@@ -7,7 +7,7 @@ plugins {
     id "gg.essential.loom" version "0.10.0.+"
 }
 
-version = "4.1.0"
+version = "4.1.1"
 group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide-loader"
 
@@ -76,11 +76,10 @@ dependencies {
     forge("net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9")
 
     implementation "org.jetbrains:annotations-java5:19.0.0"
-    implementation "org.json:json:20220924"
-    implementation 'io.nayuki:qrcodegen:1.4.0'
-    implementation 'org.bouncycastle:bcpg-jdk15on:1.70'
-
-    implementation "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
+    shadowImpl "org.json:json:20240303"
+    shadowImpl 'io.nayuki:qrcodegen:1.4.0'
+    shadowImpl 'org.bouncycastle:bcpg-jdk15on:1.70'
+    shadowImpl "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
 
     compileOnly "org.projectlombok:lombok:1.18.20"
     annotationProcessor "org.projectlombok:lombok:1.18.16"
@@ -104,18 +103,19 @@ tasks.withType(Jar) {
     }
 }
 
-
 tasks.shadowJar {
     archiveFileName = jar.archiveFileName
     exclude "META-INF/versions/**"
-    dependencies {
-        include(dependency("org.slf4j:slf4j-api:1.7.25"))
-        include(dependency("org.json:json:20220924"))
-        include(dependency("org.bouncycastle:bcpg-jdk15on:1.70"))
-        include(dependency("org.bouncycastle:bcprov-jdk15on:1.70"))
-        include(dependency("com.twelvemonkeys..*:.*"))
-    }
+    configurations = [project.configurations.shadowImpl]
 }
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+tasks.register("relocateShadowJar", ConfigureShadowRelocation) {
+    target = tasks.shadowJar
+    prefix = "kr.syeyoung.dungeonsguide.launcherlibs"
+}
+tasks.shadowJar.dependsOn tasks.relocateShadowJar
+
 
 tasks.named("remapJar") {
     archiveClassifier = "mapped"

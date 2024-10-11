@@ -7,7 +7,7 @@ plugins {
     id "gg.essential.loom" version "0.10.0.+"
 }
 
-version = "4.0.0-beta12.2"
+version = "4.0.0-beta12.3"
 group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide"
 
@@ -57,12 +57,11 @@ dependencies {
 
 
     implementation "org.jetbrains:annotations-java5:19.0.0"
-    implementation "org.java-websocket:Java-WebSocket:1.5.1"
-    implementation 'com.github.Dungeons-Guide:DiscordIPC:1d33a1c'
-    implementation "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
 
-
-    implementation 'net.java.dev.jna:jna:5.12.1' // sorry minecraft.
+    shadowImpl "org.json:json:20240303"
+    shadowImpl "org.java-websocket:Java-WebSocket:1.5.1"
+    shadowImpl 'com.github.Dungeons-Guide:DiscordIPC:d403df89'
+    shadowImpl "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
 
 
     compileOnly "org.projectlombok:lombok:1.18.20"
@@ -124,27 +123,23 @@ tasks.withType(JavaCompile) {
 
 tasks.withType(Jar) {
     archivesBaseName = "dungeonsguide"
-    manifest {
-
-    }
+    manifest {}
 }
 
 
 tasks.shadowJar {
     archiveFileName = jar.archiveFileName
 
-    relocate "org.java_websocket", "kr.syeyoung.dungeonsguide.org.java_websocket"
-    relocate 'com.jagrosh.discordipc', 'kr.syeyoung.dungeonsguide.com.jagrosh.discordipc'
-
-    dependencies {
-        include(dependency("org.java-websocket:Java-WebSocket:1.5.1"))
-        include(dependency("org.slf4j:slf4j-api:1.7.25"))
-        include(dependency("com.kohlschutter.junixsocket:junixsocket-common:2.3.4"))
-        include(dependency("com.kohlschutter.junixsocket:junixsocket-native-common:2.3.4"))
-        include(dependency("net.java.dev.jna:jna:5.12.1"))
-        include(dependency("com.github.Dungeons-Guide:DiscordIPC:1d33a1c"))
-    }
+    configurations = [project.configurations.shadowImpl]
 }
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+tasks.register("relocateShadowJar", ConfigureShadowRelocation) {
+    target = tasks.shadowJar
+    prefix = "kr.syeyoung.dungeonsguide.modlibs"
+}
+tasks.shadowJar.dependsOn tasks.relocateShadowJar
+
 
 tasks.named("remapJar") {
     archiveClassifier = "mapped"
