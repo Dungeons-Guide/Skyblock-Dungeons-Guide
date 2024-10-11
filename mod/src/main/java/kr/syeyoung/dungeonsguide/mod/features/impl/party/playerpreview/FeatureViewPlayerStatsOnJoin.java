@@ -19,16 +19,12 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview;
 
 import com.mojang.authlib.GameProfile;
-import io.github.moulberry.hychat.HyChat;
-import io.github.moulberry.hychat.chat.ChatManager;
-import io.github.moulberry.hychat.gui.GuiChatBox;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessResult;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCStringList;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.DataRendererEditor;
@@ -49,7 +45,6 @@ import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.fml.common.Loader;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Mouse;
 
@@ -165,20 +160,20 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
 
     public IChatComponent getHoveredComponent(ScaledResolution scaledResolution) {
         IChatComponent ichatcomponent = null;
-        if (Loader.isModLoaded("hychat")) {
-            try {
-                ChatManager chatManager = HyChat.getInstance().getChatManager();
-                GuiChatBox guiChatBox = chatManager.getFocusedChat();
-
-                int x = guiChatBox.getX(scaledResolution);
-                int y = guiChatBox.getY(scaledResolution);
-                ichatcomponent = guiChatBox.chatArray.getHoveredComponent(guiChatBox.getSelectedTab().getChatLines(), Mouse.getX(), Mouse.getY(), x, y);
-            } catch (Exception t) {
-            }
-        }
-        if (ichatcomponent == null) {
+//        if (Loader.isModLoaded("hychat")) {
+//            try {
+//                ChatManager chatManager = HyChat.getInstance().getChatManager();
+//                GuiChatBox guiChatBox = chatManager.getFocusedChat();
+//
+//                int x = guiChatBox.getX(scaledResolution);
+//                int y = guiChatBox.getY(scaledResolution);
+//                ichatcomponent = guiChatBox.chatArray.getHoveredComponent(guiChatBox.getSelectedTab().getChatLines(), Mouse.getX(), Mouse.getY(), x, y);
+//            } catch (Exception t) {
+//            }
+//        }
+//        if (ichatcomponent == null) {
             ichatcomponent = Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
-        }
+//        }
         return ichatcomponent;
     }
 

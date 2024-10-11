@@ -88,6 +88,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) return;
         if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
+        if (dungeonRoom.getDungeonRoomInfo() == null) return;
 
         if (!dungeonRoom.getDungeonRoomInfo().getUuid().equals(lastRoomUID)) {
             for (DungeonMechanic value : dungeonRoom.getMechanics().values()) {

@@ -420,7 +420,8 @@ public class CosmeticsManager {
             }
         } catch (Exception exception) {
             FeatureCollectDiagnostics.queueSendLogAsync(exception);
-            exception.printStackTrace();}
+            exception.printStackTrace();
+        }
     }
 
     @SubscribeEvent

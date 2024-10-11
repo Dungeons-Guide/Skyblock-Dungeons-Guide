@@ -194,7 +194,7 @@ public class GLCursors {
     private static User32 U_INSTANCE;
     private static X11 X_INSTANCE;
     private static Cursor createCursorWindows(int cursor) throws LWJGLException, InstantiationException, InvocationTargetException, IllegalAccessException {
-        if (U_INSTANCE == null) U_INSTANCE= Native.loadLibrary("User32", User32.class);
+        if (U_INSTANCE == null) U_INSTANCE= (User32) Native.loadLibrary("User32", User32.class);
         User32 user32 = U_INSTANCE;
         Pointer hIcon = user32
                 .LoadCursorW(Pointer.NULL, cursor);
@@ -215,7 +215,7 @@ public class GLCursors {
         return createCursor(handle);
     }
     private static Cursor createCursorLinux(int cursor) throws LWJGLException, InstantiationException, InvocationTargetException, IllegalAccessException {
-        if (X_INSTANCE == null) X_INSTANCE= Native.loadLibrary("X11", X11.class);
+        if (X_INSTANCE == null) X_INSTANCE= (X11) Native.loadLibrary("X11", X11.class);
         X11.Display display = X_INSTANCE.XOpenDisplay(null);
         Pointer fontCursor = X_INSTANCE.XCreateFontCursor(display, cursor);
         long iconPtr = Pointer.nativeValue(fontCursor);
@@ -224,7 +224,7 @@ public class GLCursors {
     }
     private static Cursor createCursorMac(String cursor) throws LWJGLException, InstantiationException, InvocationTargetException, IllegalAccessException {
         // trust me, it's horrible.
-        if (F_INSTANCE == null) F_INSTANCE = Native.loadLibrary("Foundation", Foundation.class);
+        if (F_INSTANCE == null) F_INSTANCE = (Foundation) Native.loadLibrary("Foundation", Foundation.class);
         Foundation foundation = F_INSTANCE;
         Pointer nsCursor = foundation.objc_getClass("NSCursor");
         Pointer selector = foundation.sel_registerName(cursor);

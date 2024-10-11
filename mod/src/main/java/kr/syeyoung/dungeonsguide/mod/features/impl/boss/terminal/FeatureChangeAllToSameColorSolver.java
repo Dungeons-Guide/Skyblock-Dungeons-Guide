@@ -194,6 +194,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
 //        if (Mouse.getEventButton())
 
         Slot s = chest.getSlotUnderMouse();
+        if (s == null) return;
         int row = s.slotNumber / 9;
         int column = s.slotNumber % 9;
 

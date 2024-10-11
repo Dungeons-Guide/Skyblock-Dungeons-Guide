@@ -128,8 +128,8 @@ public class StompClient extends WebSocketClient {
                     String subscriptionName = payload.headers().get("subscription");
                     int subscriptionId = Integer.parseInt(subscriptionName);
                     StompSubscription listener = stompSubscriptionMap.get(subscriptionId);
-
-                    listener.process(this, payload.payload());
+                    if (listener != null)
+                        listener.process(this, payload.payload());
 
                     break;
                 case RECEIPT:

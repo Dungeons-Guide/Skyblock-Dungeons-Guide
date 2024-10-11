@@ -140,6 +140,8 @@ public class FeaturePartyReady extends TextHUDFeature {
             break;
         }
 
+        if (username == null) return;
+
 
         Boolean status = null;
         String longestMatch = "";

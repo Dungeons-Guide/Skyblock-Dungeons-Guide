@@ -31,10 +31,17 @@ public class NativeLoader {
 
     public static void extractLibraryAndLoad(String name) throws IOException {
         String libName = System.mapLibraryName(name);
-        String dir = Platform.ARCH;
 
-        if (!(dir.equals("aarch64") || dir.equals("x86") || dir.equals("x86_64"))) {
-            if (Platform.is64Bit()) {
+        String arch = System.getProperty("os.arch").toLowerCase().trim();
+
+        if ("i386".equals(arch) || "i686".equals(arch)) {
+            arch = "x86";
+        } else if ("x86_64".equals(arch) || "amd64".equals(arch)) {
+            arch = "x86_64";
+        }
+        String dir = arch;
+        if (!(dir.equals("x86") || dir.equals("x86_64") || dir.equals("aarch64"))) {
+            if (Platform.is64Bit()){
                 dir = "x86_64";
             } else {
                 dir = "x86";
@@ -44,9 +51,9 @@ public class NativeLoader {
         String resourceLoc = "/native/"+dir+"/"+libName;
 
         System.out.println("Extracting "+name+" from "+resourceLoc);
-        System.out.println("Arch: "+Platform.ARCH +" | OS: "+Platform.getOSType());
+        System.out.println("Arch: "+ dir +" | OS: "+Platform.getOSType());
 
-        File targetExtractionPath = new File("native/"+libName);
+        File targetExtractionPath = new File("native-"+(System.nanoTime() % 1000000)+"/"+libName);
         targetExtractionPath.getParentFile().mkdirs();
         try (InputStream is = NativeLoader.class.getResourceAsStream(resourceLoc)) {
             Files.copy(is, targetExtractionPath.toPath(), StandardCopyOption.REPLACE_EXISTING);
