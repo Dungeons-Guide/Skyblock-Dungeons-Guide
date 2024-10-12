@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod;
 
 import com.google.common.collect.Sets;
+import com.sun.jna.internal.Cleaner;
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
@@ -454,6 +455,14 @@ public class DungeonsGuide implements DGInterface {
 
         for (ExecutorService executorService : executorServices) {
             executorService.shutdownNow();
+        }
+
+        try {
+            Cleaner cleaner = Cleaner.getCleaner();
+            Thread t = ReflectionHelper.getPrivateValue(Cleaner.class, cleaner, "cleanerThread");
+            t.stop();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         THREAD_GROUP.interrupt();
