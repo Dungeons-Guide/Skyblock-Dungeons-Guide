@@ -7,7 +7,7 @@ plugins {
     id "gg.essential.loom" version "0.10.0.+"
 }
 
-version = "4.1.1"
+version = "4.1.2"
 group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide-loader"
 
@@ -61,6 +61,8 @@ repositories {
 
 configurations {
     implementation.extendsFrom shadowImpl
+    api.extendsFrom shadowApi
+
     unmappedMod {
         canBeConsumed = true
         canBeResolved = false
@@ -76,7 +78,7 @@ dependencies {
     forge("net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9")
 
     implementation "org.jetbrains:annotations-java5:19.0.0"
-    shadowImpl "org.json:json:20240303"
+    shadowApi "org.json:json:20240303"
     shadowImpl 'io.nayuki:qrcodegen:1.4.0'
     shadowImpl 'org.bouncycastle:bcpg-jdk15on:1.70'
     shadowImpl "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
@@ -106,7 +108,7 @@ tasks.withType(Jar) {
 tasks.shadowJar {
     archiveFileName = jar.archiveFileName
     exclude "META-INF/versions/**"
-    configurations = [project.configurations.shadowImpl]
+    configurations = [project.configurations.shadowImpl, project.configurations.shadowApi]
 }
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
