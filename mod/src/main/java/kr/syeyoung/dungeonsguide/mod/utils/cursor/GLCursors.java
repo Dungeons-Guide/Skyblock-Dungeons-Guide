@@ -184,10 +184,10 @@ public class GLCursors {
     public static void cleanup() {
         F_INSTANCE = null; U_INSTANCE = null; X_INSTANCE = null;
 
-        Map<Class, ?> blah = ReflectionHelper.getPrivateValue(Native.class, null, "typeOptions");
-        blah.remove(Foundation.class);
-        blah.remove(User32.class);
-        blah.remove(X11.class);
+//        Map<Class, ?> blah = ReflectionHelper.getPrivateValue(Native.class, null, "typeOptions");
+//        blah.remove(Foundation.class);
+//        blah.remove(User32.class);
+//        blah.remove(X11.class);
     }
 
     private static Foundation F_INSTANCE;

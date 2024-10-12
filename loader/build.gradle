@@ -114,7 +114,7 @@ tasks.shadowJar {
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 tasks.register("relocateShadowJar", ConfigureShadowRelocation) {
     target = tasks.shadowJar
-    prefix = "kr.syeyoung.dungeonsguide.launcherlibs"
+    prefix = "kr.syeyoung.dungeonsguide.libs"
 }
 tasks.shadowJar.dependsOn tasks.relocateShadowJar
 
