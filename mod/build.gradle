@@ -7,7 +7,7 @@ plugins {
     id "gg.essential.loom" version "0.10.0.+"
 }
 
-version = "4.0.0-beta12.3"
+version = "4.0.0-beta12.4"
 group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide"
 
@@ -58,7 +58,7 @@ dependencies {
 
     implementation "org.jetbrains:annotations-java5:19.0.0"
 
-    shadowImpl "org.json:json:20240303"
+//    shadowImpl "org.json:json:20240303"
     shadowImpl "org.java-websocket:Java-WebSocket:1.5.1"
     shadowImpl 'com.github.Dungeons-Guide:DiscordIPC:d403df89'
     shadowImpl "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
