@@ -59,7 +59,10 @@ dependencies {
     implementation "org.jetbrains:annotations-java5:19.0.0"
 
 //    shadowImpl "org.json:json:20240303"
-    shadowImpl "org.java-websocket:Java-WebSocket:1.5.1"
+    shadowImpl 'net.java.dev.jna:jna:5.12.1' // sorry minecraft... i had to
+    shadowImpl("org.java-websocket:Java-WebSocket:1.5.1") {
+        exclude group: "org.json", module: "json"
+    }
     shadowImpl 'com.github.Dungeons-Guide:DiscordIPC:d403df89'
     shadowImpl "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
 
@@ -129,12 +132,16 @@ tasks.shadowJar {
     archiveFileName = jar.archiveFileName
 
     configurations = [project.configurations.shadowImpl]
+
+    dependencies {
+        exclude(dependency("org.json:json")) // provided via loader
+    }
 }
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 tasks.register("relocateShadowJar", ConfigureShadowRelocation) {
     target = tasks.shadowJar
-    prefix = "kr.syeyoung.dungeonsguide.modlibs"
+    prefix = "kr.syeyoung.dungeonsguide.libs"
 }
 tasks.shadowJar.dependsOn tasks.relocateShadowJar
 
