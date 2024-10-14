@@ -41,7 +41,7 @@
                             <Text text="Your tokens: " color="#FFFFFFFF" size="8"/>
                             <Text bind:text="token" color="#FFFFFFFF" size="8"/>
                             <flexible>
-                                <align vAlign="END">
+                                <align hAlign="END">
                                     <Text text="1 token allows you to request 1 pathfind with zip file" color="#FFCCCCCC" size="8"/>
                                 </align>
                             </flexible>
