@@ -1,0 +1,47 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<size height="70">
+    <RoundRect radius="10" backgroundColor="#FF111111">
+        <padding left="5" right="5" top="5" bottom="5">
+            <row crossAlign="CENTER">
+                <size width="20" height="20">
+                    <bgcolor bind:backgroundColor="roomColor"/>
+                </size>
+                <size width="5"/>
+                <Text bind:text="shape" color="#FFFFFFFF"/>
+                <size width="5"/>
+                <flexible>
+                    <col crossAlign="CENTER" mainAlign="CENTER">
+                        <Text bind:text="uuid" color="#FF888888"/>
+                        <size width="0" height="5"/>
+                        <!--                <size height="10">-->
+                        <row crossAlign="CENTER">
+                            <Text bind:text="name" color="#FF00FF00"/>
+                            <size width="5"/>
+                        </row>
+                        <size width="0" height="5"/>
+                        <size width="40" height="20">
+                            <RoundButton text="Edit" on:click="edit" disabled="true"/>
+                        </size>
+                    </col>
+                </flexible>
+            </row>
+        </padding>
+    </RoundRect>
+</size>
