@@ -36,7 +36,6 @@ import java.util.Set;
 
 @AllArgsConstructor
 public class CachedPathfinder implements IPathfinder {
-    private PathfindCache cache;
     private int rotation;
     private ByteBuffer array;
 
@@ -46,8 +45,7 @@ public class CachedPathfinder implements IPathfinder {
 
     private int roomXMin, roomYMin, roomZMin;
     private int roomXLen, roomZLen;
-    public CachedPathfinder(PathfindCache cache, int rotation, int xStart, int yStart, int zStart, int xLen, int yLen, int zLen, ByteBuffer data) {
-        this.cache = cache;
+    public CachedPathfinder( int rotation, int xStart, int yStart, int zStart, int xLen, int yLen, int zLen, ByteBuffer data) {
         this.rotation = rotation;
         this.xStart = xStart;
         this.yStart = yStart;

@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindCache;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
@@ -48,7 +49,7 @@ public class WidgetMissingPrecalculations extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "missing")
     public final BindableAttribute<String> missing = new BindableAttribute<String>(String.class);
 
-    public WidgetMissingPrecalculations(UUID uuid2, List<PathfindCache> pathfindCaches, List<PathfindRequest> required) {
+    public WidgetMissingPrecalculations(UUID uuid2, List<PathfindPrecalculation> pathfindCaches, List<PathfindRequest> required) {
         super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/missingprecalculations.gui"));
         DungeonRoomInfo dungeonRoomInfo = DungeonRoomInfoRegistry.getByUUID(uuid2);
 
@@ -89,7 +90,9 @@ public class WidgetMissingPrecalculations extends AnnotatedImportOnlyWidget {
 
         this.roomColor.setValue(color);
 
-        Set<String> loadedIds = pathfindCaches.stream().map(a -> a.getId()).collect(Collectors.toSet());
+        Set<String> loadedIds = pathfindCaches.stream()
+                .filter(a -> a.getRoomUID().equals(uuid2))
+                .map(a -> a.getTargetId()).collect(Collectors.toSet());
         Set<String> requestIds = required.stream().map(a -> a.getId()).collect(Collectors.toSet());
         this.missing.setValue(
                 Stream.concat(
@@ -111,6 +114,6 @@ public class WidgetMissingPrecalculations extends AnnotatedImportOnlyWidget {
             }
         }
 
-        this.loaded.setValue(pathfindCaches.stream().map(a -> a.getId().substring(36, Math.min(136, a.getId().length()))).collect(Collectors.joining("\n")));
+        this.loaded.setValue(pathfindCaches.stream().map(a -> a.getTargetId().substring(36, Math.min(136, a.getTargetId().length()))).collect(Collectors.joining("\n")));
     }
 }

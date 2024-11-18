@@ -21,16 +21,14 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -40,7 +38,7 @@ import java.util.stream.Collectors;
 @Getter @Setter
 @AllArgsConstructor
 public class PathfindRequest {
-    private FeaturePathfindSettings.AlgorithmSettings algorithmSettings;
+    private AlgorithmSettings algorithmSettings;
     private DungeonRoomInfo dungeonRoomInfo;
     private Set<String> openMech; // excludes superboomable things.
     private List<OffsetVec3> target;
@@ -74,22 +72,16 @@ public class PathfindRequest {
     }
 
     public void write(DRIWorld driWorld, DataOutputStream dataOutputStream) throws IOException {
-        dataOutputStream.writeUTF("DGPF");
+        dataOutputStream.writeUTF("DGPFR");
         dataOutputStream.writeUTF(getId());
         dataOutputStream.writeUTF(dungeonRoomInfo.getUuid().toString());
         dataOutputStream.writeUTF(dungeonRoomInfo.getName());
         // export algorithm settings
         dataOutputStream.writeUTF("ALGO");
-        dataOutputStream.writeBoolean(algorithmSettings.isEnderpearl());
-        dataOutputStream.writeBoolean(algorithmSettings.isTntpearl());
-        dataOutputStream.writeBoolean(algorithmSettings.isStonkDown());
-        dataOutputStream.writeBoolean(algorithmSettings.isStonkEChest());
-        dataOutputStream.writeBoolean(algorithmSettings.isStonkTeleport());
-        dataOutputStream.writeBoolean(algorithmSettings.isRouteEtherwarp());
-        dataOutputStream.writeInt(algorithmSettings.getMaxStonk());
-        dataOutputStream.writeInt(algorithmSettings.getEtherwarpRadius());
-        dataOutputStream.writeFloat((float) algorithmSettings.getEtherwarpLeeway());
-        dataOutputStream.writeFloat((float) algorithmSettings.getEtherwarpOffset());
+
+        NBTTagCompound tagCompound = algorithmSettings.serializeToNBT();
+        CompressedStreamTools.write(tagCompound, dataOutputStream);
+
         // export targets
         dataOutputStream.writeUTF("TRGT");
         dataOutputStream.writeInt(target.size());

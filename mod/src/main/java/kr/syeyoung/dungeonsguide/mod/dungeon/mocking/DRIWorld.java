@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.mocking;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonBreakableWall;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
@@ -29,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWor
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.BitStorage;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
 import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
@@ -61,7 +60,7 @@ public class DRIWorld extends World implements IPathfindWorld {
 
     private HashSet<BlockPos> poses = new HashSet<>();
     private HashSet<BlockPos> open = new HashSet<>();
-    private FeaturePathfindSettings.AlgorithmSettings algorithmSettings;
+    private AlgorithmSettings algorithmSettings;
 
     private BitStorage enderpearl, whole;
     public DRIWorld(DungeonRoomInfo dungeonRoomInfo) {

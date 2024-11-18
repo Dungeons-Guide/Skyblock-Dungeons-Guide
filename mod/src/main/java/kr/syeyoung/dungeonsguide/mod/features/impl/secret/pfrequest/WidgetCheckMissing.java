@@ -36,8 +36,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.CachedPathfinderRegistry;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindCache;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPrecalculation;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindResultCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -70,7 +70,7 @@ public class WidgetCheckMissing extends AnnotatedImportOnlyWidget {
     public WidgetCheckMissing() {
         super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/checkmissing.gui"));
         List<Widget> widgets = new ArrayList<>();
-        for (Map.Entry<UUID, List<PathfindCache>> uuidListEntry : CachedPathfinderRegistry.getByRooms().entrySet()) {
+        for (Map.Entry<UUID, List<PathfindPrecalculation>> uuidListEntry : PathfindResultCache.getINSTANCE().getByRoom().entrySet()) {
             if (DungeonRoomInfoRegistry.getByUUID(uuidListEntry.getKey()) != null)
                 widgets.add(new WidgetPrecalculations(uuidListEntry.getKey(), uuidListEntry.getValue()));
         }
@@ -87,11 +87,7 @@ public class WidgetCheckMissing extends AnnotatedImportOnlyWidget {
             e.printStackTrace();
         }
     }
-    @On(functionName = "reload")
-    public void reload() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-        CachedPathfinderRegistry.loadAll(new File(Main.getConfigDir(), "pfResult"));
-    }
+
     @On(functionName = "checkmissing")
     public void checkMissing() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
@@ -209,7 +205,7 @@ public class WidgetCheckMissing extends AnnotatedImportOnlyWidget {
 
             precalculationApi.getValue().addWidget(new WidgetMissingPrecalculations(
                     dungeonRoomInfo.getUuid(),
-                    CachedPathfinderRegistry.getByRoom(dungeonRoomInfo.getUuid()) == null ? Collections.emptyList() : CachedPathfinderRegistry.getByRoom(dungeonRoomInfo.getUuid()),
+                    PathfindResultCache.getINSTANCE().getByRoom(dungeonRoomInfo.getUuid()) == null ? Collections.emptyList() : PathfindResultCache.getINSTANCE().getByRoom(dungeonRoomInfo.getUuid()),
                     requests
             ));
         }

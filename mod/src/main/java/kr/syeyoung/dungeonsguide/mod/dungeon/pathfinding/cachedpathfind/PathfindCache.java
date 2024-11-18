@@ -22,12 +22,15 @@ import io.netty.buffer.ByteBuf;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.init.Items;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.input.CountingInputStream;
 import sun.nio.ch.DirectBuffer;
@@ -50,9 +53,13 @@ public class PathfindCache {
     @Getter
     private UUID roomId;
     private File file;
+
+    @Getter
+    private AlgorithmSettings algorithmSettings;
     @Getter
     private List<OffsetVec3> targets;
 
+    @Getter
     private int gzipStart = 0;
 
     public PathfindCache(File f) throws IOException {
@@ -70,7 +77,36 @@ public class PathfindCache {
             dis.readUTF(); // room name
             magicValue = dis.readUTF();
             if (!magicValue.equals("ALGO")) throw new IllegalStateException("Expected magic value ALGO Instead got "+magicValue);
-            dis.skipBytes(22); // skip algorithm settings
+//            dis.skipBytes(22); // skip algorithm settings
+
+            AlgorithmSettings current = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
+            boolean epearl = dis.readBoolean();
+            boolean tntpearl = dis.readBoolean();
+            boolean stonkdown = dis.readBoolean();
+            boolean stonkechest = dis.readBoolean();
+            boolean stonkteleport = dis.readBoolean();
+            boolean etherwarp = dis.readBoolean();
+            int maxstonk = dis.readInt();
+            int etherwarprad = dis.readInt();
+            double leeway = dis.readFloat();
+            double offset = dis.readFloat();
+            this.algorithmSettings = new AlgorithmSettings(
+                    current.getPickaxe(),
+                    current.getPickaxeSpeed(),
+                    current.getShovelSpeed(),
+                    current.getAxeSpeed(),
+                    stonkdown,
+                    stonkteleport,
+                    stonkechest,
+                    etherwarp,
+                    maxstonk,
+                    epearl,
+                    tntpearl,
+                    offset,
+                    etherwarprad,
+                    leeway
+            );
+
             magicValue = dis.readUTF();
             if (!magicValue.equals("TRGT")) throw new IllegalStateException("Expected magic value TRGT Instead got "+magicValue);
 
@@ -107,7 +143,7 @@ public class PathfindCache {
             ReadableByteChannel channel = Channels.newChannel(dataInputStream);
             while (channel.read(buffer) > 0);
 
-            return new CachedPathfinder(this, rotation, xStart, yStart, zStart, xLen, yLen, zLen, buffer);
+            return new CachedPathfinder(rotation, xStart, yStart, zStart, xLen, yLen, zLen, buffer);
         }
     }
 

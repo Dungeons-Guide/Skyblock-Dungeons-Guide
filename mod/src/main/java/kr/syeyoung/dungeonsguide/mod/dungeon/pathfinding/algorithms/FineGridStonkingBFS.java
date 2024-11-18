@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.ShadowCast;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -44,10 +44,10 @@ public class FineGridStonkingBFS implements IPathfinder {
 
     @Getter
     private BoundingBox destinationBB;
-    private FeaturePathfindSettings.AlgorithmSettings algorithmSettings;
+    private AlgorithmSettings algorithmSettings;
     private long start;
 
-    public FineGridStonkingBFS(FeaturePathfindSettings.AlgorithmSettings algorithmSettings) {
+    public FineGridStonkingBFS(AlgorithmSettings algorithmSettings) {
         this.algorithmSettings = algorithmSettings;
     }
     @Override

@@ -22,9 +22,9 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCEnum;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.init.Items;
@@ -79,27 +79,6 @@ public class FeaturePathfindSettings extends SimpleFeature {
                 this.<Integer>getParameter("max_etherwarp").getValue(),
                 this.<Double>getParameter("leeway_etherwarp").getValue()
         );
-    }
-    @AllArgsConstructor @Getter
-    public static class AlgorithmSettings {
-        private final Item pickaxe;
-        private final double pickaxeSpeed;
-        private final double shovelSpeed;
-        private final double axeSpeed;
-
-        private final boolean stonkDown;
-        private final boolean stonkTeleport;
-        private final boolean stonkEChest;
-
-        private final boolean routeEtherwarp;
-
-        private final int maxStonk;
-        private final boolean enderpearl;
-        private final boolean tntpearl;
-
-        private final double etherwarpOffset;
-        private final int etherwarpRadius;
-        private final double etherwarpLeeway;
     }
 
     public Item getPickaxe() {

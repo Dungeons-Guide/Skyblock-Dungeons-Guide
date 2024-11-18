@@ -35,32 +35,29 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.SerializableBlockPos;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonRoomMatchEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonStateChangeEvent;
-import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.CachedPathfinder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.CachedPathfinderRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindCache;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPrecalculation;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindResultCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
@@ -165,7 +162,7 @@ public class DungeonRoom implements IPathfindWorld {
         PathfinderExecutor executor1 =         idExecutor.get(id);
         if (executor1 != null) return executor1;
 //        System.out.println(id);
-        PathfindCache cachedPathfinder = CachedPathfinderRegistry.getById(id);
+        PathfindPrecalculation cachedPathfinder = PathfindResultCache.getINSTANCE().getByTargetId(id);
 //        System.out.println(cachedPathfinder);
         if (cachedPathfinder == null) return null;
         try {
@@ -424,10 +421,10 @@ public class DungeonRoom implements IPathfindWorld {
                         }
                     }
 
-        List<PathfindCache> pathfinders = CachedPathfinderRegistry.getByRoom(dungeonRoomInfo.getUuid());
+        List<PathfindPrecalculation> pathfinders = PathfindResultCache.getINSTANCE().getByRoom(dungeonRoomInfo.getUuid());
         if (pathfinders != null) {
-            for (PathfindCache pathfinder : pathfinders) {
-                loadPrecalculated(pathfinder.getId());
+            for (PathfindPrecalculation pathfinder : pathfinders) {
+                loadPrecalculated(pathfinder.getTargetId());
             }
         }
     }
@@ -524,7 +521,7 @@ public class DungeonRoom implements IPathfindWorld {
     private final int lenx, leny, lenz;
     private static final float playerWidth = 0.25f;
 
-    private FeaturePathfindSettings.AlgorithmSettings algorithmSettings;
+    private AlgorithmSettings algorithmSettings;
 
 
     private int isNoInstaBreak(IBlockState iBlockState, BlockPos pos) {

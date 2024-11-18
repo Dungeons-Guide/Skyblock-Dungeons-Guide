@@ -18,8 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.commands;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import com.google.gson.*;
@@ -43,7 +41,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.CachedPathfinderRegistry;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.MigrationUtils;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
@@ -70,8 +68,6 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -134,7 +130,8 @@ public class CommandDgDebug extends CommandBase {
             "fullbright",
             "gimmebright",
             "pfall",
-            "partycollection"
+            "partycollection",
+            "migrate"
     };
 
     @Override
@@ -174,9 +171,6 @@ public class CommandDgDebug extends CommandBase {
                 break;
             case "loadrooms":
                 loadRoomsCommand();
-                break;
-            case "loadroutes":
-                loadRoutesCommand();
                 break;
             case "reloadah":
                 reloadAHCommand();
@@ -292,6 +286,13 @@ public class CommandDgDebug extends CommandBase {
             case "partycollection":
                 partyCollectionCommand(args[1], args[2], args[3]);
                 break;
+            case "migrate":
+                try {
+                    migrateCommand();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
             default:
                 ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
@@ -300,6 +301,17 @@ public class CommandDgDebug extends CommandBase {
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
                 break;
+        }
+    }
+
+    private void migrateCommand() throws Exception {
+        File targetDir = new File(Main.getConfigDir(), "precalculations");
+
+        UUID uuid = UUID.randomUUID();
+        for (File pfResult : new File(Main.getConfigDir(), "pfResult").listFiles()) {
+            if (!pfResult.getName().endsWith(".pfres")) continue;
+            System.out.println(pfResult);
+            MigrationUtils.migrate(pfResult, new File(targetDir, pfResult.getName()), uuid.toString());
         }
     }
 
@@ -653,16 +665,6 @@ public class CommandDgDebug extends CommandBase {
         } catch (BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException |
                  NoSuchAlgorithmException | IOException | IllegalBlockSizeException |
                  NoSuchPaddingException e) {
-            e.printStackTrace();
-        }
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cAn error has occurred while loading roomdata"));
-    }
-    private void loadRoutesCommand() {
-        try {
-            CachedPathfinderRegistry.loadAll(new File(Main.getConfigDir(), "pfResult"));
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully loaded pfResults"));
-            return;
-        } catch (Exception e) {
             e.printStackTrace();
         }
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cAn error has occurred while loading roomdata"));

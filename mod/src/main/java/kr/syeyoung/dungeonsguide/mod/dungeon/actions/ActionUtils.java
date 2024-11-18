@@ -22,12 +22,11 @@ import kr.syeyoung.dungeonsguide.dungeon.data.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonBreakableWall;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemTool;
 import net.minecraft.util.BlockPos;
@@ -47,7 +46,7 @@ public class ActionUtils {
 
     public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, List<PossibleClickingSpot> spots, OffsetPoint target, ActionDAGAccepter eachBuild, boolean guard) throws PathfindImpossibleException {
         spots = spots.stream().filter(a -> {
-            FeaturePathfindSettings.AlgorithmSettings settings = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
+            AlgorithmSettings settings = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
             {
                 RequiredTool pickaxe = a.getTools()[0];
                 if (pickaxe != null) {

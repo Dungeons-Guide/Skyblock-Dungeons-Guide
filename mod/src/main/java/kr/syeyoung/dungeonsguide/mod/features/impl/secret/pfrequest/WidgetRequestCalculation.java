@@ -20,29 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRedstoneKey;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor2;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.ISecret;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
-import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
-import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
-import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.CachedPathfinderRegistry;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindCache;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
@@ -51,22 +29,14 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 
-import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class WidgetRequestCalculation extends AnnotatedImportOnlyWidget {
 

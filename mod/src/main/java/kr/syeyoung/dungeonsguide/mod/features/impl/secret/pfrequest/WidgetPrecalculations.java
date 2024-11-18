@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindCache;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
@@ -43,7 +44,7 @@ public class WidgetPrecalculations extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "roomColor")
     public final BindableAttribute<Integer> roomColor = new BindableAttribute<Integer>(Integer.class);
 
-    public WidgetPrecalculations(UUID uuid2, List<PathfindCache> pathfindCaches) {
+    public WidgetPrecalculations(UUID uuid2, List<PathfindPrecalculation> pathfindCaches) {
         super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/precalculations.gui"));
         DungeonRoomInfo dungeonRoomInfo = DungeonRoomInfoRegistry.getByUUID(uuid2);
 
@@ -84,7 +85,7 @@ public class WidgetPrecalculations extends AnnotatedImportOnlyWidget {
 
         this.roomColor.setValue(color);
 
-        String pfs = pathfindCaches.stream().map(a -> a.getId().substring(36, Math.min(136, a.getId().length()))).collect(Collectors.joining("\n"));
+        String pfs = pathfindCaches.stream().map(a -> a.getTargetId().substring(36, Math.min(136, a.getTargetId().length()))).collect(Collectors.joining("\n"));
         this.pfs.setValue(pfs);
     }
 }

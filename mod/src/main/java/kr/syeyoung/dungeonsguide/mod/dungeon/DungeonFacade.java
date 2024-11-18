@@ -19,12 +19,10 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon;
 
 import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.CachedPathfinder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.CachedPathfinderRegistry;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindResultCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -55,8 +53,15 @@ public class DungeonFacade {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
-        new File(Main.getConfigDir(), "pfResult").mkdirs();
-        CachedPathfinderRegistry.loadAll(new File(Main.getConfigDir(), "pfResult"));
-        System.out.println(CachedPathfinderRegistry.getRegistered().size());
+
+        try {
+            new File(Main.getConfigDir(), "precalculations").mkdirs();
+            new PathfindResultCache(new File(Main.getConfigDir(), "precalculations"));
+            System.out.println(PathfindResultCache.getINSTANCE().getLoaded().size());
+        } catch (IOException e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
+            e.printStackTrace();
+        }
+
     }
 }
