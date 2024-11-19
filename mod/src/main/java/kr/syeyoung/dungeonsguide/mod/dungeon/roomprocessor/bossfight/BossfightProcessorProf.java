@@ -155,7 +155,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
             boolean yE = Math.abs(updateEvent.entityLiving.posY - 72.5) < 0.01;
 
             if (getCurrentPhase().equals("fight-3")) {
-                if (profStand.getPosition().distanceSq(updateEvent.entityLiving.getPosition().add(0, 2, 0)) < 5) {
+                if (profStand != null && profStand.getPosition().distanceSq(updateEvent.entityLiving.getPosition().add(0, 2, 0)) < 5) {
                     mapping.put(updateEvent.entityLiving.getEntityId(), 23);
                 }
             }

@@ -69,15 +69,20 @@ public class BindableAttribute<T> {
 
     private Set<BindableAttribute<T>> linkedWith = new HashSet<>();
 
-    private void boundSet(T old, T neu) {
-        setValue(neu);
+
+    public class Updater implements BiConsumer<T, T>{
+        @Override
+        public void accept(T old, T neu) {
+            setValue(neu);
+        }
     }
+    private Updater boundSet = new Updater();
 
     public void exportTo(BindableAttribute<T> bindableAttribute) { // This method has to be called by exporting bindable attribute
         if (bindableAttribute.type != type) throw new IllegalArgumentException("Different type!!");
 
-        this.addOnUpdate(bindableAttribute::boundSet);
-        bindableAttribute.addOnUpdate(this::boundSet);
+        this.addOnUpdate(bindableAttribute.boundSet);
+        bindableAttribute.addOnUpdate(boundSet);
         linkedWith.add(bindableAttribute);
 
         if (bindableAttribute.initialized)
@@ -87,8 +92,8 @@ public class BindableAttribute<T> {
     }
 
     public void unexport(BindableAttribute<T> bindableAttribute) {
-        bindableAttribute.removeOnUpdate(this::boundSet);
-        removeOnUpdate(bindableAttribute::boundSet);
+        bindableAttribute.removeOnUpdate(boundSet);
+        removeOnUpdate(bindableAttribute.boundSet);
         linkedWith.remove(bindableAttribute);
     }
 
