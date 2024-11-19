@@ -1,0 +1,50 @@
+<RoundRect backgroundColor="#FF555555" radius="5">
+    <padding left="5" top="5" right="5" bottom="5">
+        <col>
+            <row>
+                <size width="20" height="20">
+                    <RoundRect bind:backgroundColor="roomColor" radius="5"/>
+                </size>
+                <size width="5"/>
+                <flexible>
+                    <padding bottom="5" top="5">
+                        <Text bind:text="roomName" color="#FFFFFFFF" size="8"/>
+                    </padding>
+                </flexible>
+            </row>
+            <size height="3"/>
+            <col crossAlign="START">
+                <SelectiveContainer bind:visible="abilityOverride">
+                    <Text text="Ability Overriden" color="#FFFFFF00" slot="true"/>
+                    <size width="0" height="0" slot="false"/>
+                </SelectiveContainer>
+                <SelectiveContainer bind:visible="missingPrecalc">
+                    <Text text="Has missing precalculations!" color="#FFFF0000" slot="true"/>
+                    <size width="0" height="0" slot="false"/>
+                </SelectiveContainer>
+                <SelectiveContainer bind:visible="redundantPrecalc">
+                    <Text text="Has redundant/dupe precalculations!" color="#FFFF0000" slot="true"/>
+                    <size width="0" height="0" slot="false"/>
+                </SelectiveContainer>
+                <row>
+                    <Text text="Requires " color="#FFFFFFFF"/>
+                    <Text bind:text="requiredPrecalculations" color="#FF00AA00"/>
+                    <Text text=" precalculations" color="#FFFFFFFF"/>
+                </row>
+
+                <row>
+                    <Text bind:text="loadedPrecalculations" color="#FF00AA00"/>
+                    <Text text="/" color="#FFFFFFFF"/>
+                    <Text bind:text="requiredPrecalculations" color="#FFAAAAAA"/>
+                    <Text text=" + (" color="#FFFFFFFF"/>
+                    <Text bind:text="redundantPrecalculations" color="#FFAAAAAA"/>
+                    <Text text=") loaded" color="#FFFFFFFF"/>
+                </row>
+            </col>
+            <size height="3"/>
+            <size width="130" height="15">
+                <RoundButton text="View/Edit Room Preset" on:click="edit"/>
+            </size>
+        </col>
+    </padding>
+</RoundRect>

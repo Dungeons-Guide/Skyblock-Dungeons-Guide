@@ -1,1 +1,28 @@
-<col gap="3" bind:_="roomlist"/>
+<col>
+
+    <RoundRect radius="5" backgroundColor="#FF333333">
+        <padding left="5" top="5" right="5" bottom="5">
+            <col>
+                <row>
+                    <Text text="Presets" size="16" color="#FFFFFFFF" />
+                    <flexible><size width="5"/></flexible>
+                    <size height="16" width="80">
+                        <RoundButton text="Create new" on:click="create"/>
+                    </size>
+                </row>
+                <size height="3"/>
+                <line color="#FFFFFFFF" dir="HORIZONTAL" thickness="1"/>
+                <size height="3"/>
+                <col bind:api="presetsApi" bind:_="presets">
+                </col>
+                <size height="3"/>
+                <Text text="Green is currently viewing / Blue is applied" color="#FFFFFFFF"/>
+            </col>
+        </padding>
+    </RoundRect>
+    <size height="5"/>
+    <SelectiveContainer bind:visible="presetVisibility">
+        <Text slot="false" text="Choose a preset to view"/>
+        <slot slot="true" bind:child="viewPreset"/>
+    </SelectiveContainer>
+</col>

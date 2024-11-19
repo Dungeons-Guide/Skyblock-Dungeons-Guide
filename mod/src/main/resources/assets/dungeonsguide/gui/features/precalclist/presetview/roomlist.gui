@@ -1,0 +1,30 @@
+<RoundRect radius="5" backgroundColor="#FF333333">
+    <padding left="5" top="5" bottom="5" right="5">
+        <col>
+            <row crossAlign="END">
+                <Text text="Rooms" size="16" color="#FFFFFFFF" />
+                <flexible>
+                    <row mainAlign="END" crossAlign="END">
+                        <size width="100" height="20">
+                            <RoundButton bind:text="sortText" on:click="cycleSort"/>
+                        </size>
+                        <size width="5"/>
+                        <flexible fit="LOOSE">
+                            <size width="200" height="32">
+                                <RoundButton bind:text="filterText" on:click="cycleFilter"/>
+                            </size>
+                        </flexible>
+                    </row>
+                </flexible>
+                <size width="5"/>
+                <size width="200" height="20">
+                    <TextField placeholder="Search Rooms" bind:value="search"/>
+                </size>
+            </row>
+            <size height="3"/>
+            <line color="#FFFFFFFF" dir="HORIZONTAL" thickness="1"/>
+            <size height="3"/>
+            <WrapGrid gap="3" minimumWidth="150" bind:_="rooms" bind:api="roomsApi"/>
+        </col>
+    </padding>
+</RoundRect>

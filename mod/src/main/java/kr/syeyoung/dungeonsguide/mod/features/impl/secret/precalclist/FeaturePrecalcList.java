@@ -21,5 +21,6 @@ public class FeaturePrecalcList extends SimpleFeature {
     @Override
     public void setupConfigureWidget(List<Widget> widgets) {
         super.setupConfigureWidget(widgets);
+        widgets.add(new WidgetPrecalcList());
     }
 }

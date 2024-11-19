@@ -2,20 +2,15 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind;
 
 import com.sun.nio.file.ExtendedWatchEventModifier;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import lombok.Getter;
-import org.sqlite.SQLiteConfig;
-import org.sqlite.SQLiteDataSource;
-import org.sqlite.SQLiteJDBCLoader;
-import org.sqlite.SQLiteOpenMode;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.*;
 
-public class PathfindResultCache {
+public class PathfindResultRegistry {
     @Getter
     private List<PathfindPrecalculation> loaded = new ArrayList<>();
     private Map<String, List<PathfindPrecalculation>> byId = new HashMap<>();
@@ -26,11 +21,11 @@ public class PathfindResultCache {
     private Map<String, List<PathfindPrecalculation>> byId2 = new HashMap<>();
 
     @Getter
-    private static PathfindResultCache INSTANCE;
+    private static PathfindResultRegistry INSTANCE;
 
-    public PathfindResultCache(File dir) throws IOException {
+    public PathfindResultRegistry(File dir) throws IOException {
         if (INSTANCE != null) throw new IllegalStateException("Already initialized");
-        PathfindResultCache.INSTANCE = this;
+        PathfindResultRegistry.INSTANCE = this;
 
         loadAll(dir);
 
@@ -138,15 +133,21 @@ public class PathfindResultCache {
         byId2.clear();
         byFile.clear();
 
-        Files.walk(dir.toPath(), FileVisitOption.FOLLOW_LINKS)
-                        .forEach(path -> {
-                            if (!path.getFileName().toString().endsWith(".pfres")) return;
-                            try {
-                                PathfindPrecalculation pathfindCache = new PathfindPrecalculation(path.toFile());
-                                register(pathfindCache);
-                            } catch (Exception e) {
-                                System.out.println(path.getFileName());e.printStackTrace();}
-                        });
+        try {
+            Files.walk(dir.toPath(), FileVisitOption.FOLLOW_LINKS)
+                    .forEach(path -> {
+                        if (!path.getFileName().toString().endsWith(".pfres")) return;
+                        try {
+                            PathfindPrecalculation pathfindCache = new PathfindPrecalculation(path.toFile());
+                            register(pathfindCache);
+                        } catch (Exception e) {
+                            System.out.println(path.getFileName());
+                            e.printStackTrace();
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

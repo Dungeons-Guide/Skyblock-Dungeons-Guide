@@ -38,9 +38,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonStateChangeEvent
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPrecalculation;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindResultCache;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindResultRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
@@ -162,7 +161,7 @@ public class DungeonRoom implements IPathfindWorld {
         PathfinderExecutor executor1 =         idExecutor.get(id);
         if (executor1 != null) return executor1;
 //        System.out.println(id);
-        PathfindPrecalculation cachedPathfinder = PathfindResultCache.getINSTANCE().getByTargetId(id);
+        PathfindPrecalculation cachedPathfinder = PathfindResultRegistry.getINSTANCE().getByTargetId(id);
 //        System.out.println(cachedPathfinder);
         if (cachedPathfinder == null) return null;
         try {
@@ -421,7 +420,7 @@ public class DungeonRoom implements IPathfindWorld {
                         }
                     }
 
-        List<PathfindPrecalculation> pathfinders = PathfindResultCache.getINSTANCE().getByRoom(dungeonRoomInfo.getUuid());
+        List<PathfindPrecalculation> pathfinders = PathfindResultRegistry.getINSTANCE().getByRoom(dungeonRoomInfo.getUuid());
         if (pathfinders != null) {
             for (PathfindPrecalculation pathfinder : pathfinders) {
                 loadPrecalculated(pathfinder.getTargetId());

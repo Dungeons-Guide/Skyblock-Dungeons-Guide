@@ -1,0 +1,70 @@
+<RoundRect radius="5" backgroundColor="#FF333333">
+    <padding left="5" top="5" bottom="5" right="5">
+        <col>
+            <row>
+                <Text text="Metadata" size="16" color="#FFFFFFFF" />
+            </row>
+            <size height="3"/>
+            <line color="#FFFFFFFF" dir="HORIZONTAL" thickness="1"/>
+            <size height="3"/>
+            <row>
+                <Text text="Currently viewing: " color="#FFFFFFFF"/>
+                <Text bind:text="presetName" color="#FFFFFFFF"/>
+                <flexible>
+                    <size/>
+                </flexible>
+                <size height="15" width="75">
+                    <RoundButton text="Change Name" on:click="changeName"/>
+                </size>
+                <size width="5"/>
+                <size height="15" width="40">
+                    <RoundButton text="Clone" on:click="clone"/>
+                </size>
+                <size width="5"/>
+                <size height="15" width="40">
+                    <RoundButton text="Delete" on:click="delete"/>
+                </size>
+            </row>
+            <size height="5"/>
+            <row>
+                <Text text="Internal ID: " color="#FF777777"/>
+                <Text bind:text="id" color="#FF777777"/>
+            </row>
+            <size height="5"/>
+            <row>
+                <Text text="Filename: " color="#FF777777"/>
+                <Text bind:text="filename" color="#FF777777"/>
+            </row>
+            <size height="5"/>
+            <row>
+                <Text text="Generated At: " color="#FF777777"/>
+                <Text bind:text="generatedAt" color="#FF777777"/>
+            </row>
+            <size height="5"/>
+            <row>
+                <Text text="Origin: " color="#FF777777"/>
+                <Text bind:text="origin" color="#FF777777"/>
+            </row>
+            <size height="5"/>
+            <row>
+                <Text text="Default Pathfind Ability Settings: " color="#FFFFFFFF"/>
+                <flexible>
+                    <slot bind:_="abilitySettings"/>
+                </flexible>
+                <size height="15" width="150">
+                    <RoundButton text="Edit Default Ability Settings" on:click="editAbilitySettings"/>
+                </size>
+            </row>
+            <size height="5"/>
+            <row>
+                <size height="15" width="100">
+                    <RoundButton text="Apply this preset" on:click="apply"/>
+                </size>
+                <size width="5"/>
+                <size height="15" width="170">
+                    <RoundButton text="Request Missing Precalculations" on:click="requestMissing"/>
+                </size>
+            </row>
+        </col>
+    </padding>
+</RoundRect>

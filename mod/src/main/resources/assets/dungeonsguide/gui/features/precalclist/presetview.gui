@@ -1,0 +1,14 @@
+<col>
+    <slot bind:_="metadata"/>
+    <size height="5"/>
+
+    <SelectiveContainer bind:visible="crunchData">
+        <size height="200" slot="calculating">
+            <align>
+                <Text text="Crunching Data...." size="16" color="#FFFFFFFF"/>
+            </align>
+        </size>
+        <slot bind:child="roompreset" slot="done"/>
+    </SelectiveContainer>
+
+</col>

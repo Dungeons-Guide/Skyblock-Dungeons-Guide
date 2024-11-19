@@ -1,0 +1,123 @@
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
+
+import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPresetRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.MapConfiguration;
+import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.Modal;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.ModalAsk;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.ModalConfirm;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.util.ResourceLocation;
+
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Map;
+import java.util.UUID;
+
+public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
+    private PathfindPreset preset;
+    private WidgetViewPreset parent;
+
+    @Bind(variableName = "presetName")
+    public final BindableAttribute<String> presetName = new BindableAttribute<>(String.class);
+
+    @Bind(variableName = "id")
+    public final BindableAttribute<String> id = new BindableAttribute<>(String.class);
+
+    @Bind(variableName = "generatedAt")
+    public final BindableAttribute<String> generatedAt = new BindableAttribute<>(String.class);
+
+    @Bind(variableName = "origin")
+    public final BindableAttribute<String> origin = new BindableAttribute<>(String.class);
+
+    @Bind(variableName = "filename")
+    public final BindableAttribute<String> filename = new BindableAttribute<>(String.class);
+
+    @Bind(variableName = "abilitySettings")
+    public final BindableAttribute<Widget> abilitySettings = new BindableAttribute<>(Widget.class);
+
+
+
+    public WidgetPresetMetadata(PathfindPreset preset, WidgetViewPreset widgetViewPreset) {
+        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/presetview/metadata.gui"));
+        this.preset = preset;
+        this.parent = widgetViewPreset;
+
+        this.presetName.setValue(preset.getPresetName());
+        this.id.setValue(preset.getPresetId());
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL);
+        this.generatedAt.setValue(dateTimeFormatter.format(preset.getGeneratedAt().atZone(ZoneId.systemDefault())));
+        this.origin.setValue(preset.getOrigin());
+        this.filename.setValue(Main.getConfigDir().toPath().relativize(preset.getFile().toPath()).toString());
+        this.abilitySettings.setValue(new WidgetAbilitySettings(preset));
+    }
+
+
+    @On(functionName = "changeName")
+    public void changeName() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
+        ModalAsk modalMessage = new ModalAsk("Please enter the new preset name in below box", "Enter new name here", preset.getPresetName());
+        PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Choose new name for preset", modalMessage, true), (a) -> {
+            if (a == null) return;
+            preset.setPresetName((String)a);
+            parent.notifyNameUpdate(preset);
+            WidgetPresetMetadata.this.presetName.setValue(preset.getPresetName());
+        });
+    }
+
+    @On(functionName = "clone")
+    public void clonePreset() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
+        PathfindPreset preset1 = preset.clone();
+        PathfindPresetRegistry.getINSTANCE().register(preset1);
+
+        parent.notifyNew(preset1);
+    }
+
+
+    @On(functionName = "delete")
+    public void delete() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
+        ModalConfirm modalMessage = new ModalConfirm("Deleting can not be reverted");
+        PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Are you sure?", modalMessage, true), (a) -> {
+            if (a == null) return;
+            if (a == Boolean.TRUE) {
+                PathfindPresetRegistry.getINSTANCE().unregister(preset);
+                parent.notifyDelete(preset);
+            }
+        });
+    }
+
+    @On(functionName = "apply")
+    public void apply() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
+    }
+
+
+    @On(functionName = "editAbilitySettings")
+    public void editAbilitySettings() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
+    }
+
+    @On(functionName = "requestMissing")
+    public void requestMissing() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
+    }
+
+
+}

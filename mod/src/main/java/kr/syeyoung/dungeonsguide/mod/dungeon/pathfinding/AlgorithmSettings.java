@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -12,7 +13,8 @@ import java.io.IOException;
 
 @AllArgsConstructor
 @Getter
-public class AlgorithmSettings {
+@Data
+public class AlgorithmSettings implements Cloneable {
     private final Item pickaxe;
     private final double pickaxeSpeed;
     private final double shovelSpeed;
@@ -75,5 +77,15 @@ public class AlgorithmSettings {
     public static AlgorithmSettings deserialize(DataInputStream dataInputStream) throws IOException {
         NBTTagCompound nbtTagCompound = CompressedStreamTools.read(dataInputStream, new NBTSizeTracker(10000));
         return AlgorithmSettings.deserialize(nbtTagCompound);
+    }
+
+    @Override
+    public AlgorithmSettings clone() {
+        try {
+            AlgorithmSettings clone = (AlgorithmSettings) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

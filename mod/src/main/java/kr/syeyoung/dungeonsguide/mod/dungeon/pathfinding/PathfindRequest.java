@@ -36,14 +36,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter @Setter
-@AllArgsConstructor
 public class PathfindRequest {
-    private AlgorithmSettings algorithmSettings;
-    private DungeonRoomInfo dungeonRoomInfo;
-    private Set<String> openMech; // excludes superboomable things.
-    private List<OffsetVec3> target;
+    private final AlgorithmSettings algorithmSettings;
+    private final DungeonRoomInfo dungeonRoomInfo;
+    private final Set<String> openMech; // excludes superboomable things.
+    private final List<OffsetVec3> target;
+
+    public PathfindRequest(AlgorithmSettings algorithmSettings, DungeonRoomInfo dungeonRoomInfo, Set<String> openMech, List<OffsetVec3> target) {
+        this.algorithmSettings = algorithmSettings;
+        this.dungeonRoomInfo = dungeonRoomInfo;
+        this.openMech = openMech;
+        this.target = target;
+    }
+
+    private String cachedId = null;
 
     public String getId() {
+        if (cachedId != null) return cachedId;
         String idStart = dungeonRoomInfo.getUuid().toString();
         idStart += ":";
         idStart += openMech.stream().sorted(String::compareTo).collect(Collectors.joining(","));
@@ -54,7 +63,7 @@ public class PathfindRequest {
                         .thenComparingDouble(a -> a.zCoord)
                         .thenComparingDouble(a -> a.yCoord))
                 .map(a -> a.xCoord+","+a.yCoord+","+a.zCoord).collect(Collectors.joining(";"));
-        return idStart;
+        return cachedId = idStart;
     }
 
     @Override
