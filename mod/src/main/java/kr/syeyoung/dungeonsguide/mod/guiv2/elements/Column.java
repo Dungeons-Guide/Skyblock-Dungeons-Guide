@@ -54,7 +54,7 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
     public final BindableAttribute<List<Widget>> widgets = new BindableAttribute(WidgetList.class);
 
     @Export(attributeName = "api")
-    public final BindableAttribute<Column> api = new BindableAttribute<>(Column.class, this);
+    public final BindableAttribute<Column> api = new BindableAttribute<>(Column.class, null);
 
     public Column() {
         hAlign.addOnUpdate((a,b) -> getDomElement().requestRelayout());
@@ -260,5 +260,17 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
             if (leftOver == 0 || sumFlex == 0) break;
         } while (startingWidth != maxWidth);
         return maxWidth;
+    }
+
+    @Override
+    public void onUnmount() {
+        super.onUnmount();
+        api.setValue(null);
+    }
+
+    @Override
+    public void onMount() {
+        super.onMount();
+        api.setValue(this);
     }
 }

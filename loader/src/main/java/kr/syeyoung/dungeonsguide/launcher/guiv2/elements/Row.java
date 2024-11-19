@@ -54,7 +54,8 @@ public class Row extends AnnotatedExportOnlyWidget implements Layouter {
 
 
     @Export(attributeName = "api")
-    public final BindableAttribute<Row> rowAPI = new BindableAttribute<>(Row.class, this);
+    public final BindableAttribute<Row> rowAPI = new BindableAttribute<>(Row.class, null);
+
     public Row() {
         hAlign.addOnUpdate((a,b) -> getDomElement().requestRelayout());
         vAlign.addOnUpdate((a,b) -> getDomElement().requestRelayout());
@@ -259,5 +260,17 @@ public class Row extends AnnotatedExportOnlyWidget implements Layouter {
             }
         }
         return width + maxPer * flex;
+    }
+
+    @Override
+    public void onUnmount() {
+        super.onUnmount();
+        rowAPI.setValue(null);
+    }
+
+    @Override
+    public void onMount() {
+        super.onMount();
+        rowAPI.setValue(this);
     }
 }
