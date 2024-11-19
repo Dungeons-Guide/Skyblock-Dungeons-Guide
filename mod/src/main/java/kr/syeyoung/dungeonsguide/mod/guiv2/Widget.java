@@ -86,8 +86,14 @@ public abstract class Widget {
     public void mouseExited(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {}
     public void mouseEntered(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {}
 
+
+    private boolean unmountededEver = false;
     public void onMount() {
+        if(unmountededEver) {
+//            System.out.println("REMOUNTING UNMOUNTED WIDGET!!!");
+        }
     }
     public void onUnmount() {
+        unmountededEver = true;
     }
 }

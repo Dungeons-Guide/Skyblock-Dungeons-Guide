@@ -46,7 +46,7 @@ public class Wrap extends AnnotatedExportOnlyWidget implements Layouter {
 
 
     @Export(attributeName = "api")
-    public final BindableAttribute<Wrap> api = new BindableAttribute<>(Wrap.class, this);
+    public final BindableAttribute<Wrap> api = new BindableAttribute<>(Wrap.class, null);
 
     @Override
     public List<Widget> build(DomElement buildContext) {
@@ -151,5 +151,17 @@ public class Wrap extends AnnotatedExportOnlyWidget implements Layouter {
     @Override
     protected Renderer createRenderer() {
         return OnlyChildrenRenderer.INSTANCE;
+    }
+
+    @Override
+    public void onUnmount() {
+        super.onUnmount();
+        this.api.setValue(null);
+    }
+
+    @Override
+    public void onMount() {
+        super.onMount();
+        this.api.setValue(this);
     }
 }

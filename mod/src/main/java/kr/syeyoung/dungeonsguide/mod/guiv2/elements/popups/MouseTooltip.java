@@ -45,8 +45,8 @@ public class MouseTooltip extends Widget {
     @Override
     public void onUnmount() {
         super.onUnmount();
-        x.unexportAll();
-        y.unexportAll();
+//        x.unexportAll();
+//        y.unexportAll();
     }
 
     @Override

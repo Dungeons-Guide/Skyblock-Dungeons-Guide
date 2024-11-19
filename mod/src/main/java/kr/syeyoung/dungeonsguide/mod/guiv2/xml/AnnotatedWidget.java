@@ -145,7 +145,7 @@ public abstract class AnnotatedWidget extends Widget implements ImportingWidget,
 
     public void onUnmount() {
         for (BindableAttribute value : getExportedAttributes().values()) {
-            value.unexportAll();
+//            value.unexportAll();
         }
     }
 }
