@@ -172,8 +172,8 @@ public class WidgetPresetRoomList extends AnnotatedImportOnlyWidget {
         if (updating.getAndSet(true)) return;
 
         WidgetViewPreset.calculator.submit(() -> {
+            List<Widget> widgets = rebuildList();
             Minecraft.getMinecraft().addScheduledTask(() -> {
-                List<Widget> widgets = rebuildList();
                 roomsApi.getValue().removeAllWidget();
                 for (Widget widget : widgets) {
                     roomsApi.getValue().addWidget(widget);
