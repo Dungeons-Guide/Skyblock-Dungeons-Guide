@@ -1,10 +1,11 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics;
 
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPrecalculation;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.WidgetPresetRoomDetails;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
@@ -13,7 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WidgetPresetRoomDetailsRedundant extends AnnotatedImportOnlyWidget {
+public class WidgetPresetRoomDetailsUnused extends AnnotatedImportOnlyWidget {
 
     private WidgetPresetRoomDetails parent;
     private AdditionalInfoCaculatedDungeonRoomInfo roomInfo;
@@ -25,8 +26,10 @@ public class WidgetPresetRoomDetailsRedundant extends AnnotatedImportOnlyWidget 
 
     @Bind(variableName = "requests")
     public final BindableAttribute<List<Widget>> requests = new BindableAttribute(WidgetList.class);
+    @Bind(variableName = "api")
+    public final BindableAttribute<Column> api = new BindableAttribute(Column.class);
 
-    public WidgetPresetRoomDetailsRedundant(WidgetPresetRoomDetails parent, AdditionalInfoCaculatedDungeonRoomInfo roomInfo) {
+    public WidgetPresetRoomDetailsUnused(WidgetPresetRoomDetails parent, AdditionalInfoCaculatedDungeonRoomInfo roomInfo) {
         super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/secretview.gui"));
 
         this.parent = parent;
@@ -47,4 +50,13 @@ public class WidgetPresetRoomDetailsRedundant extends AnnotatedImportOnlyWidget 
     }
 
 
+    public void setDetailsWidget(Widget w) {
+        this.parent.setDetailsWidget(w);
+    }
+
+    public void remove(WidgetPresetRoomDetailsSecretPrecalculation widgetPresetRoomDetailsSecretPrecalculation) {
+        if (this.api.getValue() != null)
+            this.api.getValue().removeWidget(widgetPresetRoomDetailsSecretPrecalculation);
+        this.requests.getValue().remove(widgetPresetRoomDetailsSecretPrecalculation);
+    }
 }

@@ -105,7 +105,7 @@ public class WidgetMissingPrecalculations extends AnnotatedImportOnlyWidget {
         System.out.println(uuid2 + " / "+dungeonRoomInfo.getName());
         for (String loadedId : loadedIds) {
             if (!requestIds.contains(loadedId)) {
-                System.out.println("Redundant: "+loadedId);
+                System.out.println("Unused: "+loadedId);
             }
         }
         for (String requestId : requestIds) {

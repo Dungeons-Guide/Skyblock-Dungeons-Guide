@@ -12,7 +12,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class MigrationUtils {
-    public static void migrate(File f, File f2, String migrationId) throws IOException, NoSuchAlgorithmException {
+    public static PathfindPrecalculation migrate(File f, File f2, String migrationId) throws IOException, NoSuchAlgorithmException {
         PathfindCache cache = new PathfindCache(f);
         MessageDigest md = MessageDigest.getInstance("MD5");
         String hash = Hex.encodeHexString(md.digest(cache.getId().getBytes()));
@@ -51,5 +51,6 @@ public class MigrationUtils {
             dataOutputStream.flush();
             dataOutputStream.close();
         }
+        return new PathfindPrecalculation(f2);
     }
 }

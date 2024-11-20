@@ -21,6 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.config;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPresetRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 
@@ -61,5 +63,8 @@ public class Config {
         } finally {
             fos.close();
         }
+
+
+        PathfindPresetRegistry.getINSTANCE().saveAll();
     }
 }

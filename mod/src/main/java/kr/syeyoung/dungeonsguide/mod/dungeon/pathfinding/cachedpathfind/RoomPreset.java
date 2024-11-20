@@ -19,7 +19,7 @@ public class RoomPreset implements Cloneable {
     private UUID roomId;
 
     private AlgorithmSettings algorithmSettings;
-    private List<String> precalculations = new ArrayList<>();
+    private Set<String> precalculations = new HashSet<>();
 
     public RoomPreset(PathfindPreset parent, UUID roomId) {
         this.parent = parent;
@@ -37,8 +37,8 @@ public class RoomPreset implements Cloneable {
         parent.markDirty();
     }
 
-    public List<String> getPrecalculations() {
-        return Collections.unmodifiableList(precalculations);
+    public Set<String> getPrecalculations() {
+        return Collections.unmodifiableSet(precalculations);
     }
 
     public AlgorithmSettings getAlgorithmSettings() {
@@ -59,13 +59,18 @@ public class RoomPreset implements Cloneable {
             roomPreset.precalculations.add(element.getAsString());
         }
 //        roomPreset.tspCache = jsonObject.get("tspCache").getAsString();
-        String algoSettings = jsonObject.get("algorithmSettings").getAsString();
-        ByteArrayInputStream bais = new ByteArrayInputStream(Base64.getDecoder().decode(algoSettings));
-        DataInputStream dataInputStream = new DataInputStream(bais);
-        try {
-            roomPreset.algorithmSettings = AlgorithmSettings.deserialize(dataInputStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (jsonObject.has("algorithmSettings")) {
+
+            String algoSettings = jsonObject.get("algorithmSettings").getAsString();
+            ByteArrayInputStream bais = new ByteArrayInputStream(Base64.getDecoder().decode(algoSettings));
+            DataInputStream dataInputStream = new DataInputStream(bais);
+            try {
+                roomPreset.algorithmSettings = AlgorithmSettings.deserialize(dataInputStream);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            roomPreset.algorithmSettings = null;
         }
         return roomPreset;
     }
@@ -81,13 +86,15 @@ public class RoomPreset implements Cloneable {
 //        res.addProperty("tspCache", tspCache);
 
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            DataOutputStream dataOutputStream = new DataOutputStream(baos);
-            CompressedStreamTools.write(algorithmSettings.serializeToNBT(), dataOutputStream);
-            dataOutputStream.flush();
-            String algoSettings = Base64.getEncoder().encodeToString(baos.toByteArray());
+            if (algorithmSettings != null) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                DataOutputStream dataOutputStream = new DataOutputStream(baos);
+                CompressedStreamTools.write(algorithmSettings.serializeToNBT(), dataOutputStream);
+                dataOutputStream.flush();
+                String algoSettings = Base64.getEncoder().encodeToString(baos.toByteArray());
+                res.addProperty("algorithmSettings", algoSettings);
+            }
 
-            res.addProperty("algorithmSettings", algoSettings);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -99,7 +106,7 @@ public class RoomPreset implements Cloneable {
     public RoomPreset clone() {
         try {
             RoomPreset roomPreset = (RoomPreset) super.clone();
-            roomPreset.precalculations = new ArrayList<>(this.precalculations);
+            roomPreset.precalculations = new HashSet<>(this.precalculations);
 //            roomPreset.tspCache = null;
             roomPreset.parent = null;
             roomPreset.algorithmSettings = this.algorithmSettings == null ? null : this.algorithmSettings.clone();

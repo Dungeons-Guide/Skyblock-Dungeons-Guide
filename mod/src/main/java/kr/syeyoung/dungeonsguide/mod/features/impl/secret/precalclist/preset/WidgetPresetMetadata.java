@@ -1,9 +1,10 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
 import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPresetRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.MapConfiguration;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetAbilitySettings;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.Modal;
@@ -20,8 +21,6 @@ import net.minecraft.util.ResourceLocation;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Map;
-import java.util.UUID;
 
 public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
     private PathfindPreset preset;
@@ -46,6 +45,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<Widget> abilitySettings = new BindableAttribute<>(Widget.class);
 
 
+    private BindableAttribute<AlgorithmSettings> algorithmSettingsBindableAttribute = new BindableAttribute<>(AlgorithmSettings.class);
 
     public WidgetPresetMetadata(PathfindPreset preset, WidgetViewPreset widgetViewPreset) {
         super(new ResourceLocation("dungeonsguide:gui/features/precalclist/presetview/metadata.gui"));
@@ -58,7 +58,8 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
         this.generatedAt.setValue(dateTimeFormatter.format(preset.getGeneratedAt().atZone(ZoneId.systemDefault())));
         this.origin.setValue(preset.getOrigin());
         this.filename.setValue(Main.getConfigDir().toPath().relativize(preset.getFile().toPath()).toString());
-        this.abilitySettings.setValue(new WidgetAbilitySettings(preset));
+        algorithmSettingsBindableAttribute.setValue(preset.getAlgorithmSettings());
+        this.abilitySettings.setValue(new WidgetAbilitySettings(algorithmSettingsBindableAttribute));
     }
 
 

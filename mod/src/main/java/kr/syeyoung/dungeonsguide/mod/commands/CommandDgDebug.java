@@ -41,13 +41,14 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.MigrationUtils;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.Preset;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
@@ -308,11 +309,30 @@ public class CommandDgDebug extends CommandBase {
         File targetDir = new File(Main.getConfigDir(), "precalculations");
 
         UUID uuid = UUID.randomUUID();
+        List<PathfindPrecalculation> precalculations=  new ArrayList<>();
         for (File pfResult : new File(Main.getConfigDir(), "pfResult").listFiles()) {
             if (!pfResult.getName().endsWith(".pfres")) continue;
             System.out.println(pfResult);
-            MigrationUtils.migrate(pfResult, new File(targetDir, pfResult.getName()), uuid.toString());
+            PathfindPrecalculation precalculation = MigrationUtils.migrate(pfResult, new File(targetDir, pfResult.getName()), uuid.toString());
+            PathfindResultRegistry.getINSTANCE().register(precalculation);
+            precalculations.add(precalculation);
         }
+
+        PathfindPreset preset = new PathfindPreset();
+        preset.setPresetName("Migration From Old Pathfind Results");
+        preset.setAlgorithmSettings(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings());
+        preset.setEditable(false);
+        preset.setOrigin("Dungeons Guide Precalculation Service v1");
+
+        for (PathfindPrecalculation precalculation : precalculations) {
+            if (!preset.getPresets().containsKey(precalculation.getRoomUID()))
+                preset.getPresets().put(precalculation.getRoomUID(), new RoomPreset(preset, precalculation.getRoomUID()));
+            // wtf really
+            RoomPreset roomPreset = preset.getPresets().get(precalculation.getRoomUID());
+            roomPreset.addPrecalculation(precalculation.getId());
+        }
+
+        PathfindPresetRegistry.getINSTANCE().register(preset);
     }
 
     private void calculateStonks() {

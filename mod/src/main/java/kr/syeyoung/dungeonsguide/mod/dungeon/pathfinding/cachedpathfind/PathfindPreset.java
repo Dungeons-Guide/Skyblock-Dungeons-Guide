@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonWriter;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -62,8 +63,29 @@ public class PathfindPreset implements Cloneable {
         markDirty();
     }
 
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+        markDirty();
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+        markDirty();
+    }
+
     public void markDirty() {
         this.dirty = true;
+    }
+
+    public void save() throws IOException {
+        if (!dirty) return;
+
+        try (OutputStream outputStream = new FileOutputStream(file)) {
+            JsonWriter jsonWriter = new JsonWriter(new OutputStreamWriter(new BufferedOutputStream(outputStream)));
+            new Gson().toJson(saveToJson(), jsonWriter);
+            jsonWriter.flush();
+            dirty = false;
+        }
     }
 
     public static PathfindPreset loadFromFile(File f) throws IOException {

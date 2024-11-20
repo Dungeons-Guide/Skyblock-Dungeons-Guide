@@ -1,5 +1,6 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset;
 
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;

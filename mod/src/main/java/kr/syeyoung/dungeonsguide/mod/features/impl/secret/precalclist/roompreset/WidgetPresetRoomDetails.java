@@ -1,8 +1,11 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset;
 
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor2;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.ISecret;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics.WidgetPresetRoomDetailsUnused;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics.WidgetPresetRoomDetailsSecret;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
@@ -26,6 +29,8 @@ public class WidgetPresetRoomDetails extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<List<Widget>> secrets = new BindableAttribute(WidgetList.class);
 
 
+    @Bind(variableName = "details")
+    public final BindableAttribute<Widget> details = new BindableAttribute<>(Widget.class);
 
 
     public WidgetPresetRoomDetails(AdditionalInfoCaculatedDungeonRoomInfo roomInfo) {
@@ -39,7 +44,7 @@ public class WidgetPresetRoomDetails extends AnnotatedImportOnlyWidget {
         List<Widget> secrets = new ArrayList<>();
 
         if (!roomInfo.getUnused().isEmpty())
-            secrets.add(new WidgetPresetRoomDetailsRedundant(this, roomInfo));
+            secrets.add(new WidgetPresetRoomDetailsUnused(this, roomInfo));
 
         for (Map.Entry<String, DungeonMechanic> stringDungeonMechanicEntry : roomInfo.getDungeonRoomInfo().getMechanics().entrySet().stream().sorted(
                 Comparator.<Map.Entry<String, DungeonMechanic>, Integer>comparing(a -> a.getValue() instanceof ISecret ? 0 : a.getValue() instanceof DungeonRoomDoor2 ? 2 : 1)
@@ -51,5 +56,9 @@ public class WidgetPresetRoomDetails extends AnnotatedImportOnlyWidget {
         }
 
         this.secrets.setValue(secrets);
+    }
+
+    public void setDetailsWidget(Widget widget) {
+        this.details.setValue(widget);
     }
 }

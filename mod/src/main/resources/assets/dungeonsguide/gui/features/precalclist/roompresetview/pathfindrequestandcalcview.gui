@@ -1,0 +1,13 @@
+<col crossAlign="START">
+    <slot bind:_="requestdetails"/>
+
+    <Text text="Linked Precalculations" color="#FFFFFFFF" size="12"/>
+    <size height="3"/>
+    <SelectiveContainer bind:visible="visible">
+        <size width="120" height="15" slot="none">
+            <RoundButton text="Link Precalculation" on:click="link"/>
+        </size>
+        <size slot="has"/>
+    </SelectiveContainer>
+    <col bind:_="precalculations" bind:api="precalculationsApi" crossAlign="START"/>
+</col>

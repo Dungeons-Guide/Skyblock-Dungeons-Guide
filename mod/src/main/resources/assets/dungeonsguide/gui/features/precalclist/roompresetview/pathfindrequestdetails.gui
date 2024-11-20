@@ -1,0 +1,37 @@
+<col crossAlign="START">
+    <Text text="Precalc Request Details" color="#FFFFFFFF" size="12"/>
+    <size height="3"/>
+    <row>
+        <Text text="ID: " color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="id" color="#FFFFFFFF"/>
+        </flexible>
+        <size height="15" width="40">
+            <RoundButton text="Copy" on:click="copyId"/>
+        </size>
+    </row>
+    <row>
+        <Text text="Hash: " color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="hash" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <row>
+        <Text text="Algorithm Settings: " color="#FFFFFFFF"/>
+        <flexible>
+            <slot bind:_="algorithmSettings" />
+        </flexible>
+    </row>
+    <row>
+        <Text text="Room State: " color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="roomState" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <size width="120" height="15">
+        <RoundButton text="View on virtual world"/>
+    </size>
+    <size height="3"/>
+    <line dir="HORIZONTAL" thickness="1" color="#FFFFFFFF"/>
+    <size height="3"/>
+</col>

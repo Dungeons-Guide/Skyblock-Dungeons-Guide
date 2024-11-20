@@ -8,7 +8,7 @@
                     </padding>
                 </flexible>
                 <size width="30">
-                    <RoundButton text="View"/>
+                    <RoundButton text="View" on:click="view"/>
                 </size>
             </row>
         </IntrinsicHeight>

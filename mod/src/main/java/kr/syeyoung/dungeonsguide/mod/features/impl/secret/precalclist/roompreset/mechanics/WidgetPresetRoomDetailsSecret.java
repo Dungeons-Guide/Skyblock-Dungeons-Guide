@@ -1,7 +1,9 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics;
 
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.WidgetPresetRoomDetails;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
@@ -56,6 +58,8 @@ public class WidgetPresetRoomDetailsSecret extends AnnotatedImportOnlyWidget {
             this.image.setValue("dungeonsguide:textures/features/precalclist/door.png");
         } else if (dungeonMechanic instanceof DungeonRoomDoor2) {
             this.image.setValue("dungeonsguide:textures/features/precalclist/witherdoor.png");
+        } else {
+            this.image.setValue("dungeonsguide:textures/darklogo.png");
         }
 
         List<Widget> toBeAdded = new ArrayList<>();
@@ -65,6 +69,10 @@ public class WidgetPresetRoomDetailsSecret extends AnnotatedImportOnlyWidget {
                     stateInfo.getMechanicPrecalculationMap().get(mechanicName).getRequiredPrecalculationHash(), roomInfo, this));
         }
         this.requests.setValue(toBeAdded);
+    }
+
+    public void setDetailsWidget(Widget w) {
+        this.parent.setDetailsWidget(w);
     }
 
 

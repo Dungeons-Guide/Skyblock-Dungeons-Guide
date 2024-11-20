@@ -106,6 +106,11 @@ public class PathfindResultRegistry {
         if (list == null) return Collections.emptyList();
         return list;
     }
+    public List<PathfindPrecalculation> getsByHash(String hash) {
+        List<PathfindPrecalculation> list = byHash.get(hash);
+        if (list == null) return Collections.emptyList();
+        return list;
+    }
 
     public List<PathfindPrecalculation> getByRoom(UUID roomUID) {
         return byRoom.getOrDefault(roomUID, Collections.emptyList());

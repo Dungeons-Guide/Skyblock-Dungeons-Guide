@@ -1,7 +1,7 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Wrap;
@@ -12,13 +12,10 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Mouse;
 
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -85,10 +82,10 @@ public class WidgetPresetRoomList extends AnnotatedImportOnlyWidget {
                 return !additionalInfoCaculatedDungeonRoomInfo.getMissing().isEmpty();
             }
         },
-        REDUNANT("Filter: Show rooms with duplicate or redundant precalculation") {
+        REDUNANT("Filter: Show rooms with duplicate or unused precalculation") {
             @Override
             public boolean test(AdditionalInfoCaculatedDungeonRoomInfo additionalInfoCaculatedDungeonRoomInfo) {
-                return !additionalInfoCaculatedDungeonRoomInfo.getDuplicate().isEmpty() || !additionalInfoCaculatedDungeonRoomInfo.getTotalRequiredPrecalculation().isEmpty();
+                return !additionalInfoCaculatedDungeonRoomInfo.getDuplicate().isEmpty() || !additionalInfoCaculatedDungeonRoomInfo.getUnused().isEmpty();
             }
         },
         OVERRIDEN("Filter: Show Rooms with ability overriden") {

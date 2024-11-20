@@ -21,11 +21,15 @@
                                         </padding>
                                     </ScrollablePanel>
                                 </flexible>
-                                <size width="150">
+                                <size width="200">
                                     <padding left="3" top="3" right="3" bottom="3">
                                         <RoundRect backgroundColor="#FF111111" radius="3">
                                             <padding left="3" right="3" bottom="3" top="3">
-                                                <Text text="Choose a precalc on left" color="#FFFFFFFF"/>
+                                                <ScrollablePanel direction="VERTICAL">
+                                                    <slot bind:child="details">
+                                                        <Text text="Choose Request/Precalc on Left"/>
+                                                    </slot>
+                                                </ScrollablePanel>
                                             </padding>
                                         </RoundRect>
                                     </padding>

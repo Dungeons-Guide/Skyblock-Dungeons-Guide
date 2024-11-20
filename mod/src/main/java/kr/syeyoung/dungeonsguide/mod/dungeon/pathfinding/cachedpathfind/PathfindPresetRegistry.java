@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.sun.nio.file.ExtendedWatchEventModifier;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class PathfindPresetRegistry {
     @Getter
@@ -54,6 +57,12 @@ public class PathfindPresetRegistry {
                 FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void saveAll() throws IOException {
+        for (PathfindPreset loadedPreset : loadedPresets) {
+            loadedPreset.save();
         }
     }
 }

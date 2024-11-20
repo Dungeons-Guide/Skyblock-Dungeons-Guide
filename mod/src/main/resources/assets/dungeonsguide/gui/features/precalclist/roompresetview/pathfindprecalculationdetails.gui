@@ -1,0 +1,69 @@
+<col crossAlign="START">
+    <size height="3"/>
+    <line dir="HORIZONTAL" thickness="1" color="#FFFFFFFF"/>
+    <size height="3"/>
+    <row>
+        <Text text="ID: " color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="id" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <row>
+        <Text text="Generated From: " color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="generatedFrom" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <row>
+        <Text text="Stored At: " color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="storedAt" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+
+    <row>
+        <Text text="Algorithm Settings: " color="#FFFFFFFF"/>
+        <flexible>
+            <slot bind:_="algorithmSettings"/>
+        </flexible>
+    </row>
+    <row>
+        <Text text="Target Hash: " color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="targetHash" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <row>
+        <Text text="Target ID: " color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="targetId" color="#FFFFFFFF"/>
+        </flexible>
+        <size height="15" width="40">
+            <RoundButton text="Copy" on:click="copyId"/>
+        </size>
+    </row>
+    <row>
+        <Text text="Room UID: " color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="roomUID" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <row>
+        <Text text="Room State: " color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="roomState" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <row>
+        <size width="120" height="15">
+            <RoundButton text="View on virtual world"/>
+        </size>
+        <size width="5"/>
+        <SelectiveContainer bind:visible="modifiable">
+            <size width="50" height="15" slot="true">
+                <RoundButton text="Unlink" on:click="unlink"/>
+            </size>
+            <slot slot="false"/>
+        </SelectiveContainer>
+    </row>
+</col>

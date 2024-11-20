@@ -1,0 +1,11 @@
+<row crossAlign="START">
+    <flexible>
+        <slot bind:_="precalculation"/>
+    </flexible>
+    <size width="5"/>
+    <align vAlign="END">
+        <size width="30" height="20">
+            <RoundButton text="Link" on:click="link"/>
+        </size>
+    </align>
+</row>

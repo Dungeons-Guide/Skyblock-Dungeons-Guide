@@ -1,8 +1,7 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
-import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.Preset;
-import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.WidgetPresetList;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetPrecalcList;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;

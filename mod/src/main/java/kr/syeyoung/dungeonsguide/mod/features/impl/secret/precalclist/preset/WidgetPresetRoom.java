@@ -1,14 +1,14 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.WidgetPresetRoomDetails;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import lombok.Getter;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.util.ResourceLocation;
 
 public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
@@ -28,14 +28,14 @@ public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> abilityOverride = new BindableAttribute<>(String.class);
     @Bind(variableName = "missingPrecalc")
     public final BindableAttribute<String> missingPrecalc = new BindableAttribute<>(String.class);
-    @Bind(variableName = "redundantPrecalc")
-    public final BindableAttribute<String> redundantPrecalc = new BindableAttribute<>(String.class);
+    @Bind(variableName = "unusedPrecalc")
+    public final BindableAttribute<String> unusedPrecalc = new BindableAttribute<>(String.class);
     @Bind(variableName = "requiredPrecalculations")
     public final BindableAttribute<String> requiredPrecalculations = new BindableAttribute<>(String.class);
     @Bind(variableName = "loadedPrecalculations")
     public final BindableAttribute<String> loadedPrecalculations = new BindableAttribute<>(String.class);
-    @Bind(variableName = "redundantPrecalculations")
-    public final BindableAttribute<String> redundantPrecalculations = new BindableAttribute<>(String.class);
+    @Bind(variableName = "unusedPrecalculations")
+    public final BindableAttribute<String> unusedPrecalculations = new BindableAttribute<>(String.class);
 
 
 
@@ -53,10 +53,10 @@ public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
 
         abilityOverride.setValue(dungeonRoomInfo.getRoomPreset().isOverridingParentAlgorithmSettings() ? "true" : "false");
         missingPrecalc.setValue(dungeonRoomInfo.getMissing().isEmpty() ? "false" : "true");
-        redundantPrecalc.setValue((dungeonRoomInfo.getDuplicate().isEmpty() && dungeonRoomInfo.getUnused().isEmpty()) ? "false" : "true");
+        unusedPrecalc.setValue((dungeonRoomInfo.getDuplicate().isEmpty() && dungeonRoomInfo.getUnused().isEmpty()) ? "false" : "true");
         requiredPrecalculations.setValue(dungeonRoomInfo.getTotalRequiredPrecalculation().size()+"");
         loadedPrecalculations.setValue(dungeonRoomInfo.getLoaded().size()+"");
-        redundantPrecalculations.setValue((dungeonRoomInfo.getDuplicate().size() + dungeonRoomInfo.getUnused().size())+"");
+        unusedPrecalculations.setValue((dungeonRoomInfo.getDuplicate().size() + dungeonRoomInfo.getUnused().size())+"");
     }
 
     @On(functionName = "edit")

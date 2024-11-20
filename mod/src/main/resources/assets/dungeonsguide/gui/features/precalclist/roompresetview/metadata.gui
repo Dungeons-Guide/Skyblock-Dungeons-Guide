@@ -62,9 +62,22 @@
                     <RoundButton text="Edit Override Ability Settings"/>
                 </size>
             </row>
+            <size height="3"/>
             <row>
-                <size height="15" width="80">
+                <size height="15" width="70">
                     <RoundButton text="View Room!"/>
+                </size>
+                <size width="5"/>
+                <size height="15" width="120">
+                    <RoundButton text="Unlink Unused Precalcs"/>
+                </size>
+                <size width="5"/>
+                <size height="15" width="100">
+                    <RoundButton text="Unlink All Precalcs"/>
+                </size>
+                <size width="5"/>
+                <size height="15" width="180">
+                    <RoundButton text="AutoLink Exact Match Precalcs"/>
                 </size>
             </row>
         </col>

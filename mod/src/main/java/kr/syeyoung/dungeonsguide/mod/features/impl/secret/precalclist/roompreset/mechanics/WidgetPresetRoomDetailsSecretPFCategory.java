@@ -1,10 +1,10 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics;
 
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
@@ -24,6 +24,8 @@ public class WidgetPresetRoomDetailsSecretPFCategory extends AnnotatedImportOnly
     @Bind(variableName = "precalculations")
     public final BindableAttribute<List<Widget>> pathfindrequests = new BindableAttribute(WidgetList.class);
 
+    @Bind(variableName = "api")
+    public final BindableAttribute<Column> api = new BindableAttribute(Column.class);
 
 
     public WidgetPresetRoomDetailsSecretPFCategory(String mechanicName, String state,
@@ -44,6 +46,10 @@ public class WidgetPresetRoomDetailsSecretPFCategory extends AnnotatedImportOnly
             toBeAdded.add(new WidgetPresetRoomDetailsSecretPathfindRequest(request, roomInfo, this));
         }
         this.pathfindrequests.setValue(toBeAdded);
+    }
+
+    public void setDetailsWidget(Widget w) {
+        this.parent.setDetailsWidget(w);
     }
 
 

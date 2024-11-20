@@ -48,7 +48,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
         this.dungeonRoomInfo = dungeonRoomInfo;
         this.derivedFrom = pathfindPreset;
 
-        if (pathfindPreset.getPresets().containsKey(dungeonRoomInfo.getUuid())) {
+        if (!pathfindPreset.getPresets().containsKey(dungeonRoomInfo.getUuid())) {
             pathfindPreset.getPresets().put(dungeonRoomInfo.getUuid(), new RoomPreset(pathfindPreset, dungeonRoomInfo.getUuid()));
             pathfindPreset.markDirty();
         }
@@ -105,16 +105,17 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
     }
 
     public void rematchWithRoomPreset() {
-        Map<String, PathfindPrecalculation> idsFound = new HashMap<>();
+        Map<String, List<PathfindPrecalculation>> idsFound = new HashMap<>();
 
         List<PathfindPrecalculation> duplicate = new ArrayList<>();
         for (String precalcid : roomPreset.getPrecalculations()) {
             PathfindPrecalculation precalc = PathfindResultRegistry.getINSTANCE().getById(precalcid);
-            if (idsFound.containsKey(precalc.getId())) {
+            if (idsFound.containsKey(precalc.getTargetId())) {
                 duplicate.add(precalc);
-                continue;
+            } else {
+                idsFound.put(precalc.getTargetId(), new ArrayList<>());
             }
-            idsFound.put(precalc.getTargetId(), precalc);
+            idsFound.get(precalc.getTargetId()).add(precalc);
         }
 
         Map<String, PathfindRequest> required = new HashMap<>();
@@ -124,9 +125,9 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
 
 
         List<PathfindPrecalculation> unused = new ArrayList<>();
-        for (Map.Entry<String, PathfindPrecalculation> entry : idsFound.entrySet()) {
+        for (Map.Entry<String, List<PathfindPrecalculation>> entry : idsFound.entrySet()) {
             if (required.containsKey(entry.getKey())) continue;
-            unused.add(entry.getValue());
+            unused.addAll(entry.getValue());
         }
 
         List<PathfindRequest> missing = new ArrayList<>();
@@ -135,11 +136,11 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
             missing.add(s.getValue());
         }
 
-        List<Tuple<PathfindRequest, PathfindPrecalculation>> loaded = new ArrayList<>();
+        Map<PathfindRequest, List<PathfindPrecalculation>> loaded = new HashMap<>();
         for (PathfindRequest request : totalRequiredPrecalculation) {
             if (missing.contains(request)) continue;
 
-            loaded.add(new Tuple<>(request, idsFound.get(request.getId())));
+            loaded.put(request, idsFound.get(request.getId()));
         }
         this.missing = missing;
         this.unused = unused;
@@ -150,7 +151,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
     private List<PathfindRequest> missing;
     private List<PathfindPrecalculation> unused;
     private List<PathfindPrecalculation> duplicate;
-    private List<Tuple<PathfindRequest, PathfindPrecalculation>> loaded;
+    private Map<PathfindRequest, List<PathfindPrecalculation>> loaded;
 
     private ActionDAG buildReferencingAllPossibleThings(DungeonRoom dungeonRoom) {
         ActionDAGBuilder builder = new ActionDAGBuilder(dungeonRoom);

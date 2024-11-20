@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
+import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.FontRenderer;
@@ -13,9 +14,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class WidgetAbilitySettings extends Widget implements Renderer {
-    private PathfindPreset settings;
-    public WidgetAbilitySettings(PathfindPreset settings) {
-        this.settings = settings;
+    private BindableAttribute<AlgorithmSettings> settings = new BindableAttribute<>(AlgorithmSettings.class);
+    public WidgetAbilitySettings(BindableAttribute<AlgorithmSettings> settings) {
+        this.settings.exportTo(settings);
     }
 
     @Override
@@ -26,7 +27,7 @@ public class WidgetAbilitySettings extends Widget implements Renderer {
     @Override
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
 
-        AlgorithmSettings algorithmSettings = settings.getAlgorithmSettings();
+        AlgorithmSettings algorithmSettings = settings.getValue();
 
         Minecraft.getMinecraft().fontRendererObj.drawString("blahblah", 0, 0, 0xFFFFFFFF);
     }
