@@ -1,0 +1,17 @@
+<col>
+    <RoundRect radius="5" bind:backgroundColor="color">
+        <IntrinsicHeight>
+            <row crossAlign="STRETCH">
+                <flexible>
+                    <padding left="3" top="3" right="3" bottom="3">
+                        <Text bind:text="whatever" color="#FFFFFFFF"/>
+                    </padding>
+                </flexible>
+                <size width="30">
+                    <RoundButton text="View"/>
+                </size>
+            </row>
+        </IntrinsicHeight>
+    </RoundRect>
+    <size height="3"/>
+</col>

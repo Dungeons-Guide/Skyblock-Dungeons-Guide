@@ -29,9 +29,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import org.apache.commons.codec.binary.Hex;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,6 +67,18 @@ public class PathfindRequest {
                         .thenComparingDouble(a -> a.yCoord))
                 .map(a -> a.xCoord+","+a.yCoord+","+a.zCoord).collect(Collectors.joining(";"));
         return cachedId = idStart;
+    }
+
+    private String hash = null;
+    public String getHash() {
+        if (this.hash != null) return hash;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            String hash = Hex.encodeHexString(md.digest(getId().getBytes()));
+            return this.hash = hash;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

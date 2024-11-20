@@ -1,0 +1,41 @@
+<padding left="5" top="5" bottom="5" right="5">
+    <col>
+        <slot bind:_="metadata"/>
+        <size height="5"/>
+        <flexible>
+            <RoundRect radius="5" backgroundColor="#FF333333">
+                <padding left="5" top="5" bottom="5" right="5">
+                    <col>
+                        <row>
+                            <Text text="Required &amp; Loaded Precalculations" size="16" color="#FFFFFFFF"/>
+                        </row>
+                        <size height="3"/>
+                        <line color="#FFFFFFFF" dir="HORIZONTAL" thickness="1"/>
+                        <size height="3"/>
+                        <flexible>
+                            <row>
+                                <flexible>
+                                    <ScrollablePanel direction="VERTICAL">
+                                        <padding left="3" top="3" right="3" bottom="3">
+                                            <col bind:_="secrets"/>
+                                        </padding>
+                                    </ScrollablePanel>
+                                </flexible>
+                                <size width="150">
+                                    <padding left="3" top="3" right="3" bottom="3">
+                                        <RoundRect backgroundColor="#FF111111" radius="3">
+                                            <padding left="3" right="3" bottom="3" top="3">
+                                                <Text text="Choose a precalc on left" color="#FFFFFFFF"/>
+                                            </padding>
+                                        </RoundRect>
+                                    </padding>
+                                </size>
+                            </row>
+                        </flexible>
+                    </col>
+                </padding>
+            </RoundRect>
+
+        </flexible>
+    </col>
+</padding>

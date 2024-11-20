@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
@@ -60,6 +61,6 @@ public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "edit")
     public void edit() {
-
+        Navigator.getNavigator(getDomElement()).openPage(new WidgetPresetRoomDetails(roomInfo));
     }
 }

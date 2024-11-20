@@ -1,0 +1,72 @@
+<RoundRect radius="5" backgroundColor="#FF333333">
+    <padding left="5" top="5" bottom="5" right="5">
+        <col>
+            <row>
+                <Text text="Metadata" size="16" color="#FFFFFFFF" />
+            </row>
+            <size height="3"/>
+            <line color="#FFFFFFFF" dir="HORIZONTAL" thickness="1"/>
+            <size height="3"/>
+            <row>
+                <flexible>
+                    <row>
+                        <Text text="Room Name: " color="#FFFFFFFF"/>
+                        <Text bind:text="roomName" color="#FFEEEE00"/>
+                    </row>
+                </flexible>
+                <flexible flex="2">
+                    <row>
+                        <Text text="Internal ID: " color="#FFFFFFFF"/>
+                        <Text bind:text="roomUID" color="#FF777777"/>
+                    </row>
+                </flexible>
+            </row>
+            <size height="5"/>
+            <row>
+                <flexible>
+                    <row>
+                        <Text text="Secret Count: " color="#FFFFFFFF"/>
+                        <Text bind:text="secretCount" color="#FF777777"/>
+                    </row>
+                </flexible>
+                <flexible>
+                    <row>
+                        <Text text="Room Shape: " color="#FFFFFFFF"/>
+                        <Text bind:text="roomShape" color="#FF777777"/>
+                    </row>
+                </flexible>
+                <flexible>
+                    <row>
+                        <Text text="Room Type: " color="#FFFFFFFF"/>
+                        <Text bind:text="roomType" color="#FF777777"/>
+                    </row>
+                </flexible>
+            </row>
+            <size height="5"/>
+            <row crossAlign="START">
+                <Text text="List of Room States (" color="#FFFFFFFF"/>
+                <Text bind:text="roomStateCount" color="#FF777777"/>
+                <Text text="): " color="#FFFFFFFF"/>
+                <flexible>
+                    <Text bind:text="roomStates" color="#FF777777"/>
+                </flexible>
+            </row>
+            <size height="5"/>
+            <row>
+                <Text text="Pathfind Ability Settings Override: " color="#FFFFFFFF"/>
+                <flexible>
+                    <size width="0"/>
+                    <!--                        <slot bind:_="abilitySettings"/>-->
+                </flexible>
+                <size height="15" width="150">
+                    <RoundButton text="Edit Override Ability Settings"/>
+                </size>
+            </row>
+            <row>
+                <size height="15" width="80">
+                    <RoundButton text="View Room!"/>
+                </size>
+            </row>
+        </col>
+    </padding>
+</RoundRect>
