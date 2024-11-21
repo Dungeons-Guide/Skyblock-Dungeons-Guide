@@ -1,0 +1,17 @@
+<col crossAlign="START">
+    <size height="3"/>
+    <line dir="HORIZONTAL" thickness="1" color="#FFFFFFFF"/>
+    <size height="3"/>
+    <row>
+        <Text text="ID: " color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="id" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <SelectiveContainer bind:visible="modifiable">
+        <size width="50" height="15" slot="true">
+            <RoundButton text="Unlink" on:click="unlink"/>
+        </size>
+        <slot slot="false"/>
+    </SelectiveContainer>
+</col>

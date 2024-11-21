@@ -6,6 +6,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.Additional
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.WidgetPresetRoomDetails;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
@@ -28,6 +29,9 @@ public class WidgetPresetRoomDetailsSecret extends AnnotatedImportOnlyWidget {
 
     @Bind(variableName = "requests")
     public final BindableAttribute<List<Widget>> requests = new BindableAttribute(WidgetList.class);
+
+    @Bind(variableName = "api")
+    public final BindableAttribute<Column> api = new BindableAttribute<>(Column.class);
 
     public WidgetPresetRoomDetailsSecret(String mechanicName, WidgetPresetRoomDetails parent, AdditionalInfoCaculatedDungeonRoomInfo roomInfo) {
         super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/secretview.gui"));

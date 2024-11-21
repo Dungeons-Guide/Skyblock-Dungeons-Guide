@@ -7,6 +7,8 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
 public class WidgetPresetRoomDetailsSecretPathfindRequest extends AnnotatedImportOnlyWidget {
@@ -43,6 +45,7 @@ public class WidgetPresetRoomDetailsSecretPathfindRequest extends AnnotatedImpor
 
     @On(functionName = "view")
     public void view() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         parent.setDetailsWidget(new WidgetPresetRoomRequestAndCalcView(pathfindRequest, roomInfo, this));
     }
 

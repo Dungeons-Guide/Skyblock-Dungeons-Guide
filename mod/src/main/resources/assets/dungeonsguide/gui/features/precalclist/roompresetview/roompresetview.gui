@@ -17,7 +17,7 @@
                                 <flexible>
                                     <ScrollablePanel direction="VERTICAL">
                                         <padding left="3" top="3" right="3" bottom="3">
-                                            <col bind:_="secrets"/>
+                                            <col bind:_="secrets" bind:api="secretsApi"/>
                                         </padding>
                                     </ScrollablePanel>
                                 </flexible>

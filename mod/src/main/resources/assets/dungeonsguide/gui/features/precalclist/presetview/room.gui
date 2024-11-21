@@ -18,6 +18,14 @@
                     <Text text="Ability Overriden" color="#FFFFFF00" slot="true"/>
                     <size width="0" height="0" slot="false"/>
                 </SelectiveContainer>
+                <SelectiveContainer bind:visible="unknownPrecalc">
+                    <bgcolor backgroundColor="#FFFF3333" slot="true">
+                        <padding top="3" right="3" bottom="3" left="3">
+                            <Text text="Has UNKNOWN precalculations!" color="#FFFFFFFF"/>
+                        </padding>
+                    </bgcolor>
+                    <size width="0" height="0" slot="false"/>
+                </SelectiveContainer>
                 <SelectiveContainer bind:visible="missingPrecalc">
                     <Text text="Has missing precalculations!" color="#FFFF0000" slot="true"/>
                     <size width="0" height="0" slot="false"/>
@@ -38,7 +46,9 @@
                     <Text bind:text="requiredPrecalculations" color="#FFAAAAAA"/>
                     <Text text=" + (" color="#FFFFFFFF"/>
                     <Text bind:text="unusedPrecalculations" color="#FFAAAAAA"/>
-                    <Text text=") loaded" color="#FFFFFFFF"/>
+                    <Text text=") loaded " color="#FFFFFFFF"/>
+                    <Text bind:text="missingPrecalculations" color="#FF999999"/>
+                    <Text text=" unknown" color="#FF999999"/>
                 </row>
             </col>
             <size height="3"/>

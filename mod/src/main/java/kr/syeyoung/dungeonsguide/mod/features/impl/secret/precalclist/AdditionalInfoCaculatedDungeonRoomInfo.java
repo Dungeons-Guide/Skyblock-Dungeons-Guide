@@ -107,9 +107,14 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
     public void rematchWithRoomPreset() {
         Map<String, List<PathfindPrecalculation>> idsFound = new HashMap<>();
 
+        List<String> notfound = new ArrayList<>();
         List<PathfindPrecalculation> duplicate = new ArrayList<>();
         for (String precalcid : roomPreset.getPrecalculations()) {
             PathfindPrecalculation precalc = PathfindResultRegistry.getINSTANCE().getById(precalcid);
+            if (precalc == null) {
+                notfound.add(precalcid);
+                continue;
+            }
             if (idsFound.containsKey(precalc.getTargetId())) {
                 duplicate.add(precalc);
             } else {
@@ -146,8 +151,10 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
         this.unused = unused;
         this.duplicate = duplicate;
         this.loaded =  loaded;
+        this.missingPrecalculation = notfound;
     }
 
+    private List<String> missingPrecalculation;
     private List<PathfindRequest> missing;
     private List<PathfindPrecalculation> unused;
     private List<PathfindPrecalculation> duplicate;

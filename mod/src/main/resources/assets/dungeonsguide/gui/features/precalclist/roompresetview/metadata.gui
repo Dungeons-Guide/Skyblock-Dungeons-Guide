@@ -1,6 +1,6 @@
 <RoundRect radius="5" backgroundColor="#FF333333">
     <padding left="5" top="5" bottom="5" right="5">
-        <col>
+        <col crossAlign="START">
             <row>
                 <Text text="Metadata" size="16" color="#FFFFFFFF" />
             </row>
@@ -63,23 +63,32 @@
                 </size>
             </row>
             <size height="3"/>
-            <row>
-                <size height="15" width="70">
-                    <RoundButton text="View Room!"/>
-                </size>
-                <size width="5"/>
-                <size height="15" width="120">
-                    <RoundButton text="Unlink Unused Precalcs"/>
-                </size>
-                <size width="5"/>
-                <size height="15" width="100">
-                    <RoundButton text="Unlink All Precalcs"/>
-                </size>
-                <size width="5"/>
-                <size height="15" width="180">
-                    <RoundButton text="AutoLink Exact Match Precalcs"/>
-                </size>
-            </row>
+            <size height="15" width="70">
+                <RoundButton text="View Room!"/>
+            </size>
+            <size height="3"/>
+            <SelectiveContainer bind:visible="editable">
+                <col slot="true" crossAlign="START">
+                    <row>
+                        <size height="15" width="130">
+                            <RoundButton text="Unlink Unused Precalcs" on:click="unlinkUnused"/>
+                        </size>
+                        <size width="5"/>
+                        <size height="15" width="140">
+                            <RoundButton text="Unlink Unknown Precalcs" on:click="unlinkUnknown"/>
+                        </size>
+                        <size width="5"/>
+                        <size height="15" width="110">
+                            <RoundButton text="Unlink All Precalcs" on:click="unlinkAll"/>
+                        </size>
+                    </row>
+                    <size height="3"/>
+                    <size height="15" width="180">
+                        <RoundButton text="AutoLink Exact Match Precalcs" on:click="autolink"/>
+                    </size>
+                </col>
+                <size width="0" height="0" slot="false"/>
+            </SelectiveContainer>
         </col>
     </padding>
 </RoundRect>

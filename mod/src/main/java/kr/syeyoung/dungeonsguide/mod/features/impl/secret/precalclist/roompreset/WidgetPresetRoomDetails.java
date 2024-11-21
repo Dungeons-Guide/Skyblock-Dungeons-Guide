@@ -4,10 +4,14 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor2;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.ISecret;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset.WidgetViewPreset;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics.WidgetPresetRoomDetailsSecretUnknownPrecalculation;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics.WidgetPresetRoomDetailsUnknown;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics.WidgetPresetRoomDetailsUnused;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics.WidgetPresetRoomDetailsSecret;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
@@ -28,6 +32,8 @@ public class WidgetPresetRoomDetails extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "secrets")
     public final BindableAttribute<List<Widget>> secrets = new BindableAttribute(WidgetList.class);
 
+    @Bind(variableName = "secretsApi")
+    public final BindableAttribute<Column> secretsApi = new BindableAttribute<>(Column.class);
 
     @Bind(variableName = "details")
     public final BindableAttribute<Widget> details = new BindableAttribute<>(Widget.class);
@@ -42,6 +48,9 @@ public class WidgetPresetRoomDetails extends AnnotatedImportOnlyWidget {
 
 
         List<Widget> secrets = new ArrayList<>();
+
+        if (!roomInfo.getMissingPrecalculation().isEmpty())
+            secrets.add(new WidgetPresetRoomDetailsUnknown(this, roomInfo));
 
         if (!roomInfo.getUnused().isEmpty())
             secrets.add(new WidgetPresetRoomDetailsUnused(this, roomInfo));
@@ -60,5 +69,36 @@ public class WidgetPresetRoomDetails extends AnnotatedImportOnlyWidget {
 
     public void setDetailsWidget(Widget widget) {
         this.details.setValue(widget);
+    }
+
+    public void refresh() {
+        if (this.secretsApi.getValue() != null)
+            this.secretsApi.getValue().removeAllWidget();
+
+        AdditionalInfoCaculatedDungeonRoomInfo.RoomStateInfo stateInfo = roomInfo.getStateInfos().get(0);
+
+        List<Widget> secrets = new ArrayList<>();
+
+        if (!roomInfo.getMissingPrecalculation().isEmpty())
+            secrets.add(new WidgetPresetRoomDetailsUnknown(this, roomInfo));
+
+        if (!roomInfo.getUnused().isEmpty())
+            secrets.add(new WidgetPresetRoomDetailsUnused(this, roomInfo));
+
+        for (Map.Entry<String, DungeonMechanic> stringDungeonMechanicEntry : roomInfo.getDungeonRoomInfo().getMechanics().entrySet().stream().sorted(
+                Comparator.<Map.Entry<String, DungeonMechanic>, Integer>comparing(a -> a.getValue() instanceof ISecret ? 0 : a.getValue() instanceof DungeonRoomDoor2 ? 2 : 1)
+                        .thenComparing(a -> a.getKey())
+        ).collect(Collectors.toList())) {
+            if (!stateInfo.getMechanicPrecalculationMap().containsKey(stringDungeonMechanicEntry.getKey()))
+                continue;
+            secrets.add(new WidgetPresetRoomDetailsSecret(stringDungeonMechanicEntry.getKey(), this, roomInfo));
+        }
+
+        if (this.secretsApi.getValue() != null)
+            for (Widget secret : secrets) {
+                this.secretsApi.getValue().addWidget(secret);
+            }
+        else
+            this.secrets.setValue(secrets);
     }
 }

@@ -9,6 +9,8 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
 public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
@@ -36,7 +38,10 @@ public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> loadedPrecalculations = new BindableAttribute<>(String.class);
     @Bind(variableName = "unusedPrecalculations")
     public final BindableAttribute<String> unusedPrecalculations = new BindableAttribute<>(String.class);
-
+    @Bind(variableName = "missingPrecalculations")
+    public final BindableAttribute<String> missingPrecalculations = new BindableAttribute<>(String.class);
+    @Bind(variableName = "unknownPrecalc")
+    public final BindableAttribute<String> unknownPrecalc = new BindableAttribute<>(String.class);
 
 
     public WidgetPresetRoom(AdditionalInfoCaculatedDungeonRoomInfo dungeonRoomInfo, PathfindPreset preset, WidgetPresetRoomList roomList) {
@@ -54,13 +59,16 @@ public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
         abilityOverride.setValue(dungeonRoomInfo.getRoomPreset().isOverridingParentAlgorithmSettings() ? "true" : "false");
         missingPrecalc.setValue(dungeonRoomInfo.getMissing().isEmpty() ? "false" : "true");
         unusedPrecalc.setValue((dungeonRoomInfo.getDuplicate().isEmpty() && dungeonRoomInfo.getUnused().isEmpty()) ? "false" : "true");
+        unknownPrecalc.setValue(dungeonRoomInfo.getMissingPrecalculation().isEmpty() ? "false" : "true");
         requiredPrecalculations.setValue(dungeonRoomInfo.getTotalRequiredPrecalculation().size()+"");
         loadedPrecalculations.setValue(dungeonRoomInfo.getLoaded().size()+"");
         unusedPrecalculations.setValue((dungeonRoomInfo.getDuplicate().size() + dungeonRoomInfo.getUnused().size())+"");
+        missingPrecalculations.setValue(dungeonRoomInfo.getMissingPrecalculation().size() + "");
     }
 
     @On(functionName = "edit")
     public void edit() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         Navigator.getNavigator(getDomElement()).openPage(new WidgetPresetRoomDetails(roomInfo));
     }
 }
