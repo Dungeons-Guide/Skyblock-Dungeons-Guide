@@ -32,6 +32,8 @@ public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> missingPrecalc = new BindableAttribute<>(String.class);
     @Bind(variableName = "unusedPrecalc")
     public final BindableAttribute<String> unusedPrecalc = new BindableAttribute<>(String.class);
+    @Bind(variableName = "warning")
+    public final BindableAttribute<String> warning = new BindableAttribute<>(String.class);
     @Bind(variableName = "requiredPrecalculations")
     public final BindableAttribute<String> requiredPrecalculations = new BindableAttribute<>(String.class);
     @Bind(variableName = "loadedPrecalculations")
@@ -60,6 +62,8 @@ public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
         missingPrecalc.setValue(dungeonRoomInfo.getMissing().isEmpty() ? "false" : "true");
         unusedPrecalc.setValue((dungeonRoomInfo.getDuplicate().isEmpty() && dungeonRoomInfo.getUnused().isEmpty()) ? "false" : "true");
         unknownPrecalc.setValue(dungeonRoomInfo.getMissingPrecalculation().isEmpty() ? "false" : "true");
+        warning.setValue(dungeonRoomInfo.getWarnings() > 0 ? "true" : "false");
+
         requiredPrecalculations.setValue(dungeonRoomInfo.getTotalRequiredPrecalculation().size()+"");
         loadedPrecalculations.setValue(dungeonRoomInfo.getLoaded().size()+"");
         unusedPrecalculations.setValue((dungeonRoomInfo.getDuplicate().size() + dungeonRoomInfo.getUnused().size())+"");

@@ -17,7 +17,7 @@ public class MigrationUtils {
         MessageDigest md = MessageDigest.getInstance("MD5");
         String hash = Hex.encodeHexString(md.digest(cache.getId().getBytes()));
         md = MessageDigest.getInstance("MD5");
-        String id2 = Hex.encodeHexString(md.digest((f.getName()+"/"+cache.getId()).getBytes()));
+        String id2 = Hex.encodeHexString(md.digest((f.getName()+"/"+cache.getId()+"/"+cache.getAlgorithmSettings().toString()).getBytes()));
 
 
         try (FileOutputStream fos = new FileOutputStream(f2)) {

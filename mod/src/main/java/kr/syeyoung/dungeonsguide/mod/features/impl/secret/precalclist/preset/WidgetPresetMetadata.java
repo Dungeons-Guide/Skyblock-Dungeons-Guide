@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPresetRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetAbilitySettings;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
@@ -18,6 +19,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -97,6 +100,13 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
             if (a == Boolean.TRUE) {
                 PathfindPresetRegistry.getINSTANCE().unregister(preset);
                 parent.notifyDelete(preset);
+
+                try {
+                    Files.delete(preset.getFile().toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    FeatureCollectDiagnostics.queueSendLogAsync(e);
+                }
             }
         });
     }

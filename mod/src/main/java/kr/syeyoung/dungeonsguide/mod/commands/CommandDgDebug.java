@@ -40,6 +40,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventHolder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -310,17 +311,19 @@ public class CommandDgDebug extends CommandBase {
 
         UUID uuid = UUID.randomUUID();
         List<PathfindPrecalculation> precalculations=  new ArrayList<>();
+        AlgorithmSettings algorithmSettings = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
         for (File pfResult : new File(Main.getConfigDir(), "pfResult").listFiles()) {
             if (!pfResult.getName().endsWith(".pfres")) continue;
             System.out.println(pfResult);
             PathfindPrecalculation precalculation = MigrationUtils.migrate(pfResult, new File(targetDir, pfResult.getName()), uuid.toString());
             PathfindResultRegistry.getINSTANCE().register(precalculation);
+            algorithmSettings = precalculation.getAlgorithmSettings();
             precalculations.add(precalculation);
         }
 
         PathfindPreset preset = new PathfindPreset();
         preset.setPresetName("Migration From Old Pathfind Results");
-        preset.setAlgorithmSettings(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings());
+        preset.setAlgorithmSettings(algorithmSettings);
         preset.setEditable(false);
         preset.setOrigin("Dungeons Guide Precalculation Service v1");
 
@@ -333,6 +336,7 @@ public class CommandDgDebug extends CommandBase {
         }
 
         PathfindPresetRegistry.getINSTANCE().register(preset);
+        PathfindPresetRegistry.getINSTANCE().saveAll();
     }
 
     private void calculateStonks() {

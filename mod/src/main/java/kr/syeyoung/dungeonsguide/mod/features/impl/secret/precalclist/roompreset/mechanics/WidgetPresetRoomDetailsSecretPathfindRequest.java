@@ -35,8 +35,8 @@ public class WidgetPresetRoomDetailsSecretPathfindRequest extends AnnotatedImpor
         if (dungeonRoomInfo.getMissing().contains(request)) {
             this.color.setValue(0xFF551111);
         } else {
-            if (dungeonRoomInfo.getLoaded().get(request).size() > 1)
-                this.color.setValue(0xFF335511);
+            if (roomInfo.getLoaded().get(pathfindRequest).size() > 1 || !roomInfo.getLoaded().get(pathfindRequest).get(0).getAlgorithmSettings().equals(pathfindRequest.getAlgorithmSettings()))
+                this.color.setValue(0xFF553311);
             else
                 this.color.setValue(0xFF115511);
         }
@@ -53,7 +53,7 @@ public class WidgetPresetRoomDetailsSecretPathfindRequest extends AnnotatedImpor
         if (roomInfo.getMissing().contains(pathfindRequest)) {
             this.color.setValue(0xFF551111);
         } else {
-            if (roomInfo.getLoaded().get(pathfindRequest).size() > 1)
+            if (roomInfo.getLoaded().get(pathfindRequest).size() > 1 || !roomInfo.getLoaded().get(pathfindRequest).get(0).getAlgorithmSettings().equals(pathfindRequest.getAlgorithmSettings()))
                 this.color.setValue(0xFF335511);
             else
                 this.color.setValue(0xFF115511);

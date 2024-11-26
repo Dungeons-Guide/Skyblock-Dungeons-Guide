@@ -88,8 +88,9 @@ public class PathfindCache {
             boolean etherwarp = dis.readBoolean();
             int maxstonk = dis.readInt();
             int etherwarprad = dis.readInt();
-            double leeway = Float.intBitsToFloat(Integer.reverse(dis.readInt()));
-            double offset = Float.intBitsToFloat(Integer.reverse(dis.readInt()));
+
+            double leeway = Math.round(Float.intBitsToFloat(Integer.reverseBytes(dis.readInt())) * 1000000.0) / 1000000.0;
+            double offset = Math.round(Float.intBitsToFloat(Integer.reverseBytes(dis.readInt())) * 1000000.0) / 1000000.0;
             this.algorithmSettings = new AlgorithmSettings(
                     current.getPickaxe(),
                     current.getPickaxeSpeed(),

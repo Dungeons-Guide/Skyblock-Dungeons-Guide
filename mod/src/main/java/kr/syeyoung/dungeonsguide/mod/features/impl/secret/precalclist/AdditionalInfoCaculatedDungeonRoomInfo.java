@@ -142,16 +142,22 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
         }
 
         Map<PathfindRequest, List<PathfindPrecalculation>> loaded = new HashMap<>();
+        int warnings = 0;
         for (PathfindRequest request : totalRequiredPrecalculation) {
             if (missing.contains(request)) continue;
 
             loaded.put(request, idsFound.get(request.getId()));
+            if (idsFound.get(request.getId()).size() > 1 ||
+                    !loaded.get(request).get(0).getAlgorithmSettings().equals(request.getAlgorithmSettings())) {
+                warnings++;
+            }
         }
         this.missing = missing;
         this.unused = unused;
         this.duplicate = duplicate;
         this.loaded =  loaded;
         this.missingPrecalculation = notfound;
+        this.warnings = warnings;
     }
 
     private List<String> missingPrecalculation;
@@ -159,6 +165,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
     private List<PathfindPrecalculation> unused;
     private List<PathfindPrecalculation> duplicate;
     private Map<PathfindRequest, List<PathfindPrecalculation>> loaded;
+    private int warnings;
 
     private ActionDAG buildReferencingAllPossibleThings(DungeonRoom dungeonRoom) {
         ActionDAGBuilder builder = new ActionDAGBuilder(dungeonRoom);
@@ -313,7 +320,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
                 }
 
                 for (List<OffsetVec3> offsetVec3s : toPfTo) {
-                    PathfindRequest request = new PathfindRequest(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings(), dungeonRoomInfo, open, offsetVec3s);
+                    PathfindRequest request = new PathfindRequest(roomPreset.getAlgorithmSettings(), dungeonRoomInfo, open, offsetVec3s);
                     request.getId();
                     mechanicInfo.requiredPrecalculationHash.add(request);
                     totalRequests.add(request);

@@ -89,6 +89,12 @@ public class WidgetPresetRoomList extends AnnotatedImportOnlyWidget {
                 return !additionalInfoCaculatedDungeonRoomInfo.getDuplicate().isEmpty() || !additionalInfoCaculatedDungeonRoomInfo.getUnused().isEmpty();
             }
         },
+        WARNING("Filter: Show Rooms with warnings") {
+            @Override
+            public boolean test(AdditionalInfoCaculatedDungeonRoomInfo additionalInfoCaculatedDungeonRoomInfo) {
+                return additionalInfoCaculatedDungeonRoomInfo.getWarnings() > 0;
+            }
+        },
         OVERRIDEN("Filter: Show Rooms with ability overriden") {
             @Override
             public boolean test(AdditionalInfoCaculatedDungeonRoomInfo additionalInfoCaculatedDungeonRoomInfo) {

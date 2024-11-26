@@ -34,6 +34,10 @@
                     <Text text="Has unused/dupe precalculations!" color="#FFFF0000" slot="true"/>
                     <size width="0" height="0" slot="false"/>
                 </SelectiveContainer>
+                <SelectiveContainer bind:visible="warning">
+                    <Text text="Has warnings!" color="#FFFFDD00" slot="true"/>
+                    <size width="0" height="0" slot="false"/>
+                </SelectiveContainer>
                 <row>
                     <Text text="Requires " color="#FFFFFFFF"/>
                     <Text bind:text="requiredPrecalculations" color="#FF00AA00"/>
