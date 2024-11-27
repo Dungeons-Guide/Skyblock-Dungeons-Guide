@@ -51,6 +51,7 @@ import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.Preset;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.guiv2.view.TestView;
@@ -71,6 +72,7 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -295,6 +297,15 @@ public class CommandDgDebug extends CommandBase {
                     e.printStackTrace();
                 }
                 break;
+            case "randomroutine":
+
+//                int val1 = this.<Integer>getParameter("haste").getValue();
+//                int val2 = this.<Integer>getParameter("pickaxe_efficiency").getValue();
+//                Item.ToolMaterial toolMaterial = this.<FeaturePathfindSettings.Material>getParameter("pickaxe_type").getValue().getToolMaterial();
+//                double efficiency2 = toolMaterial.getEfficiencyOnProperMaterial();
+//                efficiency2 += val2 * val2 + 1;
+//                efficiency2 *= val1 * 0.2 + 1;
+                break;
             default:
                 ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
@@ -311,7 +322,7 @@ public class CommandDgDebug extends CommandBase {
 
         UUID uuid = UUID.randomUUID();
         List<PathfindPrecalculation> precalculations=  new ArrayList<>();
-        AlgorithmSettings algorithmSettings = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
+        AlgorithmSettings algorithmSettings = null;
         for (File pfResult : new File(Main.getConfigDir(), "pfResult").listFiles()) {
             if (!pfResult.getName().endsWith(".pfres")) continue;
             System.out.println(pfResult);
@@ -319,6 +330,9 @@ public class CommandDgDebug extends CommandBase {
             PathfindResultRegistry.getINSTANCE().register(precalculation);
             algorithmSettings = precalculation.getAlgorithmSettings();
             precalculations.add(precalculation);
+        }
+        if (algorithmSettings == null) {
+            throw new IllegalStateException("No files in pfresult dir");
         }
 
         PathfindPreset preset = new PathfindPreset();

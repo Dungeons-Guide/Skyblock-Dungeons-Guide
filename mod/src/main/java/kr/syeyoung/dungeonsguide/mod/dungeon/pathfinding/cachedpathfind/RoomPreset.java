@@ -109,7 +109,7 @@ public class RoomPreset implements Cloneable {
             roomPreset.precalculations = new HashSet<>(this.precalculations);
 //            roomPreset.tspCache = null;
             roomPreset.parent = null;
-            roomPreset.algorithmSettings = this.algorithmSettings == null ? null : this.algorithmSettings.clone();
+            roomPreset.algorithmSettings = this.algorithmSettings;
             return roomPreset;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);

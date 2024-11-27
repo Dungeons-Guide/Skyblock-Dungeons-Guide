@@ -77,7 +77,9 @@ public class WidgetPresetRoomRequestAndCalcView extends AnnotatedImportOnlyWidge
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         WidgetModalChoosePrecalculation choosePrecalculation = new WidgetModalChoosePrecalculation(
                 PathfindResultRegistry.getINSTANCE().getsByHash(request.getHash())
-                        .stream().filter(a -> !roomInfo.getRoomPreset().getPrecalculations().contains(a.getId())).collect(Collectors.toList())
+                        .stream()
+                        .filter(a -> !roomInfo.getRoomPreset().getPrecalculations().contains(a.getId()))
+                        .collect(Collectors.toList())
         );
         PopupMgr.getPopupMgr(getDomElement())
                 .openPopup(new Modal(300, 200, "Choose Precalculation", choosePrecalculation, true), this::actuallyLink);

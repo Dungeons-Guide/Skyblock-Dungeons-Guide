@@ -93,9 +93,9 @@ public class PathfindCache {
             double offset = Math.round(Float.intBitsToFloat(Integer.reverseBytes(dis.readInt())) * 1000000.0) / 1000000.0;
             this.algorithmSettings = new AlgorithmSettings(
                     current.getPickaxe(),
-                    current.getPickaxeSpeed(),
-                    current.getShovelSpeed(),
-                    current.getAxeSpeed(),
+                    current.getShovel(),
+                    current.getAxe(),
+                    current.getHasteLevel(),
                     stonkdown,
                     stonkteleport,
                     stonkechest,

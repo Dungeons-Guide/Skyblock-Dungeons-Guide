@@ -529,7 +529,7 @@ public class DungeonRoom implements IPathfindWorld {
         if (b.getBlockHardness(getCachedWorld(), pos) < 0) {
             return 99;
         } else if (algorithmSettings.getPickaxeSpeed() > 0 &&
-                (((algorithmSettings.getPickaxe().canHarvestBlock(b)) &&
+                (((algorithmSettings.getPickaxe().getTool().canHarvestBlock(b)) &&
                 b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getPickaxeSpeed() / 30.0) ||
                 (b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getPickaxeSpeed() / 100.0))
         ) {
@@ -538,7 +538,7 @@ public class DungeonRoom implements IPathfindWorld {
                 && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getShovelSpeed()) {
         } else if (algorithmSettings.getAxeSpeed() > 0 && b.isToolEffective("axe", iBlockState) && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getAxeSpeed()) {
         } else {
-            return algorithmSettings.getPickaxe().canHarvestBlock(b) ? 1 : 1;
+            return algorithmSettings.getPickaxe() != null && algorithmSettings.getPickaxe().getTool().canHarvestBlock(b) ? 1 : 1;
         }
         return 0;
     }

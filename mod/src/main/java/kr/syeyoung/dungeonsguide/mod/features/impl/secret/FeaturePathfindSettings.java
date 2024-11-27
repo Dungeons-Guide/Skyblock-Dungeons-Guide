@@ -29,12 +29,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemTool;
 
 import java.util.LinkedHashMap;
 
 public class FeaturePathfindSettings extends SimpleFeature {
     public FeaturePathfindSettings() {
-        super("Pathfinding & Secrets", "Experimental Pathfind Settings", "Configure A* FineGrid Smart algorithm\n\nUpdate to the config after entering dungeon will not be applied until player enters next dungeon.", "secret.secretpathfind.algorithmconfig", true);
+        super("Pathfinding & Secrets", "Experimental Pathfind Settings (UNUSED ANYMORE)", "Configure A* FineGrid Smart algorithm\n\nUpdate to the config after entering dungeon will not be applied until player enters next dungeon.", "secret.secretpathfind.algorithmconfig", true);
         parameters = new LinkedHashMap<>();
         addParameter("pickaxe", new FeatureParameter<Boolean>("pickaxe", "Use Pickaxe", "Hint to the algorithm to use pickaxe stonks", true, new TCBoolean()));
         addParameter("pickaxe_type", new FeatureParameter<Material>("pickaxe_type", "Pickaxe Type", "Type of your pickaxe", Material.GOLD, new TCEnum<>(Material.values())));
@@ -64,10 +65,10 @@ public class FeaturePathfindSettings extends SimpleFeature {
 
     public AlgorithmSettings getAlgorithmSettings() {
         return new AlgorithmSettings(
-                getPickaxe(),
-                isPickaxe() ? getPickaxeFactor() : -1,
-                isShovel() ? getInstabreakShovel() : -1,
-                isAxe() ? getInstabreakAxe() : -1,
+                !isPickaxe() ? null : new AlgorithmSettings.ToolSettings(this.<Material>getParameter("pickaxe_type").getValue().getPickaxe(), this.<Integer>getParameter("pickaxe_efficiency").getValue()),
+                !isShovel() ? null : new AlgorithmSettings.ToolSettings(this.<Material>getParameter("shovel_type").getValue().getShovel(), this.<Integer>getParameter("shovel_efficiency").getValue()),
+                !isAxe() ? null : new AlgorithmSettings.ToolSettings(this.<Material>getParameter("axe_type").getValue().getShovel(), this.<Integer>getParameter("axe_efficiency").getValue()),
+                this.<Integer>getParameter("haste").getValue(),
                 isStonkStair(),
                 isStonkTeleport(),
                 isStonkEChest(),
@@ -81,39 +82,6 @@ public class FeaturePathfindSettings extends SimpleFeature {
         );
     }
 
-    public Item getPickaxe() {
-        return this.<Material>getParameter("pickaxe_type").getValue().getPickaxe();
-    }
-    public double getPickaxeFactor() {
-        int val1 = this.<Integer>getParameter("haste").getValue();
-        int val2 = this.<Integer>getParameter("pickaxe_efficiency").getValue();
-        Item.ToolMaterial toolMaterial = this.<Material>getParameter("pickaxe_type").getValue().getToolMaterial();
-        double efficiency2 = toolMaterial.getEfficiencyOnProperMaterial();
-        efficiency2 += val2 * val2 + 1;
-        efficiency2 *= val1 * 0.2 + 1;
-//        efficiency2 /= 30;
-        return efficiency2;
-    }
-    public double getInstabreakShovel() {
-        int val1 = this.<Integer>getParameter("haste").getValue();
-        int val2 = this.<Integer>getParameter("shovel_efficiency").getValue();
-        Item.ToolMaterial toolMaterial = this.<Material>getParameter("shovel_type").getValue().getToolMaterial();
-        double efficiency2 = toolMaterial.getEfficiencyOnProperMaterial();
-        efficiency2 += val2 * val2 + 1;
-        efficiency2 *= val1 * 0.2 + 1;
-        efficiency2 /= 30;
-        return efficiency2;
-    }
-    public double getInstabreakAxe() {
-        int val1 = this.<Integer>getParameter("haste").getValue();
-        int val2 = this.<Integer>getParameter("axe_efficiency").getValue();
-        Item.ToolMaterial toolMaterial = this.<Material>getParameter("axe_type").getValue().getToolMaterial();
-        double efficiency2 = toolMaterial.getEfficiencyOnProperMaterial();
-        efficiency2 += val2 * val2 + 1;
-        efficiency2 *= val1 * 0.2 + 1;
-        efficiency2 /= 30;
-        return efficiency2;
-    }
 
     public boolean isPickaxe() {
         return this.<Boolean>getParameter("pickaxe").getValue();
@@ -165,9 +133,15 @@ public class FeaturePathfindSettings extends SimpleFeature {
 
     @Getter @RequiredArgsConstructor
     public enum Material {
-        WOOD(Item.ToolMaterial.WOOD, Items.wooden_pickaxe), STONE(Item.ToolMaterial.STONE, Items.stone_pickaxe), GOLD(Item.ToolMaterial.GOLD, Items.golden_pickaxe), IRON(Item.ToolMaterial.IRON, Items.iron_pickaxe), DIAMOND(Item.ToolMaterial.EMERALD, Items.diamond_pickaxe);
+        WOOD(Item.ToolMaterial.WOOD, (ItemTool) Items.wooden_pickaxe, (ItemTool) Items.wooden_shovel, (ItemTool) Items.wooden_axe),
+        STONE(Item.ToolMaterial.STONE, (ItemTool) Items.stone_pickaxe, (ItemTool) Items.stone_shovel, (ItemTool) Items.stone_axe),
+        GOLD(Item.ToolMaterial.GOLD, (ItemTool) Items.golden_pickaxe, (ItemTool) Items.golden_shovel, (ItemTool) Items.golden_axe),
+        IRON(Item.ToolMaterial.IRON, (ItemTool) Items.iron_pickaxe, (ItemTool) Items.iron_shovel, (ItemTool) Items.iron_axe),
+        DIAMOND(Item.ToolMaterial.EMERALD, (ItemTool) Items.diamond_pickaxe, (ItemTool) Items.diamond_shovel, (ItemTool) Items.diamond_axe);
         private final Item.ToolMaterial toolMaterial;
-        private final Item pickaxe;
+        private final ItemTool pickaxe;
+        private final ItemTool shovel;
+        private final ItemTool axe;
     }
 
 }

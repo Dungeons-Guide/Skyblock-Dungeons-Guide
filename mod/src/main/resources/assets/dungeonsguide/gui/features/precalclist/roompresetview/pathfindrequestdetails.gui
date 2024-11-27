@@ -16,12 +16,14 @@
             <Text bind:text="hash" color="#FFFFFFFF"/>
         </flexible>
     </row>
-    <row>
-        <Text text="Algorithm Settings: " color="#FFFFFFFF"/>
-        <flexible>
-            <slot bind:_="algorithmSettings" />
-        </flexible>
-    </row>
+    <Text text="Algorithm Settings: " color="#FFFFFFFF"/>
+    <size height="28">
+        <ScrollablePanel direction="HORIZONTAL">
+            <size width="248" height="20">
+                <slot bind:_="algorithmSettings"/>
+            </size>
+        </ScrollablePanel>
+    </size>
     <row>
         <Text text="Room State: " color="#FFFFFFFF"/>
         <flexible>

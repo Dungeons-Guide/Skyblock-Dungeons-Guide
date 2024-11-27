@@ -153,7 +153,7 @@ public class PathfindPreset implements Cloneable {
     public PathfindPreset clone() {
         try {
             PathfindPreset preset = (PathfindPreset) super.clone();
-            preset.algorithmSettings = algorithmSettings.clone();
+            preset.algorithmSettings = algorithmSettings;
             preset.presets = new HashMap<>();
             preset.presetId = UUID.randomUUID().toString();
             preset.presetName = "Clone of " +presetName;

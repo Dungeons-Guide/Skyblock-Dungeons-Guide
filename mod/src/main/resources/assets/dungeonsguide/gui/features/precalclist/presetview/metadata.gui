@@ -48,9 +48,17 @@
             <size height="5"/>
             <row>
                 <Text text="Default Pathfind Ability Settings: " color="#FFFFFFFF"/>
+                <size width="3"/>
                 <flexible>
-                    <slot bind:_="abilitySettings"/>
+                    <size height="28">
+                        <ScrollablePanel direction="HORIZONTAL">
+                            <size width="248" height="20">
+                                <slot bind:_="abilitySettings"/>
+                            </size>
+                        </ScrollablePanel>
+                    </size>
                 </flexible>
+                <size width="5"/>
                 <size height="15" width="150">
                     <RoundButton text="Edit Default Ability Settings" on:click="editAbilitySettings"/>
                 </size>

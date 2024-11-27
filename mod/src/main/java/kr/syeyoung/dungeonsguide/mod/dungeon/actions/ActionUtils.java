@@ -51,7 +51,7 @@ public class ActionUtils {
                 RequiredTool pickaxe = a.getTools()[0];
                 if (pickaxe != null) {
                     if (settings.getPickaxeSpeed() < 0) return false;
-                    int lv = ((ItemPickaxe) settings.getPickaxe()).getToolMaterial().getHarvestLevel();
+                    int lv =  settings.getPickaxe().getTool().getToolMaterial().getHarvestLevel();
                     if (lv >= pickaxe.getHarvestLv()) {
                         if (settings.getPickaxeSpeed() / 30 > pickaxe.getBreakingPower()) {
                             // good
@@ -71,7 +71,7 @@ public class ActionUtils {
                 RequiredTool shovel = a.getTools()[1];
                 if (shovel != null) {
                     if (settings.getShovelSpeed() < 0) return false;
-                    int lv = ((ItemTool) settings.getPickaxe()).getToolMaterial().getHarvestLevel();
+                    int lv = settings.getShovel().getTool().getToolMaterial().getHarvestLevel();
                     if (lv >= shovel.getHarvestLv()) {
                         if (settings.getPickaxeSpeed() / 30 > shovel.getBreakingPower()) {
                             // good
@@ -91,7 +91,7 @@ public class ActionUtils {
                 RequiredTool axe = a.getTools()[2];
                 if (axe != null) {
                     if (settings.getAxeSpeed() < 0) return false;
-                    int lv = ((ItemTool) settings.getPickaxe()).getToolMaterial().getHarvestLevel();
+                    int lv = settings.getAxe().getTool().getToolMaterial().getHarvestLevel();
                     if (lv >= axe.getHarvestLv()) {
                         if (settings.getPickaxeSpeed() / 30 > axe.getBreakingPower()) {
                             // good
