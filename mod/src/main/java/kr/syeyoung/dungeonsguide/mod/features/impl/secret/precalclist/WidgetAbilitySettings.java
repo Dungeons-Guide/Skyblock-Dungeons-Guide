@@ -39,11 +39,15 @@ public class WidgetAbilitySettings extends Widget implements Renderer {
     public static final ResourceLocation abilities = new ResourceLocation("dungeonsguide:textures/features/precalclist/abilities.png");
 
 
-    private void renderIndex(int x, int y, int index, int width, int height) {
+    private void renderIndex(int x, int y, int index, int width, int height, int type) {
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
         Minecraft.getMinecraft().getTextureManager().bindTexture(abilities);
+
+        int offsetX = (type % 2) * 256;
+        int offsetY = (type / 2) * 256;
+
         GuiScreen.drawScaledCustomSizeModalRect(
-                x, y, (index % 8) * 32 + 0.5f, index / 8 * 32 + 0.5f,  31, 31, width, height, 256, 256
+                x, y, (index % 8) * 32 + 0.5f + offsetX, index / 8 * 32 + 0.5f + offsetY,  31, 31, width, height, 512, 512
         );
 
     }
@@ -60,31 +64,31 @@ public class WidgetAbilitySettings extends Widget implements Renderer {
 
         int pickX = 5;
         if (algorithmSettings.getPickaxe() != null) {
-            renderIndex(pickX, 1, algorithmSettings.getPickaxe().getTool().getToolMaterial().ordinal() * 8, 16, 16);
+            renderIndex(pickX, 1, algorithmSettings.getPickaxe().getTool().getToolMaterial().ordinal() * 8, 16, 16, 0);
             String toDraw = algorithmSettings.getPickaxe().getEfficiency() + "";
             fr.drawStringWithShadow(toDraw, pickX + 17 - fr.getStringWidth(toDraw), 10, 0xFF979797);
         } else {
-            renderIndex(pickX, 1, 4, 16, 16);
+            renderIndex(pickX, 1, 0, 16, 16, 1);
             fr.drawStringWithShadow("X", pickX + 17 - fr.getStringWidth("X"), 10, 0xFFa4232b);
         }
 
         int shovelX = 24;
         if (algorithmSettings.getShovel() != null) {
-            renderIndex(shovelX, 1, algorithmSettings.getShovel().getTool().getToolMaterial().ordinal() * 8 + 1, 16, 16);
+            renderIndex(shovelX, 1, algorithmSettings.getShovel().getTool().getToolMaterial().ordinal() * 8 + 1, 16, 16, 0);
             String toDraw = algorithmSettings.getShovel().getEfficiency() + "";
             fr.drawStringWithShadow(toDraw, shovelX + 17 - fr.getStringWidth(toDraw), 10, 0xFF979797);
         } else {
-            renderIndex(shovelX, 1, 5, 16, 16);
+            renderIndex(shovelX, 1, 1, 16, 16, 1);
             fr.drawStringWithShadow("X", shovelX + 17 - fr.getStringWidth("X"), 10, 0xFFa4232b);
         }
 
         int axeX = 43;
         if (algorithmSettings.getAxe() != null) {
-            renderIndex(axeX, 1, algorithmSettings.getAxe().getTool().getToolMaterial().ordinal() * 8 + 2, 16, 16);
+            renderIndex(axeX, 1, algorithmSettings.getAxe().getTool().getToolMaterial().ordinal() * 8 + 2, 16, 16, 0);
             String toDraw = algorithmSettings.getAxe().getEfficiency() + "";
             fr.drawStringWithShadow(toDraw, axeX + 17 - fr.getStringWidth(toDraw), 10, 0xFF979797);
         } else {
-            renderIndex(axeX, 1, 6, 16, 16);
+            renderIndex(axeX, 1, 2, 16, 16, 1);
             fr.drawStringWithShadow("X", axeX + 17 - fr.getStringWidth("X"), 10, 0xFFa4232b);
         }
 
@@ -95,25 +99,25 @@ public class WidgetAbilitySettings extends Widget implements Renderer {
 
         int hasteX = 76;
 
-        renderIndex(hasteX, 2, 48, 16, 16);
+        renderIndex(hasteX, 2, 48, 16, 16, algorithmSettings.getHasteLevel() == 0 ? 1 : 0);
         if (algorithmSettings.getHasteLevel() == 0) {
             fr.drawStringWithShadow("X", hasteX + 17 - fr.getStringWidth(""),10,0xFFa4232b);
         } else {
             fr.drawStringWithShadow(algorithmSettings.getHasteLevel()+"", hasteX + 17 - fr.getStringWidth(algorithmSettings.getHasteLevel()+""),10,0xFFFFFFFF);
         }
 
-        renderIndex(95, 2, algorithmSettings.isRouteEtherwarp() ? 40 : 44, 16, 16);
+        renderIndex(95, 2, 40, 16, 16, algorithmSettings.isRouteEtherwarp() ? 0 : 1);
         if (algorithmSettings.isRouteEtherwarp()) {
             fr.drawString(algorithmSettings.getEtherwarpRadius() + " " + String.format("%.2f", algorithmSettings.getEtherwarpOffset()), 112, 2, 0xFFFFFFFF);
             fr.drawString(String.format("%.4f", algorithmSettings.getEtherwarpLeeway()), 112, 11, 0xFFFFFFFF);
         }
 
 
-        renderIndex(148, 2, algorithmSettings.isEnderpearl() ? 41 : 45, 16, 16);
-        renderIndex(167, 2, algorithmSettings.isTntpearl() ? 49 : 53, 16, 16);
-        renderIndex(186, 2, algorithmSettings.isStonkDown() ? 50 : 54, 16, 16);
-        renderIndex(205, 2, algorithmSettings.isStonkTeleport() ? 56 : 60, 16, 16);
-        renderIndex(224, 2, algorithmSettings.isStonkEChest() ? 58 : 62, 16, 16);
+        renderIndex(148, 2, 41, 16, 16, algorithmSettings.isEnderpearl() ? 0 : 1);
+        renderIndex(167, 2, 49, 16, 16, algorithmSettings.isTntpearl() ? 0 : 1);
+        renderIndex(186, 2, 50, 16, 16, algorithmSettings.isStonkDown() ? 0 : 1);
+        renderIndex(205, 2, 56, 16, 16,  algorithmSettings.isStonkTeleport() ? 0 : 1);
+        renderIndex(224, 2, 58, 16, 16, algorithmSettings.isStonkEChest() ? 0 : 1);
 
 
 

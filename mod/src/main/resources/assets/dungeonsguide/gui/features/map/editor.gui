@@ -111,7 +111,7 @@
                             <Text bind:text="iconstyledescription" color="#FF777777"/>
                         </col>
                     </WrapGrid>
-                    <size height="5"/>
+                    <size height="5"/>w<w></w>
                     <WrapGrid minimumWidth="150" gap="5">
                         <row crossAlign="CENTER">
                             <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Draw Names:" color="#FFFFFFFF"/></align></flexible>

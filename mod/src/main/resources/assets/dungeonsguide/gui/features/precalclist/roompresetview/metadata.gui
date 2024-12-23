@@ -55,8 +55,13 @@
             <row>
                 <Text text="Pathfind Ability Settings Override: " color="#FFFFFFFF"/>
                 <flexible>
-                    <size width="0"/>
-                    <!--                        <slot bind:_="abilitySettings"/>-->
+                    <size height="28">
+                        <ScrollablePanel direction="HORIZONTAL">
+                            <size width="248" height="20">
+                                <slot bind:_="algorithmSettings"/>
+                            </size>
+                        </ScrollablePanel>
+                    </size>
                 </flexible>
                 <size height="15" width="150">
                     <RoundButton text="Edit Override Ability Settings"/>

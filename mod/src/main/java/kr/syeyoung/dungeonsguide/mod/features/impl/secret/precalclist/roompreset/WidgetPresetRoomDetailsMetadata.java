@@ -1,12 +1,15 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindResultRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.MapConfiguration;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetAbilitySettings;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset.WidgetViewPreset;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.Modal;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.ModalConfirm;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
@@ -40,8 +43,14 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "roomStates")
     public final BindableAttribute<String> roomStates = new BindableAttribute<>(String.class);
 
+    @Bind(variableName = "algorithmSettings")
+    public final BindableAttribute<Widget> algorithmSettings = new BindableAttribute<>(Widget.class);
+
     @Bind(variableName = "editable")
     public final BindableAttribute<String> editable = new BindableAttribute<>(String.class);
+
+
+    private final BindableAttribute<AlgorithmSettings> algorithmSettingsBindableAttribute = new BindableAttribute<>(AlgorithmSettings.class);
 
     public WidgetPresetRoomDetailsMetadata(AdditionalInfoCaculatedDungeonRoomInfo roomInfo, WidgetPresetRoomDetails parent) {
         super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/metadata.gui"));
@@ -60,6 +69,11 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
                         .map(a -> a.isEmpty() ? "(empty)" : a).collect(Collectors.joining(" | ")));
 
         this.editable.setValue(roomInfo.getRoomPreset().getParent().isEditable() ? "true" : "false");
+
+        if (roomInfo.getRoomPreset().isOverridingParentAlgorithmSettings()) {
+            algorithmSettingsBindableAttribute.setValue(roomInfo.getRoomPreset().getAlgorithmSettings());
+            this.algorithmSettings.setValue(new WidgetAbilitySettings(algorithmSettingsBindableAttribute));
+        }
     }
 
     @On(functionName = "unlinkUnused")
