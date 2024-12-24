@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetPrecalcList;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
@@ -29,14 +30,14 @@ public class WidgetPreset extends AnnotatedImportOnlyWidget {
     public WidgetPreset(PathfindPreset preset, WidgetPrecalcList presetList) {
         super(new ResourceLocation("dungeonsguide:gui/features/precalclist/preset.gui"));
         this.name.setValue(preset.getPresetName());
-        this.backgroundColor.setValue(0xFF505050);
+        this.backgroundColor.setValue(preset.getPresetId().equals(FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPresetId()) ? 0xFF005756 : 0xFF505050);
         this.buttonTxt.setValue(preset.isEditable() ? "Edit/View" : "View");
         this.presetList = presetList;
         this.preset = preset;
     }
 
     public void setSelected(boolean selected) {
-        this.backgroundColor.setValue(selected ? 0xff065702 : 0xFF505050); // #507750
+        this.backgroundColor.setValue(selected ? 0xff065702 : preset.getPresetId().equals(FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPresetId()) ? 0xFF005756 : 0xFF505050); // #507750
     }
 
     @On(functionName = "edit")

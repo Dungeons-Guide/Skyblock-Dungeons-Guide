@@ -24,6 +24,7 @@ public class WidgetViewPreset extends AnnotatedImportOnlyWidget {
 
     @Getter
     private PathfindPreset preset;
+    @Getter
     private WidgetPrecalcList presetList;
 
     @Bind(variableName = "metadata")

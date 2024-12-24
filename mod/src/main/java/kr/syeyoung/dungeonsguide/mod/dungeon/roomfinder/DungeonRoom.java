@@ -250,8 +250,6 @@ public class DungeonRoom implements IPathfindWorld {
 
         this.doorsAndStates = doorsAndStates;
         tryRematch();
-
-        algorithmSetting = context.getAlgorithmSetting();
     }
 
     public DungeonRoom(DungeonContext context) {
@@ -310,7 +308,7 @@ public class DungeonRoom implements IPathfindWorld {
         this.roomMatcher.setMatch(dungeonRoomInfo);
         this.roomMatcher.setRotation(0);
 
-        algorithmSetting = context.getAlgorithmSetting();
+        algorithmSetting = context.getPreset().getRoomPreset(dungeonRoomInfo.getUuid()).getAlgorithmSetting();
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
 
 
@@ -407,6 +405,7 @@ public class DungeonRoom implements IPathfindWorld {
         this.dungeonRoomInfo = dungeonRoomInfo;
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
 
+        algorithmSetting = context.getPreset().getRoomPreset(dungeonRoomInfo.getUuid()).getAlgorithmSetting();
 
         for (DungeonMechanic value : getMechanics().values()) {
                         if (value instanceof DungeonTomb) {

@@ -49,6 +49,11 @@ public class PathfindPreset implements Cloneable {
         }
     }
 
+    public RoomPreset getRoomPreset(UUID uuid) {
+        if (presets.containsKey(uuid)) return presets.get(uuid);
+        return new RoomPreset(this, uuid);
+    }
+
     private PathfindPreset(String dummy) {}
 
 
@@ -95,6 +100,13 @@ public class PathfindPreset implements Cloneable {
             return preset;
         }
     }
+    public static PathfindPreset loadFromStream(InputStream in) throws IOException {
+        try (InputStream inputStream = in) {
+            JsonObject jsonObject = new Gson().fromJson(new InputStreamReader(new BufferedInputStream(inputStream)), JsonObject.class);
+            return loadFromJson(jsonObject);
+        }
+    }
+
 
     public static PathfindPreset loadFromJson(JsonObject jsonObject) {
         PathfindPreset preset = new PathfindPreset("");

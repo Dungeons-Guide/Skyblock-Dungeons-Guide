@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.BitStorage;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -97,7 +98,9 @@ public class DRIWorld extends World implements IPathfindWorld {
         whole = new BitStorage(getXwidth(), getYwidth(), getZwidth(), DungeonRoom.CollisionState.BITS); // plus 1 , because I don't wanna do floating point op for dividing and ceiling
         enderpearl = new BitStorage(getXwidth(), getYwidth(), getZwidth(), DungeonRoom.PearlLandType.BITS);
 
-        this.algorithmSetting = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSetting();
+        PathfindPreset preset = FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset();
+        AlgorithmSetting algorithmSetting1 = preset.getRoomPreset(dungeonRoomInfo.getUuid()).getAlgorithmSetting();
+        this.algorithmSetting = algorithmSetting1;
     }
 
     @Override

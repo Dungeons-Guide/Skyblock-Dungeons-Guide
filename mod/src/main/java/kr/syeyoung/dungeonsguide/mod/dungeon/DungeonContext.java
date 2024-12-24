@@ -32,6 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.MapPlayerProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
@@ -71,7 +72,7 @@ public class DungeonContext {
     private final DungeonEventRecorder recorder = new DungeonEventRecorder();
 
     @Getter
-    private final AlgorithmSetting algorithmSetting = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSetting();
+    private final PathfindPreset preset = FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset();
 
     @Getter
     private final List<WeakReference<PathfinderExecutor>> executors = new CopyOnWriteArrayList<>();

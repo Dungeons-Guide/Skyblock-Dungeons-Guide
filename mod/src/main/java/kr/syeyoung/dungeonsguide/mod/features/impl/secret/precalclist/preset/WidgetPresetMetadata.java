@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPresetRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetAbilitySettings;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.WidgetCreateAbilitySettings;
@@ -64,7 +65,10 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL);
         this.generatedAt.setValue(dateTimeFormatter.format(preset.getGeneratedAt().atZone(ZoneId.systemDefault())));
         this.origin.setValue(preset.getOrigin());
-        this.filename.setValue(Main.getConfigDir().toPath().relativize(preset.getFile().toPath()).toString());
+        if (preset.getFile() != null)
+            this.filename.setValue(Main.getConfigDir().toPath().relativize(preset.getFile().toPath()).toString());
+        else
+            this.filename.setValue("no file");
         algorithmSettingBindableAttribute.setValue(preset.getAlgorithmSetting());
         this.abilitySettings.setValue(new WidgetAbilitySettings(algorithmSettingBindableAttribute));
         this.editable.setValue(preset.isEditable() ? "true" : "false");
@@ -107,7 +111,8 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
                 parent.notifyDelete(preset);
 
                 try {
-                    Files.delete(preset.getFile().toPath());
+                    if (preset.getFile() != null)
+                        Files.delete(preset.getFile().toPath());
                 } catch (IOException e) {
                     e.printStackTrace();
                     FeatureCollectDiagnostics.queueSendLogAsync(e);
@@ -120,6 +125,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
     public void apply() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 
+        parent.getPresetList().apply(preset);
     }
 
 

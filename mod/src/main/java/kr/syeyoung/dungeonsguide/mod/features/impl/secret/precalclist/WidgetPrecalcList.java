@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPresetRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset.WidgetPreset;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset.WidgetViewPreset;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
@@ -89,6 +90,15 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
             }
         }
         edit(null);
+    }
+
+    public void apply(PathfindPreset preset) {
+
+        FeatureRegistry.SECRET_PRECALC_LIST.setSelectedPreset(preset);
+
+        for (WidgetPreset widgetPreset : widgetPresetList) {
+            widgetPreset.setSelected(widgetPreset.getPreset() == preset);
+        }
     }
 
     public void update(PathfindPreset preset) {

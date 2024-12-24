@@ -279,7 +279,7 @@ public abstract class AbstractActionMove extends AbstractAction {
 
     public void forceRefresh(DungeonRoom dungeonRoom) {
         if (executor == null) executor = dungeonRoom.loadPrecalculated(new PathfindRequest(
-                dungeonRoom.getContext().getAlgorithmSetting(),
+                dungeonRoom.getAlgorithmSetting(),
                 dungeonRoom.getDungeonRoomInfo(),
                 dungeonRoom.getMechanics().entrySet().stream().filter(b -> {
                     return  (b.getValue() instanceof DungeonDoor || b.getValue() instanceof DungeonOnewayDoor);
@@ -312,7 +312,7 @@ public abstract class AbstractActionMove extends AbstractAction {
         FineGridStonkingBFS a = null;
         if (executor == null) {
             executor = room.loadPrecalculated(new PathfindRequest(
-                    room.getContext().getAlgorithmSetting(),
+                    room.getAlgorithmSetting(),
                     room.getDungeonRoomInfo(),
                     state.getOpenMechanics().stream().filter(b -> {
                         return  room.getMechanics().get(b) instanceof DungeonDoor || room.getMechanics().get(b) instanceof DungeonOnewayDoor;
@@ -321,7 +321,7 @@ public abstract class AbstractActionMove extends AbstractAction {
             ).getId());
             if (executor == null) return 999999999;
             if (executor == null) {
-                executor = new PathfinderExecutor(new FineGridStonkingBFS(room.getContext().getAlgorithmSetting()),
+                executor = new PathfinderExecutor(new FineGridStonkingBFS(room.getAlgorithmSetting()),
                         getPathfindBoundingBox(room), new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics())));
             }
             memoization.put(state.getOpenMechanics()+"-"+vec3Str, executor);

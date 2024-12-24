@@ -19,6 +19,17 @@ public class PathfindPresetRegistry {
     @Getter
     private static PathfindPresetRegistry INSTANCE;
 
+    public static PathfindPreset DEFAULT_PRESET;
+
+    static {
+        try {
+            DEFAULT_PRESET = PathfindPreset.loadFromStream(PathfindPresetRegistry.class.getResourceAsStream("/defaultPreset.json"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public void register(PathfindPreset preset) {
         if (presetsById.containsKey(preset.getPresetId())) throw new IllegalStateException("Dupliucate preset:: "+preset.getPresetId());
         this.loadedPresets.add(preset);
@@ -48,6 +59,7 @@ public class PathfindPresetRegistry {
         if (INSTANCE != null) throw new IllegalStateException("Already initialized");
         PathfindPresetRegistry.INSTANCE = this;
 
+        register(DEFAULT_PRESET);
         loadAll(toWatch);
     }
 
@@ -64,6 +76,7 @@ public class PathfindPresetRegistry {
 
     public void saveAll() throws IOException {
         for (PathfindPreset loadedPreset : loadedPresets) {
+            if (loadedPreset == DEFAULT_PRESET) continue;
             loadedPreset.save();
         }
     }
