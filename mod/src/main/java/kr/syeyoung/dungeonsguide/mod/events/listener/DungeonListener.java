@@ -97,12 +97,7 @@ public class DungeonListener {
         TabList.INSTANCE.clear();
         TeamManager.INSTANCE.clear();
         ScoreboardManager.INSTANCE.clear();
-        try {
-            Config.saveConfig();
-        } catch (IOException e) {
-            FeatureCollectDiagnostics.queueSendLogAsync(e);
-            e.printStackTrace();
-        }
+        Config.scheduleConfigSave();
         DungeonActionContext.getSpawnLocation().clear();
         DungeonActionContext.getKilleds().clear();
     }

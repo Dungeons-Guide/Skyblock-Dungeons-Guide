@@ -18,20 +18,31 @@
 
 package kr.syeyoung.dungeonsguide.mod.config;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPresetRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 
 import java.io.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 public class Config {
     public static JsonObject configuration;
 
     public static File f;
+
+    private static final Executor configSaver = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder()
+            .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
+            .setNameFormat("DG-ConfigSaver-%d").build());
+
 
     public static void loadConfig(File f) throws IOException {
         try {
@@ -45,6 +56,17 @@ public class Config {
         }
 
         saveConfig();
+    }
+
+    public static void scheduleConfigSave() {
+        configSaver.execute(() -> {
+            try {
+                Config.saveConfig();
+            } catch (IOException e) {
+                FeatureCollectDiagnostics.queueSendLogAsync(e);
+                e.printStackTrace();
+            }
+        });
     }
 
     public static void saveConfig() throws IOException {

@@ -18,12 +18,25 @@
 
 package kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3;
 
+import kr.syeyoung.dungeonsguide.mod.config.Config;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
 import net.minecraft.client.gui.GuiScreen;
 
 public class ConfigGuiScreenAdapter extends GuiScreenAdapter {
     public ConfigGuiScreenAdapter(GuiScreen parent) {
         super(new GlobalHUDScale(new MainConfigWidget()), parent);
+    }
+    public ConfigGuiScreenAdapter(GuiScreen parent, Widget widget) {
+        super(widget, parent);
+    }
+
+
+    @Override
+    public void onGuiClosed() {
+        super.onGuiClosed();
+
+        Config.scheduleConfigSave();
     }
 }
