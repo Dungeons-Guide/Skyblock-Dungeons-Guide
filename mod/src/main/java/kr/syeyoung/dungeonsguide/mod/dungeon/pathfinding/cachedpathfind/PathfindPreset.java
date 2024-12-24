@@ -7,11 +7,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import lombok.Data;
 import lombok.Getter;
 import net.minecraft.nbt.CompressedStreamTools;
 
@@ -30,7 +28,7 @@ public class PathfindPreset implements Cloneable {
     private File file;
     private boolean dirty = false;
 
-    private AlgorithmSettings algorithmSettings;
+    private AlgorithmSetting algorithmSetting;
     private Map<UUID, RoomPreset> presets = new HashMap<>();
 
 
@@ -43,7 +41,7 @@ public class PathfindPreset implements Cloneable {
         this.dirty = true;
         this.editable = true;
 
-        this.algorithmSettings = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
+        this.algorithmSetting = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSetting();
 
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
             presets.put(dungeonRoomInfo.getUuid(), new RoomPreset(this, dungeonRoomInfo.getUuid()));
@@ -58,8 +56,8 @@ public class PathfindPreset implements Cloneable {
         markDirty();
     }
 
-    public void setAlgorithmSettings(AlgorithmSettings algorithmSettings) {
-        this.algorithmSettings = algorithmSettings;
+    public void setAlgorithmSetting(AlgorithmSetting algorithmSetting) {
+        this.algorithmSetting = algorithmSetting;
         markDirty();
     }
 
@@ -106,11 +104,11 @@ public class PathfindPreset implements Cloneable {
         preset.dirty = false;
         preset.editable = jsonObject.get("editable").getAsBoolean();
 
-        String algoSettings = jsonObject.get("algorithmSettings").getAsString();
+        String algoSettings = jsonObject.get("algorithmSetting").getAsString();
         ByteArrayInputStream bais = new ByteArrayInputStream(Base64.getDecoder().decode(algoSettings));
         DataInputStream dataInputStream = new DataInputStream(bais);
         try {
-            preset.algorithmSettings = AlgorithmSettings.deserialize(dataInputStream);
+            preset.algorithmSetting = AlgorithmSetting.deserialize(dataInputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -132,11 +130,11 @@ public class PathfindPreset implements Cloneable {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream dataOutputStream = new DataOutputStream(baos);
-            CompressedStreamTools.write(algorithmSettings.serializeToNBT(), dataOutputStream);
+            CompressedStreamTools.write(algorithmSetting.serializeToNBT(), dataOutputStream);
             dataOutputStream.flush();
             String algoSettings = Base64.getEncoder().encodeToString(baos.toByteArray());
 
-            jsonObject.addProperty("algorithmSettings", algoSettings);
+            jsonObject.addProperty("algorithmSetting", algoSettings);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -153,7 +151,7 @@ public class PathfindPreset implements Cloneable {
     public PathfindPreset clone() {
         try {
             PathfindPreset preset = (PathfindPreset) super.clone();
-            preset.algorithmSettings = algorithmSettings;
+            preset.algorithmSetting = algorithmSetting;
             preset.presets = new HashMap<>();
             preset.presetId = UUID.randomUUID().toString();
             preset.presetName = "Clone of " +presetName;

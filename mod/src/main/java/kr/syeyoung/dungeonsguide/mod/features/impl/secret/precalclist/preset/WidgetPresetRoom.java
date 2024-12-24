@@ -58,7 +58,7 @@ public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
         this.roomColor.setValue(roomInfo.getRoomColor());
 
 
-        abilityOverride.setValue(dungeonRoomInfo.getRoomPreset().isOverridingParentAlgorithmSettings() ? "true" : "false");
+        abilityOverride.setValue(dungeonRoomInfo.getRoomPreset().isOverridingParentAlgorithmSetting() ? "true" : "false");
         missingPrecalc.setValue(dungeonRoomInfo.getMissing().isEmpty() ? "false" : "true");
         unusedPrecalc.setValue((dungeonRoomInfo.getDuplicate().isEmpty() && dungeonRoomInfo.getUnused().isEmpty()) ? "false" : "true");
         unknownPrecalc.setValue(dungeonRoomInfo.getMissingPrecalculation().isEmpty() ? "false" : "true");

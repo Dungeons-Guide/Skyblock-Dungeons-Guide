@@ -1,7 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.codec.binary.Hex;
@@ -17,7 +17,7 @@ public class MigrationUtils {
         MessageDigest md = MessageDigest.getInstance("MD5");
         String hash = Hex.encodeHexString(md.digest(cache.getId().getBytes()));
         md = MessageDigest.getInstance("MD5");
-        String id2 = Hex.encodeHexString(md.digest((f.getName()+"/"+cache.getId()+"/"+cache.getAlgorithmSettings().toString()).getBytes()));
+        String id2 = Hex.encodeHexString(md.digest((f.getName()+"/"+cache.getId()+"/"+cache.getAlgorithmSetting().toString()).getBytes()));
 
         //
 
@@ -32,8 +32,8 @@ public class MigrationUtils {
             dataOutputStream.writeUTF(cache.getId().split(":")[1]);
             dataOutputStream.writeUTF("Migration "+migrationId);
             dataOutputStream.writeUTF("ALGO");
-            AlgorithmSettings algorithmSettings = cache.getAlgorithmSettings();
-            NBTTagCompound nbtTagCompound = algorithmSettings.serializeToNBT();
+            AlgorithmSetting algorithmSetting = cache.getAlgorithmSetting();
+            NBTTagCompound nbtTagCompound = algorithmSetting.serializeToNBT();
             CompressedStreamTools.write(nbtTagCompound, dataOutputStream);
             dataOutputStream.writeUTF("TRGT");
             dataOutputStream.writeInt(cache.getTargets().size());

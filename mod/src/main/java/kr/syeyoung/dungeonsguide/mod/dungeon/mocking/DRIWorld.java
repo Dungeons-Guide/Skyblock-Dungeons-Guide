@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWor
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.BitStorage;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
@@ -60,7 +60,7 @@ public class DRIWorld extends World implements IPathfindWorld {
 
     private HashSet<BlockPos> poses = new HashSet<>();
     private HashSet<BlockPos> open = new HashSet<>();
-    private AlgorithmSettings algorithmSettings;
+    private AlgorithmSetting algorithmSetting;
 
     private BitStorage enderpearl, whole;
     public DRIWorld(DungeonRoomInfo dungeonRoomInfo) {
@@ -97,7 +97,7 @@ public class DRIWorld extends World implements IPathfindWorld {
         whole = new BitStorage(getXwidth(), getYwidth(), getZwidth(), DungeonRoom.CollisionState.BITS); // plus 1 , because I don't wanna do floating point op for dividing and ceiling
         enderpearl = new BitStorage(getXwidth(), getYwidth(), getZwidth(), DungeonRoom.PearlLandType.BITS);
 
-        this.algorithmSettings = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
+        this.algorithmSetting = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSetting();
     }
 
     @Override
@@ -174,17 +174,17 @@ public class DRIWorld extends World implements IPathfindWorld {
         if (b == Blocks.air) return 0;
         if (b.getBlockHardness(this, pos) < 0) {
             return 99;
-        } else if (algorithmSettings.getPickaxeSpeed() > 0 &&
-                (((algorithmSettings.getPickaxe().getTool().canHarvestBlock(b)) &&
-                        b.getBlockHardness(this, pos) <= algorithmSettings.getPickaxeSpeed() / 30.0) ||
-                        (b.getBlockHardness(this, pos) <= algorithmSettings.getPickaxeSpeed() / 100.0))
+        } else if (algorithmSetting.getPickaxeSpeed() > 0 &&
+                (((algorithmSetting.getPickaxe().getTool().canHarvestBlock(b)) &&
+                        b.getBlockHardness(this, pos) <= algorithmSetting.getPickaxeSpeed() / 30.0) ||
+                        (b.getBlockHardness(this, pos) <= algorithmSetting.getPickaxeSpeed() / 100.0))
         ) {
-        } else if (algorithmSettings.getShovelSpeed() > 0
+        } else if (algorithmSetting.getShovelSpeed() > 0
                 && b.isToolEffective("shovel", iBlockState)
-                && b.getBlockHardness(this, pos) <= algorithmSettings.getShovelSpeed()) {
-        } else if (algorithmSettings.getAxeSpeed() > 0 && b.isToolEffective("axe", iBlockState) && b.getBlockHardness(this, pos) <= algorithmSettings.getAxeSpeed()) {
+                && b.getBlockHardness(this, pos) <= algorithmSetting.getShovelSpeed()) {
+        } else if (algorithmSetting.getAxeSpeed() > 0 && b.isToolEffective("axe", iBlockState) && b.getBlockHardness(this, pos) <= algorithmSetting.getAxeSpeed()) {
         } else {
-            return algorithmSettings.getPickaxe() != null && algorithmSettings.getPickaxe().getTool().canHarvestBlock(b) ? 1 : 1;
+            return algorithmSetting.getPickaxe() != null && algorithmSetting.getPickaxe().getTool().canHarvestBlock(b) ? 1 : 1;
         }
         return 0;
     }

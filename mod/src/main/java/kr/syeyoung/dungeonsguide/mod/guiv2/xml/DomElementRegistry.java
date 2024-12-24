@@ -31,6 +31,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,8 +44,28 @@ public class DomElementRegistry {
     }
 
     public static <T extends Widget, R extends Widget & ImportingWidget> ParsedWidgetConverter<T, R> obtainConverter(String name) {
-        if (!converters.containsKey(name))
-            System.out.println("Try to get nonexistent widget "+name);
+        if (!converters.containsKey(name)) {
+            System.out.println("Try to get nonexistent widget " + name);
+
+
+            try {
+                Class clazz = Class.forName(name);
+                if (ExportedWidget.class.isAssignableFrom(clazz)) {
+                    MethodHandle handle = MethodHandles.publicLookup().unreflectConstructor(clazz.getConstructor());
+                    converters.put(name, new ExportedWidgetConverter(() -> {
+                        try {
+                            return handle.invoke();
+                        } catch (Throwable e) {
+                            throw new RuntimeException(e);
+                        }
+                    }));
+                }
+            } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
         return converters.get(name);
     }
 
@@ -67,6 +89,7 @@ public class DomElementRegistry {
         register("absXY", new ExportedWidgetConverter(AbsXY::new));
         register("Placeholder", new ExportedWidgetConverter(Placeholder::new));
         register("TextField", new ExportedWidgetConverter(TextField::new));
+        register("ValidatingTextField", new ExportedWidgetConverter(ValidatingTextField::new));
         register("PopupManager", new ExportedWidgetConverter(PopupMgr::new));
         register("AbstractButton", new ExportedWidgetConverter(Button::new));
         register("AbstractToggleButton", new ExportedWidgetConverter(ToggleButton::new));

@@ -1,0 +1,188 @@
+<ScrollablePanel direction="VERTICAL">
+    <padding left="5" right="5" top="5" bottom="5">
+        <col crossAlign="START">
+            <Text text="§lEtherwarp Settings" size="8" color="#FFFFFFFF"/>
+            <size height="5"/>
+            <row>
+                <size width="16" height="16">
+                    <ResourceImage location="dungeonsguide:textures/features/precalclist/abilities.png"  x="0" y="160" width="32" height="32" textureWidth="512" textureHeight="512"/>
+                </size>
+                <flexible>
+                    <SimpleToggleButton width="40" height="14" text="Use etherwarp for routing &amp; entering stonking" bind:enabled="etherwarp" bind:txtEnabled="txtEtherwarp"/>
+                </flexible>
+            </row>
+            <Include include="dungeonsguide:gui/elements/collapsible.gui" bind:open="txtEtherwarp">
+                <padding top="5" left="5" right="5" bottom="5">
+                    <bgcolor backgroundColor="#FFFFFFFF">
+                        <padding left="1" right="1" top="1" bottom="1">
+                            <bgcolor backgroundColor="#FF111111">
+                                <padding top="5" right="5" bottom="5" left="5">
+                                    <col>
+                                        <size height="150">
+                                            <clip>
+                                                <kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.WidgetEtherwarpPreview
+                                                        bind:offset="etherwarpOffset"
+                                                        bind:leeway="etherwarpLeeway"
+                                                        bind:length="maxEtherwarp"/>
+                                            </clip>
+                                        </size>
+                                        <size height="2"/>
+                                        <row>
+                                            <Text text="Maximum Etherwarp Length: " color="#FFFFFFFF"/>
+                                            <size width="25" height="16">
+                                                <ValidatingTextField placeholder="61" regex="\d+" bind:validatedValue="txtMaxEtherwarp" bind:extraValidator="etherwarpValidator"/>
+                                            </size>
+                                            <Text text=" Blocks " color="#FFFFFFFF"/>
+                                            <Text text="For maxed out etherwarp: 61" color="#FF777777"/>
+                                        </row>
+                                        <size height="2"/>
+                                        <row>
+                                            <Text text="Etherwarp Offset: " color="#FFFFFFFF"/>
+                                            <size width="40" height="16">
+                                                <ValidatingTextField placeholder="0.4" regex="(0|([1-9][0-9]*))(\.[0-9]+)?" bind:validatedValue="txtEtherwarpOffset" bind:extraValidator="offsetValidator"/>
+                                            </size>
+                                            <Text text=" Blocks " color="#FFFFFFFF"/>
+                                            <Text text="Suggestion: 0.4" color="#FF777777"/>
+                                        </row>
+                                        <size height="2"/>
+                                        <row>
+                                            <Text text="Etherwarp Leeway: " color="#FFFFFFFF"/>
+                                            <size width="50" height="16">
+                                                <ValidatingTextField placeholder="0.0625" regex="(0|([1-9][0-9]*))(\.[0-9]+)?" bind:validatedValue="txtEtherwarpLeeway" bind:extraValidator="offsetValidator"/>
+                                            </size>
+                                            <Text text=" Blocks " color="#FFFFFFFF"/>
+                                            <Text text="Suggestion: 0.0625 (1/16 of a block)" color="#FF777777"/>
+                                        </row>
+                                    </col>
+                                </padding>
+                            </bgcolor>
+                        </padding>
+                    </bgcolor>
+                </padding>
+            </Include>
+            <size height="5"/>
+            <!-- Enable Etherwarp -->
+            <!-- Etherwarp offset -->
+            <!-- Etherwarp leeway -->
+            <!-- Etherwarp length / Visualizer-->
+            <Text text="§lGeneral Stonking Settings" size="8" color="#FFFFFFFF"/>
+            <size height="5"/>
+            <padding left="5">
+                <col crossAlign="START">
+                    <row crossAlign="CENTER">
+                        <Text text="Maximum Stonk Length: " color="#FFFFFFFF"/>
+                        <size width="25" height="16">
+                            <ValidatingTextField regex="\d+" bind:validatedValue="stonkLength"/>
+                        </size>
+                        <Text text=" Pathfind Nodes" color="#FFFFFFFF"/>
+                    </row>
+                    <Text text="This is in pathfind-node-unit which means 1 minecraft block is 2 units" size="8" color="#FF777777"/>
+                </col>
+            </padding>
+            <size height="5"/>
+
+            <!-- Stonk Length -->
+
+            <Text text="§lStonking Tool Settings" size="8" color="#FFFFFFFF"/>
+            <Text text="These are tools you wish to use in stonk routes" size="8" color="#FF777777"/>
+            <size height="5"/>
+            <padding left="5">
+                <col crossAlign="START">
+                    <!-- Tools -->
+
+                    <row crossAlign="CENTER">
+                        <size width="32" height="32">
+                            <kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.WidgetIconButton bind:iconIdx="pickaxeIndex" selected="true" disabled="false" on:click="pickaxeEdit" bind:ref="pickaxeButton"/>
+                        </size>
+                        <size width="50" height="16">
+                            <Text bind:text="pickaxeEfficiency" size="8" color="#FFFFFFFF"/>
+                        </size>
+                        <size width="32" height="32">
+                            <kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.WidgetIconButton bind:iconIdx="shovelIndex" selected="true" disabled="false" on:click="shovelEdit" bind:ref="shovelButton"/>
+                        </size>
+                        <size width="50" height="16">
+                            <Text bind:text="shovelEfficiency" size="8" color="#FFFFFFFF"/>
+                        </size>
+                        <size width="32" height="32">
+                            <kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.WidgetIconButton bind:iconIdx="axeIndex" selected="true" disabled="false" on:click="axeEdit" bind:ref="axeButton"/>
+                        </size>
+                        <size width="50" height="16">
+                            <Text bind:text="axeEfficiency" size="8" color="#FFFFFFFF"/>
+                        </size>
+                    </row>
+                    <size height="3"/>
+
+                    <!-- Haste -->
+
+
+                    <row>
+                        <size width="16" height="16">
+                            <ResourceImage location="dungeonsguide:textures/features/precalclist/abilities.png"  x="0" y="192" width="32" height="32" textureWidth="512" textureHeight="512"/>
+                        </size>
+                        <size width="5"/>
+                        <Text text="Haste Level: " color="#FFFFFFFF"/>
+                        <size width="15" height="16">
+                            <kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.WidgetEfficiencyButton selected="false" disabled="false" bind:text="hasteLevel" on:click="hasteEdit" bind:ref="hasteButton"/>
+                        </size>
+                    </row>
+                </col>
+            </padding>
+
+
+            <size height="5"/>
+            <Text text="§lStonking Entrance Settings" size="8" color="#FFFFFFFF"/>
+            <Text text="These are ways that you can enter the wall/ceiling" size="8" color="#FF777777"/>
+            <size height="5"/>
+            <padding left="5">
+                <col crossAlign="START">
+                    <!-- Stonk Enter: stair / teleport down / enderchest / tntpearl -->
+                    <row>
+                        <size width="16" height="16">
+                            <ResourceImage location="dungeonsguide:textures/features/precalclist/abilities.png"  x="64" y="192" width="32" height="32" textureWidth="512" textureHeight="512"/>
+                        </size>
+                        <flexible>
+                            <SimpleToggleButton width="40" height="14" text="Stair + Stonking" bind:enabled="stair"/>
+                        </flexible>
+                    </row>
+                    <row>
+                        <size width="16" height="16">
+                            <ResourceImage location="dungeonsguide:textures/features/precalclist/abilities.png"  x="0" y="224" width="32" height="32" textureWidth="512" textureHeight="512"/>
+                        </size>
+                        <flexible>
+                            <SimpleToggleButton width="40" height="14" text="Teleport Down" bind:enabled="teleportdown"/>
+                        </flexible>
+                    </row>
+                    <row>
+                        <size width="16" height="16">
+                            <ResourceImage location="dungeonsguide:textures/features/precalclist/abilities.png"  x="64" y="224" width="32" height="32" textureWidth="512" textureHeight="512"/>
+                        </size>
+                        <flexible>
+                            <SimpleToggleButton width="40" height="14" text="Enderchest" bind:enabled="enderchest"/>
+                        </flexible>
+                    </row>
+                    <row>
+                        <size width="16" height="16">
+                            <ResourceImage location="dungeonsguide:textures/features/precalclist/abilities.png"  x="32" y="192" width="32" height="32" textureWidth="512" textureHeight="512"/>
+                        </size>
+                        <flexible>
+                            <SimpleToggleButton width="40" height="14" text="Tnt Pearl (broken)" bind:enabled="tntpearl"/>
+                        </flexible>
+                    </row>
+                    <row>
+                        <size width="16" height="16">
+                            <ResourceImage location="dungeonsguide:textures/features/precalclist/abilities.png"  x="32" y="160" width="32" height="32" textureWidth="512" textureHeight="512"/>
+                        </size>
+                        <flexible>
+                            <SimpleToggleButton width="40" height="14" text="Ender pearl" bind:enabled="enderpearl"/>
+                        </flexible>
+                    </row>
+                </col>
+            </padding>
+            <align hAlign="END">
+                <size width="100" height="20">
+                    <RoundButton text="Create New" on:click="create"/>
+                </size>
+            </align>
+        </col>
+    </padding>
+</ScrollablePanel>

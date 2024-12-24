@@ -44,7 +44,26 @@ public class ResourceImage extends AnnotatedExportOnlyWidget {
     public final BindableAttribute<Integer> uvWidth = new BindableAttribute<Integer>(Integer.class);
     @Export(attributeName="uvHeight")
     public final BindableAttribute<Integer> uvHeight = new BindableAttribute<Integer>(Integer.class);
-    
+
+    public ResourceImage() {
+        location.addOnUpdate((a,b) -> onUpdate());
+        uvX.addOnUpdate((a,b) -> onUpdate());
+        uvY.addOnUpdate((a,b) -> onUpdate());
+        textureHeight.addOnUpdate((a,b) -> onUpdate());
+        textureWidth.addOnUpdate((a,b) -> onUpdate());
+        uvWidth.addOnUpdate((a,b) -> onUpdate());
+        uvHeight.addOnUpdate((a,b) -> onUpdate());
+    }
+    public void onUpdate() {
+        if (getDomElement().getWidget() != null) {
+            getDomElement().getChildren().clear();
+            getDomElement().addElement(new Image(
+                    new ResourceLocation(location.getValue()), uvX.getValue(), uvY.getValue(), textureWidth.getValue(), textureHeight.getValue(), uvWidth.getValue(), uvHeight.getValue()
+            ).createDomElement(getDomElement()));
+        }
+    }
+
+
     @Override
     public List<Widget> build(DomElement buildContext) {
         return Collections.singletonList(new Image(

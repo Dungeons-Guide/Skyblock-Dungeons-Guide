@@ -1,0 +1,12 @@
+
+        <RoundRect radius="3" backgroundColor="#FF111111">
+            <padding left="3" right="3" bottom="3" top="3">
+                <size width="82" height="30">
+                    <col>
+                        <Text text="Haste Level" color="#FFFFFFFF" size="8"/>
+                        <size height="3"/>
+                        <WrapGrid minimumWidth="15" gap="1" bind:_="hastes"/>
+                    </col>
+                </size>
+            </padding>
+        </RoundRect>

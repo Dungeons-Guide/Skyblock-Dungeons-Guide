@@ -52,8 +52,16 @@ public class ToggleButton extends AnnotatedWidget implements Renderer {
     @Export(attributeName = "enabled")
     public final BindableAttribute<Boolean> enabled = new BindableAttribute<>(Boolean.class);
 
+    @Export(attributeName = "txtEnabled")
+    public final BindableAttribute<String> txtEnabled = new BindableAttribute<>(String.class);
+
+
     public ToggleButton() {
         super(new ResourceLocation("dungeonsguide:gui/elements/toggleButton.gui"));
+
+        enabled.addOnUpdate((old, neu) -> {
+            txtEnabled.setValue(String.valueOf(neu));
+        });
     }
 
     @Override

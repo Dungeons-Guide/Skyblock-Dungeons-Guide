@@ -1,0 +1,39 @@
+
+    <AbstractButton bind:disabled="disabled" bind:click="click">
+        <size height="15">
+            <bgcolor bind:backgroundColor="backgroundColor">
+                <padding left="1" top="1" right="1" bottom="1">
+                    <bgcolor backgroundColor="#FF333333">
+                        <align vAlign="CENTER" hAlign="CENTER">
+                            <Text bind:text="text" color="#FFAAAAAA" size="8"/>
+                        </align>
+                    </bgcolor>
+                </padding>
+            </bgcolor>
+        </size>
+        <size height="15" slot="pressed">
+            <bgcolor backgroundColor="#FFFFFF00">
+                <padding left="1" top="1" right="1" bottom="1">
+                    <bgcolor backgroundColor="#FF333333">
+                        <align vAlign="CENTER" hAlign="CENTER">
+                            <Text bind:text="text" color="#FFAAAAAA" size="8"/>
+                        </align>
+                    </bgcolor>
+                </padding>
+            </bgcolor>
+        </size>
+        <size height="15" slot="hovered">
+            <bgcolor backgroundColor="#FFFFFFFF">
+                <padding left="1" top="1" right="1" bottom="1">
+                    <bgcolor backgroundColor="#FF333333">
+                        <align vAlign="CENTER" hAlign="CENTER">
+                            <Text bind:text="text" color="#FFAAAAAA" size="8"/>
+                        </align>
+                    </bgcolor>
+                </padding>
+            </bgcolor>
+        </size>
+        <size height="15" slot="disabled">
+            <Placeholder/>
+        </size>
+    </AbstractButton>

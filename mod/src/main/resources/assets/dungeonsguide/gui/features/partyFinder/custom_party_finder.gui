@@ -175,9 +175,7 @@
                                                     </flexible>
                                                     <flexible>
                                                         <align vAlign="CENTER" hAlign="END">
-                                                            <size width="50">
-                                                                <SimpleToggleButton bind:enabled="filterUnjoinable"/>
-                                                            </size>
+                                                            <SimpleToggleButton width="50" height="20" bind:enabled="filterUnjoinable"/>
                                                         </align>
                                                     </flexible>
                                                 </row>

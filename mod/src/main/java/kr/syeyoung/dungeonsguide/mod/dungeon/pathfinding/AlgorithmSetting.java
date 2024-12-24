@@ -1,10 +1,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding;
 
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import lombok.With;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.*;
@@ -14,7 +12,7 @@ import java.io.IOException;
 
 @Getter
 @Data
-public class AlgorithmSettings implements Cloneable {
+public class AlgorithmSetting implements Cloneable {
     @Data @AllArgsConstructor
     public static class ToolSettings {
         private final ItemTool tool;
@@ -72,7 +70,7 @@ public class AlgorithmSettings implements Cloneable {
     private final double shovelSpeed;
     private final double axeSpeed;
 
-    public AlgorithmSettings(NBTTagCompound nbt) {
+    public AlgorithmSetting(NBTTagCompound nbt) {
         if (nbt.getInteger("version") != 2) throw new IllegalArgumentException("Unexpected Algo Settings version: "+nbt.getInteger("version")+" / Expected: 2");
         this.pickaxe = ToolSettings.deserialize(nbt.getTag("pickaxe"));
         this.shovel = ToolSettings.deserialize(nbt.getTag("shovel"));
@@ -95,7 +93,7 @@ public class AlgorithmSettings implements Cloneable {
         this.axeSpeed = axe == null ? -1 : axe.getSpeed(hasteLevel) / 30.0;
     }
 
-    public AlgorithmSettings(ToolSettings pickaxe, ToolSettings shovel, ToolSettings axe, int hasteLevel, boolean stonkDown, boolean stonkTeleport, boolean stonkEChest, boolean routeEtherwarp, int maxStonk, boolean enderpearl, boolean tntpearl, double etherwarpOffset, int etherwarpRadius, double etherwarpLeeway) {
+    public AlgorithmSetting(ToolSettings pickaxe, ToolSettings shovel, ToolSettings axe, int hasteLevel, boolean stonkDown, boolean stonkTeleport, boolean stonkEChest, boolean routeEtherwarp, int maxStonk, boolean enderpearl, boolean tntpearl, double etherwarpOffset, int etherwarpRadius, double etherwarpLeeway) {
         this.pickaxe = pickaxe;
         this.shovel = shovel;
         this.axe = axe;
@@ -140,15 +138,15 @@ public class AlgorithmSettings implements Cloneable {
         return nbt;
     }
 
-    public static AlgorithmSettings deserialize(DataInputStream dataInputStream) throws IOException {
+    public static AlgorithmSetting deserialize(DataInputStream dataInputStream) throws IOException {
         NBTTagCompound nbtTagCompound = CompressedStreamTools.read(dataInputStream, new NBTSizeTracker(10000));
-        return new AlgorithmSettings(nbtTagCompound);
+        return new AlgorithmSetting(nbtTagCompound);
     }
 
     @Override
-    public AlgorithmSettings clone() {
+    public AlgorithmSetting clone() {
         try {
-            AlgorithmSettings clone = (AlgorithmSettings) super.clone();
+            AlgorithmSetting clone = (AlgorithmSetting) super.clone();
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();

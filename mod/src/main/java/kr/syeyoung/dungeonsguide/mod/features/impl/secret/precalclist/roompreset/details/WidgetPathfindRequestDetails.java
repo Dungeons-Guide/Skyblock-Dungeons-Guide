@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.details;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetAbilitySettings;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
@@ -25,12 +25,12 @@ public class WidgetPathfindRequestDetails extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "roomState")
     public final BindableAttribute<String> roomState = new BindableAttribute<>(String.class);
 
-    @Bind(variableName = "algorithmSettings")
-    public final BindableAttribute<Widget> algorithmSettings = new BindableAttribute<>(Widget.class);
+    @Bind(variableName = "algorithmSetting")
+    public final BindableAttribute<Widget> algorithmSetting = new BindableAttribute<>(Widget.class);
 
 
     private PathfindRequest request;
-    private BindableAttribute<AlgorithmSettings> algorithmSettingsBindableAttribute = new BindableAttribute<>(AlgorithmSettings.class);
+    private BindableAttribute<AlgorithmSetting> algorithmSettingBindableAttribute = new BindableAttribute<>(AlgorithmSetting.class);
     public WidgetPathfindRequestDetails(PathfindRequest request) {
         super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequestdetails.gui"));
         this.request = request;
@@ -38,8 +38,8 @@ public class WidgetPathfindRequestDetails extends AnnotatedImportOnlyWidget {
         this.hash.setValue(request.getHash());
         String mech = request.getOpenMech().stream().sorted(String::compareTo).collect(Collectors.joining(","));
         this.roomState.setValue(mech.isEmpty() ? "(empty)" : mech);
-        this.algorithmSettingsBindableAttribute.setValue(request.getAlgorithmSettings());
-        this.algorithmSettings.setValue(new WidgetAbilitySettings(this.algorithmSettingsBindableAttribute));
+        this.algorithmSettingBindableAttribute.setValue(request.getAlgorithmSetting());
+        this.algorithmSetting.setValue(new WidgetAbilitySettings(this.algorithmSettingBindableAttribute));
     }
 
     @On(functionName = "copyId")

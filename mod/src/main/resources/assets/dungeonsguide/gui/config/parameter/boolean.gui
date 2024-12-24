@@ -18,5 +18,5 @@
   -->
 
 <size width="40" height="14">
-        <SimpleToggleButton bind:enabled="enabled"/>
+        <SimpleToggleButton width="40" height="14" bind:enabled="enabled"/>
 </size>

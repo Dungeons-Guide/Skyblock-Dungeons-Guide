@@ -20,7 +20,7 @@
     <size height="28">
         <ScrollablePanel direction="HORIZONTAL">
             <size width="248" height="20">
-                <slot bind:_="algorithmSettings"/>
+                <slot bind:_="algorithmSetting"/>
             </size>
         </ScrollablePanel>
     </size>

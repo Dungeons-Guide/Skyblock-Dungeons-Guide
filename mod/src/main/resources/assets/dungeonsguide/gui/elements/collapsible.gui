@@ -1,0 +1,6 @@
+<wrapper open="false">
+    <SelectiveContainer bind:visible="open">
+        <slot bind:child="_" slot="true"/>
+        <slot slot="false"/>
+    </SelectiveContainer>
+</wrapper>

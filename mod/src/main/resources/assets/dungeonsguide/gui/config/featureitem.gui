@@ -62,7 +62,7 @@
                                     <size width="0" height="0" slot="hide"/>
                                     <size width="45" height="14" slot="show">
                                         <padding left="5">
-                                            <SimpleToggleButton bind:enabled="isEnabled"/>
+                                            <SimpleToggleButton width="40" height="14" bind:enabled="isEnabled"/>
                                         </padding>
                                     </size>
                                 </SelectiveContainer>

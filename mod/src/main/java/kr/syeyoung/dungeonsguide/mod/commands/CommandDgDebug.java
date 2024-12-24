@@ -40,7 +40,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventHolder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -49,9 +49,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.Preset;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.guiv2.view.TestView;
@@ -72,7 +70,6 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -322,22 +319,22 @@ public class CommandDgDebug extends CommandBase {
 
         UUID uuid = UUID.randomUUID();
         List<PathfindPrecalculation> precalculations=  new ArrayList<>();
-        AlgorithmSettings algorithmSettings = null;
+        AlgorithmSetting algorithmSetting = null;
         for (File pfResult : new File(Main.getConfigDir(), "pfResult").listFiles()) {
             if (!pfResult.getName().endsWith(".pfres")) continue;
             System.out.println(pfResult);
             PathfindPrecalculation precalculation = MigrationUtils.migrate(pfResult, new File(targetDir, pfResult.getName()), uuid.toString());
             PathfindResultRegistry.getINSTANCE().register(precalculation);
-            algorithmSettings = precalculation.getAlgorithmSettings();
+            algorithmSetting = precalculation.getAlgorithmSetting();
             precalculations.add(precalculation);
         }
-        if (algorithmSettings == null) {
+        if (algorithmSetting == null) {
             throw new IllegalStateException("No files in pfresult dir");
         }
 
         PathfindPreset preset = new PathfindPreset();
         preset.setPresetName("Migration From Old Pathfind Results");
-        preset.setAlgorithmSettings(algorithmSettings);
+        preset.setAlgorithmSetting(algorithmSetting);
         preset.setEditable(false);
         preset.setOrigin("Dungeons Guide Precalculation Service v1");
 
@@ -618,7 +615,7 @@ public class CommandDgDebug extends CommandBase {
                             open.add(openMechList.get(i1));
                         }
                     }
-                    requests.add(new PathfindRequest(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings(), dungeonRoomInfo, open, offsetVec3s));
+                    requests.add(new PathfindRequest(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSetting(), dungeonRoomInfo, open, offsetVec3s));
                 }
             }
 

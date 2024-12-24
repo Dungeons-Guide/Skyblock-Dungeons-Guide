@@ -45,7 +45,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindStrategy;
 import lombok.AllArgsConstructor;
@@ -189,7 +189,7 @@ public class DungeonRoom implements IPathfindWorld {
             return null;
         PathfinderExecutor executor;
         if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID_SMART) {
-            executor = new PathfinderExecutor(new FineGridStonkingBFS(algorithmSettings), pos, this);
+            executor = new PathfinderExecutor(new FineGridStonkingBFS(algorithmSetting), pos, this);
         } else {
             return  null;
         }
@@ -251,7 +251,7 @@ public class DungeonRoom implements IPathfindWorld {
         this.doorsAndStates = doorsAndStates;
         tryRematch();
 
-        algorithmSettings = context.getAlgorithmSettings();
+        algorithmSetting = context.getAlgorithmSetting();
     }
 
     public DungeonRoom(DungeonContext context) {
@@ -310,7 +310,7 @@ public class DungeonRoom implements IPathfindWorld {
         this.roomMatcher.setMatch(dungeonRoomInfo);
         this.roomMatcher.setRotation(0);
 
-        algorithmSettings = context.getAlgorithmSettings();
+        algorithmSetting = context.getAlgorithmSetting();
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
 
 
@@ -520,7 +520,7 @@ public class DungeonRoom implements IPathfindWorld {
     private final int lenx, leny, lenz;
     private static final float playerWidth = 0.25f;
 
-    private AlgorithmSettings algorithmSettings;
+    private AlgorithmSetting algorithmSetting;
 
 
     private int isNoInstaBreak(IBlockState iBlockState, BlockPos pos) {
@@ -528,17 +528,17 @@ public class DungeonRoom implements IPathfindWorld {
         if (b == Blocks.air) return 0;
         if (b.getBlockHardness(getCachedWorld(), pos) < 0) {
             return 99;
-        } else if (algorithmSettings.getPickaxeSpeed() > 0 &&
-                (((algorithmSettings.getPickaxe().getTool().canHarvestBlock(b)) &&
-                b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getPickaxeSpeed() / 30.0) ||
-                (b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getPickaxeSpeed() / 100.0))
+        } else if (algorithmSetting.getPickaxeSpeed() > 0 &&
+                (((algorithmSetting.getPickaxe().getTool().canHarvestBlock(b)) &&
+                b.getBlockHardness(getCachedWorld(), pos) <= algorithmSetting.getPickaxeSpeed() / 30.0) ||
+                (b.getBlockHardness(getCachedWorld(), pos) <= algorithmSetting.getPickaxeSpeed() / 100.0))
         ) {
-        } else if (algorithmSettings.getShovelSpeed() > 0
+        } else if (algorithmSetting.getShovelSpeed() > 0
                 && b.isToolEffective("shovel", iBlockState)
-                && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getShovelSpeed()) {
-        } else if (algorithmSettings.getAxeSpeed() > 0 && b.isToolEffective("axe", iBlockState) && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getAxeSpeed()) {
+                && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSetting.getShovelSpeed()) {
+        } else if (algorithmSetting.getAxeSpeed() > 0 && b.isToolEffective("axe", iBlockState) && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSetting.getAxeSpeed()) {
         } else {
-            return algorithmSettings.getPickaxe() != null && algorithmSettings.getPickaxe().getTool().canHarvestBlock(b) ? 1 : 1;
+            return algorithmSetting.getPickaxe() != null && algorithmSetting.getPickaxe().getTool().canHarvestBlock(b) ? 1 : 1;
         }
         return 0;
     }

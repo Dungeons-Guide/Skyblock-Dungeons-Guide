@@ -1,7 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.details;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetAbilitySettings;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
@@ -28,8 +27,8 @@ public class WidgetPathfindResultDetails extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> generatedFrom = new BindableAttribute<>(String.class);
     @Bind(variableName = "storedAt")
     public final BindableAttribute<String> storedAt = new BindableAttribute<>(String.class);
-    @Bind(variableName = "algorithmSettings")
-    public final BindableAttribute<Widget> algorithmSettings = new BindableAttribute<>(Widget.class);
+    @Bind(variableName = "algorithmSetting")
+    public final BindableAttribute<Widget> algorithmSetting = new BindableAttribute<>(Widget.class);
     @Bind(variableName = "targetHash")
     public final BindableAttribute<String> targetHash = new BindableAttribute<>(String.class);
     @Bind(variableName = "targetId")
@@ -39,7 +38,7 @@ public class WidgetPathfindResultDetails extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "roomState")
     public final BindableAttribute<String> roomState = new BindableAttribute<>(String.class);
 
-    private final BindableAttribute<AlgorithmSettings> algorithmSettingsBindableAttribute = new BindableAttribute<>(AlgorithmSettings.class);
+    private final BindableAttribute<AlgorithmSetting> algorithmSettingBindableAttribute = new BindableAttribute<>(AlgorithmSetting.class);
 
     private final Runnable onDelete;
     private PathfindPrecalculation linked;
@@ -53,8 +52,8 @@ public class WidgetPathfindResultDetails extends AnnotatedImportOnlyWidget {
         this.id.setValue(linkedResult.getId());
         this.generatedFrom.setValue(linkedResult.getGeneratedFrom());
         this.storedAt.setValue(linkedResult.getFile());
-        this.algorithmSettingsBindableAttribute.setValue(linkedResult.getAlgorithmSettings());
-        this.algorithmSettings.setValue(new WidgetAbilitySettings(this.algorithmSettingsBindableAttribute));
+        this.algorithmSettingBindableAttribute.setValue(linkedResult.getAlgorithmSetting());
+        this.algorithmSetting.setValue(new WidgetAbilitySettings(this.algorithmSettingBindableAttribute));
         this.targetHash.setValue(linkedResult.getTargetHash());
         this.targetId.setValue(linkedResult.getTargetId().substring(36, Math.min(66, linkedResult.getTargetId().length())));
         this.roomUID.setValue(linkedResult.getRoomUID().toString());

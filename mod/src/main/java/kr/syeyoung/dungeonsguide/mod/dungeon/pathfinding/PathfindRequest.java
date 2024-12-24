@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
@@ -40,13 +39,13 @@ import java.util.stream.Collectors;
 
 @Getter @Setter
 public class PathfindRequest {
-    private final AlgorithmSettings algorithmSettings;
+    private final AlgorithmSetting algorithmSetting;
     private final DungeonRoomInfo dungeonRoomInfo;
     private final Set<String> openMech; // excludes superboomable things.
     private final List<OffsetVec3> target;
 
-    public PathfindRequest(AlgorithmSettings algorithmSettings, DungeonRoomInfo dungeonRoomInfo, Set<String> openMech, List<OffsetVec3> target) {
-        this.algorithmSettings = algorithmSettings;
+    public PathfindRequest(AlgorithmSetting algorithmSetting, DungeonRoomInfo dungeonRoomInfo, Set<String> openMech, List<OffsetVec3> target) {
+        this.algorithmSetting = algorithmSetting;
         this.dungeonRoomInfo = dungeonRoomInfo;
         this.openMech = openMech;
         this.target = target;
@@ -103,7 +102,7 @@ public class PathfindRequest {
         // export algorithm settings
         dataOutputStream.writeUTF("ALGO");
 
-        NBTTagCompound tagCompound = algorithmSettings.serializeToNBT();
+        NBTTagCompound tagCompound = algorithmSetting.serializeToNBT();
         CompressedStreamTools.write(tagCompound, dataOutputStream);
 
         // export targets

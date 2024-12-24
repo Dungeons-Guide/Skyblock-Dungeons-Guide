@@ -4,10 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import lombok.Data;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.nbt.CompressedStreamTools;
 
 import java.io.*;
@@ -18,14 +17,14 @@ public class RoomPreset implements Cloneable {
     private PathfindPreset parent;
     private UUID roomId;
 
-    private AlgorithmSettings algorithmSettings;
+    private AlgorithmSetting algorithmSetting;
     private Set<String> precalculations = new HashSet<>();
 
     public RoomPreset(PathfindPreset parent, UUID roomId) {
         this.parent = parent;
         this.roomId = roomId;
 
-        this.algorithmSettings = null;
+        this.algorithmSetting = null;
     }
 
     public void addPrecalculation(String precalculation) {
@@ -41,12 +40,19 @@ public class RoomPreset implements Cloneable {
         return Collections.unmodifiableSet(precalculations);
     }
 
-    public AlgorithmSettings getAlgorithmSettings() {
-        return algorithmSettings == null ? parent.getAlgorithmSettings() : algorithmSettings;
+    public AlgorithmSetting getAlgorithmSetting() {
+        return algorithmSetting == null ? parent.getAlgorithmSetting() : algorithmSetting;
+    }
+    public AlgorithmSetting getAlgorithmSettingOverride() {
+        return algorithmSetting;
     }
 
-    public boolean isOverridingParentAlgorithmSettings() {
-        return algorithmSettings != null;
+    public void setAlgorithmSettingOverride(AlgorithmSetting algorithmSetting) {
+        this.algorithmSetting = algorithmSetting;
+    }
+
+    public boolean isOverridingParentAlgorithmSetting() {
+        return algorithmSetting != null;
     }
 
     protected void setParent(PathfindPreset parent) {
@@ -59,18 +65,18 @@ public class RoomPreset implements Cloneable {
             roomPreset.precalculations.add(element.getAsString());
         }
 //        roomPreset.tspCache = jsonObject.get("tspCache").getAsString();
-        if (jsonObject.has("algorithmSettings")) {
+        if (jsonObject.has("algorithmSetting")) {
 
-            String algoSettings = jsonObject.get("algorithmSettings").getAsString();
+            String algoSettings = jsonObject.get("algorithmSetting").getAsString();
             ByteArrayInputStream bais = new ByteArrayInputStream(Base64.getDecoder().decode(algoSettings));
             DataInputStream dataInputStream = new DataInputStream(bais);
             try {
-                roomPreset.algorithmSettings = AlgorithmSettings.deserialize(dataInputStream);
+                roomPreset.algorithmSetting = AlgorithmSetting.deserialize(dataInputStream);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            roomPreset.algorithmSettings = null;
+            roomPreset.algorithmSetting = null;
         }
         return roomPreset;
     }
@@ -86,13 +92,13 @@ public class RoomPreset implements Cloneable {
 //        res.addProperty("tspCache", tspCache);
 
         try {
-            if (algorithmSettings != null) {
+            if (algorithmSetting != null) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 DataOutputStream dataOutputStream = new DataOutputStream(baos);
-                CompressedStreamTools.write(algorithmSettings.serializeToNBT(), dataOutputStream);
+                CompressedStreamTools.write(algorithmSetting.serializeToNBT(), dataOutputStream);
                 dataOutputStream.flush();
                 String algoSettings = Base64.getEncoder().encodeToString(baos.toByteArray());
-                res.addProperty("algorithmSettings", algoSettings);
+                res.addProperty("algorithmSetting", algoSettings);
             }
 
         } catch (IOException e) {
@@ -109,7 +115,7 @@ public class RoomPreset implements Cloneable {
             roomPreset.precalculations = new HashSet<>(this.precalculations);
 //            roomPreset.tspCache = null;
             roomPreset.parent = null;
-            roomPreset.algorithmSettings = this.algorithmSettings;
+            roomPreset.algorithmSetting = this.algorithmSetting;
             return roomPreset;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);

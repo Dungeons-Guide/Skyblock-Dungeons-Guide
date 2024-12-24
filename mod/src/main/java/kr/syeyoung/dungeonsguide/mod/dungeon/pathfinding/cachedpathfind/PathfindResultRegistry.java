@@ -2,7 +2,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind;
 
 import com.sun.nio.file.ExtendedWatchEventModifier;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithmSetting.AlgorithmSettingRegistry;
 import lombok.Getter;
 
 import java.io.File;
@@ -86,6 +86,9 @@ public class PathfindResultRegistry {
             byId2.put(precalculation.getTargetId(), new ArrayList<>());
         byId2.get(precalculation.getTargetId()).add(precalculation);
         loaded.add(precalculation);
+
+
+        AlgorithmSettingRegistry.registerAlgorithmSetting(precalculation.getAlgorithmSetting());
     }
 
     public PathfindPrecalculation getById(String id) {

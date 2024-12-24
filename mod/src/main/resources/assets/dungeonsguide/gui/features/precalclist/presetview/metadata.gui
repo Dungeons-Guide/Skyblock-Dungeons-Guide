@@ -47,6 +47,17 @@
             </row>
             <size height="5"/>
             <row>
+                <Text text="Editable: " color="#FFFFFFFF"/>
+                <SelectiveContainer bind:visible="editable">
+                    <Text text="Yes" color="#FF00FF00" slot="true"/>
+                    <row slot="false">
+                        <Text text="No" color="#FFFF0000"/>
+                        <Text text=" (create clone and edit that one)" color="#FF777777"/>
+                    </row>
+                </SelectiveContainer>
+            </row>
+            <size height="5"/>
+            <row>
                 <Text text="Default Pathfind Ability Settings: " color="#FFFFFFFF"/>
                 <size width="3"/>
                 <flexible>
@@ -59,9 +70,12 @@
                     </size>
                 </flexible>
                 <size width="5"/>
-                <size height="15" width="150">
-                    <RoundButton text="Edit Default Ability Settings" on:click="editAbilitySettings"/>
-                </size>
+                <SelectiveContainer bind:visible="editable">
+                    <size height="15" width="150" slot="true">
+                        <RoundButton text="Edit Default Ability Settings" on:click="editAbilitySettings"/>
+                    </size>
+                    <size width="0" height="0" slot="false"/>
+                </SelectiveContainer>
             </row>
             <size height="5"/>
             <row>

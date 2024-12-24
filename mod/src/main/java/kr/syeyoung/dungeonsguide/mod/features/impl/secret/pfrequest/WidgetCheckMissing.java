@@ -197,7 +197,7 @@ public class WidgetCheckMissing extends AnnotatedImportOnlyWidget {
                             open.add(openMechList.get(i1));
                         }
                     }
-                    requests.add(new PathfindRequest(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings(), dungeonRoomInfo, open, offsetVec3s));
+                    requests.add(new PathfindRequest(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSetting(), dungeonRoomInfo, open, offsetVec3s));
                 }
             }
 

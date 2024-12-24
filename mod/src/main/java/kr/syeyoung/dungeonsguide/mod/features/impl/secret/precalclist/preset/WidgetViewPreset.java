@@ -51,8 +51,7 @@ public class WidgetViewPreset extends AnnotatedImportOnlyWidget {
 
     }
 
-    @Override
-    public void onMount() {
+    public void recalc() {
 
         roompreset.setValue(null);
         crunchData.setValue("calculating");
@@ -72,6 +71,11 @@ public class WidgetViewPreset extends AnnotatedImportOnlyWidget {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public void onMount() {
+        recalc();
     }
 
     public void notifyDelete(PathfindPreset preset) {

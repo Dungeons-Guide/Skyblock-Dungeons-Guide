@@ -1,0 +1,15 @@
+<row crossAlign="START">
+    <flexible>
+        <size height="20">
+            <slot bind:_="ability"/>
+        </size>
+    </flexible>
+    <size width="5"/>
+    <size width="35" height="20">
+        <RoundButton text="Select" on:click="select"/>
+    </size>
+    <size width="5"/>
+    <size width="80" height="20">
+        <RoundButton text="Create From" on:click="derive"/>
+    </size>
+</row>

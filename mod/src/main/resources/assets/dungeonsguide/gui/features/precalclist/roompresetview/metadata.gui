@@ -58,14 +58,25 @@
                     <size height="28">
                         <ScrollablePanel direction="HORIZONTAL">
                             <size width="248" height="20">
-                                <slot bind:_="algorithmSettings"/>
+                                <slot bind:_="algorithmSetting"/>
                             </size>
                         </ScrollablePanel>
                     </size>
                 </flexible>
-                <size height="15" width="150">
-                    <RoundButton text="Edit Override Ability Settings"/>
-                </size>
+            </row>
+            <row mainAlign="END">
+                <SelectiveContainer bind:visible="editable">
+                    <row slot="true">
+                        <size height="15" width="150">
+                            <RoundButton text="Edit Override Ability Settings" on:click="editOverrideAbilitySettings"/>
+                        </size>
+                        <size width="5"/>
+                        <size height="15" width="100">
+                            <RoundButton text="Remove Override" on:click="removeOverrideAbilitySettings"/>
+                        </size>
+                    </row>
+                    <size width="0" height="0" slot="false"/>
+                </SelectiveContainer>
             </row>
             <size height="3"/>
             <size height="15" width="70">

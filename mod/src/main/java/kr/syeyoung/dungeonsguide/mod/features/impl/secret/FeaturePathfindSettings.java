@@ -22,7 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCEnum;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import lombok.Getter;
@@ -63,11 +63,11 @@ public class FeaturePathfindSettings extends SimpleFeature {
         addParameter("leeway_etherwarp", new FeatureParameter<Double>("leeway_etherwarp", "Etherwarp calculation block leeway", "Bigger number = less tight etherwarp (etherwarp target away from edge), smaller number = tighter etherwarp (right on the edge of block). Default is 0.0625 (1/16 of block). Range is [0, inf).", 0.0625, new TCDouble()));
     }
 
-    public AlgorithmSettings getAlgorithmSettings() {
-        return new AlgorithmSettings(
-                !isPickaxe() ? null : new AlgorithmSettings.ToolSettings(this.<Material>getParameter("pickaxe_type").getValue().getPickaxe(), this.<Integer>getParameter("pickaxe_efficiency").getValue()),
-                !isShovel() ? null : new AlgorithmSettings.ToolSettings(this.<Material>getParameter("shovel_type").getValue().getShovel(), this.<Integer>getParameter("shovel_efficiency").getValue()),
-                !isAxe() ? null : new AlgorithmSettings.ToolSettings(this.<Material>getParameter("axe_type").getValue().getShovel(), this.<Integer>getParameter("axe_efficiency").getValue()),
+    public AlgorithmSetting getAlgorithmSetting() {
+        return new AlgorithmSetting(
+                !isPickaxe() ? null : new AlgorithmSetting.ToolSettings(this.<Material>getParameter("pickaxe_type").getValue().getPickaxe(), this.<Integer>getParameter("pickaxe_efficiency").getValue()),
+                !isShovel() ? null : new AlgorithmSetting.ToolSettings(this.<Material>getParameter("shovel_type").getValue().getShovel(), this.<Integer>getParameter("shovel_efficiency").getValue()),
+                !isAxe() ? null : new AlgorithmSetting.ToolSettings(this.<Material>getParameter("axe_type").getValue().getShovel(), this.<Integer>getParameter("axe_efficiency").getValue()),
                 this.<Integer>getParameter("haste").getValue(),
                 isStonkStair(),
                 isStonkTeleport(),

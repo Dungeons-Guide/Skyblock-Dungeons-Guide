@@ -1,20 +1,15 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.sun.nio.file.ExtendedWatchEventModifier;
-import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithmSetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class PathfindPresetRegistry {
     @Getter
@@ -28,6 +23,13 @@ public class PathfindPresetRegistry {
         if (presetsById.containsKey(preset.getPresetId())) throw new IllegalStateException("Dupliucate preset:: "+preset.getPresetId());
         this.loadedPresets.add(preset);
         this.presetsById.put(preset.getPresetId(), preset);
+
+        AlgorithmSettingRegistry.registerAlgorithmSetting(preset.getAlgorithmSetting());
+        for (RoomPreset value : preset.getPresets().values()) {
+            if (value.isOverridingParentAlgorithmSetting())
+                AlgorithmSettingRegistry.registerAlgorithmSetting(value.getAlgorithmSetting());
+        }
+
     }
 
     public PathfindPreset getPreset(String presetId) {

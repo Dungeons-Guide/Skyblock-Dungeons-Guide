@@ -1,0 +1,6 @@
+<AbstractButton bind:click="click" bind:disabled="disabled">
+    <ResourceImage location="dungeonsguide:textures/features/precalclist/abilities.png" bind:x="x" bind:y="y" width="32" height="32" textureWidth="512" textureHeight="512"/>
+    <ResourceImage location="dungeonsguide:textures/features/precalclist/abilities.png" bind:x="hoverX" bind:y="hoverY" width="32" height="32" textureWidth="512" textureHeight="512" slot="hovered"/>
+    <ResourceImage location="dungeonsguide:textures/features/precalclist/abilities.png" bind:x="clickX" bind:y="clickY" width="32" height="32" textureWidth="512" textureHeight="512" slot="pressed"/>
+    <ResourceImage location="dungeonsguide:textures/features/precalclist/abilities.png" bind:x="disableX" bind:y="disableY" width="32" height="32" textureWidth="512" textureHeight="512" slot="disabled"/>
+</AbstractButton>

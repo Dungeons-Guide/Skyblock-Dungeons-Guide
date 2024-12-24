@@ -1,11 +1,13 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
 import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPresetRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetAbilitySettings;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.WidgetCreateAbilitySettings;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.modal.WidgetModalChooseAbilitySettings;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.Modal;
@@ -47,8 +49,10 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "abilitySettings")
     public final BindableAttribute<Widget> abilitySettings = new BindableAttribute<>(Widget.class);
 
+    @Bind(variableName = "editable")
+    public final BindableAttribute<String> editable = new BindableAttribute<>(String.class);
 
-    private BindableAttribute<AlgorithmSettings> algorithmSettingsBindableAttribute = new BindableAttribute<>(AlgorithmSettings.class);
+    private BindableAttribute<AlgorithmSetting> algorithmSettingBindableAttribute = new BindableAttribute<>(AlgorithmSetting.class);
 
     public WidgetPresetMetadata(PathfindPreset preset, WidgetViewPreset widgetViewPreset) {
         super(new ResourceLocation("dungeonsguide:gui/features/precalclist/presetview/metadata.gui"));
@@ -61,8 +65,9 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
         this.generatedAt.setValue(dateTimeFormatter.format(preset.getGeneratedAt().atZone(ZoneId.systemDefault())));
         this.origin.setValue(preset.getOrigin());
         this.filename.setValue(Main.getConfigDir().toPath().relativize(preset.getFile().toPath()).toString());
-        algorithmSettingsBindableAttribute.setValue(preset.getAlgorithmSettings());
-        this.abilitySettings.setValue(new WidgetAbilitySettings(algorithmSettingsBindableAttribute));
+        algorithmSettingBindableAttribute.setValue(preset.getAlgorithmSetting());
+        this.abilitySettings.setValue(new WidgetAbilitySettings(algorithmSettingBindableAttribute));
+        this.editable.setValue(preset.isEditable() ? "true" : "false");
     }
 
 
@@ -122,6 +127,14 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
     public void editAbilitySettings() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 
+
+        PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(400, 300, "Choose New Default Algorithm Setting", new WidgetModalChooseAbilitySettings(), true), (a) -> {
+            if (a != null) {
+                this.algorithmSettingBindableAttribute.setValue((AlgorithmSetting) a);
+                preset.setAlgorithmSetting((AlgorithmSetting) a);
+                this.parent.recalc();
+            }
+        });
     }
 
     @On(functionName = "requestMissing")

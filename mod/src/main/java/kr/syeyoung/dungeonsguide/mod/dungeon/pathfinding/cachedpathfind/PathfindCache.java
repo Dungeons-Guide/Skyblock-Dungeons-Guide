@@ -18,33 +18,20 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind;
 
-import io.netty.buffer.ByteBuf;
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.init.Items;
-import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.input.CountingInputStream;
-import sun.nio.ch.DirectBuffer;
 
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channel;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.zip.DeflaterInputStream;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
 public class PathfindCache {
@@ -55,7 +42,7 @@ public class PathfindCache {
     private File file;
 
     @Getter
-    private AlgorithmSettings algorithmSettings;
+    private AlgorithmSetting algorithmSetting;
     @Getter
     private List<OffsetVec3> targets;
 
@@ -79,7 +66,7 @@ public class PathfindCache {
             if (!magicValue.equals("ALGO")) throw new IllegalStateException("Expected magic value ALGO Instead got "+magicValue);
 //            dis.skipBytes(22); // skip algorithm settings
 
-            AlgorithmSettings current = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
+            AlgorithmSetting current = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSetting();
             boolean epearl = dis.readBoolean();
             boolean tntpearl = dis.readBoolean();
             boolean stonkdown = dis.readBoolean();
@@ -91,7 +78,7 @@ public class PathfindCache {
 
             double leeway = Math.round(Float.intBitsToFloat(Integer.reverseBytes(dis.readInt())) * 1000000.0) / 1000000.0;
             double offset = Math.round(Float.intBitsToFloat(Integer.reverseBytes(dis.readInt())) * 1000000.0) / 1000000.0;
-            this.algorithmSettings = new AlgorithmSettings(
+            this.algorithmSetting = new AlgorithmSetting(
                     current.getPickaxe(),
                     current.getShovel(),
                     current.getAxe(),

@@ -68,6 +68,16 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
     )
     public final BindableAttribute<Integer> placeholderColor = new BindableAttribute<>(Integer.class, 0xFFAAAAAA);
 
+    @Export(
+            attributeName = "focusedBorderColor"
+    )
+    public final BindableAttribute<Integer> focusedBorderColor = new BindableAttribute<>(Integer.class, 0xFFFFFFFF);
+
+    @Export(
+            attributeName = "borderColor"
+    )
+    public final BindableAttribute<Integer> borderColor = new BindableAttribute<>(Integer.class, 0xFF808080);
+
 
     private int selectionStart = 0;
     private int selectionEnd = 0;
@@ -101,7 +111,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         Size bounds = getDomElement().getSize();
 
-        context.drawRect(0,0,bounds.getWidth(), bounds.getHeight(), getDomElement().isFocused() ? Color.white.getRGB() : Color.gray.getRGB());
+        context.drawRect(0,0,bounds.getWidth(), bounds.getHeight(), getDomElement().isFocused() ? focusedBorderColor.getValue() : borderColor.getValue());
         context.drawRect(1,1,bounds.getWidth() - 1, bounds.getHeight() - 1, Color.black.getRGB());
 
         Minecraft mc = Minecraft.getMinecraft();

@@ -1,0 +1,25 @@
+
+        <RoundRect radius="3" backgroundColor="#FF111111">
+            <padding left="3" right="3" bottom="3" top="3">
+                <size width="82" height="90">
+                <row>
+                    <flexible>
+                    <col bind:_="tools"/>
+                    </flexible>
+                    <size width="3"/>
+                    <line dir="VERTICAL" thickness="1" color="#FFFFFFFF"/>
+                    <size width="3"/>
+                    <size width="60">
+                        <col>
+                            <Text text="Efficiency" color="#FFFFFFFF" size="8"/>
+                            <size height="3"/>
+                            <SelectiveContainer bind:visible="efficiencyOpen">
+                                <WrapGrid minimumWidth="15" gap="1" slot="open" bind:_="efficiencies"/>
+                                <Text text="Choose tool" color="#FFcccc00" slot="close"/>
+                            </SelectiveContainer>
+                        </col>
+                    </size>
+                </row>
+                </size>
+            </padding>
+        </RoundRect>

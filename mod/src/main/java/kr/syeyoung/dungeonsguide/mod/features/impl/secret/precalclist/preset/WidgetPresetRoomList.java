@@ -98,7 +98,7 @@ public class WidgetPresetRoomList extends AnnotatedImportOnlyWidget {
         OVERRIDEN("Filter: Show Rooms with ability overriden") {
             @Override
             public boolean test(AdditionalInfoCaculatedDungeonRoomInfo additionalInfoCaculatedDungeonRoomInfo) {
-                return additionalInfoCaculatedDungeonRoomInfo.getRoomPreset().isOverridingParentAlgorithmSettings();
+                return additionalInfoCaculatedDungeonRoomInfo.getRoomPreset().isOverridingParentAlgorithmSetting();
             }
         };
 

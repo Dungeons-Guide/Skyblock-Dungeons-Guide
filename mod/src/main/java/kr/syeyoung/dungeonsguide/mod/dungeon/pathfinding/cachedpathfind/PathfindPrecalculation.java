@@ -1,7 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSettings;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
 import lombok.Data;
 import org.apache.commons.io.input.CountingInputStream;
@@ -23,7 +23,7 @@ public class PathfindPrecalculation {
 
     private String generatedFrom;
 
-    private AlgorithmSettings algorithmSettings;
+    private AlgorithmSetting algorithmSetting;
 
     private String targetHash;
     private String targetId;
@@ -82,7 +82,7 @@ public class PathfindPrecalculation {
 
 
             expectMagicValue(dis, "ALGO");
-            algorithmSettings = AlgorithmSettings.deserialize(dis);
+            algorithmSetting = AlgorithmSetting.deserialize(dis);
 
             expectMagicValue(dis, "TRGT");
             int targetSize = dis.readInt();

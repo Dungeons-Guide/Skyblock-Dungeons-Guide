@@ -19,14 +19,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.WidgetMissingPrecalculations;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.Vec3;
 
 import java.awt.*;
 import java.util.*;
@@ -148,7 +143,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
 
             loaded.put(request, idsFound.get(request.getId()));
             if (idsFound.get(request.getId()).size() > 1 ||
-                    !loaded.get(request).get(0).getAlgorithmSettings().equals(request.getAlgorithmSettings())) {
+                    !loaded.get(request).get(0).getAlgorithmSetting().equals(request.getAlgorithmSetting())) {
                 warnings++;
             }
         }
@@ -320,7 +315,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
                 }
 
                 for (List<OffsetVec3> offsetVec3s : toPfTo) {
-                    PathfindRequest request = new PathfindRequest(roomPreset.getAlgorithmSettings(), dungeonRoomInfo, open, offsetVec3s);
+                    PathfindRequest request = new PathfindRequest(roomPreset.getAlgorithmSetting(), dungeonRoomInfo, open, offsetVec3s);
                     request.getId();
                     mechanicInfo.requiredPrecalculationHash.add(request);
                     totalRequests.add(request);
