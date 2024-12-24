@@ -44,7 +44,7 @@ public class ActionUtils {
 
     public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, List<PossibleClickingSpot> spots, OffsetPoint target, ActionDAGAccepter eachBuild, boolean guard) throws PathfindImpossibleException {
         spots = spots.stream().filter(a -> {
-            AlgorithmSetting settings = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSetting();
+            AlgorithmSetting settings = dungeonRoom.getContext().getAlgorithmSetting();
             {
                 RequiredTool pickaxe = a.getTools()[0];
                 if (pickaxe != null) {

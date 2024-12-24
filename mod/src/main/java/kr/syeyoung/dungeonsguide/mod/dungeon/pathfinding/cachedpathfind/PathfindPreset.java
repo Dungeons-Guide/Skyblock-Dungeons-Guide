@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonWriter;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithmSetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import lombok.Getter;
@@ -41,7 +42,7 @@ public class PathfindPreset implements Cloneable {
         this.dirty = true;
         this.editable = true;
 
-        this.algorithmSetting = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSetting();
+        this.algorithmSetting = AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING;
 
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
             presets.put(dungeonRoomInfo.getUuid(), new RoomPreset(this, dungeonRoomInfo.getUuid()));

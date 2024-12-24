@@ -4,7 +4,7 @@
         <padding left="5" top="5" right="5" bottom="5">
             <col>
                 <row>
-                    <Text text="Presets" size="16" color="#FFFFFFFF" />
+                    <Text text="Pathfind Presets" size="16" color="#FFFFFFFF" />
                     <flexible><size width="5"/></flexible>
                     <size height="16" width="80">
                         <RoundButton text="Create new" on:click="create"/>

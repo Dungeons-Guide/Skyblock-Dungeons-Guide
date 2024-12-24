@@ -40,7 +40,7 @@ public class WidgetModalChooseAbilitySettings extends AnnotatedImportOnlyWidget 
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 
 
-        PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(500, 400, "Create New Algorithm Setting", new WidgetCreateAbilitySettings(new AlgorithmSetting(null, null, null, 0, true, true, false, true, 14, false, false, 0.4, 61, 0.0625)), true), (a) -> {
+        PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(500, 400, "Create New Algorithm Setting", new WidgetCreateAbilitySettings(AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING), true), (a) -> {
             if (a != null) {
                 AlgorithmSettingRegistry.registerAlgorithmSetting((AlgorithmSetting) a);
                 api.getValue().addWidget(new WidgetAbilitySettingOption((AlgorithmSetting) a, this));
