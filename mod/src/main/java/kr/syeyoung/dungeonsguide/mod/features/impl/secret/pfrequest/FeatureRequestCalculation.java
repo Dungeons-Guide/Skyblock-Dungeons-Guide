@@ -55,9 +55,11 @@ import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import kr.syeyoung.dungeonsguide.mod.overlay.WholeScreenPositioner;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.lwjgl.opengl.Display;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
@@ -383,21 +385,26 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
     public void uploadToService(WidgetRequestCalculation widgetRequestCalculation) {
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
             try {
-                final JFileChooser[] fc = new JFileChooser[1];
-                final int[] returnVal = new int[1];
-                EventQueue.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        fc[0] = new JFileChooser(Main.getConfigDir());
-                        returnVal[0] = fc[0].showOpenDialog(null);
-                    }
-                });
 
-                if (returnVal[0] != JFileChooser.APPROVE_OPTION) {
+                Frame parent = new Frame();
+                FileDialog dialog = new FileDialog(parent, "Choose a Pathfind Request ZIP", FileDialog.LOAD);
+                dialog.setDirectory(Main.getConfigDir().getAbsolutePath());
+
+                dialog.setFilenameFilter((dir, name) -> name.endsWith(".zip")); //osx
+                dialog.setFile("*.zip"); // windows
+
+                dialog.setVisible(true);
+
+                File[] chosen = dialog.getFiles();
+
+                dialog.dispose();
+                parent.dispose();
+
+                if (chosen.length == 0) {
                     widgetRequestCalculation.reload();
                     return;
                 }
-                File f = fc[0].getSelectedFile();
+                File f = chosen[0];
 
                 String uploadUrl;
                 Progress p1 = new Progress("Getting upload url...", null, null, false);

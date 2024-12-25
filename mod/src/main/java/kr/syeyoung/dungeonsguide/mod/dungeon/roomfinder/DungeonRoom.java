@@ -39,7 +39,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPrecalculation;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPresetRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindResultRegistry;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.RoomPreset;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
@@ -157,23 +159,23 @@ public class DungeonRoom implements IPathfindWorld {
     private final Map<Vec3, WeakReference<PathfinderExecutor>> activePathfind = new HashMap<>();
 
     private final Map<String, PathfinderExecutor> idExecutor = new HashMap<>();
-    public PathfinderExecutor loadPrecalculated(String id) {
-        PathfinderExecutor executor1 =         idExecutor.get(id);
-        if (executor1 != null) return executor1;
-//        System.out.println(id);
-        PathfindPrecalculation cachedPathfinder = PathfindResultRegistry.getINSTANCE().getByTargetId(id);
-//        System.out.println(cachedPathfinder);
-        if (cachedPathfinder == null) return null;
+    public void loadPrecalculated(String id) {
+        PathfindPrecalculation cachedPathfinder = PathfindResultRegistry.getINSTANCE().getById(id);
+        if (cachedPathfinder == null) return;
+        if (idExecutor.containsKey(cachedPathfinder.getTargetHash())) return;
         try {
             IPathfinder pathfinder = cachedPathfinder.createPathfinder(getRoomMatcher().getRotation());
-            executor1 = new PathfinderExecutor(pathfinder, BoundingBox.of(AxisAlignedBB.fromBounds(0,0,0,0,0,0)), this);
-            idExecutor.put(id, executor1);
+            PathfinderExecutor executor1 = new PathfinderExecutor(pathfinder, BoundingBox.of(AxisAlignedBB.fromBounds(0,0,0,0,0,0)), this);
+            idExecutor.put(cachedPathfinder.getTargetHash(), executor1);
             executor1.doStep();
-            return executor1;
+            return;
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
         }
+    }
+
+    public PathfinderExecutor loadPrecalculatedByHash(String hash) {
+        return idExecutor.get(hash);
     }
 
     public PathfinderExecutor createEntityPathTo(BoundingBox pos) {
@@ -308,7 +310,8 @@ public class DungeonRoom implements IPathfindWorld {
         this.roomMatcher.setMatch(dungeonRoomInfo);
         this.roomMatcher.setRotation(0);
 
-        algorithmSetting = context.getPreset().getRoomPreset(dungeonRoomInfo.getUuid()).getAlgorithmSetting();
+        roomPreset = context.getPreset().getRoomPreset(dungeonRoomInfo.getUuid());
+        algorithmSetting = roomPreset.getAlgorithmSetting();
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
 
 
@@ -405,7 +408,8 @@ public class DungeonRoom implements IPathfindWorld {
         this.dungeonRoomInfo = dungeonRoomInfo;
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
 
-        algorithmSetting = context.getPreset().getRoomPreset(dungeonRoomInfo.getUuid()).getAlgorithmSetting();
+        roomPreset = context.getPreset().getRoomPreset(dungeonRoomInfo.getUuid());
+        algorithmSetting = roomPreset.getAlgorithmSetting();
 
         for (DungeonMechanic value : getMechanics().values()) {
                         if (value instanceof DungeonTomb) {
@@ -419,10 +423,10 @@ public class DungeonRoom implements IPathfindWorld {
                         }
                     }
 
-        List<PathfindPrecalculation> pathfinders = PathfindResultRegistry.getINSTANCE().getByRoom(dungeonRoomInfo.getUuid());
+        Set<String> pathfinders = roomPreset.getPrecalculations();
         if (pathfinders != null) {
-            for (PathfindPrecalculation pathfinder : pathfinders) {
-                loadPrecalculated(pathfinder.getTargetId());
+            for (String precalcId : pathfinders) {
+                loadPrecalculated(precalcId);
             }
         }
     }
@@ -520,6 +524,7 @@ public class DungeonRoom implements IPathfindWorld {
     private static final float playerWidth = 0.25f;
 
     private AlgorithmSetting algorithmSetting;
+    private RoomPreset roomPreset;
 
 
     private int isNoInstaBreak(IBlockState iBlockState, BlockPos pos) {

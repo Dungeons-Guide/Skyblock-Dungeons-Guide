@@ -389,22 +389,20 @@ public class FeatureRoomEdit  extends SimpleFeature {
         @On(functionName = "loaddgrun")
         public void loadDGRun() {
 
-            final JFileChooser[] fc = new JFileChooser[1];
-            final int[] returnVal = new int[1];
-            try {
-                EventQueue.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        fc[0] = new JFileChooser(Main.getConfigDir());
-                        returnVal[0] = fc[0].showOpenDialog(null);
-                    }
-                });
-            } catch (InterruptedException | InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-            if (returnVal[0] != JFileChooser.APPROVE_OPTION) return;
 
-            File f = fc[0].getSelectedFile();
+            Frame parent = new Frame();
+            FileDialog dialog = new FileDialog(parent, "Choose a DG Run file", FileDialog.LOAD);
+            dialog.setDirectory(Main.getConfigDir().getAbsolutePath());
+
+            dialog.setFilenameFilter((dir, name) -> name.endsWith(".dgrun")); //osx
+            dialog.setFile("*.dgrun"); // windows
+
+            dialog.setVisible(true);
+
+            File[] chosen = dialog.getFiles();
+
+            if (chosen.length == 0) return;
+            File f = chosen[0];
             try {
                 load(f);
             } catch (Exception e) {
