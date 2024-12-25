@@ -1,0 +1,22 @@
+
+<padding left="5" top="5" right="5" bottom="5">
+    <col>
+        <SimpleToggleButton width="40" height="14" text="Include Precalculations" bind:enabled="includePrecalculation"/>
+        <flexible>
+            <size/>
+        </flexible>
+        <row>
+            <flexible>
+                <size height="15">
+                    <RoundButton text="Export" on:click="confirm"/>
+                </size>
+            </flexible>
+            <size width="10"/>
+            <flexible>
+                <size height="15">
+                    <RoundButton text="Cancel" on:click="cancel" backgroundColor="#FF373737" hoveredBackgroundColor="#FF3B3B3B" pressedBackgroundColor="#FF383838"/>
+                </size>
+            </flexible>
+        </row>
+    </col>
+</padding>

@@ -143,6 +143,15 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
         });
     }
 
+    @On(functionName = "export")
+    public void export() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
+
+
+        PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(200, 150, "Export Options", new WidgetModalExportSettings(preset), true), null);
+    }
+
     @On(functionName = "requestMissing")
     public void requestMissing() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));

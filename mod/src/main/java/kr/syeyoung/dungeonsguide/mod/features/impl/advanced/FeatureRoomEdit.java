@@ -401,6 +401,8 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
             File[] chosen = dialog.getFiles();
 
+            parent.dispose();
+            dialog.dispose();
             if (chosen.length == 0) return;
             File f = chosen[0];
             try {

@@ -16,8 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
+package kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip;
 
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.FeatureRequestCalculation;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Column;
@@ -27,29 +29,68 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.util.ResourceLocation;
-import scala.collection.immutable.IntMap;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class WidgetProgress extends AnnotatedImportOnlyWidget {
+public class WidgetNotificationProgress extends AnnotatedImportOnlyWidget implements Renderer {
 
     @Bind(variableName = "progresses")
     public final BindableAttribute<Column> progresses = new BindableAttribute<>(Column.class);
-    @Bind(variableName = "progressVisible")
-    public final BindableAttribute<String> visible = new BindableAttribute<>(String.class, "false");
-    public WidgetProgress() {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/progress.gui"));
+    @Bind(variableName = "progressTitle")
+    public final BindableAttribute<String> progressTitle = new BindableAttribute<>(String.class);
+    private UUID uuid;
+    public WidgetNotificationProgress(UUID uuid, String title) {
+        super(new ResourceLocation("dungeonsguide:gui/features/notifications/tooltipProgress.gui"));
+        this.uuid = uuid;
+
+        this.progressTitle.setValue(title);
     }
 
-    public void update(List<FeatureRequestCalculation.Progress> progresses) {
+    @Override
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
+        if (progressUpdate) {
+            update(progressesData);
+            progressUpdate = false;
+        }
+
+        SingleChildRenderer.INSTANCE.doRender(partialTicks, context, buildContext);
+    }
+
+    @AllArgsConstructor
+    @Getter @Setter
+    public static class Progress {
+        private volatile String message;
+        private AtomicInteger current;
+        private AtomicInteger total;
+        private final boolean bar;
+    }
+    private List<Progress> progressesData = new CopyOnWriteArrayList<>();
+    private volatile boolean progressUpdate = false;
+
+    public void addProgress(Progress progress) {
+        this.progressesData.add(progress);
+        this.progressUpdate = true;
+    }
+
+    public void removeProgress(Progress progress) {
+        this.progressesData.remove(progress);
+        this.progressUpdate = true;
+    }
+
+    public void update(List<Progress> progresses) {
         if (this.progresses.getValue() != null) {
             Column column = this.progresses.getValue();
             column.removeAllWidget();;
-            for (FeatureRequestCalculation.Progress progress : progresses) {
+            for (Progress progress : progresses) {
                 column.addWidget(new WidgetProgressPart(progress));
             }
-            visible.setValue(progresses.isEmpty() ? "false" : "true");
         }
     }
 
@@ -66,10 +107,10 @@ public class WidgetProgress extends AnnotatedImportOnlyWidget {
 //        public final BindableAttribute<String> bar = new BindableAttribute<>(String.class);
 
 
-        private FeatureRequestCalculation.Progress progress;
+        private Progress progress;
 
-        public WidgetProgressPart(FeatureRequestCalculation.Progress progress) {
-            super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/progresspart.gui"));
+        public WidgetProgressPart(Progress progress) {
+            super(new ResourceLocation("dungeonsguide:gui/features/notifications/progresspart.gui"));
             this.progress = progress;
 //            this.bar.setValue(progress.isBar()  ? "true" : "false");
             this.text.setValue(progress.getMessage());

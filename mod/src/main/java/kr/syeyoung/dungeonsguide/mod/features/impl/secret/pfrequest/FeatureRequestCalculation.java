@@ -49,6 +49,9 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotification;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationProgress;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
@@ -77,7 +80,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-public class FeatureRequestCalculation extends AbstractGuiFeature {
+public class FeatureRequestCalculation extends SimpleFeature {
     public FeatureRequestCalculation() {
         super("Pathfinding & Secrets", "Request path calculation", "- View which precalculations are missing\n- Request pre-calculation (Requires purchase on dg)", "secret.requestcalculation");
         setEnabled(true);
@@ -99,64 +102,23 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
     private AtomicBoolean calculating = new AtomicBoolean();
 
 
-    private WidgetProgress progress;
+    private UUID calcuuid = UUID.randomUUID();
+    private UUID calcuuid2 = UUID.randomUUID();
 
-    @Override
-    public OverlayWidget instantiateWidget() {
-        return new OverlayWidget(
-                progress = new WidgetProgress(),
-                OverlayType.OVER_ANY,
-                new WholeScreenPositioner(),
-                getClass().getSimpleName()
-        );
-    }
-
-    @Override
-    public boolean isVisible() {
-        return true;
-    }
-
-    @DGEventHandler(triggerOutOfSkyblock = true)
-    public void onTick(DGTickEvent tickEvent) {
-        if (progressUpdate) {
-            if (progress != null) {
-                progress.update(progresses);
-                progressUpdate = false;
-            }
-        }
-    }
-
-
-
-
-    @AllArgsConstructor @Getter
-    public static class Progress {
-        private volatile String message;
-        private AtomicInteger current;
-        private AtomicInteger total;
-        private final boolean bar;
-    }
-    private List<Progress> progresses = new CopyOnWriteArrayList<>();
-    private volatile boolean progressUpdate = false;
-
-    private void addProgress(Progress progress) {
-        this.progresses.add(progress);
-        this.progressUpdate = true;
-    }
-
-    private void removeProgress(Progress progress) {
-        this.progresses.remove(progress);
-        this.progressUpdate = true;
-    }
 
     public void requestCalc() {
         if (calculating.getAndSet(true)) return;
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
+            WidgetNotificationProgress progress = new WidgetNotificationProgress(calcuuid, "Pathfind Request Generation Progress");
+            FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(calcuuid, progress); // should be thread safe. shouuuuld be.
+
             try {
+
+
                 int est = 0;
                 Set<PathfindRequest> requests = new HashSet<>();
-                Progress progress1 = new Progress("Generating headers...", null, null, false);
-                addProgress(progress1);
+                WidgetNotificationProgress.Progress progress1 = new WidgetNotificationProgress.Progress("Generating headers...", null, null, false);
+                progress.addProgress(progress1);
                 try {
                     for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
                         DRIWorld driWorld = new DRIWorld(dungeonRoomInfo);
@@ -274,7 +236,7 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                         fakeContext.cleanup();
                     }
                 } finally {
-                    removeProgress(progress1);
+                    progress.removeProgress(progress1);
                 }
                 if (requests.size() == 0) {
                     ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eTotal" + requests.size() + " requests");
@@ -284,11 +246,11 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
 
 
                 int totalRoomAndState = requests.stream().map(a -> new ImmutablePair(a.getDungeonRoomInfo().getUuid(),a.getOpenMech().stream().sorted(String::compareTo).collect(Collectors.joining(",")))).collect(Collectors.toSet()).size();
-                Progress roomProgress = new Progress("Room&States 0/"+totalRoomAndState, new AtomicInteger(), new AtomicInteger(totalRoomAndState), true);
-                Progress requestProgress = new Progress("Requests 0/"+requests.size(), new AtomicInteger(), new AtomicInteger(requests.size()), true);
+                WidgetNotificationProgress.Progress roomProgress = new WidgetNotificationProgress.Progress ("Room&States 0/"+totalRoomAndState, new AtomicInteger(), new AtomicInteger(totalRoomAndState), true);
+                WidgetNotificationProgress.Progress requestProgress = new WidgetNotificationProgress.Progress ("Requests 0/"+requests.size(), new AtomicInteger(), new AtomicInteger(requests.size()), true);
 
-                addProgress(roomProgress);
-                addProgress(requestProgress);
+                progress.addProgress(roomProgress);
+                progress.addProgress(requestProgress);
 
                 List<File> files = new ArrayList<>();
                 File outdir;
@@ -315,25 +277,25 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                                 dataOutputStream.flush();
                                 dataOutputStream.close();
                                 System.out.println("It took " + (System.currentTimeMillis() - start) + "ms : " + request.getId());
-                                int currentReq = requestProgress.current.incrementAndGet();
-                                requestProgress.message = "Requests " + currentReq + "/" + requestProgress.total.get();
+                                int currentReq = requestProgress.getCurrent().incrementAndGet();
+                                requestProgress.setMessage("Requests " + currentReq + "/" + requestProgress.getTotal().get());
                                 files.add(f);
                             } catch (Exception e) {
                                 System.out.println("Error while " + id.toString() + ".pfreq / " + request.getId());
                                 e.printStackTrace();
                             }
                         }
-                        int currentRooms = roomProgress.current.incrementAndGet();
-                        roomProgress.message = "Room&States " + currentRooms + "/" + roomProgress.total.get();
+                        int currentRooms = roomProgress.getCurrent().incrementAndGet();
+                        roomProgress.setMessage("Room&States " + currentRooms + "/" + roomProgress.getTotal().get());
                         System.out.println("ROOM: " + begin.getDungeonRoomInfo().getName() + " took " + (System.currentTimeMillis() - start2) + "ms to complete");
                     });
                 } finally {
-                    removeProgress(roomProgress);
-                    removeProgress(requestProgress);
+                    progress.removeProgress(roomProgress);
+                    progress.removeProgress(requestProgress);
                 }
 
-                Progress zip = new Progress("Zipping... 0/"+files.size()+1, new AtomicInteger(0), new AtomicInteger(files.size()+1), true);
-                addProgress(zip);
+                WidgetNotificationProgress.Progress zip = new WidgetNotificationProgress.Progress ("Zipping... 0/"+files.size()+1, new AtomicInteger(0), new AtomicInteger(files.size()+1), true);
+                progress.addProgress(zip);
 
                 try {
                     File target = new File(Main.getConfigDir(), "pfreq-"+System.currentTimeMillis() + ".zip");
@@ -341,35 +303,32 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                         System.out.println("Writing to " + target);
                         ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eWriting pathfind request zip file to " + target.getAbsolutePath());
                         final FileOutputStream fos = new FileOutputStream(target);
-                        ZipOutputStream zipOut = new ZipOutputStream(fos);
+                        ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(fos));
 
                         for (File srcFile : files) {
                             FileInputStream fis = new FileInputStream(srcFile);
                             ZipEntry zipEntry = new ZipEntry(srcFile.getName());
                             zipOut.putNextEntry(zipEntry);
 
-                            byte[] bytes = new byte[1024 * 1024];
-                            int length;
-                            while ((length = fis.read(bytes)) >= 0) {
-                                zipOut.write(bytes, 0, length);
-                            }
+                            Files.copy(srcFile.toPath(), zipOut);
+
                             fis.close();
-                            int cnt = zip.current.incrementAndGet();
-                            zip.message = "Zipping... "+cnt+"/"+zip.total.get();
+                            int cnt = zip.getCurrent().incrementAndGet();
+                            zip.setMessage("Zipping... "+cnt+"/"+zip.getTotal().get());
                         }
                         zipOut.close();
                         fos.close();
                     }
                     ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eSuccessfully wrote pathfind request zip file to "+target.getAbsolutePath());
                 } finally {
-                    removeProgress(zip);
+                    progress.removeProgress(zip);
                 }
-                FeatureRequestCalculation.Progress complete = new FeatureRequestCalculation.Progress("Complete!", new AtomicInteger(1), new AtomicInteger(1), true);
-                FeatureRegistry.SECRET_PATHFIND_REQUEST.addProgress(complete);
+                WidgetNotificationProgress.Progress complete = new WidgetNotificationProgress.Progress("Complete!", new AtomicInteger(1), new AtomicInteger(1), true);
+                progress.addProgress(complete);
                 try {
                     Thread.sleep(5000);
                 } finally {
-                    FeatureRegistry.SECRET_PATHFIND_REQUEST.removeProgress(complete);
+                    progress.removeProgress(complete);
                 }
 
             } catch (Exception e) {
@@ -377,6 +336,8 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                 e.printStackTrace();
             } finally {
                 this.calculating.set(false);
+
+                FeatureRegistry.NOTIFICATIONS.getRootWidget().removeNotification(calcuuid);
             }
         }).start();
     }
@@ -384,7 +345,12 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
 
     public void uploadToService(WidgetRequestCalculation widgetRequestCalculation) {
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
+            WidgetNotificationProgress progress = new WidgetNotificationProgress(calcuuid, "Pathfind Request Uploading Progress");
+            FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(calcuuid2, progress); // should be thread safe. shouuuuld be.
+
+
             try {
+
 
                 Frame parent = new Frame();
                 FileDialog dialog = new FileDialog(parent, "Choose a Pathfind Request ZIP", FileDialog.LOAD);
@@ -407,9 +373,9 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                 File f = chosen[0];
 
                 String uploadUrl;
-                Progress p1 = new Progress("Getting upload url...", null, null, false);
+                WidgetNotificationProgress.Progress p1 = new WidgetNotificationProgress.Progress ("Getting upload url...", null, null, false);
                 try {
-                    addProgress(p1);
+                    progress.addProgress(p1);
                     HttpsURLConnection connection = (HttpsURLConnection) new URL("https://pathfind.dungeons.guide/upload").openConnection();
                     connection.setRequestProperty("User-Agent", "DungeonsGuide/"+ VersionInfo.VERSION);
                     connection.setRequestMethod("POST");
@@ -421,11 +387,11 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                     JsonObject key = new Gson().fromJson(servers, JsonObject.class);
                     uploadUrl = key.get("url").getAsString();
                 } finally {
-                    removeProgress(p1);
+                    progress.removeProgress(p1);
                 }
-                p1 = new Progress("Uploading..." , new AtomicInteger(), new AtomicInteger((int) f.length()), true);
+                p1 = new WidgetNotificationProgress.Progress ("Uploading..." , new AtomicInteger(), new AtomicInteger((int) f.length()), true);
                 try {
-                    addProgress(p1);
+                    progress.addProgress(p1);
                     HttpsURLConnection httpsURLConnection = (HttpsURLConnection) new URL(uploadUrl).openConnection();
                     httpsURLConnection.setDoOutput(true);
                     httpsURLConnection.setRequestProperty("Content-Length", f.length()+"");
@@ -447,11 +413,11 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                         throw new RuntimeException("Status code "+httpsURLConnection.getResponseCode());
                     }
                 } finally {
-                    removeProgress(p1);
+                    progress.removeProgress(p1);
                 }
-                p1 = new Progress("Requesting Calculation", null, null, false);
+                p1 = new WidgetNotificationProgress.Progress ("Requesting Calculation", null, null, false);
                 try {
-                    addProgress(p1);
+                    progress.addProgress(p1);
                     HttpsURLConnection httpsURLConnection = (HttpsURLConnection) new URL("https://pathfind.dungeons.guide/process").openConnection();
                     httpsURLConnection.setRequestMethod("POST");
                     httpsURLConnection.setRequestProperty("User-Agent", "DungeonsGuide/"+ VersionInfo.VERSION);
@@ -462,20 +428,22 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                         throw new RuntimeException("Status code "+httpsURLConnection.getResponseCode());
                     }
                 } finally {
-                    removeProgress(p1);
+                    progress.removeProgress(p1);
                 }
-                p1 = new Progress("Requested calculation! Track status in config", new AtomicInteger(1), new AtomicInteger(1), true);
-                addProgress(p1);
+                p1 = new WidgetNotificationProgress.Progress ("Requested calculation! Track status in config", new AtomicInteger(1), new AtomicInteger(1), true);
+                progress.addProgress(p1);
                 try {
                     Thread.sleep(5000);
                 } finally {
-                    removeProgress(p1);
+                    progress.removeProgress(p1);
                 }
 
             } catch (Exception e) {
                 ChatTransmitter.addToQueue("An error occured while doing stuff: contact dg support");
                 System.out.println("An error occured while requesting pfreqs");
                 e.printStackTrace();
+            } finally {
+                FeatureRegistry.NOTIFICATIONS.getRootWidget().removeNotification(calcuuid2);
             }
         }).start();
     }

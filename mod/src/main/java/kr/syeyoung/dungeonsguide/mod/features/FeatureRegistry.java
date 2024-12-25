@@ -36,6 +36,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.FeatureDungeonMap
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.spiritleap.FeatureCustomLeapGui;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.ability.FeatureAbilityCooldown;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.FeatureNotifications;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.FeaturePartyList;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.FeaturePartyReady;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui.FeatureCustomPartyFinder;
@@ -258,6 +259,8 @@ public class FeatureRegistry {
     public static final FeaturePartyReady PARTY_READY = register(new FeaturePartyReady());
     public static final FeatureAutoAcceptReparty ETC_AUTO_ACCEPT_REPARTY = register(new FeatureAutoAcceptReparty());
     public static final FeatureRepartyCommand ETC_REPARTY = register(new FeatureRepartyCommand());
+
+    public static final FeatureNotifications NOTIFICATIONS = register(new FeatureNotifications());
 
     // Data Communication
     public static final FeatureCollectScore ETC_COLLECT_SCORE = register(new FeatureCollectScore());

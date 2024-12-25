@@ -1,0 +1,20 @@
+
+<UnconstrainedBox>
+    <size width="250">
+        <padding top="2.5" bottom="2.5" right="5" left="5">
+            <bgcolor backgroundColor="#FFFFFFFF">
+                <padding left="1" right="1" top="1" bottom="1">
+                    <bgcolor backgroundColor="#FF111111">
+                        <padding left="5" right="5" top="5" bottom="5">
+                            <col crossAlign="START">
+                                <Text bind:text="progressTitle" color="#FFFFFFFF" size="8"/>
+                                <size height="5"/>
+                                <col bind:api="progresses"></col>
+                            </col>
+                        </padding>
+                    </bgcolor>
+                </padding>
+            </bgcolor>
+        </padding>
+    </size>
+</UnconstrainedBox>

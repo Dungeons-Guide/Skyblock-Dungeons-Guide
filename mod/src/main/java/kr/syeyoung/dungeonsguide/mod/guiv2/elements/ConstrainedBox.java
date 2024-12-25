@@ -85,7 +85,8 @@ public class ConstrainedBox extends AnnotatedExportOnlyWidget implements Layoute
     @Override
     public boolean canCutRequest() {
         return Objects.equals(minWidth.getValue(), maxWidth.getValue())
-                && Objects.equals(minHeight.getValue(), maxHeight.getValue());
+                && Objects.equals(minHeight.getValue(), maxHeight.getValue())
+                && minHeight.getValue() != Double.POSITIVE_INFINITY && minWidth.getValue() != Double.POSITIVE_INFINITY;
     }
 
     @Override

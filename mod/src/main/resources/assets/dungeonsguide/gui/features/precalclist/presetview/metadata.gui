@@ -26,6 +26,12 @@
                 </size>
             </row>
             <size height="5"/>
+            <row mainAlign="END">
+                <size height="16" width="50">
+                    <RoundButton text="Export" on:click="export"/>
+                </size>
+            </row>
+            <size height="5"/>
             <row>
                 <Text text="Internal ID: " color="#FF777777"/>
                 <Text bind:text="id" color="#FF777777"/>
