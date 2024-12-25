@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +44,16 @@ public class RoomPreset implements Cloneable {
     public AlgorithmSetting getAlgorithmSetting() {
         return algorithmSetting == null ? parent.getAlgorithmSetting() : algorithmSetting;
     }
+
+    public AlgorithmSetting getEffectiveAlgorithmSetting(DungeonRoomInfo info) {
+        if (info.getColor() == 62)
+            return getAlgorithmSetting()
+                    .withRouteEtherwarp(false)
+                    .withStonkTeleport(false);
+        else
+            return getAlgorithmSetting();
+    }
+
     public AlgorithmSetting getAlgorithmSettingOverride() {
         return algorithmSetting;
     }

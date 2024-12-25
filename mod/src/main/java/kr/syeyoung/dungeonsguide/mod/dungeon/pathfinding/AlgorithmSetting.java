@@ -1,8 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.*;
@@ -12,6 +10,8 @@ import java.io.IOException;
 
 @Getter
 @Data
+@With
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AlgorithmSetting implements Cloneable {
     @Data @AllArgsConstructor
     public static class ToolSettings {

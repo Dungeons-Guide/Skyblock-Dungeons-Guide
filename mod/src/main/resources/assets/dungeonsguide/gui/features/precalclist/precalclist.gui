@@ -4,10 +4,12 @@
         <padding left="5" top="5" right="5" bottom="5">
             <col>
                 <row>
-                    <Text text="Pathfind Presets" size="16" color="#FFFFFFFF" />
-                    <flexible><size width="5"/></flexible>
+                    <flexible>
+                        <Text text="Pathfind Presets" size="16" color="#FFFFFFFF" />
+                    </flexible>
+                    <size width="5"/>
                     <size height="16" width="50">
-                        <RoundButton text="Import"/>
+                        <RoundButton text="Import" on:click="import"/>
                     </size>
                     <size width="5"/>
                     <size height="16" width="80">

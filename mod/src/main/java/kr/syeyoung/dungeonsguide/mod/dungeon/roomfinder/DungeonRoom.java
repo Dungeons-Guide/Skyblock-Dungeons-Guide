@@ -311,7 +311,7 @@ public class DungeonRoom implements IPathfindWorld {
         this.roomMatcher.setRotation(0);
 
         roomPreset = context.getPreset().getRoomPreset(dungeonRoomInfo.getUuid());
-        algorithmSetting = roomPreset.getAlgorithmSetting();
+        algorithmSetting = roomPreset.getEffectiveAlgorithmSetting(dungeonRoomInfo);
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
 
 
@@ -409,7 +409,7 @@ public class DungeonRoom implements IPathfindWorld {
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
 
         roomPreset = context.getPreset().getRoomPreset(dungeonRoomInfo.getUuid());
-        algorithmSetting = roomPreset.getAlgorithmSetting();
+        algorithmSetting = roomPreset.getEffectiveAlgorithmSetting(dungeonRoomInfo);
 
         for (DungeonMechanic value : getMechanics().values()) {
                         if (value instanceof DungeonTomb) {

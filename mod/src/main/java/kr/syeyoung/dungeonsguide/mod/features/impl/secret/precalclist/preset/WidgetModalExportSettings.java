@@ -20,6 +20,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import org.apache.commons.io.FileUtils;
 import scala.xml.Atom;
 
@@ -122,12 +123,12 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
             WidgetNotificationProgress progress = new WidgetNotificationProgress(uid, "Exporting Preset");
             FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(uid, progress);
 
-            List<File> files = new ArrayList<>();
+            List<Tuple<String, File>> files = new ArrayList<>();
             PathfindResultRegistry registry = PathfindResultRegistry.getINSTANCE();
             for (RoomPreset value : preset.getPresets().values()) {
                 for (String calcid : value.getPrecalculations()) {
                     PathfindPrecalculation precalc = registry.getById(calcid);
-                    files.add(new File(precalc.getFile()));
+                    files.add(new Tuple(precalc.getId(), new File(precalc.getFile())));
                 }
             }
 
@@ -137,6 +138,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
             WidgetNotificationProgress.Progress progress1 = new WidgetNotificationProgress.Progress("Writing Preset Export 0/"+(files.size() + 1), new AtomicInteger(0), new AtomicInteger(files.size()+1), true);
             progress.addProgress(progress1);
             try (FileOutputStream fos = new FileOutputStream(target); ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(fos));) {
+                zipOut.setComment("Dungeons Guide Preset Export");
                 zipOut.setLevel(Deflater.NO_COMPRESSION);
                 {
                     ZipEntry zipEntry = new ZipEntry("preset.json");
@@ -154,12 +156,12 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
 
                 if (includePrecalc) {
-                    for (File srcFile : files) {
-                        FileInputStream fis = new FileInputStream(srcFile);
-                        ZipEntry zipEntry = new ZipEntry(srcFile.getName());
+                    for (Tuple<String, File> srcFile : files) {
+                        FileInputStream fis = new FileInputStream(srcFile.getSecond());
+                        ZipEntry zipEntry = new ZipEntry("precalculations/"+srcFile.getFirst()+".pfres");
                         zipOut.putNextEntry(zipEntry);
 
-                        Files.copy(srcFile.toPath(), zipOut);
+                        Files.copy(srcFile.getSecond().toPath(), zipOut);
 
                         fis.close();
 

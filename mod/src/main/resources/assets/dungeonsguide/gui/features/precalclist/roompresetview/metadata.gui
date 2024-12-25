@@ -53,7 +53,7 @@
             </row>
             <size height="5"/>
             <row>
-                <Text text="Pathfind Ability Settings Override: " color="#FFFFFFFF"/>
+                <Text text="Effective Pathfind Ability Settings: " color="#FFFFFFFF"/>
                 <flexible>
                     <size height="28">
                         <ScrollablePanel direction="HORIZONTAL">

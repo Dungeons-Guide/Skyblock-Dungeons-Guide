@@ -8,10 +8,13 @@
             <line color="#FFFFFFFF" dir="HORIZONTAL" thickness="1"/>
             <size height="3"/>
             <row>
-                <Text text="Currently viewing: " color="#FFFFFFFF"/>
-                <Text bind:text="presetName" color="#FFFFFFFF"/>
                 <flexible>
-                    <size/>
+                    <row>
+                        <Text text="Currently viewing: " color="#FFFFFFFF"/>
+                        <flexible>
+                            <Text bind:text="presetName" color="#FFFFFFFF"/>
+                        </flexible>
+                    </row>
                 </flexible>
                 <size height="15" width="75">
                     <RoundButton text="Change Name" on:click="changeName"/>

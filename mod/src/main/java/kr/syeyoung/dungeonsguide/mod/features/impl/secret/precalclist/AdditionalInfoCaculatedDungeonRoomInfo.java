@@ -315,7 +315,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
                 }
 
                 for (List<OffsetVec3> offsetVec3s : toPfTo) {
-                    PathfindRequest request = new PathfindRequest(roomPreset.getAlgorithmSetting(), dungeonRoomInfo, open, offsetVec3s);
+                    PathfindRequest request = new PathfindRequest(roomPreset.getEffectiveAlgorithmSetting(dungeonRoomInfo), dungeonRoomInfo, open, offsetVec3s);
                     request.getId();
                     mechanicInfo.requiredPrecalculationHash.add(request);
                     totalRequests.add(request);

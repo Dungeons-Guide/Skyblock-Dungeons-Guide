@@ -99,7 +99,7 @@ public class DRIWorld extends World implements IPathfindWorld {
         enderpearl = new BitStorage(getXwidth(), getYwidth(), getZwidth(), DungeonRoom.PearlLandType.BITS);
 
         PathfindPreset preset = FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset();
-        AlgorithmSetting algorithmSetting1 = preset.getRoomPreset(dungeonRoomInfo.getUuid()).getAlgorithmSetting();
+        AlgorithmSetting algorithmSetting1 = preset.getRoomPreset(dungeonRoomInfo.getUuid()).getEffectiveAlgorithmSetting(dungeonRoomInfo);
         this.algorithmSetting = algorithmSetting1;
     }
 

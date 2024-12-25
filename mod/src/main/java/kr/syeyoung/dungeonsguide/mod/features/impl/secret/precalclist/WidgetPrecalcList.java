@@ -1,8 +1,12 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPresetRegistry;
+import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.Notification;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationAutoClose;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationProgress;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset.WidgetPreset;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset.WidgetViewPreset;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
@@ -15,10 +19,18 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.io.FileUtils;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.awt.*;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "presetsApi")
@@ -55,6 +67,142 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
         PathfindPreset pathfindPreset = new PathfindPreset();
         PathfindPresetRegistry.getINSTANCE().register(pathfindPreset);
         addPreset(pathfindPreset);
+    }
+
+    @On(functionName = "import")
+    public void importFile() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
+        new Thread(DungeonsGuide.THREAD_GROUP, this::_importFile).start();
+    }
+
+
+    private void _importFile() {
+
+        UUID uuid = UUID.randomUUID();
+
+
+        try {
+            Frame parent = new Frame();
+            FileDialog dialog = new FileDialog(parent, "Select Import Target", FileDialog.LOAD);
+            dialog.setFilenameFilter((dir, name) -> name.endsWith(".zip"));
+            dialog.setFile("*.zip");
+            dialog.setVisible(true);
+
+            File[] chosen = dialog.getFiles();
+            if (chosen.length == 0) return;
+
+            File target = chosen[0];
+
+            parent.dispose();
+            dialog.dispose();
+
+
+            WidgetNotificationProgress progress = new WidgetNotificationProgress(uuid, "Importing Preset :: "+target.getName());
+            FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(uuid, progress);
+
+            WidgetNotificationProgress.Progress openingFile = new WidgetNotificationProgress.Progress("Opening File...", null, null, false);
+            progress.addProgress(openingFile);
+            PathfindPreset preset;
+            try (ZipFile zipFile = new ZipFile(target)) {
+
+                if (!"Dungeons Guide Preset Export".equals(zipFile.getComment())) {
+                    throw new IllegalArgumentException("File is not valid pathfind preset export");
+                }
+
+                {
+                    UUID random = UUID.randomUUID();
+                    ZipEntry zipEntry = zipFile.getEntry("preset.json");
+                    if (zipEntry == null) {
+                        throw new IllegalArgumentException("File is not valid pathfind preset export");
+                    }
+                    File presetExtractionTarget = new File(new File(Main.getConfigDir(), "presets"), random+".json");
+                    try (InputStream inputStream = zipFile.getInputStream(zipEntry)) {
+                        preset = PathfindPreset.loadFromStream(inputStream);
+                        preset.setPresetId(random.toString());
+                        preset.setFile(presetExtractionTarget);
+                    }
+                    preset.save();
+                    PathfindPresetRegistry.getINSTANCE().register(preset);
+                }
+
+                List<String> targets = new ArrayList<>();
+                long totalSize = 0;
+
+                Enumeration<? extends ZipEntry> elements = zipFile.entries();
+                while (elements.hasMoreElements()) {
+                    ZipEntry zipEntry = elements.nextElement();
+                    if (zipEntry.getName().startsWith("precalculations/")) {
+                        targets.add(zipEntry.getName());
+                        totalSize += zipEntry.getSize();
+                    }
+                }
+                progress.removeProgress(openingFile);
+
+                WidgetNotificationProgress.Progress extracting = new WidgetNotificationProgress.Progress("Extracting Precalculations 0/"+targets.size(), new AtomicInteger(0), new AtomicInteger(targets.size()), true);
+                progress.addProgress(extracting);
+
+                File importTarget = new File(new File(Main.getConfigDir(), "precalculations"), preset.getPresetId());
+                if (!importTarget.exists())
+                    importTarget.mkdirs();
+
+                long usablespace = Files.getFileStore(importTarget.toPath()).getUsableSpace();
+                if (usablespace < totalSize) {
+                    throw new IllegalStateException(FileUtils.byteCountToDisplaySize(totalSize) + " of storage required but only " + FileUtils.byteCountToDisplaySize(usablespace) + " available");
+                }
+
+                List<File> extractions = new ArrayList<>();
+
+                for (String s : targets) {
+                    ZipEntry entry = zipFile.getEntry(s);
+                    try (InputStream is = zipFile.getInputStream(entry)) {
+                        String id = s.split("/")[1];
+                        File extractTarget =  new File(importTarget, id);
+                        if (PathfindResultRegistry.getINSTANCE().getById(id.split("\\.")[0]) == null) {
+                            Files.copy(is, extractTarget.toPath());
+                            extractions.add(extractTarget);
+                        }
+                        extracting.setMessage("Extracting Precalculations "+extracting.getCurrent().incrementAndGet()+"/"+extracting.getTotal().get());
+                    }
+                }
+
+                progress.removeProgress(extracting);
+
+                extracting = new WidgetNotificationProgress.Progress("Loading Precalculations 0/"+extractions.size(), new AtomicInteger(0), new AtomicInteger(targets.size()), true);
+                progress.addProgress(extracting);
+                for (File extraction : extractions) {
+                    extracting.setMessage("Loading Precalculations "+extracting.getCurrent().incrementAndGet()+"/"+extracting.getTotal().get());
+                    try {
+                        PathfindResultRegistry.getINSTANCE().register(new PathfindPrecalculation(extraction));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        UUID uid = UUID.randomUUID();
+                        FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(uid, new WidgetNotificationAutoClose(uid, Notification.builder()
+                                .title("Error while loading precalculation")
+                                .description(e.getMessage()+"\n Cause: "+extraction.getName())
+                                .titleColor(0xFFFF0000).build(),5000));
+                    }
+                }
+
+                progress.removeProgress(extracting);
+            }
+
+            FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(uuid, new WidgetNotificationAutoClose(uuid, Notification.builder()
+                    .title("Successfully Imported Preset!")
+                    .description("File: "+target.getAbsolutePath())
+                    .titleColor(0xFF00FF00)
+                    .build(), 5000));
+
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                addPreset(preset);
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(uuid, new WidgetNotificationAutoClose(uuid, Notification.builder()
+                    .title("Error while importing preset")
+                    .description(e.getMessage())
+                    .titleColor(0xFFFF0000).build(),30000));
+        }
     }
 
     public void addPreset(PathfindPreset preset) {

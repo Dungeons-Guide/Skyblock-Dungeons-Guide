@@ -70,7 +70,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
 
         this.editable.setValue(roomInfo.getRoomPreset().getParent().isEditable() ? "true" : "false");
 
-        algorithmSettingBindableAttribute.setValue(roomInfo.getRoomPreset().getAlgorithmSettingOverride());
+        algorithmSettingBindableAttribute.setValue(this.roomInfo.getRoomPreset().getEffectiveAlgorithmSetting(roomInfo.getDungeonRoomInfo()));
         this.algorithmSetting.setValue(new WidgetAbilitySettings(algorithmSettingBindableAttribute));
     }
 
@@ -148,7 +148,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
             for (PathfindRequest request : roomInfo.getMissing()) {
                 List<PathfindPrecalculation> precalcs = PathfindResultRegistry.getINSTANCE().getsByHash(request.getHash());
                 for (PathfindPrecalculation precalc : precalcs) {
-                    if (!precalc.getAlgorithmSetting().equals(roomInfo.getRoomPreset().getAlgorithmSetting()))
+                    if (!precalc.getAlgorithmSetting().equals(roomInfo.getRoomPreset().getEffectiveAlgorithmSetting(roomInfo.getDungeonRoomInfo())))
                         continue;
 
                     roomInfo.getRoomPreset().addPrecalculation(precalc.getId());
@@ -165,8 +165,9 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "removeOverrideAbilitySettings")
     public void removeOverride() {
-        algorithmSettingBindableAttribute.setValue(null);
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         this.roomInfo.getRoomPreset().setAlgorithmSettingOverride(null);
+        algorithmSettingBindableAttribute.setValue(this.roomInfo.getRoomPreset().getEffectiveAlgorithmSetting(roomInfo.getDungeonRoomInfo()));
 
         WidgetViewPreset.calculator.submit(() -> {
             roomInfo.rematchWithRoomPreset();
@@ -178,11 +179,13 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "editOverrideAbilitySettings")
     public void editOverride() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(400, 300, "Choose New Algorithm Setting Override", new WidgetModalChooseAbilitySettings(), true), (a) -> {
             if (a != null) {
-                this.algorithmSettingBindableAttribute.setValue((AlgorithmSetting) a);
                 this.roomInfo.getRoomPreset().setAlgorithmSettingOverride((AlgorithmSetting) a);
+                algorithmSettingBindableAttribute.setValue(this.roomInfo.getRoomPreset().getEffectiveAlgorithmSetting(roomInfo.getDungeonRoomInfo()));
+
 
 
                 WidgetViewPreset.calculator.submit(() -> {

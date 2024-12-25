@@ -53,8 +53,9 @@ public class WidgetPresetRoomDetailsSecretPathfindRequest extends AnnotatedImpor
         if (roomInfo.getMissing().contains(pathfindRequest)) {
             this.color.setValue(0xFF551111);
         } else {
-            if (roomInfo.getLoaded().get(pathfindRequest).size() > 1 || !roomInfo.getLoaded().get(pathfindRequest).get(0).getAlgorithmSetting().equals(pathfindRequest.getAlgorithmSetting()))
-                this.color.setValue(0xFF335511);
+            if (roomInfo.getLoaded().get(pathfindRequest).size() > 1
+                    || !roomInfo.getLoaded().get(pathfindRequest).get(0).getAlgorithmSetting().equals(pathfindRequest.getAlgorithmSetting()))
+                this.color.setValue(0xFF553311);
             else
                 this.color.setValue(0xFF115511);
         }

@@ -12,6 +12,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithmSetting.Algori
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.nbt.CompressedStreamTools;
 
 import java.io.*;
@@ -21,11 +22,13 @@ import java.util.*;
 @Getter
 public class PathfindPreset implements Cloneable {
     private String presetName;
+    @Setter
     private String presetId;
     private Instant generatedAt;
     private String origin;
     private boolean editable;
 
+    @Setter
     private File file;
     private boolean dirty = false;
 

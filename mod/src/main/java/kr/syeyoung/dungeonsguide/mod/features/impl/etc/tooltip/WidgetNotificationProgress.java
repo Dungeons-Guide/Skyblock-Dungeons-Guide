@@ -56,8 +56,8 @@ public class WidgetNotificationProgress extends AnnotatedImportOnlyWidget implem
     @Override
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         if (progressUpdate) {
-            update(progressesData);
             progressUpdate = false;
+            update(progressesData);
         }
 
         SingleChildRenderer.INSTANCE.doRender(partialTicks, context, buildContext);
