@@ -1,11 +1,15 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
+import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPresetRegistry;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationProgress;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetAbilitySettings;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.WidgetCreateAbilitySettings;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.modal.WidgetModalChooseAbilitySettings;
@@ -27,6 +31,9 @@ import java.nio.file.Files;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
     private PathfindPreset preset;
@@ -150,6 +157,84 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
 
 
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(200, 150, "Export Options", new WidgetModalExportSettings(preset), true), null);
+    }
+
+
+    @On(functionName = "unlinkUnused")
+    public void unlinkUnused() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModalConfirm modalMessage = new ModalConfirm("This will unlink all UNUSED precalculations in this PRESET.\nThis operation can not be undone");
+        PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Are you sure?", modalMessage, true), (a) -> {
+            if (a == null) return;
+            if (a == Boolean.TRUE) {
+                UUID uid = UUID.randomUUID();
+                WidgetNotificationProgress progress = new WidgetNotificationProgress(
+                        uid, "Unlinking"
+                );
+                FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(uid, progress);
+                progress.addProgress(new WidgetNotificationProgress.Progress("Unlinking...", null, null, false));
+
+                WidgetViewPreset.calculator.submit(() -> {
+                    try {
+                        List<AdditionalInfoCaculatedDungeonRoomInfo> additionalInfoCaculatedDungeonRoomInfoList = new ArrayList<>();
+                        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+                            additionalInfoCaculatedDungeonRoomInfoList.add(new AdditionalInfoCaculatedDungeonRoomInfo(dungeonRoomInfo, preset));
+                        }
+
+                        for (AdditionalInfoCaculatedDungeonRoomInfo roomInfo : additionalInfoCaculatedDungeonRoomInfoList) {
+                            for (PathfindPrecalculation precalculation : roomInfo.getUnused()) {
+                                roomInfo.getRoomPreset().removePrecalculation(precalculation.getId());
+                            }
+                        }
+                    } finally {
+                        FeatureRegistry.NOTIFICATIONS.getRootWidget().removeNotification(uid);
+                        Minecraft.getMinecraft().addScheduledTask(() -> {
+                            parent.recalc();
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    @On(functionName = "autolink")
+    public void autolink() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
+        UUID uid = UUID.randomUUID();
+        WidgetNotificationProgress progress = new WidgetNotificationProgress(
+                uid, "Autolinking"
+        );
+        FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(uid, progress);
+        progress.addProgress(new WidgetNotificationProgress.Progress("Autolinking...", null, null, false));
+
+        WidgetViewPreset.calculator.submit(() -> {
+            try {
+                List<AdditionalInfoCaculatedDungeonRoomInfo> additionalInfoCaculatedDungeonRoomInfoList = new ArrayList<>();
+                for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+                    additionalInfoCaculatedDungeonRoomInfoList.add(new AdditionalInfoCaculatedDungeonRoomInfo(dungeonRoomInfo, preset));
+                }
+
+                for (AdditionalInfoCaculatedDungeonRoomInfo roomInfo : additionalInfoCaculatedDungeonRoomInfoList) {
+
+                    for (PathfindRequest request : roomInfo.getMissing()) {
+                        List<PathfindPrecalculation> precalcs = PathfindResultRegistry.getINSTANCE().getsByHash(request.getHash());
+                        for (PathfindPrecalculation precalc : precalcs) {
+                            if (!precalc.getAlgorithmSetting().equals(roomInfo.getRoomPreset().getEffectiveAlgorithmSetting(roomInfo.getDungeonRoomInfo())))
+                                continue;
+
+                            roomInfo.getRoomPreset().addPrecalculation(precalc.getId());
+                            break;
+                        }
+                    }
+                }
+            } finally {
+                FeatureRegistry.NOTIFICATIONS.getRootWidget().removeNotification(uid);
+                Minecraft.getMinecraft().addScheduledTask(() -> {
+                    parent.recalc();
+                });
+            }
+        });
     }
 
     @On(functionName = "requestMissing")

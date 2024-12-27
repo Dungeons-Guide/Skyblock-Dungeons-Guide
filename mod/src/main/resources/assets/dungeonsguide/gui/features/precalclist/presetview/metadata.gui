@@ -87,6 +87,21 @@
                 </SelectiveContainer>
             </row>
             <size height="5"/>
+
+            <SelectiveContainer bind:visible="editable">
+                <row slot="true">
+                        <size height="15" width="130">
+                            <RoundButton text="Unlink Unused Precalcs" on:click="unlinkUnused"/>
+                        </size>
+                        <size width="5"/>
+                        <size height="15" width="180">
+                            <RoundButton text="AutoLink Exact Match Precalcs" on:click="autolink"/>
+                        </size>
+                </row>
+                <size width="0" height="0" slot="false"/>
+            </SelectiveContainer>
+
+            <size height="5"/>
             <row>
                 <size height="15" width="100">
                     <RoundButton text="Apply this preset" on:click="apply"/>
@@ -96,6 +111,8 @@
                     <RoundButton text="Request Missing Precalculations" on:click="requestMissing"/>
                 </size>
             </row>
+
+
         </col>
     </padding>
 </RoundRect>
