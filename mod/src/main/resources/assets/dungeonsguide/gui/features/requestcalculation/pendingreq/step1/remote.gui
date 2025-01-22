@@ -1,0 +1,40 @@
+<col crossAlign="START">
+    <Text text="§l1. Remote Calculation Service (Recommended)" size="8" color="#FFFFFFFF"/>
+    <size height="3"/>
+    <row>
+        <Text text="Required Credits: " size="8" color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="reqCredit" size="8" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <row>
+        <Text text="Your Total Credits: " size="8" color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="currCredit" size="8" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <row>
+        <Text text="Need to buy: " size="8" color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="purchaseCredit" size="8" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <row>
+        <Text text="Estimated Price: " size="8" color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="estimatedPrice" size="8" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <row>
+        <Text text="Estimated Time: " size="8" color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="estimatedTime" size="8" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <size height="3"/>
+    <size height="20">
+        <RoundButton text="Reload" on:click="reload"/>
+    </size>
+    <size height="5"/>
+    <Text bind:text="err" color="#FFCC0000" size="8"/>
+</col>

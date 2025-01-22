@@ -90,6 +90,22 @@ public class RenderingContext {
         return clips.empty() ? null : clips.peek();
     }
 
+
+    public boolean canDraw(Rect bounds) {
+        Rectangle clip = currentClip();
+        if (clip == null) return true;
+
+        if (clip.isEmpty() || bounds.getWidth() <= 0 || bounds.getHeight() <= 0) {
+            return false;
+        }
+        double x0 = clip.x;
+        double y0 = Minecraft.getMinecraft().displayHeight - clip.y - clip.height;
+        return (bounds.getX() + bounds.getWidth() > x0 &&
+                bounds.getY() + bounds.getHeight() > y0 &&
+                bounds.getX() < x0 + clip.width &&
+                bounds.getY() < y0 + clip.height);
+    }
+
     public void pushClip(Rect absBounds, Size size, double x, double y, double width, double height) {
         if (width < 0 || height < 0) {
             width = 0;

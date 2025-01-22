@@ -1,0 +1,73 @@
+
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2024  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<padding left="5" right="5" top="5">
+    <RoundRect radius="5" backgroundColor="#FF333333">
+        <padding left="5" top="5" right="5" bottom="5">
+            <col crossAlign="START">
+                <row>
+                    <flexible>
+                        <Text text="Pathfind Credits" color="#FFFFFFFF" size="12"/>
+                    </flexible>
+                </row>
+                <size height="5"/>
+                <line color="#FFFFFFFF"/>
+                <size height="5"/>
+                <padding left="5" right="5">
+                    <col crossAlign="START">
+                        <row>
+                            <Text text="Your total pathfind credits: " color="#FFFFFFFF" size="8"/>
+                            <flexible><Text bind:text="credits" color="#FFFFFFFF" size="8"/></flexible>
+                            <size width="5"/>
+                            <size height="20" width="100">
+                                <RoundButton text="Purchase Credits" on:click="purchaseCredits"/>
+                            </size><size width="5"/>
+                            <size height="20" width="100">
+                                <RoundButton text="Reload" on:click="reload"/>
+                            </size>
+                        </row>
+
+                        <IntrinsicHeight>
+                            <row>
+                                <line dir="VERTICAL"/>
+                                <flexible>
+                                    <padding left="5">
+                                        <col crossAlign="START">
+                                            <Text text="1000 from purchased" color="#FF777777" size="8"/>
+                                            <Text text="1000 from patreon reward" color="#FF777777" size="8"/>
+                                            <Text text="1000 from discord boosting" color="#FF777777" size="8"/>
+                                            <Text text="1000 from migrated tokens" color="#FF777777" size="8"/>
+                                        </col>
+                                    </padding>
+                                </flexible>
+                            </row>
+                        </IntrinsicHeight>
+
+                        <size height="3"/>
+
+                        <Text text="1 credit allows you to request 1 unit-room pathfind with zip file" color="#FFCCCCCC" size="8"/>
+
+                    </col>
+                </padding>
+                <size height="5"/>
+                <Text bind:text="error" color="#FFCC0000" size="8"/>
+            </col>
+        </padding>
+    </RoundRect>
+</padding>

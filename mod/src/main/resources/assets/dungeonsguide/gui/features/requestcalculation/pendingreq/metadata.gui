@@ -1,0 +1,33 @@
+<RoundRect radius="5" backgroundColor="#FF333333">
+    <padding left="5" top="5" bottom="5" right="5">
+        <col crossAlign="START">
+            <Text text="Metadata" color="#FFFFFFFF" size="12"/>
+            <size height="3"/>
+            <row>
+                <Text text="Total Precalc Requests: " size="8" color="#FFFFFFFF"/>
+                <flexible>
+                    <Text bind:text="precalcReqs" size="8" color="#FFFFFFFF"/>
+                </flexible>
+            </row>
+            <row>
+                <Text text="Total Credits Required: " size="8" color="#FFFFFFFF"/>
+                <flexible>
+                    <Text bind:text="requiredCredits" size="8" color="#FFFFFFFF"/>
+                </flexible>
+            </row>
+            <row>
+                <Text text="Spanning: " size="8" color="#FFFFFFFF"/>
+                <flexible>
+                    <Text bind:text="rooms" size="8" color="#FFFFFFFF"/>
+                </flexible>
+            </row>
+            <row>
+                <Text text="Apply to " size="8" color="#FFFFFFFF"/>
+                <flexible>
+                    <Text bind:text="presetName" size="8" color="#FFFFFFFF"/>
+                </flexible>
+                <Text text=" on complete" size="8" color="#FFFFFFFF"/>
+            </row>
+        </col>
+    </padding>
+</RoundRect>

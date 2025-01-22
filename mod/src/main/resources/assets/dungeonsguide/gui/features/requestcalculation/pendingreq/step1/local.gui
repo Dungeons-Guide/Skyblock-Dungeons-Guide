@@ -1,0 +1,20 @@
+<col crossAlign="START">
+    <Text text="§l2. Local Calculation on PC (no support provided)" size="8" color="#FFFFFFFF"/>
+    <size height="3"/>
+    <row>
+        <Text text="Required Calc Unit: " size="8" color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="reqCalcUnit" size="8" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <row>
+        <Text text="Time: " size="8" color="#FFFFFFFF"/>
+        <flexible>
+            <Text bind:text="estimate" size="8" color="#FFFFFFFF"/>
+        </flexible>
+    </row>
+    <size height="3"/>
+    <Text text="Estimated Time for beginner to setup calc program: please don't" size="8" color="#FF777777"/>
+    <size height="3"/>
+    <Text text="Estimated Time for developer to setup calc program: 3 hours" size="8" color="#FF777777"/>
+</col>

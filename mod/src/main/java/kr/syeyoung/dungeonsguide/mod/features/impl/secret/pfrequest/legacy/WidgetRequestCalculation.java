@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.legacy;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -58,7 +58,7 @@ public class WidgetRequestCalculation extends AnnotatedImportOnlyWidget {
 
 
     public WidgetRequestCalculation() {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/requestcalculation.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/legacy/requestcalculation.gui"));
 
         generatingReq.setValue(FeatureRegistry.SECRET_PATHFIND_REQUEST.calculating());
         calculationDisable.setValue(true);
@@ -99,7 +99,7 @@ public class WidgetRequestCalculation extends AnnotatedImportOnlyWidget {
     public void generateReq() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         generatingReq.setValue(true);
-        FeatureRegistry.SECRET_PATHFIND_REQUEST.requestCalc();
+//        FeatureRegistry.SECRET_PATHFIND_REQUEST.requestCalc();
     }
 
     @On(functionName = "purchaseToken")

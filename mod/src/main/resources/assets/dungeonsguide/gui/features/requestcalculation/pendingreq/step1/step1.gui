@@ -1,0 +1,29 @@
+<RoundRect radius="5" backgroundColor="#FF333333">
+    <padding left="5" top="5" bottom="5" right="5">
+        <col crossAlign="START">
+            <Text text="§e§lStep 1" color="#FFFFFFFF" size="12"/>
+            <size height="3"/>
+            <Text text="Generate Pathfind Precalc Request zip" size="6" color="#FFFFFFFF"/>
+
+
+            <size height="3"/>
+
+            <size height="20">
+                <RoundButton text="Generate Zip" on:click="generateZip"/>
+            </size>
+            <size height="3"/>
+            <Text text="* It will take few minutes" size="8" color="#FF777777"/>
+
+            <size height="5"/>
+            <size height="3"/>
+            <line thickness="1" color="#FFFFFFFF"/>
+            <size height="3"/>
+
+            <flexible>
+                <ScrollablePanel direction="VERTICAL">
+                    <slot bind:_="step2calc"/>
+                </ScrollablePanel>
+            </flexible>
+        </col>
+    </padding>
+</RoundRect>

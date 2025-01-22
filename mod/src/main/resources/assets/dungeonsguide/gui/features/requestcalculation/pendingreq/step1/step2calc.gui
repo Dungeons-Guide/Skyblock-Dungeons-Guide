@@ -1,0 +1,33 @@
+<col crossAlign="START">
+    <Text text="Price/Time Estimates for §lStep 2" size="8" color="#FFFFFFFF"/>
+    <size height="3"/>
+    <IntrinsicHeight>
+        <padding left="3">
+            <row>
+                <line dir="VERTICAL" thickness="1" color="#FFFFFFFF"/>
+                <size width="3"/>
+                <flexible>
+                    <col crossAlign="START">
+                        <slot bind:_="remoteEstimate"/>
+                        <size height="3"/>
+                        <row>
+                            <flexible>
+                                <line thickness="1" color="#FFFFFFFF"/>
+                            </flexible>
+                            <padding left="3" right="3">
+                                <Text text="OR" color="#FFFFFFFF" size="8"/>
+                            </padding>
+                            <flexible>
+                                <line thickness="1" color="#FFFFFFFF"/>
+                            </flexible>
+                        </row>
+                        <size height="3"/>
+                        <slot bind:_="localEstimate"/>
+                    </col>
+                </flexible>
+            </row>
+        </padding>
+    </IntrinsicHeight>
+    <size height="3"/>
+    <Text text="Time estimates are assuming etherwarp on" size="8" color="#FFFFFFFF"/>
+</col>

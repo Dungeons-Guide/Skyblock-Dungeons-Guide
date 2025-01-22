@@ -1,0 +1,29 @@
+<padding top="3">
+        <size height="18">
+            <row>
+                <flexible>
+                    <align hAlign="START" vAlign="CENTER">
+                    <Text bind:text="hash" color="#FFFFFFFF" size="8"/>
+                    </align>
+                </flexible>
+                <size width="3"/>
+                <size width="70">
+                    <align hAlign="START" vAlign="CENTER">
+                    <Text bind:text="roomName" color="#FFFFFFFF" size="8"/>
+                    </align>
+                </size>
+                <size width="3"/>
+                <size width="100">
+                    <align hAlign="START" vAlign="CENTER">
+                    <Text bind:text="roomState" color="#FFFFFFFF" size="8"/>
+                    </align>
+                </size>
+                <size width="3"/>
+                <size width="40">
+                    <align hAlign="CENTER" vAlign="CENTER">
+                        <Text bind:text="credits" color="#FFFFFFFF" align="CENTER" size="8"/>
+                    </align>
+                </size>
+            </row>
+        </size>
+</padding>

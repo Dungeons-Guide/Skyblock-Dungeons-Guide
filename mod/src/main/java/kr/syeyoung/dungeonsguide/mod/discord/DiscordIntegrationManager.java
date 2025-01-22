@@ -69,6 +69,19 @@ public class DiscordIntegrationManager implements IPCListener {
         return ipcClient.getStatus() == PipeStatus.CONNECTED;
     }
 
+    public void requestAuth() {
+        JSONObject payload = new JSONObject()
+                .put("cmd", "AUTHORIZE")
+                .put("args", new JSONObject()
+                        .put("scopes", new JSONArray().put("identify").put("relationships.read").put("rpc"))
+                        .put("client_id", "816298079732498473"));
+        ipcClient.send(payload, new Callback(success ->{
+            System.out.println(success);
+        }, fail -> {
+            System.out.println(fail);
+        }));
+    }
+
     public void sendInvite(String id, String content) {
         JSONObject payload = new JSONObject()
                 .put("cmd", "ACTIVITY_INVITE_USER")

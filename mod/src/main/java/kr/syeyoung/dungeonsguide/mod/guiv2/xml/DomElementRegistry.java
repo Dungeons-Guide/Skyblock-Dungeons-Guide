@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.view.TestView;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.ParserException;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.W3CBackedParser;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.W3CBackedParserElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
@@ -125,12 +126,21 @@ public class DomElementRegistry {
 
     }
 
+    private static final Map<ResourceLocation, Parser> cache = new HashMap<>();
+
     public static Parser obtainParser(ResourceLocation resourceLocation) {
+        if (cache.containsKey(resourceLocation)) return cache.get(resourceLocation);
         try {
             IResource iResource = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation);
-            return new W3CBackedParser(iResource.getInputStream());
+            W3CBackedParser parser = new W3CBackedParser(iResource.getInputStream());
+            cache.put(resourceLocation, parser);
+            return parser;
         } catch (Exception e) {
             throw new ParserException("An error occurred while parsing "+resourceLocation, e);
         }
+    }
+
+    public static void onResourceManagerReload() {
+        cache.clear();
     }
 }

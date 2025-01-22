@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.legacy;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -30,32 +30,27 @@ import net.minecraft.util.ResourceLocation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WidgetCalculationProcessEvent extends AnnotatedImportOnlyWidget {
+public class WidgetCalculationProcess extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "timestamp")
     public final BindableAttribute<String> timestamp = new BindableAttribute<>(String.class);
-    @Bind(variableName = "type")
-    public final BindableAttribute<String> type = new BindableAttribute<>(String.class);
-    @Bind(variableName = "name")
-    public final BindableAttribute<String> name = new BindableAttribute<>(String.class);
+    @Bind(variableName = "id")
+    public final BindableAttribute<String> id = new BindableAttribute<>(String.class);
     @Bind(variableName = "status")
     public final BindableAttribute<String> status = new BindableAttribute<>(String.class);
+    @Bind(variableName = "events")
+    public final BindableAttribute<List<Widget>> widgetList = new BindableAttribute(WidgetList.class);
 
-    public WidgetCalculationProcessEvent(JsonObject jsonObject) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/event.gui"));
-        timestamp.setValue(jsonObject.get("timestamp").getAsString());
-        name.setValue(jsonObject.has("name") ? jsonObject.get("name").getAsString() : "");
-        type.setValue(jsonObject.get("type").getAsString());
-        status.setValue("");
+    public WidgetCalculationProcess(JsonObject jsonObject) {
+        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/legacy/calculationprogress.gui"));
+        timestamp.setValue(jsonObject.get("execution").getAsJsonObject().get("startDate").getAsString());
+        id.setValue(jsonObject.get("execution").getAsJsonObject().get("name").getAsString());
+        status.setValue(jsonObject.get("execution").getAsJsonObject().get("status").getAsString());
+        List<Widget> widgets = new ArrayList<>();
 
-        if (jsonObject.get("type").getAsString().equals("MapRunStarted")) {
-            JsonObject stuffs = jsonObject.getAsJsonObject("maprun").getAsJsonObject("itemCounts");
-            int good = stuffs.get("succeeded").getAsInt();
-            int faield = stuffs.get("failed").getAsInt();
-            int running = stuffs.get("running").getAsInt();
-            int total = stuffs.get("total").getAsInt();
-
-            status.setValue(good+" Complete " + faield+" Failed " + running+ " Running out of "+total+" tasks");
-
+        for (JsonElement history : jsonObject.get("history").getAsJsonArray()) {
+            widgets.add(new WidgetCalculationProcessEvent(history.getAsJsonObject()));
         }
+
+        widgetList.setValue(widgets);
     }
 }

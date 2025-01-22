@@ -1,0 +1,34 @@
+<col>
+    <padding bottom="3">
+        <size height="16">
+            <row>
+                <flexible>
+                    <align hAlign="START" vAlign="CENTER">
+                        <Text text="Precalculation ID Hash" color="#FFFFFFFF" size="8"/>
+                    </align>
+                </flexible>
+                <size width="3"/>
+                <size width="70">
+                    <align hAlign="START" vAlign="CENTER">
+                        <Text text="Room Name" color="#FFFFFFFF" size="8"/>
+                    </align>
+                </size>
+                <size width="3"/>
+                <size width="100">
+                    <align hAlign="START" vAlign="CENTER">
+                        <Text text="Room State" color="#FFFFFFFF" size="8"/>
+                    </align>
+                </size>
+                <size width="3"/>
+                <size width="40">
+                    <align hAlign="CENTER" vAlign="CENTER">
+                        <Text text="Used Credits" color="#FFFFFFFF" align="CENTER" size="8"/>
+                    </align>
+                </size>
+            </row>
+        </size>
+    </padding>
+    <line color="#FFFFFFFF" thickness="1"/>
+    <col bind:_="list">
+    </col>
+</col>

@@ -31,6 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatRoutine;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
+import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
@@ -295,7 +296,7 @@ public class CommandDgDebug extends CommandBase {
                 }
                 break;
             case "randomroutine":
-
+                DiscordIntegrationManager.INSTANCE.requestAuth();
 //                int val1 = this.<Integer>getParameter("haste").getValue();
 //                int val2 = this.<Integer>getParameter("pickaxe_efficiency").getValue();
 //                Item.ToolMaterial toolMaterial = this.<FeaturePathfindSettings.Material>getParameter("pickaxe_type").getValue().getToolMaterial();

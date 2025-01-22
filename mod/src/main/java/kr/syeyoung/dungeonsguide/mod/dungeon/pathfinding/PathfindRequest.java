@@ -97,6 +97,7 @@ public class PathfindRequest {
     public void write(DRIWorld driWorld, DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeUTF("DGPFR");
         dataOutputStream.writeUTF(getId());
+        dataOutputStream.writeUTF(getHash());
         dataOutputStream.writeUTF(dungeonRoomInfo.getUuid().toString());
         dataOutputStream.writeUTF(dungeonRoomInfo.getName());
         // export algorithm settings

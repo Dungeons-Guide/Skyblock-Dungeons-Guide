@@ -9,12 +9,15 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationProgress;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.PathfindPrecalculationRequestSet;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.WidgetPendingRequestPage;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetAbilitySettings;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.WidgetCreateAbilitySettings;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.modal.WidgetModalChooseAbilitySettings;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.Modal;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.ModalAsk;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.ModalConfirm;
@@ -240,6 +243,40 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
     @On(functionName = "requestMissing")
     public void requestMissing() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
+        UUID uid = UUID.randomUUID();
+        WidgetNotificationProgress progress = new WidgetNotificationProgress(
+                uid, "Generating Precalculation Request Set..."
+        );
+        FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(uid, progress);
+        progress.addProgress(new WidgetNotificationProgress.Progress("Generating Precalculation Request Set...", null, null, false));
+
+
+        WidgetViewPreset.calculator.submit(() -> {
+            try {
+                List<AdditionalInfoCaculatedDungeonRoomInfo> additionalInfoCaculatedDungeonRoomInfoList = new ArrayList<>();
+                for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+                    additionalInfoCaculatedDungeonRoomInfoList.add(new AdditionalInfoCaculatedDungeonRoomInfo(dungeonRoomInfo, preset));
+                }
+                List<PathfindRequest> requests = new ArrayList<>();
+                for (AdditionalInfoCaculatedDungeonRoomInfo roomInfo : additionalInfoCaculatedDungeonRoomInfoList) {
+                    for (PathfindRequest request : roomInfo.getMissing()) {
+                        requests.add(request);
+                    }
+                }
+
+                PathfindPrecalculationRequestSet requestSet = new PathfindPrecalculationRequestSet(preset, requests);
+
+                FeatureRegistry.SECRET_PATHFIND_REQUEST.addPathfindPrecalculationRequestSet(requestSet);
+                // open gui.
+
+                Navigator navigator = Navigator.getNavigator(getDomElement());
+                navigator.setPageWithoutPush(FeatureRegistry.SECRET_PATHFIND_REQUEST.getConfigureWidget());
+                navigator.openPage(new WidgetPendingRequestPage(requestSet));
+            } finally {
+                FeatureRegistry.NOTIFICATIONS.getRootWidget().removeNotification(uid);
+            }
+        });
 
     }
 

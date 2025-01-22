@@ -56,6 +56,8 @@ public class W3CBackedParser implements Parser {
                 break;
             }
         rootElement = semiRoot;
+
+        inputStream.close();
     }
 
     @Override
@@ -65,6 +67,5 @@ public class W3CBackedParser implements Parser {
 
     @Override
     public void close() throws IOException {
-        inputStream.close();
     }
 }

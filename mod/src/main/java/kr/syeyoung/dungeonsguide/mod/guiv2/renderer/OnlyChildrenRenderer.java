@@ -29,6 +29,7 @@ public class OnlyChildrenRenderer implements Renderer {
         for (DomElement value : buildContext.getChildren()) {
             Rect original = value.getRelativeBound();
             if (original == null) continue;
+
             GlStateManager.pushMatrix();
             GlStateManager.translate(original.getX(), original.getY(), 0);
 
@@ -42,9 +43,10 @@ public class OnlyChildrenRenderer implements Renderer {
                      (original.getHeight() * absYScale)
             );
             value.setAbsBounds(elementABSBound);
-
-            value.getRenderer().doRender(
-                    partialTicks,renderingContext, value);
+            if (renderingContext.currentClip() == null || renderingContext.canDraw(elementABSBound)) {
+                value.getRenderer().doRender(
+                        partialTicks,renderingContext, value);
+            }
             GlStateManager.popMatrix();
         }
     }

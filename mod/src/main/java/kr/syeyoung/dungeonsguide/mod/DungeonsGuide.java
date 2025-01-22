@@ -41,6 +41,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.guiv2.PassthroughManager;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.DefaultFontRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
@@ -483,6 +484,7 @@ public class DungeonsGuide implements DGInterface {
         GLCursors.setupCursors();
         DefaultFontRenderer.DEFAULT_RENDERER.onResourceManagerReload();
         ShaderManager.onResourceReload();
+        DomElementRegistry.onResourceManagerReload();
 
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
         byte[] glypthWidths = ReflectionHelper.getPrivateValue(FontRenderer.class, fontRenderer, "glyphWidth", "field_78287_e", "field_2819", "e");

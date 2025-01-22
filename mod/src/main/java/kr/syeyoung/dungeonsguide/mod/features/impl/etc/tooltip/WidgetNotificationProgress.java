@@ -63,6 +63,11 @@ public class WidgetNotificationProgress extends AnnotatedImportOnlyWidget implem
         SingleChildRenderer.INSTANCE.doRender(partialTicks, context, buildContext);
     }
 
+    @Override
+    public void onMount() {
+        progressUpdate = true;
+    }
+
     @AllArgsConstructor
     @Getter @Setter
     public static class Progress {

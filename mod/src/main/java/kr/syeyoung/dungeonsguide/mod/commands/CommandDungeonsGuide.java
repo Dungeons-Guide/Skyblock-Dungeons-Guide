@@ -37,6 +37,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.SkinF
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.image.ImageTexture;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
@@ -292,6 +293,7 @@ public class CommandDungeonsGuide extends CommandBase {
         StaticResourceCache.INSTANCE.purgeCache();
         ImageTexture.imageMap.clear();
         SkinFetcher.purgeCache();
+        DomElementRegistry.onResourceManagerReload();
 
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
     }

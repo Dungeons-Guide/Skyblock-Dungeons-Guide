@@ -21,6 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.primitive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.awt.geom.Rectangle2D;
+
 @Data @AllArgsConstructor
 public class Rect implements IRect {
     private final double x;
@@ -29,4 +31,5 @@ public class Rect implements IRect {
     private final double height;
 
     public static Rect fromPositionSize(Position pos, Size size) { return new Rect(pos.getX(), pos.getY(), size.getWidth(), size.getHeight()); }
+
 }

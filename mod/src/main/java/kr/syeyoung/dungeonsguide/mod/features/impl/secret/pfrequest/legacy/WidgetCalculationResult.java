@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.legacy;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -45,7 +45,7 @@ public class WidgetCalculationResult extends AnnotatedImportOnlyWidget {
 
 
     public WidgetCalculationResult(String timestamp, String key) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/calculationresult.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/legacy/calculationresult.gui"));
         this.key.setValue(key);
         this.timestamp.setValue(" ("+timestamp+")");
     }

@@ -1,0 +1,20 @@
+<row>
+    <flexible>
+        <ScrollablePanel direction="VERTICAL">
+            <padding top="5" right="5" left="5" bottom="5">
+                <slot bind:_="precalcReqSetPreview"/>
+            </padding>
+        </ScrollablePanel>
+    </flexible>
+    <padding top="5" right="5" left="5" bottom="5">
+        <size width="200">
+            <col>
+                <slot bind:_="metadata"/>
+                <size height="5"/>
+                <flexible>
+                    <slot bind:child="currentStep"/>
+                </flexible>
+            </col>
+        </size>
+    </padding>
+</row>
