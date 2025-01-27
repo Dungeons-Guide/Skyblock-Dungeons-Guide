@@ -41,7 +41,7 @@ dependencies {
     modOnlyDev(project(path: ":mod", configuration: "unmappedMod"))
 }
 
-task standaloneJar(type: Jar) {
+task standaloneJar(type: Zip) {
     group = "build"
 
     archiveClassifier = "standalone"
@@ -59,7 +59,7 @@ task standaloneJar(type: Jar) {
     }
 }
 
-task standaloneDevJar(type: Jar) {
+task standaloneDevJar(type: Zip) {
     group = "build"
 
     archiveClassifier = "devStandalone"
