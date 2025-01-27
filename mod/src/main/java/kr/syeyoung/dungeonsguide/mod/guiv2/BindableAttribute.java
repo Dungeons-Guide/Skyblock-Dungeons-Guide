@@ -37,7 +37,7 @@ public class BindableAttribute<T> {
     private boolean initialized = false;
     @Getter
     private final Class<T> type;
-    private T value;
+    private volatile T value;
     private List<BiConsumer<T,T>> onUpdates = new ArrayList<>();
 
     private boolean updating = false;

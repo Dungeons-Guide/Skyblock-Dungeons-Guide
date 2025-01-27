@@ -125,11 +125,11 @@ public class AlgorithmSetting implements Cloneable {
         nbt.setTag("shovel", shovel == null ? new NBTTagByte((byte)0) : shovel.serialize());
         nbt.setTag("axe", axe == null ? new NBTTagByte((byte)0) : axe.serialize());
 
-        nbt.setBoolean("stonkDown", stonkTeleport);
+        nbt.setBoolean("stonkDown", stonkDown);
         nbt.setBoolean("stonkTeleport", stonkTeleport);
         nbt.setBoolean("stonkEChest", stonkEChest);
         nbt.setBoolean("routeEtherwarp", routeEtherwarp);
-        nbt.setInteger(("maxStonk"), maxStonk);
+        nbt.setInteger("maxStonk", maxStonk);
         nbt.setBoolean("enderpearl", enderpearl);
         nbt.setBoolean("tntpearl", tntpearl);
         nbt.setDouble("etherwarpOffset", etherwarpOffset);

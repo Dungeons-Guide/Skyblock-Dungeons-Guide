@@ -16,25 +16,29 @@
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<padding top="5" right="5" left="5" bottom="5">
     <col crossAlign="START">
-        <Text text="Request Metadata" color="#FFFFFFFF" size="12"/>
-        <size height="5"/>
         <row>
-            <Text text="      Started at: " color="#FFAAAAAA"/>
+            <Text text="         Started at: " color="#FFAAAAAA"/>
             <Text bind:text="timestamp" color="#FFFFFFFF"/>
         </row>
         <row>
-            <Text text="                 ID: " color="#FFAAAAAA"/>
+            <Text text="          States ID: " color="#FFAAAAAA"/>
             <Text bind:text="id" color="#FFFFFFFF"/>
         </row>
         <row>
-            <Text text="Current Status: " color="#FFAAAAAA"/>
+            <Text text="  Current Status: " color="#FFAAAAAA"/>
             <Text bind:text="status" color="#FF00FFFF"/>
+        </row>
+        <row>
+            <Text text="  Request Status: " color="#FFAAAAAA"/>
+            <Text bind:text="requestStatus" color="#FFFFFFFF"/>
+        </row>
+        <row>
+            <Text text="         Completed: " color="#FFAAAAAA"/>
+            <Text bind:text="completed" color="#FFFFFFFF"/>
         </row>
         <size height="10"/>
         <Text text="Events" color="#FFFFFFFF" size="12"/>
         <size height="5"/>
         <col bind:_="events"></col>
     </col>
-</padding>

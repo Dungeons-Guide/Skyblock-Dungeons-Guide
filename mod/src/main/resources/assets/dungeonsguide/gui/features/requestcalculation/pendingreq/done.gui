@@ -1,0 +1,21 @@
+<RoundRect radius="5" backgroundColor="#FF333333">
+    <padding left="5" top="5" bottom="5" right="5">
+        <col crossAlign="START">
+            <Text text="§e§lStep 3" color="#FFFFFFFF" size="12"/>
+            <size height="3"/>
+            <Text text="Running calculation on cloud" size="6" color="#FFFFFFFF"/>
+            <size height="3"/>
+            <size height="20">
+                <RoundButton text="View Progress" on:click="viewProgress"/>
+            </size>
+            <size height="3"/>
+            <Text text="* It will take several minutes" size="8" color="#FF777777"/>
+            <Text text="* You can now close Minecraft" size="8" color="#FF777777"/>
+            <Text text="* If calc fails, credits will be refunded within 10m" size="8" color="#FF777777"/>
+            <size height="5"/>
+            <size height="3"/>
+            <line thickness="1" color="#FFFFFFFF"/>
+            <size height="3"/>
+        </col>
+    </padding>
+</RoundRect>

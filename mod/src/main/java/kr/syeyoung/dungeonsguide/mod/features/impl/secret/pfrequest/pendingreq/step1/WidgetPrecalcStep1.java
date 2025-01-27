@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step1;
 
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.launcher.Main;

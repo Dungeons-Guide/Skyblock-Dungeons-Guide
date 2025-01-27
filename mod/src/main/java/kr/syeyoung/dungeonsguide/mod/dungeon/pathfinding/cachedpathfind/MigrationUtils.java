@@ -23,7 +23,7 @@ public class MigrationUtils {
 
         try (FileOutputStream fos = new FileOutputStream(f2)) {
             DataOutputStream dataOutputStream = new DataOutputStream(fos);
-            dataOutputStream.writeUTF("R2DGPF");
+            dataOutputStream.writeBytes("DGPFRES2");
             dataOutputStream.writeInt(1);
             dataOutputStream.writeUTF(id2);
             dataOutputStream.writeUTF(hash);
@@ -31,18 +31,18 @@ public class MigrationUtils {
             dataOutputStream.writeUTF(cache.getRoomId().toString());
             dataOutputStream.writeUTF(cache.getId().split(":")[1]);
             dataOutputStream.writeUTF("Migration "+migrationId);
-            dataOutputStream.writeUTF("ALGO");
+            dataOutputStream.writeBytes("ALGO");
             AlgorithmSetting algorithmSetting = cache.getAlgorithmSetting();
             NBTTagCompound nbtTagCompound = algorithmSetting.serializeToNBT();
             CompressedStreamTools.write(nbtTagCompound, dataOutputStream);
-            dataOutputStream.writeUTF("TRGT");
+            dataOutputStream.writeBytes("TRGT");
             dataOutputStream.writeInt(cache.getTargets().size());
             for (OffsetVec3 target : cache.getTargets()) {
                 dataOutputStream.writeInt((int) (target.xCoord * 2));
                 dataOutputStream.writeInt((int) (target.yCoord * 2 + 140));
                 dataOutputStream.writeInt((int) (target.zCoord * 2));
             }
-            dataOutputStream.writeUTF("NODE");
+            dataOutputStream.writeBytes("NODE");
             dataOutputStream.writeBoolean(true);
 
             try (FileInputStream fileInputStream = new FileInputStream(f)) {

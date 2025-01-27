@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.legacy;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.remotereq;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -40,11 +40,21 @@ public class WidgetCalculationProcess extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "events")
     public final BindableAttribute<List<Widget>> widgetList = new BindableAttribute(WidgetList.class);
 
-    public WidgetCalculationProcess(JsonObject jsonObject) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/legacy/calculationprogress.gui"));
+    @Bind(variableName = "completed")
+    public final BindableAttribute<String> completed = new BindableAttribute<>(String.class);
+    @Bind(variableName = "requestStatus")
+    public final BindableAttribute<String> requestStatus = new BindableAttribute<>(String.class);
+
+
+    public WidgetCalculationProcess(JsonObject jsonObject, JsonObject request) {
+        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/remotereq/calculationprogress.gui"));
         timestamp.setValue(jsonObject.get("execution").getAsJsonObject().get("startDate").getAsString());
         id.setValue(jsonObject.get("execution").getAsJsonObject().get("name").getAsString());
         status.setValue(jsonObject.get("execution").getAsJsonObject().get("status").getAsString());
+
+        completed.setValue(request.get("completed").getAsBoolean() ? "Yes" :"No");
+        requestStatus.setValue(request.get("status").getAsString());
+
         List<Widget> widgets = new ArrayList<>();
 
         for (JsonElement history : jsonObject.get("history").getAsJsonArray()) {

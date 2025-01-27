@@ -1,0 +1,86 @@
+
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2024  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<padding left="5" right="5" top="5">
+    <RoundRect radius="5" backgroundColor="#FF333333">
+        <padding left="5" top="5" right="5" bottom="5">
+            <col crossAlign="START">
+                <row>
+                    <flexible>
+                        <Text text="Remote Calculation Service Progress" color="#FFFFFFFF" size="12"/>
+                    </flexible>
+                    <size height="20" width="100">
+                        <RoundButton text="Reload" on:click="reload"/>
+                    </size>
+                </row>
+
+                <size height="5"/>
+                <line/>
+                <size height="5"/>
+
+                <Text text="Request Metadata" color="#FFFFFFFF" size="12"/>
+                <size height="5"/>
+                <row>
+                    <Text text="        Request ID: " color="#FFAAAAAA"/>
+                    <Text bind:text="requestId" color="#FFFFFFFF"/>
+                </row>
+                <row>
+                    <Text text="               Name: " color="#FFAAAAAA"/>
+                    <Text bind:text="requestName" color="#FFFFFFFF"/>
+                </row>
+                <row>
+                    <Text text="             Link to: " color="#FFAAAAAA"/>
+                    <Text bind:text="linkTo" color="#FFFFFFFF"/>
+                </row>
+                <size height="5"/>
+
+                <SelectiveContainer bind:visible="loading">
+                    <size height="100" slot="true">
+                        <bgcolor backgroundColor="#FF000000">
+                            <align vAlign="CENTER" hAlign="CENTER">
+                                <Text text="Loading..." color="#FFFFFFFF" size="8"/>
+                            </align>
+                        </bgcolor>
+                    </size>
+                    <slot bind:child="progress" slot="false"/>
+                </SelectiveContainer>
+                <size height="5"/>
+                <Text text="Download and Apply Precalculations" color="#FFFFFFFF" size="12"/>
+                <size height="3"/>
+                <Text text="Download is only available for 7 days after pathfind completes" color="#FFCCCCCC" size="8"/>
+                <size height="5"/>
+                <SelectiveContainer bind:visible="complete">
+                    <row slot="true">
+                        <size width="200" height="20">
+                            <RoundButton text="Download and Auto Apply Result" on:click="downloadAndAutoApply"/>
+                        </size>
+                        <size width="5"/>
+                        <size width="150" height="20">
+                            <RoundButton text="Download in browser" on:click="download"/>
+                        </size>
+                    </row>
+                    <Text text="Wait for pathfind to complete...." size="8" color="#FFCCCCCC" slot="false"/>
+                </SelectiveContainer>
+
+                <size height="5"/>
+                <Text bind:text="error" color="#FFCC0000" size="8"/>
+            </col>
+        </padding>
+    </RoundRect>
+</padding>

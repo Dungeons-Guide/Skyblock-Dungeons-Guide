@@ -1,0 +1,19 @@
+<RoundRect radius="5" backgroundColor="#FF333333">
+    <padding left="5" top="5" bottom="5" right="5">
+        <col crossAlign="START">
+            <Text text="§e§lStep 2" color="#FFFFFFFF" size="12"/>
+            <size height="3"/>
+            <Text text="Actually pre-calculate routes using zip" size="6" color="#FFFFFFFF"/>
+            <size height="3"/>
+            <slot bind:_="progress"/>
+            <size height="3"/>
+            <Text text="* It will take few minutes" size="8" color="#FF777777"/>
+            <Text text="* Try not to close Minecraft" size="8" color="#FF777777"/>
+            <Text text="* If uploading fails, credits will be refunded within 10m" size="8" color="#FF777777"/>
+            <size height="5"/>
+            <size height="3"/>
+            <line thickness="1" color="#FFFFFFFF"/>
+            <size height="3"/>
+        </col>
+    </padding>
+</RoundRect>

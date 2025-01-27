@@ -316,7 +316,8 @@ public class CommandDgDebug extends CommandBase {
     }
 
     private void migrateCommand() throws Exception {
-        File targetDir = new File(Main.getConfigDir(), "precalculations");
+        File targetDir = new File(Main.getConfigDir(), "precalculations/migration");
+        targetDir.mkdirs();
 
         UUID uuid = UUID.randomUUID();
         List<PathfindPrecalculation> precalculations=  new ArrayList<>();

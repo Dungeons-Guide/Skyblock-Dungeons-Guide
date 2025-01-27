@@ -25,8 +25,8 @@ public class WidgetRequestSet extends AnnotatedImportOnlyWidget {
         super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/frontpage/precalcrequestset.gui"));
 
         backgroundColor.setValue(requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.PENDING ? 0xFF505050 :
-                requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.GENERATING_ZIP ? 0xFF575600 :
-                        requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.WAITING_FOR_USER ? 0xff065702 : 0);
+                requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.GENERATING_ZIP || requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.CREATING_UPLOADING_REQUEST ? 0xFF575600 :
+                        requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.WAITING_FOR_USER ? 0xff065702 : 0xFF111111);
 
         name.setValue(requestSet.getName());
 
@@ -36,9 +36,10 @@ public class WidgetRequestSet extends AnnotatedImportOnlyWidget {
 
     @Override
     public void onMount() {
+
         backgroundColor.setValue(requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.PENDING ? 0xFF505050 :
-                requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.GENERATING_ZIP ? 0xFF575600 :
-                        requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.WAITING_FOR_USER ? 0xff065702 : 0);
+                requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.GENERATING_ZIP || requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.CREATING_UPLOADING_REQUEST ? 0xFF575600 :
+                        requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.WAITING_FOR_USER ? 0xff065702 : 0xFF111111);
 
     }
 
@@ -51,8 +52,8 @@ public class WidgetRequestSet extends AnnotatedImportOnlyWidget {
 
         requestSet.setSeen(true);
         backgroundColor.setValue(requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.PENDING ? 0xFF505050 :
-                requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.GENERATING_ZIP ? 0xFF575600 :
-                requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.WAITING_FOR_USER ? 0xff065702 : 0);
+                requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.GENERATING_ZIP || requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.CREATING_UPLOADING_REQUEST ? 0xFF575600 :
+                requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.WAITING_FOR_USER ? 0xff065702 : 0xFF111111);
 
         Navigator.getNavigator(getDomElement()).openPage(new WidgetPendingRequestPage(requestSet));
     }

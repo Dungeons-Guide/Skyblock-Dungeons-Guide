@@ -101,13 +101,15 @@ public class PathfindRequest {
     *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
     *    |   real Magic Value (DGPFREQ2) |    Version    |               |
     *    +---+---+---+---+---+---+---+---+---+---+---+---+               | // following is version 1
-    *    |           ID        (Variable Size) (Java UTF8)               |
+    *    |           Target ID (Variable Size) (Java UTF8)               |
     *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
-    *    |           ID Hash   (Variable Size) (Java UTF8)               |
+    *    |         Target Hash (Variable Size) (Java UTF8)               |
     *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
     *    |           Room UID  (Variable Size) (Java UTF8)               | // ik this is stupid
     *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
     *    |           Room Name (Variable Size) (Java UTF8)               |
+    *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+    *    |           Room State(Variable Size) (Java UTF8)               |
     *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
     *    |     X Len     |     Y Len     |     Z Len     |Magic Val(ALGO)| // You may ask why it moved here.
     *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+ // Well it's easier to validate on python this way
@@ -137,8 +139,10 @@ public class PathfindRequest {
 
         dataOutputStream.writeUTF(getId());
         dataOutputStream.writeUTF(getHash());
+
         dataOutputStream.writeUTF(dungeonRoomInfo.getUuid().toString());
         dataOutputStream.writeUTF(dungeonRoomInfo.getName());
+        dataOutputStream.writeUTF(openMech.stream().sorted(String::compareTo).collect(Collectors.joining(",")));
 
         dataOutputStream.writeInt(dungeonRoomInfo.getWidth()); // x len
         dataOutputStream.writeInt(dungeonRoomInfo.getLength()); // z len

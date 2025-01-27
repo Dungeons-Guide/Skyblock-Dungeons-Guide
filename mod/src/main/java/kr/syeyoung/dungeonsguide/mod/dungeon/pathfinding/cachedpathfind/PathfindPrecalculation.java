@@ -60,7 +60,10 @@ public class PathfindPrecalculation {
 
 
     private void expectMagicValue(DataInputStream dis, String magicValue) throws IOException {
-        String actual = dis.readUTF();
+        byte[] bytes = new byte[magicValue.length()];
+        int read = dis.read(bytes);
+        if (read != bytes.length) throw new IllegalStateException("Expected magic value "+magicValue+" Instead got EOF?");
+        String actual = new String(bytes);
         if (!actual.equals(magicValue)) throw new IllegalStateException("Expected magic value "+magicValue+" Instead got "+actual);
     }
 
@@ -71,7 +74,7 @@ public class PathfindPrecalculation {
             DataInputStream dis = new DataInputStream(countingInputStream);
 
 
-            expectMagicValue(dis, "R2DGPF");
+            expectMagicValue(dis, "DGPFRES2");
             this.version = dis.readInt();
             this.id = dis.readUTF();
             this.targetHash = dis.readUTF();
@@ -103,9 +106,15 @@ public class PathfindPrecalculation {
     public IPathfinder createPathfinder(int rotation) throws IOException {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             fileInputStream.skip(start);
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
-            InflaterInputStream gzipInputStream = new InflaterInputStream(bufferedInputStream);
-            DataInputStream dataInputStream = new DataInputStream(gzipInputStream);
+            DataInputStream dataInputStream;
+            if (compressed) {
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+                InflaterInputStream gzipInputStream = new InflaterInputStream(bufferedInputStream);
+                dataInputStream = new DataInputStream(gzipInputStream);
+            } else {
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+                dataInputStream = new DataInputStream(bufferedInputStream);
+            }
             int xStart = dataInputStream.readShort();
             int yStart = dataInputStream.readShort();
             int zStart = dataInputStream.readShort();

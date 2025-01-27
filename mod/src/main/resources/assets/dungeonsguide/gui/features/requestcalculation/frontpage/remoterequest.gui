@@ -1,0 +1,18 @@
+<col>
+    <size height="20">
+        <RoundRect radius="5" bind:backgroundColor="backgroundColor">
+            <row>
+                <size width="5"/>
+                <flexible>
+                    <align vAlign="CENTER" hAlign="START">
+                        <Text bind:text="name" color="#FFFFFFFF"/>
+                    </align>
+                </flexible>
+                <size width="70">
+                    <RoundButton text="View" on:click="view"/>
+                </size>
+            </row>
+        </RoundRect>
+    </size>
+    <size height="3"/>
+</col>

@@ -1,21 +1,31 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationProgress;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.WidgetPrecalcStep1Calculating;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step1.WidgetPrecalcStep1Calculating;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step2.WidgetStep2Uploading;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.remotereq.RemoteCache;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.json.JSONObject;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.lang.ref.WeakReference;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -48,11 +58,17 @@ public class PathfindPrecalculationRequestSet {
     private volatile WidgetNotificationProgress progressForGui;
     @Setter
     private volatile WeakReference<WidgetPrecalcStep1Calculating> maybeNotify ;
+    @Setter
+    private volatile WeakReference<WidgetStep2Uploading> maybeNotify2 ;
 
+
+
+    private String uploadUrl;
+    private String requestId;
 
 
     public static enum Status {
-        PENDING, GENERATING_ZIP, WAITING_FOR_USER
+        PENDING, GENERATING_ZIP, WAITING_FOR_USER, CREATING_UPLOADING_REQUEST, DONE
     }
 
     public PathfindPrecalculationRequestSet(PathfindPreset preset, List<PathfindRequest> requestList) {
@@ -104,7 +120,108 @@ public class PathfindPrecalculationRequestSet {
         calculateCredits();
     }
 
+    public void createRequest() {
+        if (status != Status.WAITING_FOR_USER) throw new IllegalStateException("State is not waiting for user");
+        this.status = Status.CREATING_UPLOADING_REQUEST;
 
+        final UUID calcuuid = UUID.randomUUID();
+        progressForTopRight = new WidgetNotificationProgress(calcuuid, "Pathfind Request Progress");
+        progressForGui = new WidgetNotificationProgress(calcuuid, "Pathfind Request Progress");
+
+        new Thread(DungeonsGuide.THREAD_GROUP, () -> {
+            FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(calcuuid, progressForTopRight); // should be thread safe. shouuuuld be.
+
+            try {
+                WidgetNotificationProgress.Progress progress = new WidgetNotificationProgress.Progress("Creating Request", null, null, false);
+                progressForTopRight.addProgress(progress);
+                progressForGui.addProgress(progress);
+                try {
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(FeatureRequestCalculation.DOMAIN + "/requests").openConnection();
+                    connection.setRequestProperty("User-Agent", "DungeonsGuide/" + VersionInfo.VERSION);
+                    connection.setRequestMethod("POST");
+                    connection.addRequestProperty("Authorization", "Bearer " + AuthManager.getInstance().getWorkingTokenOrThrow());
+                    connection.setConnectTimeout(10000);
+                    connection.setReadTimeout(10000);
+                    connection.setDoInput(true);
+                    connection.setDoOutput(true);
+                    JSONObject request = new JSONObject()
+                            .put("credit", getCredits())
+                            .put("contentSize", Files.size(zipFile.toPath()));
+                    connection.getOutputStream().write(request.toString().getBytes());
+                    connection.getOutputStream().flush();
+
+                    InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
+                    String servers = IOUtils.toString(inputStreamReader);
+                    JsonObject key = new Gson().fromJson(servers, JsonObject.class);
+                    uploadUrl = key.get("uploadUrl").getAsString();
+                    requestId = key.get("request").getAsJsonObject().get("requestId").getAsString();
+                } finally {
+                    progressForTopRight.removeProgress(progress);
+                    progressForGui.removeProgress(progress);
+                }
+
+                WidgetNotificationProgress.Progress progress1 = new WidgetNotificationProgress.Progress("Uploading...", new AtomicInteger(), new AtomicInteger((int) Files.size(zipFile.toPath())), true);
+                progressForTopRight.addProgress(progress1);
+                progressForGui.addProgress(progress1);
+                try {
+                    HttpsURLConnection httpsURLConnection = (HttpsURLConnection) new URL(uploadUrl).openConnection();
+                    httpsURLConnection.setDoOutput(true);
+                    httpsURLConnection.setRequestProperty("User-Agent", "DungeonsGuide/" + VersionInfo.VERSION);
+                    httpsURLConnection.setRequestProperty("Content-Length", zipFile.length()+"");
+                    httpsURLConnection.setRequestProperty("Content-Type", "application/zip");
+                    httpsURLConnection.setFixedLengthStreamingMode(zipFile.length());
+                    httpsURLConnection.setRequestMethod("PUT");
+                    FileInputStream fileInputStream = new FileInputStream(zipFile);
+                    byte buf[] = new byte[1024 *1024];
+                    int len = 0;
+                    long total = 0;
+                    while((len = fileInputStream.read(buf)) != -1) {
+                        httpsURLConnection.getOutputStream().write(buf, 0, len);
+                        total += len;
+                        progress1.getCurrent().set((int) total);
+                    }
+                    System.out.println(httpsURLConnection.getResponseCode());
+                    System.out.println(httpsURLConnection.getResponseMessage());
+                    if (httpsURLConnection.getResponseCode() != 200) {
+                        throw new RuntimeException("Status code "+httpsURLConnection.getResponseCode());
+                    }
+                } finally {
+                    progressForTopRight.removeProgress(progress1);
+                    progressForGui.removeProgress(progress1);
+                }
+                this.status = Status.DONE;
+                FeatureRegistry.SECRET_PATHFIND_REQUEST.getRemoteCacheMap().put(requestId, new RemoteCache(requestId, name, linkedPreset, true, false));
+                if (maybeNotify2 != null) {
+                    WidgetStep2Uploading calculating = maybeNotify2.get();
+                    if (calculating != null) calculating.notifyDone();
+                }
+
+                WidgetNotificationProgress.Progress progress2 = new WidgetNotificationProgress.Progress ("Requested calculation! Track status in config", new AtomicInteger(1), new AtomicInteger(1), true);
+                progressForTopRight.addProgress(progress2);
+                progressForGui.addProgress(progress2);
+                try {
+                    Thread.sleep(5000);
+                } finally {
+                    progressForTopRight.removeProgress(progress2);
+                    progressForGui.removeProgress(progress2);
+                }
+            } catch (Exception e) {
+                System.out.println("An error occured while requesting pathfind");
+                e.printStackTrace();
+
+                this.status = Status.WAITING_FOR_USER;
+                uploadUrl = null;
+                requestId = null;
+                if (maybeNotify2 != null) {
+                    WidgetStep2Uploading calculating = maybeNotify2.get();
+                    if (calculating != null) calculating.notifyDone();
+                }
+            } finally {
+                FeatureRegistry.NOTIFICATIONS.getRootWidget().removeNotification(calcuuid);
+            }
+        }).start();
+
+    }
 
     public void generateZip() {
         if (status != Status.PENDING) throw new IllegalStateException("State is not pending");
@@ -121,8 +238,7 @@ public class PathfindPrecalculationRequestSet {
                 int est = 0;
                 Set<PathfindRequest> requests = new HashSet<>(requestList);
 
-                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eTotal" + requests.size() + " requests");
-                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eEstimated PF " + est + " on unit room");
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eTotal " + requests.size() + " requests");
 
 
 
@@ -216,7 +332,6 @@ public class PathfindPrecalculationRequestSet {
                     if (calculating != null) calculating.notifyDone();
                 }
 
-
                 WidgetNotificationProgress.Progress complete = new WidgetNotificationProgress.Progress("Complete!", new AtomicInteger(1), new AtomicInteger(1), true);
                 progressForTopRight.addProgress(complete);
                 try {
@@ -227,13 +342,12 @@ public class PathfindPrecalculationRequestSet {
             } catch (Exception e) {
                 System.out.println("An error occured while generating pfreqs");
                 e.printStackTrace();
-                this.status = Status.PENDING;
                 if (maybeNotify != null) {
                     WidgetPrecalcStep1Calculating calculating = maybeNotify.get();
                     if (calculating != null) calculating.notifyDone();
                 }
+                this.status = Status.PENDING;
             } finally {
-
                 FeatureRegistry.NOTIFICATIONS.getRootWidget().removeNotification(calcuuid);
             }
         }).start();

@@ -1,9 +1,13 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.PathfindPrecalculationRequestSet;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step1.WidgetPrecalcStep1;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step1.WidgetPrecalcStep1Calculating;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step2.WidgetPrecalcStep2;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step2.WidgetStep2Uploading;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Placeholder;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import net.minecraft.util.ResourceLocation;
@@ -41,6 +45,12 @@ public class WidgetPendingRequestPage extends AnnotatedImportOnlyWidget {
                 return;
             case WAITING_FOR_USER:
                 this.currentStep.setValue(new WidgetPrecalcStep2(this, requestSet));
+                return;
+            case CREATING_UPLOADING_REQUEST:
+                this.currentStep.setValue(new WidgetStep2Uploading(this, requestSet));
+                return;
+            case DONE:
+                this.currentStep.setValue(new WidgetDone(this, requestSet));
                 return;
         }
     }

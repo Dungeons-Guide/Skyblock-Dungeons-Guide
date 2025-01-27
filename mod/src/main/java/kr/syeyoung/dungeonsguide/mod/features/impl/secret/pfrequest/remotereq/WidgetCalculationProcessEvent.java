@@ -16,19 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.legacy;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.remotereq;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 import net.minecraft.util.ResourceLocation;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class WidgetCalculationProcessEvent extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "timestamp")
@@ -41,7 +35,7 @@ public class WidgetCalculationProcessEvent extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> status = new BindableAttribute<>(String.class);
 
     public WidgetCalculationProcessEvent(JsonObject jsonObject) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/legacy/event.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/remotereq/event.gui"));
         timestamp.setValue(jsonObject.get("timestamp").getAsString());
         name.setValue(jsonObject.has("name") ? jsonObject.get("name").getAsString() : "");
         type.setValue(jsonObject.get("type").getAsString());
