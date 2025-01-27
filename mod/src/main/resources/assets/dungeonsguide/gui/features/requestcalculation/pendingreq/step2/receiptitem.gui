@@ -1,0 +1,10 @@
+<col>
+    <size height="3"/>
+    <row>
+        <Text bind:text="item" size="8" color="#FFFFFFFF"/>
+        <flexible><size/></flexible>
+        <Text text="- " size="8" color="#FFFFFFFF"/>
+        <Text bind:text="credit" size="8" color="#FFFFFFFF"/>
+        <Text text=" Credits" size="8" color="#FFFFFFFF"/>
+    </row>
+</col>

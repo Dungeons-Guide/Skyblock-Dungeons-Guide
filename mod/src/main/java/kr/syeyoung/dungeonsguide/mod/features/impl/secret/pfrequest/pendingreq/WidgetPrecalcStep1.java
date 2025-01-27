@@ -7,6 +7,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.Pathfind
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindResultRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.RoomPreset;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.FeatureRequestCalculation;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.PathfindPrecalculationRequestSet;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.WidgetPendingRequestPage;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
@@ -150,16 +151,16 @@ public class WidgetPrecalcStep1 extends AnnotatedImportOnlyWidget {
 
             private void doReload() {
                 try {
-                    JsonObject jsonObject = ApiFetcher.getJsonWithAuth("https://pathfind.dungeons.guide/info", AuthManager.getInstance().getWorkingTokenOrThrow());
-                    int tokens = jsonObject.get("token").getAsInt();
+                    JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/info", AuthManager.getInstance().getWorkingTokenOrThrow());
+                    int tokens = jsonObject.get("credit").getAsInt();
 
                     this.currCredit.setValue(tokens+"");
                     long purchase = Math.max(0, requestSet.getCredits() - tokens);
                     this.purchaseCredit.setValue(purchase+"");
 
-                    int units = (int) Math.ceil(purchase / 5000.0);
+                    int units = (int) Math.ceil(purchase / 10000.0);
 
-                    this.estimatedPrice.setValue("$"+units);
+                    this.estimatedPrice.setValue("$"+(units * 2)); // TODO: fetch pricing info too
 
                 } catch (IOException e) {
                     this.err.setValue(e.getMessage());

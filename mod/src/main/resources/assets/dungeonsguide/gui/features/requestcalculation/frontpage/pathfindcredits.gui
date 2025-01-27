@@ -43,21 +43,21 @@
                             </size>
                         </row>
 
-                        <IntrinsicHeight>
-                            <row>
-                                <line dir="VERTICAL"/>
-                                <flexible>
-                                    <padding left="5">
-                                        <col crossAlign="START">
-                                            <Text text="1000 from purchased" color="#FF777777" size="8"/>
-                                            <Text text="1000 from patreon reward" color="#FF777777" size="8"/>
-                                            <Text text="1000 from discord boosting" color="#FF777777" size="8"/>
-                                            <Text text="1000 from migrated tokens" color="#FF777777" size="8"/>
-                                        </col>
-                                    </padding>
-                                </flexible>
-                            </row>
-                        </IntrinsicHeight>
+<!--                        <IntrinsicHeight>-->
+<!--                            <row>-->
+<!--                                <line dir="VERTICAL"/>-->
+<!--                                <flexible>-->
+<!--                                    <padding left="5">-->
+<!--                                        <col crossAlign="START">-->
+<!--                                            <Text text="1000 from purchased" color="#FF777777" size="8"/>-->
+<!--                                            <Text text="1000 from patreon reward" color="#FF777777" size="8"/>-->
+<!--                                            <Text text="1000 from discord boosting" color="#FF777777" size="8"/>-->
+<!--                                            <Text text="1000 from migrated tokens" color="#FF777777" size="8"/>-->
+<!--                                        </col>-->
+<!--                                    </padding>-->
+<!--                                </flexible>-->
+<!--                            </row>-->
+<!--                        </IntrinsicHeight>-->
 
                         <size height="3"/>
 

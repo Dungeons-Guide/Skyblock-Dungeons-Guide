@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
 
+import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -73,7 +74,8 @@ public class PathfindPrecalculationRequestSet {
     private void calculateCredits() {
         long credits = 0;
         for (PathfindRequest pathfindRequest : requestList) {
-            int bitCount = Integer.bitCount(pathfindRequest.getDungeonRoomInfo().getShape() & 0xffff);
+            DungeonRoomInfo dri = pathfindRequest.getDungeonRoomInfo();
+            int bitCount = dri.getWidth() * dri.getLength() / 1024;
             credits += bitCount;
         }
 

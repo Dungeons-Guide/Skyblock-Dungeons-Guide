@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.frontpage;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.FeatureRequestCalculation;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
@@ -32,8 +33,8 @@ public class WidgetPathfindCredits extends AnnotatedImportOnlyWidget {
 
     private void doReload() {
         try {
-            JsonObject jsonObject = ApiFetcher.getJsonWithAuth("https://pathfind.dungeons.guide/info", AuthManager.getInstance().getWorkingTokenOrThrow());
-            credits.setValue(jsonObject.get("token").getAsInt()+" tokens");
+            JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/info", AuthManager.getInstance().getWorkingTokenOrThrow());
+            credits.setValue(jsonObject.get("credit").getAsInt()+" credits");
         } catch (IOException e) {
             this.err.setValue(e.getMessage());
             e.printStackTrace();

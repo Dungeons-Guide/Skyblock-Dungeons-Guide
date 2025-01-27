@@ -36,6 +36,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPOutputStream;
 
 @Getter @Setter
 public class PathfindRequest {
@@ -94,20 +95,62 @@ public class PathfindRequest {
         return id == null ? 0 : id.hashCode();
     }
 
+    /*    Bytes. BTW. Version 1 Format.
+    *      0                                       1
+    *      0   1   2   3   4   5   6   7   8   9   0   1   2   3   4   5
+    *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+    *    |   real Magic Value (DGPFREQ2) |    Version    |               |
+    *    +---+---+---+---+---+---+---+---+---+---+---+---+               | // following is version 1
+    *    |           ID        (Variable Size) (Java UTF8)               |
+    *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+    *    |           ID Hash   (Variable Size) (Java UTF8)               |
+    *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+    *    |           Room UID  (Variable Size) (Java UTF8)               | // ik this is stupid
+    *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+    *    |           Room Name (Variable Size) (Java UTF8)               |
+    *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+    *    |     X Len     |     Y Len     |     Z Len     |Magic Val(ALGO)| // You may ask why it moved here.
+    *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+ // Well it's easier to validate on python this way
+    *    |              Algorithm Settings (Var Size) (NBT)              |
+    *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+    *    |Magic Val(TRGT)| Target Len (#)|  Target[0] X  |  Target[0] Y  |
+    *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+    *    |  Target[0] Z  |  Target[1] X  |  Target[1] Y  |  Target[1] Z  |
+    *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+    *    |Magic Val(WRLD)|                                               |
+    *    +---+---+---+---+                                               |
+    *    |                                                               |
+    *    |                            World                              |
+    *    |                                                               |
+    *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+    *    |Magic Val(CLPL)|                                               |
+    *    +---+---+---+---+                                               |
+    *    |                                                               |
+    *    |                       Calculated World                        |
+    *    |                                                               |
+    *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+    * */
+
     public void write(DRIWorld driWorld, DataOutputStream dataOutputStream) throws IOException {
-        dataOutputStream.writeUTF("DGPFR");
+        dataOutputStream.writeBytes("DGPFREQ2");
+        dataOutputStream.writeInt(1); // versioning
+
         dataOutputStream.writeUTF(getId());
         dataOutputStream.writeUTF(getHash());
         dataOutputStream.writeUTF(dungeonRoomInfo.getUuid().toString());
         dataOutputStream.writeUTF(dungeonRoomInfo.getName());
-        // export algorithm settings
-        dataOutputStream.writeUTF("ALGO");
 
+        dataOutputStream.writeInt(dungeonRoomInfo.getWidth()); // x len
+        dataOutputStream.writeInt(dungeonRoomInfo.getLength()); // z len
+        dataOutputStream.writeInt(256); // y len, why not lol.
+
+        // export algorithm settings
+        dataOutputStream.writeBytes("ALGO");
         NBTTagCompound tagCompound = algorithmSetting.serializeToNBT();
         CompressedStreamTools.write(tagCompound, dataOutputStream);
 
         // export targets
-        dataOutputStream.writeUTF("TRGT");
+        dataOutputStream.writeBytes("TRGT");
         dataOutputStream.writeInt(target.size());
         for (OffsetVec3 offsetVec3 : target) {
             dataOutputStream.writeInt((int) (offsetVec3.xCoord * 2));
@@ -117,40 +160,38 @@ public class PathfindRequest {
         // export blockage map.
 
         // export world itself first.
-        dataOutputStream.writeUTF("WRLD");
+        dataOutputStream.writeBytes("WRLD");
         if (dungeonRoomInfo.getWidth() == 0 || dungeonRoomInfo.getLength() == 0 || dungeonRoomInfo.getWorld() == null) throw new IllegalStateException("World doesnot have blocks");
-        dataOutputStream.writeInt(dungeonRoomInfo.getWidth()); // x len
-        dataOutputStream.writeInt(dungeonRoomInfo.getLength()); // z len
-        dataOutputStream.writeInt(256); // y len, why not lol.
         // write data
-        for (int y = 0; y < 256; y++) {
-            for (int z = 0; z < dungeonRoomInfo.getLength(); z++) {
-                for (int x = 0; x < dungeonRoomInfo.getWidth(); x++) {
-                    IBlockState blockState = driWorld.getBlockState(new BlockPos(x,y,z));
-                    dataOutputStream.write((byte) Block.getIdFromBlock(blockState.getBlock()));
-                    dataOutputStream.write((byte) blockState.getBlock().getMetaFromState(blockState));
+
+            for (int y = 0; y < 256; y++) {
+                for (int z = 0; z < dungeonRoomInfo.getLength(); z++) {
+                    for (int x = 0; x < dungeonRoomInfo.getWidth(); x++) {
+                        IBlockState blockState = driWorld.getBlockState(new BlockPos(x, y, z));
+                        dataOutputStream.write((byte) Block.getIdFromBlock(blockState.getBlock()));
+                        dataOutputStream.write((byte) blockState.getBlock().getMetaFromState(blockState));
+                    }
                 }
             }
-        }
 
 
         // export nodestatemap
-        dataOutputStream.writeUTF("CLPL");
-        dataOutputStream.writeInt(dungeonRoomInfo.getWidth()*2); // x len
-        dataOutputStream.writeInt(dungeonRoomInfo.getLength()*2); // z len
-        dataOutputStream.writeInt(512); // y len, why not lol.
-        // write data
-        for (int y = 0; y < 512; y++) {
-            for (int z = 0; z < dungeonRoomInfo.getLength()*2; z++) {
-                for (int x = 0; x < dungeonRoomInfo.getWidth()*2; x++) {
-                    byte data = (byte) (driWorld.getBlock(x,y,z).ordinal() - 1); // 0 is uncached. you're never gonna get that. // 4bit
-                    byte pearl = (byte) (driWorld.getPearl(x,y,z).ordinal() - 1); // 3 bit
-                    boolean isInsta = driWorld.isInstabreak(x,y,z);
-                    byte ultimateData = (byte) ((isInsta ? 1<<7 : 0) | pearl << 4 | data);
-                    dataOutputStream.write(ultimateData);
+        dataOutputStream.writeBytes("CLPL");
+
+            // write data
+            for (int y = 0; y < 512; y++) {
+                for (int z = 0; z < dungeonRoomInfo.getLength() * 2; z++) {
+                    for (int x = 0; x < dungeonRoomInfo.getWidth() * 2; x++) {
+                        byte data = (byte) (driWorld.getBlock(x, y, z).ordinal() - 1); // 0 is uncached. you're never gonna get that. // 4bit
+                        byte pearl = (byte) (driWorld.getPearl(x, y, z).ordinal() - 1); // 3 bit
+                        boolean isInsta = driWorld.isInstabreak(x, y, z);
+                        byte ultimateData = (byte) ((isInsta ? 1 << 7 : 0) | pearl << 4 | data);
+                        dataOutputStream.write(ultimateData);
+                    }
                 }
             }
-        }
+
+
         dataOutputStream.flush();
 //        dataOutputStream.write
     }

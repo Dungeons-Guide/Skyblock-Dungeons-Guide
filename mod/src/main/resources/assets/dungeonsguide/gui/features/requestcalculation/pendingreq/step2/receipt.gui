@@ -1,0 +1,26 @@
+<col>
+    <row>
+        <Text text="Total: " size="12" color="#FFFFFFFF"/>
+        <flexible><size/></flexible>
+        <Text bind:text="reqCredits" size="12" color="#FFFFFFFF"/>
+        <Text text=" Credits" size = "12" color="#FFFFFFFF"/>
+    </row>
+    <col bind:api="receiptApi"/>
+    <size height="3"/>
+    <line color="#FFFFFFFF" thickness="1"/>
+    <size height="3"/>
+    <row>
+        <Text text="Extra Needed" size="8" color="#FFFFFFFF"/>
+        <flexible><size/></flexible>
+        <Text bind:text="purchaseCredits" size="8" color="#FFFFFFFF"/>
+        <Text text=" Credits" size="8" color="#FFFFFFFF"/>
+    </row>
+    <size height="3"/>
+    <align hAlign="END">
+        <size height="18" width="40">
+            <RoundButton text="Reload" on:click="reload"/>
+        </size>
+    </align>
+    <size height="5"/>
+    <Text bind:text="err" color="#FFCC0000" size="8"/>
+</col>

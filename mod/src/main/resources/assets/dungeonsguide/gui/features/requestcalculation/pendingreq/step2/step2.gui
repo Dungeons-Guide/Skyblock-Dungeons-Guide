@@ -5,36 +5,19 @@
             <size height="3"/>
             <Text text="Actually pre-calculate routes using zip" size="6" color="#FFFFFFFF"/>
             <size height="3"/>
-            <row>
-                <Text text="Total: " size="12" color="#FFFFFFFF"/>
-                <flexible><size/></flexible>
-                <Text text="301 Credits" size="12" color="#FFFFFFFF"/>
-            </row>
-            <size height="3"/>
-            <row>
-                <Text text="Patreon Reward" size="8" color="#FFFFFFFF"/>
-                <flexible><size/></flexible>
-                <Text text="- 100 Credits" size="8" color="#FFFFFFFF"/>
-            </row>
-            <row>
-                <Text text="Early Supporter" size="8" color="#FFFFFFFF"/>
-                <flexible><size/></flexible>
-                <Text text="- 100 Credits" size="8" color="#FFFFFFFF"/>
-            </row>
-            <row>
-                <Text text="Current Balance" size="8" color="#FFFFFFFF"/>
-                <flexible><size/></flexible>
-                <Text text="- 100 Credits" size="8" color="#FFFFFFFF"/>
-            </row>
-            <size height="3"/>
-            <line color="#FFFFFFFF" thickness="1"/>
-            <size height="3"/>
-            <row>
-                <Text text="Extra Needed" size="8" color="#FFFFFFFF"/>
-                <flexible><size/></flexible>
-                <Text text="10000 Credits" size="8" color="#FFFFFFFF"/>
-            </row>
 
+            <slot bind:child="receipt"/>
+
+            <size height="20">
+                <SelectiveContainer bind:visible="purchase">
+                    <RoundButton text="Purchase Credits" on:click="purchase" slot="true"/>
+                    <RoundButton text="Request Pathfind" on:click="request" slot="false"/>
+                    <Text text="Loading..." size="8" color="#FFFFFFFF" slot="loading"/>
+                </SelectiveContainer>
+            </size>
+            <size height="5"/>
+
+            <Text bind:text="err" size="8" color="#FFFF0000"/>
 
             <flexible>
                 <size/>

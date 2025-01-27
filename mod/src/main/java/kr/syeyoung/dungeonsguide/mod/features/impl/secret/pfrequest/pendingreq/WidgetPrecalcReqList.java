@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq;
 
+import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.PathfindPrecalculationRequestSet;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
@@ -46,7 +47,10 @@ public class WidgetPrecalcReqList extends AnnotatedImportOnlyWidget {
             this.hash.setValue(pathfindRequest.getHash());
             this.roomName.setValue(pathfindRequest.getDungeonRoomInfo().getName());
             this.roomState.setValue(pathfindRequest.getOpenMech().stream().sorted(String::compareTo).collect(Collectors.joining(",")));
-            int bitCount = Integer.bitCount(pathfindRequest.getDungeonRoomInfo().getShape() & 0xffff);
+
+            DungeonRoomInfo dri = pathfindRequest.getDungeonRoomInfo();
+            int bitCount = dri.getWidth() * dri.getLength() / 1024;
+
             this.credits.setValue(bitCount+"");
         }
     }

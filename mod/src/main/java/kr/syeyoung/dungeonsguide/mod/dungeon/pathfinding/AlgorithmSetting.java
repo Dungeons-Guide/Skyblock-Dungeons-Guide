@@ -117,7 +117,7 @@ public class AlgorithmSetting implements Cloneable {
 
     public NBTTagCompound serializeToNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setDouble("version", 2);
+        nbt.setInteger("version", 2);
 
         nbt.setInteger("haste", hasteLevel);
 

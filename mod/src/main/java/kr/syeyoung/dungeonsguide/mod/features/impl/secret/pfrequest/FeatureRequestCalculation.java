@@ -72,6 +72,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class FeatureRequestCalculation extends SimpleFeature {
+    public static final String DOMAIN = "https://2wut55i2i2.execute-api.us-east-1.amazonaws.com/v1";
+
     public FeatureRequestCalculation() {
         super("Pathfinding & Secrets", "Request path calculation", "- View which precalculations are missing\n- Request pre-calculation (Requires purchase on dg)", "secret.requestcalculation");
         setEnabled(true);
