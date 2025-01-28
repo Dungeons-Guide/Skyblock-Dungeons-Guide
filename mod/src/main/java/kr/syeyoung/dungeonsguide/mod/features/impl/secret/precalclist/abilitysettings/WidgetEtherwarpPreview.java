@@ -77,6 +77,7 @@ public class WidgetEtherwarpPreview extends AnnotatedExportOnlyWidget implements
 
         GlStateManager.color(1.0f, 0f, 0f, 0.3f);
         GlStateManager.disableTexture2D();
+        GlStateManager.disableCull();
 
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldRenderer = tessellator.getWorldRenderer();
@@ -188,6 +189,7 @@ public class WidgetEtherwarpPreview extends AnnotatedExportOnlyWidget implements
         context.drawScaledCustomSizeModalRect(24, -80, 0, 0, 16, 16,
                 16, 16, 16, 16);
 
+        GlStateManager.enableCull();
 
 
         GlStateManager.popMatrix();
