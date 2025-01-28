@@ -174,7 +174,15 @@ public class DungeonRoom implements IPathfindWorld {
         }
     }
 
+    private long nextShowedWarning = 0;
     public PathfinderExecutor loadPrecalculatedByHash(String hash) {
+        if (!idExecutor.containsKey(hash)) {
+            if (nextShowedWarning < System.currentTimeMillis()) {
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cPrecalculation "+hash+" in room "+dungeonRoomInfo.getName()+" is §4§lMISSING §cin currently applied preset §e"+roomPreset.getParent().getPresetName()+"§c. There may be some problems in pathfinding. Please add precalculations at /dg -> Pathfinding & Secrets -> Precalculations");
+                nextShowedWarning = System.currentTimeMillis() + 30000L;
+            }
+        }
+
         return idExecutor.get(hash);
     }
 

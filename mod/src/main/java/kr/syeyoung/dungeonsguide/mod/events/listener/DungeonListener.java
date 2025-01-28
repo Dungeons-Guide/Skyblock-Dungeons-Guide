@@ -35,8 +35,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
+import kr.syeyoung.dungeonsguide.mod.fakeserver.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.advanced.FeatureCompareRoom;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
@@ -47,7 +47,10 @@ import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -57,7 +60,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S21PacketChunkData;
 import net.minecraft.network.play.server.S26PacketMapChunkBulk;
 import net.minecraft.profiler.Profiler;
@@ -73,19 +75,16 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -185,9 +184,12 @@ public class DungeonListener {
                 context.tick();
             } else {
                 try {
-                    if (SkyblockStatus.isOnDungeon()) {
+                    if (DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isForceIsOnDungeon()) {
+                        DungeonServerLaunchUtils.createContext();
+                        MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
+                    } else if (SkyblockStatus.isOnDungeon()) {
                         DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(new DungeonContext(
-                                SkyblockStatus.locationName,
+                                SkyblockStatus.getLocationName(),
                                 Minecraft.getMinecraft().thePlayer.worldObj));
                         MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
                     }
@@ -256,6 +258,26 @@ public class DungeonListener {
                 }
             }
             profiler.endSection();
+
+            if (context.getDungeonName().equals("TEST DG")) {
+                FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+                ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+
+                int width = fr.getStringWidth("Dungeons Guide Mockup Dungeon");
+                int width2 = fr.getStringWidth("Preset: "+context.getPreset().getPresetName());
+                int bigger = Math.max(width, width2);
+                Gui.drawRect(
+                        (sr.getScaledWidth()-bigger - 10)/2,
+                        (sr.getScaledHeight()/9 - 5) ,
+                        (sr.getScaledWidth() + bigger + 10) /2,
+                        (sr.getScaledHeight()/9) + 5 + fr.FONT_HEIGHT*2,
+                        0x77111111
+                );
+
+                fr.drawString("Dungeons Guide Mockup Dungeon", (sr.getScaledWidth()-width)/2, sr.getScaledHeight()/9, 0xFF00FF00);
+
+                fr.drawString("Preset: "+context.getPreset().getPresetName(), (sr.getScaledWidth() - width2) / 2, sr.getScaledHeight() / 9 + fr.FONT_HEIGHT, 0xFF00FF00);
+            }
 
         }
         GlStateManager.enableBlend();

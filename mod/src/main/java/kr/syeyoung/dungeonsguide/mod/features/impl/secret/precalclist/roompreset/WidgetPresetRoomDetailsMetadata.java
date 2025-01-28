@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindResultRegistry;
+import kr.syeyoung.dungeonsguide.mod.fakeserver.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetAbilitySettings;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.modal.WidgetModalChooseAbilitySettings;
@@ -12,6 +13,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.Modal;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.ModalConfirm;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.ModalMessage;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
@@ -20,6 +22,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -196,5 +201,22 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
                 });
             }
         });
+    }
+
+    @On(functionName = "viewroom")
+    public void viewRoom() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
+        try {
+            DungeonServerLaunchUtils.launchDungeonServerAndJoin(roomInfo.getDungeonRoomInfo(), roomInfo.getRoomPreset().getParent());
+        } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            e.printStackTrace();
+            PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Error",
+                    new ModalMessage("An error occured while making client side dungeon. \n\n"+sw.toString()), true), (a) -> {});
+        }
+
     }
 }

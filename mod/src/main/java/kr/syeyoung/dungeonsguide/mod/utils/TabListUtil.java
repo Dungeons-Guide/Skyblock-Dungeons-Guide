@@ -64,6 +64,8 @@ public class TabListUtil {
             return null;
         }
 
+        if (!name.contains(" ")) return name;
+
         return getString(name, tabListRegex);
     }
     @Nullable

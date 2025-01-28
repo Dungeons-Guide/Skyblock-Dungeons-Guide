@@ -80,7 +80,7 @@
             </row>
             <size height="3"/>
             <size height="15" width="70">
-                <RoundButton text="View Room!"/>
+                <RoundButton text="View Room!" on:click="viewroom"/>
             </size>
             <size height="3"/>
             <SelectiveContainer bind:visible="editable">

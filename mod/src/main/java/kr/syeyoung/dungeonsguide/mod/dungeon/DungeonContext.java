@@ -72,7 +72,7 @@ public class DungeonContext {
     private final DungeonEventRecorder recorder = new DungeonEventRecorder();
 
     @Getter
-    private final PathfindPreset preset = FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset();
+    private final PathfindPreset preset;
 
     @Getter
     private final List<WeakReference<PathfinderExecutor>> executors = new CopyOnWriteArrayList<>();
@@ -126,7 +126,11 @@ public class DungeonContext {
     private final BlockPos door;
 
     public DungeonContext(String dungeonName, World world) {
+        this(dungeonName, world, FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset());
+    }
+    public DungeonContext(String dungeonName, World world, PathfindPreset preset) {
         this.dungeonName = dungeonName;
+        this.preset = preset;
         this.world = world;
         recorder.createEvent(new DungeonNodataEvent("DUNGEON_CONTEXT_CREATION"));
         mapPlayerMarkerProcessor = new MapPlayerProcessor(this);

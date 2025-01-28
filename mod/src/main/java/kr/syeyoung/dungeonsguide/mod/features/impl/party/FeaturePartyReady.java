@@ -51,7 +51,7 @@ public class FeaturePartyReady extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return  PartyManager.INSTANCE.getPartyContext() != null && PartyManager.INSTANCE.getPartyContext().isPartyExistHypixel() && "Dungeon Hub".equals(SkyblockStatus.locationName);
+        return  PartyManager.INSTANCE.getPartyContext() != null && PartyManager.INSTANCE.getPartyContext().isPartyExistHypixel() && "Dungeon Hub".equals(SkyblockStatus.getLocationName());
     }
 
 

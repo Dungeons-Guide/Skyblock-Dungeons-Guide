@@ -66,6 +66,7 @@ public class DungeonRoomInfo implements Serializable {
     private Map<String, DungeonMechanic> mechanics = new HashMap<>();
     private int totalSecrets = -1;
 
+    @Getter
     private char[] world;
     private int width, length;
 

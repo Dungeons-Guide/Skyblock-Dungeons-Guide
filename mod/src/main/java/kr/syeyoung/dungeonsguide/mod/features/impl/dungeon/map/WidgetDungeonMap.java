@@ -170,11 +170,11 @@ public class WidgetDungeonMap extends Widget implements Renderer {
         Gui.drawRect(0, 0, (int)featureSize.getWidth(), (int)featureSize.getHeight(), RenderUtils.getColorAt(0,0, mapConfiguration.getBackgroundColor()));
         GlStateManager.color(1, 1, 1, 1);
         GlStateManager.pushMatrix();
-        if (mapData == null) {
-            Gui.drawRect(0, 0, (int)featureSize.getWidth(), (int)featureSize.getHeight(), 0xFFFF0000);
-        } else {
+//        if (mapData == null) {
+//            Gui.drawRect(0, 0, (int)featureSize.getWidth(), (int)featureSize.getHeight(), 0xFFFF0000);
+//        } else {
             renderMap(partialTicks, context);
-        }
+//        }
         GlStateManager.popMatrix();
         GL11.glLineWidth((float) mapConfiguration.getBorderWidth());
         RenderUtils.drawUnfilledBox(0, 0, (int)featureSize.getWidth(), (int)featureSize.getHeight(),mapConfiguration.getBorder());
@@ -184,9 +184,6 @@ public class WidgetDungeonMap extends Widget implements Renderer {
 
     public void renderMap(float partialTicks, DungeonContext dungeonContext) {
         DungeonRoomScaffoldParser mapProcessor = dungeonContext.getScaffoldParser();
-        MapData mapData = mapProcessor.getLatestMapData();
-        MapPlayerProcessor mapPlayerProcessor = dungeonContext.getMapPlayerMarkerProcessor();
-
 
         EntityPlayer p = Minecraft.getMinecraft().thePlayer;
 

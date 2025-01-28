@@ -20,11 +20,11 @@ package kr.syeyoung.dungeonsguide.mod;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.HypixelJoinedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.SkyblockJoinedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.SkyblockLeftEvent;
+import kr.syeyoung.dungeonsguide.mod.fakeserver.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
@@ -42,7 +42,15 @@ import java.util.Set;
 
 public class SkyblockStatus {
     boolean wasOnHypixel = false;
-    public static String locationName;
+    private static String locationName;
+
+    public static String getLocationName() {
+        return locationName;
+    }
+
+    public static void setLocationName(String locationName) {
+        SkyblockStatus.locationName = locationName;
+    }
 
 
     @SubscribeEvent
@@ -74,6 +82,8 @@ public class SkyblockStatus {
 
     }
 
+
+
     public static boolean isOnSkyblock(){
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
@@ -82,8 +92,6 @@ public class SkyblockStatus {
 
     public static boolean isOnDungeon() {
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-
-
 
         return skyblockStatus != null && (skyblockStatus.forceIsOnDungeon || skyblockStatus.isOnDungeon);
     }
@@ -112,6 +120,11 @@ public class SkyblockStatus {
     private static final Set<String> SKYBLOCK_IN_ALL_LANGUAGES = Sets.newHashSet("SKYBLOCK");
 
     public void updateStatus() {
+        forceIsOnDungeon = DungeonServerLaunchUtils.isDungeonIntegratedServerRunning() && Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().theWorld != null;
+        if (forceIsOnDungeon) {
+            locationName = "TEST DG";
+        }
+
         if (!isOnHypixel()) {
             isOnDungeon = false;
             isOnSkyblock = false;
@@ -152,14 +165,14 @@ public class SkyblockStatus {
                 }
             }
             if (sc.getJustTeam().startsWith(" §7⏣")) {
-                locationName = strippedLine.trim();
+                setLocationName(strippedLine.trim());
             }
         }
 
         isDungeonRunning = foundDungeon;
 
-        if (locationName != null)
-            isOnDungeon = locationName.startsWith("The Catacombs") | foundDungeon;
+        if (getLocationName() != null)
+            isOnDungeon = getLocationName().startsWith("The Catacombs") | foundDungeon;
         else
             isOnDungeon=false;
     }

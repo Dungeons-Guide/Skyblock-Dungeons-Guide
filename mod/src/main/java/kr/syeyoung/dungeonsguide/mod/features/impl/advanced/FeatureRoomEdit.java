@@ -492,6 +492,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
             System.out.println(Minecraft.getMinecraft().theWorld);
             Minecraft.getMinecraft().thePlayer.setPosition(0, 70, 0);
             Minecraft.getMinecraft().thePlayer.inventory.mainInventory[0] = new ItemStack(Items.stick);
+
             DungeonContext fakeContext = new DungeonContext("TEST DG", Minecraft.getMinecraft().theWorld);
             DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(fakeContext);
             DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(true);

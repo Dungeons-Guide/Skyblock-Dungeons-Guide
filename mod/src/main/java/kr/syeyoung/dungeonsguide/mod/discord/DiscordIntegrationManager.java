@@ -215,7 +215,7 @@ public class DiscordIntegrationManager implements IPCListener {
         if (!SkyblockStatus.isOnHypixel() || !FeatureRegistry.DISCORD_RICHPRESENCE.isEnabled() || (!SkyblockStatus.isOnSkyblock() && FeatureRegistry.DISCORD_RICHPRESENCE.<Boolean>getParameter("disablenotskyblock").getValue())) {
             sendRichPresence(null);
         } else {
-            String name = SkyblockStatus.locationName == null ? "" : SkyblockStatus.locationName;
+            String name = SkyblockStatus.getLocationName() == null ? "" : SkyblockStatus.getLocationName();
             if (!SkyblockStatus.isOnSkyblock()) name ="Somewhere on Hypixel";
             if (name.trim().equals("Your Island")) name = "Private Island";
 
