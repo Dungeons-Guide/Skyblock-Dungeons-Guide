@@ -122,6 +122,7 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
                         preset.setPresetId(random.toString());
                         preset.setFile(presetExtractionTarget);
                     }
+                    preset.markDirty();
                     preset.save();
                     PathfindPresetRegistry.getINSTANCE().register(preset);
                 }
