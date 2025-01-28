@@ -183,7 +183,7 @@ public class DungeonServerLaunchUtils {
         try {
             theIntegratedServer = new DungeonIntegratedServer(mc, dungeonRoomInfo); // TODO: find SRG
             theIntegratedServer.startServerThread();
-            ReflectionHelper.setPrivateValue(Minecraft.class, mc, true, "integratedServerIsRunning");
+            ReflectionHelper.setPrivateValue(Minecraft.class, mc, true, "integratedServerIsRunning", "field_2575", "field_71455_al", "aw");
         }
         catch (Throwable throwable) {
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Starting integrated server");
@@ -220,6 +220,6 @@ public class DungeonServerLaunchUtils {
         }
         networkmanager.sendPacket(new C00PacketLoginStart(gameProfile));
 
-        ReflectionHelper.setPrivateValue(Minecraft.class, mc, networkmanager, "myNetworkManager");
+        ReflectionHelper.setPrivateValue(Minecraft.class, mc, networkmanager, "myNetworkManager", "field_2574", "field_71453_ak", "av");
     }
 }
