@@ -53,7 +53,7 @@ public class WidgetPathfindCredits extends AnnotatedImportOnlyWidget {
     public void purchaseCredits() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         try {
-            Desktop.getDesktop().browse(new URL("https://pathfind.dungeons.guide/purchase?uuid="+Minecraft.getMinecraft().getSession().getProfile().getId()).toURI());
+            Desktop.getDesktop().browse(new URL("https://store.dungeons.guide/category/pathfinding").toURI());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {

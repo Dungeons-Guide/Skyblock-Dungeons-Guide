@@ -11,7 +11,6 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationProgress;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.FeatureRequestCalculation;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.PathfindPrecalculationRequestSet;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.legacy.WidgetRequestCalculation;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.WidgetPendingRequestPage;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
@@ -65,7 +64,7 @@ public class WidgetPrecalcStep2 extends AnnotatedImportOnlyWidget {
     public void purchaseCredits() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         try {
-            Desktop.getDesktop().browse(new URL(FeatureRequestCalculation.DOMAIN+"/purchase?uuid="+Minecraft.getMinecraft().getSession().getProfile().getId()).toURI());
+            Desktop.getDesktop().browse(new URL("https://store.dungeons.guide/category/pathfinding").toURI());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {

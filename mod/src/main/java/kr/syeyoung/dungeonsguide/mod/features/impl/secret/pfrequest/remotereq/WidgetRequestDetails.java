@@ -13,7 +13,6 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificatio
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationProgress;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.FeatureRequestCalculation;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.legacy.WidgetCalculationResult;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.Modal;
