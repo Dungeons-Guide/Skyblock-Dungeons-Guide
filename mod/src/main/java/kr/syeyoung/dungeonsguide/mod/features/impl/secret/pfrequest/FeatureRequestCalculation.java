@@ -19,60 +19,20 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
 
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRedstoneKey;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor2;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.ISecret;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
-import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
-import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.VersionInfo;
-import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
-import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
-import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationProgress;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.frontpage.WidgetPathfindCredits;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.frontpage.WidgetRemoteRequestList;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.frontpage.WidgetRequestSetsList;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.remotereq.RemoteCache;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import lombok.Getter;
-import net.minecraft.util.BlockPos;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.awt.*;
-import java.io.*;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 public class FeatureRequestCalculation extends SimpleFeature {
     public static final String DOMAIN = "https://pathfind.dungeons.guide/v1";

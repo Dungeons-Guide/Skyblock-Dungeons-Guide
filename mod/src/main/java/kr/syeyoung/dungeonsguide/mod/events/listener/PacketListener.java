@@ -18,9 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.listener;
 
-import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.CachedWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world.CachedWorld;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
@@ -33,17 +32,13 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.NameTagVisibility;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.Team;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.*;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.ChunkCache;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.MapData;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

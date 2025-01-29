@@ -1,8 +1,8 @@
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind;
+package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache;
 
 import com.sun.nio.file.ExtendedWatchEventModifier;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithmSetting.AlgorithmSettingRegistry;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import lombok.Getter;
 
 import java.io.File;

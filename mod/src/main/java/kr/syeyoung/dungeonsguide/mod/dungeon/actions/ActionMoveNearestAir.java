@@ -21,35 +21,10 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonBreakableWall;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDoor;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonOnewayDoor;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.DungeonRoomButOpen;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
-import scala.actors.threadpool.Arrays;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper=false)
 public class ActionMoveNearestAir extends AbstractActionMove {

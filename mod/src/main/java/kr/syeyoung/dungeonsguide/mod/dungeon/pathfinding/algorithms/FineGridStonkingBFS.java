@@ -19,10 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.ShadowCast;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

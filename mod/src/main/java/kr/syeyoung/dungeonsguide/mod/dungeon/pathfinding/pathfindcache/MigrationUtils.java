@@ -1,7 +1,7 @@
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind;
+package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.codec.binary.Hex;

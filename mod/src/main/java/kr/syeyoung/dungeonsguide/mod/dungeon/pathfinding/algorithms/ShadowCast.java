@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding;
+package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
 import net.minecraft.util.BlockPos;
 import scala.tools.nsc.transform.CleanUp;

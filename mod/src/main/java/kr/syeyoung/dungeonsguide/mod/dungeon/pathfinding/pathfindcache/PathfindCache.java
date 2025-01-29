@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind;
+package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import lombok.Getter;

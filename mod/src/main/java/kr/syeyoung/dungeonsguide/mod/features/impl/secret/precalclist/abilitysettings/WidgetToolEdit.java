@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;

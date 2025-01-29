@@ -16,13 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind;
+package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache;
 
-import io.netty.buffer.ByteBuf;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
 import lombok.AllArgsConstructor;
@@ -30,9 +28,7 @@ import lombok.Getter;
 import net.minecraft.util.Vec3;
 
 import java.nio.ByteBuffer;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set;
 
 @AllArgsConstructor
 public class CachedPathfinder implements IPathfinder {

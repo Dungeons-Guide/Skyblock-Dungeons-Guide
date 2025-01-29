@@ -1,6 +1,4 @@
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithmSetting;
-
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
+package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting;
 
 import java.util.HashSet;
 import java.util.Set;

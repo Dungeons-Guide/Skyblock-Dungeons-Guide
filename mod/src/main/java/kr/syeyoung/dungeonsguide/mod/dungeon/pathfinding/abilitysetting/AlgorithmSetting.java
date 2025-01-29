@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding;
+package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting;
 
 import lombok.*;
 import net.minecraft.item.Item;

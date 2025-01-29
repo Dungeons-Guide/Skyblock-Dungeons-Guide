@@ -1,12 +1,11 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.TCString;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPreset;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPresetRegistry;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPreset;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPresetRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import lombok.Getter;
 
 import java.util.List;
 

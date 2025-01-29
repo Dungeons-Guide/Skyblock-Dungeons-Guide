@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.details.WidgetPresetRoomRequestAndCalcView;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;

@@ -20,7 +20,7 @@
 // (powered by FernFlower decompiler)
 //
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding;
+package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;

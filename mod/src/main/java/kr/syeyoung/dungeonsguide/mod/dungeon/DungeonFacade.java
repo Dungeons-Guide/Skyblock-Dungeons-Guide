@@ -19,8 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon;
 
 import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindPresetRegistry;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindResultRegistry;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPresetRegistry;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindResultRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import lombok.Getter;

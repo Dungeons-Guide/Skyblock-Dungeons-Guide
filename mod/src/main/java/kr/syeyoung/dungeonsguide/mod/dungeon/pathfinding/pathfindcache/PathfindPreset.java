@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind;
+package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -7,10 +7,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithmSetting.AlgorithmSettingRegistry;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.nbt.CompressedStreamTools;

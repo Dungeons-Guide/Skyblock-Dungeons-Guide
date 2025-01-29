@@ -2,7 +2,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
 
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationAutoClose;
@@ -25,10 +25,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -120,6 +118,7 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
                     File presetExtractionTarget = new File(new File(Main.getConfigDir(), "presets"), random+".json");
                     try (InputStream inputStream = zipFile.getInputStream(zipEntry)) {
                         preset = PathfindPreset.loadFromStream(inputStream);
+                        preset.setEditable(false);
                         preset.setPresetId(random.toString());
                         preset.setFile(presetExtractionTarget);
                     }

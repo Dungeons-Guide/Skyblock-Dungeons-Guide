@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -33,7 +32,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonRoomEdit;
@@ -554,10 +552,12 @@ public class GeneralRoomProcessor implements RoomProcessor {
             }
         }
     }
+
+    public static final IBlockState STONE = Blocks.stone.getStateFromMeta(2);
     @Override
     public void onBlockUpdate(BlockUpdateEvent blockUpdateEvent) {
         for (Tuple<BlockPos, IBlockState> updatedBlock : blockUpdateEvent.getUpdatedBlocks()) {
-            if (updatedBlock.getSecond().equals(NodeProcessorDungeonRoom.preBuilt)) continue;
+            if (updatedBlock.getSecond().equals(STONE)) continue;
             dungeonRoom.resetBlock(updatedBlock.getFirst());
         }
     }
