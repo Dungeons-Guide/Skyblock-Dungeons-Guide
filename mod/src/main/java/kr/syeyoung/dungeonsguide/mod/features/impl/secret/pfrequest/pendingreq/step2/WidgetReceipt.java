@@ -69,9 +69,11 @@ public class WidgetReceipt extends AnnotatedImportOnlyWidget {
             if (calc < 0) calc = 0;
 
             this.purchaseCredits.setValue(calc + "");
-            this.receiptApi.getValue().removeAllWidget();
-            for (Widget widget : toAdd) {
-                this.receiptApi.getValue().addWidget(widget);
+            if (this.receiptApi.getValue() != null) {
+                this.receiptApi.getValue().removeAllWidget();
+                for (Widget widget : toAdd) {
+                    this.receiptApi.getValue().addWidget(widget);
+                }
             }
 
             step2.setPurchaseReq(calc);
