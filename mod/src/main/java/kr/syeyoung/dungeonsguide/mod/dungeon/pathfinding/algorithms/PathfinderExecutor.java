@@ -33,6 +33,7 @@ public class PathfinderExecutor {
     @Getter
     private IPathfindWorld dungeonRoom;
 
+    @Getter
     private IPathfinder pathfinder;
     @Getter
     private boolean isComplete = false;

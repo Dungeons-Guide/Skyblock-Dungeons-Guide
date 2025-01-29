@@ -22,6 +22,7 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonBreakableWall;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor2;
@@ -30,6 +31,12 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechan
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractActionMove;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AtomicAction;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.SerializableBlockPos;
@@ -51,6 +58,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindStrategy;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -159,33 +167,6 @@ public class DungeonRoom implements IPathfindWorld {
 
     private final Map<Vec3, WeakReference<PathfinderExecutor>> activePathfind = new HashMap<>();
 
-    private final Map<String, PathfinderExecutor> idExecutor = new HashMap<>();
-    public void loadPrecalculated(String id) {
-        PathfindPrecalculation cachedPathfinder = PathfindResultRegistry.getINSTANCE().getById(id);
-        if (cachedPathfinder == null) return;
-        if (idExecutor.containsKey(cachedPathfinder.getTargetHash())) return;
-        try {
-            IPathfinder pathfinder = cachedPathfinder.createPathfinder(getRoomMatcher().getRotation());
-            PathfinderExecutor executor1 = new PathfinderExecutor(pathfinder, BoundingBox.of(AxisAlignedBB.fromBounds(0,0,0,0,0,0)), this);
-            idExecutor.put(cachedPathfinder.getTargetHash(), executor1);
-            executor1.doStep();
-            return;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private long nextShowedWarning = 0;
-    public PathfinderExecutor loadPrecalculatedByHash(String hash) {
-        if (!idExecutor.containsKey(hash)) {
-            if (nextShowedWarning < System.currentTimeMillis()) {
-                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cPrecalculation "+hash+" in room "+dungeonRoomInfo.getName()+" is §4§lMISSING §cin currently applied preset §e"+roomPreset.getParent().getPresetName()+"§c. There may be some problems in pathfinding. Please add precalculations at /dg -> Pathfinding & Secrets -> Precalculations");
-                nextShowedWarning = System.currentTimeMillis() + 30000L;
-            }
-        }
-
-        return idExecutor.get(hash);
-    }
 
     public PathfinderExecutor createEntityPathTo(BoundingBox pos) {
         FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.SECRET_PATHFIND_STRATEGY.getPathfindStrat();
@@ -438,7 +419,76 @@ public class DungeonRoom implements IPathfindWorld {
                 loadPrecalculated(precalcId);
             }
         }
+
+
+        // build tsp cache.
+
+        ActionDAG dag = AdditionalInfoCaculatedDungeonRoomInfo.buildReferencingAllPossibleThings(this);
+        List<AbstractActionMove> listOfMoves = new ArrayList<>();
+        for (ActionDAGNode actionDAGNode : dag.getAllNodes()) {
+            if (actionDAGNode.getAction() instanceof AtomicAction) {
+                for (AbstractAction actionInAtomicAction : ((AtomicAction) actionDAGNode.getAction()).getActions()) {
+                    if (actionInAtomicAction instanceof AbstractActionMove) {
+                        listOfMoves.add((AbstractActionMove) actionInAtomicAction);
+                    }
+                }
+            } else if (actionDAGNode.getAction() instanceof AbstractActionMove) {
+                listOfMoves.add((AbstractActionMove) actionDAGNode.getAction());
+            }
+        }
+
+        List<OffsetVec3> vec3 = new ArrayList<>();
+        for (AbstractActionMove listOfMove : listOfMoves) {
+            vec3.add(listOfMove.getTargetVec3());
+        }
+
+        tspCache = new TSPCache(vec3);
+        for (PathfindPrecalculation value : idCalculation.values()) {
+            try {
+                tspCache.addToCache(value);
+            } catch (IOException e) { e.printStackTrace(); }
+        }
     }
+
+    @Getter
+    private TSPCache tspCache;
+
+    private final Map<String, PathfinderExecutor> idExecutor = new HashMap<>();
+    private final Map<String, PathfindPrecalculation> idCalculation = new HashMap<>();
+    public void loadPrecalculated(String id) {
+        PathfindPrecalculation cachedPathfinder = PathfindResultRegistry.getINSTANCE().getById(id);
+        if (cachedPathfinder == null) return;
+        if (idCalculation.containsKey(id)) return;
+        idCalculation.put(cachedPathfinder.getTargetHash(), cachedPathfinder);
+    }
+
+    private long nextShowedWarning = 0;
+    public synchronized PathfinderExecutor loadPrecalculatedByHash(String hash) {
+        if (!idCalculation.containsKey(hash)) {
+            if (nextShowedWarning < System.currentTimeMillis()) {
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cPrecalculation "+hash+" in room "+dungeonRoomInfo.getName()+" is §4§lMISSING §cin currently applied preset §e"+roomPreset.getParent().getPresetName()+"§c. There may be some problems in pathfinding. Please add precalculations at /dg -> Pathfinding & Secrets -> Precalculations");
+                nextShowedWarning = System.currentTimeMillis() + 30000L;
+            }
+            return null;
+        }
+
+        if (idExecutor.containsKey(hash)) return idExecutor.get(hash);
+
+        System.out.println("LOADING:: "+hash);
+        PathfindPrecalculation precalculation = idCalculation.get(hash);
+
+        try {
+            IPathfinder pathfinder = precalculation.createPathfinder(getRoomMatcher().getRotation());
+            PathfinderExecutor executor1 = new PathfinderExecutor(pathfinder, BoundingBox.of(AxisAlignedBB.fromBounds(0,0,0,0,0,0)), this);
+            idExecutor.put(precalculation.getTargetHash(), executor1);
+            executor1.doStep();
+            return executor1;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     public void updateRoomProcessor() {
         RoomProcessorGenerator roomProcessorGenerator = ProcessorFactory.getRoomProcessorGenerator(dungeonRoomInfo.getProcessorId());

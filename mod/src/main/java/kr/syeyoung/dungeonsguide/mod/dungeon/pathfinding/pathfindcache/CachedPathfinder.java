@@ -122,9 +122,16 @@ public class CachedPathfinder implements IPathfinder {
         int relY = y - yStart;
         int relZ = z - zStart;
         int idx = (relY * xLen * zLen + relZ * xLen + relX) * 8;
-        array.position(idx);
-        byte[] data = new byte[8];
-        array.get(data);
+        long lng = array.getLong(idx);
+        byte[] data = new byte[] {
+                (byte) (lng >> 56),
+                (byte) (lng >> 48),
+                (byte) (lng >> 40),
+                (byte) (lng >> 32),
+                (byte) (lng >> 24),
+                (byte) (lng >> 16),
+                (byte) (lng >> 8),
+                (byte) (lng >> 0)};
         if (data[3] == 12) {
             return new CachedPathfindNode(0,0,0, Float.POSITIVE_INFINITY,null);
         }

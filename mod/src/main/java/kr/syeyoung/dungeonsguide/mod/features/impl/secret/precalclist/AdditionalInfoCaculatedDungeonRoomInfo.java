@@ -162,7 +162,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
     private Map<PathfindRequest, List<PathfindPrecalculation>> loaded;
     private int warnings;
 
-    private ActionDAG buildReferencingAllPossibleThings(DungeonRoom dungeonRoom) {
+    public static ActionDAG buildReferencingAllPossibleThings(DungeonRoom dungeonRoom) {
         ActionDAGBuilder builder = new ActionDAGBuilder(dungeonRoom);
         for (Map.Entry<String, DungeonMechanic> value : dungeonRoom.getMechanics().entrySet()) {
             if (value.getValue() instanceof ISecret) {

@@ -113,38 +113,42 @@ public class ActionRoute {
 
             Map<String, Object> memoization = new ConcurrentHashMap<>();
             boolean finalAnnealing = annealing;
-            List<TravelingSalesman.PartialCalculationResult> results = IntStream.range(0, dag.getCount())
-                    .parallel()
-                    .mapToObj((dagId) -> {
-                        if (finalAnnealing) return TravelingSalesman.annealing(dagId, dag, start, dungeonRoom, memoization);
-                        else return TravelingSalesman.bruteforce(dagId, dag, start, dungeonRoom, memoization);
-                    })
-                    .collect(Collectors.toList());
-            TravelingSalesman.PartialCalculationResult minCostRoute = results.stream()
-                    .min(Comparator.comparingDouble(a -> a.getCost())).orElse(null);
+            try {
+                List<TravelingSalesman.PartialCalculationResult> results = IntStream.range(0, dag.getCount())
+                        .parallel()
+                        .mapToObj((dagId) -> {
+                            if (finalAnnealing)
+                                return TravelingSalesman.annealing(dagId, dag, start, dungeonRoom, memoization);
+                            else return TravelingSalesman.bruteforce(dagId, dag, start, dungeonRoom, memoization);
+                        })
+                        .collect(Collectors.toList());
+                TravelingSalesman.PartialCalculationResult minCostRoute = results.stream()
+                        .min(Comparator.comparingDouble(a -> a.getCost())).orElse(null);
 
-            int cnt = results.stream().mapToInt(a -> a.getSearchSpace()).sum();
+                int cnt = results.stream().mapToInt(a -> a.getSearchSpace()).sum();
 
-            if (minCostRoute == null) {
-                try {
-                    Thread.sleep(30000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                if (minCostRoute == null) {
+                    try {
+                        Thread.sleep(30000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
+
+                this.dagId = minCostRoute == null ? 0 : minCostRoute.getDagId();
+                order = minCostRoute == null ? new ArrayList<>() : minCostRoute.getRoute();
+                ChatTransmitter.sendDebugChat("ActionRoute has " + cnt + " Possible subroutes :: Chosen route with " + (minCostRoute == null ? Double.POSITIVE_INFINITY : minCostRoute.getCost()) + " cost with Id " + dagId);
+                ChatTransmitter.sendDebugChat("Pathfinding took " + (System.currentTimeMillis() - startttt) + "ms");
+                List<AbstractAction> nodes = minCostRoute != null ? minCostRoute.getRoute().stream().map(ActionDAGNode::getAction).collect(Collectors.toList()) : new ArrayList<>();
+                nodes.add(new ActionComplete());
+                actions = nodes;
+                current = 0;
+
+
+                calculating = false;
+            }catch (Exception e) {
+                e.printStackTrace();
             }
-
-            this.dagId = minCostRoute == null ? 0 : minCostRoute.getDagId();
-            order = minCostRoute == null ? new ArrayList<>() : minCostRoute.getRoute();
-            ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes :: Chosen route with "+(minCostRoute == null ? Double.POSITIVE_INFINITY : minCostRoute.getCost())+" cost with Id "+dagId);
-            ChatTransmitter.sendDebugChat("Pathfinding took "+ (System.currentTimeMillis() - startttt)+"ms");
-            List<AbstractAction> nodes = minCostRoute != null ? minCostRoute.getRoute().stream().map(ActionDAGNode::getAction).collect(Collectors.toList()) : new ArrayList<>();
-            nodes.add(new ActionComplete());
-            actions = nodes;
-            current = 0;
-
-
-            calculating = false;
-
         });
     }
     public AbstractAction next() {

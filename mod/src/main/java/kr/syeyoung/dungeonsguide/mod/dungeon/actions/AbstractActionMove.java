@@ -296,6 +296,9 @@ public abstract class AbstractActionMove extends AbstractAction {
         return "Move\n- target: "+ getTargetVec3().toString();
     }
 
+    private String hash;
+
+
     @Override
     public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
         Vec3 bpos = getTransformedTargetVec3(room);
@@ -305,32 +308,36 @@ public abstract class AbstractActionMove extends AbstractAction {
             state.setPlayerPos(bpos);
             return cost;
         }
-
-        PathfinderExecutor executor = (PathfinderExecutor) memoization.get(
-                state.getOpenMechanics()+"-"+vec3Str
-        );
-        FineGridStonkingBFS a = null;
-        if (executor == null) {
-            executor = room.loadPrecalculatedByHash(new PathfindRequest(
+        if (hash == null) {
+            hash = new PathfindRequest(
                     room.getAlgorithmSetting(),
                     room.getDungeonRoomInfo(),
                     state.getOpenMechanics().stream().filter(b -> {
                         return  room.getMechanics().get(b) instanceof DungeonDoor || room.getMechanics().get(b) instanceof DungeonOnewayDoor;
                     }).collect(Collectors.toSet()),
                     getTargetOffsetPointSet()
-            ).getHash());
-            if (executor == null) return 999999999;
-            if (executor == null) {
-                executor = new PathfinderExecutor(new FineGridStonkingBFS(room.getAlgorithmSetting()),
-                        getPathfindBoundingBox(room), new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics())));
-            }
-            memoization.put(state.getOpenMechanics()+"-"+vec3Str, executor);
-
+            ).getHash();
         }
-        executor.setTarget(state.getPlayerPos());
-        state.setPlayerPos(bpos);
+        double cost = room.getTspCache().getCost(hash, new OffsetVec3(room, state.getPlayerPos()));
+        if (cost != -1) {
+            state.setPlayerPos(bpos);
+            return cost;
+        }
 
-        double result = executor.findCost();
+
+        PathfinderExecutor executor = (PathfinderExecutor) memoization.get(
+                hash
+        );
+        FineGridStonkingBFS a = null;
+        if (executor == null) {
+            executor = room.loadPrecalculatedByHash(hash);
+            memoization.put(hash, executor);
+        }
+
+
+        double result = executor.getPathfinder().getCost(state.getPlayerPos());
+
+        state.setPlayerPos(bpos);
         if (Double.isNaN(result)) return 999999999;
         return result;
     }

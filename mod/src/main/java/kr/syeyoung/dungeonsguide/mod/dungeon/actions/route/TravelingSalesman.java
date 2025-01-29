@@ -116,7 +116,7 @@ public class TravelingSalesman {
                     int idx2 = localMinCostRoute.indexOf(potentialRequire);
                     if (idx2 > maxIdx) maxIdx = idx2;
                 }
-                System.out.println(sanityCheck + " to " + (maxIdx + 1));
+//                System.out.println(sanityCheck + " to " + (maxIdx + 1));
                 localMinCostRoute.add(maxIdx + 1, sanityCheck);
             }
         }
