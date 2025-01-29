@@ -272,6 +272,7 @@ public class PathfindPrecalculationRequestSet {
                                 long start = System.currentTimeMillis();
                                 System.out.println("Writing " + id.toString() + ".pfreq  / " + request.getId());
                                 File f = new File(outdir, id.toString() + ".pfreq");
+                                f.deleteOnExit();
                                 DataOutputStream dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(f)));
                                 request.write(driWorld, dataOutputStream);
                                 dataOutputStream.flush();
@@ -283,6 +284,7 @@ public class PathfindPrecalculationRequestSet {
                             } catch (Exception e) {
                                 System.out.println("Error while " + id.toString() + ".pfreq / " + request.getId());
                                 e.printStackTrace();
+                                throw new RuntimeException("Error while "+id.toString()+".pfreq / "+request.getId(), e);
                             }
                         }
                         int currentRooms = roomProgress.getCurrent().incrementAndGet();
@@ -319,6 +321,13 @@ public class PathfindPrecalculationRequestSet {
                             fis.close();
                             int cnt = zip.getCurrent().incrementAndGet();
                             zip.setMessage("Zipping... "+cnt+"/"+zip.getTotal().get());
+
+                            try {
+                                Files.deleteIfExists(srcFile.toPath());
+                            } catch (Exception e) {
+                                System.out.println("Error while deleting "+srcFile+" but I don't care.");
+                                e.printStackTrace();
+                            }
                         }
                         zipOut.close();
                         fos.close();

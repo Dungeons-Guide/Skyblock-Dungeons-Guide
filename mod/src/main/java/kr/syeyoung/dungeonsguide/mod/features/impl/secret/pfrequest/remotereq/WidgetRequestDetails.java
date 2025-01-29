@@ -155,6 +155,7 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
                 File downloadTarget;
                 try {
                     downloadTarget = File.createTempFile("dg-pfprecalc-download", ".zip");
+                    downloadTarget.deleteOnExit();
                     HttpsURLConnection connection = (HttpsURLConnection) new URL(downloadUrl).openConnection();
                     connection.setRequestMethod("GET");
                     connection.setRequestProperty("User-Agent", "DungeonsGuide/" + VersionInfo.VERSION);
