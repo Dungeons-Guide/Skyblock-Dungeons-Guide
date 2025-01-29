@@ -29,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -140,7 +141,7 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
                 }
                 progress.removeProgress(openingFile);
 
-                WidgetNotificationProgress.Progress extracting = new WidgetNotificationProgress.Progress("Extracting Precalculations 0/"+targets.size(), new AtomicInteger(0), new AtomicInteger(targets.size()), true);
+                WidgetNotificationProgress.Progress extracting = new WidgetNotificationProgress.Progress("Extracting Precalculations 0/"+targets.size(), new AtomicLong(0), new AtomicLong(targets.size()), true);
                 progress.addProgress(extracting);
 
                 File importTarget = new File(new File(Main.getConfigDir(), "precalculations"), preset.getPresetId());
@@ -169,7 +170,7 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
 
                 progress.removeProgress(extracting);
 
-                extracting = new WidgetNotificationProgress.Progress("Loading Precalculations 0/"+extractions.size(), new AtomicInteger(0), new AtomicInteger(targets.size()), true);
+                extracting = new WidgetNotificationProgress.Progress("Loading Precalculations 0/"+extractions.size(), new AtomicLong(0), new AtomicLong(targets.size()), true);
                 progress.addProgress(extracting);
                 for (File extraction : extractions) {
                     extracting.setMessage("Loading Precalculations "+extracting.getCurrent().incrementAndGet()+"/"+extracting.getTotal().get());

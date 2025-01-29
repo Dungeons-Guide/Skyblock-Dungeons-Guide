@@ -32,6 +32,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -160,7 +161,7 @@ public class PathfindPrecalculationRequestSet {
                     progressForGui.removeProgress(progress);
                 }
 
-                WidgetNotificationProgress.Progress progress1 = new WidgetNotificationProgress.Progress("Uploading...", new AtomicInteger(), new AtomicInteger((int) Files.size(zipFile.toPath())), true);
+                WidgetNotificationProgress.Progress progress1 = new WidgetNotificationProgress.Progress("Uploading...", new AtomicLong(), new AtomicLong((int) Files.size(zipFile.toPath())), true);
                 progressForTopRight.addProgress(progress1);
                 progressForGui.addProgress(progress1);
                 try {
@@ -196,7 +197,7 @@ public class PathfindPrecalculationRequestSet {
                     if (calculating != null) calculating.notifyDone();
                 }
 
-                WidgetNotificationProgress.Progress progress2 = new WidgetNotificationProgress.Progress ("Requested calculation! Track status in config", new AtomicInteger(1), new AtomicInteger(1), true);
+                WidgetNotificationProgress.Progress progress2 = new WidgetNotificationProgress.Progress ("Requested calculation! Track status in config", new AtomicLong(1), new AtomicLong(1), true);
                 progressForTopRight.addProgress(progress2);
                 progressForGui.addProgress(progress2);
                 try {
@@ -243,8 +244,8 @@ public class PathfindPrecalculationRequestSet {
 
 
                 int totalRoomAndState = requests.stream().map(a -> new ImmutablePair(a.getDungeonRoomInfo().getUuid(),a.getOpenMech().stream().sorted(String::compareTo).collect(Collectors.joining(",")))).collect(Collectors.toSet()).size();
-                WidgetNotificationProgress.Progress roomProgress = new WidgetNotificationProgress.Progress ("Room&States 0/"+totalRoomAndState, new AtomicInteger(), new AtomicInteger(totalRoomAndState), true);
-                WidgetNotificationProgress.Progress requestProgress = new WidgetNotificationProgress.Progress ("Requests 0/"+requests.size(), new AtomicInteger(), new AtomicInteger(requests.size()), true);
+                WidgetNotificationProgress.Progress roomProgress = new WidgetNotificationProgress.Progress ("Room&States 0/"+totalRoomAndState, new AtomicLong(), new AtomicLong(totalRoomAndState), true);
+                WidgetNotificationProgress.Progress requestProgress = new WidgetNotificationProgress.Progress ("Requests 0/"+requests.size(), new AtomicLong(), new AtomicLong(requests.size()), true);
 
                 progressForTopRight.addProgress(roomProgress);
                 progressForGui.addProgress(roomProgress);
@@ -278,7 +279,7 @@ public class PathfindPrecalculationRequestSet {
                                 dataOutputStream.flush();
                                 dataOutputStream.close();
                                 System.out.println("It took " + (System.currentTimeMillis() - start) + "ms : " + request.getId());
-                                int currentReq = requestProgress.getCurrent().incrementAndGet();
+                                long currentReq = requestProgress.getCurrent().incrementAndGet();
                                 requestProgress.setMessage("Requests " + currentReq + "/" + requestProgress.getTotal().get());
                                 intermediate.add(f);
                             } catch (Exception e) {
@@ -287,7 +288,7 @@ public class PathfindPrecalculationRequestSet {
                                 throw new RuntimeException("Error while "+id.toString()+".pfreq / "+request.getId(), e);
                             }
                         }
-                        int currentRooms = roomProgress.getCurrent().incrementAndGet();
+                        long currentRooms = roomProgress.getCurrent().incrementAndGet();
                         roomProgress.setMessage("Room&States " + currentRooms + "/" + roomProgress.getTotal().get());
                         System.out.println("ROOM: " + begin.getDungeonRoomInfo().getName() + " took " + (System.currentTimeMillis() - start2) + "ms to complete");
                         return intermediate.stream();
@@ -299,7 +300,7 @@ public class PathfindPrecalculationRequestSet {
                     progressForGui.removeProgress(requestProgress);
                 }
 
-                WidgetNotificationProgress.Progress zip = new WidgetNotificationProgress.Progress ("Zipping... 0/"+files.size(), new AtomicInteger(0), new AtomicInteger(files.size()), true);
+                WidgetNotificationProgress.Progress zip = new WidgetNotificationProgress.Progress ("Zipping... 0/"+files.size(), new AtomicLong(0), new AtomicLong(files.size()), true);
                 progressForTopRight.addProgress(zip);
                 progressForGui.addProgress(zip);
 
@@ -319,7 +320,7 @@ public class PathfindPrecalculationRequestSet {
                             Files.copy(srcFile.toPath(), zipOut);
 
                             fis.close();
-                            int cnt = zip.getCurrent().incrementAndGet();
+                            long cnt = zip.getCurrent().incrementAndGet();
                             zip.setMessage("Zipping... "+cnt+"/"+zip.getTotal().get());
 
                             try {
@@ -343,7 +344,7 @@ public class PathfindPrecalculationRequestSet {
                     if (calculating != null) calculating.notifyDone();
                 }
 
-                WidgetNotificationProgress.Progress complete = new WidgetNotificationProgress.Progress("Complete!", new AtomicInteger(1), new AtomicInteger(1), true);
+                WidgetNotificationProgress.Progress complete = new WidgetNotificationProgress.Progress("Complete!", new AtomicLong(1), new AtomicLong(1), true);
                 progressForTopRight.addProgress(complete);
                 try {
                     Thread.sleep(5000);

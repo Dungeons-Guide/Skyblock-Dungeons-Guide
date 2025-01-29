@@ -44,6 +44,8 @@ public class WidgetCalculationProcess extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> completed = new BindableAttribute<>(String.class);
     @Bind(variableName = "requestStatus")
     public final BindableAttribute<String> requestStatus = new BindableAttribute<>(String.class);
+    @Bind(variableName = "credits")
+    public final BindableAttribute<String> credits = new BindableAttribute<>(String.class);
 
 
     public WidgetCalculationProcess(JsonObject jsonObject, JsonObject request) {
@@ -54,6 +56,7 @@ public class WidgetCalculationProcess extends AnnotatedImportOnlyWidget {
 
         completed.setValue(request.get("completed").getAsBoolean() ? "Yes" :"No");
         requestStatus.setValue(request.get("status").getAsString());
+        credits.setValue(request.get("credit").getAsString());
 
         List<Widget> widgets = new ArrayList<>();
 

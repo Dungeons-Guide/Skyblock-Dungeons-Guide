@@ -31,6 +31,7 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -135,7 +136,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
             long st = System.currentTimeMillis();
 
-            WidgetNotificationProgress.Progress progress1 = new WidgetNotificationProgress.Progress("Writing Preset Export 0/"+(files.size() + 1), new AtomicInteger(0), new AtomicInteger(files.size()+1), true);
+            WidgetNotificationProgress.Progress progress1 = new WidgetNotificationProgress.Progress("Writing Preset Export 0/"+(files.size() + 1), new AtomicLong(0), new AtomicLong(files.size()+1), true);
             progress.addProgress(progress1);
             try (FileOutputStream fos = new FileOutputStream(target); ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(fos));) {
                 zipOut.setComment("Dungeons Guide Preset Export");

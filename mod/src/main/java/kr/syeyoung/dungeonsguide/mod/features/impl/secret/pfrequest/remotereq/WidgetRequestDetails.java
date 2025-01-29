@@ -40,6 +40,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -161,9 +162,9 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
                     connection.setRequestProperty("User-Agent", "DungeonsGuide/" + VersionInfo.VERSION);
                     connection.connect();
 
-                    int contentLength = Integer.parseInt(connection.getHeaderField("Content-Length"));
+                    long contentLength = Long.parseLong(connection.getHeaderField("Content-Length"));
                     progressForTopRight.removeProgress(progress);
-                    progress = new WidgetNotificationProgress.Progress("Downloading ("+FileUtils.byteCountToDisplaySize(contentLength)+")", new AtomicInteger(), new AtomicInteger(contentLength), true);
+                    progress = new WidgetNotificationProgress.Progress("Downloading ("+FileUtils.byteCountToDisplaySize(contentLength)+")", new AtomicLong(), new AtomicLong(contentLength), true);
                     progressForTopRight.addProgress(progress);
 
                     try (BufferedInputStream in = new BufferedInputStream(connection.getInputStream());
@@ -180,7 +181,7 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
                     progressForTopRight.removeProgress(progress);
                 }
 
-                progress = new WidgetNotificationProgress.Progress("Extracting", new AtomicInteger(), new AtomicInteger(), false);
+                progress = new WidgetNotificationProgress.Progress("Extracting", new AtomicLong(), new AtomicLong(), false);
                 progressForTopRight.addProgress(progress);
                 List<File> toLoad = new ArrayList<>();
                 try {
@@ -190,7 +191,7 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
                     ZipFile zipFile = new ZipFile(downloadTarget);
                     progressForTopRight.removeProgress(progress);
                     int size = zipFile.size();
-                    progress = new WidgetNotificationProgress.Progress("Extracting (0/"+size+")", new AtomicInteger(0), new AtomicInteger(size), true);
+                    progress = new WidgetNotificationProgress.Progress("Extracting (0/"+size+")", new AtomicLong(0), new AtomicLong(size), true);
                     progressForTopRight.addProgress(progress);
 
                     Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -202,13 +203,13 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
                             Files.copy(in, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
                             toLoad.add(target);
                         }
-                        int current = progress.getCurrent().incrementAndGet();
+                        long current = progress.getCurrent().incrementAndGet();
                         progress.setMessage("Extracting ("+current+"/"+size+")");
                     }
                 } finally {
                     progressForTopRight.removeProgress(progress);
                 }
-                progress = new WidgetNotificationProgress.Progress("Loading (0/"+toLoad.size()+")", new AtomicInteger(), new AtomicInteger(toLoad.size()), true);
+                progress = new WidgetNotificationProgress.Progress("Loading (0/"+toLoad.size()+")", new AtomicLong(), new AtomicLong(toLoad.size()), true);
                 progressForTopRight.addProgress(progress);
 
                 List<PathfindPrecalculation> precalculations = new ArrayList<>();
@@ -227,7 +228,7 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
                             errors++;
                         }
 
-                        int current = progress.getCurrent().incrementAndGet();
+                        long current = progress.getCurrent().incrementAndGet();
 
                         progress.setMessage("Loading ("+current+"/"+toLoad.size()+") "+errors+" errors");
                     }
@@ -256,7 +257,7 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
                     Thread.sleep(5000);
                     return;
                 }
-                progress = new WidgetNotificationProgress.Progress("Linking to preset (0/"+precalculations.size()+")", new AtomicInteger(), new AtomicInteger(toLoad.size()), true);
+                progress = new WidgetNotificationProgress.Progress("Linking to preset (0/"+precalculations.size()+")", new AtomicLong(), new AtomicLong(toLoad.size()), true);
                 progressForTopRight.addProgress(progress);
                 try {
                     for (PathfindPrecalculation precalculation : precalculations) {
@@ -267,7 +268,7 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
                         roomPreset.addPrecalculation(precalculation.getId());
 
 
-                        int current = progress.getCurrent().incrementAndGet();
+                        long current = progress.getCurrent().incrementAndGet();
 
                         progress.setMessage("Linking to preset (" + current + "/" + toLoad.size() + ")");
                     }

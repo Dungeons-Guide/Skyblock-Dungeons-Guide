@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class WidgetNotificationProgress extends AnnotatedImportOnlyWidget implements Renderer {
 
@@ -72,8 +73,8 @@ public class WidgetNotificationProgress extends AnnotatedImportOnlyWidget implem
     @Getter @Setter
     public static class Progress {
         private volatile String message;
-        private AtomicInteger current;
-        private AtomicInteger total;
+        private AtomicLong current;
+        private AtomicLong total;
         private final boolean bar;
     }
     private List<Progress> progressesData = new CopyOnWriteArrayList<>();

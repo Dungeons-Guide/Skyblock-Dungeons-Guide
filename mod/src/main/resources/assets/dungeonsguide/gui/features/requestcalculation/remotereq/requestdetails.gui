@@ -49,17 +49,16 @@
                     <Text bind:text="linkTo" color="#FFFFFFFF"/>
                 </row>
                 <size height="5"/>
-
-                <SelectiveContainer bind:visible="loading">
-                    <size height="100" slot="true">
-                        <bgcolor backgroundColor="#FF000000">
+                <flexible>
+                    <SelectiveContainer bind:visible="loading">
+                        <bgcolor backgroundColor="#FF000000" slot="true">
                             <align vAlign="CENTER" hAlign="CENTER">
                                 <Text text="Loading..." color="#FFFFFFFF" size="8"/>
                             </align>
                         </bgcolor>
-                    </size>
-                    <slot bind:child="progress" slot="false"/>
-                </SelectiveContainer>
+                        <slot bind:child="progress" slot="false"/>
+                    </SelectiveContainer>
+                </flexible>
                 <size height="5"/>
                 <Text text="Download and Apply Precalculations" color="#FFFFFFFF" size="12"/>
                 <size height="3"/>

@@ -20,6 +20,7 @@ public class RoomPreset implements Cloneable {
 
     private AlgorithmSetting algorithmSetting;
     private Set<String> precalculations = new HashSet<>();
+    private String tspCache;
 
     public RoomPreset(PathfindPreset parent, UUID roomId) {
         this.parent = parent;
@@ -75,7 +76,9 @@ public class RoomPreset implements Cloneable {
         for (JsonElement element : jsonObject.get("precalculations").getAsJsonArray()) {
             roomPreset.precalculations.add(element.getAsString());
         }
-//        roomPreset.tspCache = jsonObject.get("tspCache").getAsString();
+        if (jsonObject.has("tspCache"))
+            roomPreset.tspCache = jsonObject.get("tspCache").isJsonNull() ? null : jsonObject.get("tspCache").getAsString();
+
         if (jsonObject.has("algorithmSetting")) {
 
             String algoSettings = jsonObject.get("algorithmSetting").getAsString();
@@ -100,7 +103,7 @@ public class RoomPreset implements Cloneable {
         }
         res.addProperty("id", roomId.toString());
         res.add("precalculations", array);
-//        res.addProperty("tspCache", tspCache);
+        res.addProperty("tspCache", tspCache);
 
         try {
             if (algorithmSetting != null) {
