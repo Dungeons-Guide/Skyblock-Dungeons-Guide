@@ -18,6 +18,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.s
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.remotereq.RemoteCache;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.json.JSONObject;
@@ -161,7 +162,7 @@ public class PathfindPrecalculationRequestSet {
                     progressForGui.removeProgress(progress);
                 }
 
-                WidgetNotificationProgress.Progress progress1 = new WidgetNotificationProgress.Progress("Uploading...", new AtomicLong(), new AtomicLong((int) Files.size(zipFile.toPath())), true);
+                WidgetNotificationProgress.Progress progress1 = new WidgetNotificationProgress.Progress("Uploading... ("+ FileUtils.byteCountToDisplaySize(Files.size(zipFile.toPath()))+")", new AtomicLong(), new AtomicLong(Files.size(zipFile.toPath())), true);
                 progressForTopRight.addProgress(progress1);
                 progressForGui.addProgress(progress1);
                 try {

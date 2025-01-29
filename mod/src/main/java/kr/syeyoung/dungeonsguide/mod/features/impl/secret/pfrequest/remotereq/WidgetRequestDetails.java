@@ -24,6 +24,9 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -35,14 +38,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "progress")
@@ -188,24 +188,27 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
                     File targetDir = new File(Main.getConfigDir(), "precalculations/"+requestId);
                     targetDir.mkdirs();
 
-                    ZipFile zipFile = new ZipFile(downloadTarget);
-                    progressForTopRight.removeProgress(progress);
-                    int size = zipFile.size();
-                    progress = new WidgetNotificationProgress.Progress("Extracting (0/"+size+")", new AtomicLong(0), new AtomicLong(size), true);
-                    progressForTopRight.addProgress(progress);
+                    try (ZipFile zipFile = new ZipFile(downloadTarget)) {
+                        progressForTopRight.removeProgress(progress);
+                        int size = Collections.list(zipFile.getEntries()).size();
 
-                    Enumeration<? extends ZipEntry> entries = zipFile.entries();
-                    while (entries.hasMoreElements()) {
-                        ZipEntry zipEntry = entries.nextElement();
-                        try (InputStream in = zipFile.getInputStream(zipEntry)) {
-                            String[] name = zipEntry.getName().split("/");
-                            File target = new File(targetDir, name[name.length - 1]);
-                            Files.copy(in, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                            toLoad.add(target);
+                        progress = new WidgetNotificationProgress.Progress("Extracting (0/"+size+")", new AtomicLong(0), new AtomicLong(size), true);
+                        progressForTopRight.addProgress(progress);
+
+                        Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+                        while (entries.hasMoreElements()) {
+                            ZipArchiveEntry zipEntry = entries.nextElement();
+                            try (InputStream in = zipFile.getInputStream(zipEntry)) {
+                                String[] name = zipEntry.getName().split("/");
+                                File target = new File(targetDir, name[name.length - 1]);
+                                Files.copy(in, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                                toLoad.add(target);
+                            }
+                            long current = progress.getCurrent().incrementAndGet();
+                            progress.setMessage("Extracting ("+current+"/"+size+")");
                         }
-                        long current = progress.getCurrent().incrementAndGet();
-                        progress.setMessage("Extracting ("+current+"/"+size+")");
                     }
+
                 } finally {
                     progressForTopRight.removeProgress(progress);
                 }
