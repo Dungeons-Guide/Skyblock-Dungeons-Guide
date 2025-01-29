@@ -251,19 +251,20 @@ public class PathfindPrecalculationRequestSet {
                 progressForTopRight.addProgress(requestProgress);
                 progressForGui.addProgress(requestProgress);
 
-                List<File> files = new ArrayList<>();
                 File outdir;
+                List<File> files;
                 try {
                     Path p = Files.createTempDirectory("dg-pfrequest-gen");
                     outdir = p.toFile();
                     System.out.println("Writing to " + p);
-                    requests.stream().collect(Collectors.groupingBy(a ->
+                    files = requests.stream().collect(Collectors.groupingBy(a ->
                             new ImmutablePair<>(a.getDungeonRoomInfo().getUuid(), a.getOpenMech().stream().sorted(String::compareTo).collect(Collectors.joining(",")))
-                    )).entrySet().parallelStream().forEach(stuff -> {
+                    )).entrySet().parallelStream().flatMap(stuff -> {
                         PathfindRequest begin = stuff.getValue().get(0);
 
                         DRIWorld driWorld = new DRIWorld(begin.getDungeonRoomInfo(), new ArrayList<>(begin.getOpenMech()));
 
+                        List<File> intermediate = new ArrayList<>();
                         long start2 = System.currentTimeMillis();
                         for (PathfindRequest request : stuff.getValue()) {
                             UUID id = UUID.randomUUID();
@@ -278,7 +279,7 @@ public class PathfindPrecalculationRequestSet {
                                 System.out.println("It took " + (System.currentTimeMillis() - start) + "ms : " + request.getId());
                                 int currentReq = requestProgress.getCurrent().incrementAndGet();
                                 requestProgress.setMessage("Requests " + currentReq + "/" + requestProgress.getTotal().get());
-                                files.add(f);
+                                intermediate.add(f);
                             } catch (Exception e) {
                                 System.out.println("Error while " + id.toString() + ".pfreq / " + request.getId());
                                 e.printStackTrace();
@@ -287,7 +288,8 @@ public class PathfindPrecalculationRequestSet {
                         int currentRooms = roomProgress.getCurrent().incrementAndGet();
                         roomProgress.setMessage("Room&States " + currentRooms + "/" + roomProgress.getTotal().get());
                         System.out.println("ROOM: " + begin.getDungeonRoomInfo().getName() + " took " + (System.currentTimeMillis() - start2) + "ms to complete");
-                    });
+                        return intermediate.stream();
+                    }).collect(Collectors.toList());
                 } finally {
                     progressForTopRight.removeProgress(roomProgress);
                     progressForGui.removeProgress(roomProgress);
@@ -295,7 +297,7 @@ public class PathfindPrecalculationRequestSet {
                     progressForGui.removeProgress(requestProgress);
                 }
 
-                WidgetNotificationProgress.Progress zip = new WidgetNotificationProgress.Progress ("Zipping... 0/"+files.size()+1, new AtomicInteger(0), new AtomicInteger(files.size()+1), true);
+                WidgetNotificationProgress.Progress zip = new WidgetNotificationProgress.Progress ("Zipping... 0/"+files.size(), new AtomicInteger(0), new AtomicInteger(files.size()), true);
                 progressForTopRight.addProgress(zip);
                 progressForGui.addProgress(zip);
 
