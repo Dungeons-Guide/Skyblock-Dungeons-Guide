@@ -122,8 +122,8 @@ public class ActionUtils {
                         })
                         .collect(Collectors.groupingBy(a -> new ImmutablePair<>(a.getClusterId(), a.isStonkingReq()))).entrySet()) {
             ActionDAGBuilder builder1 = builder;
-            if (guard)
-                builder1 = builder.or(new ActionStupidGuard());
+//            if (guard)
+//                builder1 = builder.or(new ActionStupidGuard());
 
 
             if (integerListEntry.getKey().right) {
@@ -227,8 +227,8 @@ public class ActionUtils {
         for (Map.Entry<Integer, List<PossibleMoveSpot>> integerListEntry :
                 spots.stream().collect(Collectors.groupingBy(a ->a.getClusterId())).entrySet()) {
             ActionDAGBuilder builder1 = builder;
-            if (guard)
-                builder1 = builder.or(new ActionStupidGuard());
+//            if (guard)
+//                builder1 = builder.or(new ActionStupidGuard());
 
             builder1 = builder1.or(
                     eachBuild.build(new AtomicAction.Builder())

@@ -44,8 +44,9 @@ public class ActionMoveSpot extends AbstractActionMove {
 
     public ActionMoveSpot(List<PossibleMoveSpot> target, DungeonRoom dungeonRoom) {
         super(
-                RaytraceHelper.chooseMinimalY2(target).stream().min(Comparator.comparingInt(b -> b.isBlocked() ? 1 : 0)).get()
-                        .getOffsetPointSet().get(0),
+                ActionMove.getCenterOf(RaytraceHelper.chooseMinimalY2(target).stream()
+                        .min(Comparator.comparingInt(b -> b.isBlocked() ? 1 : 0)).get()
+                        .getOffsetPointSet()),
                 target.stream().flatMap(a -> a.getOffsetPointSet().stream()).collect(Collectors.toList())
         );
         this.targets = target;

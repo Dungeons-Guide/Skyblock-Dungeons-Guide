@@ -42,6 +42,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.SerializableBlockPos;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonRoomMatchEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonStateChangeEvent;
+import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
+import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.*;
@@ -423,7 +425,6 @@ public class DungeonRoom implements IPathfindWorld {
 
 
         // build tsp cache.
-
         ActionDAG dag = AdditionalInfoCaculatedDungeonRoomInfo.buildReferencingAllPossibleThings(this);
         List<AbstractActionMove> listOfMoves = new ArrayList<>();
         for (ActionDAGNode actionDAGNode : dag.getAllNodes()) {
@@ -490,7 +491,7 @@ public class DungeonRoom implements IPathfindWorld {
         }
 
         if (idExecutor.containsKey(hash)) {
-            SoftReference<PathfinderExecutor> executorSoftReference = idExecutor.get(hash);
+            WeakReference<PathfinderExecutor> executorSoftReference = idExecutor.get(hash);
             PathfinderExecutor executor = executorSoftReference.get();
             if (executor != null) return executor;
             idExecutor.remove(hash);
@@ -502,7 +503,7 @@ public class DungeonRoom implements IPathfindWorld {
         try {
             IPathfinder pathfinder = precalculation.createPathfinder(getRoomMatcher().getRotation());
             PathfinderExecutor executor1 = new PathfinderExecutor(pathfinder, BoundingBox.of(AxisAlignedBB.fromBounds(0,0,0,0,0,0)), this);
-            idExecutor.put(precalculation.getTargetHash(), new SoftReference<>(executor1));
+            idExecutor.put(precalculation.getTargetHash(), new WeakReference<>(executor1));
             executor1.doStep();
             return executor1;
         } catch (IOException e) {

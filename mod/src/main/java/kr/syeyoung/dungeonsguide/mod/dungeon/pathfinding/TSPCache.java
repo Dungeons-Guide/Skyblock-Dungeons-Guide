@@ -39,6 +39,7 @@ public class TSPCache {
 
     public synchronized void addToCache(PathfindPrecalculation precalculation) throws IOException {
         CachedPathfinder iPathfinder = (CachedPathfinder) precalculation.createPathfinder(dungeonRoom.getRoomMatcher().getRotation());
+        iPathfinder.init(dungeonRoom, null);
         double[] arr = new double[locationsInCache.size()];
         for (int i = 0; i < locationsInCache.size(); i++) {
             Vec3 offsetVec3 = locationsInCache.get(i);

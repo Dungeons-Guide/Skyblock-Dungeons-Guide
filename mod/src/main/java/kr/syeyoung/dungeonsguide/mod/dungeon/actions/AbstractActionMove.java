@@ -304,19 +304,13 @@ public abstract class AbstractActionMove extends AbstractAction {
     public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization, TSPCache tspCache) {
         Vec3 bpos = getTransformedTargetVec3(room);
 
-        if (state.isStupidHeuristic()) {
-            double cost = state.getPlayerPos().distanceTo(bpos);
-            state.setPlayerPos(bpos);
-            return cost;
-        }
-
         if (hashCache == null) {
             hashCache = new String[1 << state.getOpenMechanicsIndex().size()];
         }
 
-        String hash = hashCache[state.getOpenMechanicsBitset()];
+        String hash = hashCache[state.openMechanicsBitset];
         if (hash == null) {
-            int bitset = state.getOpenMechanicsBitset();
+            int bitset = state.openMechanicsBitset;
             Set<String> setConstruction = new HashSet<>();
             for (int i = 0; i < state.getOpenMechanicsIndex().size(); i++) {
                 if ((bitset & (1 << i)) != 0) {
@@ -324,7 +318,7 @@ public abstract class AbstractActionMove extends AbstractAction {
                 }
             }
 
-            hashCache[state.getOpenMechanicsBitset()] = hash = new PathfindRequest(
+            hashCache[state.openMechanicsBitset] = hash = new PathfindRequest(
                     room.getAlgorithmSetting(),
                     room.getDungeonRoomInfo(),
                     setConstruction,
@@ -334,13 +328,13 @@ public abstract class AbstractActionMove extends AbstractAction {
 
 
         double cost = room.getTspCache().getCost(hash, state.getPlayerPos());
-        if (cost != -1) {
+        if (cost >= 0) {
             state.setPlayerPos(bpos);
             return cost;
         }
 
         cost = tspCache.getCost(hash, state.getPlayerPos());
-        if (cost > 0) {
+        if (cost >= 0) {
             state.setPlayerPos(bpos);
             return cost;
         }
@@ -351,8 +345,9 @@ public abstract class AbstractActionMove extends AbstractAction {
                 tspCache.addToCache(precalculation);
             } catch (IOException e) { throw new RuntimeException(e); }
 
+            cost = tspCache.getCost(hash, state.getPlayerPos());
             state.setPlayerPos(bpos);
-            return tspCache.getCost(hash, state.getPlayerPos());
+            return cost;
         }
 
         System.out.println(state.getPlayerPos());

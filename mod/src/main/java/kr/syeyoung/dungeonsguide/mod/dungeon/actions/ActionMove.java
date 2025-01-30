@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.dungeon.data.PossibleClickingSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
@@ -42,10 +43,31 @@ public class ActionMove extends AbstractActionMove {
     @Getter
     private List<PossibleClickingSpot> targets;
 
+    public static OffsetVec3 getCenterOf(List<OffsetVec3> set) {
+        double cx = 0, cy = 0, cz = 0;
+        for (OffsetVec3 offsetVec3 : set) {
+            cx += offsetVec3.xCoord;
+            cy += offsetVec3.yCoord;
+            cz += offsetVec3.zCoord;
+        }
+        cx /= set.size(); cy /= set.size(); cz /= set.size();
+
+        double cost = Double.POSITIVE_INFINITY;
+        double finalCx = cx;
+        double finalCy = cy;
+        double finalCz = cz;
+        return set.stream()
+                .min(Comparator.<OffsetVec3>comparingDouble(offsetVec3 -> Math.abs(offsetVec3.xCoord - finalCx) + Math.abs(offsetVec3.yCoord - finalCy) + Math.abs(offsetVec3.zCoord - finalCz))
+                        .thenComparingDouble(a -> a.xCoord)
+                        .thenComparingDouble(a -> a.yCoord)
+                        .thenComparingDouble(a -> a.zCoord)).orElse(null);
+    }
+
     public ActionMove(List<PossibleClickingSpot> target, DungeonRoom dungeonRoom) {
         super(
-                RaytraceHelper.chooseMinimalY(target).stream().min(Comparator.comparingInt(b -> !b.isStonkingReq() ? 1 : 0)).get()
-                        .getOffsetPointSet().get(0),
+                getCenterOf(RaytraceHelper.chooseMinimalY(target).stream()
+                        .min(Comparator.comparingInt(b -> !b.isStonkingReq() ? 1 : 0)).get()
+                        .getOffsetPointSet()),
                 target.stream().flatMap(a -> a.getOffsetPointSet().stream()).collect(Collectors.toList())
         );
         this.targets = target;

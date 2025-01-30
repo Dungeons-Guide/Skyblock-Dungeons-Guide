@@ -28,10 +28,8 @@ import java.util.*;
 public class RoomState {
     private Vec3 playerPos;
 
-    private int openMechanicsBitset;
+    public int openMechanicsBitset;
     private final List<String> openMechanicsIndex;
-
-    private boolean stupidHeuristic;
     public RoomState(List<String> openMechanicsIndex) {
         this.openMechanicsIndex = openMechanicsIndex;
     }

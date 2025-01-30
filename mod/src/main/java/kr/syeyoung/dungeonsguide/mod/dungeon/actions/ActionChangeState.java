@@ -77,7 +77,7 @@ public class ActionChangeState extends AbstractAction {
             if (this.state.equals("open")) {
                 int index = state.getOpenMechanicsIndex().indexOf(mechanicName);
                 if (index != -1) {
-                    state.setOpenMechanicsBitset(state.getOpenMechanicsBitset() | (1 << index));
+                    state.openMechanicsBitset  |= (1 << index);
                 }
             }
         }
