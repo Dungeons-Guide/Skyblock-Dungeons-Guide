@@ -255,7 +255,10 @@ public class RaytraceHelper {
                 .entrySet().stream().map(
                         a -> new PossibleClickingSpot(
                                 a.getKey().getTools(),
-                                a.getValue().stream().map(b -> b.getKey()).collect(Collectors.toList()),
+                                a.getValue().stream().map(b -> b.getKey())
+                                        .sorted(Comparator.<OffsetVec3>comparingDouble(c -> c.xCoord)
+                                                .thenComparingDouble(c -> c.yCoord)
+                                                .thenComparingDouble(c -> c.zCoord)).collect(Collectors.toList()),
                                 a.getKey().isStonkingReq(),
                                 a.getKey().getClusterId()
                         )
