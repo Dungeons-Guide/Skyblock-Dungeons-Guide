@@ -27,7 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world.DungeonRoomButOpen;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
@@ -296,38 +295,47 @@ public abstract class AbstractActionMove extends AbstractAction {
         return "Move\n- target: "+ getTargetVec3().toString();
     }
 
-    private String hash;
-
+    private volatile String[] hashCache;
 
     @Override
     public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
         Vec3 bpos = getTransformedTargetVec3(room);
 
-        if (memoization.containsKey("stupidheuristic")) {
+        if (state.isStupidHeuristic()) {
             double cost = state.getPlayerPos().distanceTo(bpos);
             state.setPlayerPos(bpos);
             return cost;
         }
+
+        if (hashCache == null) {
+            hashCache = new String[1 << state.getOpenMechanicsIndex().size()];
+        }
+
+        String hash = hashCache[state.getOpenMechanicsBitset()];
         if (hash == null) {
-            hash = new PathfindRequest(
+            int bitset = state.getOpenMechanicsBitset();
+            Set<String> setConstruction = new HashSet<>();
+            for (int i = 0; i < state.getOpenMechanicsIndex().size(); i++) {
+                if ((bitset & (1 << i)) != 0) {
+                    setConstruction.add(state.getOpenMechanicsIndex().get(i));
+                }
+            }
+
+            hashCache[state.getOpenMechanicsBitset()] = hash = new PathfindRequest(
                     room.getAlgorithmSetting(),
                     room.getDungeonRoomInfo(),
-                    state.getOpenMechanics().stream().filter(b -> {
-                        return  room.getMechanics().get(b) instanceof DungeonDoor || room.getMechanics().get(b) instanceof DungeonOnewayDoor;
-                    }).collect(Collectors.toSet()),
+                    setConstruction,
                     getTargetOffsetPointSet()
             ).getHash();
         }
-        double cost = room.getTspCache().getCost(hash, new OffsetVec3(room, state.getPlayerPos()));
+        double cost = room.getTspCache().getCost(hash, state.getPlayerPos());
         if (cost != -1) {
             state.setPlayerPos(bpos);
             return cost;
         }
 
 
-        PathfinderExecutor executor = (PathfinderExecutor) memoization.get(
-                hash
-        );
+        PathfinderExecutor executor = (PathfinderExecutor) memoization.get(hash);
         FineGridStonkingBFS a = null;
         if (executor == null) {
             executor = room.loadPrecalculatedByHash(hash);

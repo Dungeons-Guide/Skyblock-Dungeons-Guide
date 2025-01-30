@@ -442,7 +442,7 @@ public class DungeonRoom implements IPathfindWorld {
             vec3.add(listOfMove.getTargetVec3());
         }
 
-        tspCache = new TSPCache(vec3);
+        tspCache = new TSPCache(this, vec3);
         for (PathfindPrecalculation value : idCalculation.values()) {
             try {
                 tspCache.addToCache(value);

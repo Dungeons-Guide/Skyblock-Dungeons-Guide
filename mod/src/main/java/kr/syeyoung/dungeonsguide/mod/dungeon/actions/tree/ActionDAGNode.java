@@ -26,7 +26,7 @@ import java.util.*;
 
 public class ActionDAGNode {
     @Getter
-    private final Set<ActionDAGNode> requiredBy = new HashSet<>();
+    private final List<ActionDAGNode> requiredBy = new ArrayList<>();
     @Getter
     private final AbstractAction action;
 
@@ -86,6 +86,30 @@ public class ActionDAGNode {
             }
         }
         return nodes;
+    }
+
+    public boolean checkImpossible(int dagId, List<ActionDAGNode> solution, int nodeIdx) {
+        if (orFactor > 0) {
+            int stuff = (dagId / orFactor) % or.size();
+            ActionDAGNode node = or.get(stuff);
+
+            int idx = solution.indexOf(node);
+            if (idx > nodeIdx) {
+                return true;
+            }
+        }
+        for (int i = 0; i < optional.size(); i++) {
+            ActionDAGNode actionDAGNode = optional.get(i);
+            if (actionDAGNode.isOptIncluded(dagId)) {
+
+                int idx = solution.indexOf(actionDAGNode);
+                if (idx > nodeIdx) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public List<ActionDAGNode> getAllChildren() {

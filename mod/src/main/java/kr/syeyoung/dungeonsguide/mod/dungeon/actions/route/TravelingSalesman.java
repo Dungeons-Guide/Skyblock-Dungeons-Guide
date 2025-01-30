@@ -1,5 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions.route;
 
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDoor;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonOnewayDoor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
@@ -9,23 +11,19 @@ import lombok.Data;
 import net.minecraft.util.Vec3;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TravelingSalesman {
 
     private static boolean checkImpossible(ActionDAGNode p1Node, List<ActionDAGNode> solution, int nodeIdx, int dagId) {
-        for (ActionDAGNode actionDAGNode : p1Node.getRequiredBy()) {
+        for (int i = 0; i < p1Node.getRequiredBy().size(); i++) {
+            ActionDAGNode actionDAGNode = p1Node.getRequiredBy().get(i);
             int idx = solution.indexOf(actionDAGNode);
             if (idx < nodeIdx) {
                 return true;
             }
         }
-        for (ActionDAGNode potentialRequire : p1Node.getPotentialRequires(dagId)) {
-            int idx = solution.indexOf(potentialRequire);
-            if (idx > nodeIdx) {
-                return true;
-            }
-        }
-        return false;
+        return p1Node.checkImpossible(dagId, solution, nodeIdx);
     }
 
     public static PartialCalculationResult annealing(int dagId, ActionDAG dag, Vec3 start, DungeonRoom dungeonRoom, Map<String, Object> memoization) {
@@ -39,6 +37,12 @@ public class TravelingSalesman {
         double lastScore = Double.POSITIVE_INFINITY;
         double temperature = 100;
         int len = currentSolution.size();
+
+        List<String> mechanicNames = dungeonRoom.getMechanics().entrySet().stream().filter(a -> a.getValue() instanceof DungeonDoor || a.getValue() instanceof DungeonOnewayDoor)
+                .map(a -> a.getKey()).collect(Collectors.toList());
+
+
+        RoomState roomState = new RoomState(mechanicNames);
         while(true) {
             cnt++;
 
@@ -74,10 +78,11 @@ public class TravelingSalesman {
 
 
 
-            RoomState roomState = new RoomState();
             roomState.setPlayerPos(start);
+            roomState.setOpenMechanicsBitset(0);
             double cost = 0;
-            for (ActionDAGNode actionDAGNode : currentSolution) {
+            for (int i = 0; i < currentSolution.size(); i++) {
+                ActionDAGNode actionDAGNode = currentSolution.get(i);
                 cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, memoization);
                 if (cost == Double.POSITIVE_INFINITY) break;
             }
@@ -129,11 +134,15 @@ public class TravelingSalesman {
         int cnt = 0;
         double localMinCost = Double.POSITIVE_INFINITY;
         List<ActionDAGNode> localMinCostRoute = null;
+        List<String> mechanicNames = dungeonRoom.getMechanics().entrySet().stream().filter(a -> a.getValue() instanceof DungeonDoor || a.getValue() instanceof DungeonOnewayDoor)
+                .map(a -> a.getKey()).collect(Collectors.toList());
+
+
 
         for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dagId)) {
             cnt++;
 
-            RoomState roomState = new RoomState();
+            RoomState roomState = new RoomState(mechanicNames);
             roomState.setPlayerPos(start);
             double cost = 0;
             for (ActionDAGNode actionDAGNode : actionDAGNodes) {

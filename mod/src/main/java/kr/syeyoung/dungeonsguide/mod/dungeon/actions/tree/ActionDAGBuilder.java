@@ -109,7 +109,8 @@ public class ActionDAGBuilder {
             // 5. OR + OPT => KEEP
             // 6. OPT + OPT => KEEP
             actionDAGNode1.setMaximumDepth(Math.max(current.getMaximumDepth() + 1, actionDAGNode1.getMaximumDepth()));
-            actionDAGNode1.getRequiredBy().add(current);
+            if (!actionDAGNode1.getRequiredBy().contains(current))
+                actionDAGNode1.getRequiredBy().add(current);
             return new ActionDAGBuilderNoMore(this);
         }
 
@@ -120,7 +121,8 @@ public class ActionDAGBuilder {
             current.getOr().add(child);
         else if (nodeType == ActionDAGNode.NodeType.OPTIONAL)
             current.getOptional().add(child);
-        child.getRequiredBy().add(current);
+        if (!child.getRequiredBy().contains(current))
+            child.getRequiredBy().add(current);
 
         child.setMaximumDepth(current.getMaximumDepth() + 1);
 

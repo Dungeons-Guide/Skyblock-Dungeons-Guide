@@ -80,11 +80,18 @@ public class CachedPathfinder implements IPathfinder {
 
     @Override
     public PathfindResult getRoute(Vec3 from) {
-        OffsetVec3 offsetVec3 = new OffsetVec3(0,0,0);
-        offsetVec3.setPosInWorld(xLen/2+3, zLen/2+3,roomXMin/2, roomYMin/2, roomZMin/2, from.xCoord, from.yCoord, from.zCoord, rotation);
-        int nodeX = (int) Math.round(offsetVec3.xCoord * 2);
-        int nodeY = (int) Math.round(offsetVec3.yCoord * 2);
-        int nodeZ = (int) Math.round(offsetVec3.zCoord * 2);
+        int nodeX, nodeY, nodeZ;
+        if (rotation == 0) {
+            nodeX = (int) Math.round(from.xCoord * 2);
+            nodeY = (int) Math.round(from.yCoord * 2);
+            nodeZ = (int) Math.round(from.zCoord * 2);
+        } else {
+            OffsetVec3 offsetVec3 = new OffsetVec3(0, 0, 0);
+            offsetVec3.setPosInWorld(xLen / 2 + 3, zLen / 2 + 3, roomXMin / 2, roomYMin / 2, roomZMin / 2, from.xCoord, from.yCoord, from.zCoord, rotation);
+            nodeX = (int) Math.round(offsetVec3.xCoord * 2);
+            nodeY = (int) Math.round(offsetVec3.yCoord * 2);
+            nodeZ = (int) Math.round(offsetVec3.zCoord * 2);
+        }
 
         LinkedList<PathfindResult.PathfindNode> route = new LinkedList<>();
         CachedPathfindNode curr = getNode(nodeX, nodeY, nodeZ);
@@ -147,11 +154,27 @@ public class CachedPathfinder implements IPathfinder {
 
     @Override
     public double getCost(Vec3 from) {
-        OffsetVec3 offsetVec3 = new OffsetVec3(0,0,0);
-        offsetVec3.setPosInWorld(xLen/2+3, zLen/2+3,roomXMin/2, roomYMin/2, roomZMin/2, from.xCoord, from.yCoord, from.zCoord, rotation);
-        int nodeX = (int) Math.round(offsetVec3.xCoord * 2);
-        int nodeY = (int) Math.round(offsetVec3.yCoord * 2);
-        int nodeZ = (int) Math.round(offsetVec3.zCoord * 2);
-        return getNode(nodeX, nodeY, nodeZ).gScore;
+        int x, y, z;
+        if (rotation == 0) {
+            x = (int) Math.round(from.xCoord * 2);
+            y = (int) Math.round(from.yCoord * 2);
+            z = (int) Math.round(from.zCoord * 2);
+        } else {
+            OffsetVec3 offsetVec3 = new OffsetVec3(0, 0, 0);
+            offsetVec3.setPosInWorld(xLen / 2 + 3, zLen / 2 + 3, roomXMin / 2, roomYMin / 2, roomZMin / 2, from.xCoord, from.yCoord, from.zCoord, rotation);
+            x = (int) Math.round(offsetVec3.xCoord * 2);
+            y = (int) Math.round(offsetVec3.yCoord * 2);
+            z = (int) Math.round(offsetVec3.zCoord * 2);
+        }
+        if (x < xStart || y < yStart || z < zStart || x >= xStart + xLen || y >= yStart + yLen || z >= zStart + zLen) {
+            return Float.POSITIVE_INFINITY;
+        }
+        int relX = x - xStart;
+        int relY = y - yStart;
+        int relZ = z - zStart;
+        int idx = (relY * xLen * zLen + relZ * xLen + relX) * 8;
+
+        int val = array.getInt(idx + 4);
+        return Float.intBitsToFloat(Integer.reverseBytes(val));
     }
 }

@@ -22,11 +22,17 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.util.Vec3;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter @Setter
 public class RoomState {
     private Vec3 playerPos;
-    private Set<String> openMechanics = new HashSet<>();
+
+    private int openMechanicsBitset;
+    private final List<String> openMechanicsIndex;
+
+    private boolean stupidHeuristic;
+    public RoomState(List<String> openMechanicsIndex) {
+        this.openMechanicsIndex = openMechanicsIndex;
+    }
 }

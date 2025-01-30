@@ -74,7 +74,10 @@ public class ActionChangeState extends AbstractAction {
         DungeonMechanic mechanic = room.getMechanics().get(mechanicName);
         if (mechanic instanceof DungeonTomb || mechanic instanceof DungeonOnewayDoor || mechanic instanceof DungeonDoor || mechanic instanceof DungeonBreakableWall) {
             if (this.state.equals("open")) {
-                state.getOpenMechanics().add(mechanicName);
+                int index = state.getOpenMechanicsIndex().indexOf(mechanicName);
+                if (index != -1) {
+                    state.setOpenMechanicsBitset(state.getOpenMechanicsBitset() | (1 << index));
+                }
             }
         }
         return 0;

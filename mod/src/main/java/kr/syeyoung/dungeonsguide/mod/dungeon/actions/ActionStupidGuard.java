@@ -72,6 +72,6 @@ public class ActionStupidGuard extends AbstractAction {
 
     @Override
     public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
-        return memoization.containsKey("stupidheuristic") ? Double.POSITIVE_INFINITY : 0;
+        return state.isStupidHeuristic() ? Double.POSITIVE_INFINITY : 0;
     }
 }

@@ -130,8 +130,8 @@ public class AtomicAction extends AbstractAction {
     @Override
     public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
         double cost = 0;
-        for (AbstractAction action : getActions()) {
-            cost += action.evalulateCost(state, room, memoization);
+        for (int i = 0; i < getActions().size(); i++) {
+            cost += getActions().get(i).evalulateCost(state, room, memoization);
         }
         return cost;
     }
