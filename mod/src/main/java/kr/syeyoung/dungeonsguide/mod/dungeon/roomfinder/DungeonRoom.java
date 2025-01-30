@@ -458,7 +458,7 @@ public class DungeonRoom implements IPathfindWorld {
     @Getter
     private TSPCache tspCache;
 
-    private final Map<String, SoftReference<PathfinderExecutor>> idExecutor = new HashMap<>();
+    private final Map<String, WeakReference<PathfinderExecutor>> idExecutor = new HashMap<>();
     private final Map<String, PathfindPrecalculation> idCalculation = new HashMap<>();
     public void loadPrecalculated(String id) {
         PathfindPrecalculation cachedPathfinder = PathfindResultRegistry.getINSTANCE().getById(id);
