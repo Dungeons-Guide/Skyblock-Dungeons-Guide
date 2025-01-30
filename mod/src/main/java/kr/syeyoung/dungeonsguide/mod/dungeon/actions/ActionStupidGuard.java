@@ -18,20 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
-import java.awt.*;
 import java.util.Map;
 
 @Data
@@ -71,7 +65,7 @@ public class ActionStupidGuard extends AbstractAction {
     }
 
     @Override
-    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
+    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization, TSPCache tspCache) {
         return state.isStupidHeuristic() ? Double.POSITIVE_INFINITY : 0;
     }
 }

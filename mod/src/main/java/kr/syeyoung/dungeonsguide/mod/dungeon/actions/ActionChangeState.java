@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -70,7 +71,7 @@ public class ActionChangeState extends AbstractAction {
     }
 
     @Override
-    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
+    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization, TSPCache tspCache) {
         DungeonMechanic mechanic = room.getMechanics().get(mechanicName);
         if (mechanic instanceof DungeonTomb || mechanic instanceof DungeonOnewayDoor || mechanic instanceof DungeonDoor || mechanic instanceof DungeonBreakableWall) {
             if (this.state.equals("open")) {

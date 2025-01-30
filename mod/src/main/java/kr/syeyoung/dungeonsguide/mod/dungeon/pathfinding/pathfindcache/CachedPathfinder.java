@@ -23,10 +23,15 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
+import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.util.Vec3;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
+import javax.vecmath.Vector2d;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
@@ -80,18 +85,22 @@ public class CachedPathfinder implements IPathfinder {
 
     @Override
     public PathfindResult getRoute(Vec3 from) {
-        int nodeX, nodeY, nodeZ;
-        if (rotation == 0) {
-            nodeX = (int) Math.round(from.xCoord * 2);
-            nodeY = (int) Math.round(from.yCoord * 2);
-            nodeZ = (int) Math.round(from.zCoord * 2);
-        } else {
-            OffsetVec3 offsetVec3 = new OffsetVec3(0, 0, 0);
-            offsetVec3.setPosInWorld(xLen / 2 + 3, zLen / 2 + 3, roomXMin / 2, roomYMin / 2, roomZMin / 2, from.xCoord, from.yCoord, from.zCoord, rotation);
-            nodeX = (int) Math.round(offsetVec3.xCoord * 2);
-            nodeY = (int) Math.round(offsetVec3.yCoord * 2);
-            nodeZ = (int) Math.round(offsetVec3.zCoord * 2);
+        double dx = from.xCoord - roomXMin / 2.0, dz = from.zCoord - roomZMin / 2.0, dy = from.yCoord - roomYMin/2.0;
+        for (int i = 0; i < rotation; i++) {
+            double tempX = dx;
+            dx = -dz;
+            dz = tempX;
+            if (i % 2 == 0) {
+                dx += xLen/2 + 1; // + Z
+            } else {
+                dx += zLen/2 + 1; // + X
+            }
         }
+
+        int nodeX, nodeY, nodeZ;
+        nodeX = (int) Math.round(dx * 2);
+        nodeY = (int) Math.round(dy * 2);
+        nodeZ = (int) Math.round(dz * 2);
 
         LinkedList<PathfindResult.PathfindNode> route = new LinkedList<>();
         CachedPathfindNode curr = getNode(nodeX, nodeY, nodeZ);
@@ -112,6 +121,24 @@ public class CachedPathfinder implements IPathfinder {
         route.addLast(new PathfindResult.PathfindNode(nextPos.xCoord, nextPos.yCoord, nextPos.zCoord, curr.nodeType));
 
         return new PathfindResult(route, gScore);
+    }
+
+    public void close() {
+        try {
+            destroyDirectByteBuffer(array);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static void destroyDirectByteBuffer(ByteBuffer toBeDestroyed)
+            throws IllegalArgumentException, IllegalAccessException,
+            InvocationTargetException, SecurityException, NoSuchMethodException {
+        Method cleanerMethod = toBeDestroyed.getClass().getMethod("cleaner");
+        cleanerMethod.setAccessible(true);
+        Object cleaner = cleanerMethod.invoke(toBeDestroyed);
+        Method cleanMethod = cleaner.getClass().getMethod("clean");
+        cleanMethod.setAccessible(true);
+        cleanMethod.invoke(cleaner);
     }
 
     @AllArgsConstructor @Getter
@@ -154,18 +181,23 @@ public class CachedPathfinder implements IPathfinder {
 
     @Override
     public double getCost(Vec3 from) {
-        int x, y, z;
-        if (rotation == 0) {
-            x = (int) Math.round(from.xCoord * 2);
-            y = (int) Math.round(from.yCoord * 2);
-            z = (int) Math.round(from.zCoord * 2);
-        } else {
-            OffsetVec3 offsetVec3 = new OffsetVec3(0, 0, 0);
-            offsetVec3.setPosInWorld(xLen / 2 + 3, zLen / 2 + 3, roomXMin / 2, roomYMin / 2, roomZMin / 2, from.xCoord, from.yCoord, from.zCoord, rotation);
-            x = (int) Math.round(offsetVec3.xCoord * 2);
-            y = (int) Math.round(offsetVec3.yCoord * 2);
-            z = (int) Math.round(offsetVec3.zCoord * 2);
+        double dx = from.xCoord - roomXMin / 2.0, dz = from.zCoord - roomZMin / 2.0, dy = from.yCoord - roomYMin/2.0;
+        for (int i = 0; i < rotation; i++) {
+            double tempX = dx;
+            dx = -dz;
+            dz = tempX;
+            if (i % 2 == 0) {
+                dx += xLen/2 + 1; // + Z
+            } else {
+                dx += zLen/2 + 1; // + X
+            }
         }
+
+        int x, y, z;
+        x = (int) Math.round(dx * 2);
+        y = (int) Math.round(dy * 2);
+        z = (int) Math.round(dz * 2);
+
         if (x < xStart || y < yStart || z < zStart || x >= xStart + xLen || y >= yStart + yLen || z >= zStart + zLen) {
             return Float.POSITIVE_INFINITY;
         }

@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -64,7 +65,7 @@ public abstract class AbstractAction {
         return false;
     }
 
-    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) { return 0; }
+    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization, TSPCache tspCache) { return 0; }
 
     public boolean isIdempotent() { return false; }
     public boolean isSanityCheck() { return false; }

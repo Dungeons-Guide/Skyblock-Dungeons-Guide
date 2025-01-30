@@ -27,6 +27,8 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.TSPCache;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
@@ -50,6 +52,7 @@ import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -298,7 +301,7 @@ public abstract class AbstractActionMove extends AbstractAction {
     private volatile String[] hashCache;
 
     @Override
-    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
+    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization, TSPCache tspCache) {
         Vec3 bpos = getTransformedTargetVec3(room);
 
         if (state.isStupidHeuristic()) {
@@ -328,20 +331,33 @@ public abstract class AbstractActionMove extends AbstractAction {
                     getTargetOffsetPointSet()
             ).getHash();
         }
+
+
         double cost = room.getTspCache().getCost(hash, state.getPlayerPos());
         if (cost != -1) {
             state.setPlayerPos(bpos);
             return cost;
         }
 
-
-        PathfinderExecutor executor = (PathfinderExecutor) memoization.get(hash);
-        FineGridStonkingBFS a = null;
-        if (executor == null) {
-            executor = room.loadPrecalculatedByHash(hash);
-            memoization.put(hash, executor);
+        cost = tspCache.getCost(hash, state.getPlayerPos());
+        if (cost > 0) {
+            state.setPlayerPos(bpos);
+            return cost;
         }
 
+        if (cost == -2) {
+            PathfindPrecalculation precalculation = room.loadPrecalculatedUnloadedByHash(hash);
+            try {
+                tspCache.addToCache(precalculation);
+            } catch (IOException e) { throw new RuntimeException(e); }
+
+            state.setPlayerPos(bpos);
+            return tspCache.getCost(hash, state.getPlayerPos());
+        }
+
+        System.out.println(state.getPlayerPos());
+
+        PathfinderExecutor executor = room.loadPrecalculatedByHash(hash);
 
         double result = executor.getPathfinder().getCost(state.getPlayerPos());
 

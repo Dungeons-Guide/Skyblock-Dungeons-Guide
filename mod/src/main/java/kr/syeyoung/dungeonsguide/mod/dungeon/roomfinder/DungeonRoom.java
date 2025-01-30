@@ -74,6 +74,7 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.*;
@@ -442,24 +443,40 @@ public class DungeonRoom implements IPathfindWorld {
             vec3.add(listOfMove.getTargetVec3());
         }
 
-        tspCache = new TSPCache(this, vec3);
+        long start = System.currentTimeMillis();
+
+        tspCache = new TSPCache(this, vec3, Collections.EMPTY_LIST);
         for (PathfindPrecalculation value : idCalculation.values()) {
             try {
                 tspCache.addToCache(value);
             } catch (IOException e) { e.printStackTrace(); }
         }
+        ChatTransmitter.sendDebugChat("Building TSP Cache took "+(System.currentTimeMillis() - start)+"ms");
+
     }
 
     @Getter
     private TSPCache tspCache;
 
-    private final Map<String, PathfinderExecutor> idExecutor = new HashMap<>();
+    private final Map<String, SoftReference<PathfinderExecutor>> idExecutor = new HashMap<>();
     private final Map<String, PathfindPrecalculation> idCalculation = new HashMap<>();
     public void loadPrecalculated(String id) {
         PathfindPrecalculation cachedPathfinder = PathfindResultRegistry.getINSTANCE().getById(id);
         if (cachedPathfinder == null) return;
         if (idCalculation.containsKey(id)) return;
         idCalculation.put(cachedPathfinder.getTargetHash(), cachedPathfinder);
+    }
+
+    public PathfindPrecalculation loadPrecalculatedUnloadedByHash(String hash) {
+        if (!idCalculation.containsKey(hash)) {
+            if (nextShowedWarning < System.currentTimeMillis()) {
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cPrecalculation "+hash+" in room "+dungeonRoomInfo.getName()+" is §4§lMISSING §cin currently applied preset §e"+roomPreset.getParent().getPresetName()+"§c. There may be some problems in pathfinding. Please add precalculations at /dg -> Pathfinding & Secrets -> Precalculations");
+                nextShowedWarning = System.currentTimeMillis() + 30000L;
+            }
+            return null;
+        }
+
+        return idCalculation.get(hash);
     }
 
     private long nextShowedWarning = 0;
@@ -472,7 +489,12 @@ public class DungeonRoom implements IPathfindWorld {
             return null;
         }
 
-        if (idExecutor.containsKey(hash)) return idExecutor.get(hash);
+        if (idExecutor.containsKey(hash)) {
+            SoftReference<PathfinderExecutor> executorSoftReference = idExecutor.get(hash);
+            PathfinderExecutor executor = executorSoftReference.get();
+            if (executor != null) return executor;
+            idExecutor.remove(hash);
+        };
 
         System.out.println("LOADING:: "+hash);
         PathfindPrecalculation precalculation = idCalculation.get(hash);
@@ -480,7 +502,7 @@ public class DungeonRoom implements IPathfindWorld {
         try {
             IPathfinder pathfinder = precalculation.createPathfinder(getRoomMatcher().getRotation());
             PathfinderExecutor executor1 = new PathfinderExecutor(pathfinder, BoundingBox.of(AxisAlignedBB.fromBounds(0,0,0,0,0,0)), this);
-            idExecutor.put(precalculation.getTargetHash(), executor1);
+            idExecutor.put(precalculation.getTargetHash(), new SoftReference<>(executor1));
             executor1.doStep();
             return executor1;
         } catch (IOException e) {

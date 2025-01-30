@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.CachedPathfinder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import net.minecraft.util.Vec3;
@@ -24,32 +25,37 @@ public class TSPCache {
             return Double.compare(o1.zCoord, o2.zCoord);
         }
     };
-    public TSPCache(DungeonRoom dungeonRoom, List<OffsetVec3> locs) {
+    public TSPCache(DungeonRoom dungeonRoom, List<OffsetVec3> locs, List<Vec3> locs2) {
         this.dungeonRoom = dungeonRoom;
         this.locationsInCache = new ArrayList<>();
         for (OffsetVec3 loc : locs) {
             locationsInCache.add(loc.getPos(dungeonRoom));
         }
+        for (Vec3 vec3 : locs2) {
+            locationsInCache.add(vec3);
+        }
         locationsInCache.sort(vec3Comparator);
     }
 
-    public void addToCache(PathfindPrecalculation precalculation) throws IOException {
-        IPathfinder iPathfinder = precalculation.createPathfinder(dungeonRoom.getRoomMatcher().getRotation());
+    public synchronized void addToCache(PathfindPrecalculation precalculation) throws IOException {
+        CachedPathfinder iPathfinder = (CachedPathfinder) precalculation.createPathfinder(dungeonRoom.getRoomMatcher().getRotation());
         double[] arr = new double[locationsInCache.size()];
         for (int i = 0; i < locationsInCache.size(); i++) {
             Vec3 offsetVec3 = locationsInCache.get(i);
             arr[i] = iPathfinder.getCost(offsetVec3);
         }
         cache.put(precalculation.getTargetHash(), arr);
+
+        iPathfinder.close();
     }
 
     private int binarySearchIndexOf(Vec3 pos) {
-        int low = 0, high = locationsInCache.size();
+        int low = 0, high = locationsInCache.size()-1;
         while (low <= high) {
             int mid = (high + low) / 2;
 
             Vec3 elem = locationsInCache.get(mid);
-            if (elem.equals(pos)) {
+            if (elem.xCoord == pos.xCoord && elem.yCoord == pos.yCoord && elem.zCoord == pos.zCoord) {
                 return mid;
             }
 
@@ -65,6 +71,8 @@ public class TSPCache {
     public double getCost(String precalcId, Vec3 pos) {
         int index = binarySearchIndexOf(pos);
         if (index == -1) return -1;
-        return cache.get(precalcId)[index];
+        double[] cache = this.cache.get(precalcId);
+        if (cache == null) return -2;
+        return cache[index];
     }
 }

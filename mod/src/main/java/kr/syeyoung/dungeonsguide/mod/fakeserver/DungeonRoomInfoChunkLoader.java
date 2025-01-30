@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.fakeserver;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -42,7 +43,10 @@ public class DungeonRoomInfoChunkLoader implements IChunkLoader {
                 for (int y = 0; y < 256; y++) {
                     for (int z = cz*16; z < cz*16+16; z++) {
                         if (x == 0 || z == 0) continue;
-                        chunkPrimer.setBlockState(x & 0xF, y, z & 0xF, dungeonRoomInfo.getBlock(x, y-70, z, 0));
+                        OffsetPoint offsetPoint = new OffsetPoint(x,y,z);
+                        BlockPos pos = offsetPoint.toRotatedRelBlockPos(0, dungeonRoomInfo.getLength(), dungeonRoomInfo.getWidth());
+
+                        chunkPrimer.setBlockState(x & 0xF, y, z & 0xF, dungeonRoomInfo.getBlock(pos.getX(), pos.getY()-70, pos.getZ(), 0));
                     }
                 }
             }

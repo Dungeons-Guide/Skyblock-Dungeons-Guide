@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import lombok.Getter;
@@ -111,6 +112,8 @@ public class ActionRoute {
             }
             ChatTransmitter.sendDebugChat("With "+minCount+" Sorts :: Annealing? "+annealing);
 
+            TSPCache tspCache = new TSPCache(dungeonRoom, Collections.EMPTY_LIST, Collections.singletonList(start));
+
             Map<String, Object> memoization = new ConcurrentHashMap<>();
             boolean finalAnnealing = annealing;
             try {
@@ -118,8 +121,8 @@ public class ActionRoute {
                         .parallel()
                         .mapToObj((dagId) -> {
                             if (finalAnnealing)
-                                return TravelingSalesman.annealing(dagId, dag, start, dungeonRoom, memoization);
-                            else return TravelingSalesman.bruteforce(dagId, dag, start, dungeonRoom, memoization);
+                                return TravelingSalesman.annealing(dagId, dag, start, dungeonRoom, memoization, tspCache);
+                            else return TravelingSalesman.bruteforce(dagId, dag, start, dungeonRoom, memoization, tspCache);
                         })
                         .collect(Collectors.toList());
                 TravelingSalesman.PartialCalculationResult minCostRoute = results.stream()
@@ -146,7 +149,11 @@ public class ActionRoute {
 
 
                 calculating = false;
-            }catch (Exception e) {
+            } catch (OutOfMemoryError e) {
+                e.printStackTrace();
+                ChatTransmitter.sendDebugChat("OOM While calc");
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });

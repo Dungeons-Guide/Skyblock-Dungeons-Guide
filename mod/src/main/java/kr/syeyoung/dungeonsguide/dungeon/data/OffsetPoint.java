@@ -76,6 +76,20 @@ public class OffsetPoint implements Cloneable, Serializable {
         return new BlockPos(rot.x, y, rot.y);
     }
 
+    public BlockPos toRotatedRelBlockPos(int rotation, int zLen, int xLen) {
+        Vector2d rot = new Vector2d(x,z);
+        for (int i = 0; i < rotation; i++) {
+            rot = VectorUtils.rotateCounterClockwise(rot);
+            if (i % 2 == 0) {
+                rot.y += zLen; // + Z
+            } else {
+                rot.y += xLen; // + X
+            }
+        }
+
+        return new BlockPos(rot.x, y, rot.y);
+    }
+
     public Block getBlock(DungeonRoom dungeonRoom) {
         BlockPos relBp = toRotatedRelBlockPos(dungeonRoom);
 
