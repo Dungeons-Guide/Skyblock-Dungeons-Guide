@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.commands;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import com.google.gson.*;
@@ -186,7 +188,7 @@ public class CommandDgDebug extends CommandBase {
             case "process":
                 processCommand1();
                 break;
-            case "generaterequests":
+            case "process2":
                 try {
                     process2();
                 } catch (Exception e) {
@@ -501,197 +503,19 @@ public class CommandDgDebug extends CommandBase {
     }
 
     private void process2() throws IOException {
-//        try {
-//            Field f=  ValueEditRegistry.class.getDeclaredField("valueEditMap");
-//            f.setAccessible(true);
-//            Map map = (Map) f.get(null);
-//            map.put(DungeonWizard.class.getName(), new ValueEditWizard.Generator());
-//
-//        } catch (Throwable e) {
-//            throw new RuntimeException(e);
-//        }
-        int est = 0;
-        Set<PathfindRequest> requests = new HashSet<>();
+
+        int cnt = 0;
+        CBORMapper objectMapper = new CBORMapper();
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
-//            System.out.println("Loading "+dungeonRoomInfo.getName());
-            DRIWorld driWorld = new DRIWorld(dungeonRoomInfo);
-            DungeonContext fakeContext = new DungeonContext("TEST DG", driWorld);
-            DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(
-                    new Dimension(16, 16),
-                    5,
-                    new Point(0,0),
-                    new BlockPos(0,70,0)
-            );
-            fakeContext.setScaffoldParser(new DungeonRoomScaffoldParser(dungeonMapLayout, fakeContext));
-            DungeonRoom dungeonRoom = new DungeonRoom(fakeContext);
+            System.out.println(dungeonRoomInfo.getName());
+            byte[] str = objectMapper.writeValueAsBytes(dungeonRoomInfo);
+            DungeonRoomInfo info2 = objectMapper.readValue(str, DungeonRoomInfo.class);
 
-            ActionDAGBuilder builder = new ActionDAGBuilder(dungeonRoom);
-            for (Map.Entry<String, DungeonMechanic> value : dungeonRoom.getMechanics().entrySet()) {
-
-                if (value.getValue() instanceof ISecret) {
-                    try {
-                        builder.requires(new ActionChangeState(value.getKey(), "found"));
-                    } catch (PathfindImpossibleException e) {
-                        ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
-                        e.printStackTrace();
-                        continue;
-                    }
-                } else if (value.getValue() instanceof DungeonRedstoneKey) {
-                    try {
-                        builder.requires(new ActionChangeState(value.getKey(), "obtained-self"));
-                    } catch (PathfindImpossibleException e) {
-                        ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
-                        e.printStackTrace();
-                        continue;
-                    }
-                } else if (value.getValue() instanceof DungeonRoomDoor2) {
-                    try {
-                        builder.requires(new ActionChangeState(value.getKey(), "navigate"));
-                    } catch (PathfindImpossibleException e) {
-                        ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to door: "+value.getKey()+":navigate failed due to "+e.getMessage());
-                        e.printStackTrace();
-                        continue;
-                    }
-                }
-            }
-            ActionDAG dag = builder.build();
-            List<List<OffsetVec3>> toPfTo = new ArrayList<>();
-            Set<String> openMech = new HashSet<>();
-            for (ActionDAGNode allNode : dag.getAllNodes()) {
-                if (allNode.getAction() instanceof AtomicAction) {
-                    for (AbstractAction action : ((AtomicAction) allNode.getAction()).getActions()) {
-                        if (action instanceof ActionMove) {
-                            toPfTo.add(
-                                    ((ActionMove)action).getTargets().stream().flatMap(a -> a.getOffsetPointSet().stream())
-                                            .collect(Collectors.toList())
-                            );
-                        } else if (action instanceof ActionMoveSpot) {
-                            toPfTo.add(
-                                    ((ActionMoveSpot)action).getTargets().stream().flatMap(a -> a.getOffsetPointSet().stream())
-                                            .collect(Collectors.toList())
-                            );
-                        } else if (action instanceof ActionMoveNearestAir) {
-                            OffsetPoint offsetPoint = ((ActionMoveNearestAir) action).getTarget();
-                            toPfTo.add(
-                                    Collections.singletonList(new OffsetVec3(offsetPoint.getX(), offsetPoint.getY(), offsetPoint.getZ()))
-                            );
-                        } else if (action instanceof ActionChangeState) {
-                            if (((ActionChangeState) action).getState().equalsIgnoreCase("open")) {
-                                if (!((ActionChangeState) action).getMechanicName().startsWith("superboom") &&
-                                        !((ActionChangeState) action).getMechanicName().startsWith("crypt") &&
-                                        !((ActionChangeState) action).getMechanicName().startsWith("prince"))
-                                    openMech.add(((ActionChangeState) action).getMechanicName());
-                            }
-                        }
-                    }
-                } else if (allNode.getAction() instanceof ActionMove) {
-                    toPfTo.add(
-                            ((ActionMove) allNode.getAction()).getTargets().stream().flatMap(a -> a.getOffsetPointSet().stream())
-                                    .collect(Collectors.toList())
-                    );
-                } else if (allNode.getAction() instanceof ActionMoveSpot) {
-                    toPfTo.add(
-                            ((ActionMoveSpot)allNode.getAction()).getTargets().stream().flatMap(a -> a.getOffsetPointSet().stream())
-                                    .collect(Collectors.toList())
-                    );
-                } else if (allNode.getAction() instanceof ActionMoveNearestAir) {
-                    OffsetPoint offsetPoint = ((ActionMoveNearestAir) allNode.getAction()).getTarget();
-                    toPfTo.add(
-                            Collections.singletonList(new OffsetVec3(offsetPoint.getX(), offsetPoint.getY(), offsetPoint.getZ()))
-                    );
-                } else if (allNode.getAction() instanceof ActionChangeState) {
-                    if (((ActionChangeState) allNode.getAction()).getState().equalsIgnoreCase("open")
-                    && ((ActionChangeState) allNode.getAction()).getMechanicName().startsWith("door")) {
-                        openMech.add(((ActionChangeState) allNode.getAction()).getMechanicName());
-                    }
-                }
-            }
-
-            List<String> openMechList = new ArrayList<>(openMech);
-
-            for (List<OffsetVec3> offsetVec3s : toPfTo) {
-                for (int i = 0; i < (1 << openMech.size()); i++) {
-                    Set<String> open = new HashSet<>();
-                    for (int i1 = 0; i1 < openMechList.size(); i1++) {
-                        if (((i >> i1) & 0x1) > 0) {
-                            open.add(openMechList.get(i1));
-                        }
-                    }
-                    requests.add(new PathfindRequest(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSetting(), dungeonRoomInfo, open, offsetVec3s));
-                }
-            }
-
-
-            System.out.println(toPfTo.size()+" pfs for "+(1<<openMech.size())+" states "+toPfTo.size() * (1 << openMech.size()) +" Pf for "+dungeonRoomInfo.getName());
-            ChatTransmitter.getReceiveQueue().clear();
-
-            est += toPfTo.size() * (1 << openMech.size()) * dungeonRoom.getUnitPoints().size();
-//            int dr = 0, wall = 0;
-//            for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
-//                if (entry.getValue() instanceof DungeonDoor) {
-//                    System.out.println(entry.getKey()+"/"+((DungeonDoor) entry.getValue()).getOpenPreRequisite()+"/"+((DungeonDoor) entry.getValue()).getClosePreRequisite()+"/"+((DungeonDoor) entry.getValue()).getMovePreRequisite());
-//                } else if (entry.getValue() instanceof DungeonOnewayDoor){
-//                    System.out.println(entry.getKey()+"/"+((DungeonOnewayDoor) entry.getValue()).getPreRequisite() +"/"+((DungeonOnewayDoor) entry.getValue()).getMovePreRequisite());
-//                }
-//                if (entry.getValue() instanceof RouteBlocker) {
-//                    List<OffsetPoint> set = ((RouteBlocker) entry.getValue()).blockedPoints();
-//                    int x = 0, y = 0, z = 0;
-//                    for (OffsetPoint offsetPoint : set) {
-//                        x += offsetPoint.getX();
-//                        y += offsetPoint.getY();
-//                        z += offsetPoint.getZ();
-//                    }
-//                    x /= set.size();
-//                    y /= set.size();
-//                    z /= set.size();
-//                    OffsetPoint test = new OffsetPoint(x,y,z);
-//                    if (!set.contains(test)) {
-//                        System.out.println("Ummm check "+entry.getKey()+" in "+dungeonRoomInfo.getName()+" / "+dungeonRoomInfo.getUuid().toString());
-//                    }
-//
-//                }
-//                if (entry.getValue() instanceof DungeonOnewayDoor) {
-//                    dr ++;
-//                } else if (entry.getValue() instanceof DungeonBreakableWall) {
-//                    wall ++;
-//                }
-//            }
-//
-//            System.out.println(dr+" / "+(dr + wall) +" : "+dungeonRoomInfo.getName());
-            fakeContext.cleanup();
+            System.out.println(dungeonRoomInfo.equals(info2) +" :: "+dungeonRoomInfo.getName());
+            cnt++;
         }
-        System.out.println("Estimated PF "+est+" on unit room");
-        File fileRoot = Main.getConfigDir();
-        File outdir = new File(fileRoot, "pfRequest2");
+        System.out.println(cnt);
 
-        outdir.mkdirs();
-
-        requests.stream().collect(Collectors.groupingBy(a ->
-                new ImmutablePair<>(a.getDungeonRoomInfo().getUuid(), a.getOpenMech().stream().sorted(String::compareTo).collect(Collectors.joining(",")))
-        )).entrySet().parallelStream().forEach(stuff -> {
-            PathfindRequest begin = stuff.getValue().get(0);
-
-            DRIWorld driWorld = new DRIWorld(begin.getDungeonRoomInfo(), new ArrayList<>(begin.getOpenMech()));
-
-            long start2 = System.currentTimeMillis();
-            for (PathfindRequest request : stuff.getValue()) {
-                UUID id = UUID.randomUUID();
-                try {
-                    long start = System.currentTimeMillis();
-                    System.out.println("Writing "+id.toString() + ".pfreq  / " + request.getId());
-                    File f = new File(outdir, id.toString() + ".pfreq");
-                    DataOutputStream dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(f)));
-                    request.write(driWorld, dataOutputStream);
-                    dataOutputStream.flush();
-                    dataOutputStream.close();
-                    System.out.println("It took " + (System.currentTimeMillis() - start) + "ms : "+request.getId());
-                } catch (Exception e) {
-                    System.out.println("Error while "+id.toString() + ".pfreq / "+request.getId());
-                    e.printStackTrace();
-                }
-            }
-            System.out.println("ROOM: "+begin.getDungeonRoomInfo().getName()+" took "+(System.currentTimeMillis() -start2)+"ms to complete");
-        });
     }
 
     private void loadRoomsCommand() {

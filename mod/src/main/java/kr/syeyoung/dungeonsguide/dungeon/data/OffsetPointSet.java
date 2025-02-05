@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.data;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -26,7 +28,19 @@ import java.util.List;
 
 @Data
 public class OffsetPointSet implements Cloneable, Serializable {
-    private List<OffsetPoint> offsetPointList = new ArrayList<OffsetPoint>();
+    private static final long serialVersionUID = -5349635873127088737L;
+
+    @JsonValue
+    private List<OffsetPoint> offsetPointList;
+
+    public OffsetPointSet() {
+        this.offsetPointList = new ArrayList<>();
+    }
+
+    @JsonCreator
+    public OffsetPointSet(List<OffsetPoint> offsetPointList) {
+        this.offsetPointList = offsetPointList;
+    }
 
     @Override
     public Object clone() throws CloneNotSupportedException {

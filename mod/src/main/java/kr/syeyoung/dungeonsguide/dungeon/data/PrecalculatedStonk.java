@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.data;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonBreakableWall;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
@@ -28,6 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.AxisAlignedBB;
@@ -40,6 +43,8 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@EqualsAndHashCode
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class PrecalculatedStonk implements Serializable {
     private static final long serialVersionUID = 3014165936155675745L;
     private final List<PossibleClickingSpot>[] spots;
@@ -48,7 +53,10 @@ public class PrecalculatedStonk implements Serializable {
     @Getter
     private final OffsetPoint target;
 
-    public PrecalculatedStonk(List<String> dependentRouteBlocker, List<PossibleClickingSpot>[] spots, OffsetPoint target) {
+    public PrecalculatedStonk(
+            @JsonProperty("dependentRouteBlocker") List<String> dependentRouteBlocker,
+            @JsonProperty("spots") List<PossibleClickingSpot>[] spots,
+            @JsonProperty("target") OffsetPoint target) {
         this.spots = spots;
         this.dependentRouteBlocker = dependentRouteBlocker;
         this.target = target;

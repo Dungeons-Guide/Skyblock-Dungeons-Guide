@@ -18,9 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.data;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.List;
@@ -28,9 +27,13 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class PossibleClickingSpot implements Serializable {
+    private static final long serialVersionUID = 341944889909484336L;
     private RequiredTool[] tools;
     private List<OffsetVec3> offsetPointSet;
     private boolean stonkingReq;
     private int clusterId;
+
+    protected PossibleClickingSpot() {}
 }

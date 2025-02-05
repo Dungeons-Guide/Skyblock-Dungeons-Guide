@@ -18,8 +18,18 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.dungeon.serialization.DungeonRoomInfoBlocksDeserializer;
+import kr.syeyoung.dungeonsguide.dungeon.serialization.DungeonRoomInfoBlocksSerializer;
+import kr.syeyoung.dungeonsguide.dungeon.serialization.DungeonRoomInfoWorldDeserializer;
+import kr.syeyoung.dungeonsguide.dungeon.serialization.DungeonRoomInfoWorldSerializer;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
@@ -37,10 +47,11 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 public class DungeonRoomInfo implements Serializable {
     private static final long serialVersionUID = -8291811286448196640L;
 
-    public DungeonRoomInfo(short shape, byte color) {
+    public DungeonRoomInfo(@JsonProperty("shape") short shape, @JsonProperty("color") byte color) {
         this.uuid = UUID.randomUUID();
         this.name = this.uuid.toString();
         this.shape = shape;
@@ -54,6 +65,8 @@ public class DungeonRoomInfo implements Serializable {
     private short shape;
     private byte color;
 
+    @JsonDeserialize(using = DungeonRoomInfoBlocksDeserializer.class)
+    @JsonSerialize(using = DungeonRoomInfoBlocksSerializer.class)
     private int[][] blocks;
 
     private UUID uuid;
@@ -61,12 +74,54 @@ public class DungeonRoomInfo implements Serializable {
 
     private String processorId = "default";
 
+    @JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
     private Map<String, Object> properties = new HashMap<>();
 
+    @JsonTypeInfo(use= JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = DungeonArrowTrap.class, name = "trap_arrow"),
+            @JsonSubTypes.Type(value = DungeonCrusherTrap.class, name = "trap_crusher"),
+            @JsonSubTypes.Type(value = DungeonFakeChestTrap.class, name = "trap_fakechest"),
+            @JsonSubTypes.Type(value = DungeonFireTrap.class, name = "trap_fire"),
+            @JsonSubTypes.Type(value = DungeonFloorTrap.class, name = "trap_floor"),
+            @JsonSubTypes.Type(value = DungeonTripwireTrap.class, name = "trap_tripwire"),
+
+            @JsonSubTypes.Type(value = DungeonSecretBat.class, name = "secret_bat"),
+            @JsonSubTypes.Type(value = DungeonSecretChest.class, name = "secret_chest"),
+            @JsonSubTypes.Type(value = DungeonSecretDoubleChest.class, name = "secret_doublechest"),
+            @JsonSubTypes.Type(value = DungeonSecretEssence.class, name = "secret_essence"),
+            @JsonSubTypes.Type(value = DungeonSecretItemDrop.class, name = "secret_itemdrop"),
+
+            @JsonSubTypes.Type(value = DungeonFairySoul.class, name = "fairy_soul"),
+
+
+            @JsonSubTypes.Type(value = DungeonDoor.class, name = "door_reversible"),
+            @JsonSubTypes.Type(value = DungeonOnewayDoor.class, name = "door_irreversible"),
+            @JsonSubTypes.Type(value = DungeonLever.class, name = "lever_reversible"),
+            @JsonSubTypes.Type(value = DungeonOnewayLever.class, name = "lever_irreversible"),
+            @JsonSubTypes.Type(value = DungeonRedstoneKey.class, name = "redstone_key"),
+            @JsonSubTypes.Type(value = DungeonRedstoneKeySlot.class, name = "redstone_key_slot"),
+            @JsonSubTypes.Type(value = DungeonPressurePlate.class, name = "pressure_plate"),
+
+            @JsonSubTypes.Type(value = DungeonBreakableWall.class, name = "superboom_wall"),
+            @JsonSubTypes.Type(value = DungeonTomb.class, name = "crypt"),
+
+            @JsonSubTypes.Type(value = DungeonDummy.class, name = "dummy"),
+            @JsonSubTypes.Type(value = DungeonJournal.class, name = "journal"),
+            @JsonSubTypes.Type(value = DungeonNPC.class, name = "npc"),
+
+            @JsonSubTypes.Type(value = DungeonRoomDoor2.class, name = "entrance_exit"),
+
+            @JsonSubTypes.Type(value = DungeonMushroom.class, name = "special_mushroom"),
+            @JsonSubTypes.Type(value = DungeonWizard.class, name = "npc_wizard"),
+            @JsonSubTypes.Type(value = DungeonWizardCrystal.class, name = "special_wizard_crystal"),
+    })
     private Map<String, DungeonMechanic> mechanics = new HashMap<>();
     private int totalSecrets = -1;
 
     @Getter
+    @JsonDeserialize(using = DungeonRoomInfoWorldDeserializer.class)
+    @JsonSerialize(using = DungeonRoomInfoWorldSerializer.class)
     private char[] world;
     private int width, length;
 

@@ -18,10 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.data;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -29,7 +26,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class RequiredTool implements Serializable {
+    private static final long serialVersionUID = -8513638965498848298L;
+
     private float breakingPower;
     private int harvestLv;
 }

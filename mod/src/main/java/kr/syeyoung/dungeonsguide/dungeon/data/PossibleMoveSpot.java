@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.dungeon.data;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,8 +29,12 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class PossibleMoveSpot implements Serializable {
+    private static final long serialVersionUID = 8705106433732546445L;
     private List<OffsetVec3> offsetPointSet;
     private boolean blocked;
     private int clusterId;
+
+    protected PossibleMoveSpot() {}
 }

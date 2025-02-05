@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
@@ -116,17 +118,14 @@ public class DungeonRoomInfoRegistry {
         boolean isDev = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment") || DEV_USERS.contains(Minecraft.getMinecraft().thePlayer.getUniqueID().toString().replace("-",""));
         StringBuilder nameIDString = new StringBuilder("name,uuid,processsor,secrets");
         StringBuilder ids = new StringBuilder();
+        CBORMapper objectMapper = new CBORMapper();
         for (DungeonRoomInfo dungeonRoomInfo : registered) {
             try {
                 if (!dungeonRoomInfo.isUserMade() && !isDev) continue;
-                FileOutputStream fos = new FileOutputStream(new File(dir, dungeonRoomInfo.getUuid().toString() + ".roomdata"));
-                ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject(dungeonRoomInfo);
-                oos.flush();
-                oos.close();
+                objectMapper.writeValue(new File(dir, dungeonRoomInfo.getUuid().toString() + ".roomdata.cbor"), dungeonRoomInfo);
 
                 nameIDString.append("\n").append(dungeonRoomInfo.getName()).append(",").append(dungeonRoomInfo.getUuid()).append(",").append(dungeonRoomInfo.getProcessorId()).append(",").append(dungeonRoomInfo.getTotalSecrets());
-                ids.append("roomdata/").append(dungeonRoomInfo.getUuid()).append(".roomdata\n");
+                ids.append("roomdata/").append(dungeonRoomInfo.getUuid()).append(".roomdata.cbor\n");
             } catch (Exception e) {e.printStackTrace();}
         }
 
@@ -142,6 +141,7 @@ public class DungeonRoomInfoRegistry {
         registered.clear();
         shapeMap.clear();
         uuidMap.clear();
+        CBORMapper objectMapper = new CBORMapper();
         try {
             List<String> lines = IOUtils.readLines(DungeonsGuide.class.getResourceAsStream("/roomdata/datas.txt"));
             for (String name : lines) {
@@ -162,13 +162,9 @@ public class DungeonRoomInfoRegistry {
             e.printStackTrace();
         }
         for (File f : dir.listFiles()) {
-            if (!f.getName().endsWith(".roomdata")) continue;
+            if (!f.getName().endsWith(".roomdata.cbor")) continue;
             try {
-                InputStream fis = new FileInputStream(f);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
-                ois.close();
-                fis.close();
+                DungeonRoomInfo dri = objectMapper.readValue(f, DungeonRoomInfo.class);
                 register(dri);
             } catch (Exception e) {
                 System.out.println(f.getName());e.printStackTrace();}

@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.data;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import lombok.AllArgsConstructor;
@@ -28,13 +30,23 @@ import javax.vecmath.Vector2d;
 import java.io.Serializable;
 
 @Data
-@AllArgsConstructor
+@JsonFormat(shape = JsonFormat.Shape.ARRAY)
 public class OffsetVec3 implements Cloneable, Serializable {
     private static final long serialVersionUID = 3102336358774967540L;
 
     public double xCoord;
     public double yCoord;
     public double zCoord;
+
+
+    public OffsetVec3(
+            @JsonProperty("xCoord") double x,
+            @JsonProperty("yCoord") double y,
+            @JsonProperty("zCoord") double z) {
+        this.xCoord = x;
+        this.yCoord = y;
+        this.zCoord = z;
+    }
 
     public OffsetVec3(DungeonRoom dungeonRoom, Vec3 pos) {
         setPosInWorld(dungeonRoom, pos);

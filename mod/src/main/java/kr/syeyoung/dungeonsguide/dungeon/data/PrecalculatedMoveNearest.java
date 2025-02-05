@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.data;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonBreakableWall;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
@@ -28,6 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.AxisAlignedBB;
@@ -39,7 +42,8 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@EqualsAndHashCode
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class PrecalculatedMoveNearest implements Serializable {
     private static final long serialVersionUID = 4182147755650845821L;
     private final List<PossibleMoveSpot>[] spots;
@@ -48,7 +52,10 @@ public class PrecalculatedMoveNearest implements Serializable {
     @Getter
     private final OffsetPoint target;
 
-    public PrecalculatedMoveNearest(List<String> dependentRouteBlocker, List<PossibleMoveSpot>[] spots, OffsetPoint target) {
+    public PrecalculatedMoveNearest(
+            @JsonProperty("dependentRouteBlocker") List<String> dependentRouteBlocker,
+            @JsonProperty("spots") List<PossibleMoveSpot>[] spots,
+            @JsonProperty("target") OffsetPoint target) {
         this.spots = spots;
         this.dependentRouteBlocker = dependentRouteBlocker;
         this.target = target;

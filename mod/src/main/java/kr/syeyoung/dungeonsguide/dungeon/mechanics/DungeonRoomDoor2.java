@@ -30,6 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import lombok.Data;
 import lombok.Getter;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Tuple;
@@ -39,11 +40,10 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Set;
 
+@Data
 public class DungeonRoomDoor2 implements DungeonMechanic {
     private static final long serialVersionUID = 5154467820268491579L;
-    @Getter
     private OffsetPoint pfPoint = new OffsetPoint(0,0,0);
-    @Getter
     private OffsetPointSet blocks = new OffsetPointSet();
 
 
