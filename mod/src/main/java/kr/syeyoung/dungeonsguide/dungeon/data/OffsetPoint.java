@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.dungeon.data;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ import java.io.Serializable;
 
 @Data
 @JsonFormat(shape = JsonFormat.Shape.ARRAY)
+@JsonPropertyOrder({"x", "y", "z"})
 public class OffsetPoint implements Cloneable, Serializable {
     private static final long serialVersionUID = 3102336358774967540L;
 

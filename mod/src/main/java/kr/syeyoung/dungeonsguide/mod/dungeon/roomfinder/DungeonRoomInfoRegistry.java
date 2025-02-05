@@ -145,13 +145,9 @@ public class DungeonRoomInfoRegistry {
         try {
             List<String> lines = IOUtils.readLines(DungeonsGuide.class.getResourceAsStream("/roomdata/datas.txt"));
             for (String name : lines) {
-                if (!name.endsWith(".roomdata")) continue;
-                try {
-                    InputStream fis = DungeonsGuide.class.getResourceAsStream("/"+name);
-                    ObjectInputStream ois = new ObjectInputStream(fis);
-                    DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
-                    ois.close();
-                    fis.close();
+                if (!name.endsWith(".roomdata.cbor")) continue;
+                try (InputStream is = DungeonsGuide.class.getResourceAsStream("/"+name)){
+                    DungeonRoomInfo dri = objectMapper.readValue(is, DungeonRoomInfo.class);
                     register(dri);
                 } catch (Exception e) {
                     System.out.println(name);
