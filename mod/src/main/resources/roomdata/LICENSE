@@ -1,3 +1,18 @@
-Files in this directory is not under the same license as others.
+Proprietary License for Binary Data Files
+Version 1.0
 
-Currently there is NO LICENSE given to these files.
+Copyright (C) 2025 cyoung06 (syeyoung)
+
+The binary data files located in this repository under the "mod/src/main/resources/roomdata" directory are proprietary and are NOT covered under the AGPL-3.0 license.
+
+### **Usage Terms:**
+- These binary data files may be used **only within this project and its forks**.
+- Forking this repository, including the binary data files, is **permitted for development and contribution purposes only**.
+- **Redistribution of compiled or built versions of this software containing these binary data files is strictly prohibited** unless explicitly authorized by the project maintainers.
+- Modification of the binary data files is **only allowed for project contributions**.
+- Redistribution, extraction, or use of these files **outside this project and its forks** is strictly prohibited.
+- These files may not be reverse-engineered, repackaged, or used in any other software without explicit permission.
+
+### **License Updates &  Retroactive Application**
+- The project maintainers **reserve the right to modify** this license at any time, and such modifications will apply **retroactively** to all binary data files distributed under previous versions of this license.
+- Modifications to the license will apply to any new binary data files distributed under the updated terms as well as **all previously distributed binary data files**, regardless of the version they were distributed under.
