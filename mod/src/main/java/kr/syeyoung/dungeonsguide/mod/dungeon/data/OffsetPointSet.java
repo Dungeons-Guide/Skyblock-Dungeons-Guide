@@ -27,9 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class OffsetPointSet implements Cloneable, Serializable {
-    private static final long serialVersionUID = -5349635873127088737L;
-
+public class OffsetPointSet implements Cloneable {
     @JsonValue
     private List<OffsetPoint> offsetPointList;
 

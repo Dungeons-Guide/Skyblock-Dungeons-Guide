@@ -34,8 +34,7 @@ import java.io.Serializable;
 @Data
 @JsonFormat(shape = JsonFormat.Shape.ARRAY)
 @JsonPropertyOrder({"x", "y", "z"})
-public class OffsetPoint implements Cloneable, Serializable {
-    private static final long serialVersionUID = 3102336358774967540L;
+public class OffsetPoint implements Cloneable {
 
     private int x;
     private int y;

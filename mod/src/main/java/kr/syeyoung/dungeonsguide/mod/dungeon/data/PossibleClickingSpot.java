@@ -27,8 +27,7 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class PossibleClickingSpot implements Serializable {
-    private static final long serialVersionUID = 341944889909484336L;
+public class PossibleClickingSpot {
     private RequiredTool[] tools;
     private List<OffsetVec3> offsetPointSet;
     private boolean stonkingReq;

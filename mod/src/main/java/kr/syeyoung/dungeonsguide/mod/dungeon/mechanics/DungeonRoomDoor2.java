@@ -38,7 +38,6 @@ import java.util.Set;
 
 @Data
 public class DungeonRoomDoor2 implements DungeonMechanic {
-    private static final long serialVersionUID = 5154467820268491579L;
     private OffsetPoint pfPoint = new OffsetPoint(0,0,0);
     private OffsetPointSet blocks = new OffsetPointSet();
 

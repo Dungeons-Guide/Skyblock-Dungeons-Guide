@@ -37,7 +37,6 @@ import java.util.Set;
 
 @Data
 public class DungeonJournal implements DungeonMechanic {
-    private static final long serialVersionUID = 4117372070037496743L;
     private OffsetPoint secretPoint = new OffsetPoint(0,0,0);
     private List<String> preRequisite = new ArrayList<String>();
 

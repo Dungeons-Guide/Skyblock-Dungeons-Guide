@@ -27,7 +27,7 @@ import java.awt.*;
 import java.io.Serializable;
 import java.util.Set;
 
-public interface DungeonMechanic extends Serializable {
+public interface DungeonMechanic {
     void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException;
 
     void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks);

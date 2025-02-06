@@ -27,8 +27,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class RequiredTool implements Serializable {
-    private static final long serialVersionUID = -8513638965498848298L;
+public class RequiredTool {
 
     private float breakingPower;
     private int harvestLv;

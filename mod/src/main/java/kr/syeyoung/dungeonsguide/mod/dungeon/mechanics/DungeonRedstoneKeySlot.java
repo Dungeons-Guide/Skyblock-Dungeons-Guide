@@ -37,8 +37,6 @@ import java.util.stream.Collectors;
 
 @Data
 public class DungeonRedstoneKeySlot implements DungeonMechanic {
-
-    private static final long serialVersionUID = -3203171200265940652L;
     private OffsetPoint slotPoint = new OffsetPoint(0,0,0);
     private OffsetPointSet headPoint = new OffsetPointSet();
     private List<String> preRequisite = new ArrayList<String>();

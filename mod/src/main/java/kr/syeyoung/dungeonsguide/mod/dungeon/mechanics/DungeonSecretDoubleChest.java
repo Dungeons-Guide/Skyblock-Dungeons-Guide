@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.ISecret;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.AllArgsConstructor;
@@ -40,7 +41,6 @@ import java.util.Set;
 
 @Data
 public class DungeonSecretDoubleChest implements DungeonMechanic, ISecret {
-    private static final long serialVersionUID = 8784808599222706537L;
 
     private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
     private OffsetPoint secretPoint2 = new OffsetPoint(0, 0, 0);

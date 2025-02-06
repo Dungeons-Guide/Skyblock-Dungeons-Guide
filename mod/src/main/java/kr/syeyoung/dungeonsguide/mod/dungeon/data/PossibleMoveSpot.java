@@ -30,8 +30,7 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class PossibleMoveSpot implements Serializable {
-    private static final long serialVersionUID = 8705106433732546445L;
+public class PossibleMoveSpot {
     private List<OffsetVec3> offsetPointSet;
     private boolean blocked;
     private int clusterId;

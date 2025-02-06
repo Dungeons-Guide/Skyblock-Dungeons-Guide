@@ -5,7 +5,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.DungeonRedstoneKey;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.DungeonRoomDoor2;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.ISecret;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.ISecret;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;

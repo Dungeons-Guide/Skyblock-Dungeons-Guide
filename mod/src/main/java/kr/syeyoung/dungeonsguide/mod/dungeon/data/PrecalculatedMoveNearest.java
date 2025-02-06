@@ -44,8 +44,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 @EqualsAndHashCode
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public class PrecalculatedMoveNearest implements Serializable {
-    private static final long serialVersionUID = 4182147755650845821L;
+public class PrecalculatedMoveNearest {
     private final List<PossibleMoveSpot>[] spots;
     @Getter
     private final List<String> dependentRouteBlocker;

@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.serialization.DungeonRoomInfoBlocksDeserializer;
 import kr.syeyoung.dungeonsguide.mod.dungeon.serialization.DungeonRoomInfoBlocksSerializer;
@@ -48,9 +47,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class DungeonRoomInfo implements Serializable {
-    private static final long serialVersionUID = -8291811286448196640L;
-
+public class DungeonRoomInfo {
     public DungeonRoomInfo(@JsonProperty("shape") short shape, @JsonProperty("color") byte color) {
         this.uuid = UUID.randomUUID();
         this.name = this.uuid.toString();

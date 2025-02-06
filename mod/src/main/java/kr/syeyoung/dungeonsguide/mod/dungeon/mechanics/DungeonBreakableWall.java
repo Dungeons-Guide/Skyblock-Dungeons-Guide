@@ -38,7 +38,6 @@ import java.util.*;
 
 @Data
 public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
-    private static final long serialVersionUID = 1161593374765852217L;
     private OffsetPointSet secretPoint = new OffsetPointSet();
     private List<String> preRequisite = new ArrayList<String>();
 

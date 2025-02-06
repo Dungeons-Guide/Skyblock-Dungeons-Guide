@@ -36,7 +36,6 @@ import java.util.*;
 
 @Data
 public class DungeonLever implements DungeonMechanic {
-    private static final long serialVersionUID = 1368671142707748380L;
     private OffsetPoint leverPoint = new OffsetPoint(0,0,0);
     private PrecalculatedStonk leverCache;
     private List<String> preRequisite = new ArrayList<String>();

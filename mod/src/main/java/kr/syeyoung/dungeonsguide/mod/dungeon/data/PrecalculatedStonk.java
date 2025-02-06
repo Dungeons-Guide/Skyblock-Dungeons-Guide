@@ -44,8 +44,7 @@ import java.util.stream.Collectors;
 
 @EqualsAndHashCode
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public class PrecalculatedStonk implements Serializable {
-    private static final long serialVersionUID = 3014165936155675745L;
+public class PrecalculatedStonk {
     private final List<PossibleClickingSpot>[] spots;
     @Getter
     private final List<String> dependentRouteBlocker;

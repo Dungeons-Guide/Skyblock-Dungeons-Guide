@@ -32,9 +32,7 @@ import java.io.Serializable;
 @Data
 @JsonFormat(shape = JsonFormat.Shape.ARRAY)
 @JsonPropertyOrder({"xCoord", "yCoord", "zCoord"})
-public class OffsetVec3 implements Cloneable, Serializable {
-    private static final long serialVersionUID = 3102336358774967540L;
-
+public class OffsetVec3 implements Cloneable {
     public double xCoord;
     public double yCoord;
     public double zCoord;

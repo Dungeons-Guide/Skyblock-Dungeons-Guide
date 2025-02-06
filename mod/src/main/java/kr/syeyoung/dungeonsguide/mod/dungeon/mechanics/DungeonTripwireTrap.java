@@ -38,7 +38,6 @@ import java.util.Set;
 
 @Data
 public class DungeonTripwireTrap implements DungeonMechanic {
-    private static final long serialVersionUID = -7347076019472222115L;
     private OffsetPointSet dangerRegion = new OffsetPointSet();
     private List<String> preRequisite = new ArrayList<>();
 

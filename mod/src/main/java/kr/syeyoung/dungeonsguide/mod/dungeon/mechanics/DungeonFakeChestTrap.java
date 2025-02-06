@@ -41,7 +41,6 @@ import java.util.Set;
 
 @Data
 public class DungeonFakeChestTrap implements DungeonMechanic {
-    private static final long serialVersionUID = -7347076019472222115L;
     private OffsetPointSet tnts = new OffsetPointSet();
     private OffsetPoint chest = new OffsetPoint(0,0,0);
     private PrecalculatedStonk chestCache;
