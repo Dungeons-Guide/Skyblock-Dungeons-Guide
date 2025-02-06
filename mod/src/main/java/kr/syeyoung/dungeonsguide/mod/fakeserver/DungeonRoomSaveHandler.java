@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.fakeserver;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;

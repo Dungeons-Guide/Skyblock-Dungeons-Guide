@@ -18,11 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;

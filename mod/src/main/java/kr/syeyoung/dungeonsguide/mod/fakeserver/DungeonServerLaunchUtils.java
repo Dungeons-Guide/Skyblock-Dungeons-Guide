@@ -2,7 +2,7 @@ package kr.syeyoung.dungeonsguide.mod.fakeserver;
 
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;

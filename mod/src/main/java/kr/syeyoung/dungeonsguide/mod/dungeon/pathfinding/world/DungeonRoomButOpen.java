@@ -18,9 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import net.minecraft.block.state.IBlockState;

@@ -2,7 +2,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;

@@ -18,9 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.dungeon.data.PossibleClickingSpot;
-import kr.syeyoung.dungeonsguide.dungeon.data.PossibleMoveSpot;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleMoveSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
@@ -32,9 +31,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FeatureAirchkDebug extends SimpleFeature {
 

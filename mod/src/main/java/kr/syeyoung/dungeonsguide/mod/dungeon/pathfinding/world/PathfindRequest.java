@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import lombok.Getter;

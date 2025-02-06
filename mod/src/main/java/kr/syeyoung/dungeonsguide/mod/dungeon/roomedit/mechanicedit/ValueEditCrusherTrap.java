@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonCrusherTrap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.DungeonCrusherTrap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;

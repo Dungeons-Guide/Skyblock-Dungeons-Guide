@@ -18,11 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
-import kr.syeyoung.dungeonsguide.mod.discord.JDiscordRelation;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteTooltip.WidgetDiscordFriend;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Column;
@@ -32,7 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 import net.minecraft.block.material.MapColor;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.*;

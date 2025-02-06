@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.PathfindPrecalculationRequestSet;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;

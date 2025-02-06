@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.panes;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditRegistry;

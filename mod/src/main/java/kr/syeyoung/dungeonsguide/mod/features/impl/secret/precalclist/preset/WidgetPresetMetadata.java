@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world.PathfindRequest;

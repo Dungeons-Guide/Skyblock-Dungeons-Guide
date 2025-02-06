@@ -1,7 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.CachedPathfinder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;

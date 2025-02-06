@@ -1,7 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;

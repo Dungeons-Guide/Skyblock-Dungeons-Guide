@@ -18,15 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.dungeon.data.PossibleClickingSpot;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleClickingSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;

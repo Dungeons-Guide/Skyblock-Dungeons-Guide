@@ -1,31 +1,24 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.ISecret;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.ISecret;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
-import kr.syeyoung.dungeonsguide.mod.dungeon.map.MapPlayerProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.MarkerData;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay.MapOverlay;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -39,10 +32,8 @@ import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
-import java.security.Provider;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
 
 public class WidgetDungeonMap extends Widget implements Renderer {

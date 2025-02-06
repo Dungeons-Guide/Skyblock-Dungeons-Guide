@@ -18,9 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonNPC;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonWizard;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.DungeonWizard;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;

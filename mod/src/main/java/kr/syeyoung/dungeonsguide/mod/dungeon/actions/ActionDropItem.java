@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.TSPCache;

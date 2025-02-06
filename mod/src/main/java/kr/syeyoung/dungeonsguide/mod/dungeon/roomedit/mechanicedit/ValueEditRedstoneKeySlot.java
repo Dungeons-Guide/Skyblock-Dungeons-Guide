@@ -18,11 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonOnewayLever;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRedstoneKey;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRedstoneKeySlot;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.DungeonRedstoneKeySlot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;

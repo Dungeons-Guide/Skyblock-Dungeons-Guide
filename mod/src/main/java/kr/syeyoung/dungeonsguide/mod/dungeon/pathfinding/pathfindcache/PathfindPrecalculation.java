@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
 import lombok.Data;
@@ -12,7 +12,6 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.zip.InflaterInputStream;
 

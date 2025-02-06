@@ -18,18 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
-import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
-import javax.vecmath.Vector2d;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;

@@ -18,9 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonFairySoul;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.DungeonFairySoul;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCStringList;

@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map;
 
 import com.google.gson.Gson;
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCAColor;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
@@ -28,7 +28,6 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCEnum;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.MarkerData;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteTooltip.WidgetInvite;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.ElementTreeWalkIterator;
