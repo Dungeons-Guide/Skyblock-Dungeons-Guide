@@ -46,10 +46,10 @@ public class DungeonMushroomState implements DungeonMechanicState {
 
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (state.equalsIgnoreCase("navigate")) {
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (action.equalsIgnoreCase("navigate")) {
             builder = builder.requires(new ActionMoveNearestAir(data.secretPoint));
-        } else if (state.equalsIgnoreCase("click")) {
+        } else if (action.equalsIgnoreCase("click")) {
             builder = builder.requires(
                     new AtomicAction.Builder()
                             .requires(new ActionTeleport(data.teleportPoint))
@@ -80,7 +80,7 @@ public class DungeonMushroomState implements DungeonMechanicState {
     }
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         return Sets.newHashSet("navigate", "click");
     }
 

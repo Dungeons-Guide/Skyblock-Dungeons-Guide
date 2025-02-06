@@ -47,9 +47,9 @@ public class DungeonRedstoneKeyState implements DungeonMechanicState {
     }
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (state.equals(getCurrentState())) return;
-        if (state.equalsIgnoreCase("navigate")) {
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (action.equals(getCurrentState())) return;
+        if (action.equalsIgnoreCase("navigate")) {
             builder = builder
                     .requires(new ActionMoveNearestAir(getRepresentingPoint()));
             for (String str : data.preRequisite) {
@@ -59,12 +59,12 @@ public class DungeonRedstoneKeyState implements DungeonMechanicState {
             ;
         }
 
-        if (!("obtained-self".equalsIgnoreCase(state) || "placed".equalsIgnoreCase(state)))
-            throw new PathfindImpossibleException(state + " is not valid state for secret");
+        if (!("obtained-self".equalsIgnoreCase(action) || "placed".equalsIgnoreCase(action)))
+            throw new PathfindImpossibleException(action + " is not valid state for secret");
 
-        if (state.equalsIgnoreCase("obtained-self")) {
+        if (action.equalsIgnoreCase("obtained-self")) {
             if (!getCurrentState().equalsIgnoreCase("unobtained")) {
-                throw new PathfindImpossibleException(state + " is not valid state for secret");
+                throw new PathfindImpossibleException(action + " is not valid state for secret");
             }
 
             if (data.secretCache != null)
@@ -79,7 +79,7 @@ public class DungeonRedstoneKeyState implements DungeonMechanicState {
                 });
         } else { // placed
             if (!getCurrentState().equalsIgnoreCase("obtained-self")) {
-                throw new PathfindImpossibleException(state + " is not valid state for secret");
+                throw new PathfindImpossibleException(action + " is not valid state for secret");
             }
             builder.requires(new ActionChangeState(data.triggering, "triggered"));
         }
@@ -119,7 +119,7 @@ public class DungeonRedstoneKeyState implements DungeonMechanicState {
     }
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         String currentState = getCurrentState();
         if (currentState.equalsIgnoreCase("obtained-self")) {
             return Sets.newHashSet("placed", "navigate");

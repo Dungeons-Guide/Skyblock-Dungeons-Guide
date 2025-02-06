@@ -50,9 +50,9 @@ public class DungeonWizardCrystalState implements DungeonMechanicState {
     }
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (state.equals(getCurrentState())) return;
-        if (state.equalsIgnoreCase("navigate")) {
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (action.equals(getCurrentState())) return;
+        if (action.equalsIgnoreCase("navigate")) {
             builder = builder
                     .requires(new ActionMoveNearestAir(getRepresentingPoint()));
             for (String str : data.preRequisite) {
@@ -62,8 +62,8 @@ public class DungeonWizardCrystalState implements DungeonMechanicState {
             return;
         }
 
-        if (!"obtained-self".equalsIgnoreCase(state) || getCurrentState().equals("obtained-other"))
-            throw new PathfindImpossibleException(state + " is not valid state for secret");
+        if (!"obtained-self".equalsIgnoreCase(action) || getCurrentState().equals("obtained-other"))
+            throw new PathfindImpossibleException(action + " is not valid state for secret");
 
         if (data.secretCache != null)
             ActionUtils.buildActionMoveAndClick(builder, room, data.secretCache, data.preRequisite, Collections.emptyList());
@@ -102,7 +102,7 @@ public class DungeonWizardCrystalState implements DungeonMechanicState {
     }
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         if (data.secretPoint.getBlock(room) == Blocks.skull) {
             return Sets.newHashSet("obtained-self", "navigate");
         }

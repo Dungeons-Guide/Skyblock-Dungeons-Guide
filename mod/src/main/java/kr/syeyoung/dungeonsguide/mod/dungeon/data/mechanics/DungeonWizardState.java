@@ -47,11 +47,11 @@ public class DungeonWizardState implements DungeonMechanicState {
 
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (!"navigate".equalsIgnoreCase(state) && !"quest".equalsIgnoreCase(state) && !"click".equalsIgnoreCase(state))
-            throw new PathfindImpossibleException(state + " is not a valid state for secret");
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (!"navigate".equalsIgnoreCase(action) && !"quest".equalsIgnoreCase(action) && !"click".equalsIgnoreCase(action))
+            throw new PathfindImpossibleException(action + " is not a valid state for secret");
 
-        if ("click".equalsIgnoreCase(state) || "quest".equalsIgnoreCase(state)) {
+        if ("click".equalsIgnoreCase(action) || "quest".equalsIgnoreCase(action)) {
             builder = builder.requires(new AtomicAction.Builder()
                     .requires(() -> {
                         ActionInteract actionClick = new ActionInteract(data.secretPoint);
@@ -65,7 +65,7 @@ public class DungeonWizardState implements DungeonMechanicState {
             builder = builder.requires(new ActionMoveNearestAir(data.secretPoint));
         }
 
-        if ("quest".equalsIgnoreCase(state)) {
+        if ("quest".equalsIgnoreCase(action)) {
             builder = builder.requires(new ActionChangeState(data.crystal, "obtained-self")).end()
                     .requires(new ActionRoot());
         }
@@ -97,7 +97,7 @@ public class DungeonWizardState implements DungeonMechanicState {
     }
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         if (data.crystal != null) {
             DungeonMechanicState crystal1 = room.getMechanics().get(data.crystal);
             String crystalState = crystal1.getCurrentState();

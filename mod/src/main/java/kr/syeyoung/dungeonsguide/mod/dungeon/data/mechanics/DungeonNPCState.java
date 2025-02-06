@@ -46,11 +46,11 @@ public class DungeonNPCState implements DungeonMechanicState {
     }
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (!"navigate".equalsIgnoreCase(state) && !"click".equalsIgnoreCase(state))
-            throw new PathfindImpossibleException(state + " is not a valid state for secret");
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (!"navigate".equalsIgnoreCase(action) && !"click".equalsIgnoreCase(action))
+            throw new PathfindImpossibleException(action + " is not a valid state for secret");
 
-        if ("click".equalsIgnoreCase(state)) {
+        if ("click".equalsIgnoreCase(action)) {
             builder = builder.requires(new AtomicAction.Builder()
                     .requires(() -> {
                         ActionInteract actionClick = new ActionInteract(data.secretPoint);
@@ -87,7 +87,7 @@ public class DungeonNPCState implements DungeonMechanicState {
     }
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         return Sets.newHashSet("navigate", "click");
     }
 

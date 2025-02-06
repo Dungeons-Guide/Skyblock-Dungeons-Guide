@@ -47,9 +47,9 @@ public class DungeonFairySoulState implements DungeonMechanicState {
 
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (!"navigate".equalsIgnoreCase(state))
-            throw new PathfindImpossibleException(state + " is not valid state for secret");
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (!"navigate".equalsIgnoreCase(action))
+            throw new PathfindImpossibleException(action + " is not valid state for secret");
 
         builder = builder.requires(new AtomicAction.Builder()
                 .requires(() -> {
@@ -86,7 +86,7 @@ public class DungeonFairySoulState implements DungeonMechanicState {
     }
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         return Sets.newHashSet("navigate");
     }
 

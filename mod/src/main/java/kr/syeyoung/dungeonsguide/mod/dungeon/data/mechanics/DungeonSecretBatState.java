@@ -80,8 +80,8 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
     }
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (state.equalsIgnoreCase("navigate")) {
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (action.equalsIgnoreCase("navigate")) {
             builder = builder
                     .requires(new ActionMoveNearestAir(getRepresentingPoint()));
             for (String str : data.preRequisite) {
@@ -90,9 +90,9 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
             }
             return;
         }
-        if (!"found".equalsIgnoreCase(state))
-            throw new PathfindImpossibleException(state + " is not valid state for secret");
-        if (state.equals("found") && getSecretStatus(room) == SecretStatus.FOUND) return;
+        if (!"found".equalsIgnoreCase(action))
+            throw new PathfindImpossibleException(action + " is not valid state for secret");
+        if (action.equals("found") && getSecretStatus(room) == SecretStatus.FOUND) return;
         if (data.moveNearest != null) {
             ActionUtils.buildActionMoveAnd(builder, room, data.moveNearest, Collections.emptyList(), data.preRequisite, um -> um.requires(() -> {
                 ActionKill actionKill = new ActionKill(data.secretPoint);
@@ -149,7 +149,7 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
     }
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         SecretStatus status = getSecretStatus(room);
         if (status == SecretStatus.FOUND) return Sets.newHashSet("navigate");
         else return Sets.newHashSet("found", "navigate");

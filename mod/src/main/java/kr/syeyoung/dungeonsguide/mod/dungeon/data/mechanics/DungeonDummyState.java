@@ -45,8 +45,8 @@ public class DungeonDummyState implements DungeonMechanicState {
 
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (state.equalsIgnoreCase("navigate")){
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (action.equalsIgnoreCase("navigate")){
             builder = builder.requires(new ActionMoveNearestAir(data.secretPoint));
         }
         {
@@ -73,7 +73,7 @@ public class DungeonDummyState implements DungeonMechanicState {
     }
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         return Sets.newHashSet("navigate");
     }
     @Override

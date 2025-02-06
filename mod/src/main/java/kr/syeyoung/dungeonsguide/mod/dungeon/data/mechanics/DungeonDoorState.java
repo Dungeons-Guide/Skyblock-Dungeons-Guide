@@ -50,10 +50,10 @@ public class DungeonDoorState implements WorldMutatingMechanicState {
 
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (!("open".equalsIgnoreCase(state) || "closed".equalsIgnoreCase(state) || "navigate".equalsIgnoreCase(state))) throw new PathfindImpossibleException(state+" is not valid state for door");
-        if (state.equalsIgnoreCase(getCurrentState())) return;
-        if ("navigate".equalsIgnoreCase(state)) {
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (!("open".equalsIgnoreCase(action) || "closed".equalsIgnoreCase(action) || "navigate".equalsIgnoreCase(action))) throw new PathfindImpossibleException(action +" is not valid state for door");
+        if (action.equalsIgnoreCase(getCurrentState())) return;
+        if ("navigate".equalsIgnoreCase(action)) {
             builder = builder.requires(() -> {
                         int leastY = Integer.MAX_VALUE;
                         OffsetPoint thatPt = null;
@@ -73,7 +73,7 @@ public class DungeonDoorState implements WorldMutatingMechanicState {
         }
 
         {
-            if (state.equalsIgnoreCase("open")) {
+            if (action.equalsIgnoreCase("open")) {
                 for (String str : data.openPreRequisite) {
                     if (str.isEmpty()) continue;
                     ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
@@ -123,7 +123,7 @@ public class DungeonDoorState implements WorldMutatingMechanicState {
 
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         String currentStatus = getCurrentState();
         if (currentStatus.equalsIgnoreCase("closed"))
             return Sets.newHashSet("navigate", "open");

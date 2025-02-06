@@ -44,9 +44,9 @@ public class DungeonPressurePlateState implements DungeonMechanicState {
     }
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (state.equals(getCurrentState())) return;
-        if (state.equalsIgnoreCase("navigate")) {
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (action.equals(getCurrentState())) return;
+        if (action.equalsIgnoreCase("navigate")) {
             builder = builder
                     .requires(new ActionMoveNearestAir(getRepresentingPoint()));
             for (String str : data.preRequisite) {
@@ -55,11 +55,11 @@ public class DungeonPressurePlateState implements DungeonMechanicState {
             }
             return;
         }
-        if (!("triggered".equalsIgnoreCase(state) || "untriggered".equalsIgnoreCase(state)))
-            throw new PathfindImpossibleException(state + " is not valid state for secret");
+        if (!("triggered".equalsIgnoreCase(action) || "untriggered".equalsIgnoreCase(action)))
+            throw new PathfindImpossibleException(action + " is not valid state for secret");
 
 
-        if ("triggered".equalsIgnoreCase(state)) {
+        if ("triggered".equalsIgnoreCase(action)) {
             builder = builder
                     .requires(new AtomicAction.Builder()
                             .requires(new ActionDropItem(data.platePoint))
@@ -103,7 +103,7 @@ public class DungeonPressurePlateState implements DungeonMechanicState {
     }
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         String currentStatus = getCurrentState();
         if (currentStatus.equalsIgnoreCase("triggered"))
             return Sets.newHashSet("navigate", "untriggered");

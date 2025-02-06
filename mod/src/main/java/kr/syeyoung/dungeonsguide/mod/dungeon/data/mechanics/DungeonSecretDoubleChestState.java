@@ -93,8 +93,8 @@ public class DungeonSecretDoubleChestState implements DungeonMechanicState, ISec
     }
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (state.equalsIgnoreCase("navigate")) {
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (action.equalsIgnoreCase("navigate")) {
             builder = builder
                     .requires(new ActionMoveNearestAir(getRepresentingPoint()));
             for (String str : data.preRequisite) {
@@ -103,9 +103,9 @@ public class DungeonSecretDoubleChestState implements DungeonMechanicState, ISec
             }
             return;
         }
-        if (!"found".equalsIgnoreCase(state))
-            throw new PathfindImpossibleException(state + " is not valid state for secret");
-        if (state.equals("found") && getSecretStatus(room) == SecretStatus.FOUND) return;
+        if (!"found".equalsIgnoreCase(action))
+            throw new PathfindImpossibleException(action + " is not valid state for secret");
+        if (action.equals("found") && getSecretStatus(room) == SecretStatus.FOUND) return;
         builder = builder.requires(new AtomicAction.Builder()
                 .requires(new ActionClick(data.secretPoint))
                 .requires(new ActionClick(data.secretPoint2))
@@ -156,7 +156,7 @@ public class DungeonSecretDoubleChestState implements DungeonMechanicState, ISec
     }
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         SecretStatus status = getSecretStatus(room);
         if (status == SecretStatus.FOUND) return Sets.newHashSet("navigate");
         else return Sets.newHashSet("found", "navigate");

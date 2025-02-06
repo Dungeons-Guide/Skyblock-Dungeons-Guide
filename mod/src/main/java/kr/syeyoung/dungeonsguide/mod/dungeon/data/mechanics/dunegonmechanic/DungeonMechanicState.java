@@ -26,14 +26,13 @@ import java.awt.*;
 import java.util.Set;
 
 public interface DungeonMechanicState {
-    void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException;
+    void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException;
+    Set<String> getAvailableActions();
+
+
 
     void highlight(Color color, String name, float partialTicks);
-
     String getCurrentState();
-
-    Set<String> getPossibleStates();
-    Set<String> getTotalPossibleStates();
-
+    Set<String> getTotalPossibleStates(); // no one cares.
     OffsetPoint getRepresentingPoint();
 }

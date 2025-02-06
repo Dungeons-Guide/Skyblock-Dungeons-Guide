@@ -46,7 +46,7 @@ public class WidgetStateTooltip extends AnnotatedWidget {
         scale.setValue(FeatureRegistry.SECRET_BROWSE.getScale());
         this.mechanic = mechanic;
 
-        Set<String> state = mechanic.getPossibleStates();
+        Set<String> state = mechanic.getAvailableActions();
         List<Widget> widgetList = new ArrayList<>();
         for (String s : state) {
             widgetList.add(new WidgetState(dungeonRoom, mechanicId, s));

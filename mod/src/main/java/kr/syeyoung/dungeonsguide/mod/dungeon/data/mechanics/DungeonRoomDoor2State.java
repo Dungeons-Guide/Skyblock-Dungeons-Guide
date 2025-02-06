@@ -56,9 +56,9 @@ public class DungeonRoomDoor2State implements DungeonMechanicState {
     }
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (!"navigate".equalsIgnoreCase(state))
-            throw new PathfindImpossibleException(state + " is not valid state for secret");
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (!"navigate".equalsIgnoreCase(action))
+            throw new PathfindImpossibleException(action + " is not valid state for secret");
         builder.requires(new ActionMoveNearestAir(data.pfPoint));
     }
 
@@ -93,7 +93,7 @@ public class DungeonRoomDoor2State implements DungeonMechanicState {
     }
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         return Sets.newHashSet("navigate");
     }
 

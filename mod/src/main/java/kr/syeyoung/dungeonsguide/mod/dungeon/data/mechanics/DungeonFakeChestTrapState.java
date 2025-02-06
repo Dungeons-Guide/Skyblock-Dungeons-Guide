@@ -55,8 +55,8 @@ public class DungeonFakeChestTrapState implements DungeonMechanicState {
 
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (state.equalsIgnoreCase("navigate")) {
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (action.equalsIgnoreCase("navigate")) {
             builder = builder
                     .requires(new ActionMoveNearestAir(getRepresentingPoint()));
             for (String str : data.preRequisite) {
@@ -65,8 +65,8 @@ public class DungeonFakeChestTrapState implements DungeonMechanicState {
             }
             return;
         }
-        if (!"triggered".equalsIgnoreCase(state)) {
-            throw new PathfindImpossibleException(state + " is not valid state for tomb");
+        if (!"triggered".equalsIgnoreCase(action)) {
+            throw new PathfindImpossibleException(action + " is not valid state for tomb");
         }
         if (!isBlocking(room)) {
             return;
@@ -118,7 +118,7 @@ public class DungeonFakeChestTrapState implements DungeonMechanicState {
     }
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         return isBlocking(room) ? Sets.newHashSet("triggered", "navigate") : Sets.newHashSet("navigate");
     }
 

@@ -49,8 +49,8 @@ public class DungeonBreakableWallState implements WorldMutatingMechanicState {
     }
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (state.equalsIgnoreCase("navigate")) {
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (action.equalsIgnoreCase("navigate")) {
             builder = builder.requires(() -> {
                         int leastY = Integer.MAX_VALUE;
                         OffsetPoint thatPt = null;
@@ -71,7 +71,7 @@ public class DungeonBreakableWallState implements WorldMutatingMechanicState {
             return;
         }
 
-        if (!"open".equalsIgnoreCase(state)) throw new PathfindImpossibleException(state+" is not valid state for breakable wall");
+        if (!"open".equalsIgnoreCase(action)) throw new PathfindImpossibleException(action +" is not valid state for breakable wall");
         if (!isBlocking(room)) {
             return;
         }
@@ -135,7 +135,7 @@ public class DungeonBreakableWallState implements WorldMutatingMechanicState {
     }
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         return isBlocking(room) ? Sets.newHashSet("navigate", "open") : Sets.newHashSet("navigate");
     }
 

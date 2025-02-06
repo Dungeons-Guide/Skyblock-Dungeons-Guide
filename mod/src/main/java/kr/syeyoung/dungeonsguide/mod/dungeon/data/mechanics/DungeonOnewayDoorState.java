@@ -51,8 +51,8 @@ public class DungeonOnewayDoorState implements DungeonMechanicState, WorldMutati
 
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (state.equalsIgnoreCase("navigate")) {
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (action.equalsIgnoreCase("navigate")) {
             builder = builder
                     .requires(new ActionMoveNearestAir(getRepresentingPoint()));
 
@@ -62,8 +62,8 @@ public class DungeonOnewayDoorState implements DungeonMechanicState, WorldMutati
             }
             return;
         }
-        if (!("open".equalsIgnoreCase(state)))
-            throw new PathfindImpossibleException(state + " is not a valid state for door");
+        if (!("open".equalsIgnoreCase(action)))
+            throw new PathfindImpossibleException(action + " is not a valid state for door");
         if (!isBlocking(room)) {
             return;
         }
@@ -108,7 +108,7 @@ public class DungeonOnewayDoorState implements DungeonMechanicState, WorldMutati
 
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         String currentStatus = getCurrentState();
         if (currentStatus.equalsIgnoreCase("closed"))
             return Sets.newHashSet("navigate", "open");

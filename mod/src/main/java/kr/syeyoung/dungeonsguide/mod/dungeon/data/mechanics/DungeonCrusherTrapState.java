@@ -48,8 +48,8 @@ public class DungeonCrusherTrapState implements DungeonMechanicState {
 
 
     @Override
-    public void buildAction(String state, ActionDAGBuilder builder) throws PathfindImpossibleException {
-        if (state.equalsIgnoreCase("navigate")) {
+    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (action.equalsIgnoreCase("navigate")) {
             builder = builder
                     .requires(new ActionMoveNearestAir(getRepresentingPoint()));
             for (String str : data.preRequisite) {
@@ -58,7 +58,7 @@ public class DungeonCrusherTrapState implements DungeonMechanicState {
             }
             return;
         }
-        throw new PathfindImpossibleException(state + " is not valid state for tomb");
+        throw new PathfindImpossibleException(action + " is not valid state for tomb");
     }
 
     @Override
@@ -80,7 +80,7 @@ public class DungeonCrusherTrapState implements DungeonMechanicState {
     }
 
     @Override
-    public Set<String> getPossibleStates() {
+    public Set<String> getAvailableActions() {
         return Sets.newHashSet("navigate");
     }
 
