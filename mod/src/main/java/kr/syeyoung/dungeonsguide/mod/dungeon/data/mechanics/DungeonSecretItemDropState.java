@@ -61,22 +61,23 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
         return getSecretStatus(dungeonRoom) == SecretStatus.FOUND;
     }
 
+    private boolean itemdropFound = false;
     public void tick(DungeonRoom dungeonRoom) {
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
         if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 2) {
             List<EntityItem> items = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()));
             if (items.size() == 0) {
-                dungeonRoom.getRoomContext().put("i-" + ISecret.toString(pos), true); // was there, but gone!
+                itemdropFound = true; // was there, but gone!
                 ChatTransmitter.sendDebugChat("Assume at " + ISecret.toString(pos) + "found.");
             }
         }
         if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 100) {
             List<EntityItem> items = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()));
             if (items.size() != 0) {
-                dungeonRoom.getRoomContext().put("i-" + ISecret.toString(pos), false);
+                itemdropFound = false;
 //                    ChatTransmitter.sendDebugChat("Assume at "+ISecret.toString(pos)+" not found? "+items.size());
-            } else if (Boolean.FALSE.equals(dungeonRoom.getRoomContext().get("i-" + ISecret.toString(pos)))) {
-                dungeonRoom.getRoomContext().put("i-" + ISecret.toString(pos), true); // was there, but gone!
+            } else if (!itemdropFound) {
+                itemdropFound = true; // was there, but gone!
                 ChatTransmitter.sendDebugChat("Assume at " + ISecret.toString(pos) + "found? " + items.size());
             }
         }
@@ -84,19 +85,19 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
 
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
         BlockPos bpos = data.secretPoint.getBlockPos(dungeonRoom);
-        if (Boolean.TRUE.equals(dungeonRoom.getRoomContext().get("i-" + ISecret.toString(bpos)))) {
+        if (itemdropFound) {
             return SecretStatus.FOUND;
         }
         Vec3 pos = new Vec3(bpos);
         for (Integer pickedup : DungeonActionContext.getPickedups()) {
             if (DungeonActionContext.getSpawnLocation().get(pickedup) == null) continue;
             if (DungeonActionContext.getSpawnLocation().get(pickedup).squareDistanceTo(pos) < 4) {
-                dungeonRoom.getRoomContext().put("i-" + ISecret.toString(bpos), true);
+                itemdropFound = true;
                 return SecretStatus.FOUND;
             }
         }
 
-        return Boolean.FALSE.equals(dungeonRoom.getRoomContext().get("i-" + ISecret.toString(bpos))) ? SecretStatus.DEFINITELY_NOT : SecretStatus.NOT_SURE;
+        return !itemdropFound ? SecretStatus.DEFINITELY_NOT : SecretStatus.NOT_SURE;
 
     }
 

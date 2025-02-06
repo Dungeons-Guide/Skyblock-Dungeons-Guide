@@ -50,6 +50,8 @@ public class DungeonSecretDoubleChestState implements DungeonMechanicState, ISec
         this.room = room;
     }
 
+    private DungeonSecretChestState.LastMeasuredChestStatus lastMeasuredChestStatus = DungeonSecretChestState.LastMeasuredChestStatus.WASNT_THERE;
+
     public void tick(DungeonRoom dungeonRoom) {
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
         IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
@@ -57,9 +59,10 @@ public class DungeonSecretDoubleChestState implements DungeonMechanicState, ISec
             TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
             if (chest != null) {
                 if (chest.numPlayersUsing > 0) {
-                    dungeonRoom.getRoomContext().put("c-" + ISecret.toString(pos), 2);
+                    lastMeasuredChestStatus = DungeonSecretChestState.LastMeasuredChestStatus.OPENED;
                 } else {
-                    dungeonRoom.getRoomContext().put("c-" + ISecret.toString(pos), 1);
+                    if (lastMeasuredChestStatus != DungeonSecretChestState.LastMeasuredChestStatus.OPENED)
+                        lastMeasuredChestStatus = DungeonSecretChestState.LastMeasuredChestStatus.UNOPEN;
                 }
             } else {
                 System.out.println("Expected TileEntityChest at " + pos + " to not be null");
@@ -75,8 +78,8 @@ public class DungeonSecretDoubleChestState implements DungeonMechanicState, ISec
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
         IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
-        if (dungeonRoom.getRoomContext().containsKey("c-" + ISecret.toString(pos)))
-            return ((int) dungeonRoom.getRoomContext().get("c-" + ISecret.toString(pos)) == 2 || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
+        if (lastMeasuredChestStatus != DungeonSecretChestState.LastMeasuredChestStatus.WASNT_THERE)
+            return (lastMeasuredChestStatus == DungeonSecretChestState.LastMeasuredChestStatus.OPENED || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
 
         if (blockState.getBlock() == Blocks.air) {
             return SecretStatus.DEFINITELY_NOT;
@@ -135,6 +138,10 @@ public class DungeonSecretDoubleChestState implements DungeonMechanicState, ISec
         RenderUtils.highlightBlock(data.secretPoint2.getBlockPos(room), color, partialTicks);
         RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+    }
+
+    public void markFound() {
+        lastMeasuredChestStatus = DungeonSecretChestState.LastMeasuredChestStatus.OPENED;
     }
 
     public enum SecretType {

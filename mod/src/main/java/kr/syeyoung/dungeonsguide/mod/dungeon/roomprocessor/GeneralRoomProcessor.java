@@ -309,14 +309,36 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void chatReceived(IChatComponent chat) {
         if (lastChest != null && chat.getFormattedText().equals("§r§cThis chest has already been searched!§r")) {
-            getDungeonRoom().getRoomContext().put("c-"+lastChest.toString(), 2);
+            for (DungeonMechanicState mechanic : getDungeonRoom().getMechanics().values()) {
+                if (mechanic instanceof DungeonSecretChestState) {
+                    DungeonSecretChestState chest = (DungeonSecretChestState) mechanic;
+                    if (chest.getSecretPoint().getBlockPos(getDungeonRoom()).equals(lastChest)) {
+                        chest.markFound();
+                    }
+                } else if (mechanic instanceof DungeonSecretDoubleChestState) {
+                    DungeonSecretDoubleChestState chest = (DungeonSecretDoubleChestState) mechanic;
+                    if (chest.getData().getSecretPoint().getBlockPos(dungeonRoom).equals(lastChest)) {
+                        chest.markFound();
+                    } else if (chest.getData().getSecretPoint2().getBlockPos(dungeonRoom).equals(lastChest)) {
+                        chest.markFound();
+                    }
+                }
+            }
             lastChest = null;
         }
         if (chat.getFormattedText().equals("§r§aYou found a Secret Redstone Key!§r")) {
-            getDungeonRoom().getRoomContext().put("redstonekey", true);
+            for (DungeonMechanicState value : getDungeonRoom().getMechanics().values()) {
+                if (value instanceof DungeonRedstoneKeyState) {
+                    ((DungeonRedstoneKeyState) value).setDidClickOnRedstoneKey(true);
+                }
+            }
         }
         if (chat.getFormattedText().equals("§e[NPC] Wizard§f: §rOh my lovely crystal ball, mi so happy§r")) {
-            getDungeonRoom().getRoomContext().put("wizardcrystal", true);
+            for (DungeonMechanicState value : getDungeonRoom().getMechanics().values()) {
+                if (value instanceof DungeonWizardState) {
+                    ((DungeonWizardState) value).setDidCompleteQuest(true);
+                }
+            }
         }
     }
 

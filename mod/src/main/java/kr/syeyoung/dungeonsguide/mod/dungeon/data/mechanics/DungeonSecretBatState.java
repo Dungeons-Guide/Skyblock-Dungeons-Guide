@@ -53,16 +53,18 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
         this.room = room;
     }
 
+    private boolean didKillBat;
+
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
         BlockPos bpos = data.secretPoint.getBlockPos(dungeonRoom);
-        if (dungeonRoom.getRoomContext().containsKey("b-" + ISecret.toString(bpos))) {
+        if (didKillBat) {
             return SecretStatus.FOUND;
         }
         Vec3 spawn = new Vec3(bpos);
         for (Integer killed : DungeonActionContext.getKilleds()) {
             if (DungeonActionContext.getSpawnLocation().get(killed) == null) continue;
             if (DungeonActionContext.getSpawnLocation().get(killed).squareDistanceTo(spawn) < 100) {
-                dungeonRoom.getRoomContext().put("b-" + ISecret.toString(bpos), true);
+                didKillBat = true;
                 return SecretStatus.FOUND;
             }
         }

@@ -255,12 +255,5 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
                 GlStateManager.enableTexture2D();
             }
         }
-        int y=  300;
-        for (String s : dungeonRoom.getRoomContext().entrySet().stream().map(a -> a.getKey() + ":" + a.getValue()).collect(Collectors.toList())) {
-
-            fr.drawString(s, 0 ,y, 0xFFFFFFFF);
-            y += 10;
-        }
-
     }
 }

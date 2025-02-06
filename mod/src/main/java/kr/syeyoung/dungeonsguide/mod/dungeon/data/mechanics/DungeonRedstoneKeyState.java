@@ -29,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
+import lombok.Setter;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 
@@ -97,6 +98,9 @@ public class DungeonRedstoneKeyState implements DungeonMechanicState {
             data.secretCache.render(partialTicks, room);
     }
 
+    @Setter
+    private boolean didClickOnRedstoneKey = false;
+
     @Override
     public String getCurrentState() {
 
@@ -109,7 +113,7 @@ public class DungeonRedstoneKeyState implements DungeonMechanicState {
         if ("triggered".equalsIgnoreCase(state)) {
             return "placed";
         }
-        if (room.getRoomContext().containsKey("redstonekey")) {
+        if (didClickOnRedstoneKey) {
             return "obtained-self";
         }
         if (data.secretPoint.getBlock(room) == Blocks.skull) {

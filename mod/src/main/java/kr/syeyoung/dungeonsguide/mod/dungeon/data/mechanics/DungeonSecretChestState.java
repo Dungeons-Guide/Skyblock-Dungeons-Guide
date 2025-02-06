@@ -53,6 +53,16 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
         this.room = room;
     }
 
+    public void markFound() {
+        lastMeasuredChestStatus = LastMeasuredChestStatus.OPENED;
+    }
+
+    public enum LastMeasuredChestStatus {
+        WASNT_THERE, UNOPEN, OPENED
+    }
+
+    private LastMeasuredChestStatus lastMeasuredChestStatus = LastMeasuredChestStatus.WASNT_THERE;
+
     public void tick(DungeonRoom dungeonRoom) {
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
         IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
@@ -60,9 +70,10 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
             TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
             if (chest != null) {
                 if (chest.numPlayersUsing > 0) {
-                    dungeonRoom.getRoomContext().put("c-" + ISecret.toString(pos), 2);
+                    lastMeasuredChestStatus = LastMeasuredChestStatus.OPENED;
                 } else {
-                    dungeonRoom.getRoomContext().put("c-" + ISecret.toString(pos), 1);
+                    if (lastMeasuredChestStatus == LastMeasuredChestStatus.WASNT_THERE)
+                        lastMeasuredChestStatus = LastMeasuredChestStatus.UNOPEN;
                 }
             } else {
                 System.out.println("Expected TileEntityChest at " + pos + " to not be null");
@@ -78,8 +89,8 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
         IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
-        if (dungeonRoom.getRoomContext().containsKey("c-" + ISecret.toString(pos)))
-            return ((int) dungeonRoom.getRoomContext().get("c-" + ISecret.toString(pos)) == 2 || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
+        if (lastMeasuredChestStatus != LastMeasuredChestStatus.WASNT_THERE)
+            return (lastMeasuredChestStatus == LastMeasuredChestStatus.OPENED || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
 
         if (blockState.getBlock() == Blocks.air) {
             return SecretStatus.DEFINITELY_NOT;

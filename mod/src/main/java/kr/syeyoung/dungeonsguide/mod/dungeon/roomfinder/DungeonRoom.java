@@ -200,9 +200,6 @@ public class DungeonRoom implements IPathfindWorld {
                     .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
                     .setNameFormat("DG-PathfindLoader-%d").build()));
 
-    @Getter
-    private final Map<String, Object> roomContext = new HashMap<>();
-
     @AllArgsConstructor
     @Getter
     public enum RoomState {

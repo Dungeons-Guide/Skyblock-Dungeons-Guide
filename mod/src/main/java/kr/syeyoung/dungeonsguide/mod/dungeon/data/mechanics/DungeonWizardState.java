@@ -28,6 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
+import lombok.Setter;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
@@ -87,10 +88,11 @@ public class DungeonWizardState implements DungeonMechanicState {
         RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
 
-
+    @Setter
+    private boolean didCompleteQuest = false;
     @Override
     public String getCurrentState() {
-        if (room.getRoomContext().containsKey("wizardcrystal")) {
+        if (didCompleteQuest) {
             return "quest";
         }
         return "no-state";

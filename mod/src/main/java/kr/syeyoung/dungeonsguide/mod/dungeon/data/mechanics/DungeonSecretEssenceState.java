@@ -52,11 +52,13 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
         this.room = room;
     }
 
+    private boolean essenceWasThere = false;
+
     public void tick(DungeonRoom dungeonRoom) {
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
         IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
         if (blockState.getBlock() == Blocks.skull) {
-            dungeonRoom.getRoomContext().put("e-" + ISecret.toString(pos), true);
+            essenceWasThere = true;
         }
 
     }
@@ -70,10 +72,10 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
         IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
         if (blockState.getBlock() == Blocks.skull) {
-            dungeonRoom.getRoomContext().put("e-" + ISecret.toString(pos), true);
+            essenceWasThere = true;
             return SecretStatus.DEFINITELY_NOT;
         } else {
-            if (dungeonRoom.getRoomContext().containsKey("e-" + ISecret.toString(pos)))
+            if (essenceWasThere)
                 return SecretStatus.FOUND;
             return SecretStatus.NOT_SURE;
         }
