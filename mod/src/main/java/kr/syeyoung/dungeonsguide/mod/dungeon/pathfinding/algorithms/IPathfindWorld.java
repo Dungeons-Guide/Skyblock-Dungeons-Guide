@@ -18,13 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.PearlCalculatingCoordinateMap;
 import net.minecraft.block.state.IBlockState;
 
 public interface IPathfindWorld {
     public IBlockState getActualBlock(int x, int y, int z);
-    public DungeonRoom.CollisionState getBlock(int x, int y, int z);
-    public DungeonRoom.PearlLandType getPearl(int x, int y, int z);
+    public CollisionStateCalculatingCoordinateMap.CollisionState getBlock(int x, int y, int z);
+    public PearlCalculatingCoordinateMap.PearlLandType getPearl(int x, int y, int z);
     public boolean isInstabreak(int x, int y, int z);
 
     public int getXwidth();

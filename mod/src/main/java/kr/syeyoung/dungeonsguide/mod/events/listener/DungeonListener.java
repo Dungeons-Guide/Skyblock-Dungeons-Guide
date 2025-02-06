@@ -34,6 +34,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonValueEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.PearlCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
 import kr.syeyoung.dungeonsguide.mod.fakeserver.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -402,13 +404,13 @@ public class DungeonListener {
                     BlockPos real = new BlockPos(player.xCoord * 2, player.yCoord * 2, player.zCoord * 2);
                     try {
                         for (BlockPos allInBox : BlockPos.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
-                            DungeonRoom.CollisionState blocked = dungeonRoom.getBlock(allInBox.getX(), allInBox.getY(), allInBox.getZ());
+                            CollisionStateCalculatingCoordinateMap.CollisionState blocked = dungeonRoom.getBlock(allInBox.getX(), allInBox.getY(), allInBox.getZ());
                             RenderUtils.highlightBox(
                                     AxisAlignedBB.fromBounds(
                                             allInBox.getX() / 2.0 - 0.1, allInBox.getY() / 2.0 - 0.1, allInBox.getZ() / 2.0 - 0.1,
                                             allInBox.getX() / 2.0 + 0.1, allInBox.getY() / 2.0 + 0.1, allInBox.getZ() / 2.0 + 0.1
                                     ), blocked.getColor(), renderWorldLastEvent.partialTicks, false);
-                            DungeonRoom.PearlLandType type = dungeonRoom.getPearl(allInBox.getX(), allInBox.getY(), allInBox.getZ());
+                            PearlCalculatingCoordinateMap.PearlLandType type = dungeonRoom.getPearl(allInBox.getX(), allInBox.getY(), allInBox.getZ());
                             RenderUtils.drawTextAtWorld(type.name(), (float) (allInBox.getX() / 2.0 - 0.1), (float) (allInBox.getY() / 2.0 - 0.1), (float) (allInBox.getZ() / 2.0 - 0.1),
                                     0xFFFFFFFF,0.01f, false, true, renderWorldLastEvent.partialTicks);
                         }

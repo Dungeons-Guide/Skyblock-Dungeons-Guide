@@ -23,6 +23,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Dung
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.PearlCalculatingCoordinateMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 
@@ -57,20 +59,20 @@ public class DungeonRoomButOpen implements IPathfindWorld {
     }
 
     @Override
-    public DungeonRoom.CollisionState getBlock(int x, int y, int z) {
+    public CollisionStateCalculatingCoordinateMap.CollisionState getBlock(int x, int y, int z) {
         for (BlockPos freeeeePoint : freeeeePoints) {
             if (Math.abs(freeeeePoint.getX() - x) <= 3 && Math.abs(freeeeePoint.getZ() - z) <= 3 && Math.abs(freeeeePoint.getY() - y) <= 1) {
-                return DungeonRoom.CollisionState.ONGROUND;
+                return CollisionStateCalculatingCoordinateMap.CollisionState.ONGROUND;
             }
         }
         return dungeonRoom.getBlock(x,y,z);
     }
 
     @Override
-    public DungeonRoom.PearlLandType getPearl(int x, int y, int z) {
+    public PearlCalculatingCoordinateMap.PearlLandType getPearl(int x, int y, int z) {
         for (BlockPos freeeeePoint : freeeeePoints) {
             if (Math.abs(freeeeePoint.getX() - x) <= 3 && Math.abs(freeeeePoint.getZ() - z) <= 3 && Math.abs(freeeeePoint.getY() - y) <= 1) {
-                return DungeonRoom.PearlLandType.OPEN;
+                return PearlCalculatingCoordinateMap.PearlLandType.OPEN;
             }
         }
         return dungeonRoom.getPearl(x,y,z);

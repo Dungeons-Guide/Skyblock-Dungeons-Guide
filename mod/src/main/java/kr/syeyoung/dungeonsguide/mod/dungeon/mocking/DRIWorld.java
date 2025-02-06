@@ -23,12 +23,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWallState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTombState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.BitStorage;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.PearlCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import lombok.Getter;
@@ -96,8 +96,8 @@ public class DRIWorld extends World implements IPathfindWorld {
         }
 
 
-        whole = new BitStorage(getXwidth(), getYwidth(), getZwidth(), DungeonRoom.CollisionState.BITS); // plus 1 , because I don't wanna do floating point op for dividing and ceiling
-        enderpearl = new BitStorage(getXwidth(), getYwidth(), getZwidth(), DungeonRoom.PearlLandType.BITS);
+        whole = new BitStorage(getXwidth(), getYwidth(), getZwidth(), CollisionStateCalculatingCoordinateMap.CollisionState.BITS); // plus 1 , because I don't wanna do floating point op for dividing and ceiling
+        enderpearl = new BitStorage(getXwidth(), getYwidth(), getZwidth(), PearlCalculatingCoordinateMap.PearlLandType.BITS);
 
         PathfindPreset preset = FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset();
         AlgorithmSetting algorithmSetting1 = preset.getRoomPreset(dungeonRoomInfo.getUuid()).getEffectiveAlgorithmSetting(dungeonRoomInfo);
@@ -193,9 +193,9 @@ public class DRIWorld extends World implements IPathfindWorld {
         return 0;
     }
 
-    private DungeonRoom.CollisionState calculateIsBlocked(int x, int y, int z) {
+    private CollisionStateCalculatingCoordinateMap.CollisionState calculateIsBlocked(int x, int y, int z) {
 //        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y+4 >= maxy) return CollisionState.BLOCKED;
-        if (!canAccessRelative( (x ) / 2, (z ) / 2)) return DungeonRoom.CollisionState.BLOCKED;
+        if (!canAccessRelative( (x ) / 2, (z ) / 2)) return CollisionStateCalculatingCoordinateMap.CollisionState.BLOCKED;
 
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
         float playerWidth = 0.25f;
@@ -328,26 +328,26 @@ public class DRIWorld extends World implements IPathfindWorld {
                 }
             }
             if (elligible && stairFloor) {
-                return DungeonRoom.CollisionState.ENDERCHEST;
+                return CollisionStateCalculatingCoordinateMap.CollisionState.ENDERCHEST;
             }
         }
 
         if (!blocked) { // I'm on ground
             if (superboom) {
                 if (isOnGround) {
-                    return DungeonRoom.CollisionState.SUPERBOOMABLE_GROUND;
+                    return CollisionStateCalculatingCoordinateMap.CollisionState.SUPERBOOMABLE_GROUND;
                 } else {
-                    return DungeonRoom.CollisionState.SUPERBOOMABLE_AIR;
+                    return CollisionStateCalculatingCoordinateMap.CollisionState.SUPERBOOMABLE_AIR;
                 }
             }
             if (stairs && isOnGround) {
-                return DungeonRoom.CollisionState.STAIR;
+                return CollisionStateCalculatingCoordinateMap.CollisionState.STAIR;
             }
 
             if (isOnGround) {
-                return DungeonRoom.CollisionState.ONGROUND;
+                return CollisionStateCalculatingCoordinateMap.CollisionState.ONGROUND;
             } else {
-                return DungeonRoom.CollisionState.ONAIR;
+                return CollisionStateCalculatingCoordinateMap.CollisionState.ONAIR;
             }
         } else {
 
@@ -355,22 +355,22 @@ public class DRIWorld extends World implements IPathfindWorld {
             // from here, blocked = true.
             if (notstonkable > 2) {
                 if (!isOnGround) {
-                    return DungeonRoom.CollisionState.BLOCKED;
+                    return CollisionStateCalculatingCoordinateMap.CollisionState.BLOCKED;
                 } else {
-                    return DungeonRoom.CollisionState.BLOCKED_GROUND;
+                    return CollisionStateCalculatingCoordinateMap.CollisionState.BLOCKED_GROUND;
                 }
             }
 
             if (!isOnGround) {
-                return DungeonRoom.CollisionState.STONKING_AIR;
+                return CollisionStateCalculatingCoordinateMap.CollisionState.STONKING_AIR;
             } else {
-                return DungeonRoom.CollisionState.STONKING;
+                return CollisionStateCalculatingCoordinateMap.CollisionState.STONKING;
             }
         }
     }
 
-    private DungeonRoom.PearlLandType calculateCanPearl(int x, int y, int z) {
-        if (!canAccessRelative( (x ) / 2, (z ) / 2)) return DungeonRoom.PearlLandType.BLOCKED;
+    private PearlCalculatingCoordinateMap.PearlLandType calculateCanPearl(int x, int y, int z) {
+        if (!canAccessRelative( (x ) / 2, (z ) / 2)) return PearlCalculatingCoordinateMap.PearlLandType.BLOCKED;
 
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
 
@@ -401,7 +401,7 @@ public class DRIWorld extends World implements IPathfindWorld {
                 }
             }
         }
-        if (pearlList.isEmpty()) return DungeonRoom.PearlLandType.OPEN;
+        if (pearlList.isEmpty()) return PearlCalculatingCoordinateMap.PearlLandType.OPEN;
         double wholeVolume = 0;
         double topVolume = 0;
         for (AxisAlignedBB a : pearlList) {
@@ -417,13 +417,13 @@ public class DRIWorld extends World implements IPathfindWorld {
             topVolume += (maX - miX) * (maY - miY) * (maZ - miZ);
         }
         // total is 0.216
-        if (wholeVolume > 0.215) return DungeonRoom.PearlLandType.BLOCKED;
-        if (wholeVolume > 0.027 && 0 == topVolume) return DungeonRoom.PearlLandType.FLOOR;
-        if (wholeVolume  == topVolume && wholeVolume > 0.027) return DungeonRoom.PearlLandType.CEILING;
+        if (wholeVolume > 0.215) return PearlCalculatingCoordinateMap.PearlLandType.BLOCKED;
+        if (wholeVolume > 0.027 && 0 == topVolume) return PearlCalculatingCoordinateMap.PearlLandType.FLOOR;
+        if (wholeVolume  == topVolume && wholeVolume > 0.027) return PearlCalculatingCoordinateMap.PearlLandType.CEILING;
         // floor wall and ceiling wall.
-        if (wholeVolume - topVolume > 0.027 && topVolume > 0 && wholeVolume != topVolume * 2) return DungeonRoom.PearlLandType.FLOOR_WALL;
-        if (wholeVolume > 0) return DungeonRoom.PearlLandType.WALL;
-        return DungeonRoom.PearlLandType.OPEN;
+        if (wholeVolume - topVolume > 0.027 && topVolume > 0 && wholeVolume != topVolume * 2) return PearlCalculatingCoordinateMap.PearlLandType.FLOOR_WALL;
+        if (wholeVolume > 0) return PearlCalculatingCoordinateMap.PearlLandType.WALL;
+        return PearlCalculatingCoordinateMap.PearlLandType.OPEN;
     }
 
     @Override
@@ -432,24 +432,24 @@ public class DRIWorld extends World implements IPathfindWorld {
     }
 
 
-    public DungeonRoom.CollisionState getBlock(int x, int y, int z) {
+    public CollisionStateCalculatingCoordinateMap.CollisionState getBlock(int x, int y, int z) {
 
-        if (x < 2 || z < 2 || x >= 2 + getXwidth()|| z >= 2 + getZwidth() || y < 0 || y >= 512) return DungeonRoom.CollisionState.BLOCKED;
+        if (x < 2 || z < 2 || x >= 2 + getXwidth()|| z >= 2 + getZwidth() || y < 0 || y >= 512) return CollisionStateCalculatingCoordinateMap.CollisionState.BLOCKED;
 
-        if (!canAccessRelative( (x ) / 2, (z ) / 2)) return DungeonRoom.CollisionState.BLOCKED;
+        if (!canAccessRelative( (x ) / 2, (z ) / 2)) return CollisionStateCalculatingCoordinateMap.CollisionState.BLOCKED;
         int dx = x - 2, dy = y, dz = z - 2;
         int data = whole.read(dx, dy, dz);
-        if (data != 0) return DungeonRoom.CollisionState.VALUES[data];
-        DungeonRoom.CollisionState val = calculateIsBlocked(x, y, z);
+        if (data != 0) return CollisionStateCalculatingCoordinateMap.CollisionState.VALUES[data];
+        CollisionStateCalculatingCoordinateMap.CollisionState val = calculateIsBlocked(x, y, z);
         whole.store(dx,dy,dz, val.ordinal());
         return val;
     }
-    public DungeonRoom.PearlLandType getPearl(int x, int y, int z) {
-        if (x < 2 || z < 2 || x >= 2 + getXwidth()|| z >= 2 + getZwidth() || y < 0 || y >= 512) return DungeonRoom.PearlLandType.BLOCKED;
+    public PearlCalculatingCoordinateMap.PearlLandType getPearl(int x, int y, int z) {
+        if (x < 2 || z < 2 || x >= 2 + getXwidth()|| z >= 2 + getZwidth() || y < 0 || y >= 512) return PearlCalculatingCoordinateMap.PearlLandType.BLOCKED;
         int dx = x - 2, dy = y, dz = z - 2;
         int data = enderpearl.read(dx, dy, dz);
-        if (data != 0) return DungeonRoom.PearlLandType.VALUES[data];
-        DungeonRoom.PearlLandType val = calculateCanPearl(x, y, z);
+        if (data != 0) return PearlCalculatingCoordinateMap.PearlLandType.VALUES[data];
+        PearlCalculatingCoordinateMap.PearlLandType val = calculateCanPearl(x, y, z);
         enderpearl.store(dx,dy,dz, val.ordinal());
         return val;
     }
