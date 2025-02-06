@@ -19,11 +19,11 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.DungeonBreakableWall;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.DungeonDoor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.DungeonOnewayDoor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.DungeonTomb;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWall;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonDoor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonOnewayDoor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTomb;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.TSPCache;
