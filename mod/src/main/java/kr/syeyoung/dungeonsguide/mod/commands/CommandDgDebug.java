@@ -1087,23 +1087,16 @@ public class CommandDgDebug extends CommandBase {
         File fileRoot = Main.getConfigDir();
         File dir = new File(fileRoot, "processorinput");
         File outsecret = new File(fileRoot, "processoroutsecret");
+        CBORMapper cborMapper = new CBORMapper();
         for (File f : dir.listFiles()) {
             if (!f.getName().endsWith(".roomdata")) {
                 continue;
             }
-            try {
-                InputStream fis = new FileInputStream(f);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
-                ois.close();
-                fis.close();
-                dri.setUserMade(false);
 
-                FileOutputStream fos = new FileOutputStream(new File(outsecret, dri.getUuid().toString() + ".roomdata"));
-                ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject(dri);
-                oos.flush();
-                oos.close();
+            try {
+                DungeonRoomInfo dri = cborMapper.readValue(f, DungeonRoomInfo.class);
+                dri.setUserMade(false);
+                cborMapper.writeValue(new File(outsecret, dri.getUuid().toString() + ".roomdata"), dri);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1164,16 +1157,13 @@ public class CommandDgDebug extends CommandBase {
     }
     private void checkCommand() {
         File fileroot = new File(Main.getConfigDir(), "processorinput");
+        CBORMapper cborMapper = new CBORMapper();
         for (File f : fileroot.listFiles()) {
             if (!f.getName().endsWith(".roomdata")) {
                 continue;
             }
             try {
-                InputStream fis = new FileInputStream(f);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
-                ois.close();
-                fis.close();
+                DungeonRoomInfo dri = cborMapper.readValue(f, DungeonRoomInfo.class);
                 System.out.println("Starting at " + dri.getName() + " - " + dri.getUuid());
                 for (Map.Entry<String, DungeonMechanic> value2 : dri.getMechanics().entrySet()) {
                     DungeonMechanic value = value2.getValue();
@@ -1213,11 +1203,7 @@ public class CommandDgDebug extends CommandBase {
                         }
                     }
                 }
-                FileOutputStream fos = new FileOutputStream(f);
-                ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject(dri);
-                oos.flush();
-                oos.close();
+                cborMapper.writeValue(f, dri);
             } catch (Exception e) {
                 e.printStackTrace();
             }

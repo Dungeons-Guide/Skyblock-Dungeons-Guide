@@ -61,20 +61,6 @@ public class DungeonRoomInfoRegistry {
     static Gson gson = new Gson();
 
     public static void register(@NotNull DungeonRoomInfo dungeonRoomInfo) {
-
-//        System.out.println("Loading room: " + dungeonRoomInfo.getUuid());
-//
-//        File file = new File(Main.getConfigDir() + "/" + "rooms" + "/" + dungeonRoomInfo.getUuid() + ".json");
-//        if(!file.exists()){
-//            try {
-//                FileUtils.writeStringToFile(file, gson.toJson(dungeonRoomInfo));
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
-
-
-
         if (uuidMap.containsKey(dungeonRoomInfo.getUuid())) {
             DungeonRoomInfo dri1 = uuidMap.get(dungeonRoomInfo.getUuid());
             registered.remove(dri1);
