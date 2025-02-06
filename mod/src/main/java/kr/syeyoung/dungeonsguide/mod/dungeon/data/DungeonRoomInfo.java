@@ -29,7 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.serialization.DungeonRoomInfoB
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.serialization.DungeonRoomInfoBlocksSerializer;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.serialization.DungeonRoomInfoWorldDeserializer;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.serialization.DungeonRoomInfoWorldSerializer;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -71,7 +70,11 @@ public class DungeonRoomInfo {
 
     private String processorId = "default";
 
-    @JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
+    @JsonTypeInfo(use= JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = OffsetPoint.class, names = {"OffsetPoint", "kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint"}),
+            @JsonSubTypes.Type(value = OffsetPointSet.class, names = {"OffsetPointSet", "kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet"})
+    })
     private Map<String, Object> properties = new HashMap<>();
 
     @JsonTypeInfo(use= JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
