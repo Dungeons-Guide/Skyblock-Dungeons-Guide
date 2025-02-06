@@ -1,7 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions.route;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonDoor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonOnewayDoor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonDoorState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonOnewayDoorState;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
@@ -39,7 +39,7 @@ public class TravelingSalesman {
         double temperature = 100;
         int len = currentSolution.size();
 
-        List<String> mechanicNames = dungeonRoom.getMechanics().entrySet().stream().filter(a -> a.getValue() instanceof DungeonDoor || a.getValue() instanceof DungeonOnewayDoor)
+        List<String> mechanicNames = dungeonRoom.getMechanics().entrySet().stream().filter(a -> a.getValue() instanceof DungeonDoorState || a.getValue() instanceof DungeonOnewayDoorState)
                 .map(a -> a.getKey()).collect(Collectors.toList());
 
 
@@ -135,7 +135,7 @@ public class TravelingSalesman {
         int cnt = 0;
         double localMinCost = Double.POSITIVE_INFINITY;
         List<ActionDAGNode> localMinCostRoute = null;
-        List<String> mechanicNames = dungeonRoom.getMechanics().entrySet().stream().filter(a -> a.getValue() instanceof DungeonDoor || a.getValue() instanceof DungeonOnewayDoor)
+        List<String> mechanicNames = dungeonRoom.getMechanics().entrySet().stream().filter(a -> a.getValue() instanceof DungeonDoorState || a.getValue() instanceof DungeonOnewayDoorState)
                 .map(a -> a.getKey()).collect(Collectors.toList());
 
 

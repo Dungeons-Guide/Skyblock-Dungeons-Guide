@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
@@ -40,13 +40,13 @@ public class WidgetStateTooltip extends AnnotatedWidget {
     public final BindableAttribute children = new BindableAttribute(WidgetList.class);
     @Bind(variableName = "scale")
     public final BindableAttribute<Double> scale = new BindableAttribute<>(Double.class);
-    private DungeonMechanic mechanic;
-    public WidgetStateTooltip(DungeonRoom dungeonRoom, DungeonMechanic mechanic, String mechanicId) {
+    private DungeonMechanicState mechanic;
+    public WidgetStateTooltip(DungeonRoom dungeonRoom, DungeonMechanicState mechanic, String mechanicId) {
         super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/tooltip.gui"));
         scale.setValue(FeatureRegistry.SECRET_BROWSE.getScale());
         this.mechanic = mechanic;
 
-        Set<String> state = mechanic.getPossibleStates(dungeonRoom);
+        Set<String> state = mechanic.getPossibleStates();
         List<Widget> widgetList = new ArrayList<>();
         for (String s : state) {
             widgetList.add(new WidgetState(dungeonRoom, mechanicId, s));

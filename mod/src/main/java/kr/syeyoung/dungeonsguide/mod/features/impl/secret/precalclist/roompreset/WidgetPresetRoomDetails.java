@@ -1,8 +1,10 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRoomDoor2;
+import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISecret;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics.WidgetPresetRoomDetailsUnknown;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics.WidgetPresetRoomDetailsUnused;
@@ -13,12 +15,10 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
+import lombok.Setter;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class WidgetPresetRoomDetails extends AnnotatedImportOnlyWidget {
@@ -37,6 +37,14 @@ public class WidgetPresetRoomDetails extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<Widget> details = new BindableAttribute<>(Widget.class);
 
 
+    private Set<Class> secretClazz = Sets.newHashSet(
+            DungeonSecretChestState.DungeonSecretChestData.class,
+            DungeonSecretBatState.DungeonSecretBatData.class,
+            DungeonSecretDoubleChestState.DungeonSecretDoubleChestData.class,
+            DungeonSecretItemDropState.DungeonSecretItemDropData.class,
+            DungeonSecretEssenceState.DungeonSecretEssenceData.class
+    );
+
     public WidgetPresetRoomDetails(AdditionalInfoCaculatedDungeonRoomInfo roomInfo) {
         super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/roompresetview.gui"));
         this.roomInfo = roomInfo;
@@ -53,8 +61,8 @@ public class WidgetPresetRoomDetails extends AnnotatedImportOnlyWidget {
         if (!roomInfo.getUnused().isEmpty())
             secrets.add(new WidgetPresetRoomDetailsUnused(this, roomInfo));
 
-        for (Map.Entry<String, DungeonMechanic> stringDungeonMechanicEntry : roomInfo.getDungeonRoomInfo().getMechanics().entrySet().stream().sorted(
-                Comparator.<Map.Entry<String, DungeonMechanic>, Integer>comparing(a -> a.getValue() instanceof ISecret ? 0 : a.getValue() instanceof DungeonRoomDoor2 ? 2 : 1)
+        for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicEntry : roomInfo.getDungeonRoomInfo().getMechanics().entrySet().stream().sorted(
+                Comparator.<Map.Entry<String, DungeonMechanicData>, Integer>comparing(a -> secretClazz.contains(a.getValue().getClass()) ? 0 : a.getValue() instanceof DungeonRoomDoor2State.DungeonRoomDoor2Data ? 2 : 1)
                         .thenComparing(a -> a.getKey())
         ).collect(Collectors.toList())) {
             if (!stateInfo.getMechanicPrecalculationMap().containsKey(stringDungeonMechanicEntry.getKey()))
@@ -83,8 +91,8 @@ public class WidgetPresetRoomDetails extends AnnotatedImportOnlyWidget {
         if (!roomInfo.getUnused().isEmpty())
             secrets.add(new WidgetPresetRoomDetailsUnused(this, roomInfo));
 
-        for (Map.Entry<String, DungeonMechanic> stringDungeonMechanicEntry : roomInfo.getDungeonRoomInfo().getMechanics().entrySet().stream().sorted(
-                Comparator.<Map.Entry<String, DungeonMechanic>, Integer>comparing(a -> a.getValue() instanceof ISecret ? 0 : a.getValue() instanceof DungeonRoomDoor2 ? 2 : 1)
+        for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicEntry : roomInfo.getDungeonRoomInfo().getMechanics().entrySet().stream().sorted(
+                Comparator.<Map.Entry<String, DungeonMechanicData>, Integer>comparing(a -> secretClazz.contains(a.getValue().getClass()) ? 0 : a.getValue() instanceof DungeonRoomDoor2State.DungeonRoomDoor2Data ? 2 : 1)
                         .thenComparing(a -> a.getKey())
         ).collect(Collectors.toList())) {
             if (!stateInfo.getMechanicPrecalculationMap().containsKey(stringDungeonMechanicEntry.getKey()))

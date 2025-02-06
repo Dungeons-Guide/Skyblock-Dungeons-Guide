@@ -3,10 +3,10 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRedstoneKey;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRoomDoor2;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRedstoneKeyState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRoomDoor2State;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISecret;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
@@ -164,7 +164,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
 
     public static ActionDAG buildReferencingAllPossibleThings(DungeonRoom dungeonRoom) {
         ActionDAGBuilder builder = new ActionDAGBuilder(dungeonRoom);
-        for (Map.Entry<String, DungeonMechanic> value : dungeonRoom.getMechanics().entrySet()) {
+        for (Map.Entry<String, DungeonMechanicState> value : dungeonRoom.getMechanics().entrySet()) {
             if (value.getValue() instanceof ISecret) {
                 try {
                     builder.requires(new ActionChangeState(value.getKey(), "found"));
@@ -173,7 +173,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
                     e.printStackTrace();
                     continue;
                 }
-            } else if (value.getValue() instanceof DungeonRedstoneKey) {
+            } else if (value.getValue() instanceof DungeonRedstoneKeyState) {
                 try {
                     builder.requires(new ActionChangeState(value.getKey(), "obtained-self"));
                 } catch (PathfindImpossibleException e) {
@@ -181,7 +181,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
                     e.printStackTrace();
                     continue;
                 }
-            } else if (value.getValue() instanceof DungeonRoomDoor2) {
+            } else if (value.getValue() instanceof DungeonRoomDoor2State) {
                 try {
                     builder.requires(new ActionChangeState(value.getKey(), "navigate"));
                 } catch (PathfindImpossibleException e) {

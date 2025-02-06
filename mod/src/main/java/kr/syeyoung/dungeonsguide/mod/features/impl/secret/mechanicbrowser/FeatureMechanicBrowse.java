@@ -155,9 +155,9 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
             Optional.ofNullable(dungeonRoom.getMechanics().get(mechanicBrowser.getSelectedId()))
                     .ifPresent(a -> {
                         a.highlight(new Color(0,255,255,50), id +" ("+(
-                                dungeonRoom.getMechanics().get(id).getRepresentingPoint(dungeonRoom) != null ?
-                                String.format("%.1f", MathHelper.sqrt_double((dungeonRoom.getMechanics().get(id)).getRepresentingPoint(dungeonRoom).getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")
-                                +"m)", dungeonRoom, partialTicks);
+                                dungeonRoom.getMechanics().get(id).getRepresentingPoint() != null ?
+                                String.format("%.1f", MathHelper.sqrt_double((dungeonRoom.getMechanics().get(id)).getRepresentingPoint().getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")
+                                +"m)", partialTicks);
                     });
         }
     }

@@ -20,10 +20,12 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.data;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWall;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTomb;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.RouteBlocker;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWallState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTombState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicData;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
@@ -71,12 +73,16 @@ public class PrecalculatedStonk {
 
     public static PrecalculatedStonk createOne(OffsetPoint offsetPoint, DungeonRoomInfo dri) {
         List<String> calculateFor = new ArrayList<>();
-        for (Map.Entry<String, DungeonMechanic> value : dri.getMechanics().entrySet()) {
-            if (!(value.getValue() instanceof RouteBlocker)) continue;
-            if (value.getValue() instanceof DungeonTomb) continue;
-            if (value.getValue() instanceof DungeonBreakableWall) continue; // well... let's just assume they don't exist lol
-//            if (value.getValue() instanceof DungeonDoor) continue; // welll.... closable door is not something oyu wanna work with
-            for (OffsetPoint blockedPoint : ((RouteBlocker) value.getValue()).blockedPoints()) {
+
+        // create fake room.
+
+
+        for (Map.Entry<String, DungeonMechanicData> value : dri.getMechanics().entrySet()) {
+            if (!(value.getValue() instanceof WorldMutatingMechanicData)) continue;
+            if (value.getValue() instanceof DungeonTombState.DungeonTombData) continue;
+            if (value.getValue() instanceof DungeonBreakableWallState.DungeonBreakableWallData) continue; // well... let's just assume they don't exist lol
+//            if (value.getValue() instanceof DungeonDoorState) continue; // welll.... closable door is not something oyu wanna work with
+            for (OffsetPoint blockedPoint : ((WorldMutatingMechanicData) value.getValue()).blockedPoints()) {
                 int xDiff = Math.abs(blockedPoint.getX() - offsetPoint.getX());
                 int yDiff = Math.abs(blockedPoint.getY() - offsetPoint.getY());
                 int zDiff = Math.abs(blockedPoint.getZ() - offsetPoint.getZ());
@@ -102,8 +108,8 @@ public class PrecalculatedStonk {
     public void render(float partialTicks, DungeonRoom dungeonRoom) {
         if (EditingContext.getEditingContext() == null) return;
         List<PossibleClickingSpot> targets = getPrecalculatedStonk(dungeonRoom.getMechanics().entrySet().stream()
-                .filter(a -> a.getValue() instanceof RouteBlocker)
-                .filter(a -> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom)).map(a -> a.getKey()).collect(Collectors.toList()));
+                .filter(a -> a.getValue() instanceof WorldMutatingMechanicState)
+                .filter(a -> !((WorldMutatingMechanicState) a.getValue()).isBlocking(dungeonRoom)).map(a -> a.getKey()).collect(Collectors.toList()));
         int i = 0;
         for (PossibleClickingSpot spot : RaytraceHelper.chooseMinimalY(targets)) {
             GlStateManager.disableAlpha();

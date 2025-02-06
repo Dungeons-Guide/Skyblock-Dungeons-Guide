@@ -19,7 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.panes;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditRegistry;
@@ -55,7 +56,7 @@ public class SecretEditPane extends MPanel implements DynamicEditor {
         }
     }
 
-    public void createNewMechanic(String uid, DungeonMechanic data) {
+    public void createNewMechanic(String uid, DungeonMechanicData data) {
         MParameter parameter;
         parameters.add(parameter = new MParameter(new Parameter(uid, data, data), SecretEditPane.this));
         parameter.setBounds(new Rectangle(0,0,getBounds().width, 20));
@@ -91,7 +92,7 @@ public class SecretEditPane extends MPanel implements DynamicEditor {
                         ValueEditCreator vec = ValueEditRegistry.getValueEditMap(real.getNewData() == null ? "null" :real.getNewData().getClass().getName());
 
                         real.setPreviousData(vec.cloneObj(real.getNewData()));
-                        dungeonRoomInfo.getMechanics().put(real.getName(), (DungeonMechanic) real.getNewData());
+                        dungeonRoomInfo.getMechanics().put(real.getName(), (DungeonMechanicData) real.getNewData());
                     }
                 }
             });
@@ -99,7 +100,7 @@ public class SecretEditPane extends MPanel implements DynamicEditor {
         }
         {
             parameters.clear();
-            for (Map.Entry<String, DungeonMechanic> en : dungeonRoom.getDungeonRoomInfo().getMechanics().entrySet()) {
+            for (Map.Entry<String, DungeonMechanicData> en : dungeonRoom.getDungeonRoomInfo().getMechanics().entrySet()) {
                 ValueEditCreator vec = ValueEditRegistry.getValueEditMap(en.getValue() == null ? "null" :en.getValue().getClass().getName());
 
                 MParameter mParameter = new MParameter(new Parameter(en.getKey(), vec.cloneObj(en.getValue()), vec.cloneObj(en.getValue())), this);

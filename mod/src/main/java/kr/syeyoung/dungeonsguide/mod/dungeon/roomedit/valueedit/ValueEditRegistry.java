@@ -54,34 +54,34 @@ public class ValueEditRegistry {
         valueEditMap.put(AColor.class.getName(), new ValueEditAColor.Generator());
 
 
-        valueEditMap.put(DungeonFairySoul.class.getName(), new ValueEditFairySoul.Generator());
-        valueEditMap.put(DungeonNPC.class.getName(), new ValueEditNPC.Generator());
-        valueEditMap.put(DungeonTomb.class.getName(), new ValueEditTomb.Generator());
-        valueEditMap.put(DungeonBreakableWall.class.getName(), new ValueEditBreakableWall.Generator());
-        valueEditMap.put(DungeonJournal.class.getName(), new ValueEditJournal.Generator());
-        valueEditMap.put(DungeonDummy.class.getName(), new ValueEditDummy.Generator());
-        valueEditMap.put(DungeonMushroom.class.getName(), new ValueEditMushroom.Generator());
-        valueEditMap.put(DungeonSecretBat.class.getName(), new ValueEditSecretBat.Generator());
-        valueEditMap.put(DungeonSecretItemDrop.class.getName(), new ValueEditSecretItemdrop.Generator());
-        valueEditMap.put(DungeonSecretEssence.class.getName(), new ValueEditSecretEssence.Generator());
-        valueEditMap.put(DungeonSecretChest.class.getName(), new ValueEditSecretChest.Generator());
-        valueEditMap.put(DungeonSecretDoubleChest.class.getName(), new ValueEditSecretDoubleChest.Generator());
+        valueEditMap.put(DungeonFairySoulState.class.getName(), new ValueEditFairySoul.Generator());
+        valueEditMap.put(DungeonNPCState.class.getName(), new ValueEditNPC.Generator());
+        valueEditMap.put(DungeonTombState.class.getName(), new ValueEditTomb.Generator());
+        valueEditMap.put(DungeonBreakableWallState.class.getName(), new ValueEditBreakableWall.Generator());
+        valueEditMap.put(DungeonJournalState.class.getName(), new ValueEditJournal.Generator());
+        valueEditMap.put(DungeonDummyState.class.getName(), new ValueEditDummy.Generator());
+        valueEditMap.put(DungeonMushroomState.class.getName(), new ValueEditMushroom.Generator());
+        valueEditMap.put(DungeonSecretBatState.class.getName(), new ValueEditSecretBat.Generator());
+        valueEditMap.put(DungeonSecretItemDropState.class.getName(), new ValueEditSecretItemdrop.Generator());
+        valueEditMap.put(DungeonSecretEssenceState.class.getName(), new ValueEditSecretEssence.Generator());
+        valueEditMap.put(DungeonSecretChestState.class.getName(), new ValueEditSecretChest.Generator());
+        valueEditMap.put(DungeonSecretDoubleChestState.class.getName(), new ValueEditSecretDoubleChest.Generator());
 
-        valueEditMap.put(DungeonPressurePlate.class.getName(), new ValueEditPressurePlate.Generator());
-        valueEditMap.put(DungeonOnewayLever.class.getName(), new ValueEditOnewayLever.Generator());
-        valueEditMap.put(DungeonLever.class.getName(), new ValueEditLever.Generator());
-        valueEditMap.put(DungeonDoor.class.getName(), new ValueEditDoor.Generator());
-        valueEditMap.put(DungeonOnewayDoor.class.getName(), new ValueEditOnewayDoor.Generator());
-        valueEditMap.put(DungeonRedstoneKey.class.getName(), new ValueEditRedstoneKey.Generator());
-        valueEditMap.put(DungeonRedstoneKeySlot.class.getName(), new ValueEditRedstoneKeySlot.Generator());
-        valueEditMap.put(DungeonWizardCrystal.class.getName(), new ValueEditWizardCrystal.Generator());
-        valueEditMap.put(DungeonWizard.class.getName(), new ValueEditWizard.Generator());
-        valueEditMap.put(DungeonFloorTrap.class.getName(), new ValueEditFloorTrap.Generator());
-        valueEditMap.put(DungeonTripwireTrap.class.getName(), new ValueEditTripwireTrap.Generator());
-        valueEditMap.put(DungeonArrowTrap.class.getName(), new ValueEditArrowTrap.Generator());
-        valueEditMap.put(DungeonRoomDoor2.class.getName(), new ValueEditRoomDoor.Generator());
-        valueEditMap.put(DungeonFakeChestTrap.class.getName(), new ValueEditFakeChestTrap.Generator());
-        valueEditMap.put(DungeonFireTrap.class.getName(), new ValueEditFireTrap.Generator());
-        valueEditMap.put(DungeonCrusherTrap.class.getName(), new ValueEditCrusherTrap.Generator());
+        valueEditMap.put(DungeonPressurePlateState.class.getName(), new ValueEditPressurePlate.Generator());
+        valueEditMap.put(DungeonOnewayLeverState.class.getName(), new ValueEditOnewayLever.Generator());
+        valueEditMap.put(DungeonLeverState.class.getName(), new ValueEditLever.Generator());
+        valueEditMap.put(DungeonDoorState.class.getName(), new ValueEditDoor.Generator());
+        valueEditMap.put(DungeonOnewayDoorState.class.getName(), new ValueEditOnewayDoor.Generator());
+        valueEditMap.put(DungeonRedstoneKeyState.class.getName(), new ValueEditRedstoneKey.Generator());
+        valueEditMap.put(DungeonRedstoneKeySlotState.class.getName(), new ValueEditRedstoneKeySlot.Generator());
+        valueEditMap.put(DungeonWizardCrystalState.class.getName(), new ValueEditWizardCrystal.Generator());
+        valueEditMap.put(DungeonWizardState.class.getName(), new ValueEditWizard.Generator());
+        valueEditMap.put(DungeonFloorTrapState.class.getName(), new ValueEditFloorTrap.Generator());
+        valueEditMap.put(DungeonTripwireTrapState.class.getName(), new ValueEditTripwireTrap.Generator());
+        valueEditMap.put(DungeonArrowTrapState.class.getName(), new ValueEditArrowTrap.Generator());
+        valueEditMap.put(DungeonRoomDoor2State.class.getName(), new ValueEditRoomDoor.Generator());
+        valueEditMap.put(DungeonFakeChestTrapState.class.getName(), new ValueEditFakeChestTrap.Generator());
+        valueEditMap.put(DungeonFireTrapState.class.getName(), new ValueEditFireTrap.Generator());
+        valueEditMap.put(DungeonCrusherTrapState.class.getName(), new ValueEditCrusherTrap.Generator());
     }
 }

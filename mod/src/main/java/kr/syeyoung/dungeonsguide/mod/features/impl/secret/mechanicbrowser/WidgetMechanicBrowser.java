@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
@@ -59,27 +59,27 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
             "Wizard", "Redstone Key", "Fairy Soul", "Secrets", "Crypts", "NPC", "Journals", "Gates", "ETC", "Traps", "Waypoint"
     );
     private String map(Class t) {
-        if (t == DungeonFairySoul.class) return "Fairy Soul";
-        if (t == DungeonSecretBat.class) return "Secrets";
-        if (t == DungeonSecretChest.class) return "Secrets";
-        if (t == DungeonSecretItemDrop.class) return "Secrets";
-        if (t == DungeonSecretEssence.class) return "Secrets";
-        if (t == DungeonSecretDoubleChest.class) return "Secrets";
-        if (t == DungeonTomb.class) return "Crypts";
-        if (t == DungeonNPC.class) return "NPC";
-        if (t == DungeonJournal.class) return "Journals";
-        if (t == DungeonRoomDoor.class) return "Gates";
-        if (t == DungeonRoomDoor2.class) return "Gates";
-        if (t == DungeonDummy.class) return "Waypoint";
-        if (t == DungeonWizard.class) return "Wizard";
-        if (t == DungeonRedstoneKey.class) return "Redstone Key";
-        if (t == DungeonRedstoneKeySlot.class) return "ETC";
-        if (t == DungeonWizardCrystal.class) return "Wizard";
-        if (t == DungeonFakeChestTrap.class) return "Traps";
-        if (t == DungeonFloorTrap.class) return "Traps";
-        if (t == DungeonArrowTrap.class) return "Traps";
-        if (t == DungeonTripwireTrap.class) return "Traps";
-        if (t == DungeonCrusherTrap.class) return "Traps";
+        if (t == DungeonFairySoulState.class) return "Fairy Soul";
+        if (t == DungeonSecretBatState.class) return "Secrets";
+        if (t == DungeonSecretChestState.class) return "Secrets";
+        if (t == DungeonSecretItemDropState.class) return "Secrets";
+        if (t == DungeonSecretEssenceState.class) return "Secrets";
+        if (t == DungeonSecretDoubleChestState.class) return "Secrets";
+        if (t == DungeonTombState.class) return "Crypts";
+        if (t == DungeonNPCState.class) return "NPC";
+        if (t == DungeonJournalState.class) return "Journals";
+        if (t == DungeonRoomDoorState.class) return "Gates";
+        if (t == DungeonRoomDoor2State.class) return "Gates";
+        if (t == DungeonDummyState.class) return "Waypoint";
+        if (t == DungeonWizardState.class) return "Wizard";
+        if (t == DungeonRedstoneKeyState.class) return "Redstone Key";
+        if (t == DungeonRedstoneKeySlotState.class) return "ETC";
+        if (t == DungeonWizardCrystalState.class) return "Wizard";
+        if (t == DungeonFakeChestTrapState.class) return "Traps";
+        if (t == DungeonFloorTrapState.class) return "Traps";
+        if (t == DungeonArrowTrapState.class) return "Traps";
+        if (t == DungeonTripwireTrapState.class) return "Traps";
+        if (t == DungeonCrusherTrapState.class) return "Traps";
         return "ETC";
     }
 
@@ -97,8 +97,8 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
             current.setValue(route.toString());
             color.setValue(0xFFFFFF00);
         }
-        Map<String, Map<String, DungeonMechanic>> map = new HashMap<>();
-        for (Map.Entry<String, DungeonMechanic> stringDungeonMechanicEntry : dungeonRoom.getMechanics().entrySet()) {
+        Map<String, Map<String, DungeonMechanicState>> map = new HashMap<>();
+        for (Map.Entry<String, DungeonMechanicState> stringDungeonMechanicEntry : dungeonRoom.getMechanics().entrySet()) {
             String name = map(stringDungeonMechanicEntry.getValue().getClass());
             if (!map.containsKey(name))
                 map.put(name, new HashMap<>());

@@ -20,7 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRoomDoor2;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRoomDoor2State;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRoomDoor2State.DungeonRoomDoor2Data;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
@@ -31,24 +32,13 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
 import java.awt.*;
 import java.util.Collections;
 
-public class ValueEditRoomDoor extends MPanel implements ValueEdit<DungeonRoomDoor2> {
-    private Parameter parameter;
-
-    // scroll pane
-    // just create
-    // add set
-    private final DungeonRoomDoor2 dungeonDoor;
-
-    private final MLabel label;
-    private final MValue<OffsetPointSet> value;
-    private final MLabel label2;
-    private final MValue<OffsetPoint> value2;
+public class ValueEditRoomDoor extends MPanel implements ValueEdit<DungeonRoomDoor2Data> {
+    private final DungeonRoomDoor2State dummyState;
 
     public ValueEditRoomDoor(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.dungeonDoor = (DungeonRoomDoor2) parameter2.getNewData();
-
-
+        this.dungeonDoor = (DungeonRoomDoor2Data) parameter2.getNewData();
+        this.dummyState = dungeonDoor.createState(EditingContext.getEditingContext().getRoom());
         label = new MLabel();
         label.setText("Wall Points");
         label.setAlignment(MLabel.Alignment.LEFT);
@@ -66,11 +56,23 @@ public class ValueEditRoomDoor extends MPanel implements ValueEdit<DungeonRoomDo
         add(value2);
     }
 
+    private Parameter parameter;
+
+    // scroll pane
+    // just create
+    // add set
+    private final DungeonRoomDoor2Data dungeonDoor;
+
+    private final MLabel label;
+    private final MValue<OffsetPointSet> value;
+    private final MLabel label2;
+    private final MValue<OffsetPoint> value2;
+
     @Override
     public void onBoundsUpdate() {
-        label.setBounds(new Rectangle(0,0,getBounds().width, 20));
-        value.setBounds(new Rectangle(0,20,getBounds().width, 20));
-        label2.setBounds(new Rectangle(0,40,getBounds().width, 20));
+        label.setBounds(new Rectangle(0, 0, getBounds().width, 20));
+        value.setBounds(new Rectangle(0, 20, getBounds().width, 20));
+        label2.setBounds(new Rectangle(0, 40, getBounds().width, 20));
         value2.setBounds(new Rectangle(0, 60, getBounds().width, 20));
     }
 
@@ -81,12 +83,12 @@ public class ValueEditRoomDoor extends MPanel implements ValueEdit<DungeonRoomDo
 
     @Override
     public void renderWorld(float partialTicks) {
-        dungeonDoor.highlight(new Color(0,255,255,50), parameter.getName(), EditingContext.getEditingContext().getRoom(), partialTicks);
+        dummyState.highlight(new Color(0, 255, 255, 50), parameter.getName(), partialTicks);
     }
 
     @Override
     public void resize(int parentWidth, int parentHeight) {
-        this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
+        this.setBounds(new Rectangle(0, 0, parentWidth, parentHeight));
     }
 
     public static class Generator implements ValueEditCreator<ValueEditRoomDoor> {
@@ -98,13 +100,13 @@ public class ValueEditRoomDoor extends MPanel implements ValueEdit<DungeonRoomDo
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonRoomDoor2();
+            return new DungeonRoomDoor2Data();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonRoomDoor2)object).clone();
+                return ((DungeonRoomDoor2Data) object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

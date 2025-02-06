@@ -19,8 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon;
 
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTomb;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTombState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
@@ -75,8 +75,8 @@ public class FeatureDungeonTotalCrypts extends TextHUDFeature {
         int cnt = 0;
         for (DungeonRoom dungeonRoom : parser.getDungeonRoomList()) {
             if (dungeonRoom.getDungeonRoomInfo() == null) continue;
-            for (DungeonMechanic value : dungeonRoom.getMechanics().values()) {
-                if (value instanceof DungeonTomb) {
+            for (DungeonMechanicState value : dungeonRoom.getMechanics().values()) {
+                if (value instanceof DungeonTombState) {
                     cnt ++;
                 }
             }

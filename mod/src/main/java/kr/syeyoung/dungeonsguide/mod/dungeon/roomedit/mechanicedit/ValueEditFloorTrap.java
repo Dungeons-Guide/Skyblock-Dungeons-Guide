@@ -20,7 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonFloorTrap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonFloorTrapState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonFloorTrapState.DungeonFloorTrapData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
@@ -38,26 +39,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloorTrap> {
-    private Parameter parameter;
-
-    // scroll pane
-    // just create
-    // add set
-    private final DungeonFloorTrap dungeonFloorTrap;
-
-    private final MLabel label;
-    private final MValue<OffsetPointSet> value;
-    private final MTextField preRequisite;
-    private final MLabelAndElement preRequisite2;
-    private final MButton expand;
-    private final MButton updateOnlyAir;
+public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloorTrapData> {
+    private final DungeonFloorTrapState dummyState;
 
     public ValueEditFloorTrap(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.dungeonFloorTrap = (DungeonFloorTrap) parameter2.getNewData();
-
-
+        this.dungeonFloorTrap = (DungeonFloorTrapData) parameter2.getNewData();
+        this.dummyState = dungeonFloorTrap.createState(EditingContext.getEditingContext().getRoom());
         label = new MLabel();
         label.setText("Trap Points");
         label.setAlignment(MLabel.Alignment.LEFT);
@@ -67,7 +55,7 @@ public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloor
         updateOnlyAir.setText("Update Air");
         updateOnlyAir.setBackgroundColor(Color.green);
         updateOnlyAir.setForeground(Color.black);
-        updateOnlyAir.setBounds(new Rectangle(0,40,getBounds().width, 20));
+        updateOnlyAir.setBounds(new Rectangle(0, 40, getBounds().width, 20));
         add(updateOnlyAir);
 
         updateOnlyAir.setOnActionPerformed(new Runnable() {
@@ -88,7 +76,7 @@ public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloor
         expand.setText("Expand");
         expand.setBackgroundColor(Color.green);
         expand.setForeground(Color.black);
-        expand.setBounds(new Rectangle(0,40,getBounds().width, 20));
+        expand.setBounds(new Rectangle(0, 40, getBounds().width, 20));
         add(expand);
         expand.setOnActionPerformed(new Runnable() {
             @Override
@@ -121,18 +109,32 @@ public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloor
             }
         };
         preRequisite.setText(TextUtils.join(dungeonFloorTrap.getPreRequisite(), ","));
-        preRequisite2 = new MLabelAndElement("Req.",preRequisite);
-        preRequisite2.setBounds(new Rectangle(0,40,getBounds().width,20));
+        preRequisite2 = new MLabelAndElement("Req.", preRequisite);
+        preRequisite2.setBounds(new Rectangle(0, 40, getBounds().width, 20));
         add(preRequisite2);
     }
 
+    private Parameter parameter;
+
+    // scroll pane
+    // just create
+    // add set
+    private final DungeonFloorTrapData dungeonFloorTrap;
+
+    private final MLabel label;
+    private final MValue<OffsetPointSet> value;
+    private final MTextField preRequisite;
+    private final MLabelAndElement preRequisite2;
+    private final MButton expand;
+    private final MButton updateOnlyAir;
+
     @Override
     public void onBoundsUpdate() {
-        label.setBounds(new Rectangle(0,0,getBounds().width, 20));
-        value.setBounds(new Rectangle(0,20,getBounds().width, 20));
+        label.setBounds(new Rectangle(0, 0, getBounds().width, 20));
+        value.setBounds(new Rectangle(0, 20, getBounds().width, 20));
         updateOnlyAir.setBounds(new Rectangle(0, 40, getBounds().width, 20));
         expand.setBounds(new Rectangle(0, 60, getBounds().width, 20));
-        preRequisite2.setBounds(new Rectangle(0,80,getBounds().width,20));
+        preRequisite2.setBounds(new Rectangle(0, 80, getBounds().width, 20));
     }
 
     @Override
@@ -142,12 +144,12 @@ public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloor
 
     @Override
     public void renderWorld(float partialTicks) {
-        dungeonFloorTrap.highlight(new Color(0,255,255,50), parameter.getName(), EditingContext.getEditingContext().getRoom(), partialTicks);
+        dummyState.highlight(new Color(0, 255, 255, 50), parameter.getName(), partialTicks);
     }
 
     @Override
     public void resize(int parentWidth, int parentHeight) {
-        this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
+        this.setBounds(new Rectangle(0, 0, parentWidth, parentHeight));
     }
 
     public static class Generator implements ValueEditCreator<ValueEditFloorTrap> {
@@ -159,13 +161,13 @@ public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloor
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonFloorTrap();
+            return new DungeonFloorTrapData();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonFloorTrap)object).clone();
+                return ((DungeonFloorTrapData) object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

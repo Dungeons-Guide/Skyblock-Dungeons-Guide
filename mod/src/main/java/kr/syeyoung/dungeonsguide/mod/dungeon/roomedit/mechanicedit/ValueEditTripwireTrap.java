@@ -19,7 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTripwireTrap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTripwireTrapState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTripwireTrapState.DungeonTripwireTrapData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
@@ -35,24 +36,13 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class ValueEditTripwireTrap extends MPanel implements ValueEdit<DungeonTripwireTrap> {
-    private Parameter parameter;
-
-    // scroll pane
-    // just create
-    // add set
-    private final DungeonTripwireTrap DungeonTripwireTrap;
-
-    private final MLabel label;
-    private final MValue<OffsetPointSet> value;
-    private final MTextField preRequisite;
-    private final MLabelAndElement preRequisite2;
+public class ValueEditTripwireTrap extends MPanel implements ValueEdit<DungeonTripwireTrapData> {
+    private final DungeonTripwireTrapState dummyState;
 
     public ValueEditTripwireTrap(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.DungeonTripwireTrap = (DungeonTripwireTrap) parameter2.getNewData();
-
-
+        this.DungeonTripwireTrap = (DungeonTripwireTrapData) parameter2.getNewData();
+        this.dummyState = DungeonTripwireTrap.createState(EditingContext.getEditingContext().getRoom());
         label = new MLabel();
         label.setText("Trap Points");
         label.setAlignment(MLabel.Alignment.LEFT);
@@ -68,16 +58,28 @@ public class ValueEditTripwireTrap extends MPanel implements ValueEdit<DungeonTr
             }
         };
         preRequisite.setText(TextUtils.join(DungeonTripwireTrap.getPreRequisite(), ","));
-        preRequisite2 = new MLabelAndElement("Req.",preRequisite);
-        preRequisite2.setBounds(new Rectangle(0,40,getBounds().width,20));
+        preRequisite2 = new MLabelAndElement("Req.", preRequisite);
+        preRequisite2.setBounds(new Rectangle(0, 40, getBounds().width, 20));
         add(preRequisite2);
     }
 
+    private Parameter parameter;
+
+    // scroll pane
+    // just create
+    // add set
+    private final DungeonTripwireTrapData DungeonTripwireTrap;
+
+    private final MLabel label;
+    private final MValue<OffsetPointSet> value;
+    private final MTextField preRequisite;
+    private final MLabelAndElement preRequisite2;
+
     @Override
     public void onBoundsUpdate() {
-        label.setBounds(new Rectangle(0,0,getBounds().width, 20));
-        value.setBounds(new Rectangle(0,20,getBounds().width, 20));
-        preRequisite2.setBounds(new Rectangle(0,40,getBounds().width,20));
+        label.setBounds(new Rectangle(0, 0, getBounds().width, 20));
+        value.setBounds(new Rectangle(0, 20, getBounds().width, 20));
+        preRequisite2.setBounds(new Rectangle(0, 40, getBounds().width, 20));
     }
 
     @Override
@@ -87,12 +89,12 @@ public class ValueEditTripwireTrap extends MPanel implements ValueEdit<DungeonTr
 
     @Override
     public void renderWorld(float partialTicks) {
-        DungeonTripwireTrap.highlight(new Color(0,255,255,50), parameter.getName(), EditingContext.getEditingContext().getRoom(), partialTicks);
+        dummyState.highlight(new Color(0, 255, 255, 50), parameter.getName(), partialTicks);
     }
 
     @Override
     public void resize(int parentWidth, int parentHeight) {
-        this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
+        this.setBounds(new Rectangle(0, 0, parentWidth, parentHeight));
     }
 
     public static class Generator implements ValueEditCreator<ValueEditTripwireTrap> {
@@ -104,13 +106,13 @@ public class ValueEditTripwireTrap extends MPanel implements ValueEdit<DungeonTr
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonTripwireTrap();
+            return new DungeonTripwireTrapData();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonTripwireTrap)object).clone();
+                return ((DungeonTripwireTrapData) object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

@@ -19,9 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWall;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTomb;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.RouteBlocker;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWallState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTombState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
@@ -148,8 +148,8 @@ public class ActionUtils {
                                                            List<String> optionalPrerequisite,
                                                            List<String> requiredPrerequisite) throws PathfindImpossibleException {
         List<String> defaultOpenBlockers = dungeonRoom.getMechanics().entrySet().stream()
-                .filter(a -> a.getValue() instanceof RouteBlocker)
-                .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom))
+                .filter(a -> a.getValue() instanceof WorldMutatingMechanicState)
+                .filter(a-> !((WorldMutatingMechanicState) a.getValue()).isBlocking(dungeonRoom))
                 .filter(a -> precalculatedStonk.getDependentRouteBlocker().contains(a.getKey()))
                 .map(a -> a.getKey())
                 .collect(Collectors.toList());
@@ -174,8 +174,8 @@ public class ActionUtils {
                     precalculatedStonk.getPrecalculatedStonk(newBlockers), precalculatedStonk.getTarget(),
                     builder1 -> {
                         for (String newBlocker : newBlockers) {
-                            if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonBreakableWall) continue;
-                            if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonTomb) continue;
+                            if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonBreakableWallState) continue;
+                            if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonTombState) continue;
                             builder1.requires(new ActionChangeState(newBlocker, "open"));
                         }
                         for (String notBlocker : notBlockers) {
@@ -185,16 +185,16 @@ public class ActionUtils {
                             if (s.isEmpty()) continue;
                             String mech = s.split(":")[0];
                             if (newBlockers.contains(mech)) continue;
-                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTomb) continue;
-                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWall) continue;
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTombState) continue;
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWallState) continue;
                             String state = s.split(":")[1];
                             builder1.requires(new ActionChangeState(mech, state));
                         }
                         for (String s : optionalPrerequisite) {
                             if (s.isEmpty()) continue;
                             String mech = s.split(":")[0];
-                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTomb) continue;
-                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWall) continue;
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTombState) continue;
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWallState) continue;
                             String state = s.split(":")[1];
                             if (!optionalSubset.contains(mech)) {
                                 builder1.optional(new ActionChangeState(mech, state));
@@ -208,8 +208,8 @@ public class ActionUtils {
 
     public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, OffsetPoint target, ActionDAGAccepter eachBuild) throws PathfindImpossibleException {
         List<String> openBlockers = dungeonRoom.getMechanics().entrySet().stream()
-                .filter(a -> a.getValue() instanceof RouteBlocker)
-                .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom))
+                .filter(a -> a.getValue() instanceof WorldMutatingMechanicState)
+                .filter(a-> !((WorldMutatingMechanicState) a.getValue()).isBlocking(dungeonRoom))
                 .map(a -> a.getKey())
                 .collect(Collectors.toList());
 
@@ -247,8 +247,8 @@ public class ActionUtils {
                                                       String name) throws PathfindImpossibleException {
 
         List<String> defaultOpenBlockers = dungeonRoom.getMechanics().entrySet().stream()
-                .filter(a -> a.getValue() instanceof RouteBlocker)
-                .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom))
+                .filter(a -> a.getValue() instanceof WorldMutatingMechanicState)
+                .filter(a-> !((WorldMutatingMechanicState) a.getValue()).isBlocking(dungeonRoom))
                 .filter(a -> precalculatedStonk.getDependentRouteBlocker().contains(a.getKey()))
                 .map(a -> a.getKey())
                 .collect(Collectors.toList());
@@ -280,8 +280,8 @@ public class ActionUtils {
                     eachBuild,
                     builder1 -> {
                         for (String newBlocker : newBlockers) {
-                            if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonBreakableWall) continue;
-                            if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonTomb) continue;
+                            if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonBreakableWallState) continue;
+                            if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonTombState) continue;
                             builder1.requires(new ActionChangeState(newBlocker, "open"));
                         }
                         for (String notBlocker : notBlockers) {
@@ -291,16 +291,16 @@ public class ActionUtils {
                             if (s.isEmpty()) continue;
                             String mech = s.split(":")[0];
                             if (newBlockers.contains(mech)) continue;
-                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWall) continue;
-                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTomb) continue;
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWallState) continue;
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTombState) continue;
                             String state = s.split(":")[1];
                             builder1.requires(new ActionChangeState(mech, state));
                         }
                         for (String s : optionalPrerequisite) {
                             if (s.isEmpty()) continue;
                             String mech = s.split(":")[0];
-                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWall) continue;
-                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTomb) continue;
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWallState) continue;
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTombState) continue;
                             String state = s.split(":")[1];
                             if (!optionalSubset.contains(mech)) {
                                 builder1.optional(new ActionChangeState(mech, state));

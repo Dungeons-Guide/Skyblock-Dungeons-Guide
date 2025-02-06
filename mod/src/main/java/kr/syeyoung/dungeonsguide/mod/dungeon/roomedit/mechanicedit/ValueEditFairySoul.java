@@ -19,7 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonFairySoul;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonFairySoulState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonFairySoulState.DungeonFairySoulData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
@@ -35,24 +36,13 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class ValueEditFairySoul extends MPanel implements ValueEdit<DungeonFairySoul> {
-    private Parameter parameter;
-
-    // scroll pane
-    // just create
-    // add set
-    private final DungeonFairySoul dungeonSecret;
-
-    private final MLabel label;
-    private final MValue<OffsetPoint> value;
-    private final MTextField preRequisite;
-    private final MLabelAndElement preRequisite2;
+public class ValueEditFairySoul extends MPanel implements ValueEdit<DungeonFairySoulData> {
+    private final DungeonFairySoulState dummyState;
 
     public ValueEditFairySoul(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.dungeonSecret = (DungeonFairySoul) parameter2.getNewData();
-
-
+        this.dungeonSecret = (DungeonFairySoulData) parameter2.getNewData();
+        this.dummyState = dungeonSecret.createState(EditingContext.getEditingContext().getRoom());
         label = new MLabel();
         label.setText("FairySoul Point");
         label.setAlignment(MLabel.Alignment.LEFT);
@@ -68,16 +58,28 @@ public class ValueEditFairySoul extends MPanel implements ValueEdit<DungeonFairy
             }
         };
         preRequisite.setText(TextUtils.join(dungeonSecret.getPreRequisite(), ","));
-        preRequisite2 = new MLabelAndElement("Req.",preRequisite);
-        preRequisite2.setBounds(new Rectangle(0,40,getBounds().width,20));
+        preRequisite2 = new MLabelAndElement("Req.", preRequisite);
+        preRequisite2.setBounds(new Rectangle(0, 40, getBounds().width, 20));
         add(preRequisite2);
     }
 
+    private Parameter parameter;
+
+    // scroll pane
+    // just create
+    // add set
+    private final DungeonFairySoulData dungeonSecret;
+
+    private final MLabel label;
+    private final MValue<OffsetPoint> value;
+    private final MTextField preRequisite;
+    private final MLabelAndElement preRequisite2;
+
     @Override
     public void onBoundsUpdate() {
-        label.setBounds(new Rectangle(0,0,getBounds().width, 20));
-        value.setBounds(new Rectangle(0,20,getBounds().width, 20));
-        preRequisite2.setBounds(new Rectangle(0,40,getBounds().width,20));
+        label.setBounds(new Rectangle(0, 0, getBounds().width, 20));
+        value.setBounds(new Rectangle(0, 20, getBounds().width, 20));
+        preRequisite2.setBounds(new Rectangle(0, 40, getBounds().width, 20));
     }
 
     @Override
@@ -87,12 +89,12 @@ public class ValueEditFairySoul extends MPanel implements ValueEdit<DungeonFairy
 
     @Override
     public void renderWorld(float partialTicks) {
-        dungeonSecret.highlight(new Color(0,255,0,50), parameter.getName(), EditingContext.getEditingContext().getRoom(), partialTicks);
+        dummyState.highlight(new Color(0, 255, 0, 50), parameter.getName(), partialTicks);
     }
 
     @Override
     public void resize(int parentWidth, int parentHeight) {
-        this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
+        this.setBounds(new Rectangle(0, 0, parentWidth, parentHeight));
     }
 
     public static class Generator implements ValueEditCreator<ValueEditFairySoul> {
@@ -104,13 +106,13 @@ public class ValueEditFairySoul extends MPanel implements ValueEdit<DungeonFairy
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonFairySoul();
+            return new DungeonFairySoulData();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonFairySoul)object).clone();
+                return ((DungeonFairySoulData) object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

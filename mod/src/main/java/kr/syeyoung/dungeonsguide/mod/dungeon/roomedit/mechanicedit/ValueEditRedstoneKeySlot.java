@@ -20,7 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRedstoneKeySlot;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRedstoneKeySlotState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRedstoneKeySlotState.DungeonRedstoneKeySlotData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
@@ -36,28 +37,13 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class ValueEditRedstoneKeySlot extends MPanel implements ValueEdit<DungeonRedstoneKeySlot> {
-    private Parameter parameter;
-
-    // scroll pane
-    // just create
-    // add set
-    private final DungeonRedstoneKeySlot dungeonLever;
-
-    private final MLabel label;
-    private final MValue<OffsetPoint> value;
-    private final MLabel label2;
-    private final MValue<OffsetPointSet> headpoint;
-    private final MTextField preRequisite;
-    private final MLabelAndElement preRequisite2;
-
-
+public class ValueEditRedstoneKeySlot extends MPanel implements ValueEdit<DungeonRedstoneKeySlotData> {
+    private final DungeonRedstoneKeySlotState dummyState;
 
     public ValueEditRedstoneKeySlot(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.dungeonLever = (DungeonRedstoneKeySlot) parameter2.getNewData();
-
-
+        this.dungeonLever = (DungeonRedstoneKeySlotData) parameter2.getNewData();
+        this.dummyState = dungeonLever.createState(EditingContext.getEditingContext().getRoom());
         label = new MLabel();
         label.setText("Slot Point");
         label.setAlignment(MLabel.Alignment.LEFT);
@@ -81,19 +67,32 @@ public class ValueEditRedstoneKeySlot extends MPanel implements ValueEdit<Dungeo
             }
         };
         preRequisite.setText(TextUtils.join(dungeonLever.getPreRequisite(), ","));
-        preRequisite2 = new MLabelAndElement("Req.",preRequisite);
-        preRequisite2.setBounds(new Rectangle(0,40,getBounds().width,20));
+        preRequisite2 = new MLabelAndElement("Req.", preRequisite);
+        preRequisite2.setBounds(new Rectangle(0, 40, getBounds().width, 20));
         add(preRequisite2);
-
     }
+
+    private Parameter parameter;
+
+    // scroll pane
+    // just create
+    // add set
+    private final DungeonRedstoneKeySlotData dungeonLever;
+
+    private final MLabel label;
+    private final MValue<OffsetPoint> value;
+    private final MLabel label2;
+    private final MValue<OffsetPointSet> headpoint;
+    private final MTextField preRequisite;
+    private final MLabelAndElement preRequisite2;
 
     @Override
     public void onBoundsUpdate() {
-        label.setBounds(new Rectangle(0,0,getBounds().width, 20));
-        value.setBounds(new Rectangle(0,20,getBounds().width, 20));
-        label2.setBounds(new Rectangle(0,40,getBounds().width,20));
+        label.setBounds(new Rectangle(0, 0, getBounds().width, 20));
+        value.setBounds(new Rectangle(0, 20, getBounds().width, 20));
+        label2.setBounds(new Rectangle(0, 40, getBounds().width, 20));
         headpoint.setBounds(new Rectangle(0, 60, getBounds().width, 20));
-        preRequisite2.setBounds(new Rectangle(0,80,getBounds().width,20));
+        preRequisite2.setBounds(new Rectangle(0, 80, getBounds().width, 20));
     }
 
     @Override
@@ -103,12 +102,12 @@ public class ValueEditRedstoneKeySlot extends MPanel implements ValueEdit<Dungeo
 
     @Override
     public void renderWorld(float partialTicks) {
-        dungeonLever.highlight(new Color(0,255,0,50), parameter.getName(), EditingContext.getEditingContext().getRoom(), partialTicks);
+        dummyState.highlight(new Color(0, 255, 0, 50), parameter.getName(), partialTicks);
     }
 
     @Override
     public void resize(int parentWidth, int parentHeight) {
-        this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
+        this.setBounds(new Rectangle(0, 0, parentWidth, parentHeight));
     }
 
     public static class Generator implements ValueEditCreator<ValueEditRedstoneKeySlot> {
@@ -120,13 +119,13 @@ public class ValueEditRedstoneKeySlot extends MPanel implements ValueEdit<Dungeo
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonRedstoneKeySlot();
+            return new DungeonRedstoneKeySlotData();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonRedstoneKeySlot)object).clone();
+                return ((DungeonRedstoneKeySlotData) object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

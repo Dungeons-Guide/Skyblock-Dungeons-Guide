@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -37,7 +38,9 @@ public class OffsetVec3 implements Cloneable {
     public double yCoord;
     public double zCoord;
 
+    public OffsetVec3() {}
 
+    @JsonCreator
     public OffsetVec3(
             @JsonProperty("xCoord") double xCoord,
             @JsonProperty("yCoord") double yCoord,

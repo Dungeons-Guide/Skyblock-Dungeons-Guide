@@ -24,7 +24,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.serialization.DungeonRoomInfoBlocksDeserializer;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.serialization.DungeonRoomInfoBlocksSerializer;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.serialization.DungeonRoomInfoWorldDeserializer;
@@ -79,44 +80,44 @@ public class DungeonRoomInfo {
 
     @JsonTypeInfo(use= JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
     @JsonSubTypes({
-            @JsonSubTypes.Type(value = DungeonArrowTrap.class, name = "trap_arrow"),
-            @JsonSubTypes.Type(value = DungeonCrusherTrap.class, name = "trap_crusher"),
-            @JsonSubTypes.Type(value = DungeonFakeChestTrap.class, name = "trap_fakechest"),
-            @JsonSubTypes.Type(value = DungeonFireTrap.class, name = "trap_fire"),
-            @JsonSubTypes.Type(value = DungeonFloorTrap.class, name = "trap_floor"),
-            @JsonSubTypes.Type(value = DungeonTripwireTrap.class, name = "trap_tripwire"),
+            @JsonSubTypes.Type(value = DungeonArrowTrapState.DungeonArrowTrapData.class, name = "trap_arrow"),
+            @JsonSubTypes.Type(value = DungeonCrusherTrapState.DungeonCrusherTrapData.class, name = "trap_crusher"),
+            @JsonSubTypes.Type(value = DungeonFakeChestTrapState.DungeonFakeChestTrapData.class, name = "trap_fakechest"),
+            @JsonSubTypes.Type(value = DungeonFireTrapState.DungeonFireTrapData.class, name = "trap_fire"),
+            @JsonSubTypes.Type(value = DungeonFloorTrapState.DungeonFloorTrapData.class, name = "trap_floor"),
+            @JsonSubTypes.Type(value = DungeonTripwireTrapState.DungeonTripwireTrapData.class, name = "trap_tripwire"),
 
-            @JsonSubTypes.Type(value = DungeonSecretBat.class, name = "secret_bat"),
-            @JsonSubTypes.Type(value = DungeonSecretChest.class, name = "secret_chest"),
-            @JsonSubTypes.Type(value = DungeonSecretDoubleChest.class, name = "secret_doublechest"),
-            @JsonSubTypes.Type(value = DungeonSecretEssence.class, name = "secret_essence"),
-            @JsonSubTypes.Type(value = DungeonSecretItemDrop.class, name = "secret_itemdrop"),
+            @JsonSubTypes.Type(value = DungeonSecretBatState.DungeonSecretBatData.class, name = "secret_bat"),
+            @JsonSubTypes.Type(value = DungeonSecretChestState.DungeonSecretChestData.class, name = "secret_chest"),
+            @JsonSubTypes.Type(value = DungeonSecretDoubleChestState.DungeonSecretDoubleChestData.class, name = "secret_doublechest"),
+            @JsonSubTypes.Type(value = DungeonSecretEssenceState.DungeonSecretEssenceData.class, name = "secret_essence"),
+            @JsonSubTypes.Type(value = DungeonSecretItemDropState.DungeonSecretItemDropData.class, name = "secret_itemdrop"),
 
-            @JsonSubTypes.Type(value = DungeonFairySoul.class, name = "fairy_soul"),
+            @JsonSubTypes.Type(value = DungeonFairySoulState.DungeonFairySoulData.class, name = "fairy_soul"),
 
 
-            @JsonSubTypes.Type(value = DungeonDoor.class, name = "door_reversible"),
-            @JsonSubTypes.Type(value = DungeonOnewayDoor.class, name = "door_irreversible"),
-            @JsonSubTypes.Type(value = DungeonLever.class, name = "lever_reversible"),
-            @JsonSubTypes.Type(value = DungeonOnewayLever.class, name = "lever_irreversible"),
-            @JsonSubTypes.Type(value = DungeonRedstoneKey.class, name = "redstone_key"),
-            @JsonSubTypes.Type(value = DungeonRedstoneKeySlot.class, name = "redstone_key_slot"),
-            @JsonSubTypes.Type(value = DungeonPressurePlate.class, name = "pressure_plate"),
+            @JsonSubTypes.Type(value = DungeonDoorState.DungeonDoorData.class, name = "door_reversible"),
+            @JsonSubTypes.Type(value = DungeonOnewayDoorState.DungeonOnewayDoorData.class, name = "door_irreversible"),
+            @JsonSubTypes.Type(value = DungeonLeverState.DungeonLeverData.class, name = "lever_reversible"),
+            @JsonSubTypes.Type(value = DungeonOnewayLeverState.DungeonOnewayLeverData.class, name = "lever_irreversible"),
+            @JsonSubTypes.Type(value = DungeonRedstoneKeyState.DungeonRedstoneKeyData.class, name = "redstone_key"),
+            @JsonSubTypes.Type(value = DungeonRedstoneKeySlotState.DungeonRedstoneKeySlotData.class, name = "redstone_key_slot"),
+            @JsonSubTypes.Type(value = DungeonPressurePlateState.DungeonPressurePlateData.class, name = "pressure_plate"),
 
-            @JsonSubTypes.Type(value = DungeonBreakableWall.class, name = "superboom_wall"),
-            @JsonSubTypes.Type(value = DungeonTomb.class, name = "crypt"),
+            @JsonSubTypes.Type(value = DungeonBreakableWallState.DungeonBreakableWallData.class, name = "superboom_wall"),
+            @JsonSubTypes.Type(value = DungeonTombState.DungeonTombData.class, name = "crypt"),
 
-            @JsonSubTypes.Type(value = DungeonDummy.class, name = "dummy"),
-            @JsonSubTypes.Type(value = DungeonJournal.class, name = "journal"),
-            @JsonSubTypes.Type(value = DungeonNPC.class, name = "npc"),
+            @JsonSubTypes.Type(value = DungeonDummyState.DungeonDummyData.class, name = "dummy"),
+            @JsonSubTypes.Type(value = DungeonJournalState.DungeonJournalData.class, name = "journal"),
+            @JsonSubTypes.Type(value = DungeonNPCState.DungeonNPCData.class, name = "npc"),
 
-            @JsonSubTypes.Type(value = DungeonRoomDoor2.class, name = "entrance_exit"),
+            @JsonSubTypes.Type(value = DungeonRoomDoor2State.DungeonRoomDoor2Data.class, name = "entrance_exit"),
 
-            @JsonSubTypes.Type(value = DungeonMushroom.class, name = "special_mushroom"),
-            @JsonSubTypes.Type(value = DungeonWizard.class, name = "npc_wizard"),
-            @JsonSubTypes.Type(value = DungeonWizardCrystal.class, name = "special_wizard_crystal"),
+            @JsonSubTypes.Type(value = DungeonMushroomState.DungeonMushroomData.class, name = "special_mushroom"),
+            @JsonSubTypes.Type(value = DungeonWizardState.DungeonWizardData.class, name = "npc_wizard"),
+            @JsonSubTypes.Type(value = DungeonWizardCrystalState.DungeonWizardCrystalData.class, name = "special_wizard_crystal"),
     })
-    private Map<String, DungeonMechanic> mechanics = new HashMap<>();
+    private Map<String, DungeonMechanicData> mechanics = new HashMap<>();
     private int totalSecrets = -1;
 
     @Getter

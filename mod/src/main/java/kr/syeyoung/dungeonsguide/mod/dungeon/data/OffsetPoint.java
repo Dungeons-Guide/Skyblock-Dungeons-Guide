@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -40,6 +41,9 @@ public class OffsetPoint implements Cloneable {
     private int y;
     private int z;
 
+    public OffsetPoint() {}
+
+    @JsonCreator
     public OffsetPoint(
             @JsonProperty("x") int x,
             @JsonProperty("y") int y,

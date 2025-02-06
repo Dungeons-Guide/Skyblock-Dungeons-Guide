@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
@@ -40,12 +40,12 @@ public class WidgetCategory extends AnnotatedWidget {
     public final BindableAttribute<String> visible = new BindableAttribute<>(String.class, "open");
     @Bind(variableName = "children")
     public final BindableAttribute children = new BindableAttribute<>(WidgetList.class);
-    public WidgetCategory(String s, DungeonRoom dungeonRoom, Map<String, DungeonMechanic> dungeonMechanics, Consumer<String> onSelect) {
+    public WidgetCategory(String s, DungeonRoom dungeonRoom, Map<String, DungeonMechanicState> dungeonMechanics, Consumer<String> onSelect) {
         super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/category.gui"));
         categoryName.setValue(s);
 
         List<Widget> widgets = new ArrayList<>();
-        for (Map.Entry<String, DungeonMechanic> dungeonMechanic : dungeonMechanics.entrySet()) {
+        for (Map.Entry<String, DungeonMechanicState> dungeonMechanic : dungeonMechanics.entrySet()) {
             widgets.add(new WidgetSecret(dungeonMechanic.getKey(), dungeonRoom, dungeonMechanic.getValue(), onSelect));
         }
         children.setValue(widgets);

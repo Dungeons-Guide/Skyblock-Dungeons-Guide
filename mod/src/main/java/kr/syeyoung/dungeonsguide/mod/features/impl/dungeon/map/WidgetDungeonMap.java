@@ -2,7 +2,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISecret;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
@@ -578,7 +578,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 String toDraw;
                 if (dungeonRoom.getDungeonRoomInfo() != null) {
                     int cnt = 0;
-                    for (DungeonMechanic value : dungeonRoom.getMechanics().values()) {
+                    for (DungeonMechanicState value : dungeonRoom.getMechanics().values()) {
                         if (value instanceof ISecret) {
                             if (((ISecret) value).isFound(dungeonRoom)) {
                                 cnt += 1;

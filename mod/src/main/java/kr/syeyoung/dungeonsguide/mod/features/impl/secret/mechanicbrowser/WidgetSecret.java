@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.AbsLocationPopup;
@@ -40,16 +40,16 @@ public class WidgetSecret extends AnnotatedWidget {
 
     private String id;
     private DungeonRoom room;
-    private DungeonMechanic mechanic;
+    private DungeonMechanicState mechanic;
     private Consumer<String> onSelect;
-    public WidgetSecret(String name, DungeonRoom room, DungeonMechanic dungeonMechanic, Consumer<String> selectedId) {
+    public WidgetSecret(String name, DungeonRoom room, DungeonMechanicState dungeonMechanicState, Consumer<String> selectedId) {
         super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/secret.gui"));
-        secretName.setValue(name+" §7("+ dungeonMechanic.getCurrentState(room) +", "+
-                (dungeonMechanic.getRepresentingPoint(room) != null ?
-                        String.format("%.1f", MathHelper.sqrt_double(dungeonMechanic.getRepresentingPoint(room).getBlockPos(room).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")
+        secretName.setValue(name+" §7("+ dungeonMechanicState.getCurrentState() +", "+
+                (dungeonMechanicState.getRepresentingPoint() != null ?
+                        String.format("%.1f", MathHelper.sqrt_double(dungeonMechanicState.getRepresentingPoint().getBlockPos(room).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")
                 +"m)");
         this.id = name;
-        this.mechanic = dungeonMechanic;
+        this.mechanic = dungeonMechanicState;
         this.room = room;
         this.onSelect = selectedId;
     }
@@ -57,9 +57,9 @@ public class WidgetSecret extends AnnotatedWidget {
     @Override
     public void onMount() {
         super.onMount();
-        secretName.setValue(id+" §7("+ mechanic.getCurrentState(room) +", "+
-                (mechanic.getRepresentingPoint(room) != null ?
-                        String.format("%.1f", MathHelper.sqrt_double(mechanic.getRepresentingPoint(room).getBlockPos(room).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")
+        secretName.setValue(id+" §7("+ mechanic.getCurrentState() +", "+
+                (mechanic.getRepresentingPoint() != null ?
+                        String.format("%.1f", MathHelper.sqrt_double(mechanic.getRepresentingPoint().getBlockPos(room).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")
                 +"m)");
     }
 

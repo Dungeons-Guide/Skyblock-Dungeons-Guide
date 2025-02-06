@@ -23,11 +23,11 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWall;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRoomDoor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRoomDoor2;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTomb;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWallState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRoomDoor2State;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
@@ -104,7 +104,7 @@ public class DungeonRoom implements IPathfindWorld {
     private int totalSecrets = -1;
     private RoomState currentState = RoomState.DISCOVERED;
 
-    private Map<String, DungeonMechanic> cached = null;
+    private Map<String, DungeonMechanicState> cached = null;
 
     @Setter
     private World cachedWorld;
@@ -147,12 +147,15 @@ public class DungeonRoom implements IPathfindWorld {
 
         return this.cachedWorld = cachedWorld;
     }
-    public Map<String, DungeonMechanic> getMechanics() {
+    public Map<String, DungeonMechanicState> getMechanics() {
         if (cached == null || EditingContext.getEditingContext() != null) {
-            cached = new HashMap<>(dungeonRoomInfo.getMechanics());
+            cached = new HashMap<>();
+            for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicDataEntry : dungeonRoomInfo.getMechanics().entrySet()) {
+                cached.put(stringDungeonMechanicDataEntry.getKey(), stringDungeonMechanicDataEntry.getValue().createState(this));
+            }
             int index = 0;
             for (DungeonDoor door : doors) {
-                if (door.getType().isExist()) cached.put((door.getType().getName())+"-"+(++index), new DungeonRoomDoor(this, door));
+                if (door.getType().isExist()) cached.put((door.getType().getName())+"-"+(++index), new DungeonRoomDoorState(this, door));
             }
         }
         return cached;
@@ -304,13 +307,13 @@ public class DungeonRoom implements IPathfindWorld {
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
 
 
-        for (DungeonMechanic value : getMechanics().values()) {
-            if (value instanceof DungeonTomb) {
-                for (OffsetPoint offsetPoint : ((DungeonTomb) value).blockedPoints()) {
+        for (DungeonMechanicState value : getMechanics().values()) {
+            if (value instanceof DungeonTombState) {
+                for (OffsetPoint offsetPoint : ((DungeonTombState) value).blockedPoints()) {
                     poses.add(offsetPoint.getBlockPos(this));
                 }
-            } else if (value instanceof DungeonBreakableWall) {
-                for (OffsetPoint offsetPoint : ((DungeonBreakableWall) value).blockedPoints()) {
+            } else if (value instanceof DungeonBreakableWallState) {
+                for (OffsetPoint offsetPoint : ((DungeonBreakableWallState) value).blockedPoints()) {
                     poses.add(offsetPoint.getBlockPos(this));
                 }
             }
@@ -358,7 +361,7 @@ public class DungeonRoom implements IPathfindWorld {
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,16), new Vector2d(0, -16), new Vector2d(16, 0), new Vector2d(-16 , 0));
 
     private void buildDoors(Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
-        if (getDungeonRoomInfo().getMechanics().values().stream().noneMatch(a -> a instanceof DungeonRoomDoor2)) {
+        if (getDungeonRoomInfo().getMechanics().values().stream().noneMatch(a -> a instanceof DungeonRoomDoor2State)) {
             Set<Tuple<BlockPos, EDungeonDoorType>> positions = new HashSet<>();
             BlockPos pos = context.getScaffoldParser().getDungeonMapLayout().roomPointToWorldPoint(minRoomPt).add(16, 0, 16);
             for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : doorsAndStates) {
@@ -400,13 +403,13 @@ public class DungeonRoom implements IPathfindWorld {
         roomPreset = context.getPreset().getRoomPreset(dungeonRoomInfo.getUuid());
         algorithmSetting = roomPreset.getEffectiveAlgorithmSetting(dungeonRoomInfo);
 
-        for (DungeonMechanic value : getMechanics().values()) {
-                        if (value instanceof DungeonTomb) {
-                            for (OffsetPoint offsetPoint : ((DungeonTomb) value).blockedPoints()) {
+        for (DungeonMechanicState value : getMechanics().values()) {
+                        if (value instanceof DungeonTombState) {
+                            for (OffsetPoint offsetPoint : ((DungeonTombState) value).blockedPoints()) {
                                 poses.add(offsetPoint.getBlockPos(this));
                             }
-                        } else if (value instanceof DungeonBreakableWall) {
-                            for (OffsetPoint offsetPoint : ((DungeonBreakableWall) value).blockedPoints()) {
+                        } else if (value instanceof DungeonBreakableWallState) {
+                            for (OffsetPoint offsetPoint : ((DungeonBreakableWallState) value).blockedPoints()) {
                                 poses.add(offsetPoint.getBlockPos(this));
                             }
                         }

@@ -18,11 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWall;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonDoor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonOnewayDoor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTomb;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWallState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonDoorState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.TSPCache;
@@ -52,9 +51,9 @@ public class ActionChangeState extends AbstractAction {
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
-        DungeonMechanic mechanic = dungeonRoom.getMechanics().get(mechanicName);
+        DungeonMechanicState mechanic = dungeonRoom.getMechanics().get(mechanicName);
         if (state.equalsIgnoreCase("navigate")) {
-            return Minecraft.getMinecraft().thePlayer.getDistanceSq(mechanic.getRepresentingPoint(dungeonRoom).getBlockPos(dungeonRoom)) < 36;
+            return Minecraft.getMinecraft().thePlayer.getDistanceSq(mechanic.getRepresentingPoint().getBlockPos(dungeonRoom)) < 36;
         }
         if (state.equalsIgnoreCase("click")) {
             return true;
@@ -62,21 +61,21 @@ public class ActionChangeState extends AbstractAction {
         if (mechanic == null) {
             return false;
         }
-        return mechanic.getCurrentState(dungeonRoom).equalsIgnoreCase(state);
+        return mechanic.getCurrentState().equalsIgnoreCase(state);
     }
 
     @Override
     public boolean shouldRecalculatePath(DungeonRoom dungeonRoom) {
         return dungeonRoom.getMechanics()
                 .get(mechanicName)
-                .getCurrentState(dungeonRoom)
+                .getCurrentState()
                 .equalsIgnoreCase(state);
     }
 
     @Override
     public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization, TSPCache tspCache) {
-        DungeonMechanic mechanic = room.getMechanics().get(mechanicName);
-        if (mechanic instanceof DungeonTomb || mechanic instanceof DungeonOnewayDoor || mechanic instanceof DungeonDoor || mechanic instanceof DungeonBreakableWall) {
+        DungeonMechanicState mechanic = room.getMechanics().get(mechanicName);
+        if (mechanic instanceof DungeonTombState || mechanic instanceof DungeonOnewayDoorState || mechanic instanceof DungeonDoorState || mechanic instanceof DungeonBreakableWallState) {
             if (this.state.equals("open")) {
                 int index = state.getOpenMechanicsIndex().indexOf(mechanicName);
                 if (index != -1) {
@@ -104,9 +103,9 @@ public class ActionChangeState extends AbstractAction {
 
     @Override
     public ActionDAGBuilder buildActionDAG(ActionDAGBuilder builder, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
-        DungeonMechanic mechanic = dungeonRoom.getMechanics().get(mechanicName);
-        if (mechanic!= null && !mechanic.getCurrentState(dungeonRoom).equalsIgnoreCase(state))
-            mechanic.buildAction(state, dungeonRoom, builder);
+        DungeonMechanicState mechanic = dungeonRoom.getMechanics().get(mechanicName);
+        if (mechanic!= null && !mechanic.getCurrentState().equalsIgnoreCase(state))
+            mechanic.buildAction(state, builder);
         return new ActionDAGBuilder.ActionDAGBuilderNoMore(builder);
     }
 }

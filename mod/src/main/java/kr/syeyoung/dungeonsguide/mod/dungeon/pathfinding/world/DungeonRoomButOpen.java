@@ -19,8 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.RouteBlocker;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import net.minecraft.block.state.IBlockState;
@@ -41,9 +41,9 @@ public class DungeonRoomButOpen implements IPathfindWorld {
         this.mechanics = mechanics;
 
         for (String mechanic : mechanics) {
-            DungeonMechanic mechanic1 = dungeonRoom.getMechanics().get(mechanic);
-            if (!(mechanic1 instanceof RouteBlocker)) continue;
-            for (OffsetPoint offsetPoint : ((RouteBlocker) mechanic1).blockedPoints()) {
+            DungeonMechanicState mechanic1 = dungeonRoom.getMechanics().get(mechanic);
+            if (!(mechanic1 instanceof WorldMutatingMechanicState)) continue;
+            for (OffsetPoint offsetPoint : ((WorldMutatingMechanicState) mechanic1).blockedPoints()) {
                 BlockPos b = offsetPoint.getBlockPos(dungeonRoom);
                 freeeeePoints.add(new BlockPos(b.getX() * 2+1, b.getY() * 2+1, b.getZ() * 2+1));
             }

@@ -19,8 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonFairySoul;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonFairySoulState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCStringList;
@@ -91,8 +92,8 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
         if (dungeonRoom.getDungeonRoomInfo() == null) return;
 
         if (!dungeonRoom.getDungeonRoomInfo().getUuid().equals(lastRoomUID)) {
-            for (DungeonMechanic value : dungeonRoom.getMechanics().values()) {
-                if (value instanceof DungeonFairySoul)
+            for (DungeonMechanicState value : dungeonRoom.getMechanics().values()) {
+                if (value instanceof DungeonFairySoulState)
                     warning = System.currentTimeMillis() + 2500;
             }
             lastRoomUID = dungeonRoom.getDungeonRoomInfo().getUuid();
@@ -132,8 +133,8 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
             List<RoomSwitch> switches1 = new LinkedList<>();
             for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
                 boolean found = false;
-                for (DungeonMechanic value : dungeonRoomInfo.getMechanics().values()) {
-                    if (value instanceof DungeonFairySoul) {
+                for (DungeonMechanicData value : dungeonRoomInfo.getMechanics().values()) {
+                    if (value instanceof DungeonFairySoulState.DungeonFairySoulData) {
                         found = true;
                         break;
                     }

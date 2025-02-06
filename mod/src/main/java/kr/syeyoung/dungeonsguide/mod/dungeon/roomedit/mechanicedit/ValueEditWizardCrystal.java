@@ -19,7 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonWizardCrystal;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonWizardCrystalState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonWizardCrystalState.DungeonWizardCrystalData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
@@ -35,25 +36,13 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class ValueEditWizardCrystal extends MPanel implements ValueEdit<DungeonWizardCrystal> {
-    private Parameter parameter;
-
-    // scroll pane
-    // just create
-    // add set
-    private final DungeonWizardCrystal dungeonLever;
-
-    private final MLabel label;
-    private final MValue<OffsetPoint> value;
-    private final MTextField preRequisite;
-    private final MLabelAndElement preRequisite2;
-
+public class ValueEditWizardCrystal extends MPanel implements ValueEdit<DungeonWizardCrystalData> {
+    private final DungeonWizardCrystalState dummyState;
 
     public ValueEditWizardCrystal(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.dungeonLever = (DungeonWizardCrystal) parameter2.getNewData();
-
-
+        this.dungeonLever = (DungeonWizardCrystalData) parameter2.getNewData();
+        this.dummyState = dungeonLever.createState(EditingContext.getEditingContext().getRoom());
         label = new MLabel();
         label.setText("Secret Point");
         label.setAlignment(MLabel.Alignment.LEFT);
@@ -69,17 +58,28 @@ public class ValueEditWizardCrystal extends MPanel implements ValueEdit<DungeonW
             }
         };
         preRequisite.setText(TextUtils.join(dungeonLever.getPreRequisite(), ","));
-        preRequisite2 = new MLabelAndElement("Req.",preRequisite);
-        preRequisite2.setBounds(new Rectangle(0,40,getBounds().width,20));
+        preRequisite2 = new MLabelAndElement("Req.", preRequisite);
+        preRequisite2.setBounds(new Rectangle(0, 40, getBounds().width, 20));
         add(preRequisite2);
-
     }
+
+    private Parameter parameter;
+
+    // scroll pane
+    // just create
+    // add set
+    private final DungeonWizardCrystalData dungeonLever;
+
+    private final MLabel label;
+    private final MValue<OffsetPoint> value;
+    private final MTextField preRequisite;
+    private final MLabelAndElement preRequisite2;
 
     @Override
     public void onBoundsUpdate() {
-        label.setBounds(new Rectangle(0,0,getBounds().width, 20));
-        value.setBounds(new Rectangle(0,20,getBounds().width, 20));
-        preRequisite2.setBounds(new Rectangle(0,40,getBounds().width,20));
+        label.setBounds(new Rectangle(0, 0, getBounds().width, 20));
+        value.setBounds(new Rectangle(0, 20, getBounds().width, 20));
+        preRequisite2.setBounds(new Rectangle(0, 40, getBounds().width, 20));
     }
 
     @Override
@@ -89,12 +89,12 @@ public class ValueEditWizardCrystal extends MPanel implements ValueEdit<DungeonW
 
     @Override
     public void renderWorld(float partialTicks) {
-        dungeonLever.highlight(new Color(0,255,0,50), parameter.getName(), EditingContext.getEditingContext().getRoom(), partialTicks);
+        dummyState.highlight(new Color(0, 255, 0, 50), parameter.getName(), partialTicks);
     }
 
     @Override
     public void resize(int parentWidth, int parentHeight) {
-        this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
+        this.setBounds(new Rectangle(0, 0, parentWidth, parentHeight));
     }
 
     public static class Generator implements ValueEditCreator<ValueEditWizardCrystal> {
@@ -106,13 +106,13 @@ public class ValueEditWizardCrystal extends MPanel implements ValueEdit<DungeonW
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonWizardCrystal();
+            return new DungeonWizardCrystalData();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonWizardCrystal)object).clone();
+                return ((DungeonWizardCrystalData) object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

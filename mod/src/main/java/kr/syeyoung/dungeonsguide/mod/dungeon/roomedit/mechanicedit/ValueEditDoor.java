@@ -20,7 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonDoor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonDoorState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonDoorState.DungeonDoorData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
@@ -38,28 +39,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
-    private Parameter parameter;
-
-    // scroll pane
-    // just create
-    // add set
-    private final DungeonDoor dungeonDoor;
-
-    private final MLabel label;
-    private final MValue<OffsetPointSet> value;
-    private final MTextField preRequisite;
-    private final MLabelAndElement preRequisite_par;
-    private final MTextField preRequisite2;
-    private final MLabelAndElement preRequisite2_par;
-    private final MButton updateOnlyAir;
-    private final MButton expand;
+public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoorData> {
+    private final DungeonDoorState dummyState;
 
     public ValueEditDoor(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.dungeonDoor = (DungeonDoor) parameter2.getNewData();
-
-
+        this.dungeonDoor = (DungeonDoorData) parameter2.getNewData();
+        this.dummyState = dungeonDoor.createState(EditingContext.getEditingContext().getRoom());
         label = new MLabel();
         label.setText("Wall Points");
         label.setAlignment(MLabel.Alignment.LEFT);
@@ -72,7 +58,7 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
         updateOnlyAir.setText("Update Air");
         updateOnlyAir.setBackgroundColor(Color.green);
         updateOnlyAir.setForeground(Color.black);
-        updateOnlyAir.setBounds(new Rectangle(0,40,getBounds().width, 20));
+        updateOnlyAir.setBounds(new Rectangle(0, 40, getBounds().width, 20));
         add(updateOnlyAir);
         updateOnlyAir.setOnActionPerformed(new Runnable() {
             @Override
@@ -90,7 +76,7 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
         expand.setText("Expand");
         expand.setBackgroundColor(Color.green);
         expand.setForeground(Color.black);
-        expand.setBounds(new Rectangle(0,40,getBounds().width, 20));
+        expand.setBounds(new Rectangle(0, 40, getBounds().width, 20));
         add(expand);
         expand.setOnActionPerformed(new Runnable() {
             @Override
@@ -123,8 +109,8 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
             }
         };
         preRequisite.setText(TextUtils.join(dungeonDoor.getOpenPreRequisite(), ","));
-        preRequisite_par = new MLabelAndElement("Open Req.",preRequisite);
-        preRequisite_par.setBounds(new Rectangle(0,60,getBounds().width,20));
+        preRequisite_par = new MLabelAndElement("Open Req.", preRequisite);
+        preRequisite_par.setBounds(new Rectangle(0, 60, getBounds().width, 20));
         add(preRequisite_par);
 
         preRequisite2 = new MTextField() {
@@ -134,19 +120,35 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
             }
         };
         preRequisite2.setText(TextUtils.join(dungeonDoor.getClosePreRequisite(), ","));
-        preRequisite2_par = new MLabelAndElement("Close Req.",preRequisite2);
-        preRequisite2_par.setBounds(new Rectangle(0,80,getBounds().width,20));
+        preRequisite2_par = new MLabelAndElement("Close Req.", preRequisite2);
+        preRequisite2_par.setBounds(new Rectangle(0, 80, getBounds().width, 20));
         add(preRequisite2_par);
     }
 
+    private Parameter parameter;
+
+    // scroll pane
+    // just create
+    // add set
+    private final DungeonDoorData dungeonDoor;
+
+    private final MLabel label;
+    private final MValue<OffsetPointSet> value;
+    private final MTextField preRequisite;
+    private final MLabelAndElement preRequisite_par;
+    private final MTextField preRequisite2;
+    private final MLabelAndElement preRequisite2_par;
+    private final MButton updateOnlyAir;
+    private final MButton expand;
+
     @Override
     public void onBoundsUpdate() {
-        label.setBounds(new Rectangle(0,0,getBounds().width, 20));
-        value.setBounds(new Rectangle(0,20,getBounds().width, 20));
-        updateOnlyAir.setBounds(new Rectangle(0,40,getBounds().width, 20));
-        expand.setBounds(new Rectangle(0,60,getBounds().width, 20));
-        preRequisite_par.setBounds(new Rectangle(0,80,getBounds().width,20));
-        preRequisite2_par.setBounds(new Rectangle(0,100,getBounds().width,20));
+        label.setBounds(new Rectangle(0, 0, getBounds().width, 20));
+        value.setBounds(new Rectangle(0, 20, getBounds().width, 20));
+        updateOnlyAir.setBounds(new Rectangle(0, 40, getBounds().width, 20));
+        expand.setBounds(new Rectangle(0, 60, getBounds().width, 20));
+        preRequisite_par.setBounds(new Rectangle(0, 80, getBounds().width, 20));
+        preRequisite2_par.setBounds(new Rectangle(0, 100, getBounds().width, 20));
     }
 
     @Override
@@ -156,12 +158,12 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
 
     @Override
     public void renderWorld(float partialTicks) {
-        dungeonDoor.highlight(new Color(0,255,255,50), parameter.getName(), EditingContext.getEditingContext().getRoom(), partialTicks);
+        dummyState.highlight(new Color(0, 255, 255, 50), parameter.getName(), partialTicks);
     }
 
     @Override
     public void resize(int parentWidth, int parentHeight) {
-        this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
+        this.setBounds(new Rectangle(0, 0, parentWidth, parentHeight));
     }
 
     public static class Generator implements ValueEditCreator<ValueEditDoor> {
@@ -173,13 +175,13 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonDoor();
+            return new DungeonDoorData();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonDoor)object).clone();
+                return ((DungeonDoorData) object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

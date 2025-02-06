@@ -20,10 +20,11 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.mocking;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWall;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTomb;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.RouteBlocker;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWallState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTombState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.BitStorage;
@@ -74,20 +75,20 @@ public class DRIWorld extends World implements IPathfindWorld {
         this.openMechanics = openMechanics;
         this.shape = dungeonRoomInfo.getShape();
 
-        for (DungeonMechanic value : dungeonRoomInfo.getMechanics().values()) {
-            if (value instanceof DungeonTomb) {
-                for (OffsetPoint offsetPoint : ((DungeonTomb) value).blockedPoints()) {
+        for (DungeonMechanicData value : dungeonRoomInfo.getMechanics().values()) {
+            if (value instanceof DungeonTombState.DungeonTombData) {
+                for (OffsetPoint offsetPoint : ((DungeonTombState.DungeonTombData) value).blockedPoints()) {
                     poses.add(new BlockPos(offsetPoint.getX(), offsetPoint.getY() + 70, offsetPoint.getZ()));
                 }
-            } else if (value instanceof DungeonBreakableWall) {
-                for (OffsetPoint offsetPoint : ((DungeonBreakableWall) value).blockedPoints()) {
+            } else if (value instanceof DungeonBreakableWallState.DungeonBreakableWallData) {
+                for (OffsetPoint offsetPoint : ((DungeonBreakableWallState.DungeonBreakableWallData) value).blockedPoints()) {
                     poses.add(new BlockPos(offsetPoint.getX(), offsetPoint.getY() + 70, offsetPoint.getZ()));
                 }
             }
-        }
+        } // TODO: construct actual mechanics.
 
         for (String openMechanic : openMechanics) {
-            RouteBlocker routeBlocker = (RouteBlocker) dungeonRoomInfo.getMechanics().get(openMechanic);
+            WorldMutatingMechanicState routeBlocker = (WorldMutatingMechanicState) dungeonRoomInfo.getMechanics().get(openMechanic);
             for (OffsetPoint offsetPoint : routeBlocker.blockedPoints()) {
                 open.add(new BlockPos(offsetPoint.getX(), offsetPoint.getY() +70, offsetPoint.getZ()));
             }

@@ -26,7 +26,8 @@ import com.google.gson.stream.JsonWriter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedMoveNearest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
@@ -347,58 +348,64 @@ public class CommandDgDebug extends CommandBase {
 
     private void calculateStonks() {
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
-            for (Map.Entry<String, DungeonMechanic> stringDungeonMechanicEntry : dungeonRoomInfo.getMechanics().entrySet()) {
-                DungeonMechanic mechanic = stringDungeonMechanicEntry.getValue();
-                if (mechanic instanceof DungeonFakeChestTrap) {
-                    ((DungeonFakeChestTrap) mechanic).setChestCache(PrecalculatedStonk.createOne(
-                            ((DungeonFakeChestTrap) mechanic).getChest(),
+            for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicEntry : dungeonRoomInfo.getMechanics().entrySet()) {
+                DungeonMechanicData mechanic = stringDungeonMechanicEntry.getValue();
+                if (mechanic instanceof DungeonFakeChestTrapState.DungeonFakeChestTrapData) {
+                    DungeonFakeChestTrapState.DungeonFakeChestTrapData mechanic1 = (DungeonFakeChestTrapState.DungeonFakeChestTrapData) mechanic;
+                    mechanic1.setChestCache(PrecalculatedStonk.createOne(
+                            mechanic1.getChest(),
                             dungeonRoomInfo
                     ));
-                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonFakeChestTrap) mechanic).getChestCache().getDependentRouteBlocker());
-                    System.out.println(((DungeonFakeChestTrap) mechanic).getChestCache().getPrecalculatedStonk(Collections.emptyList()).size());
-
-                } else if (mechanic instanceof DungeonLever) {
-                    ((DungeonLever) mechanic).setLeverCache(PrecalculatedStonk.createOne(
-                            ((DungeonLever) mechanic).getLeverPoint(),
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+ mechanic1.getChestCache().getDependentRouteBlocker());
+                    System.out.println(mechanic1.getChestCache().getPrecalculatedStonk(Collections.emptyList()).size());
+                } else if (mechanic instanceof DungeonLeverState.DungeonLeverData) {
+                    DungeonLeverState.DungeonLeverData mechanic1 = (DungeonLeverState.DungeonLeverData) mechanic;
+                    mechanic1.setLeverCache(PrecalculatedStonk.createOne(
+                            mechanic1.getLeverPoint(),
                             dungeonRoomInfo
                     ));
-                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonLever) mechanic).getLeverCache().getDependentRouteBlocker());
-                    System.out.println(((DungeonLever) mechanic).getLeverCache().getPrecalculatedStonk(Collections.emptyList()).size());
-                } else if (mechanic instanceof DungeonOnewayLever) {
-                    ((DungeonOnewayLever) mechanic).setLeverCache(PrecalculatedStonk.createOne(
-                            ((DungeonOnewayLever) mechanic).getLeverPoint(),
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+ mechanic1.getLeverCache().getDependentRouteBlocker());
+                    System.out.println(mechanic1.getLeverCache().getPrecalculatedStonk(Collections.emptyList()).size());
+                } else if (mechanic instanceof DungeonOnewayLeverState.DungeonOnewayLeverData) {
+                    DungeonOnewayLeverState.DungeonOnewayLeverData mechanic1 = (DungeonOnewayLeverState.DungeonOnewayLeverData) mechanic;
+                    mechanic1.setLeverCache(PrecalculatedStonk.createOne(
+                            mechanic1.getLeverPoint(),
                             dungeonRoomInfo
                     ));
-                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonOnewayLever) mechanic).getLeverCache().getDependentRouteBlocker());
-                    System.out.println(((DungeonOnewayLever) mechanic).getLeverCache().getPrecalculatedStonk(Collections.emptyList()).size());
-                } else if (mechanic instanceof DungeonSecretChest) {
-                    ((DungeonSecretChest) mechanic).setSecretCache(PrecalculatedStonk.createOne(
-                            ((DungeonSecretChest) mechanic).getSecretPoint(),
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+ mechanic1.getLeverCache().getDependentRouteBlocker());
+                    System.out.println(mechanic1.getLeverCache().getPrecalculatedStonk(Collections.emptyList()).size());
+                } else if (mechanic instanceof DungeonSecretChestState.DungeonSecretChestData) {
+                    DungeonSecretChestState.DungeonSecretChestData mechanic1 = (DungeonSecretChestState.DungeonSecretChestData) mechanic;
+                    mechanic1.setSecretCache(PrecalculatedStonk.createOne(
+                            mechanic1.getSecretPoint(),
                             dungeonRoomInfo
                     ));
-                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonSecretChest) mechanic).getSecretCache().getDependentRouteBlocker());
-                    System.out.println(((DungeonSecretChest) mechanic).getSecretCache().getPrecalculatedStonk(Collections.emptyList()).size());
-                } else if (mechanic instanceof DungeonSecretEssence) {
-                    ((DungeonSecretEssence) mechanic).setSecretCache(PrecalculatedStonk.createOne(
-                        ((DungeonSecretEssence) mechanic).getSecretPoint(),
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+ mechanic1.getSecretCache().getDependentRouteBlocker());
+                    System.out.println(mechanic1.getSecretCache().getPrecalculatedStonk(Collections.emptyList()).size());
+                } else if (mechanic instanceof DungeonSecretEssenceState.DungeonSecretEssenceData) {
+                    DungeonSecretEssenceState.DungeonSecretEssenceData mechanic1 = (DungeonSecretEssenceState.DungeonSecretEssenceData) mechanic;
+                    mechanic1.setSecretCache(PrecalculatedStonk.createOne(
+                        mechanic1.getSecretPoint(),
                         dungeonRoomInfo
                     ));
-                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonSecretEssence) mechanic).getSecretCache().getDependentRouteBlocker());
-                    System.out.println(((DungeonSecretEssence) mechanic).getSecretCache().getPrecalculatedStonk(Collections.emptyList()).size());
-                } else if (mechanic instanceof DungeonWizardCrystal) {
-                    ((DungeonWizardCrystal) mechanic).setSecretCache(PrecalculatedStonk.createOne(
-                            ((DungeonWizardCrystal) mechanic).getSecretPoint(),
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+ mechanic1.getSecretCache().getDependentRouteBlocker());
+                    System.out.println(mechanic1.getSecretCache().getPrecalculatedStonk(Collections.emptyList()).size());
+                } else if (mechanic instanceof DungeonWizardCrystalState.DungeonWizardCrystalData) {
+                    DungeonWizardCrystalState.DungeonWizardCrystalData mechanic1 = (DungeonWizardCrystalState.DungeonWizardCrystalData) mechanic;
+                    mechanic1.setSecretCache(PrecalculatedStonk.createOne(
+                            mechanic1.getSecretPoint(),
                             dungeonRoomInfo
                     ));
-                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonWizardCrystal) mechanic).getSecretCache().getDependentRouteBlocker());
-                    System.out.println(((DungeonWizardCrystal) mechanic).getSecretCache().getPrecalculatedStonk(Collections.emptyList()).size());
-                } else if (mechanic instanceof DungeonRedstoneKey) {
-                    ((DungeonRedstoneKey) mechanic).setSecretCache(PrecalculatedStonk.createOne(
-                            ((DungeonRedstoneKey) mechanic).getSecretPoint(),
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+ mechanic1.getSecretCache().getDependentRouteBlocker());
+                    System.out.println(mechanic1.getSecretCache().getPrecalculatedStonk(Collections.emptyList()).size());
+                } else if (mechanic instanceof DungeonRedstoneKeyState.DungeonRedstoneKeyData) {
+                    DungeonRedstoneKeyState.DungeonRedstoneKeyData mechanic1 = (DungeonRedstoneKeyState.DungeonRedstoneKeyData) mechanic;
+                    mechanic1.setSecretCache(PrecalculatedStonk.createOne(
+                            mechanic1.getSecretPoint(),
                             dungeonRoomInfo
                     ));
-                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonRedstoneKey) mechanic).getSecretCache().getDependentRouteBlocker());
-                    System.out.println(((DungeonRedstoneKey) mechanic).getSecretCache().getPrecalculatedStonk(Collections.emptyList()).size());
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+ mechanic1.getSecretCache().getDependentRouteBlocker());
+                    System.out.println(mechanic1.getSecretCache().getPrecalculatedStonk(Collections.emptyList()).size());
                 }
 
             }
@@ -407,22 +414,24 @@ public class CommandDgDebug extends CommandBase {
 
     private void calculateNearests() {
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
-            for (Map.Entry<String, DungeonMechanic> stringDungeonMechanicEntry : dungeonRoomInfo.getMechanics().entrySet()) {
-                DungeonMechanic mechanic = stringDungeonMechanicEntry.getValue();
-                if (mechanic instanceof DungeonSecretBat) {
-                    ((DungeonSecretBat) mechanic).setMoveNearest(PrecalculatedMoveNearest.createOneBat(
-                            ((DungeonSecretBat) mechanic).getSecretPoint(),
+            for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicEntry : dungeonRoomInfo.getMechanics().entrySet()) {
+                DungeonMechanicData mechanic = stringDungeonMechanicEntry.getValue();
+                if (mechanic instanceof DungeonSecretBatState.DungeonSecretBatData) {
+                    DungeonSecretBatState.DungeonSecretBatData mechanic1 = (DungeonSecretBatState.DungeonSecretBatData) mechanic;
+                    mechanic1.setMoveNearest(PrecalculatedMoveNearest.createOneBat(
+                            mechanic1.getSecretPoint(),
                             dungeonRoomInfo
                     ));
-                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonSecretBat) mechanic).getMoveNearest().getDependentRouteBlocker());
-                    System.out.println(((DungeonSecretBat) mechanic).getMoveNearest().getPrecalculatedStonk(Collections.emptyList()).size());
-                } else if (mechanic instanceof DungeonSecretItemDrop) {
-                    ((DungeonSecretItemDrop) mechanic).setMoveNearest(PrecalculatedMoveNearest.createOneItem(
-                            ((DungeonSecretItemDrop) mechanic).getSecretPoint(),
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+ mechanic1.getMoveNearest().getDependentRouteBlocker());
+                    System.out.println(mechanic1.getMoveNearest().getPrecalculatedStonk(Collections.emptyList()).size());
+                } else if (mechanic instanceof DungeonSecretItemDropState.DungeonSecretItemDropData) {
+                    DungeonSecretItemDropState.DungeonSecretItemDropData mechanic1 = (DungeonSecretItemDropState.DungeonSecretItemDropData) mechanic;
+                    mechanic1.setMoveNearest(PrecalculatedMoveNearest.createOneItem(
+                            mechanic1.getSecretPoint(),
                             dungeonRoomInfo
                     ));
-                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonSecretItemDrop) mechanic).getMoveNearest().getDependentRouteBlocker());
-                    System.out.println(((DungeonSecretItemDrop) mechanic).getMoveNearest().getPrecalculatedStonk(Collections.emptyList()).size());
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+ mechanic1.getMoveNearest().getDependentRouteBlocker());
+                    System.out.println(mechanic1.getMoveNearest().getPrecalculatedStonk(Collections.emptyList()).size());
                 }
 
             }
@@ -1106,44 +1115,44 @@ public class CommandDgDebug extends CommandBase {
                 System.out.println("world null for " + dungeonRoomInfo.getName());
                 continue;
             }
-            for (DungeonMechanic value : dungeonRoomInfo.getMechanics().values()) {
-                if (value instanceof DungeonSecretEssence) {
-                    OffsetPoint offsetPoint = ((DungeonSecretEssence) value).getSecretPoint();
+            for (DungeonMechanicData value : dungeonRoomInfo.getMechanics().values()) {
+                if (value instanceof DungeonSecretEssenceState.DungeonSecretEssenceData) {
+                    OffsetPoint offsetPoint = ((DungeonSecretEssenceState.DungeonSecretEssenceData) value).getSecretPoint();
                     if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.skull) {
                         System.out.println("setblock "+offsetPoint+" to skul on "+dungeonRoomInfo.getName());
                         dungeonRoomInfo.setBlock(offsetPoint, Blocks.skull.getStateFromMeta(0));
                     }
-                } else if (value instanceof DungeonRedstoneKey) {
-                    OffsetPoint offsetPoint = ((DungeonRedstoneKey) value).getSecretPoint();
+                } else if (value instanceof DungeonRedstoneKeyState.DungeonRedstoneKeyData) {
+                    OffsetPoint offsetPoint = ((DungeonRedstoneKeyState.DungeonRedstoneKeyData) value).getSecretPoint();
                     if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.skull) {
                         System.out.println("setblock "+offsetPoint+" to skul on "+dungeonRoomInfo.getName());
                         dungeonRoomInfo.setBlock(offsetPoint, Blocks.skull.getStateFromMeta(0));
                     }
-                } else if (value instanceof DungeonWizardCrystal) {
-                    OffsetPoint offsetPoint = ((DungeonWizardCrystal) value).getSecretPoint();
+                } else if (value instanceof DungeonWizardCrystalState.DungeonWizardCrystalData) {
+                    OffsetPoint offsetPoint = ((DungeonWizardCrystalState.DungeonWizardCrystalData) value).getSecretPoint();
                         if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.skull) {
                             System.out.println("setblock "+offsetPoint+" to skul on "+dungeonRoomInfo.getName());
                             dungeonRoomInfo.setBlock(offsetPoint, Blocks.skull.getStateFromMeta(0));
                         }
-                } else if (value instanceof DungeonSecretChest) {
-                    OffsetPoint offsetPoint = ((DungeonSecretChest) value).getSecretPoint();
+                } else if (value instanceof DungeonSecretChestState.DungeonSecretChestData) {
+                    OffsetPoint offsetPoint = ((DungeonSecretChestState.DungeonSecretChestData) value).getSecretPoint();
                         if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.chest) {
                             System.out.println("setblock "+offsetPoint+" to chest on "+dungeonRoomInfo.getName());
                             dungeonRoomInfo.setBlock(offsetPoint, Blocks.chest.getStateFromMeta(0));
                         }
-                } else if (value instanceof DungeonOnewayLever) {
-                    OffsetPoint offsetPoint = ((DungeonOnewayLever) value).getLeverPoint();
+                } else if (value instanceof DungeonOnewayLeverState.DungeonOnewayLeverData) {
+                    OffsetPoint offsetPoint = ((DungeonOnewayLeverState.DungeonOnewayLeverData) value).getLeverPoint();
                         if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.lever) {
                             System.out.println("setblock "+offsetPoint+" to lever on "+dungeonRoomInfo.getName());
                             dungeonRoomInfo.setBlock(offsetPoint, Blocks.lever.getStateFromMeta(0));
                         }
-                } else if (value instanceof DungeonSecretDoubleChest) {
-                    OffsetPoint offsetPoint = ((DungeonSecretDoubleChest) value).getSecretPoint();
+                } else if (value instanceof DungeonSecretDoubleChestState.DungeonSecretDoubleChestData) {
+                    OffsetPoint offsetPoint = ((DungeonSecretDoubleChestState.DungeonSecretDoubleChestData) value).getSecretPoint();
                         if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.chest) {
                             System.out.println("setblock "+offsetPoint+" to chest on "+dungeonRoomInfo.getName());
                             dungeonRoomInfo.setBlock(offsetPoint, Blocks.chest.getStateFromMeta(0));
                         }
-                    OffsetPoint offsetPoint2 = ((DungeonSecretDoubleChest) value).getSecretPoint2();
+                    OffsetPoint offsetPoint2 = ((DungeonSecretDoubleChestState.DungeonSecretDoubleChestData) value).getSecretPoint2();
                         if (dungeonRoomInfo.getBlock(offsetPoint2, 0).getBlock() != Blocks.chest) {
                             System.out.println("setblock "+offsetPoint2+" to chest on "+dungeonRoomInfo.getName());
                             dungeonRoomInfo.setBlock(offsetPoint2, Blocks.chest.getStateFromMeta(0));
@@ -1162,37 +1171,37 @@ public class CommandDgDebug extends CommandBase {
             try {
                 DungeonRoomInfo dri = cborMapper.readValue(f, DungeonRoomInfo.class);
                 System.out.println("Starting at " + dri.getName() + " - " + dri.getUuid());
-                for (Map.Entry<String, DungeonMechanic> value2 : dri.getMechanics().entrySet()) {
-                    DungeonMechanic value = value2.getValue();
-                    if ((value instanceof DungeonSecretEssence || value instanceof DungeonSecretChest) && ((ISecret) value).getSecretPoint().getY() == 0) {
+                for (Map.Entry<String, DungeonMechanicData> value2 : dri.getMechanics().entrySet()) {
+                    DungeonMechanicData value = value2.getValue();
+                    if ((value instanceof DungeonSecretEssenceState.DungeonSecretEssenceData || value instanceof DungeonSecretChestState.DungeonSecretChestData) && ((ISecret) value).getSecretPoint().getY() == 0) {
                         OffsetPoint offsetPoint = ((ISecret) value).getSecretPoint();
                         if (dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                             dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
                             System.out.println("Fixing " + value2.getKey() + " - as secret " + value.getClass().getSimpleName() + " - at " + ((ISecret) value).getSecretPoint());
                         }
-                    } else if (value instanceof DungeonOnewayDoor) {
-                        for (OffsetPoint offsetPoint : ((DungeonOnewayDoor) value).getSecretPoint().getOffsetPointList()) {
+                    } else if (value instanceof DungeonOnewayDoorState.DungeonOnewayDoorData) {
+                        for (OffsetPoint offsetPoint : ((DungeonOnewayDoorState.DungeonOnewayDoorData) value).getSecretPoint().getOffsetPointList()) {
                             if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                                 dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
                                 System.out.println("Fixing " + value2.getKey() + " - o-door - at " + offsetPoint);
                             }
                         }
-                    } else if (value instanceof DungeonDoor) {
-                        for (OffsetPoint offsetPoint : ((DungeonDoor) value).getSecretPoint().getOffsetPointList()) {
+                    } else if (value instanceof DungeonDoorState.DungeonDoorData) {
+                        for (OffsetPoint offsetPoint : ((DungeonDoorState.DungeonDoorData) value).getSecretPoint().getOffsetPointList()) {
                             if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                                 dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
                                 System.out.println("Fixing " + value2.getKey() + " - door - at " + offsetPoint);
                             }
                         }
-                    } else if (value instanceof DungeonBreakableWall) {
-                        for (OffsetPoint offsetPoint : ((DungeonBreakableWall) value).getSecretPoint().getOffsetPointList()) {
+                    } else if (value instanceof DungeonBreakableWallState.DungeonBreakableWallData) {
+                        for (OffsetPoint offsetPoint : ((DungeonBreakableWallState.DungeonBreakableWallData) value).getSecretPoint().getOffsetPointList()) {
                             if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                                 dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
                                 System.out.println("Fixing " + value2.getKey() + " - wall - at " + offsetPoint);
                             }
                         }
-                    } else if (value instanceof DungeonTomb) {
-                        for (OffsetPoint offsetPoint : ((DungeonTomb) value).getSecretPoint().getOffsetPointList()) {
+                    } else if (value instanceof DungeonTombState.DungeonTombData) {
+                        for (OffsetPoint offsetPoint : ((DungeonTombState.DungeonTombData) value).getSecretPoint().getOffsetPointList()) {
                             if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                                 dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
                                 System.out.println("Fixing " + value2.getKey() + " - crypt - at " + offsetPoint);

@@ -19,7 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonSecretEssence;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonSecretEssenceState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonSecretEssenceState.DungeonSecretEssenceData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
@@ -32,24 +33,13 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class ValueEditSecretEssence extends MPanel implements ValueEdit<DungeonSecretEssence> {
-    private Parameter parameter;
-
-    // scroll pane
-    // just create
-    // add set
-    private final DungeonSecretEssence dungeonSecretEssence;
-
-    private final MLabel label;
-    private final MValue<OffsetPoint> value;
-    private final MTextField preRequisite;
-    private final MLabelAndElement preRequisite2;
+public class ValueEditSecretEssence extends MPanel implements ValueEdit<DungeonSecretEssenceData> {
+    private final DungeonSecretEssenceState dummyState;
 
     public ValueEditSecretEssence(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.dungeonSecretEssence = (DungeonSecretEssence) parameter2.getNewData();
-
-
+        this.dungeonSecretEssence = (DungeonSecretEssenceData) parameter2.getNewData();
+        this.dummyState = dungeonSecretEssence.createState(EditingContext.getEditingContext().getRoom());
         label = new MLabel();
         label.setText("Secret Point");
         label.setAlignment(MLabel.Alignment.LEFT);
@@ -65,16 +55,28 @@ public class ValueEditSecretEssence extends MPanel implements ValueEdit<DungeonS
             }
         };
         preRequisite.setText(TextUtils.join(dungeonSecretEssence.getPreRequisite(), ","));
-        preRequisite2 = new MLabelAndElement("Req.",preRequisite);
-        preRequisite2.setBounds(new Rectangle(0,60,getBounds().width,20));
+        preRequisite2 = new MLabelAndElement("Req.", preRequisite);
+        preRequisite2.setBounds(new Rectangle(0, 60, getBounds().width, 20));
         add(preRequisite2);
     }
 
+    private Parameter parameter;
+
+    // scroll pane
+    // just create
+    // add set
+    private final DungeonSecretEssenceData dungeonSecretEssence;
+
+    private final MLabel label;
+    private final MValue<OffsetPoint> value;
+    private final MTextField preRequisite;
+    private final MLabelAndElement preRequisite2;
+
     @Override
     public void onBoundsUpdate() {
-        label.setBounds(new Rectangle(0,0,getBounds().width, 20));
-        value.setBounds(new Rectangle(0,20,getBounds().width, 20));
-        preRequisite2.setBounds(new Rectangle(0,60,getBounds().width,20));
+        label.setBounds(new Rectangle(0, 0, getBounds().width, 20));
+        value.setBounds(new Rectangle(0, 20, getBounds().width, 20));
+        preRequisite2.setBounds(new Rectangle(0, 60, getBounds().width, 20));
     }
 
     @Override
@@ -84,12 +86,12 @@ public class ValueEditSecretEssence extends MPanel implements ValueEdit<DungeonS
 
     @Override
     public void renderWorld(float partialTicks) {
-        dungeonSecretEssence.highlight(new Color(0,255,0,50), parameter.getName(), EditingContext.getEditingContext().getRoom(), partialTicks);
+        dummyState.highlight(new Color(0, 255, 0, 50), parameter.getName(), partialTicks);
     }
 
     @Override
     public void resize(int parentWidth, int parentHeight) {
-        this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
+        this.setBounds(new Rectangle(0, 0, parentWidth, parentHeight));
     }
 
     public static class Generator implements ValueEditCreator<ValueEditSecretEssence> {
@@ -101,13 +103,13 @@ public class ValueEditSecretEssence extends MPanel implements ValueEdit<DungeonS
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonSecretEssence();
+            return new DungeonSecretEssenceData();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonSecretEssence)object).clone();
+                return ((DungeonSecretEssenceData) object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

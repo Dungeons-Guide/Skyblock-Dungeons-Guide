@@ -20,9 +20,9 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonDoor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonOnewayDoor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.RouteBlocker;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonDoorState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonOnewayDoorState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
@@ -283,8 +283,8 @@ public abstract class AbstractActionMove extends AbstractAction {
                 dungeonRoom.getAlgorithmSetting(),
                 dungeonRoom.getDungeonRoomInfo(),
                 dungeonRoom.getMechanics().entrySet().stream().filter(b -> {
-                    return  (b.getValue() instanceof DungeonDoor || b.getValue() instanceof DungeonOnewayDoor);
-                }).filter(b -> !((RouteBlocker)b.getValue()).isBlocking(dungeonRoom)).map(Map.Entry::getKey).collect(Collectors.toSet()),
+                    return  (b.getValue() instanceof DungeonDoorState || b.getValue() instanceof DungeonOnewayDoorState);
+                }).filter(b -> !((WorldMutatingMechanicState)b.getValue()).isBlocking(dungeonRoom)).map(Map.Entry::getKey).collect(Collectors.toSet()),
                 getTargetOffsetPointSet()
         ).getHash());
         if (executor == null) executor = dungeonRoom.createEntityPathTo(getPathfindBoundingBox(dungeonRoom));

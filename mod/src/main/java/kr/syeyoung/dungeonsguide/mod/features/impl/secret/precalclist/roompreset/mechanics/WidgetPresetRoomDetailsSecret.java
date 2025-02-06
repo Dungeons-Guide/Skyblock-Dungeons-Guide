@@ -1,7 +1,8 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.WidgetPresetRoomDetails;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
@@ -43,24 +44,24 @@ public class WidgetPresetRoomDetailsSecret extends AnnotatedImportOnlyWidget {
 
         this.mechanicNameV.setValue(mechanicName);
 
-        DungeonMechanic dungeonMechanic = roomInfo.getDungeonRoomInfo().getMechanics().get(mechanicName);
-        if (dungeonMechanic instanceof DungeonSecretChest) {
+        DungeonMechanicData dungeonMechanicState = roomInfo.getDungeonRoomInfo().getMechanics().get(mechanicName);
+        if (dungeonMechanicState instanceof DungeonSecretChestState.DungeonSecretChestData) {
             this.image.setValue("dungeonsguide:textures/features/precalclist/chest.png");
-        } else if (dungeonMechanic instanceof DungeonSecretBat) {
+        } else if (dungeonMechanicState instanceof DungeonSecretBatState.DungeonSecretBatData) {
             this.image.setValue("dungeonsguide:textures/features/precalclist/bat.png");
-        } else if (dungeonMechanic instanceof DungeonSecretEssence) {
+        } else if (dungeonMechanicState instanceof DungeonSecretEssenceState.DungeonSecretEssenceData) {
             this.image.setValue("dungeonsguide:textures/features/precalclist/essence.png");
-        } else if (dungeonMechanic instanceof DungeonSecretItemDrop) {
+        } else if (dungeonMechanicState instanceof DungeonSecretItemDropState.DungeonSecretItemDropData) {
             this.image.setValue("dungeonsguide:textures/features/precalclist/itemdrop.png");
-        } else if (dungeonMechanic instanceof DungeonSecretDoubleChest) {
+        } else if (dungeonMechanicState instanceof DungeonSecretDoubleChestState.DungeonSecretDoubleChestData) {
             this.image.setValue("dungeonsguide:textures/features/precalclist/largechest.png");
-        } else if (dungeonMechanic instanceof DungeonLever || dungeonMechanic instanceof DungeonOnewayLever) {
+        } else if (dungeonMechanicState instanceof DungeonLeverState.DungeonLeverData || dungeonMechanicState instanceof DungeonOnewayLeverState.DungeonOnewayLeverData) {
             this.image.setValue("dungeonsguide:textures/features/precalclist/lever.png");
-        } else if (dungeonMechanic instanceof DungeonPressurePlate) {
+        } else if (dungeonMechanicState instanceof DungeonPressurePlateState.DungeonPressurePlateData) {
             this.image.setValue("dungeonsguide:textures/features/precalclist/pressureplate.png");
-        } else if (dungeonMechanic instanceof DungeonDoor || dungeonMechanic instanceof DungeonOnewayDoor) {
+        } else if (dungeonMechanicState instanceof DungeonDoorState.DungeonDoorData || dungeonMechanicState instanceof DungeonOnewayDoorState.DungeonOnewayDoorData) {
             this.image.setValue("dungeonsguide:textures/features/precalclist/door.png");
-        } else if (dungeonMechanic instanceof DungeonRoomDoor2) {
+        } else if (dungeonMechanicState instanceof DungeonRoomDoor2State.DungeonRoomDoor2Data) {
             this.image.setValue("dungeonsguide:textures/features/precalclist/witherdoor.png");
         } else {
             this.image.setValue("dungeonsguide:textures/darklogo.png");
