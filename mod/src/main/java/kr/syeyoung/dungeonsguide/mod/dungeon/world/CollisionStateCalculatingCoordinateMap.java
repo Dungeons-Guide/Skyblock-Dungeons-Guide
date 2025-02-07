@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.block.Block;
@@ -28,32 +29,32 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
 
     private CoordinateMapWorld world;
 
-    private DungeonRoom dungeonRoom;
     private Set<BlockPos> poses;
-    public CollisionStateCalculatingCoordinateMap(ICoordinateMap<IBlockState> map, int minX, int minY, int minZ, int maxX, int maxY, int maxZ, DungeonRoom dungeonRoom, InstaBreakFactorCalculatingCoordinateMap instaBreakCalc) {
+    private RoomBounds roomBounds;
+    public CollisionStateCalculatingCoordinateMap(ICoordinateMap<IBlockState> map, Set<BlockPos> poses, InstaBreakFactorCalculatingCoordinateMap instaBreakCalc, RoomBounds roomBounds) {
         this.map = map;
         this.world = new CoordinateMapWorld(map);
 
-        this.dungeonRoom = dungeonRoom;
+        this.minX = roomBounds.getMinX() * 2 + 2;
+        this.minY = 0;
+        this.minZ = roomBounds.getMinZ() * 2 + 2;
+        this.maxX = roomBounds.getMaxX() * 2 + 2;
+        this.maxY = 256 * 2;
+        this.maxZ = roomBounds.getMaxZ() * 2 + 2;
 
-        this.minX = minX;
-        this.minY = minY;
-        this.minZ = minZ;
-        this.maxX = maxX;
-        this.maxY = maxY;
-        this.maxZ = maxZ;
         this.lenX = maxX - minX;
         this.lenY = maxY - minY;
         this.lenZ = maxZ - minZ;
 
-        this.poses = dungeonRoom.getPoses();
+        this.poses = poses;
         this.instaBreakCalc = instaBreakCalc;
+        this.roomBounds = roomBounds;
     }
 
     private static final float playerWidth = 0.25f;
     @Override
     public CollisionState getBlock(int x, int y, int z) {
-        if (!dungeonRoom.canAccessRelative( (x - minX + 2) / 2, (z - minZ + 2) / 2)) return CollisionStateCalculatingCoordinateMap.CollisionState.BLOCKED;
+        if (!roomBounds.canAccessRelative( (x - minX + 2) / 2, (z - minZ + 2) / 2)) return CollisionStateCalculatingCoordinateMap.CollisionState.BLOCKED;
         // TODO: use isInScope to determine.
 
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;

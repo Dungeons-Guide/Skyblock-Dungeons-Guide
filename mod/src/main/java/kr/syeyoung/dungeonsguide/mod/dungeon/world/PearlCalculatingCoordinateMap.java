@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -17,16 +18,17 @@ public class PearlCalculatingCoordinateMap implements ICoordinateMap<PearlCalcul
 
     private CoordinateMapWorld world;
 
-    public PearlCalculatingCoordinateMap(ICoordinateMap<IBlockState> map, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+    public PearlCalculatingCoordinateMap(ICoordinateMap<IBlockState> map, RoomBounds roomBounds) {
         this.map = map;
         this.world = new CoordinateMapWorld(map);
 
-        this.minX = minX;
-        this.minY = minY;
-        this.minZ = minZ;
-        this.maxX = maxX;
-        this.maxY = maxY;
-        this.maxZ = maxZ;
+        this.minX = roomBounds.getMinX() * 2 + 2;
+        this.minY = 0;
+        this.minZ = roomBounds.getMinZ() * 2 + 2;
+        this.maxX = roomBounds.getMaxX() * 2 + 2;
+        this.maxY = 256 * 2;
+        this.maxZ = roomBounds.getMaxZ() * 2 + 2;
+
         this.lenX = maxX - minX;
         this.lenY = maxY - minY;
         this.lenZ = maxZ - minZ;

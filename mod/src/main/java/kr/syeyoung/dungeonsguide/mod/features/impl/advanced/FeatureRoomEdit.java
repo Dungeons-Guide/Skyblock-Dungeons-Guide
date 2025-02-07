@@ -143,7 +143,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
                             .filter(a -> a instanceof PropertyDirection)
                             .map(PropertyDirection.class::cast).findFirst();
 
-                    if (!dungeonRoom.canAccessRelative(x,z)) {
+                    if (!dungeonRoom.getRoomBounds().canAccessRelative(x,z)) {
                         continue;
                     }
 

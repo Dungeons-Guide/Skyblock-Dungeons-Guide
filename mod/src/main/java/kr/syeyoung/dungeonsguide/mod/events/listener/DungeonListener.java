@@ -418,7 +418,7 @@ public class DungeonListener {
 
                     if (FeatureRegistry.COMPARE_ROOM.toggleCompareStatus && dungeonRoom.getDungeonRoomInfo().hasSchematic()) {
                         OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new BlockPos(0,0,0));
-                        for (BlockPos allInBox : BlockPos.getAllInBox(dungeonRoom.getMin().add(0, -60, 0), dungeonRoom.getMax().add(0, 180, 0))) {
+                        for (BlockPos allInBox : BlockPos.getAllInBox(dungeonRoom.getRoomBounds().getMin().add(0, -60, 0), dungeonRoom.getRoomBounds().getMax().add(0, 180, 0))) {
                             offsetPoint.setPosInWorld(dungeonRoom, allInBox);
                             IBlockState blockState = dungeonRoom.getDungeonRoomInfo().getBlock(offsetPoint, dungeonRoom.getRoomMatcher().getRotation());
                             if (!blockState.equals(dungeonRoom.getCachedWorld().getBlockState(allInBox))) {

@@ -46,7 +46,7 @@ import javax.vecmath.Vector3f;
 public class RoomProcessorRedRoom extends GeneralRoomProcessor {
     public RoomProcessorRedRoom(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
-        BlockPos basePt = dungeonRoom.getMin().add(dungeonRoom.getMax());
+        BlockPos basePt = dungeonRoom.getRoomBounds().getMin().add(dungeonRoom.getRoomBounds().getMax());
         this.basePt = new Vec3(basePt.getX() / 2.0f, basePt.getY() / 2.0f, basePt.getZ() / 2.0f);
     }
 
@@ -61,7 +61,7 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
 
     @Override
     public void tick() {
-        BlockPos basePt = getDungeonRoom().getMin().add(getDungeonRoom().getMax());
+        BlockPos basePt = getDungeonRoom().getRoomBounds().getMin().add(getDungeonRoom().getRoomBounds().getMax());
         this.basePt = new Vec3(basePt.getX() / 2.0f, basePt.getY() / 2.0f + 4, basePt.getZ() / 2.0f);
         DungeonDoor real = null;
         for (DungeonDoor door : getDungeonRoom().getDoors()) {

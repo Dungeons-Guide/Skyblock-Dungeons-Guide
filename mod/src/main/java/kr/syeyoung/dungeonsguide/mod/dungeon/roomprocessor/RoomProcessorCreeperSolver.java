@@ -55,8 +55,8 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
     private void findCreeperAndDoPoses() {
         World w = getDungeonRoom().getContext().getWorld();
         List<BlockPos> prismarines = new ArrayList<BlockPos>();
-        final BlockPos low = getDungeonRoom().getMin().add(0,-2,0);
-        final BlockPos high = getDungeonRoom().getMax().add(0,20,0);
+        final BlockPos low = getDungeonRoom().getRoomBounds().getMin().add(0,-2,0);
+        final BlockPos high = getDungeonRoom().getRoomBounds().getMax().add(0,20,0);
         final AxisAlignedBB axis = AxisAlignedBB.fromBounds(
                 low.getX() + 17, low.getY() + 7, low.getZ() + 17,
                 low.getX() + 16, low.getY() + 10.5, low.getZ() + 16
@@ -131,7 +131,7 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
             RenderUtils.drawLine(new Vec3(poset[0].getX() +0.5, poset[0].getY() +0.5, poset[0].getZ()+0.5),
                     new Vec3(poset[1].getX() +0.5, poset[1].getY() +0.5, poset[1].getZ()+0.5), oneIsConnected ? new Color(0,0,0,50) : color, partialTicks, true);
         }
-        final BlockPos low = getDungeonRoom().getMin();
+        final BlockPos low = getDungeonRoom().getRoomBounds().getMin();
         final AxisAlignedBB axis = AxisAlignedBB.fromBounds(
                 low.getX() + 17, low.getY() + 5, low.getZ() + 17,
                 low.getX() + 16, low.getY() + 8.5, low.getZ() + 16

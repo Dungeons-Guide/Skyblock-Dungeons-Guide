@@ -113,7 +113,7 @@ public class GeneralEditPane extends MPanel {
         {
             MLabel la;
             shape2 = new MLabelAndElement("Found Room Shape: ", la = new MLabel());
-            la.setText(dungeonRoom.getShape()+"");
+            la.setText(dungeonRoom.getRoomBounds().getShape()+"");
             shape2.setBounds(new Rectangle(0,100,getBounds().width, 20));
             add(shape2);
         }
@@ -216,9 +216,9 @@ public class GeneralEditPane extends MPanel {
 
     private NBTTagCompound createNBT() {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setShort("Width", (short) (dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 1));
+        compound.setShort("Width", (short) (dungeonRoom.getRoomBounds().getMax().getX() - dungeonRoom.getRoomBounds().getMin().getX() + 1));
         compound.setShort("Height", (short) 255);
-        compound.setShort("Length", (short) (dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 1));
+        compound.setShort("Length", (short) (dungeonRoom.getRoomBounds().getMax().getZ() - dungeonRoom.getRoomBounds().getMin().getZ() + 1));
         int size =compound.getShort("Width") * compound.getShort("Height") * compound.getShort("Length");
 
         byte[] blocks = new byte[size];
@@ -234,7 +234,7 @@ public class GeneralEditPane extends MPanel {
                     int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
                     BlockPos pos = dungeonRoom.getRelativeBlockPosAt(x,y - 70,z);
                     IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos);
-                    boolean acc = dungeonRoom.canAccessRelative(x,z);
+                    boolean acc = dungeonRoom.getRoomBounds().canAccessRelative(x,z);
                     int id = Block.getIdFromBlock(blockState.getBlock());
                     blocks[index] = acc ? (byte) id : 0;
                     meta[index] = acc ? (byte) blockState.getBlock().getMetaFromState(blockState) : 0;

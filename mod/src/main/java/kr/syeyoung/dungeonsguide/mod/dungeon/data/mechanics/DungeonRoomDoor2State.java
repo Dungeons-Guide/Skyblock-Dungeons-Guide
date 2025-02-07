@@ -49,7 +49,7 @@ public class DungeonRoomDoor2State implements DungeonMechanicState {
 
 
     private Vector2d getIdentifier(DungeonRoom dungeonRoom) {
-        BlockPos pos = data.pfPoint.getBlockPos(dungeonRoom).subtract(dungeonRoom.getMin());
+        BlockPos pos = data.pfPoint.getBlockPos(dungeonRoom).subtract(dungeonRoom.getRoomBounds().getMin());
         double xWat = Math.round(pos.getX() / 16) / 2.0 - 0.5;
         double zWat = Math.round(pos.getZ() / 16) / 2.0 - 0.5;
         return new Vector2d(xWat, zWat);

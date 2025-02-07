@@ -85,16 +85,16 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
         int facing = (int) (thePlayer.rotationYaw + 45) % 360;
         if (facing < 0) facing += 360;
         if (dungeonRoom.getRoomMatcher() == null) {
-            BlockPos offsetPoint = new BlockPos((int) thePlayer.posX - dungeonRoom.getMin().getX(),
-                    (int) thePlayer.posY-dungeonRoom.getMin().getY(),
-                    (int) thePlayer.posZ - dungeonRoom.getMin().getZ());
+            BlockPos offsetPoint = new BlockPos((int) thePlayer.posX - dungeonRoom.getRoomBounds().getMin().getX(),
+                    (int) thePlayer.posY-dungeonRoom.getRoomBounds().getMin().getY(),
+                    (int) thePlayer.posZ - dungeonRoom.getRoomBounds().getMin().getZ());
             return new TextSpan(getStyle("coord"), "X: "+offsetPoint.getX()+" Y: "+offsetPoint.getY()+" Z: "+offsetPoint.getZ()+" Room Not Matched");
         } else {
             int real = (facing / 90 + dungeonRoom.getRoomMatcher().getRotation()) % 4;
 
             OffsetVec3 offsetPoint = new OffsetVec3(dungeonRoom, thePlayer.getPositionVector());
 
-            return new TextSpan(getStyle("coord"), "X: " +String.format("%.2f",  offsetPoint.getXCoord()) + " Y: " + String.format("%.2f",  offsetPoint.getYCoord()) + " Z: " + String.format("%.2f",  offsetPoint.getZCoord()) + " Facing: " + FeatureRoomCoordDisplay.facing[real] + " In? "+dungeonRoom.isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector()));
+            return new TextSpan(getStyle("coord"), "X: " +String.format("%.2f",  offsetPoint.getXCoord()) + " Y: " + String.format("%.2f",  offsetPoint.getYCoord()) + " Z: " + String.format("%.2f",  offsetPoint.getZCoord()) + " Facing: " + FeatureRoomCoordDisplay.facing[real] + " In? "+dungeonRoom.getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector()));
         }
     }
 

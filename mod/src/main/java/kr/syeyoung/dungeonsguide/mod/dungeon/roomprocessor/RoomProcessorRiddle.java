@@ -72,8 +72,8 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
         if (foundMatch) {
             ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eRiddle §7:: "+ch2.split(":")[0].trim()+" §fhas the reward!"));
             final String name = TextUtils.stripColor(ch2.split(":")[0]).replace("[NPC] ","").trim();
-            final BlockPos low = getDungeonRoom().getMin();
-            final BlockPos high = getDungeonRoom().getMax();
+            final BlockPos low = getDungeonRoom().getRoomBounds().getMin();
+            final BlockPos high = getDungeonRoom().getRoomBounds().getMax();
             World w = getDungeonRoom().getContext().getWorld();
             List<EntityArmorStand> armor = w.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
                 @Override

@@ -64,7 +64,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
@@ -82,14 +81,9 @@ import java.util.concurrent.*;
 @Getter
 public class DungeonRoom implements IPathfindWorld {
     private final Set<Point> unitPoints;
-    private final short shape;
+    private final RoomBounds roomBounds;
     private final byte color;
 
-    @Getter
-    private int blockUpdateId = 0;
-
-    private final BlockPos min;
-    private final BlockPos max;
     private final Point minRoomPt;
 
     private final DungeonContext context;
@@ -97,9 +91,6 @@ public class DungeonRoom implements IPathfindWorld {
     private final List<DungeonDoor> doors = new ArrayList<>();
 
     private DungeonRoomInfo dungeonRoomInfo;
-
-    private final int unitWidth; // X
-    private final int unitHeight; // Z
 
     @Setter
     private int totalSecrets = -1;
@@ -109,22 +100,22 @@ public class DungeonRoom implements IPathfindWorld {
 
     @Setter
     private World cachedWorld;
-    private CachedWorldBackedCoordinateMap coordinateMap;
+    private WorldBackedCoordinateMap coordinateMap;
     private EditableChunkCache chunkCache;
 
     public World getCachedWorld() {
         if (this.cachedWorld != null) return cachedWorld;
 
 
-        int minZChunk = getMin().getZ() >> 4;
-        int minXChunk = getMin().getX() >> 4;
-        int maxZChunk = getMax().getZ() >> 4;
-        int maxXChunk = getMax().getX() >> 4;
+        int minZChunk = roomBounds.getMin().getZ() >> 4;
+        int minXChunk = roomBounds.getMin().getX() >> 4;
+        int maxZChunk = roomBounds.getMax().getZ() >> 4;
+        int maxXChunk = roomBounds.getMax().getX() >> 4;
 
         for (int z = minZChunk; z <= maxZChunk; z++) {
             for (int x = minXChunk; x <= maxXChunk; x++) {
-                if (!canAccessAbsolute(new BlockPos(x * 16,0, z*16)) && !canAccessAbsolute(new BlockPos(x * 16+15,0, z*16+15))
-                && !canAccessAbsolute(new BlockPos(x * 16+15,0, z*16)) && !canAccessAbsolute(new BlockPos(x * 16,0, z*16+15))) {
+                if (!getRoomBounds().canAccessAbsolute(new BlockPos(x * 16,0, z*16)) && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16+15,0, z*16+15))
+                && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16+15,0, z*16)) && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16,0, z*16+15))) {
                     continue;
                 }
                 Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
@@ -144,10 +135,10 @@ public class DungeonRoom implements IPathfindWorld {
             }
         }
 
-        this.chunkCache = new EditableChunkCache(getContext().getWorld(), min.add(-3, 0, -3), max.add(3,0,3), 0);
+        this.chunkCache = new EditableChunkCache(getContext().getWorld(), roomBounds.getMin().add(-3, 0, -3), roomBounds.getMax().add(3,0,3), 0);
         CachedWorld cachedWorld =  new CachedWorld(chunkCache, context.getWorld().provider);
 
-        coordinateMap = new CachedWorldBackedCoordinateMap(chunkCache, min.getX()-3, 0, min.getZ()-3, max.getX()+3, 256, max.getZ()+3);
+        coordinateMap = new WorldBackedCoordinateMap(cachedWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
 
 
         return this.cachedWorld = cachedWorld;
@@ -217,20 +208,15 @@ public class DungeonRoom implements IPathfindWorld {
     private Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates;
     public DungeonRoom(Set<Point> points, short shape, byte color, BlockPos min, BlockPos max, DungeonContext context, Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
         this.unitPoints = points;
-        this.shape = shape;
         this.color = color;
-        this.min = min;
-        this.max = max;
         this.context = context;
+        roomBounds = new RoomBounds(shape, min, max);
 
         minRoomPt = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
         for (Point pt : unitPoints) {
             if (pt.x < minRoomPt.x) minRoomPt.x = pt.x;
             if (pt.y < minRoomPt.y) minRoomPt.y = pt.y;
         }
-        unitWidth = (int) Math.ceil((max.getX() - min.getX()) / 32.0);
-        unitHeight = (int) Math.ceil((max.getZ() - min.getZ()) / 32.0);
-
 
 
 
@@ -267,26 +253,22 @@ public class DungeonRoom implements IPathfindWorld {
             context.getScaffoldParser().getRoomMap().put(p, this);
         }
 
-
-        this.shape = this.dungeonRoomInfo.getShape();
         this.color = this.dungeonRoomInfo.getColor();
-        this.min = new BlockPos(0, 70, 0);
-        this.max = new BlockPos(dungeonRoomInfo.getBlocks()[0].length - 1, 70,  dungeonRoomInfo.getBlocks().length - 1);
         this.context = context;
+        roomBounds = new RoomBounds(this.dungeonRoomInfo.getShape(), new BlockPos(0, 70, 0), new BlockPos(dungeonRoomInfo.getBlocks()[0].length - 1, 70, dungeonRoomInfo.getBlocks().length - 1));
+
 
         minRoomPt = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
         for (Point pt : unitPoints) {
             if (pt.x < minRoomPt.x) minRoomPt.x = pt.x;
             if (pt.y < minRoomPt.y) minRoomPt.y = pt.y;
         }
-        unitWidth = (int) Math.ceil((max.getX() - min.getX()) / 32.0);
-        unitHeight = (int) Math.ceil((max.getZ() - min.getZ()) / 32.0);
 
 
 
 
-        minx = min.getX() * 2 + 2; miny = 0; minz = min.getZ() * 2 + 2;
-        maxx = max.getX() * 2 + 2; maxy = 255 * 2 + 2; maxz = max.getZ() * 2 + 2;
+        minx = roomBounds.getMin().getX() * 2 + 2; miny = 0; minz = roomBounds.getMin().getZ() * 2 + 2;
+        maxx = roomBounds.getMax().getX() * 2 + 2; maxy = 255 * 2 + 2; maxz = roomBounds.getMax().getZ() * 2 + 2;
 
         lenx = maxx - minx;
         leny = maxy - miny;
@@ -302,7 +284,7 @@ public class DungeonRoom implements IPathfindWorld {
         algorithmSetting = roomPreset.getEffectiveAlgorithmSetting(dungeonRoomInfo);
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
 
-
+        HashSet<BlockPos> poses = new HashSet<>();
         for (DungeonMechanicState value : getMechanics().values()) {
             if (value instanceof DungeonTombState) {
                 for (OffsetPoint offsetPoint : ((DungeonTombState) value).blockedPoints()) {
@@ -314,6 +296,11 @@ public class DungeonRoom implements IPathfindWorld {
                 }
             }
         }
+        coordinateMap = new WorldBackedCoordinateMap(driWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+
+        instaBreak = new InstaBreakFactorCalculatingCoordinateMap(coordinateMap, algorithmSetting);
+        enderpearl = new BitCachingCoordinateMap<>(new PearlCalculatingCoordinateMap(coordinateMap, roomBounds), PearlCalculatingCoordinateMap.PearlLandType.VALUES, PearlCalculatingCoordinateMap.PearlLandType.BLOCKED);
+        whole = new BitCachingCoordinateMap<>(new CollisionStateCalculatingCoordinateMap(coordinateMap, poses, instaBreak, roomBounds), CollisionStateCalculatingCoordinateMap.CollisionState.VALUES, CollisionStateCalculatingCoordinateMap.CollisionState.BLOCKED);
     }
 
     private volatile boolean matched = false;
@@ -383,14 +370,14 @@ public class DungeonRoom implements IPathfindWorld {
             if (color == 18) dungeonRoomInfo.setProcessorId("bossroom");
         } else {
             context.getRecorder().createEvent(new DungeonRoomMatchEvent(getUnitPoints().iterator().next(),
-                    getRoomMatcher().getRotation(), new SerializableBlockPos(getMin()),
-                    new SerializableBlockPos(getMax()), getShape(), getColor(),
+                    getRoomMatcher().getRotation(), new SerializableBlockPos(roomBounds.getMin()),
+                    new SerializableBlockPos(roomBounds.getMax()), getRoomBounds().getShape(), getColor(),
                     dungeonRoomInfo.getUuid(),
                     dungeonRoomInfo.getName(),
                     dungeonRoomInfo.getProcessorId()));
         }
-        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! shape: " + getShape() + " color: " +getColor() + " unitPos: " + unitPoints.iterator().next().x + "," + unitPoints.iterator().next().y));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! mapMin: " + getMin() + " mapMx: " + getMax()));
+        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! shape: " + getRoomBounds().getShape() + " color: " +getColor() + " unitPos: " + unitPoints.iterator().next().x + "," + unitPoints.iterator().next().y));
+        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! mapMin: " + roomBounds.getMin() + " mapMx: " + roomBounds.getMax()));
         ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! id: " + dungeonRoomInfo.getUuid() + " name: " + dungeonRoomInfo.getName() +" proc: "+dungeonRoomInfo.getProcessorId()));
 
 
@@ -400,6 +387,7 @@ public class DungeonRoom implements IPathfindWorld {
         roomPreset = context.getPreset().getRoomPreset(dungeonRoomInfo.getUuid());
         algorithmSetting = roomPreset.getEffectiveAlgorithmSetting(dungeonRoomInfo);
 
+        HashSet<BlockPos> poses = new HashSet<>();
         for (DungeonMechanicState value : getMechanics().values()) {
                         if (value instanceof DungeonTombState) {
                             for (OffsetPoint offsetPoint : ((DungeonTombState) value).blockedPoints()) {
@@ -411,9 +399,10 @@ public class DungeonRoom implements IPathfindWorld {
                             }
                         }
                     }
+
         instaBreak = new InstaBreakFactorCalculatingCoordinateMap(coordinateMap, algorithmSetting);
-        enderpearl = new BitCachingCoordinateMap<>(new PearlCalculatingCoordinateMap(coordinateMap, minx, miny, minz, maxx, maxy, maxz), PearlCalculatingCoordinateMap.PearlLandType.VALUES, PearlCalculatingCoordinateMap.PearlLandType.BLOCKED);
-        whole = new BitCachingCoordinateMap<>(new CollisionStateCalculatingCoordinateMap(coordinateMap, minx, miny, minz, maxx, maxy, maxz, this, instaBreak), CollisionStateCalculatingCoordinateMap.CollisionState.VALUES, CollisionStateCalculatingCoordinateMap.CollisionState.BLOCKED);
+        enderpearl = new BitCachingCoordinateMap<>(new PearlCalculatingCoordinateMap(coordinateMap, roomBounds), PearlCalculatingCoordinateMap.PearlLandType.VALUES, PearlCalculatingCoordinateMap.PearlLandType.BLOCKED);
+        whole = new BitCachingCoordinateMap<>(new CollisionStateCalculatingCoordinateMap(coordinateMap, poses, instaBreak, roomBounds), CollisionStateCalculatingCoordinateMap.CollisionState.VALUES, CollisionStateCalculatingCoordinateMap.CollisionState.BLOCKED);
 
 
         Set<String> pathfinders = roomPreset.getPrecalculations();
@@ -526,7 +515,7 @@ public class DungeonRoom implements IPathfindWorld {
     public Block getAbsoluteBlockAt(int x, int y, int z) {
         // validate x y z's
         BlockPos pos = new BlockPos(x,y,z);
-        if (canAccessAbsolute(pos)) {
+        if (getRoomBounds().canAccessAbsolute(pos)) {
             return getCachedWorld().getBlockState(pos).getBlock();
         }
         return null;
@@ -534,63 +523,32 @@ public class DungeonRoom implements IPathfindWorld {
 
     public Block getRelativeBlockAt(int x, int y, int z) {
         // validate x y z's
-        if (canAccessRelative(x,z)) {
-            BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getY(),min.getZ());
+        if (getRoomBounds().canAccessRelative(x,z)) {
+            BlockPos pos = new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
             return getCachedWorld().getBlockState(pos).getBlock();
         }
         return null;
     }
 
     public BlockPos getRelativeBlockPosAt(int x, int y, int z) {
-        BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getY(),min.getZ());
+        BlockPos pos = new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
         return pos;
     }
 
     public Vec3 getRelativeVec3At(double x, double y, double z) {
-        Vec3 pos = new Vec3(x,y,z).addVector(min.getX(),min.getY(),min.getZ());
+        Vec3 pos = new Vec3(x,y,z).addVector(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
         return pos;
     }
+
     public int getRelativeBlockDataAt(int x, int y, int z) {
         // validate x y z's
-        if (canAccessRelative(x,z)) {
-            BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getY(),min.getZ());
+        if (getRoomBounds().canAccessRelative(x,z)) {
+            BlockPos pos = new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
             IBlockState iBlockState = getCachedWorld().getBlockState(pos);
             return iBlockState.getBlock().getMetaFromState(iBlockState);
         }
         return -1;
     }
-
-    public int getAbsoluteBlockDataAt(int x, int y, int z) {
-        // validate x y z's
-        BlockPos pos = new BlockPos(x,y,z);
-        if (canAccessAbsolute(pos)) {
-            IBlockState iBlockState = getCachedWorld().getBlockState(pos);
-            return iBlockState.getBlock().getMetaFromState(iBlockState);
-        }
-        return -1;
-    }
-
-    public boolean canAccessAbsolute(BlockPos pos) {
-        return canAccessRelative(pos.getX() - this.min.getX(), pos.getZ() - this.min.getZ());
-    }
-    public boolean canAccessRelative(int x, int z) {
-        if (x/32 >= 4 || z / 32 >= 4) return false;
-        boolean firstCond =  x> 0 && z > 0 && (shape >>((z/32) *4 +(x/32)) & 0x1) > 0;
-        boolean zCond = (shape >> ((z / 32) * 4 + (x / 32) - 1) & 0x1) > 0;
-        boolean xCond = (shape >> ((z / 32) * 4 + (x / 32) - 4) & 0x1) > 0;
-        if (x % 32 == 0 && z % 32 == 0) {
-            return firstCond && (shape >>((z/32) *4 +(x/32) - 5) & 0x1) > 0
-                    && xCond
-                    && zCond;
-        } else if (x % 32 == 0) {
-            return firstCond && zCond;
-        } else if (z % 32 == 0) {
-            return firstCond && xCond;
-        }
-
-        return firstCond;
-    }
-
 
 
     private BitCachingCoordinateMap<PearlCalculatingCoordinateMap.PearlLandType> enderpearl;
@@ -612,21 +570,13 @@ public class DungeonRoom implements IPathfindWorld {
 
 
     public boolean isInstabreak(int x, int y, int z) {
-        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y+4 >= maxy) return false;
+//        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y+4 >= maxy) return false;
+        // TODO: what to do with this sanity check?
         if (x%2 != 0 && z%2 != 0) return false;
 
         return instaBreak.getBlock(x/2, y/2, z/2).getFactor()  == 0;
     }
 
-    private HashSet<BlockPos> poses = new HashSet<>();
-
-    public boolean isFullyWithin(Vec3 vec) {
-        if (vec.xCoord * 2 <= minx + 1 || vec.zCoord * 2 <= minz + 1) return false;
-        if (vec.xCoord * 2 >= maxx - 1 || vec.zCoord * 2 >= maxz - 1) return false;
-        if (!canAccessRelative( (int) Math.floor((vec.xCoord * 2 - minx + 1) / 2), (int) Math.floor((vec.zCoord * 2 - minz + 1) / 2))) return false;
-        if (!canAccessRelative( (int) Math.floor((vec.xCoord * 2 - minx + 3) / 2), (int) Math.floor((vec.zCoord * 2 - minz + 3) / 2))) return false;
-        return true;
-    }
 
 
     @Override
@@ -637,7 +587,6 @@ public class DungeonRoom implements IPathfindWorld {
     public CollisionStateCalculatingCoordinateMap.CollisionState getBlock(int x, int y, int z) {
         return whole.getBlock(x, y, z);
     }
-
 
     public PearlCalculatingCoordinateMap.PearlLandType getPearl(int x, int y, int z) {
         return enderpearl.getBlock(x, y, z);
@@ -679,21 +628,10 @@ public class DungeonRoom implements IPathfindWorld {
         for (int x = -2; x <= 2; x++) {
             for (int y = -5; y <= 5; y++) {
                 for (int z = -2; z <= 2; z++) {
-                    resetBlock2(pos.getX()*2 + x, pos.getY()*2 + y, pos.getZ()*2 + z);
-                    resetBlock3(pos.getX() * 2 + x, pos.getY() * 2 + y, pos.getZ() * 2 + z);
+                    whole.update(pos.getX() * 2 + x, pos.getY() * 2 + y, pos.getZ() *2 + z);
+                    enderpearl.update(pos.getX() * 2 + x, pos.getY() * 2 + y, pos.getZ() *2 + z);
                 }
             }
-        }
-
-    }
-    private void resetBlock2(int x, int y, int z) {
-        if (whole.update(x, y, z)) {
-            blockUpdateId++;
-        }
-    }
-    private void resetBlock3(int x, int y, int z) {
-        if (enderpearl.update(x, y, z)) {
-            blockUpdateId++;
         }
     }
 
@@ -701,14 +639,13 @@ public class DungeonRoom implements IPathfindWorld {
         if (!chunkCache.isManaged(cx, cz)) {
             return;
         }
-//        ChatTransmitter.sendDebugChat("UPDATING!!! "+cx+"/"+cz +" from "+dungeonRoomInfo.getName());
         chunkCache.updateChunk(new BlockPos(cx*16+8, 0, cz*16+8));
 
         for (int x = 0; x < 16; x ++) { // fix pf not going through big block updates
             for (int z = 0; z < 16; z++) {
                 for (int y = 0; y < 255; y++) {
-                    resetBlock2(cx * 16 + x, y, cz * 16 + z);
-                    resetBlock3(cx * 16 + x, y, cz * 16 + z);
+                    whole.update(cx * 16 + x, y, cz * 16 + z);
+                    enderpearl.update(cx * 16 + x, y, cz * 16 + z);
                 }
             }
         }

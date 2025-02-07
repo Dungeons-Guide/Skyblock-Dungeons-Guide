@@ -60,8 +60,8 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
 
         DungeonRoom dungeonRoom = getDungeonRoom();
         World w = dungeonRoom.getContext().getWorld();
-        final BlockPos low = dungeonRoom.getMin();
-        final BlockPos high = dungeonRoom.getMax();
+        final BlockPos low = dungeonRoom.getRoomBounds().getMin();
+        final BlockPos high = dungeonRoom.getRoomBounds().getMax();
         entityList = new ArrayList<EntityArmorStand>(w.getEntities(EntityArmorStand.class, input -> {
             BlockPos pos = input.getPosition();
             return low.getX() < pos.getX() && pos.getX() < high.getX()

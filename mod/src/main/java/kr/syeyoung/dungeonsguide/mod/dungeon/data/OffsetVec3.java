@@ -56,7 +56,7 @@ public class OffsetVec3 implements Cloneable {
 
 
     public void setPosInWorld(DungeonRoom dungeonRoom, Vec3 pos) {
-        Vector2d vector2d = new Vector2d(pos.xCoord - dungeonRoom.getMin().getX(), pos.zCoord - dungeonRoom.getMin().getZ());
+        Vector2d vector2d = new Vector2d(pos.xCoord - dungeonRoom.getRoomBounds().getMin().getX(), pos.zCoord - dungeonRoom.getRoomBounds().getMin().getZ());
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             vector2d = VectorUtils.rotateClockwise(vector2d);
             if (i % 2 == 0) {
@@ -68,7 +68,7 @@ public class OffsetVec3 implements Cloneable {
 
         this.xCoord = vector2d.x;
         this.zCoord = vector2d.y;
-        this.yCoord = pos.yCoord - dungeonRoom.getMin().getY();
+        this.yCoord = pos.yCoord - dungeonRoom.getRoomBounds().getMin().getY();
     }
 
     public void setPosInWorld(int xWid, int zWid, int minX, int minY, int minZ, double x, double y, double z, int rotation) {
@@ -93,9 +93,9 @@ public class OffsetVec3 implements Cloneable {
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             rot = VectorUtils.rotateCounterClockwise(rot);
             if (i % 2 == 0) {
-                rot.y += dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 2; // + Z
+                rot.y += dungeonRoom.getRoomBounds().getMax().getZ() - dungeonRoom.getRoomBounds().getMin().getZ() + 2; // + Z
             } else {
-                rot.y += dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 2; // + X
+                rot.y += dungeonRoom.getRoomBounds().getMax().getX() - dungeonRoom.getRoomBounds().getMin().getX() + 2; // + X
             }
         }
 

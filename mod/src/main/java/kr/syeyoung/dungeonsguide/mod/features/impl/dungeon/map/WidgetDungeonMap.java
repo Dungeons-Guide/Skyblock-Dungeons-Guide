@@ -394,7 +394,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
 
             int offX = 0, offY = 0, width = 0;
             if (nameRotation != MapConfiguration.NameSettings.NameRotation.ROTATE) {
-                Rectangle fit = maxFit(rot, dungeonRoom.getShape());
+                Rectangle fit = maxFit(rot, dungeonRoom.getRoomBounds().getShape());
                 if ((fit.height - fit.width) * (rot % 2 == 0 ? 1 : -1) > 0 && nameRotation == MapConfiguration.NameSettings.NameRotation.SNAP_LONG) {
                     if (fit.height - fit.width > 0) {
                         rot = (((int) (snapRotation / 90) % 4 + 4) % 4);
@@ -413,7 +413,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                     }
                     rot = (int) ((firstSnap) / 90 % 4);
                     rot = rot % 4;
-                    fit = maxFit(rot, dungeonRoom.getShape());
+                    fit = maxFit(rot, dungeonRoom.getRoomBounds().getShape());
                 }
                 Point mapPt = layout.roomPointToMapPoint(dungeonRoom.getMinRoomPt());
 
@@ -438,7 +438,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 offY += mapPt.y;
             } else {
                 Point mapPt = layout.roomPointToMapPoint(dungeonRoom.getMinRoomPt());
-                Rectangle fit = maxFit(0, dungeonRoom.getShape());
+                Rectangle fit = maxFit(0, dungeonRoom.getRoomBounds().getShape());
                 offX = mapPt.x + (fit.width * unitRoomBigWidth - gap) / 2;
                 offY = mapPt.y + (fit.height * unitRoomBigHeight - gap) / 2;
                 width = fit.width;
@@ -503,7 +503,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
             int offX = mapPt.x + unitRoomWidth / 2;
             int offY = mapPt.y + unitRoomHeight / 2;
             if (mapConfiguration.getCheckmarkSettings().isCenter()) {
-                Rectangle fit = maxFit(0, dungeonRoom.getShape());
+                Rectangle fit = maxFit(0, dungeonRoom.getRoomBounds().getShape());
                 offX = mapPt.x + fit.x * unitRoomBigWidth + (fit.width * unitRoomBigWidth - gap) / 2;
                 offY = mapPt.y + fit.y * unitRoomBigHeight + (fit.height * unitRoomBigHeight - gap) / 2;
 //                System.out.println(dungeonRoom.getShape() + " / "+ fit);
@@ -715,8 +715,8 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 int heightPixels = maxHeight * unitRoomBigHeight - gap;
                 int widthTexturePixels = maxWidth * 20 - 4;
                 int heightTexturePixels = maxHeight * 20 - 4;
-                int rWidthPixels = dungeonRoom.getUnitWidth() * unitRoomBigWidth - gap;
-                int rHeightPixels = dungeonRoom.getUnitHeight() * unitRoomBigHeight - gap;
+                int rWidthPixels = dungeonRoom.getRoomBounds().getUnitLenX() * unitRoomBigWidth - gap;
+                int rHeightPixels = dungeonRoom.getRoomBounds().getUnitLenZ() * unitRoomBigHeight - gap;
 
                 Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(override.getTextureLocation()));
                 GlStateManager.pushMatrix();;
@@ -730,10 +730,10 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
                 for (int y = 0; y < 4; y++) {
                     for (int x = 0; x < 4; x++) {
-                        boolean isIn = ((dungeonRoom.getShape() >> ((y * 4) + x)) & 0x1) > 0;
-                        boolean isRightIn = ((dungeonRoom.getShape() >> ((y * 4) + x +1)) & 0x1) > 0 && x < 3;
-                        boolean isBottomIn = ((dungeonRoom.getShape() >> ((y * 4) + x + 4)) & 0x1) > 0 && y < 3;
-                        boolean isBottomRightIn = ((dungeonRoom.getShape() >> ((y * 4) + x  + 5)) & 0x1) > 0 && y < 3 && x < 3;
+                        boolean isIn = ((dungeonRoom.getRoomBounds().getShape() >> ((y * 4) + x)) & 0x1) > 0;
+                        boolean isRightIn = ((dungeonRoom.getRoomBounds().getShape() >> ((y * 4) + x +1)) & 0x1) > 0 && x < 3;
+                        boolean isBottomIn = ((dungeonRoom.getRoomBounds().getShape() >> ((y * 4) + x + 4)) & 0x1) > 0 && y < 3;
+                        boolean isBottomRightIn = ((dungeonRoom.getRoomBounds().getShape() >> ((y * 4) + x  + 5)) & 0x1) > 0 && y < 3 && x < 3;
 
                         int offX = mapPt.x + x * unitRoomBigWidth;
                         int offY = mapPt.y + y * unitRoomBigHeight;

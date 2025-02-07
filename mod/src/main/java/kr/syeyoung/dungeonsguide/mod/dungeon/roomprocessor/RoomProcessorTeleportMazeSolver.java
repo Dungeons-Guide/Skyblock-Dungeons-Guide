@@ -42,7 +42,7 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
 
     public RoomProcessorTeleportMazeSolver(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
-        yLevel = dungeonRoom.getMin().getY() - 1;
+        yLevel = dungeonRoom.getRoomBounds().getMin().getY() - 1;
     }
 
     private final List<BlockPos> visitedPortals = new ArrayList<BlockPos>();

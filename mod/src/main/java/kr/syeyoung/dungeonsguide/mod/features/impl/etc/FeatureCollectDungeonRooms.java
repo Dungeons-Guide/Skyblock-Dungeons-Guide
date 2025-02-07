@@ -450,8 +450,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             RoomInfo roomInfo = roomInfoMap.get(dungeonRoomListEntry.getKey());
             if (roomInfo  == null) continue;
             roomInfo.blockUpdates.add(new RoomInfo.BlockUpdate(dungeonRoomListEntry.getValue().stream().map(it -> new RoomInfo.BlockUpdate.BlockUpdateData(it.getFirst(), it.getSecond())).collect(Collectors.toList()), System.currentTimeMillis()));
-            roomInfo.minX = dungeonRoomListEntry.getKey().getMin().getX();
-            roomInfo.minZ = dungeonRoomListEntry.getKey().getMin().getZ();
+            roomInfo.minX = dungeonRoomListEntry.getKey().getRoomBounds().getMin().getX();
+            roomInfo.minZ = dungeonRoomListEntry.getKey().getRoomBounds().getMin().getZ();
 
         }
     }
@@ -547,7 +547,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                 jsonObject.addProperty("correlation", correlationId);
                 jsonObject.addProperty("minX", roomInfo.minX);
                 jsonObject.addProperty("minZ", roomInfo.minZ);
-                jsonObject.addProperty("shape", dungeonRoomRoomInfoEntry.getKey().getShape());
+                jsonObject.addProperty("shape", dungeonRoomRoomInfoEntry.getKey().getRoomBounds().getShape());
                 jsonObject.addProperty("color", dungeonRoomRoomInfoEntry.getKey().getColor());
                 jsonObject.addProperty("secrets", dungeonRoomRoomInfoEntry.getKey().getTotalSecrets());
                 jsonObject.add("entities", gson.toJsonTree(roomInfo.entityData));
@@ -642,9 +642,9 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
     private NBTTagCompound createNBT(RoomInfo roomInfo, DungeonRoom dungeonRoom) {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setShort("Width", (short) (dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 1));
+        compound.setShort("Width", (short) (dungeonRoom.getRoomBounds().getMax().getX() - dungeonRoom.getRoomBounds().getMin().getX() + 1));
         compound.setShort("Height", (short) 255);
-        compound.setShort("Length", (short) (dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 1));
+        compound.setShort("Length", (short) (dungeonRoom.getRoomBounds().getMax().getZ() - dungeonRoom.getRoomBounds().getMin().getZ() + 1));
         int size =compound.getShort("Width") * compound.getShort("Height") * compound.getShort("Length");
 
         byte[] blocks = new byte[size];

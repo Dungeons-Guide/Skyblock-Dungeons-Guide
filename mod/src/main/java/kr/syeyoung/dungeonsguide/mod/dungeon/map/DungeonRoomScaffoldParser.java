@@ -115,15 +115,15 @@ public class DungeonRoomScaffoldParser {
 
                     // USELESS DEBUG CODE
                     context.getRecorder().createEvent(new DungeonRoomDiscoverEvent(room.getUnitPoints().iterator().next(),
-                            new SerializableBlockPos(room.getMin()), new SerializableBlockPos(room.getMax()),
-                            room.getShape(), room.getColor()));
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("New Map discovered! shape: " + room.getShape() + " color: " + room.getColor() + " unitPos: " + x + "," + y));
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: " + room.getMin() + " mapMx: " + room.getMax()));
+                            new SerializableBlockPos(room.getRoomBounds().getMin()), new SerializableBlockPos(room.getRoomBounds().getMax()),
+                            room.getRoomBounds().getShape(), room.getColor()));
+                    ChatTransmitter.sendDebugChat(new ChatComponentText("New Map discovered! shape: " + room.getRoomBounds().getShape() + " color: " + room.getColor() + " unitPos: " + x + "," + y));
+                    ChatTransmitter.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: " + room.getRoomBounds().getMin() + " mapMx: " + room.getRoomBounds().getMax()));
                     StringBuilder builder = new StringBuilder();
                     for (int dy = 0; dy < 4; dy++) {
                         builder.append("\n");
                         for (int dx = 0; dx < 4; dx++) {
-                            boolean isSet = ((room.getShape() >> (dy * 4 + dx)) & 0x1) != 0;
+                            boolean isSet = ((room.getRoomBounds().getShape() >> (dy * 4 + dx)) & 0x1) != 0;
                             builder.append(isSet ? "O" : "X");
                         }
                     }
