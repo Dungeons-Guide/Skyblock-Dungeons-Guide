@@ -57,7 +57,6 @@ public class CoordinateMapBackedPathfindWorld implements IPathfindWorld {
     @Override
     public boolean isInstabreak(int x, int y, int z) {
         if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y+4 >= maxy) return false;
-        // TODO: what to do with this sanity check?
         if (x%2 != 0 && z%2 != 0) return false;
 
         return instaBreak.getBlock(x/2, y/2, z/2).getFactor()  == 0;

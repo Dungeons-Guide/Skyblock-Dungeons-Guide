@@ -174,7 +174,7 @@ public class DungeonServerLaunchUtils {
         System.gc();
 
         try {
-            theIntegratedServer = new DungeonIntegratedServer(mc, dungeonRoomInfo); // TODO: find SRG
+            theIntegratedServer = new DungeonIntegratedServer(mc, dungeonRoomInfo);
             theIntegratedServer.startServerThread();
             ReflectionHelper.setPrivateValue(Minecraft.class, mc, true, "integratedServerIsRunning", "field_2575", "field_71455_al", "aw");
         }
