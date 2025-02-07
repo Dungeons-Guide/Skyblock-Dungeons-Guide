@@ -79,7 +79,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 @Getter
-public class DungeonRoom implements IPathfindWorld {
+public class DungeonRoom  {
     private final Set<Point> unitPoints;
     private final RoomBounds roomBounds;
     private final byte color;
@@ -163,39 +163,10 @@ public class DungeonRoom implements IPathfindWorld {
         this.currentState = currentState;
     }
 
-    private final Map<Vec3, WeakReference<PathfinderExecutor>> activePathfind = new HashMap<>();
-
-
-    public PathfinderExecutor createEntityPathTo(BoundingBox pos) {
-        FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.SECRET_PATHFIND_STRATEGY.getPathfindStrat();
-        if (activePathfind.containsKey(pos.center())) {
-            WeakReference<PathfinderExecutor> executorWeakReference = activePathfind.get(pos.center());
-            PathfinderExecutor executor = executorWeakReference.get();
-            if (executor != null) {
-                return executor;
-            }
-        }
-        if (true)
-            return null;
-        PathfinderExecutor executor;
-        if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID_SMART) {
-            executor = new PathfinderExecutor(new FineGridStonkingBFS(algorithmSetting), pos, this);
-        } else {
-            return  null;
-        }
-        activePathfind.put(pos.center(), new WeakReference<>(executor));
-        context.getExecutors().add(new WeakReference<>(executor));
-        return executor;
-    }
     private static final ExecutorService roomMatcherThread = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newSingleThreadExecutor(
             new ThreadFactoryBuilder()
                     .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
                     .setNameFormat("DG-RoomMatcher-%d").build()));
-    private static final ExecutorService pathfindLoaderThread = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newFixedThreadPool(8,
-            new ThreadFactoryBuilder()
-                    .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
-                    .setNameFormat("DG-PathfindLoader-%d").build()));
-
     @AllArgsConstructor
     @Getter
     public enum RoomState {
@@ -218,14 +189,6 @@ public class DungeonRoom implements IPathfindWorld {
             if (pt.y < minRoomPt.y) minRoomPt.y = pt.y;
         }
 
-
-
-        minx = min.getX() * 2 + 2; miny = 0; minz = min.getZ() * 2 + 2;
-        maxx = max.getX() * 2 + 2; maxy = 255 * 2 + 2; maxz = max.getZ() * 2 + 2;
-
-        lenx = maxx - minx;
-        leny = maxy - miny;
-        lenz = maxz - minz;
 
         this.doorsAndStates = doorsAndStates;
         tryRematch();
@@ -265,23 +228,12 @@ public class DungeonRoom implements IPathfindWorld {
         }
 
 
-
-
-        minx = roomBounds.getMin().getX() * 2 + 2; miny = 0; minz = roomBounds.getMin().getZ() * 2 + 2;
-        maxx = roomBounds.getMax().getX() * 2 + 2; maxy = 255 * 2 + 2; maxz = roomBounds.getMax().getZ() * 2 + 2;
-
-        lenx = maxx - minx;
-        leny = maxy - miny;
-        lenz = maxz - minz;
-
         this.doorsAndStates = new HashSet<>();
         this.cachedWorld = driWorld;
         this.roomMatcher = new RoomMatcher(this);
         this.roomMatcher.setMatch(dungeonRoomInfo);
         this.roomMatcher.setRotation(0);
 
-        roomPreset = context.getPreset().getRoomPreset(dungeonRoomInfo.getUuid());
-        algorithmSetting = roomPreset.getEffectiveAlgorithmSetting(dungeonRoomInfo);
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
 
         HashSet<BlockPos> poses = new HashSet<>();
@@ -297,10 +249,6 @@ public class DungeonRoom implements IPathfindWorld {
             }
         }
         coordinateMap = new WorldBackedCoordinateMap(driWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
-
-        instaBreak = new InstaBreakFactorCalculatingCoordinateMap(coordinateMap, algorithmSetting);
-        enderpearl = new BitCachingCoordinateMap<>(new PearlCalculatingCoordinateMap(coordinateMap, roomBounds), PearlCalculatingCoordinateMap.PearlLandType.VALUES, PearlCalculatingCoordinateMap.PearlLandType.BLOCKED);
-        whole = new BitCachingCoordinateMap<>(new CollisionStateCalculatingCoordinateMap(coordinateMap, poses, instaBreak, roomBounds), CollisionStateCalculatingCoordinateMap.CollisionState.VALUES, CollisionStateCalculatingCoordinateMap.CollisionState.BLOCKED);
     }
 
     private volatile boolean matched = false;
@@ -383,122 +331,6 @@ public class DungeonRoom implements IPathfindWorld {
 
         this.dungeonRoomInfo = dungeonRoomInfo;
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
-
-        roomPreset = context.getPreset().getRoomPreset(dungeonRoomInfo.getUuid());
-        algorithmSetting = roomPreset.getEffectiveAlgorithmSetting(dungeonRoomInfo);
-
-        HashSet<BlockPos> poses = new HashSet<>();
-        for (DungeonMechanicState value : getMechanics().values()) {
-                        if (value instanceof DungeonTombState) {
-                            for (OffsetPoint offsetPoint : ((DungeonTombState) value).blockedPoints()) {
-                                poses.add(offsetPoint.getBlockPos(this));
-                            }
-                        } else if (value instanceof DungeonBreakableWallState) {
-                            for (OffsetPoint offsetPoint : ((DungeonBreakableWallState) value).blockedPoints()) {
-                                poses.add(offsetPoint.getBlockPos(this));
-                            }
-                        }
-                    }
-
-        instaBreak = new InstaBreakFactorCalculatingCoordinateMap(coordinateMap, algorithmSetting);
-        enderpearl = new BitCachingCoordinateMap<>(new PearlCalculatingCoordinateMap(coordinateMap, roomBounds), PearlCalculatingCoordinateMap.PearlLandType.VALUES, PearlCalculatingCoordinateMap.PearlLandType.BLOCKED);
-        whole = new BitCachingCoordinateMap<>(new CollisionStateCalculatingCoordinateMap(coordinateMap, poses, instaBreak, roomBounds), CollisionStateCalculatingCoordinateMap.CollisionState.VALUES, CollisionStateCalculatingCoordinateMap.CollisionState.BLOCKED);
-
-
-        Set<String> pathfinders = roomPreset.getPrecalculations();
-        if (pathfinders != null) {
-            for (String precalcId : pathfinders) {
-                loadPrecalculated(precalcId);
-            }
-        }
-
-
-        // build tsp cache.
-        ActionDAG dag = AdditionalInfoCaculatedDungeonRoomInfo.buildReferencingAllPossibleThings(this);
-        List<AbstractActionMove> listOfMoves = new ArrayList<>();
-        for (ActionDAGNode actionDAGNode : dag.getAllNodes()) {
-            if (actionDAGNode.getAction() instanceof AtomicAction) {
-                for (AbstractAction actionInAtomicAction : ((AtomicAction) actionDAGNode.getAction()).getActions()) {
-                    if (actionInAtomicAction instanceof AbstractActionMove) {
-                        listOfMoves.add((AbstractActionMove) actionInAtomicAction);
-                    }
-                }
-            } else if (actionDAGNode.getAction() instanceof AbstractActionMove) {
-                listOfMoves.add((AbstractActionMove) actionDAGNode.getAction());
-            }
-        }
-
-        List<OffsetVec3> vec3 = new ArrayList<>();
-        for (AbstractActionMove listOfMove : listOfMoves) {
-            vec3.add(listOfMove.getTargetVec3());
-        }
-
-        long start = System.currentTimeMillis();
-
-        tspCache = new TSPCache(this, vec3, Collections.EMPTY_LIST);
-        for (PathfindPrecalculation value : idCalculation.values()) {
-            try {
-                tspCache.addToCache(value);
-            } catch (IOException e) { e.printStackTrace(); }
-        }
-        ChatTransmitter.sendDebugChat("Building TSP Cache took "+(System.currentTimeMillis() - start)+"ms");
-
-    }
-
-    @Getter
-    private TSPCache tspCache;
-
-    private final Map<String, WeakReference<PathfinderExecutor>> idExecutor = new HashMap<>();
-    private final Map<String, PathfindPrecalculation> idCalculation = new HashMap<>();
-    public void loadPrecalculated(String id) {
-        PathfindPrecalculation cachedPathfinder = PathfindResultRegistry.getINSTANCE().getById(id);
-        if (cachedPathfinder == null) return;
-        if (idCalculation.containsKey(id)) return;
-        idCalculation.put(cachedPathfinder.getTargetHash(), cachedPathfinder);
-    }
-
-    public PathfindPrecalculation loadPrecalculatedUnloadedByHash(String hash) {
-        if (!idCalculation.containsKey(hash)) {
-            if (nextShowedWarning < System.currentTimeMillis()) {
-                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cPrecalculation "+hash+" in room "+dungeonRoomInfo.getName()+" is §4§lMISSING §cin currently applied preset §e"+roomPreset.getParent().getPresetName()+"§c. There may be some problems in pathfinding. Please add precalculations at /dg -> Pathfinding & Secrets -> Precalculations");
-                nextShowedWarning = System.currentTimeMillis() + 30000L;
-            }
-            return null;
-        }
-
-        return idCalculation.get(hash);
-    }
-
-    private long nextShowedWarning = 0;
-    public synchronized PathfinderExecutor loadPrecalculatedByHash(String hash) {
-        if (!idCalculation.containsKey(hash)) {
-            if (nextShowedWarning < System.currentTimeMillis()) {
-                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cPrecalculation "+hash+" in room "+dungeonRoomInfo.getName()+" is §4§lMISSING §cin currently applied preset §e"+roomPreset.getParent().getPresetName()+"§c. There may be some problems in pathfinding. Please add precalculations at /dg -> Pathfinding & Secrets -> Precalculations");
-                nextShowedWarning = System.currentTimeMillis() + 30000L;
-            }
-            return null;
-        }
-
-        if (idExecutor.containsKey(hash)) {
-            WeakReference<PathfinderExecutor> executorSoftReference = idExecutor.get(hash);
-            PathfinderExecutor executor = executorSoftReference.get();
-            if (executor != null) return executor;
-            idExecutor.remove(hash);
-        };
-
-        System.out.println("LOADING:: "+hash);
-        PathfindPrecalculation precalculation = idCalculation.get(hash);
-
-        try {
-            IPathfinder pathfinder = precalculation.createPathfinder(getRoomMatcher().getRotation());
-            PathfinderExecutor executor1 = new PathfinderExecutor(pathfinder, BoundingBox.of(AxisAlignedBB.fromBounds(0,0,0,0,0,0)), this);
-            idExecutor.put(precalculation.getTargetHash(), new WeakReference<>(executor1));
-            executor1.doStep();
-            return executor1;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
 
@@ -512,15 +344,6 @@ public class DungeonRoom implements IPathfindWorld {
         }
     }
 
-    public Block getAbsoluteBlockAt(int x, int y, int z) {
-        // validate x y z's
-        BlockPos pos = new BlockPos(x,y,z);
-        if (getRoomBounds().canAccessAbsolute(pos)) {
-            return getCachedWorld().getBlockState(pos).getBlock();
-        }
-        return null;
-    }
-
     public Block getRelativeBlockAt(int x, int y, int z) {
         // validate x y z's
         if (getRoomBounds().canAccessRelative(x,z)) {
@@ -531,13 +354,11 @@ public class DungeonRoom implements IPathfindWorld {
     }
 
     public BlockPos getRelativeBlockPosAt(int x, int y, int z) {
-        BlockPos pos = new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
-        return pos;
+        return new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
     }
 
     public Vec3 getRelativeVec3At(double x, double y, double z) {
-        Vec3 pos = new Vec3(x,y,z).addVector(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
-        return pos;
+        return new Vec3(x,y,z).addVector(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
     }
 
     public int getRelativeBlockDataAt(int x, int y, int z) {
@@ -551,103 +372,11 @@ public class DungeonRoom implements IPathfindWorld {
     }
 
 
-    private BitCachingCoordinateMap<PearlCalculatingCoordinateMap.PearlLandType> enderpearl;
-    private BitCachingCoordinateMap<CollisionStateCalculatingCoordinateMap.CollisionState> whole;
-    private InstaBreakFactorCalculatingCoordinateMap instaBreak;
-
-    // These values are doubled
-    private final int minx;
-    private final int miny;
-    private final int minz;
-    private final int maxx;
-    private final int maxy;
-    private final int maxz;
-    private final int lenx, leny, lenz;
-
-    private AlgorithmSetting algorithmSetting;
-    private RoomPreset roomPreset;
-
-
-
-    public boolean isInstabreak(int x, int y, int z) {
-//        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y+4 >= maxy) return false;
-        // TODO: what to do with this sanity check?
-        if (x%2 != 0 && z%2 != 0) return false;
-
-        return instaBreak.getBlock(x/2, y/2, z/2).getFactor()  == 0;
-    }
-
-
-
-    @Override
-    public IBlockState getActualBlock(int x, int y, int z) {
-        return getCachedWorld().getBlockState(new BlockPos(x,y,z));
-    }
-
-    public CollisionStateCalculatingCoordinateMap.CollisionState getBlock(int x, int y, int z) {
-        return whole.getBlock(x, y, z);
-    }
-
-    public PearlCalculatingCoordinateMap.PearlLandType getPearl(int x, int y, int z) {
-        return enderpearl.getBlock(x, y, z);
-    }
-
-
-    @Override
-    public int getXwidth() {
-        return lenx;
-    }
-
-    @Override
-    public int getYwidth() {
-        return leny;
-    }
-
-    @Override
-    public int getZwidth() {
-        return lenz;
-    }
-
-    @Override
-    public int getMinX() {
-        return minx;
-    }
-
-    @Override
-    public int getMinY() {
-        return miny;
-    }
-
-    @Override
-    public int getMinZ() {
-        return minz;
-    }
-
-
-    public void resetBlock(BlockPos pos) { // I think it can be optimize due to how it is saved in arr
-        for (int x = -2; x <= 2; x++) {
-            for (int y = -5; y <= 5; y++) {
-                for (int z = -2; z <= 2; z++) {
-                    whole.update(pos.getX() * 2 + x, pos.getY() * 2 + y, pos.getZ() *2 + z);
-                    enderpearl.update(pos.getX() * 2 + x, pos.getY() * 2 + y, pos.getZ() *2 + z);
-                }
-            }
-        }
-    }
 
     public void chunkUpdate(int cx, int cz) {
         if (!chunkCache.isManaged(cx, cz)) {
             return;
         }
         chunkCache.updateChunk(new BlockPos(cx*16+8, 0, cz*16+8));
-
-        for (int x = 0; x < 16; x ++) { // fix pf not going through big block updates
-            for (int z = 0; z < 16; z++) {
-                for (int y = 0; y < 255; y++) {
-                    whole.update(cx * 16 + x, y, cz * 16 + z);
-                    enderpearl.update(cx * 16 + x, y, cz * 16 + z);
-                }
-            }
-        }
     }
 }

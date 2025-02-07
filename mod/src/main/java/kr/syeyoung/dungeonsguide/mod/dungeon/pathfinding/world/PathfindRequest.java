@@ -186,9 +186,9 @@ public class PathfindRequest {
             for (int y = 0; y < 512; y++) {
                 for (int z = 0; z < dungeonRoomInfo.getLength() * 2; z++) {
                     for (int x = 0; x < dungeonRoomInfo.getWidth() * 2; x++) {
-                        byte data = (byte) (driWorld.getBlock(x, y, z).ordinal() - 1); // 0 is uncached. you're never gonna get that. // 4bit
-                        byte pearl = (byte) (driWorld.getPearl(x, y, z).ordinal() - 1); // 3 bit
-                        boolean isInsta = driWorld.isInstabreak(x, y, z);
+                        byte data = (byte) (driWorld.getPathfindWorld().getBlock(x, y, z).ordinal() - 1); // 0 is uncached. you're never gonna get that. // 4bit
+                        byte pearl = (byte) (driWorld.getPathfindWorld().getPearl(x, y, z).ordinal() - 1); // 3 bit
+                        boolean isInsta = driWorld.getPathfindWorld().isInstabreak(x, y, z);
                         byte ultimateData = (byte) ((isInsta ? 1 << 7 : 0) | pearl << 4 | data);
                         dataOutputStream.write(ultimateData);
                     }

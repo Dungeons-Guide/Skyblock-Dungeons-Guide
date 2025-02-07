@@ -214,6 +214,11 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
 
     }
 
+    @Override
+    public void chunkUpdate(int chunkX, int chunkZ) {
+
+    }
+
     public void onPhaseChange() {}
 
     @Data

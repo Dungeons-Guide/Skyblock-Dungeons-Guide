@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import net.minecraft.util.BlockPos;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
@@ -43,7 +44,7 @@ public class ActionUtils {
 
     public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, List<PossibleClickingSpot> spots, OffsetPoint target, ActionDAGAccepter eachBuild, boolean guard) throws PathfindImpossibleException {
         spots = spots.stream().filter(a -> {
-            AlgorithmSetting settings = dungeonRoom.getAlgorithmSetting();
+            AlgorithmSetting settings = ((GeneralRoomProcessor)dungeonRoom.getRoomProcessor()).getAlgorithmSetting();
             {
                 RequiredTool pickaxe = a.getTools()[0];
                 if (pickaxe != null) {

@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.util.Vec3;

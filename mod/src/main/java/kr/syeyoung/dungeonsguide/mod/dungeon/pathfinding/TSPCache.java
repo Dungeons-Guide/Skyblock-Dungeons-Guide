@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.CachedPathfinder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import net.minecraft.util.Vec3;
 
 import java.io.IOException;
@@ -24,8 +25,10 @@ public class TSPCache {
             return Double.compare(o1.zCoord, o2.zCoord);
         }
     };
-    public TSPCache(DungeonRoom dungeonRoom, List<OffsetVec3> locs, List<Vec3> locs2) {
+    private GeneralRoomProcessor generalRoomProcessor;
+    public TSPCache(GeneralRoomProcessor generalRoomProcessor, DungeonRoom dungeonRoom, List<OffsetVec3> locs, List<Vec3> locs2) {
         this.dungeonRoom = dungeonRoom;
+        this.generalRoomProcessor = generalRoomProcessor;
         this.locationsInCache = new ArrayList<>();
         for (OffsetVec3 loc : locs) {
             locationsInCache.add(loc.getPos(dungeonRoom));
@@ -38,7 +41,7 @@ public class TSPCache {
 
     public synchronized void addToCache(PathfindPrecalculation precalculation) throws IOException {
         CachedPathfinder iPathfinder = (CachedPathfinder) precalculation.createPathfinder(dungeonRoom.getRoomMatcher().getRotation());
-        iPathfinder.init(dungeonRoom, null);
+        iPathfinder.init(generalRoomProcessor.getPathfinderWorld(), null);
         double[] arr = new double[locationsInCache.size()];
         for (int i = 0; i < locationsInCache.size(); i++) {
             Vec3 offsetVec3 = locationsInCache.get(i);

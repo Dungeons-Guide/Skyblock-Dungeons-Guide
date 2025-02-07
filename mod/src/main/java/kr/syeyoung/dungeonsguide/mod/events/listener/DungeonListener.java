@@ -33,6 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonValueEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.PearlCalculatingCoordinateMap;
@@ -398,19 +399,22 @@ public class DungeonListener {
                 }
 
 
-                if (FeatureRegistry.DEBUG.isEnabled() && dungeonRoom != null) {
 
+                if (FeatureRegistry.DEBUG.isEnabled() && dungeonRoom != null && dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor) {
+
+                    GeneralRoomProcessor roomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
                     Vec3 player = Minecraft.getMinecraft().thePlayer.getPositionVector();
                     BlockPos real = new BlockPos(player.xCoord * 2, player.yCoord * 2, player.zCoord * 2);
                     try {
+
                         for (BlockPos allInBox : BlockPos.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
-                            CollisionStateCalculatingCoordinateMap.CollisionState blocked = dungeonRoom.getBlock(allInBox.getX(), allInBox.getY(), allInBox.getZ());
+                            CollisionStateCalculatingCoordinateMap.CollisionState blocked = roomProcessor.getPathfinderWorld().getBlock(allInBox.getX(), allInBox.getY(), allInBox.getZ());
                             RenderUtils.highlightBox(
                                     AxisAlignedBB.fromBounds(
                                             allInBox.getX() / 2.0 - 0.1, allInBox.getY() / 2.0 - 0.1, allInBox.getZ() / 2.0 - 0.1,
                                             allInBox.getX() / 2.0 + 0.1, allInBox.getY() / 2.0 + 0.1, allInBox.getZ() / 2.0 + 0.1
                                     ), blocked.getColor(), renderWorldLastEvent.partialTicks, false);
-                            PearlCalculatingCoordinateMap.PearlLandType type = dungeonRoom.getPearl(allInBox.getX(), allInBox.getY(), allInBox.getZ());
+                            PearlCalculatingCoordinateMap.PearlLandType type = roomProcessor.getPathfinderWorld().getPearl(allInBox.getX(), allInBox.getY(), allInBox.getZ());
                             RenderUtils.drawTextAtWorld(type.name(), (float) (allInBox.getX() / 2.0 - 0.1), (float) (allInBox.getY() / 2.0 - 0.1), (float) (allInBox.getZ() / 2.0 - 0.1),
                                     0xFFFFFFFF,0.01f, false, true, renderWorldLastEvent.partialTicks);
                         }
@@ -659,6 +663,11 @@ public class DungeonListener {
                 if (context.getScaffoldParser() != null) {
                     for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
                         dungeonRoom.chunkUpdate(p.getChunkX(), p.getChunkZ());
+
+                        RoomProcessor roomProcessor = dungeonRoom.getRoomProcessor();
+                        if (roomProcessor != null) {
+                            roomProcessor.chunkUpdate(p.getChunkX(), p.getChunkZ());
+                        }
                     }
                 }
             }
@@ -672,6 +681,11 @@ public class DungeonListener {
                     for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
                         for (int i = 0; i < p.getChunkCount(); i++) {
                             dungeonRoom.chunkUpdate(p.getChunkX(i), p.getChunkZ(i));
+
+                            RoomProcessor roomProcessor = dungeonRoom.getRoomProcessor();
+                            if (roomProcessor != null) {
+                                roomProcessor.chunkUpdate(p.getChunkX(i), p.getChunkZ(i));
+                            }
                         }
                     }
                 }

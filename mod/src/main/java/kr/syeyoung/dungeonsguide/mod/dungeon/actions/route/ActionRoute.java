@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -112,7 +113,7 @@ public class ActionRoute {
             }
             ChatTransmitter.sendDebugChat("With "+minCount+" Sorts :: Annealing? "+annealing);
 
-            TSPCache tspCache = new TSPCache(dungeonRoom, Collections.EMPTY_LIST, Collections.singletonList(start));
+            TSPCache tspCache = new TSPCache((GeneralRoomProcessor) dungeonRoom.getRoomProcessor(), dungeonRoom, Collections.EMPTY_LIST, Collections.singletonList(start));
 
             Map<String, Object> memoization = new ConcurrentHashMap<>();
             boolean finalAnnealing = annealing;

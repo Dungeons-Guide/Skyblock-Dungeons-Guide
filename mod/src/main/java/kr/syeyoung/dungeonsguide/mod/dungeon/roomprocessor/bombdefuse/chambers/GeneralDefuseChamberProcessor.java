@@ -134,5 +134,10 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
 
     }
 
+    @Override
+    public void chunkUpdate(int chunkX, int chunkZ) {
+
+    }
+
     public void onSendData() {}
 }

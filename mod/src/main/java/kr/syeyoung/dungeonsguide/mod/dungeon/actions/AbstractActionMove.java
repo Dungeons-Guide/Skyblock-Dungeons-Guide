@@ -33,6 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -279,15 +280,16 @@ public abstract class AbstractActionMove extends AbstractAction {
     }
 
     public void forceRefresh(DungeonRoom dungeonRoom) {
-        if (executor == null) executor = dungeonRoom.loadPrecalculatedByHash(new PathfindRequest(
-                dungeonRoom.getAlgorithmSetting(),
+        GeneralRoomProcessor generalRoomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
+        if (executor == null) executor = generalRoomProcessor.loadPrecalculatedByHash(new PathfindRequest(
+                generalRoomProcessor.getAlgorithmSetting(),
                 dungeonRoom.getDungeonRoomInfo(),
                 dungeonRoom.getMechanics().entrySet().stream().filter(b -> {
                     return  (b.getValue() instanceof DungeonDoorState || b.getValue() instanceof DungeonOnewayDoorState);
                 }).filter(b -> !((WorldMutatingMechanicState)b.getValue()).isBlocking(dungeonRoom)).map(Map.Entry::getKey).collect(Collectors.toSet()),
                 getTargetOffsetPointSet()
         ).getHash());
-        if (executor == null) executor = dungeonRoom.createEntityPathTo(getPathfindBoundingBox(dungeonRoom));
+        if (executor == null) executor = generalRoomProcessor.createEntityPathTo(getPathfindBoundingBox(dungeonRoom));
         if (executor != null) executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
     }
 
@@ -307,6 +309,8 @@ public abstract class AbstractActionMove extends AbstractAction {
             hashCache = new String[1 << state.getOpenMechanicsIndex().size()];
         }
 
+        GeneralRoomProcessor generalRoomProcessor = (GeneralRoomProcessor) room.getRoomProcessor();
+
         String hash = hashCache[state.openMechanicsBitset];
         if (hash == null) {
             int bitset = state.openMechanicsBitset;
@@ -318,7 +322,7 @@ public abstract class AbstractActionMove extends AbstractAction {
             }
 
             hashCache[state.openMechanicsBitset] = hash = new PathfindRequest(
-                    room.getAlgorithmSetting(),
+                    generalRoomProcessor.getAlgorithmSetting(),
                     room.getDungeonRoomInfo(),
                     setConstruction,
                     getTargetOffsetPointSet()
@@ -326,7 +330,7 @@ public abstract class AbstractActionMove extends AbstractAction {
         }
 
 
-        double cost = room.getTspCache().getCost(hash, state.getPlayerPos());
+        double cost = generalRoomProcessor.getTspCache().getCost(hash, state.getPlayerPos());
         if (cost >= 0) {
             state.setPlayerPos(bpos);
             return cost;
@@ -339,7 +343,7 @@ public abstract class AbstractActionMove extends AbstractAction {
         }
 
         if (cost == -2) {
-            PathfindPrecalculation precalculation = room.loadPrecalculatedUnloadedByHash(hash);
+            PathfindPrecalculation precalculation = generalRoomProcessor.loadPrecalculatedUnloadedByHash(hash);
             try {
                 tspCache.addToCache(precalculation);
             } catch (IOException e) { throw new RuntimeException(e); }
@@ -351,7 +355,7 @@ public abstract class AbstractActionMove extends AbstractAction {
 
         System.out.println(state.getPlayerPos());
 
-        PathfinderExecutor executor = room.loadPrecalculatedByHash(hash);
+        PathfinderExecutor executor = generalRoomProcessor.loadPrecalculatedByHash(hash);
 
         double result = executor.getPathfinder().getCost(state.getPlayerPos());
 

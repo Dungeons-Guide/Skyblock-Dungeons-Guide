@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.CachedPathfinder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
@@ -114,7 +115,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
                 );
 
                 CachedPathfinder cachedPathfinder = (CachedPathfinder) pfc.createPathfinder(drm.getRoomMatcher().getRotation());
-                cachedPathfinder.init(drm, null);
+                cachedPathfinder.init(((GeneralRoomProcessor)drm.getRoomProcessor()).getPathfinderWorld(), null);
                 instance.add(cachedPathfinder);
             } catch (IOException e) {
                 e.printStackTrace();

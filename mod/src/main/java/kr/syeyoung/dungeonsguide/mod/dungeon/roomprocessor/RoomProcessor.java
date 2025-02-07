@@ -46,4 +46,6 @@ public interface RoomProcessor {
     void onInteractBlock(PlayerInteractEvent event);
 
     void onBlockUpdate(BlockUpdateEvent blockUpdateEvent);
+
+    void chunkUpdate(int chunkX, int chunkZ);
 }
