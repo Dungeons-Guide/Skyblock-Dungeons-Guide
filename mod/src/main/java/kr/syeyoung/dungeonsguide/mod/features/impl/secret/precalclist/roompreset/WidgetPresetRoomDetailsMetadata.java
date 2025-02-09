@@ -1,9 +1,9 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world.PathfindRequest;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPrecalculation;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindResultRegistry;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculationRegistry;
 import kr.syeyoung.dungeonsguide.mod.fakeserver.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetAbilitySettings;
@@ -150,7 +150,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         WidgetViewPreset.calculator.submit(() -> {
             for (PathfindRequest request : roomInfo.getMissing()) {
-                List<PathfindPrecalculation> precalcs = PathfindResultRegistry.getINSTANCE().getsByHash(request.getHash());
+                List<PathfindPrecalculation> precalcs = PathfindPrecalculationRegistry.getINSTANCE().getsByHash(request.getHash());
                 for (PathfindPrecalculation precalc : precalcs) {
                     if (!precalc.getAlgorithmSetting().equals(roomInfo.getRoomPreset().getEffectiveAlgorithmSetting(roomInfo.getDungeonRoomInfo())))
                         continue;

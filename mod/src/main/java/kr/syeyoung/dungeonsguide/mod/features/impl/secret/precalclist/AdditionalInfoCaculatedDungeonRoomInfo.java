@@ -16,11 +16,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world.PathfindRequest;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.*;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import lombok.Data;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.util.BlockPos;
@@ -107,7 +106,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
         List<String> notfound = new ArrayList<>();
         List<PathfindPrecalculation> duplicate = new ArrayList<>();
         for (String precalcid : roomPreset.getPrecalculations()) {
-            PathfindPrecalculation precalc = PathfindResultRegistry.getINSTANCE().getById(precalcid);
+            PathfindPrecalculation precalc = PathfindPrecalculationRegistry.getINSTANCE().getById(precalcid);
             if (precalc == null) {
                 notfound.add(precalcid);
                 continue;

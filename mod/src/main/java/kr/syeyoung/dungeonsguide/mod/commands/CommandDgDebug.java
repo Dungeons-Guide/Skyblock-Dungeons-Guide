@@ -27,7 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedMoveNearest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
@@ -38,8 +37,8 @@ import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventHolder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISecret;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.*;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
@@ -126,8 +125,7 @@ public class CommandDgDebug extends CommandBase {
             "fullbright",
             "gimmebright",
             "pfall",
-            "partycollection",
-            "migrate"
+            "partycollection"
     };
 
     @Override
@@ -282,13 +280,6 @@ public class CommandDgDebug extends CommandBase {
             case "partycollection":
                 partyCollectionCommand(args[1], args[2], args[3]);
                 break;
-            case "migrate":
-                try {
-                    migrateCommand();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
             case "randomroutine":
                 DiscordIntegrationManager.INSTANCE.requestAuth();
 //                int val1 = this.<Integer>getParameter("haste").getValue();
@@ -307,43 +298,6 @@ public class CommandDgDebug extends CommandBase {
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
                 break;
         }
-    }
-
-    private void migrateCommand() throws Exception {
-        File targetDir = new File(Main.getConfigDir(), "precalculations/migration");
-        targetDir.mkdirs();
-
-        UUID uuid = UUID.randomUUID();
-        List<PathfindPrecalculation> precalculations=  new ArrayList<>();
-        AlgorithmSetting algorithmSetting = null;
-        for (File pfResult : new File(Main.getConfigDir(), "pfResult").listFiles()) {
-            if (!pfResult.getName().endsWith(".pfres")) continue;
-            System.out.println(pfResult);
-            PathfindPrecalculation precalculation = MigrationUtils.migrate(pfResult, new File(targetDir, pfResult.getName()), uuid.toString());
-            PathfindResultRegistry.getINSTANCE().register(precalculation);
-            algorithmSetting = precalculation.getAlgorithmSetting();
-            precalculations.add(precalculation);
-        }
-        if (algorithmSetting == null) {
-            throw new IllegalStateException("No files in pfresult dir");
-        }
-
-        PathfindPreset preset = new PathfindPreset();
-        preset.setPresetName("Migration From Old Pathfind Results");
-        preset.setAlgorithmSetting(algorithmSetting);
-        preset.setEditable(false);
-        preset.setOrigin("Dungeons Guide Precalculation Service v1");
-
-        for (PathfindPrecalculation precalculation : precalculations) {
-            if (!preset.getPresets().containsKey(precalculation.getRoomUID()))
-                preset.getPresets().put(precalculation.getRoomUID(), new RoomPreset(preset, precalculation.getRoomUID()));
-            // wtf really
-            RoomPreset roomPreset = preset.getPresets().get(precalculation.getRoomUID());
-            roomPreset.addPrecalculation(precalculation.getId());
-        }
-
-        PathfindPresetRegistry.getINSTANCE().register(preset);
-        PathfindPresetRegistry.getINSTANCE().saveAll();
     }
 
     private void calculateStonks() {

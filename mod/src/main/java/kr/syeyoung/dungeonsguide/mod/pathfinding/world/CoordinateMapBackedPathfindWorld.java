@@ -1,7 +1,6 @@
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world;
+package kr.syeyoung.dungeonsguide.mod.pathfinding.world;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.*;
 import net.minecraft.block.state.IBlockState;

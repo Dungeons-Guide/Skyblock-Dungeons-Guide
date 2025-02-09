@@ -16,12 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
+package kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder;
 
 import net.minecraft.util.BlockPos;
-import scala.tools.nsc.transform.CleanUp;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 // 3D SHADOW CASTING!!!
 public class ShadowCast {

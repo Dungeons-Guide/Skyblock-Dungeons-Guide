@@ -1,8 +1,8 @@
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache;
+package kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation;
 
 import com.sun.nio.file.ExtendedWatchEventModifier;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSettingRegistry;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import lombok.Getter;
 
 import java.io.File;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 
-public class PathfindResultRegistry {
+public class PathfindPrecalculationRegistry {
     @Getter
     private List<PathfindPrecalculation> loaded = new ArrayList<>();
     private Map<String, List<PathfindPrecalculation>> byId = new HashMap<>();
@@ -21,11 +21,11 @@ public class PathfindResultRegistry {
     private Map<String, List<PathfindPrecalculation>> byId2 = new HashMap<>();
 
     @Getter
-    private static PathfindResultRegistry INSTANCE;
+    private static PathfindPrecalculationRegistry INSTANCE;
 
-    public PathfindResultRegistry(File dir) throws IOException {
+    public PathfindPrecalculationRegistry(File dir) throws IOException {
         if (INSTANCE != null) throw new IllegalStateException("Already initialized");
-        PathfindResultRegistry.INSTANCE = this;
+        PathfindPrecalculationRegistry.INSTANCE = this;
 
         loadAll(dir);
 

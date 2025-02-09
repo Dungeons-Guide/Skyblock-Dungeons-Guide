@@ -20,19 +20,12 @@
 // (powered by FernFlower decompiler)
 //
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world;
+package kr.syeyoung.dungeonsguide.mod.pathfinding.world;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.*;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.ChunkCache;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EditableChunkCache extends ChunkCache {
     public EditableChunkCache(World worldIn, BlockPos posFromIn, BlockPos posToIn, int subIn) {

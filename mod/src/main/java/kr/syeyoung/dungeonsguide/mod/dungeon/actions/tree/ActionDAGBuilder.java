@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionRoot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Getter;
 

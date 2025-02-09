@@ -1,8 +1,8 @@
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding;
+package kr.syeyoung.dungeonsguide.mod.pathfinding;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.CachedPathfinder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPrecalculation;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PrecalculatedPathfinder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import net.minecraft.util.Vec3;
@@ -40,7 +40,7 @@ public class TSPCache {
     }
 
     public synchronized void addToCache(PathfindPrecalculation precalculation) throws IOException {
-        CachedPathfinder iPathfinder = (CachedPathfinder) precalculation.createPathfinder(dungeonRoom.getRoomMatcher().getRotation());
+        PrecalculatedPathfinder iPathfinder = (PrecalculatedPathfinder) precalculation.createPathfinder(dungeonRoom.getRoomMatcher().getRotation());
         iPathfinder.init(generalRoomProcessor.getPathfinderWorld(), null);
         double[] arr = new double[locationsInCache.size()];
         for (int i = 0; i < locationsInCache.size(); i++) {

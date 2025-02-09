@@ -16,10 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
+package kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.BoundingBox;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.world.IPathfindWorld;
 import net.minecraft.util.Vec3;
 
 public interface IPathfinder {

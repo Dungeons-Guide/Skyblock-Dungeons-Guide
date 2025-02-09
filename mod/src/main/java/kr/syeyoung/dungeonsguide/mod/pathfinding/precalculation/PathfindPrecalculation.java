@@ -1,8 +1,8 @@
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache;
+package kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.IPathfinder;
 import lombok.Data;
 import org.apache.commons.io.input.CountingInputStream;
 
@@ -128,7 +128,7 @@ public class PathfindPrecalculation {
             ReadableByteChannel channel = Channels.newChannel(dataInputStream);
             while (channel.read(buffer) > 0);
 
-            return new CachedPathfinder(rotation, xStart, yStart, zStart, xLen, yLen, zLen, buffer);
+            return new PrecalculatedPathfinder(rotation, xStart, yStart, zStart, xLen, yLen, zLen, buffer);
         }
     }
 }

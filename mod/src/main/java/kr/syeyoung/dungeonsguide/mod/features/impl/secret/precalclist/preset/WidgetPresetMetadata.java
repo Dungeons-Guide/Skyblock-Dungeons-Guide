@@ -2,9 +2,9 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world.PathfindRequest;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.*;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
@@ -220,7 +220,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
                 for (AdditionalInfoCaculatedDungeonRoomInfo roomInfo : additionalInfoCaculatedDungeonRoomInfoList) {
 
                     for (PathfindRequest request : roomInfo.getMissing()) {
-                        List<PathfindPrecalculation> precalcs = PathfindResultRegistry.getINSTANCE().getsByHash(request.getHash());
+                        List<PathfindPrecalculation> precalcs = PathfindPrecalculationRegistry.getINSTANCE().getsByHash(request.getHash());
                         for (PathfindPrecalculation precalc : precalcs) {
                             if (!precalc.getAlgorithmSetting().equals(roomInfo.getRoomPreset().getEffectiveAlgorithmSetting(roomInfo.getDungeonRoomInfo())))
                                 continue;

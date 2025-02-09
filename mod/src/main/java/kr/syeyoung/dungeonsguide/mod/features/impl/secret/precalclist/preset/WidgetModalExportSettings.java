@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.*;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationAutoClose;
@@ -63,7 +63,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
         if (includePrecalc.getValue()) {
             try {
-                PathfindResultRegistry registry = PathfindResultRegistry.getINSTANCE();
+                PathfindPrecalculationRegistry registry = PathfindPrecalculationRegistry.getINSTANCE();
                 long totalSize = 4 * 1024; // 4 kb leeway.
                 for (RoomPreset value : preset.getPresets().values()) {
                     for (String calcid : value.getPrecalculations()) {
@@ -122,7 +122,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
             FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(uid, progress);
 
             List<Tuple<String, File>> files = new ArrayList<>();
-            PathfindResultRegistry registry = PathfindResultRegistry.getINSTANCE();
+            PathfindPrecalculationRegistry registry = PathfindPrecalculationRegistry.getINSTANCE();
             for (RoomPreset value : preset.getPresets().values()) {
                 for (String calcid : value.getPrecalculations()) {
                     PathfindPrecalculation precalc = registry.getById(calcid);

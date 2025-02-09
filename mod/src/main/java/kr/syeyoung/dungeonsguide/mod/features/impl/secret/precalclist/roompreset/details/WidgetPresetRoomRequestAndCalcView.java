@@ -1,8 +1,8 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.details;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world.PathfindRequest;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPrecalculation;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindResultRegistry;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculationRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset.WidgetViewPreset;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics.WidgetPresetRoomDetailsSecretPathfindRequest;
@@ -73,7 +73,7 @@ public class WidgetPresetRoomRequestAndCalcView extends AnnotatedImportOnlyWidge
     public void link() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         WidgetModalChoosePrecalculation choosePrecalculation = new WidgetModalChoosePrecalculation(
-                PathfindResultRegistry.getINSTANCE().getsByHash(request.getHash())
+                PathfindPrecalculationRegistry.getINSTANCE().getsByHash(request.getHash())
                         .stream()
                         .filter(a -> !roomInfo.getRoomPreset().getPrecalculations().contains(a.getId()))
                         .collect(Collectors.toList())

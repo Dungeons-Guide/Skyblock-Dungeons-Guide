@@ -1,6 +1,6 @@
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache;
+package kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSettingRegistry;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import lombok.Getter;
 

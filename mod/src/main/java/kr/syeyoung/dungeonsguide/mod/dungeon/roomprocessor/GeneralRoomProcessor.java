@@ -36,16 +36,16 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISecret;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.TSPCache;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPrecalculation;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindResultRegistry;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.RoomPreset;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world.CoordinateMapBackedPathfindWorld;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.BoundingBox;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.FineGridStonkingBFS;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.IPathfinder;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.PathfinderExecutor;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculationRegistry;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.RoomPreset;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.world.CoordinateMapBackedPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonRoomEdit;
@@ -733,7 +733,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     private final Map<String, WeakReference<PathfinderExecutor>> idExecutor = new HashMap<>();
     private final Map<String, PathfindPrecalculation> idCalculation = new HashMap<>();
     public void loadPrecalculated(String id) {
-        PathfindPrecalculation cachedPathfinder = PathfindResultRegistry.getINSTANCE().getById(id);
+        PathfindPrecalculation cachedPathfinder = PathfindPrecalculationRegistry.getINSTANCE().getById(id);
         if (cachedPathfinder == null) return;
         if (idCalculation.containsKey(id)) return;
         idCalculation.put(cachedPathfinder.getTargetHash(), cachedPathfinder);

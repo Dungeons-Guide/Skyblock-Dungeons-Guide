@@ -6,7 +6,7 @@ import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.*;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationAutoClose;
@@ -217,7 +217,7 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
                         // wtf really
                         try {
                             PathfindPrecalculation precalculation1 = new PathfindPrecalculation(precalculation);
-                            PathfindResultRegistry.getINSTANCE().register(precalculation1);
+                            PathfindPrecalculationRegistry.getINSTANCE().register(precalculation1);
                             precalculations.add(precalculation1);
                         } catch (Exception e) {
                             e.printStackTrace();

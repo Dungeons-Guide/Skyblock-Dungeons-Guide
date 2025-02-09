@@ -2,7 +2,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
 
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.*;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationAutoClose;
@@ -159,7 +159,7 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
                     try (InputStream is = zipFile.getInputStream(entry)) {
                         String id = s.split("/")[1];
                         File extractTarget =  new File(importTarget, id);
-                        if (PathfindResultRegistry.getINSTANCE().getById(id.split("\\.")[0]) == null) {
+                        if (PathfindPrecalculationRegistry.getINSTANCE().getById(id.split("\\.")[0]) == null) {
                             Files.copy(is, extractTarget.toPath());
                             extractions.add(extractTarget);
                         }
@@ -174,7 +174,7 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
                 for (File extraction : extractions) {
                     extracting.setMessage("Loading Precalculations "+extracting.getCurrent().incrementAndGet()+"/"+extracting.getTotal().get());
                     try {
-                        PathfindResultRegistry.getINSTANCE().register(new PathfindPrecalculation(extraction));
+                        PathfindPrecalculationRegistry.getINSTANCE().register(new PathfindPrecalculation(extraction));
                     } catch (Exception e) {
                         e.printStackTrace();
                         UUID uid = UUID.randomUUID();

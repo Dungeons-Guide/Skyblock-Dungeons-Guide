@@ -22,9 +22,9 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractActionMove;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.CachedPathfinder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindCache;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PrecalculatedPathfinder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
@@ -47,7 +47,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
         super("Debug", "Pathfind Result Debug", "View pfres file", "etc.pfresdebug", false);
     }
 
-    private List<CachedPathfinder> instance = new ArrayList<>();
+    private List<PrecalculatedPathfinder> instance = new ArrayList<>();
 
 
     private List<Vec3> pfDebugPts = new ArrayList<>();
@@ -66,8 +66,8 @@ public class FeaturePathfinderDebug extends SimpleFeature {
 
         int cnt = 0;
         for (Vec3 pfDebugPt : pfDebugPts) {
-            for (CachedPathfinder cachedPathfinder : instance) {
-                PathfindResult res = cachedPathfinder.getRoute(pfDebugPt);
+            for (PrecalculatedPathfinder precalculatedPathfinder : instance) {
+                PathfindResult res = precalculatedPathfinder.getRoute(pfDebugPt);
                 if (res == null) continue;
                 cnt++;
                 Color c = Color.getHSBColor(cnt / ((float)instance.size() * pfDebugPts.size()), 1.0f, 1.0f);
@@ -108,15 +108,15 @@ public class FeaturePathfinderDebug extends SimpleFeature {
             instance.clear();
         } else if (args[1].equals("load")) {
             try {
-                PathfindCache pfc = new PathfindCache(new File(args[2]));
+                PathfindPrecalculation pfc = new PathfindPrecalculation(new File(args[2]));
                 DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
                 DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
                         dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())
                 );
 
-                CachedPathfinder cachedPathfinder = (CachedPathfinder) pfc.createPathfinder(drm.getRoomMatcher().getRotation());
-                cachedPathfinder.init(((GeneralRoomProcessor)drm.getRoomProcessor()).getPathfinderWorld(), null);
-                instance.add(cachedPathfinder);
+                PrecalculatedPathfinder precalculatedPathfinder = (PrecalculatedPathfinder) pfc.createPathfinder(drm.getRoomMatcher().getRotation());
+                precalculatedPathfinder.init(((GeneralRoomProcessor)drm.getRoomProcessor()).getPathfinderWorld(), null);
+                instance.add(precalculatedPathfinder);
             } catch (IOException e) {
                 e.printStackTrace();
             }

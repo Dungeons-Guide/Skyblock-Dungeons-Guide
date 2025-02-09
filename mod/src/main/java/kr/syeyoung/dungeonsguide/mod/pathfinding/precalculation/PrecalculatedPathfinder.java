@@ -16,14 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache;
+package kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.BoundingBox;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.IPathfinder;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.world.IPathfindWorld;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.util.Vec3;
@@ -34,7 +33,7 @@ import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
 @AllArgsConstructor
-public class CachedPathfinder implements IPathfinder {
+public class PrecalculatedPathfinder implements IPathfinder {
     private int rotation;
     private ByteBuffer array;
 
@@ -44,7 +43,7 @@ public class CachedPathfinder implements IPathfinder {
 
     private int roomXMin, roomYMin, roomZMin;
     private int roomXLen, roomZLen;
-    public CachedPathfinder( int rotation, int xStart, int yStart, int zStart, int xLen, int yLen, int zLen, ByteBuffer data) {
+    public PrecalculatedPathfinder(int rotation, int xStart, int yStart, int zStart, int xLen, int yLen, int zLen, ByteBuffer data) {
         this.rotation = rotation;
         this.xStart = xStart;
         this.yStart = yStart;

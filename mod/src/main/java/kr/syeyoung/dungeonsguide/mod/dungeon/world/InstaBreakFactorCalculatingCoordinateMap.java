@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.block.Block;

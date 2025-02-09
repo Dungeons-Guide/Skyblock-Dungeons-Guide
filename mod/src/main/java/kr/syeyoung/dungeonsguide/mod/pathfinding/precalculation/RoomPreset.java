@@ -1,11 +1,11 @@
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache;
+package kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import lombok.Getter;
 import net.minecraft.nbt.CompressedStreamTools;
 
