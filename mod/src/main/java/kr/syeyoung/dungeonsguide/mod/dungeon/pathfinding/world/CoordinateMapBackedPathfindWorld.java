@@ -18,12 +18,15 @@ public class CoordinateMapBackedPathfindWorld implements IPathfindWorld {
     private BitCachingCoordinateMap<CollisionStateCalculatingCoordinateMap.CollisionState> whole;
     private InstaBreakFactorCalculatingCoordinateMap instaBreak;
 
+    private RoomBounds roomBounds;
+
     public CoordinateMapBackedPathfindWorld(ICoordinateMap<IBlockState> backingWorld, AlgorithmSetting algorithmSetting, RoomBounds roomBounds, Set<BlockPos> superboom) { // plan to remove roombounds.
         this.backingWorld = backingWorld;
 
         minx = roomBounds.getMinX() * 2 + 2; miny = 0; minz = roomBounds.getMinZ() * 2 + 2;
         maxx = roomBounds.getMaxX() * 2 + 2; maxy = 255 * 2 + 2; maxz = roomBounds.getMaxZ() * 2 + 2;
         lenx = maxx - minx; leny = maxy - miny; lenz = maxz - minz;
+        this.roomBounds = roomBounds;
 
         instaBreak = new InstaBreakFactorCalculatingCoordinateMap(backingWorld, algorithmSetting);
         enderpearl = new BitCachingCoordinateMap<>(new PearlCalculatingCoordinateMap(backingWorld, roomBounds), PearlCalculatingCoordinateMap.PearlLandType.VALUES, PearlCalculatingCoordinateMap.PearlLandType.BLOCKED);
@@ -56,7 +59,7 @@ public class CoordinateMapBackedPathfindWorld implements IPathfindWorld {
 
     @Override
     public boolean isInstabreak(int x, int y, int z) {
-        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y+4 >= maxy) return false;
+        if (!roomBounds.canAccessRelative(x/2, z/2)) return false;
         if (x%2 != 0 && z%2 != 0) return false;
 
         return instaBreak.getBlock(x/2, y/2, z/2).getFactor()  == 0;

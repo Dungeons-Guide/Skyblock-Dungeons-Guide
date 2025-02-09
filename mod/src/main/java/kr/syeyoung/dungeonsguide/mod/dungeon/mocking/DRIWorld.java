@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWallState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTombState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.PathfindPreset;
@@ -94,11 +95,10 @@ public class DRIWorld extends World implements ICoordinateMap<IBlockState> {
         } // TODO: construct actual mechanics.
 
         for (String openMechanic : openMechanics) {
-            WorldMutatingMechanicState routeBlocker = (WorldMutatingMechanicState) dungeonRoomInfo.getMechanics().get(openMechanic);
+            WorldMutatingMechanicData routeBlocker = (WorldMutatingMechanicData) dungeonRoomInfo.getMechanics().get(openMechanic);
             for (OffsetPoint offsetPoint : routeBlocker.blockedPoints()) {
                 open.add(new BlockPos(offsetPoint.getX(), offsetPoint.getY() +70, offsetPoint.getZ()));
             }
-
         }
 
 
@@ -166,12 +166,15 @@ public class DRIWorld extends World implements ICoordinateMap<IBlockState> {
         return this.getBlockState(pos).getBlock().isSideSolid(this, pos, side);
     }
 
+
+    private final BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
     @Override
     public IBlockState getBlock(int x, int y, int z) {
-        if (open.contains(new BlockPos(x, y, z))) {
+        mutableBlockPos.set(x, y, z);
+        if (open.contains(mutableBlockPos)) {
             return Blocks.air.getDefaultState();
         }
-        return dungeonRoomInfo.getBlock(x, y, z, 0);
+        return dungeonRoomInfo.getBlock(x, y-70, z, 0);
     }
 
     @Override

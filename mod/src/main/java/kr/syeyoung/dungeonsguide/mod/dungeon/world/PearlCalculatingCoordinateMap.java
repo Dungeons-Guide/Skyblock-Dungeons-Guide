@@ -17,6 +17,7 @@ public class PearlCalculatingCoordinateMap implements ICoordinateMap<PearlCalcul
     private int minX, minY, minZ, maxX, maxY, maxZ, lenX, lenY, lenZ;
 
     private CoordinateMapWorld world;
+    private RoomBounds roomBounds;
 
     public PearlCalculatingCoordinateMap(ICoordinateMap<IBlockState> map, RoomBounds roomBounds) {
         this.map = map;
@@ -32,10 +33,11 @@ public class PearlCalculatingCoordinateMap implements ICoordinateMap<PearlCalcul
         this.lenX = maxX - minX;
         this.lenY = maxY - minY;
         this.lenZ = maxZ - minZ;
+        this.roomBounds = roomBounds;
     }
 
     public PearlLandType getBlock(int x, int y, int z) {
-        if (x < minX || z < minZ || x >= maxX || z >= maxZ || y < minY || y+4 >= maxY) return PearlLandType.BLOCKED;
+        if (!roomBounds.canAccessRelative( (x - minX + 2) / 2, (z - minZ + 2) / 2)) return PearlLandType.BLOCKED;
 
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
 

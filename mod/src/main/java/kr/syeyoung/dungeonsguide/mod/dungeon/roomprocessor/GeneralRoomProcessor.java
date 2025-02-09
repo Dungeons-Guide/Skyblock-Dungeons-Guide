@@ -148,7 +148,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                     e.printStackTrace();
                     continue;
                 }
-            } else if (value.getValue() instanceof DungeonRedstoneKeyState && ((DungeonRedstoneKeyState) value.getValue()).getCurrentState().equalsIgnoreCase("unobtained")) {
+            } else if (value.getValue() instanceof DungeonRedstoneKeyState && value.getValue().getCurrentState().equalsIgnoreCase("unobtained")) {
                 try {
                     actionDAGBuilder.requires(new ActionChangeState(value.getKey(), "obtained-self"), algorithmSetting);
                 } catch (PathfindImpossibleException e) {

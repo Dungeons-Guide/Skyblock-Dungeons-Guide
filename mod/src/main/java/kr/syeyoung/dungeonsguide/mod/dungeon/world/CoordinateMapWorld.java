@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -52,7 +53,8 @@ public class CoordinateMapWorld extends World {
 
     @Override
     public boolean isAirBlock(BlockPos pos) {
-        throw new UnsupportedOperationException("Yikes");
+        IBlockState blockState = getBlockState(pos);
+        return blockState == null || blockState.getBlock() == Blocks.air;
     }
 
     @Override
