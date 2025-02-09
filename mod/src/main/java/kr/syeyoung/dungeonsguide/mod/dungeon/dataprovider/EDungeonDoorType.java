@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder;
+package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

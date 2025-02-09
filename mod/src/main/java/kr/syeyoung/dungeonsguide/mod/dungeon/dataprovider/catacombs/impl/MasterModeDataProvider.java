@@ -16,10 +16,10 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.impl;
+package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.catacombs.impl;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.CatacombsDataProvider;
+import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.catacombs.CatacombsDataProvider;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.*;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;

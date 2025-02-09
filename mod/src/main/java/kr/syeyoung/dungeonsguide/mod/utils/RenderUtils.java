@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.utils;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonDoor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonDoor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;

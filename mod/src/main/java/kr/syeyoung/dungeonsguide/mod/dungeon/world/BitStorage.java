@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder;
+package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 
 public class BitStorage {
     private long[] arr;

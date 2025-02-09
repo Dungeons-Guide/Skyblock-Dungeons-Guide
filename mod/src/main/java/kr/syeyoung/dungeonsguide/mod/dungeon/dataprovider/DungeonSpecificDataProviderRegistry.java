@@ -16,11 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder;
+package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.impl.MasterModeDataProvider;
-import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.impl.NormalModeDataProvider;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.TESTDGProvider;
+import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.catacombs.impl.MasterModeDataProvider;
+import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.catacombs.impl.NormalModeDataProvider;
 
 import java.util.HashMap;
 import java.util.Map;

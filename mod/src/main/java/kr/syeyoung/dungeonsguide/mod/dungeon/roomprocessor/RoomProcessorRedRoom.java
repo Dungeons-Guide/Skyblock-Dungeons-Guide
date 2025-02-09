@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonDoor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonDoor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.FeatureWarningOnPortal;

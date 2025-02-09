@@ -20,8 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon;
 
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonSpecificDataProvider;
-import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
+import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonSpecificDataProvider;
+import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventRecorder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonNodataEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonPercentageChangeEvent;

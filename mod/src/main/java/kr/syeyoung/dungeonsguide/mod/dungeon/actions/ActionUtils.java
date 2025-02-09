@@ -23,10 +23,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWall
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTombState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import net.minecraft.util.BlockPos;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
@@ -214,7 +213,7 @@ public class ActionUtils {
                 .collect(Collectors.toList());
 
         List<PossibleClickingSpot> spots = RaytraceHelper.chooseMinimalY(RaytraceHelper.raycast(
-                dungeonRoom.getDungeonRoomInfo().getBlocks() != null ?
+                dungeonRoom.getDungeonRoomInfo().getWorld() != null ?
                         new DRIWorld(dungeonRoom.getDungeonRoomInfo(), openBlockers) : dungeonRoom.getCachedWorld(), new BlockPos(target.getX(), target.getY(), target.getZ())
         ));
         return buildActionMoveAndClick(builder, dungeonRoom, spots, target, eachBuild, false, algorithmSetting);

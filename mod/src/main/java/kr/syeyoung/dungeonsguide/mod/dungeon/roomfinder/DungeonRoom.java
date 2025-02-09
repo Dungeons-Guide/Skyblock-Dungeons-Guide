@@ -30,12 +30,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Dung
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonDoor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.EDungeonDoorType;
+import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonDoor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.SerializableBlockPos;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonRoomMatchEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonStateChangeEvent;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.CachedWorld;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.EditableChunkCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
@@ -44,6 +44,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -60,6 +61,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Getter
 public class DungeonRoom  {
@@ -79,87 +81,14 @@ public class DungeonRoom  {
     private int totalSecrets = -1;
     private RoomState currentState = RoomState.DISCOVERED;
 
-    private Map<String, DungeonMechanicState> cached = null;
+    @Getter(AccessLevel.NONE)
+    private Map<String, DungeonMechanicState> _mechanics = null;
 
     @Setter
     private World cachedWorld;
     private WorldBackedCoordinateMap coordinateMap;
     private EditableChunkCache chunkCache;
 
-    public World getCachedWorld() {
-        if (this.cachedWorld != null) return cachedWorld;
-
-
-        int minZChunk = roomBounds.getMin().getZ() >> 4;
-        int minXChunk = roomBounds.getMin().getX() >> 4;
-        int maxZChunk = roomBounds.getMax().getZ() >> 4;
-        int maxXChunk = roomBounds.getMax().getX() >> 4;
-
-        for (int z = minZChunk; z <= maxZChunk; z++) {
-            for (int x = minXChunk; x <= maxXChunk; x++) {
-                if (!getRoomBounds().canAccessAbsolute(new BlockPos(x * 16,0, z*16)) && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16+15,0, z*16+15))
-                && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16+15,0, z*16)) && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16,0, z*16+15))) {
-                    continue;
-                }
-                Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
-                if (c.isEmpty()) {
-                    throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
-                }
-                boolean nonNull = false;
-                for (ExtendedBlockStorage extendedBlockStorage : c.getBlockStorageArray()) {
-                    if (extendedBlockStorage != null) {
-                        nonNull = true;
-                        break;
-                    }
-                }
-                if (!nonNull) {
-                    throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
-                }
-            }
-        }
-
-        this.chunkCache = new EditableChunkCache(getContext().getWorld(), roomBounds.getMin().add(-3, 0, -3), roomBounds.getMax().add(3,0,3), 0);
-        CachedWorld cachedWorld =  new CachedWorld(chunkCache, context.getWorld().provider);
-
-        coordinateMap = new WorldBackedCoordinateMap(cachedWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
-
-
-        return this.cachedWorld = cachedWorld;
-    }
-    public Map<String, DungeonMechanicState> getMechanics() {
-        if (cached == null || EditingContext.getEditingContext() != null) {
-            cached = new HashMap<>();
-            for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicDataEntry : dungeonRoomInfo.getMechanics().entrySet()) {
-                cached.put(stringDungeonMechanicDataEntry.getKey(), stringDungeonMechanicDataEntry.getValue().createState(this));
-            }
-            int index = 0;
-            for (DungeonDoor door : doors) {
-                if (door.getType().isExist()) cached.put((door.getType().getName())+"-"+(++index), new DungeonRoomDoorState(this, door));
-            }
-        }
-        return cached;
-    }
-
-    public void setCurrentState(RoomState currentState) {
-        context.getRecorder().createEvent(new DungeonStateChangeEvent(unitPoints.iterator().next(),
-                dungeonRoomInfo == null ? null : dungeonRoomInfo.getName(), this.currentState, currentState));
-        this.currentState = currentState;
-    }
-
-    private static final ExecutorService roomMatcherThread = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newSingleThreadExecutor(
-            new ThreadFactoryBuilder()
-                    .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
-                    .setNameFormat("DG-RoomMatcher-%d").build()));
-    @AllArgsConstructor
-    @Getter
-    public enum RoomState {
-        DISCOVERED(0), COMPLETE_WITHOUT_SECRETS(0), FINISHED(0), FAILED(-14);
-        private final int scoreModifier;
-    }
-
-    private RoomProcessor roomProcessor;
-
-    private Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates;
     public DungeonRoom(Set<Point> points, short shape, byte color, BlockPos min, BlockPos max, DungeonContext context, Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
         this.unitPoints = points;
         this.color = color;
@@ -232,6 +161,85 @@ public class DungeonRoom  {
         }
         coordinateMap = new WorldBackedCoordinateMap(driWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
     }
+
+
+    public World getCachedWorld() {
+        if (this.cachedWorld != null) return cachedWorld;
+
+
+        int minZChunk = roomBounds.getMin().getZ() >> 4;
+        int minXChunk = roomBounds.getMin().getX() >> 4;
+        int maxZChunk = roomBounds.getMax().getZ() >> 4;
+        int maxXChunk = roomBounds.getMax().getX() >> 4;
+
+        for (int z = minZChunk; z <= maxZChunk; z++) {
+            for (int x = minXChunk; x <= maxXChunk; x++) {
+                if (!getRoomBounds().canAccessAbsolute(new BlockPos(x * 16,0, z*16)) && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16+15,0, z*16+15))
+                && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16+15,0, z*16)) && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16,0, z*16+15))) {
+                    continue;
+                }
+                Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
+                if (c.isEmpty()) {
+                    throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
+                }
+                boolean nonNull = false;
+                for (ExtendedBlockStorage extendedBlockStorage : c.getBlockStorageArray()) {
+                    if (extendedBlockStorage != null) {
+                        nonNull = true;
+                        break;
+                    }
+                }
+                if (!nonNull) {
+                    throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
+                }
+            }
+        }
+
+        this.chunkCache = new EditableChunkCache(getContext().getWorld(), roomBounds.getMin().add(-3, 0, -3), roomBounds.getMax().add(3,0,3), 0);
+        CachedWorld cachedWorld =  new CachedWorld(chunkCache, context.getWorld().provider);
+
+        coordinateMap = new WorldBackedCoordinateMap(cachedWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+
+
+        return this.cachedWorld = cachedWorld;
+    }
+
+    public Map<String, DungeonMechanicState> getMechanics() {
+        if (_mechanics == null || EditingContext.getEditingContext() != null) {
+            _mechanics = new HashMap<>();
+            for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicDataEntry : dungeonRoomInfo.getMechanics().entrySet()) {
+                _mechanics.put(stringDungeonMechanicDataEntry.getKey(), stringDungeonMechanicDataEntry.getValue().createState(this));
+            }
+            int index = 0;
+            for (DungeonDoor door : doors) {
+                if (door.getType().isExist()) _mechanics.put((door.getType().getName())+"-"+(++index), new DungeonRoomDoorState(this, door));
+            }
+        }
+        return _mechanics;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public enum RoomState {
+        DISCOVERED(0), COMPLETE_WITHOUT_SECRETS(0), FINISHED(0), FAILED(-14);
+        private final int scoreModifier;
+    }
+
+    public void setCurrentState(RoomState currentState) {
+        context.getRecorder().createEvent(new DungeonStateChangeEvent(unitPoints.iterator().next(),
+                dungeonRoomInfo == null ? null : dungeonRoomInfo.getName(), this.currentState, currentState));
+        this.currentState = currentState;
+    }
+
+    private static final ExecutorService roomMatcherThread = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newSingleThreadExecutor(
+            new ThreadFactoryBuilder()
+                    .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
+                    .setNameFormat("DG-RoomMatcher-%d").build()));
+
+
+    private RoomProcessor roomProcessor;
+
+    private Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates;
 
     private volatile boolean matched = false;
     private volatile boolean matching = false;

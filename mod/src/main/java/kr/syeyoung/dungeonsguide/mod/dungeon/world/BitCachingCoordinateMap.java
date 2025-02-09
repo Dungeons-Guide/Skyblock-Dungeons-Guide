@@ -1,6 +1,5 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.BitStorage;
 import lombok.Getter;
 
 public class BitCachingCoordinateMap<T extends Enum<T>> implements ICoordinateMap<Enum<T>> {
