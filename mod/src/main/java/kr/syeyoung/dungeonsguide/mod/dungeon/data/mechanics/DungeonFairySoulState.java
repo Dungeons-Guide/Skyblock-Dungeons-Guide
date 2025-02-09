@@ -25,7 +25,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Dung
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.predicates.PredicateArmorStand;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.util.BlockPos;
@@ -47,7 +49,7 @@ public class DungeonFairySoulState implements DungeonMechanicState {
 
 
     @Override
-    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+    public void buildAction(String action, ActionDAGBuilder builder, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         if (!"navigate".equalsIgnoreCase(action))
             throw new PathfindImpossibleException(action + " is not valid state for secret");
 
@@ -59,13 +61,13 @@ public class DungeonFairySoulState implements DungeonMechanicState {
                     return actionClick;
                 })
                 .requires(new ActionMoveNearestAir(data.secretPoint))
-                .build("MoveAndInteract")
+                .build("MoveAndInteract"), algorithmSetting
         );
 
         for (String str : data.preRequisite) {
             if (!str.isEmpty()) {
                 String[] split = str.split(":");
-                builder.optional(new ActionChangeState(split[0], split[1]));
+                builder.optional(new ActionChangeState(split[0], split[1]), algorithmSetting);
             }
         }
         return;

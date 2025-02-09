@@ -220,7 +220,6 @@ public class DungeonRoom  {
         this.context = context;
         roomBounds = new RoomBounds(this.dungeonRoomInfo.getShape(), new BlockPos(0, 70, 0), new BlockPos(dungeonRoomInfo.getBlocks()[0].length - 1, 70, dungeonRoomInfo.getBlocks().length - 1));
 
-
         minRoomPt = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
         for (Point pt : unitPoints) {
             if (pt.x < minRoomPt.x) minRoomPt.x = pt.x;

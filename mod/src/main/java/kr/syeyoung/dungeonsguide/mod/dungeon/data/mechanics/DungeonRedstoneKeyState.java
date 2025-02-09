@@ -25,7 +25,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Dung
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -48,14 +50,14 @@ public class DungeonRedstoneKeyState implements DungeonMechanicState {
     }
 
     @Override
-    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+    public void buildAction(String action, ActionDAGBuilder builder, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         if (action.equals(getCurrentState())) return;
         if (action.equalsIgnoreCase("navigate")) {
             builder = builder
-                    .requires(new ActionMoveNearestAir(getRepresentingPoint()));
+                    .requires(new ActionMoveNearestAir(getRepresentingPoint()), algorithmSetting);
             for (String str : data.preRequisite) {
                 if (str.isEmpty()) continue;
-                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
             }
             ;
         }
@@ -69,20 +71,20 @@ public class DungeonRedstoneKeyState implements DungeonMechanicState {
             }
 
             if (data.secretCache != null)
-                ActionUtils.buildActionMoveAndClick(builder, room, data.secretCache, data.preRequisite, Collections.emptyList());
+                ActionUtils.buildActionMoveAndClick(builder, room, data.secretCache, data.preRequisite, Collections.emptyList(), algorithmSetting);
             else
                 ActionUtils.buildActionMoveAndClick(builder, room, data.secretPoint, builder1 -> {
                     for (String str : data.preRequisite) {
                         if (str.isEmpty()) continue;
-                        builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                        builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
                     }
                     return null;
-                });
+                }, algorithmSetting);
         } else { // placed
             if (!getCurrentState().equalsIgnoreCase("obtained-self")) {
                 throw new PathfindImpossibleException(action + " is not valid state for secret");
             }
-            builder.requires(new ActionChangeState(data.triggering, "triggered"));
+            builder.requires(new ActionChangeState(data.triggering, "triggered"), algorithmSetting);
         }
     }
 

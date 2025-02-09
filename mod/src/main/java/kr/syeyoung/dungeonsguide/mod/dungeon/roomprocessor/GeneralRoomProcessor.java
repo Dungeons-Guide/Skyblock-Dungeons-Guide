@@ -142,7 +142,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         for (Map.Entry<String, DungeonMechanicState> value : getDungeonRoom().getMechanics().entrySet()) {
             if (value.getValue() instanceof ISecret && !((ISecret) value.getValue()).isFound(getDungeonRoom())) {
                 try {
-                    actionDAGBuilder.requires(new ActionChangeState(value.getKey(), "found"));
+                    actionDAGBuilder.requires(new ActionChangeState(value.getKey(), "found"), algorithmSetting);
                 } catch (PathfindImpossibleException e) {
                     ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
                     e.printStackTrace();
@@ -150,7 +150,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 }
             } else if (value.getValue() instanceof DungeonRedstoneKeyState && ((DungeonRedstoneKeyState) value.getValue()).getCurrentState().equalsIgnoreCase("unobtained")) {
                 try {
-                    actionDAGBuilder.requires(new ActionChangeState(value.getKey(), "obtained-self"));
+                    actionDAGBuilder.requires(new ActionChangeState(value.getKey(), "obtained-self"), algorithmSetting);
                 } catch (PathfindImpossibleException e) {
                     ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
                     e.printStackTrace();
@@ -468,7 +468,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         return str;
     }
     public void pathfind(String id, String mechanic, String state, ActionRouteProperties actionRouteProperties)throws PathfindImpossibleException {
-        path.put(id, new ActionRoute(getDungeonRoom(), mechanic, state, actionRouteProperties));
+        path.put(id, new ActionRoute(getDungeonRoom(), mechanic, state, actionRouteProperties, algorithmSetting));
     }
     public void cancelAll() {
         path.clear();
@@ -695,7 +695,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
 
         // build tsp cache.
-        ActionDAG dag = AdditionalInfoCaculatedDungeonRoomInfo.buildReferencingAllPossibleThings(dungeonRoom);
+        ActionDAG dag = AdditionalInfoCaculatedDungeonRoomInfo.buildReferencingAllPossibleThings(dungeonRoom, algorithmSetting);
         List<AbstractActionMove> listOfMoves = new ArrayList<>();
         for (ActionDAGNode actionDAGNode : dag.getAllNodes()) {
             if (actionDAGNode.getAction() instanceof AtomicAction) {

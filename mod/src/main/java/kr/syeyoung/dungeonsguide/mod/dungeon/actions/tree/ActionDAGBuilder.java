@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionRoot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Getter;
 
@@ -55,20 +56,20 @@ public class ActionDAGBuilder {
         }
 
         @Override
-        public ActionDAGBuilder doAdd(AbstractAction abstractAction, ActionDAGNode.NodeType a) throws PathfindImpossibleException {
+        public ActionDAGBuilder doAdd(AbstractAction abstractAction, ActionDAGNode.NodeType a, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
             throw new UnsupportedOperationException();
         }
     }
 
-    public ActionDAGBuilder requires(Supplier<AbstractAction> abstractActionSupplier) throws PathfindImpossibleException  {
+    public ActionDAGBuilder requires(Supplier<AbstractAction> abstractActionSupplier, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException  {
         AbstractAction abstractAction = abstractActionSupplier.get();
-        return doAdd(abstractAction, ActionDAGNode.NodeType.AND);
+        return requires(abstractAction, algorithmSetting);
     }
-    public ActionDAGBuilder requires(AbstractAction abstractAction) throws PathfindImpossibleException {
-        return doAdd(abstractAction, ActionDAGNode.NodeType.AND);
+    public ActionDAGBuilder requires(AbstractAction abstractAction, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
+        return doAdd(abstractAction, ActionDAGNode.NodeType.AND, algorithmSetting);
     }
 
-    public ActionDAGBuilder doAdd(AbstractAction abstractAction, ActionDAGNode.NodeType nodeType) throws PathfindImpossibleException  {
+    public ActionDAGBuilder doAdd(AbstractAction abstractAction, ActionDAGNode.NodeType nodeType, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException  {
         if (abstractAction.isIdempotent() && idempotentActions.containsKey(abstractAction)) {
             ActionDAGNode actionDAGNode1 = idempotentActions.get(abstractAction);
 
@@ -131,27 +132,27 @@ public class ActionDAGBuilder {
         }
 
         ActionDAGBuilder actionDAGBuilder = new ActionDAGBuilder(this, child);
-        actionDAGBuilder = abstractAction.buildActionDAG(actionDAGBuilder, dungeonRoom);
+        actionDAGBuilder = abstractAction.buildActionDAG(actionDAGBuilder, dungeonRoom, algorithmSetting);
         return actionDAGBuilder;
     }
     public ActionDAGBuilder end() {
         return parent;
     }
 
-    public ActionDAGBuilder optional(Supplier<AbstractAction> abstractActionSupplier) throws PathfindImpossibleException {
+    public ActionDAGBuilder optional(Supplier<AbstractAction> abstractActionSupplier, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         AbstractAction abstractAction = abstractActionSupplier.get();
-        return optional(abstractAction);
+        return optional(abstractAction, algorithmSetting);
     }
-    public ActionDAGBuilder optional(AbstractAction abstractAction) throws PathfindImpossibleException {
-        return doAdd(abstractAction, ActionDAGNode.NodeType.OPTIONAL);
+    public ActionDAGBuilder optional(AbstractAction abstractAction, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
+        return doAdd(abstractAction, ActionDAGNode.NodeType.OPTIONAL, algorithmSetting);
     }
 
-    public ActionDAGBuilder or(Supplier<AbstractAction> abstractActionSupplier) throws PathfindImpossibleException {
+    public ActionDAGBuilder or(Supplier<AbstractAction> abstractActionSupplier, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         AbstractAction abstractAction = abstractActionSupplier.get();
-        return or(abstractAction);
+        return or(abstractAction, algorithmSetting);
     }
-    public ActionDAGBuilder or(AbstractAction abstractAction) throws PathfindImpossibleException {
-        return doAdd(abstractAction, ActionDAGNode.NodeType.OR);
+    public ActionDAGBuilder or(AbstractAction abstractAction, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
+        return doAdd(abstractAction, ActionDAGNode.NodeType.OR, algorithmSetting);
     }
 
     public ActionDAGBuilder getRoot() {

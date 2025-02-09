@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Dung
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.TSPCache;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -102,10 +103,10 @@ public class ActionChangeState extends AbstractAction {
     }
 
     @Override
-    public ActionDAGBuilder buildActionDAG(ActionDAGBuilder builder, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
+    public ActionDAGBuilder buildActionDAG(ActionDAGBuilder builder, DungeonRoom dungeonRoom, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         DungeonMechanicState mechanic = dungeonRoom.getMechanics().get(mechanicName);
         if (mechanic!= null && !mechanic.getCurrentState().equalsIgnoreCase(state))
-            mechanic.buildAction(state, builder);
+            mechanic.buildAction(state, builder, algorithmSetting);
         return new ActionDAGBuilder.ActionDAGBuilderNoMore(builder);
     }
 }

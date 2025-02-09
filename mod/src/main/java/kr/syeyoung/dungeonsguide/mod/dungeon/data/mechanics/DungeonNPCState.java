@@ -25,7 +25,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Dung
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.predicates.PredicateNPC;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.util.BlockPos;
@@ -46,7 +48,7 @@ public class DungeonNPCState implements DungeonMechanicState {
     }
 
     @Override
-    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+    public void buildAction(String action, ActionDAGBuilder builder, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         if (!"navigate".equalsIgnoreCase(action) && !"click".equalsIgnoreCase(action))
             throw new PathfindImpossibleException(action + " is not a valid state for secret");
 
@@ -59,15 +61,15 @@ public class DungeonNPCState implements DungeonMechanicState {
                         return actionClick;
                     })
                     .requires(new ActionMoveNearestAir(data.secretPoint))
-                    .build("MoveAndInteract"));
+                    .build("MoveAndInteract"), algorithmSetting);
         } else {
-            builder = builder.requires(new ActionMoveNearestAir(data.secretPoint));
+            builder = builder.requires(new ActionMoveNearestAir(data.secretPoint), algorithmSetting);
         }
 
         for (String str : data.preRequisite) {
             if (!str.isEmpty()) {
                 String[] split = str.split(":");
-                builder.optional(new ActionChangeState(split[0], split[1]));
+                builder.optional(new ActionChangeState(split[0], split[1]), algorithmSetting);
             }
         }
     }

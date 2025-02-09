@@ -28,7 +28,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.predicates.Predicate
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.AllArgsConstructor;
@@ -82,13 +84,13 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
     }
 
     @Override
-    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+    public void buildAction(String action, ActionDAGBuilder builder, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         if (action.equalsIgnoreCase("navigate")) {
             builder = builder
-                    .requires(new ActionMoveNearestAir(getRepresentingPoint()));
+                    .requires(new ActionMoveNearestAir(getRepresentingPoint()), algorithmSetting);
             for (String str : data.preRequisite) {
                 if (str.isEmpty()) continue;
-                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
             }
             return;
         }
@@ -101,7 +103,7 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
                 actionKill.setRadius(10);
                 actionKill.setPredicate(PredicateBat.INSTANCE);
                 return actionKill;
-            }), "MoveAndKill");
+            }), "MoveAndKill", algorithmSetting);
         } else {
             builder = builder.requires(new AtomicAction.Builder()
                     .requires(() -> {
@@ -111,11 +113,11 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
                         return actionKill;
                     })
                     .requires(new ActionMoveNearestAir(data.secretPoint))
-                    .build("MoveAndKill"));
+                    .build("MoveAndKill"), algorithmSetting);
 
             for (String str : data.preRequisite) {
                 if (str.isEmpty()) continue;
-                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
             }
         }
     }

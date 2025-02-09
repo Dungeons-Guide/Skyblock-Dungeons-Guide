@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.TSPCache;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
@@ -67,9 +68,9 @@ public class ActionRoute {
     @Getter
     private final ActionRouteProperties actionRouteProperties;
 
-    public ActionRoute(DungeonRoom dungeonRoom, String mechanic, String state, ActionRouteProperties actionRouteProperties)throws PathfindImpossibleException  {
+    public ActionRoute(DungeonRoom dungeonRoom, String mechanic, String state, ActionRouteProperties actionRouteProperties, AlgorithmSetting algorithmSetting)throws PathfindImpossibleException  {
         this(mechanic +" -> "+state, dungeonRoom, new ActionDAGBuilder(dungeonRoom)
-                .requires(new ActionChangeState(mechanic, state)).build(), actionRouteProperties);
+                .requires(new ActionChangeState(mechanic, state), algorithmSetting).build(), actionRouteProperties);
     }
 
     public ActionRoute(String name, DungeonRoom dungeonRoom, ActionDAG dag, ActionRouteProperties actionRouteProperties) throws PathfindImpossibleException  {

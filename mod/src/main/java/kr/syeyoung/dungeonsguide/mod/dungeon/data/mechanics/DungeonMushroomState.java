@@ -24,7 +24,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Dung
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.util.BlockPos;
@@ -46,21 +48,21 @@ public class DungeonMushroomState implements DungeonMechanicState {
 
 
     @Override
-    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+    public void buildAction(String action, ActionDAGBuilder builder, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         if (action.equalsIgnoreCase("navigate")) {
-            builder = builder.requires(new ActionMoveNearestAir(data.secretPoint));
+            builder = builder.requires(new ActionMoveNearestAir(data.secretPoint), algorithmSetting);
         } else if (action.equalsIgnoreCase("click")) {
             builder = builder.requires(
                     new AtomicAction.Builder()
                             .requires(new ActionTeleport(data.teleportPoint))
                             .requires(new ActionClick(data.secretPoint))
                             .requires(new ActionMoveNearestAir(data.secretPoint))
-                            .build("MoveAndClickAndWarp"));
+                            .build("MoveAndClickAndWarp"), algorithmSetting);
         }
         {
             for (String str : data.preRequisite) {
                 if (str.isEmpty()) continue;
-                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
             }
         }
     }

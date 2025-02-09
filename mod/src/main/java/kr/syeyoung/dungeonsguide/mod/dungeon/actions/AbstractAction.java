@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.TSPCache;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -71,5 +72,5 @@ public abstract class AbstractAction {
     public boolean isSanityCheck() { return false; }
     public boolean childComplete() { return true; }
 
-    public ActionDAGBuilder buildActionDAG(ActionDAGBuilder builder, DungeonRoom dungeonRoom) throws PathfindImpossibleException { return builder; }
+    public ActionDAGBuilder buildActionDAG(ActionDAGBuilder builder, DungeonRoom dungeonRoom, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException { return builder; }
 }

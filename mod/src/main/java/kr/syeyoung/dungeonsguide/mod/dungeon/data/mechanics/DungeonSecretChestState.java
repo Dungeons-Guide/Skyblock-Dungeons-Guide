@@ -26,7 +26,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Dung
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISecret;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.AllArgsConstructor;
@@ -107,13 +109,13 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
     }
 
     @Override
-    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+    public void buildAction(String action, ActionDAGBuilder builder, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         if (action.equalsIgnoreCase("navigate")) {
             builder = builder
-                    .requires(new ActionMoveNearestAir(getRepresentingPoint()));
+                    .requires(new ActionMoveNearestAir(getRepresentingPoint()), algorithmSetting);
             for (String str : data.preRequisite) {
                 if (str.isEmpty()) continue;
-                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
             }
             return;
         }
@@ -129,25 +131,25 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
         }).collect(Collectors.toList());
 
         if (data.secretCache != null)
-            ActionUtils.buildActionMoveAndClick(builder, room, data.secretCache, optionalRequisite, requiredRequisite);
+            ActionUtils.buildActionMoveAndClick(builder, room, data.secretCache, optionalRequisite, requiredRequisite, algorithmSetting);
         else
             ActionUtils.buildActionMoveAndClick(builder, room, data.secretPoint, builder1 -> {
                 boolean doneDoor = false;
                 for (String str : data.preRequisite) {
                     if (room.getMechanics().get(str.split(":")[0]) instanceof DungeonOnewayDoorState) {
-                        builder1.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                        builder1.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
                         doneDoor = true;
                     }
                 }
                 if (doneDoor)
-                    builder1 = builder1.requires(new ActionRoot());
+                    builder1 = builder1.requires(new ActionRoot(), algorithmSetting);
                 for (String str : data.preRequisite) {
                     if (str.isEmpty()) continue;
                     if (room.getMechanics().get(str) instanceof DungeonOnewayDoorState) continue;
-                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
                 }
                 return null;
-            });
+            }, algorithmSetting);
 
 
     }

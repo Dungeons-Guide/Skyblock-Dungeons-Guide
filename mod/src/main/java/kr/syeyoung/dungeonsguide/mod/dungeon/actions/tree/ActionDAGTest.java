@@ -20,7 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
@@ -43,22 +46,24 @@ public class ActionDAGTest {
         }
 
         @Override
-        public ActionDAGBuilder buildActionDAG(ActionDAGBuilder builder, DungeonRoom dungeonRoom) {
+        public ActionDAGBuilder buildActionDAG(ActionDAGBuilder builder, DungeonRoom dungeonRoom, AlgorithmSetting algorithmSetting) {
             return builder;
         }
     }
     public static void main(String args[]) throws PathfindImpossibleException {
 
+        AlgorithmSetting standard = AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING;
+        
         ActionDAGBuilder actionDAGBuilder = new ActionDAGBuilder(null);
         actionDAGBuilder
-                .requires(new DummyAction("1"))
-                    .requires(new DummyAction("2"))
-                        .or(new DummyAction("3")).requires(new DummyAction("8")).end().end()
-                        .or(new DummyAction("4")).end()
-                        .or(new DummyAction("5")).end()
-                        .or(new DummyAction("6")).end()
-                        .or(new DummyAction("7")).end().end()
-                    .requires(new DummyAction("8"));
+                .requires(new DummyAction("1"), standard)
+                    .requires(new DummyAction("2"), standard)
+                        .or(new DummyAction("3"), standard).requires(new DummyAction("8"), standard).end().end()
+                        .or(new DummyAction("4"), standard).end()
+                        .or(new DummyAction("5"), standard).end()
+                        .or(new DummyAction("6"), standard).end()
+                        .or(new DummyAction("7"), standard).end().end()
+                    .requires(new DummyAction("8"), standard);
 
         ActionDAG dag = actionDAGBuilder.build();
 

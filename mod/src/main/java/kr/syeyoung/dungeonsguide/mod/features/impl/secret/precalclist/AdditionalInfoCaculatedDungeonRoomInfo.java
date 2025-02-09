@@ -16,9 +16,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.pathfindcache.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import lombok.Data;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.util.BlockPos;
@@ -162,12 +164,12 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
     private Map<PathfindRequest, List<PathfindPrecalculation>> loaded;
     private int warnings;
 
-    public static ActionDAG buildReferencingAllPossibleThings(DungeonRoom dungeonRoom) {
+    public static ActionDAG buildReferencingAllPossibleThings(DungeonRoom dungeonRoom, AlgorithmSetting algorithmSetting) {
         ActionDAGBuilder builder = new ActionDAGBuilder(dungeonRoom);
         for (Map.Entry<String, DungeonMechanicState> value : dungeonRoom.getMechanics().entrySet()) {
             if (value.getValue() instanceof ISecret) {
                 try {
-                    builder.requires(new ActionChangeState(value.getKey(), "found"));
+                    builder.requires(new ActionChangeState(value.getKey(), "found"), algorithmSetting);
                 } catch (PathfindImpossibleException e) {
                     ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to " + value.getKey() + ":found failed due to " + e.getMessage());
                     e.printStackTrace();
@@ -175,7 +177,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
                 }
             } else if (value.getValue() instanceof DungeonRedstoneKeyState) {
                 try {
-                    builder.requires(new ActionChangeState(value.getKey(), "obtained-self"));
+                    builder.requires(new ActionChangeState(value.getKey(), "obtained-self"), algorithmSetting);
                 } catch (PathfindImpossibleException e) {
                     ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to " + value.getKey() + ":found failed due to " + e.getMessage());
                     e.printStackTrace();
@@ -183,7 +185,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
                 }
             } else if (value.getValue() instanceof DungeonRoomDoor2State) {
                 try {
-                    builder.requires(new ActionChangeState(value.getKey(), "navigate"));
+                    builder.requires(new ActionChangeState(value.getKey(), "navigate"), algorithmSetting);
                 } catch (PathfindImpossibleException e) {
                     ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to door: " + value.getKey() + ":navigate failed due to " + e.getMessage());
                     e.printStackTrace();
@@ -207,7 +209,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
         fakeContext.setScaffoldParser(new DungeonRoomScaffoldParser(dungeonMapLayout, fakeContext));
         DungeonRoom dungeonRoom = new DungeonRoom(fakeContext);
 
-        ActionDAG everything = buildReferencingAllPossibleThings(dungeonRoom);
+        ActionDAG everything = buildReferencingAllPossibleThings(dungeonRoom, roomPreset.getEffectiveAlgorithmSetting(dungeonRoomInfo));
 
 
         Set<String> openMech = new HashSet<>();

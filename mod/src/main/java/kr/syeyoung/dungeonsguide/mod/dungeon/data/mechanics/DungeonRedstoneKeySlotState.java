@@ -25,7 +25,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Dung
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.init.Blocks;
@@ -47,14 +49,14 @@ public class DungeonRedstoneKeySlotState implements DungeonMechanicState {
     }
 
     @Override
-    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+    public void buildAction(String action, ActionDAGBuilder builder, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         if (action.equals(getCurrentState())) return;
         if (action.equalsIgnoreCase("navigate")) {
             builder = builder
-                    .requires(new ActionMoveNearestAir(getRepresentingPoint()));
+                    .requires(new ActionMoveNearestAir(getRepresentingPoint()), algorithmSetting);
             for (String str : data.preRequisite) {
                 if (str.isEmpty()) continue;
-                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
             }
             return;
         }
@@ -64,16 +66,16 @@ public class DungeonRedstoneKeySlotState implements DungeonMechanicState {
                 .requires(new AtomicAction.Builder()
                         .requires(new ActionClick(data.slotPoint))
                         .requires(new ActionMoveNearestAir(data.slotPoint))
-                        .build("MoveAndClick"));
+                        .build("MoveAndClick"), algorithmSetting);
         {
             for (String s : data.preRequisite.stream().filter(a -> a.contains(":obtained-self")).collect(Collectors.toList())) {
-                builder.requires(new ActionChangeState(s.split(":")[0], s.split(":")[1]));
+                builder.requires(new ActionChangeState(s.split(":")[0], s.split(":")[1]), algorithmSetting);
             }
-            builder = builder.requires(new ActionRoot());
+            builder = builder.requires(new ActionRoot(), algorithmSetting);
             for (String str : data.preRequisite) {
                 if (str.isEmpty()) continue;
                 if (str.contains(":obtained-self")) continue;
-                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
             }
         }
     }

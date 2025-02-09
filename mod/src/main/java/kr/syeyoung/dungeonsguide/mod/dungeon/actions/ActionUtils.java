@@ -42,9 +42,8 @@ public class ActionUtils {
         AtomicAction.Builder build(AtomicAction.Builder builder) throws PathfindImpossibleException;
     }
 
-    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, List<PossibleClickingSpot> spots, OffsetPoint target, ActionDAGAccepter eachBuild, boolean guard) throws PathfindImpossibleException {
+    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, List<PossibleClickingSpot> spots, OffsetPoint target, ActionDAGAccepter eachBuild, boolean guard, AlgorithmSetting settings) throws PathfindImpossibleException {
         spots = spots.stream().filter(a -> {
-            AlgorithmSetting settings = ((GeneralRoomProcessor)dungeonRoom.getRoomProcessor()).getAlgorithmSetting();
             {
                 RequiredTool pickaxe = a.getTools()[0];
                 if (pickaxe != null) {
@@ -131,13 +130,13 @@ public class ActionUtils {
                 builder1 = builder1.or(new AtomicAction.Builder()
                         .requires(new ActionStonkClick(target))
                         .requires(new ActionMove(integerListEntry.getValue(), dungeonRoom))
-                        .build("MoveAndStonkClick"));
+                        .build("MoveAndStonkClick"), settings);
                 last = eachBuild.build(builder1);
             } else {
                 builder1 = builder1.or(new AtomicAction.Builder()
                         .requires(new ActionClick(target))
                         .requires(new ActionMove(integerListEntry.getValue(), dungeonRoom))
-                        .build("MoveAndClick"));
+                        .build("MoveAndClick"), settings);
                 last = eachBuild.build(builder1);
             }
         }
@@ -147,7 +146,7 @@ public class ActionUtils {
                                                            DungeonRoom dungeonRoom,
                                                            PrecalculatedStonk precalculatedStonk,
                                                            List<String> optionalPrerequisite,
-                                                           List<String> requiredPrerequisite) throws PathfindImpossibleException {
+                                                           List<String> requiredPrerequisite, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         List<String> defaultOpenBlockers = dungeonRoom.getMechanics().entrySet().stream()
                 .filter(a -> a.getValue() instanceof WorldMutatingMechanicState)
                 .filter(a-> !((WorldMutatingMechanicState) a.getValue()).isBlocking(dungeonRoom))
@@ -177,10 +176,10 @@ public class ActionUtils {
                         for (String newBlocker : newBlockers) {
                             if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonBreakableWallState) continue;
                             if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonTombState) continue;
-                            builder1.requires(new ActionChangeState(newBlocker, "open"));
+                            builder1.requires(new ActionChangeState(newBlocker, "open"), algorithmSetting);
                         }
                         for (String notBlocker : notBlockers) {
-                            builder1.requires(new ActionChangeState(notBlocker, "closed"));
+                            builder1.requires(new ActionChangeState(notBlocker, "closed"), algorithmSetting);
                         }
                         for (String s : requiredPrerequisite) {
                             if (s.isEmpty()) continue;
@@ -189,7 +188,7 @@ public class ActionUtils {
                             if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTombState) continue;
                             if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWallState) continue;
                             String state = s.split(":")[1];
-                            builder1.requires(new ActionChangeState(mech, state));
+                            builder1.requires(new ActionChangeState(mech, state), algorithmSetting);
                         }
                         for (String s : optionalPrerequisite) {
                             if (s.isEmpty()) continue;
@@ -198,16 +197,16 @@ public class ActionUtils {
                             if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWallState) continue;
                             String state = s.split(":")[1];
                             if (!optionalSubset.contains(mech)) {
-                                builder1.optional(new ActionChangeState(mech, state));
+                                builder1.optional(new ActionChangeState(mech, state), algorithmSetting);
                             }
                         }
                         return null;
-                    }, i != (1 << optionalSubset.size()) - 1);
+                    }, i != (1 << optionalSubset.size()) - 1, algorithmSetting);
         }
         return last;
     }
 
-    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, OffsetPoint target, ActionDAGAccepter eachBuild) throws PathfindImpossibleException {
+    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, OffsetPoint target, ActionDAGAccepter eachBuild, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         List<String> openBlockers = dungeonRoom.getMechanics().entrySet().stream()
                 .filter(a -> a.getValue() instanceof WorldMutatingMechanicState)
                 .filter(a-> !((WorldMutatingMechanicState) a.getValue()).isBlocking(dungeonRoom))
@@ -218,11 +217,11 @@ public class ActionUtils {
                 dungeonRoom.getDungeonRoomInfo().getBlocks() != null ?
                         new DRIWorld(dungeonRoom.getDungeonRoomInfo(), openBlockers) : dungeonRoom.getCachedWorld(), new BlockPos(target.getX(), target.getY(), target.getZ())
         ));
-        return buildActionMoveAndClick(builder, dungeonRoom, spots, target, eachBuild, false);
+        return buildActionMoveAndClick(builder, dungeonRoom, spots, target, eachBuild, false, algorithmSetting);
     }
 
 
-    public static ActionDAGBuilder buildActionMoveAnd(ActionDAGBuilder builder, DungeonRoom dungeonRoom, List<PossibleMoveSpot> spots, String name, AtomicActionAccepter eachBuild, ActionDAGAccepter afterBuild, boolean guard) throws PathfindImpossibleException {
+    public static ActionDAGBuilder buildActionMoveAnd(ActionDAGBuilder builder, DungeonRoom dungeonRoom, List<PossibleMoveSpot> spots, String name, AtomicActionAccepter eachBuild, ActionDAGAccepter afterBuild, boolean guard, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
 
         ActionDAGBuilder last = builder;
         for (Map.Entry<Integer, List<PossibleMoveSpot>> integerListEntry :
@@ -234,7 +233,7 @@ public class ActionUtils {
             builder1 = builder1.or(
                     eachBuild.build(new AtomicAction.Builder())
                             .requires(new ActionMoveSpot(integerListEntry.getValue(), dungeonRoom))
-                            .build(name));
+                            .build(name), algorithmSetting);
             last = afterBuild.build(builder1);
         }
         return last;
@@ -245,7 +244,7 @@ public class ActionUtils {
                                                       List<String> optionalPrerequisite,
                                                       List<String> requiredPrerequisite,
                                                       AtomicActionAccepter eachBuild,
-                                                      String name) throws PathfindImpossibleException {
+                                                      String name, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
 
         List<String> defaultOpenBlockers = dungeonRoom.getMechanics().entrySet().stream()
                 .filter(a -> a.getValue() instanceof WorldMutatingMechanicState)
@@ -283,10 +282,10 @@ public class ActionUtils {
                         for (String newBlocker : newBlockers) {
                             if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonBreakableWallState) continue;
                             if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonTombState) continue;
-                            builder1.requires(new ActionChangeState(newBlocker, "open"));
+                            builder1.requires(new ActionChangeState(newBlocker, "open"), algorithmSetting);
                         }
                         for (String notBlocker : notBlockers) {
-                            builder1.requires(new ActionChangeState(notBlocker, "closed"));
+                            builder1.requires(new ActionChangeState(notBlocker, "closed"), algorithmSetting);
                         }
                         for (String s : requiredPrerequisite) {
                             if (s.isEmpty()) continue;
@@ -295,7 +294,7 @@ public class ActionUtils {
                             if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWallState) continue;
                             if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTombState) continue;
                             String state = s.split(":")[1];
-                            builder1.requires(new ActionChangeState(mech, state));
+                            builder1.requires(new ActionChangeState(mech, state), algorithmSetting);
                         }
                         for (String s : optionalPrerequisite) {
                             if (s.isEmpty()) continue;
@@ -304,11 +303,11 @@ public class ActionUtils {
                             if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTombState) continue;
                             String state = s.split(":")[1];
                             if (!optionalSubset.contains(mech)) {
-                                builder1.optional(new ActionChangeState(mech, state));
+                                builder1.optional(new ActionChangeState(mech, state), algorithmSetting);
                             }
                         }
                         return null;
-                    }, i != (1 << optionalSubset.size()) - 1);
+                    }, i != (1 << optionalSubset.size()) - 1, algorithmSetting);
         }
         return last;
     }

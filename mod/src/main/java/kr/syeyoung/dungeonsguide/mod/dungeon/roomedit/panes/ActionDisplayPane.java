@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MTextField;
@@ -58,7 +59,7 @@ public class ActionDisplayPane extends MPanel {
                         String target = text.split(":")[0];
                         String state = text.split(":")[1];
                         ActionChangeState actionChangeState = new ActionChangeState(target, state);
-                        ActionDAG tree= new ActionDAGBuilder(dungeonRoom).requires(actionChangeState).build();
+                        ActionDAG tree= new ActionDAGBuilder(dungeonRoom).requires(actionChangeState, ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getAlgorithmSetting()).build();
 
                         displayPane = new ActionTreeDisplayPane(dungeonRoom, tree);
                         displayPane.setBounds(new Rectangle(0,25,getBounds().width,getBounds().height-25));

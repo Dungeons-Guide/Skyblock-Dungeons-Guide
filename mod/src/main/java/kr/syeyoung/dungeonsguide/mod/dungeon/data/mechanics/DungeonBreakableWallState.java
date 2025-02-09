@@ -21,13 +21,13 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.block.Block;
@@ -49,7 +49,7 @@ public class DungeonBreakableWallState implements WorldMutatingMechanicState {
     }
 
     @Override
-    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+    public void buildAction(String action, ActionDAGBuilder builder, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         if (action.equalsIgnoreCase("navigate")) {
             builder = builder.requires(() -> {
                         int leastY = Integer.MAX_VALUE;
@@ -61,12 +61,12 @@ public class DungeonBreakableWallState implements WorldMutatingMechanicState {
                             }
                         }
                         return new ActionMoveNearestAir(thatPt);
-                    });
+                    }, algorithmSetting);
 
 
             for (String str : data.preRequisite) {
                 if (str.isEmpty()) continue;
-                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
             }
             return;
         }
@@ -88,13 +88,13 @@ public class DungeonBreakableWallState implements WorldMutatingMechanicState {
                                     }
                                 }
                                 return new ActionMoveNearestAir(thatPt);
-                            }).build("GoAndBreakWall")
-                );
+                            }).build("GoAndBreakWall"), algorithmSetting
+        );
 
 
         for (String str : data.preRequisite) {
             if (str.isEmpty()) continue;
-            builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+            builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
         }
         return;
     }

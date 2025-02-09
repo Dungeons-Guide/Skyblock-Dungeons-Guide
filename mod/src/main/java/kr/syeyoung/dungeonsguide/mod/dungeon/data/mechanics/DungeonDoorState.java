@@ -21,15 +21,15 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.init.Blocks;
@@ -50,7 +50,7 @@ public class DungeonDoorState implements WorldMutatingMechanicState {
 
 
     @Override
-    public void buildAction(String action, ActionDAGBuilder builder) throws PathfindImpossibleException {
+    public void buildAction(String action, ActionDAGBuilder builder, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         if (!("open".equalsIgnoreCase(action) || "closed".equalsIgnoreCase(action) || "navigate".equalsIgnoreCase(action))) throw new PathfindImpossibleException(action +" is not valid state for door");
         if (action.equalsIgnoreCase(getCurrentState())) return;
         if ("navigate".equalsIgnoreCase(action)) {
@@ -64,10 +64,10 @@ public class DungeonDoorState implements WorldMutatingMechanicState {
                             }
                         }
                         return new ActionMoveNearestAir(thatPt);
-                    });;
+                    }, algorithmSetting);;
             for (String s : data.movePreRequisite) {
                 if (s.isEmpty()) continue;
-                builder.optional(new ActionChangeState(s.split(":")[0], s.split(":")[1]));
+                builder.optional(new ActionChangeState(s.split(":")[0], s.split(":")[1]), algorithmSetting);
             }
             return;
         }
@@ -77,13 +77,13 @@ public class DungeonDoorState implements WorldMutatingMechanicState {
                 for (String str : data.openPreRequisite) {
                     if (str.isEmpty()) continue;
                     ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                    builder.requires(actionChangeState);
+                    builder.requires(actionChangeState, algorithmSetting);
                 }
             } else {
                 for (String str : data.closePreRequisite) {
                     if (str.isEmpty()) continue;
                     ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                    builder.requires(actionChangeState);
+                    builder.requires(actionChangeState, algorithmSetting);
                 }
             }
         }
