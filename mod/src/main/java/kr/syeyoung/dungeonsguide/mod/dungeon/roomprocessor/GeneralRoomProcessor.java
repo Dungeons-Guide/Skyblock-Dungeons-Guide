@@ -675,7 +675,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
             return  null;
         }
         activePathfind.put(pos.center(), new WeakReference<>(executor));
-        dungeonRoom.getContext().getExecutors().add(new WeakReference<>(executor));
+        dungeonRoom.getContext().getExecutor().registerExecutor(executor);
+
         return executor;
     }
 

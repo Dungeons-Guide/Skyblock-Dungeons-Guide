@@ -22,10 +22,13 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import lombok.Getter;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.LockSupport;
 
 public class PathfinderExecutorExecutor extends Thread{
     public PathfinderExecutorExecutor(DungeonContext context) {
@@ -37,6 +40,14 @@ public class PathfinderExecutorExecutor extends Thread{
 
     public void setRoomIn(DungeonRoom target) {
         this.target = target;
+        LockSupport.unpark(this);
+    }
+
+    private final List<WeakReference<PathfinderExecutor>> executors = new CopyOnWriteArrayList<>();
+
+    public void registerExecutor(PathfinderExecutor executor) {
+        executors.add(new WeakReference<>(executor));
+        LockSupport.unpark(this);
     }
 
     @Override
@@ -48,24 +59,29 @@ public class PathfinderExecutorExecutor extends Thread{
                 if (context.getScaffoldParser() != null) {
                     try {
                         boolean flag = false;
-                        context.getExecutors().toArray(weakReferences);
+                        executors.toArray(weakReferences);
+                        boolean foundAny = false;
                         for (int i = 0; i < weakReferences.length; i++) {
                             WeakReference<PathfinderExecutor> executor = weakReferences[i];
                             if (executor == null) break;
 
                             PathfinderExecutor executor1 = executor.get();
                             if (executor1 != null) {
-                                if (executor1.getDungeonRoom() == target)
+                                if (executor1.getDungeonRoom() == target) {
                                     executor1.doStep();
+                                    foundAny = true;
+                                }
                             } else {
                                 flag = true;
                                 toRemove.add(executor);
                             }
                         }
                         if (flag) {
-                            context.getExecutors().removeAll(toRemove);
+                            executors.removeAll(toRemove);
                             toRemove.clear();
                         }
+                        if (!foundAny)
+                            LockSupport.park();
 //                    Thread.yield();
                     } catch (Exception e) {
                         FeatureCollectDiagnostics.queueSendLogAsync(e);

@@ -74,9 +74,6 @@ public class DungeonContext {
     private final PathfindPreset preset;
 
     @Getter
-    private final List<WeakReference<PathfinderExecutor>> executors = new CopyOnWriteArrayList<>();
-
-    @Getter
     private final List<RoomProcessor> globalRoomProcessors = new ArrayList<>();
 
     // bunch of statistics
@@ -106,6 +103,7 @@ public class DungeonContext {
         recorder.createEvent(new DungeonPercentageChangeEvent(percentage));
     }
 
+    @Getter
     private final PathfinderExecutorExecutor executor = new PathfinderExecutorExecutor(this);
 
 
