@@ -18,7 +18,7 @@ java {
 loom {
     runs {
         client {
-            ideConfigGenerated(true)
+            ideConfigGenerated = true
             name = "Launch Loader Only"
             runDir = '../runtime'
             property('devauth.enabled','true')

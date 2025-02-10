@@ -82,10 +82,12 @@ dependencies {
     modLocalRuntime("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 }
 
+
+
 loom {
     runs {
         client {
-            ideConfigGenerated(true)
+            ideConfigGenerated = true
             name = "Launch Dungeons Guide"
             runDir = '../runtime'
             property('devauth.enabled', 'true')
@@ -98,6 +100,14 @@ loom {
         pack200Provider.set(new dev.architectury.pack200.java.Pack200Adapter())
     }
 }
+
+afterEvaluate {
+    loom.runs.named("client") {
+        programArgs("--mods", configurations.devenvMod.files
+                .collect { file("../runtime").relativePath(it) }.join(","))
+    }
+}
+
 
 ext.genOutputDir = file("$buildDir/generated-resources")
 task generateVersionInfo {

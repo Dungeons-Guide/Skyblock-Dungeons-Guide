@@ -18,10 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import lombok.Data;
@@ -33,6 +30,10 @@ import java.io.Serializable;
 @Data
 @JsonFormat(shape = JsonFormat.Shape.ARRAY)
 @JsonPropertyOrder({"xCoord", "yCoord", "zCoord"})
+@JsonAutoDetect(
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE
+)
 public class OffsetVec3 implements Cloneable {
     public double xCoord;
     public double yCoord;
