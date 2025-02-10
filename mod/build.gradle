@@ -139,12 +139,11 @@ tasks.named("remapJar") {
 }
 
 
-tasks.assemble.dependsOn tasks.remapJar
 
 signing {
     required(project.findProperty("dg.dosign") == "true")
     useGpgCmd()
-    sign configurations.archives
+    sign tasks.remapJar, tasks.shadowJar
 }
 
 artifacts {

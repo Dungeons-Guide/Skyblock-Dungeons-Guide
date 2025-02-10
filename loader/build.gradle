@@ -111,7 +111,7 @@ tasks.named("remapJar") {
 signing {
     required(project.findProperty("dg.dosign") == "true")
     useGpgCmd()
-    sign configurations.archives
+    sign tasks.remapJar, tasks.shadowJar
 }
 
 artifacts {
