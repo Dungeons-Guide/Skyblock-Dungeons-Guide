@@ -89,6 +89,7 @@ public class DungeonContext {
     @Getter
     private boolean gotMimic = false;
 
+    // observation => sensor fusion => new state
 
     // general info
     @Getter

@@ -361,8 +361,6 @@ public class DungeonRoom  {
         return -1;
     }
 
-
-
     public void chunkUpdate(int cx, int cz) {
         if (!chunkCache.isManaged(cx, cz)) {
             return;

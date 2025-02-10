@@ -658,7 +658,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
 
     public PathfinderExecutor createEntityPathTo(BoundingBox pos) {
-        FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.SECRET_PATHFIND_STRATEGY.getPathfindStrat();
         if (activePathfind.containsKey(pos.center())) {
             WeakReference<PathfinderExecutor> executorWeakReference = activePathfind.get(pos.center());
             PathfinderExecutor executor = executorWeakReference.get();
@@ -668,6 +667,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         }
         if (true)
             return null;
+        FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.SECRET_PATHFIND_STRATEGY.getPathfindStrat();
         PathfinderExecutor executor;
         if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID_SMART) {
             executor = new PathfinderExecutor(new FineGridStonkingBFS(algorithmSetting), pos, pathfinderWorld);
