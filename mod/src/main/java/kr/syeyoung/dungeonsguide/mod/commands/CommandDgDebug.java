@@ -1188,14 +1188,14 @@ public class CommandDgDebug extends CommandBase {
         File outsecret = new File(fileRoot, "processoroutsecret");
         CBORMapper cborMapper = new CBORMapper();
         for (File f : dir.listFiles()) {
-            if (!f.getName().endsWith(".roomdata")) {
+            if (!f.getName().endsWith(".roomdata.cbor")) {
                 continue;
             }
 
             try {
                 DungeonRoomInfo dri = cborMapper.readValue(f, DungeonRoomInfo.class);
                 dri.setUserMade(false);
-                cborMapper.writeValue(new File(outsecret, dri.getUuid().toString() + ".roomdata"), dri);
+                cborMapper.writeValue(new File(outsecret, dri.getUuid().toString() + ".roomdata.cbor"), dri);
             } catch (Exception e) {
                 e.printStackTrace();
             }
