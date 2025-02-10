@@ -22,6 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.panes;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
@@ -29,18 +30,22 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.zip.GZIPOutputStream;
 
@@ -172,6 +177,54 @@ public class GeneralEditPane extends MPanel {
                         {
                             dataoutputstream.close();
                         }
+
+//                        NBTTagCompound compound = nbtTagCompound2;
+//                        int w = compound.getShort("Width");
+//                        int l = compound.getShort("Length");
+//                        if (dungeonRoom.getRoomMatcher().getRotation() % 2 == 1) {
+//                            int temp = l;
+//                            l = w;
+//                            w = temp;
+//                        }
+////                        if (!dungeonRoom.getDungeonRoomInfo().hasSchematic())
+//                        dungeonRoom.getDungeonRoomInfo().setSize(w,l,256);
+//
+//                        byte[] blocks = compound.getByteArray("Blocks");
+//                        byte[] meta = compound.getByteArray("Data");
+//                        BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos();
+//                        OffsetPoint offsetPoint = new OffsetPoint();
+//                        for (int x = 1; x < compound.getShort("Width"); x++) {
+//                            for (int y = 0; y < compound.getShort("Height"); y++) {
+//                                for (int z = 1; z < compound.getShort("Length"); z++) {
+//                                    int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
+//                                    mpos.set(x+dungeonRoom.getRoomBounds().getMinX(),y,z+dungeonRoom.getRoomBounds().getMinZ());
+//                                    offsetPoint.setPosInWorld(dungeonRoom, mpos);
+//
+//                                    Block b = Block.getBlockById(blocks[index] & 0xFF);
+//                                    Optional<PropertyDirection> propertyDirection = b.getDefaultState().getPropertyNames().stream()
+//                                            .filter(a -> a instanceof PropertyDirection)
+//                                            .map(PropertyDirection.class::cast).findFirst();
+//
+//                                    if (!dungeonRoom.getRoomBounds().canAccessRelative(x,z)) {
+//                                        continue;
+//                                    }
+//
+//
+//                                    IBlockState blockState = b.getStateFromMeta(meta[index] & 0xFF);
+//                                    if (propertyDirection.isPresent()) {
+//                                        EnumFacing enumFacing = blockState.getValue(propertyDirection.get());
+//                                        if (!(enumFacing == EnumFacing.UP || enumFacing == EnumFacing.DOWN)) {
+//                                            for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++)
+//                                                enumFacing = enumFacing.rotateY();
+//                                            blockState = blockState.withProperty(propertyDirection.get(), enumFacing);
+//                                        }
+//                                    }
+//
+//                                    dungeonRoom.getDungeonRoomInfo().setBlock(offsetPoint, blockState);
+//                                }
+//                            }
+//                        }
+
                         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSaved to "+f.getName()));
                     } catch (Exception e) {
                         e.printStackTrace();

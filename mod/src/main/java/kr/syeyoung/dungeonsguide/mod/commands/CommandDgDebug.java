@@ -219,6 +219,13 @@ public class CommandDgDebug extends CommandBase {
                     throw new RuntimeException(e);
                 }
                 break;
+            case "removedoorschematic":
+                try {
+                    removedoorsSchematic(args);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                break;
             case "check":
                 checkCommand();
                 break;
@@ -638,6 +645,138 @@ public class CommandDgDebug extends CommandBase {
             }
         }
     }
+
+
+    private void removedoorsSchematic(String[] args) throws Exception {
+        File fileRoot = Main.getConfigDir();
+        File dir = new File(fileRoot, "schematics");
+
+        File outdir = new File(fileRoot, "schematics");
+
+
+//        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
+
+        File f = new File(dir, args[1]);
+            try (FileInputStream fis = new FileInputStream(f)){
+                NBTTagCompound compound = CompressedStreamTools.readCompressed(fis);
+                byte[] blocks = compound.getByteArray("Blocks");
+                byte[] meta = compound.getByteArray("Data");
+                int shape = 1;
+                int len = compound.getShort("Length");
+                int wid = compound.getShort("Width");
+                // formula y *len*width + z * width + x
+
+                for (int x = 0; x <= 11; x ++) {
+                    for (int z = 0; z <= 11; z++) {
+                        if ((x % 2 == 1) == (z % 2 == 1)) continue;
+
+                        int rx = x * 16;
+                        int rz = z * 16;
+
+                        if (rx >= wid+6) continue;
+                        if (rz >= len+6) continue;
+
+                        if (x % 2 == 1) {
+                            if (z == 0) {
+                            } else if ((shape >>(((z/2)-1) *4 +(x/2)) & 0x1) > 0 &&
+                                    (shape >>(((z/2)) *4 +(x/2)) & 0x1) > 0) {
+                                continue;
+                            }
+                        } else {
+                            if (x == 0) {
+                            } else if ((shape >>((z/2) *4 +(x/2) - 1) & 0x1) > 0 &&
+                                    (shape >>((z/2) *4 +(x/2)) & 0x1) > 0) {
+                                continue;
+                            }
+                        }
+
+                        int f1 = 13;
+                        // paste the one with TERRACOTA or COAL or MORE AIR INSIDE
+                        for (int rrx = rx-1; rrx <= rx + 1; rrx ++) {
+                            for (int rrz = rz - 1; rrz <= rz +1; rrz ++) {
+                                for (int y = 69; y <= 72; y++) {
+                                    int i = rrx + rrz * wid + y * wid * len;
+                                    if (rrx >= wid) continue;
+                                    if (rrz >= len) continue;
+                                    if (rrx < 0) continue;
+                                    if (rrz < 0) continue;
+
+                                    if (blocks[i] == 0 || blocks[i] == (byte)173 || (blocks[i] == (byte)159 && meta[i] == 14)) {
+                                    } else {
+                                        f1 = 0;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (f1 < 12) continue;
+
+                        if (x % 2 == 1) {
+                            // going in Z dir
+                            for (int rrx = rx-2; rrx <= rx + 2; rrx ++) {
+                                for (int rrz = rz - 3; rrz <= rz +3; rrz ++) {
+                                    for (int y = 66; y <= 73; y++) {
+                                        int i = rrx + rrz * wid + y * wid * len;
+                                        if (rrx >= wid) continue;
+                                        if (rrz >= len) continue;
+                                        if (rrx < 0) continue;
+                                        if (rrz < 0) continue;
+
+                                        if (Math.abs(rrx - rx) == 2 || y >= 72 || y < 69) {
+                                            blocks[i] = (byte) 153;
+                                            meta[i] = 14;
+                                        }
+
+                                        if (Math.abs(rrz - rz) <= 1 && Math.abs(rrx - rx) <= 1 && (y >= 69 && y <= 72)) {
+                                            blocks[i] = (byte) 19;
+                                            meta[i] = 14;
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            // going in X dir
+                            for (int rrx = rx-3; rrx <= rx + 3; rrx ++) {
+                                for (int rrz = rz - 2; rrz <= rz +2; rrz ++) {
+                                    for (int y = 66; y <= 73; y++) {
+                                        int i = rrx + rrz * wid + y * wid * len;
+                                        if (rrx >= wid) continue;
+                                        if (rrz >= len) continue;
+                                        if (rrx < 0) continue;
+                                        if (rrz < 0) continue;
+
+                                        if (Math.abs(rrz - rz) == 2 || y >= 72 || y < 69) {
+                                            blocks[i] = (byte) 153;
+                                            meta[i] = 15;
+                                        }
+
+                                        if (Math.abs(rrz - rz) <= 1 && Math.abs(rrx - rx) <= 1 && (y >= 69 && y <= 72)) {
+                                            blocks[i] = (byte) 19;
+                                            meta[i] = 15;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                compound.setByteArray("Blocks", blocks);
+                compound.setByteArray("Data", meta);
+
+
+                OutputStream outputStream = Files.newOutputStream(new File(outdir, "fixed-"+f.getName()).toPath());
+
+                CompressedStreamTools.writeCompressed(compound, outputStream);
+
+                outputStream.flush();
+                outputStream.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+    }
+
 
     private void removedupe() throws Exception  {
 

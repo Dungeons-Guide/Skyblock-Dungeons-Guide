@@ -106,6 +106,10 @@ public class SkyblockStatus {
     @Setter
     private boolean forceIsOnDungeon;
 
+    @Getter
+    @Setter
+    private boolean forceIsOnDungeon2;
+
     public static boolean isOnHypixel() {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc == null || mc.thePlayer == null) return false;
@@ -120,7 +124,7 @@ public class SkyblockStatus {
     private static final Set<String> SKYBLOCK_IN_ALL_LANGUAGES = Sets.newHashSet("SKYBLOCK");
 
     public void updateStatus() {
-        forceIsOnDungeon = DungeonServerLaunchUtils.isDungeonIntegratedServerRunning() && Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().theWorld != null;
+        forceIsOnDungeon = DungeonServerLaunchUtils.isDungeonIntegratedServerRunning() && Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().theWorld != null || forceIsOnDungeon2;
         if (forceIsOnDungeon) {
             locationName = "TEST DG";
         }

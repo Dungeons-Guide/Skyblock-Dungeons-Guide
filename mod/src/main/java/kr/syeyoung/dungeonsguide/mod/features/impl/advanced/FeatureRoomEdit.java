@@ -86,6 +86,7 @@ import org.lwjgl.input.Keyboard;
 import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -165,6 +166,103 @@ public class FeatureRoomEdit  extends SimpleFeature {
         }
     }
 
+    private void load(DungeonRoomInfo dungeonRoomInfo) {
+        if (!dungeonRoomInfo.hasSchematic()) throw new IllegalArgumentException("HAS NO SCHEMATIC!");
+
+
+        if (Minecraft.getMinecraft().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
+            NBTTagCompound compound = schematic;
+            for (int x = 0; x < compound.getShort("Width") + 16; x+= 1) {
+                for (int y = 0; y < compound.getShort("Height"); y++) {
+                    for (int z = 0; z < compound.getShort("Length") + 16; z+=1) {
+                        BlockPos pos = new BlockPos(x, 0, z);
+                        World w = MinecraftServer.getServer().getEntityWorld();
+                        if (x % 16 == 0 && z % 16 == 0 && y == 0) {
+                            for (int i = 0; i < w.getChunkFromBlockCoords(pos).getBlockStorageArray().length; i++) {
+                                w.getChunkFromBlockCoords(pos).getBlockStorageArray()[i] = null;
+                            }
+                        }
+                        w.markBlockForUpdate(pos);
+                    }
+                }
+            }
+            onWorldUnload(null);
+        } else {
+            if (Minecraft.getMinecraft().theWorld != null) {
+                boolean flag = Minecraft.getMinecraft().isIntegratedServerRunning();
+                boolean flag1 = Minecraft.getMinecraft().isConnectedToRealms();
+                Minecraft.getMinecraft().theWorld.sendQuittingDisconnectingPacket();
+                Minecraft.getMinecraft().loadWorld((WorldClient) null);
+            }
+
+
+            ISaveFormat isaveformat = Minecraft.getMinecraft().getSaveLoader();
+            isaveformat.flushCache();
+            isaveformat.deleteWorldDirectory("dungeonsguide");
+
+
+
+            WorldType.FLAT.onGUICreateWorldPress();
+            WorldSettings.GameType worldsettings$gametype = WorldSettings.GameType.CREATIVE;
+            WorldSettings worldsettings = new WorldSettings(0, worldsettings$gametype, false, false, WorldType.FLAT);
+            worldsettings.setWorldName("3;minecraft:air");
+            worldsettings.enableCommands();
+
+            Minecraft.getMinecraft().launchIntegratedServer("dungeonsguide", "dungeonsguide", worldsettings);
+        }
+
+        blockUpdates = new ArrayList<>();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        MinecraftServer.getServer().getEntityWorld().setSpawnPoint(new BlockPos(0, 100, 0));
+        MinecraftServer.getServer().getEntityWorld().getGameRules().setOrCreateGameRule("doMobSpawning", "false");
+        MinecraftServer.getServer().getEntityWorld().getGameRules().setOrCreateGameRule("doDaylightCycle", "false");
+        MinecraftServer.getServer().getEntityWorld().getGameRules().setOrCreateGameRule("randomTickSpeed", "0");
+
+        shape = dungeonRoomInfo.getShape();
+        color = dungeonRoomInfo.getColor();
+
+        schematic = null;
+        List<FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData> datas = new ArrayList<>();
+        for (int x = 1; x < dungeonRoomInfo.getWidth(); x++) {
+            for (int y = 0; y < 256; y++) {
+                for (int z = 1; z < dungeonRoomInfo.getLength(); z++) {
+                    if (!( (shape >>((z/32) *4 +(x/32)) & 0x1) > 0)) {
+                        continue;
+                    }
+
+                    BlockPos pos = new BlockPos(x, y, z);
+                    World w = MinecraftServer.getServer().getEntityWorld();
+                    Chunk c = w.getChunkFromBlockCoords(pos);
+                    w.markBlockForUpdate(pos);
+                    ExtendedBlockStorage[] storage= c.getBlockStorageArray();
+                    ExtendedBlockStorage extendedblockstorage = storage[y >> 4];
+
+                    IBlockState block = dungeonRoomInfo.getBlock(x, y-70, z, 0);
+                    if (extendedblockstorage == null) {
+                        if (block.getBlock() == Blocks.air) {
+                            continue;
+                        }
+                        extendedblockstorage = storage[y >> 4] = new ExtendedBlockStorage(y >> 4 << 4, true);
+                    }
+                    extendedblockstorage.set(x & 0xF, y & 15, z & 0xF, block);
+                    if ((block.getBlock() == Blocks.dispenser)) {
+                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new BlockPos(x, y, z),  block));
+                    }
+                }
+            }
+        }
+        blockUpdates.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate(datas, System.currentTimeMillis()));
+        xWid = (dungeonRoomInfo.getWidth() + 5) / 32;
+        zWid = (dungeonRoomInfo.getLength() + 5) / 32;
+
+        FeatureRoomEdit.this.flag = true;
+        FeatureRoomEdit.this.setup = false;
+
+    }
 
     private File f;
     private void load(File f) {
@@ -297,6 +395,112 @@ public class FeatureRoomEdit  extends SimpleFeature {
         FeatureRoomEdit.this.setup = false;
     }
 
+    private void loadSchm(File f) {
+        this.f = f;
+
+
+        if (Minecraft.getMinecraft().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
+            NBTTagCompound compound = schematic;
+            for (int x = 0; x < compound.getShort("Width") + 16; x+= 1) {
+                for (int y = 0; y < compound.getShort("Height"); y++) {
+                    for (int z = 0; z < compound.getShort("Length") + 16; z+=1) {
+                        BlockPos pos = new BlockPos(x, 0, z);
+                        World w = MinecraftServer.getServer().getEntityWorld();
+                        if (x % 16 == 0 && z % 16 == 0 && y == 0) {
+                            for (int i = 0; i < w.getChunkFromBlockCoords(pos).getBlockStorageArray().length; i++) {
+                                w.getChunkFromBlockCoords(pos).getBlockStorageArray()[i] = null;
+                            }
+                        }
+                        w.markBlockForUpdate(pos);
+                    }
+                }
+            }
+            onWorldUnload(null);
+        } else {
+            if (Minecraft.getMinecraft().theWorld != null) {
+                boolean flag = Minecraft.getMinecraft().isIntegratedServerRunning();
+                boolean flag1 = Minecraft.getMinecraft().isConnectedToRealms();
+                Minecraft.getMinecraft().theWorld.sendQuittingDisconnectingPacket();
+                Minecraft.getMinecraft().loadWorld((WorldClient) null);
+            }
+
+
+            ISaveFormat isaveformat = Minecraft.getMinecraft().getSaveLoader();
+            isaveformat.flushCache();
+            isaveformat.deleteWorldDirectory("dungeonsguide");
+
+
+
+            WorldType.FLAT.onGUICreateWorldPress();
+            WorldSettings.GameType worldsettings$gametype = WorldSettings.GameType.CREATIVE;
+            WorldSettings worldsettings = new WorldSettings(0, worldsettings$gametype, false, false, WorldType.FLAT);
+            worldsettings.setWorldName("3;minecraft:air");
+            worldsettings.enableCommands();
+
+            Minecraft.getMinecraft().launchIntegratedServer("dungeonsguide", "dungeonsguide", worldsettings);
+        }
+        blockUpdates = new ArrayList<>();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        MinecraftServer.getServer().getEntityWorld().setSpawnPoint(new BlockPos(0, 100, 0));
+        MinecraftServer.getServer().getEntityWorld().getGameRules().setOrCreateGameRule("doMobSpawning", "false");
+        MinecraftServer.getServer().getEntityWorld().getGameRules().setOrCreateGameRule("doDaylightCycle", "false");
+        MinecraftServer.getServer().getEntityWorld().getGameRules().setOrCreateGameRule("randomTickSpeed", "0");
+
+        shape = 1;
+        color = 63;
+
+        NBTTagCompound compound;
+        try (FileInputStream fis = new FileInputStream(f)){
+            compound =  CompressedStreamTools.readCompressed(fis);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        schematic = compound;
+        byte[] blocks = compound.getByteArray("Blocks");
+        byte[] meta = compound.getByteArray("Data");
+        List<FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData> datas = new ArrayList<>();
+        for (int x = 0; x < compound.getShort("Width"); x++) {
+            for (int y = 0; y < compound.getShort("Height"); y++) {
+                for (int z = 0; z < compound.getShort("Length"); z++) {
+                    if (!( (shape >>((z/32) *4 +(x/32)) & 0x1) > 0)) {
+                        continue;
+                    }
+
+                    int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
+                    BlockPos pos = new BlockPos(x, y, z);
+                    World w = MinecraftServer.getServer().getEntityWorld();
+                    Chunk c = w.getChunkFromBlockCoords(pos);
+                    w.markBlockForUpdate(pos);
+                    ExtendedBlockStorage[] storage= c.getBlockStorageArray();
+                    ExtendedBlockStorage extendedblockstorage = storage[y >> 4];
+                    if (extendedblockstorage == null) {
+                        if ((blocks[index] & 0xFF) == 0) {
+                            continue;
+                        }
+                        extendedblockstorage = storage[y >> 4] = new ExtendedBlockStorage(y >> 4 << 4, true);
+                    }
+                    extendedblockstorage.set(x & 0xF, y & 15, z & 0xF, Block.getBlockById(blocks[index] & 0xFF).getStateFromMeta(meta[index] & 0xFF));
+                    if ((blocks[index] & 0xFF) == 23) {
+                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new BlockPos(x, y, z),  Blocks.dropper.getStateFromMeta(meta[index] & 0xFF)));
+                    }
+                }
+            }
+        }
+        blockUpdates.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate(datas, System.currentTimeMillis()));
+        xWid = (compound.getShort("Width") + 5) / 32;
+        zWid = (compound.getShort("Length") + 5) / 32;
+
+        FeatureRoomEdit.this.flag = true;
+        FeatureRoomEdit.this.setup = false;
+    }
+
+
     public class RoomConfiguration extends AnnotatedImportOnlyWidget {
 
         @Bind(
@@ -355,6 +559,30 @@ public class FeatureRoomEdit  extends SimpleFeature {
                 load(new File(files.get(nextFile).toUri()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            }
+        }
+
+        @On(functionName = "loadschematic")
+        public  void loadSchematic() {
+            Frame parent = new Frame();
+            FileDialog dialog = new FileDialog(parent, "Choose a Schematic file", FileDialog.LOAD);
+            dialog.setDirectory(Main.getConfigDir().getAbsolutePath());
+
+            dialog.setFilenameFilter((dir, name) -> name.endsWith(".schematic")); //osx
+            dialog.setFile("*.schematic"); // windows
+
+            dialog.setVisible(true);
+
+            File[] chosen = dialog.getFiles();
+
+            parent.dispose();
+            dialog.dispose();
+            if (chosen.length == 0) return;
+            File f = chosen[0];
+            try {
+                loadSchm(f);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         @On(functionName = "loaddgrun")
@@ -466,7 +694,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
             DungeonContext fakeContext = new DungeonContext("TEST DG", Minecraft.getMinecraft().theWorld);
             DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(fakeContext);
-            DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(true);
+            DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon2(true);
             DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(
                     new Dimension(16, 16),
                     5,
@@ -510,13 +738,13 @@ public class FeatureRoomEdit  extends SimpleFeature {
         if (flag) {
             EditingContext.endEditingSession();
             DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
-            DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(false);
+            DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon2(false);
             blockUpdates = null;
             flag = false;
         }
     }
 
-    public static class RoomSwitch extends AnnotatedImportOnlyWidget {
+    public class RoomSwitch extends AnnotatedImportOnlyWidget {
         @Bind(variableName = "uuid")
         public final BindableAttribute<String> uuid = new BindableAttribute<>(String.class);
         @Bind(variableName = "name")
@@ -525,6 +753,8 @@ public class FeatureRoomEdit  extends SimpleFeature {
         public final BindableAttribute<Integer> color = new BindableAttribute<>(Integer.class);
         @Bind(variableName = "shape")
         public final BindableAttribute<String> shape = new BindableAttribute<>(String.class);
+
+        private DungeonRoomInfo info;
         public RoomSwitch(DungeonRoomInfo dungeonRoomInfo) {
             super(new ResourceLocation("dungeonsguide:gui/features/roomedit/room.gui"));
             name.setValue(dungeonRoomInfo.getName());
@@ -550,10 +780,14 @@ public class FeatureRoomEdit  extends SimpleFeature {
             }
 
             this.color.setValue(color);
+
+            this.info = dungeonRoomInfo  ;
         }
 
         @On(functionName = "edit")
         public void edit() {
+
+            FeatureRoomEdit.this.load(info);
             // blahblah
         }
 

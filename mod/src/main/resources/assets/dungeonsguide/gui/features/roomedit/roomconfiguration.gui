@@ -31,7 +31,7 @@
                         </size>
                         <size width="5"/>
                         <size height="20" width="100">
-                            <RoundButton text="Load .schematic" disabled="true"/>
+                            <RoundButton text="Load .schematic" on:click="loadschematic"/>
                         </size>
                     </row>
                     <size height="5" width="0"/>

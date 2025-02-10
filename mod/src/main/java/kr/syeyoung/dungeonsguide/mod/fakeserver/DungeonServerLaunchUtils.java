@@ -67,6 +67,7 @@ public class DungeonServerLaunchUtils {
     }
 
     public static void createContext() {
+        if (lastLoadedRoom == null) return;
         DungeonRoomInfo dungeonRoomInfo = lastLoadedRoom;
         short shape = dungeonRoomInfo.getShape();
         DungeonContext fakeContext = new DungeonContext("TEST DG", Minecraft.getMinecraft().theWorld, lastLoadedPreset);
