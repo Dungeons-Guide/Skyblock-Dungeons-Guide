@@ -2,9 +2,9 @@ plugins {
     id "signing"
     id "idea"
     id "java"
-    id "com.github.johnrengelman.shadow" version "7.1.2"
-    id "dev.architectury.architectury-pack200" version "0.1.3"
-    id "gg.essential.loom" version "0.10.0.+"
+    id "com.gradleup.shadow" version "8.3.6"
+    id "dev.architectury.architectury-pack200"
+    id "gg.essential.loom"
 }
 
 version = "4.0.0-beta12.5-experimental8.0"
@@ -15,9 +15,9 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))
 }
 
-sourceSets.main {
-    output.setResourcesDir(file("$buildDir/classes/java/main"))
-}
+//sourceSets.main {
+//    output.setResourcesDir(file("$buildDir/classes/java/main"))
+//}
 
 repositories {
     mavenCentral()
@@ -65,7 +65,8 @@ dependencies {
     }
     shadowImpl 'com.github.Dungeons-Guide:DiscordIPC:d403df89'
     shadowImpl "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
-    shadowImpl 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+    shadowImpl('com.fasterxml.jackson.core:jackson-databind:2.18.2') {
+    }
     shadowImpl 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.18.1'
 
     compileOnly "org.projectlombok:lombok:1.18.20"
@@ -82,20 +83,9 @@ dependencies {
 }
 
 loom {
-    launchConfigs {
-        client {
-            arg("--mods", configurations.devenvMod.files
-                    .collect { file("../runtime").relativePath(it) }.join(","))
-        }
-    }
-    runConfigs {
-        named("client") {
-            ideConfigGenerated(true)
-            vmArgs.remove("-XstartOnFirstThread")
-        }
-    }
     runs {
         client {
+            ideConfigGenerated(true)
             name = "Launch Dungeons Guide"
             runDir = '../runtime'
             property('devauth.enabled', 'true')
@@ -110,7 +100,6 @@ loom {
 }
 
 ext.genOutputDir = file("$buildDir/generated-resources")
-
 task generateVersionInfo {
     ext.outputFile = file("$genOutputDir/versionMeta.properties")
     outputs.file(outputFile)
@@ -135,23 +124,18 @@ tasks.shadowJar {
 
     configurations = [project.configurations.shadowImpl]
 
+    enableRelocation = true
+    relocationPrefix = "kr.syeyoung.dungeonsguide.libs"
+
     dependencies {
         exclude(dependency("org.json:json")) // provided via loader
     }
 }
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
-tasks.register("relocateShadowJar", ConfigureShadowRelocation) {
-    target = tasks.shadowJar
-    prefix = "kr.syeyoung.dungeonsguide.libs"
-}
-tasks.shadowJar.dependsOn tasks.relocateShadowJar
-
-
 tasks.named("remapJar") {
     archiveClassifier = "mapped"
-    from(tasks.shadowJar)
-    input = tasks.shadowJar.archiveFile
+    dependsOn tasks.shadowJar
+    inputFile = tasks.shadowJar.archiveFile
 }
 
 

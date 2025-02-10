@@ -2,9 +2,9 @@ plugins {
     id "idea"
     id "signing"
     id "java"
-    id "com.github.johnrengelman.shadow" version "7.1.2"
-    id "dev.architectury.architectury-pack200" version "0.1.3"
-    id "gg.essential.loom" version "0.10.0.+"
+    id "com.gradleup.shadow" version "8.3.6"
+    id "dev.architectury.architectury-pack200"
+    id "gg.essential.loom"
 }
 
 version = "4.1.2"
@@ -16,23 +16,9 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))
 }
 loom {
-    launchConfigs {
-        client {
-            // probably will have to my own mixin tweaker, due to dungeonsguide's weird dynamic loading stuff
-//            property("mixin.debug", "true")
-//            property("asmhelper.verbose", "true")
-//            arg("--mixin", "mixins.examplemod.json")
-
-        }
-    }
-    runConfigs {
-        named("client") {
-            ideConfigGenerated(true)
-            vmArgs.remove("-XstartOnFirstThread")
-        }
-    }
     runs {
         client {
+            ideConfigGenerated(true)
             name = "Launch Loader Only"
             runDir = '../runtime'
             property('devauth.enabled','true')
@@ -46,10 +32,10 @@ loom {
     }
 }
 
-
-sourceSets.main {
-    output.setResourcesDir(file("$buildDir/classes/java/main"))
-}
+//
+//sourceSets.main {
+//    output.setResourcesDir(file("$buildDir/classes/java/main"))
+//}
 
 
 repositories {
@@ -109,20 +95,16 @@ tasks.shadowJar {
     archiveFileName = jar.archiveFileName
     exclude "META-INF/versions/**"
     configurations = [project.configurations.shadowImpl, project.configurations.shadowApi]
-}
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
-tasks.register("relocateShadowJar", ConfigureShadowRelocation) {
-    target = tasks.shadowJar
-    prefix = "kr.syeyoung.dungeonsguide.libs"
+    enableRelocation = true
+    relocationPrefix = "kr.syeyoung.dungeonsguide.libs"
 }
-tasks.shadowJar.dependsOn tasks.relocateShadowJar
 
 
 tasks.named("remapJar") {
     archiveClassifier = "mapped"
-    from(tasks.shadowJar)
-    input = tasks.shadowJar.archiveFile
+    dependsOn tasks.shadowJar
+    inputFile = tasks.shadowJar.archiveFile
 }
 
 

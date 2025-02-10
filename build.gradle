@@ -65,7 +65,7 @@ task standaloneDevJar(type: Zip) {
     archiveClassifier = "devStandalone"
     dependsOn ":mod:build", ":loader:build"
     from(zipTree(configurations.loaderOnlyDev.files[0]))
-    archiveFileName = configurations.modOnlyDev.files.name.get(0).replace(".jar", "")+"-devStandalone.jar"
+    archiveFileName = configurations.modOnlyDev.files.name.get(0).replace(".jar", "")+"-standalone.jar"
     from(configurations.modOnlyDev.files) {
         rename ".+\\.jar", "mod.jar"
     }
