@@ -16,6 +16,7 @@ roomdata/9650cb39-5f22-45f4-86cd-5d197a4266e5.roomdata.cbor
 roomdata/95c57abe-34d4-443c-baac-11d43cbc821f.roomdata.cbor
 roomdata/11982f7f-703e-4d98-9d27-4e07ba3fef71.roomdata.cbor
 roomdata/8f317c52-6550-42dd-829b-2a477389fe89.roomdata.cbor
+roomdata/a40a5e95-1700-406d-b167-7efb13da9599.roomdata.cbor
 roomdata/570ae82b-2051-496a-a731-af8d11bf1565.roomdata.cbor
 roomdata/0405eaf0-2f6a-466c-9b3b-d336980f7cbf.roomdata.cbor
 roomdata/5000be9d-3081-4a5e-8563-dd826705663a.roomdata.cbor
