@@ -121,7 +121,7 @@ public abstract class AbstractActionMove extends AbstractAction {
 
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        draw(dungeonRoom, partialTicks, actionRouteProperties, flag, getBeaconTargetPos(dungeonRoom), poses);
+        draw(dungeonRoom, partialTicks, actionRouteProperties, flag, getBeaconTargetPos(dungeonRoom), poses, FeatureRegistry.SECRET_FREEZE_LINES.isEnabled());
         {
 //            double cx = 0, cy =0 , cz = 0;
 //            int cnt = 0;
@@ -138,7 +138,7 @@ public abstract class AbstractActionMove extends AbstractAction {
         }
     }
 
-    static void draw(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag, BlockPos target, PathfindResult poses) {
+    static void draw(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag, BlockPos target, PathfindResult poses, boolean flag2) {
         float distance = MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         if (flag) multiplier *= 2.0f;
@@ -167,9 +167,10 @@ public abstract class AbstractActionMove extends AbstractAction {
                     if (warp == 1) {
                         BlockPos pos = new BlockPos(Math.floor(pose.getX()), Math.floor(pose.getY()) -1 , Math.floor(pose.getZ()));
                         RenderUtils.highlightBox(Blocks.stone.getSelectedBoundingBox(null, pos).expand(0.003, 0.003, 0.003), Color.green, partialTicks, true);
-                        warp = 2;
+                        warp = flag2 ? 0 : 2;
                     }
-                    if (pose.getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP && cnt < 10 && warp < 2) {
+                    if (pose.getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP &&
+                            ((flag2 && Minecraft.getMinecraft().thePlayer.getDistanceSq(pose.getX(), pose.getY(), pose.getZ()) < 25) || (!flag2 && cnt < 2)) && warp < 2) {
                         warp = 1;
                     }
 
@@ -263,7 +264,7 @@ public abstract class AbstractActionMove extends AbstractAction {
         if (executor == null && actionRouteProperties.isPathfind()) {
             forceRefresh(dungeonRoom);
         }
-        if (executor != null && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() ) {
+        if (executor != null && (poses == null || !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled())) {
             poses = executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
         }
 
