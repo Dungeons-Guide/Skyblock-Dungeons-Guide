@@ -45,7 +45,7 @@ loom {
             property('devauth.enabled','true')
             property("fml.coreMods.load", "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker")
             client()
-            vmArgs.remove("-XstartOnFirstThread")
+//            vmArgs.remove("-XstartOnFirstThread")
         }
     }
     forge {
@@ -93,7 +93,7 @@ dependencies {
         minecraftNatives(files(urlFile("https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-2.9.4/lwjgl-platform-2.9.4-nightly-20150209-natives-linux.jar", "lwjgl-platform-2.9.4-nightly-20150209-natives-linux-arm32.jar"),
                 urlFile("https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-2.9.4/jinput-platform-2.0.5-natives-linux.jar", "jinput-platform-2.0.5-natives-linux-arm32.jar")))
     } else if (os.isMacOS()) {
-        minecraftNatives(files(urlFile("https://github.com/MinecraftMachina/lwjgl/releases/download/2.9.4-20150209-mmachina.2/lwjgl-platform-2.9.4-nightly-20150209-natives-osx.jar", "lwjgl-platform-2.9.4-nightly-20150209-natives-osx-arm64.jar"),
+        minecraftNatives(files(urlFile("https://github.com/Dungeons-Guide/lwjgl/releases/download/2.9.4-20150209-mmachina.2-syeyoung.1/lwjgl-platform-2.9.4-nightly-20150209-natives-osx-arm64.jar", "lwjgl-platform-2.9.4-nightly-20150209-natives-osx-arm64.jar"),
                 urlFile("https://github.com/r58Playz/jinput-m1/raw/main/plugins/OSX/bin/jinput-platform-2.0.5.jar", "jinput-platform-2.0.5-natives-osx-arm64.jar")))
     }
 
