@@ -1258,7 +1258,7 @@ public class CommandDgDebug extends CommandBase {
         File fileroot = new File(Main.getConfigDir(), "processorinput");
         CBORMapper cborMapper = new CBORMapper();
         for (File f : fileroot.listFiles()) {
-            if (!f.getName().endsWith(".roomdata")) {
+            if (!f.getName().endsWith(".roomdata.cbor")) {
                 continue;
             }
             try {
@@ -1266,11 +1266,17 @@ public class CommandDgDebug extends CommandBase {
                 System.out.println("Starting at " + dri.getName() + " - " + dri.getUuid());
                 for (Map.Entry<String, DungeonMechanicData> value2 : dri.getMechanics().entrySet()) {
                     DungeonMechanicData value = value2.getValue();
-                    if ((value instanceof DungeonSecretEssenceState.DungeonSecretEssenceData || value instanceof DungeonSecretChestState.DungeonSecretChestData) && ((ISecret) value).getSecretPoint().getY() == 0) {
-                        OffsetPoint offsetPoint = ((ISecret) value).getSecretPoint();
+                    if ((value instanceof DungeonSecretEssenceState.DungeonSecretEssenceData) && ((DungeonSecretEssenceState.DungeonSecretEssenceData) value).getSecretPoint().getY() == 0) {
+                        OffsetPoint offsetPoint = ((DungeonSecretEssenceState.DungeonSecretEssenceData) value).getSecretPoint();
                         if (dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                             dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
-                            System.out.println("Fixing " + value2.getKey() + " - as secret " + value.getClass().getSimpleName() + " - at " + ((ISecret) value).getSecretPoint());
+                            System.out.println("Fixing " + value2.getKey() + " - as secret " + value.getClass().getSimpleName() + " - at " + ((DungeonSecretEssenceState.DungeonSecretEssenceData) value).getSecretPoint());
+                        }
+                    } else  if ((value instanceof DungeonSecretChestState.DungeonSecretChestData) && ((DungeonSecretChestState.DungeonSecretChestData) value).getSecretPoint().getY() == 0) {
+                        OffsetPoint offsetPoint = ((DungeonSecretChestState.DungeonSecretChestData) value).getSecretPoint();
+                        if (dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
+                            dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
+                            System.out.println("Fixing " + value2.getKey() + " - as secret " + value.getClass().getSimpleName() + " - at " + ((DungeonSecretChestState.DungeonSecretChestData) value).getSecretPoint());
                         }
                     } else if (value instanceof DungeonOnewayDoorState.DungeonOnewayDoorData) {
                         for (OffsetPoint offsetPoint : ((DungeonOnewayDoorState.DungeonOnewayDoorData) value).getSecretPoint().getOffsetPointList()) {
