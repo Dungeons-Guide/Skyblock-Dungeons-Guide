@@ -72,15 +72,17 @@ dependencies {
     forge("net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9")
 
     def os = platform.getOperatingSystem();
-    if (os.isLinux() && platform.getArchitecture().is64Bit()) {
-        minecraftNatives(files(urlFile("https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-2.9.4/lwjgl-platform-2.9.4-nightly-20150209-natives-linux.jar", "lwjgl-platform-2.9.4-nightly-20150209-natives-linux-arm64.jar"),
-                urlFile("https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-2.9.4/jinput-platform-2.0.5-natives-linux.jar", "jinput-platform-2.0.5-natives-linux-arm64.jar")))
-    } else if (os.isLinux() && !platform.getArchitecture().is64Bit()) {
-        minecraftNatives(files(urlFile("https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-2.9.4/lwjgl-platform-2.9.4-nightly-20150209-natives-linux.jar", "lwjgl-platform-2.9.4-nightly-20150209-natives-linux-arm32.jar"),
-                urlFile("https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-2.9.4/jinput-platform-2.0.5-natives-linux.jar", "jinput-platform-2.0.5-natives-linux-arm32.jar")))
-    } else if (os.isMacOS()) {
-        minecraftNatives(files(urlFile("https://github.com/Dungeons-Guide/lwjgl/releases/download/2.9.4-20150209-mmachina.2-syeyoung.1/lwjgl-platform-2.9.4-nightly-20150209-natives-osx-arm64.jar", "lwjgl-platform-2.9.4-nightly-20150209-natives-osx-arm64.jar"),
-                urlFile("https://github.com/r58Playz/jinput-m1/raw/main/plugins/OSX/bin/jinput-platform-2.0.5.jar", "jinput-platform-2.0.5-natives-osx-arm64.jar")))
+    if (platform.getArchitecture().isArm()) {
+        if (os.isLinux() && platform.getArchitecture().is64Bit()) {
+            minecraftNatives(files(urlFile("https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-2.9.4/lwjgl-platform-2.9.4-nightly-20150209-natives-linux.jar", "lwjgl-platform-2.9.4-nightly-20150209-natives-linux-arm64.jar"),
+                    urlFile("https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-2.9.4/jinput-platform-2.0.5-natives-linux.jar", "jinput-platform-2.0.5-natives-linux-arm64.jar")))
+        } else if (os.isLinux() && !platform.getArchitecture().is64Bit()) {
+            minecraftNatives(files(urlFile("https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-2.9.4/lwjgl-platform-2.9.4-nightly-20150209-natives-linux.jar", "lwjgl-platform-2.9.4-nightly-20150209-natives-linux-arm32.jar"),
+                    urlFile("https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-2.9.4/jinput-platform-2.0.5-natives-linux.jar", "jinput-platform-2.0.5-natives-linux-arm32.jar")))
+        } else if (os.isMacOS()) {
+            minecraftNatives(files(urlFile("https://github.com/Dungeons-Guide/lwjgl/releases/download/2.9.4-20150209-mmachina.2-syeyoung.1/lwjgl-platform-2.9.4-nightly-20150209-natives-osx-arm64.jar", "lwjgl-platform-2.9.4-nightly-20150209-natives-osx-arm64.jar"),
+                    urlFile("https://github.com/r58Playz/jinput-m1/raw/main/plugins/OSX/bin/jinput-platform-2.0.5.jar", "jinput-platform-2.0.5-natives-osx-arm64.jar")))
+        }
     }
 
     implementation "org.jetbrains:annotations-java5:19.0.0"
@@ -112,7 +114,7 @@ dependencies {
 
 loom {
     if (platform.getArchitecture().isArm()) {
-        loom.customMinecraftManifest = "hhttps://gist.githubusercontent.com/cyoung06/76a8208bd4575c17bdb138a0771c0886/raw/beb9ef6cc3c26abf5014d810133d21bedbffa9bb/1.8.9.json"
+        loom.customMinecraftManifest = "https://gist.githubusercontent.com/cyoung06/76a8208bd4575c17bdb138a0771c0886/raw/beb9ef6cc3c26abf5014d810133d21bedbffa9bb/1.8.9.json"
     }
     runs {
         client {
