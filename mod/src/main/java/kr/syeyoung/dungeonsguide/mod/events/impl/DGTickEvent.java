@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class DGTickEvent extends Event {

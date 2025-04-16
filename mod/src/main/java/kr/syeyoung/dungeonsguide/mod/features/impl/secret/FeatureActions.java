@@ -29,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.IPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
@@ -106,7 +107,8 @@ public class FeatureActions extends TextHUDFeature {
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
 
-        for (ActionRoute path : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getPath().values()) {
+        for (IPathDisplayEngine path2 : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getPath().values()) {
+            ActionRoute path = path2.getActionRoute();
             actualBit.addChild(new TextSpan(getStyle("pathfinding"), "Pathfinding "));
             actualBit.addChild(new TextSpan(getStyle("mechanic"), path.toString()+"\n"));
 

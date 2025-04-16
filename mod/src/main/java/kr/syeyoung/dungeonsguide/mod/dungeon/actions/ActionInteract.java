@@ -21,17 +21,13 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
-import java.awt.*;
 import java.util.function.Predicate;
 
 @Data
@@ -52,7 +48,7 @@ public class ActionInteract extends AbstractAction {
 
     private boolean interacted = false;
     @Override
-    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRouteProperties actionRouteProperties) {
+    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event) {
         if (interacted) return;
 
         Vec3 spawnLoc = DungeonActionContext.getSpawnLocation().get(event.getEntity().getEntityId());
@@ -68,12 +64,6 @@ public class ActionInteract extends AbstractAction {
         interacted = true;
     }
 
-    @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        BlockPos pos = target.getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
-        RenderUtils.drawTextAtWorld("Interact", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
-    }
 
     @Override
     public String toString() {

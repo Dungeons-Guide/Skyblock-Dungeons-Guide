@@ -36,6 +36,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISecret;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.PathfindLineProperties;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.ClassicPathDisplayEngine;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.IPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
@@ -162,9 +165,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
         try {
             ActionDAG dag = actionDAGBuilder.build();
 //                if (dag.getActionDAGNode().getPotentialRequires().size() != 0) {
-            ActionRoute actionRoute = new ActionRoute("Smart Route", dungeonRoom, dag,
-                    FeatureRegistry.SECRET_LINE_PROPERTIES_SMART_ROUTE.getRouteProperties());
-            path.put("smart", actionRoute);
+            ActionRoute actionRoute = new ActionRoute("Smart Route", dungeonRoom, dag);
+            path.put("smart", new ClassicPathDisplayEngine(actionRoute, FeatureRegistry.SECRET_LINE_PROPERTIES_SMART_ROUTE.getRouteProperties()));
 //                }
         } catch (PathfindImpossibleException e) {
             ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to everything failed due to "+e.getMessage());
@@ -235,8 +237,9 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
         Set<String> toRemove = new HashSet<>();
         path.entrySet().forEach(a -> {
-            a.getValue().onTick();
-            if (a.getValue().getCurrentAction() instanceof ActionComplete)
+            a.getValue().tick();
+            a.getValue().getActionRoute().onTick();
+            if (a.getValue().getActionRoute().getCurrentAction() instanceof ActionComplete)
                 toRemove.add(a.getKey());
         });
         toRemove.forEach(path::remove);
@@ -298,10 +301,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void drawScreen(float partialTicks) {
-        path.values().forEach(a -> {
-            a.onRenderScreen(partialTicks);
-        });
-
         if (FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && FeatureRegistry.DEBUG.isEnabled()) {
             FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
@@ -329,17 +328,21 @@ public class GeneralRoomProcessor implements RoomProcessor {
         }
 
 
-        ActionRoute finalSmallest = getBestFit(partialTicks);
+
+//
+//        ActionRoute finalSmallest = getBestFit(partialTicks);
         path.values().forEach(a -> {
-            a.onRenderWorld(partialTicks, finalSmallest == a);
+            a.renderActionRoute(partialTicks);
         });
     }
 
-    private ActionRoute getBestFit(float partialTicks) {
+    private IPathDisplayEngine<?> getBestFit(float partialTicks) {
 
-        ActionRoute smallest = null;
+        IPathDisplayEngine smallest = null;
         double smallestTan = 0.002;
-        for (ActionRoute value : path.values()) {
+        for (IPathDisplayEngine value2 : path.values()) {
+            ActionRoute value = value2.getActionRoute();
+
             BlockPos target;
             if (value.getCurrentAction() instanceof ActionMove) {
                 target = new BlockPos(((ActionMove) value.getCurrentAction()).getTargetVec3().getPos(dungeonRoom));
@@ -351,14 +354,15 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 target = ((ActionMoveNearestAir)value.getActions().get(value.getCurrent()-1)).getTarget().getBlockPos(dungeonRoom);
             } else continue;
 
-            if (value.getActionRouteProperties().getLineRefreshRate() != -1 && value.getActionRouteProperties().isPathfind() && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled()) continue;
+            if (((ActionRouteProperties) value2.getSettings()).getLineRefreshRate() != -1 &&
+                    ((ActionRouteProperties) value2.getSettings()).isPathfind() && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled()) continue;
 
             Entity e = Minecraft.getMinecraft().getRenderViewEntity();
 
             double vectorV = VectorUtils.distSquared(e.getLook(partialTicks), e.getPositionEyes(partialTicks), new Vec3(target).addVector(0.5,0.5,0.5));
 
             if (vectorV < smallestTan) {
-                smallest = value;
+                smallest = value2;
                 smallestTan = vectorV;
             }
         }
@@ -455,10 +459,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
         return false;
     }
 
-    @Getter
-    private Map<String, ActionRoute> path = new HashMap<>();
 
-    public ActionRoute getPath(String id){
+    @Getter
+    private Map<String, IPathDisplayEngine<?>> path = new HashMap<>();
+
+    public IPathDisplayEngine<?> getPath(String id){
         return path.get(id);
     }
 
@@ -468,7 +473,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         return str;
     }
     public void pathfind(String id, String mechanic, String state, ActionRouteProperties actionRouteProperties)throws PathfindImpossibleException {
-        path.put(id, new ActionRoute(getDungeonRoom(), mechanic, state, actionRouteProperties, algorithmSetting));
+        path.put(id, new ClassicPathDisplayEngine(new ActionRoute(getDungeonRoom(), mechanic, state, algorithmSetting), actionRouteProperties));
     }
     public void cancelAll() {
         path.clear();
@@ -476,6 +481,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void cancel(String id) {
         path.remove(id);
     }
+
+
 
     @Override
     public void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event) {
@@ -503,7 +510,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
             searchForNextTarget();
 
         } else if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getKeybind() == keyInputEvent.getKey() && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {
-            ActionRoute actionRoute = getBestFit(0);
+            IPathDisplayEngine engine = getBestFit(0);
+            ActionRoute actionRoute = engine.getActionRoute();
             // Because no route found!
             if (actionRoute == null) return;
             // actually do force refresh because of force freeze pathfind
@@ -514,14 +522,15 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 ActionMoveNearestAir ac = (ActionMoveNearestAir) actionRoute.getCurrentAction();
                 ac.forceRefresh(getDungeonRoom());
             } else if (actionRoute.getCurrent() >= 1 && actionRoute.getActions().get(actionRoute.getCurrent()-1) instanceof ActionMove) {
+//                engine.forceRefresh();
                 ((ActionMove)actionRoute.getActions().get(actionRoute.getCurrent()-1)).forceRefresh(dungeonRoom);
             } else if (actionRoute.getCurrent() >= 1 && actionRoute.getActions().get(actionRoute.getCurrent()-1) instanceof ActionMoveNearestAir) {
                 ((ActionMoveNearestAir)actionRoute.getActions().get(actionRoute.getCurrent()-1)).forceRefresh(dungeonRoom);
             }
 
-            if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isPathfind() && !actionRoute.getActionRouteProperties().isPathfind()) {
-                actionRoute.getActionRouteProperties().setPathfind(true);
-                actionRoute.getActionRouteProperties().setLineRefreshRate(FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getRefreshRate());
+            if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isPathfind() && !((ActionRouteProperties)engine.getSettings()).isPathfind()) {
+                ((ActionRouteProperties)engine.getSettings()).setPathfind(true);
+                ((ActionRouteProperties)engine.getSettings()).setLineRefreshRate(FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getRefreshRate());
             }
         } else if (FeatureRegistry.SECRET_SMART_KEYBIND.isEnabled() && FeatureRegistry.SECRET_SMART_KEYBIND.<Integer>getParameter("key").getValue() == keyInputEvent.getKey()) {
             if (!getDungeonRoom().getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) {
@@ -535,7 +544,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void onInteract(PlayerInteractEntityEvent event) {
         path.values().forEach(a -> {
-            a.onLivingInteract(event);
+            a.getActionRoute().onLivingInteract(event);
         });
     }
 
@@ -544,7 +553,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void onInteractBlock(PlayerInteractEvent event) {
         path.values().forEach(a -> {
-            a.onPlayerInteract(event);
+            a.getActionRoute().onPlayerInteract(event);
         });
 
         if (event.pos != null) {
@@ -608,7 +617,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void onEntityDeath(LivingDeathEvent deathEvent) {
         path.values().forEach(a -> {
-            a.onLivingDeath(deathEvent);
+            a.getActionRoute().onLivingDeath(deathEvent);
         });
         if (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getRoom() == getDungeonRoom()) {
             if (deathEvent.entity instanceof EntityBat) {

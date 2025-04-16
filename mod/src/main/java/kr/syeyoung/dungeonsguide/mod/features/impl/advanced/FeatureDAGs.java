@@ -30,6 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.IPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -82,13 +83,13 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
         if (dungeonRoom == null) return;
         GeneralRoomProcessor roomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
         int defaultLvCount = 0;
-        for (Map.Entry<String, ActionRoute> stringActionRouteEntry : roomProcessor.getPath().entrySet()) {
+        for (Map.Entry<String, IPathDisplayEngine<?>> stringActionRouteEntry : roomProcessor.getPath().entrySet()) {
 //            if (stringActionRouteEntry.getValue().isCalculating()) continue;
 
-            ActionDAGNode rootNode = stringActionRouteEntry.getValue().getDag().getActionDAGNode();
+            ActionDAGNode rootNode = stringActionRouteEntry.getValue().getActionRoute().getDag().getActionDAGNode();
             // let's dfs!!!
 
-            boolean[] visited = new boolean[stringActionRouteEntry.getValue().getDag().getAllNodes().size()];
+            boolean[] visited = new boolean[stringActionRouteEntry.getValue().getActionRoute().getDag().getAllNodes().size()];
 
             Deque<ActionDAGNode> path = new ArrayDeque<>();
             path.push(rootNode);
@@ -144,9 +145,9 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
         fr.drawString("Black=Disabled / Pink=Current / Dark Green=Parent Completed / Green=Completed", 0 ,0, 0xFFFFFF00);
         GL11.glLineWidth(5.0f);
 
-        for (ActionRoute value : roomProcessor.getPath().values()) {
+        for (IPathDisplayEngine<?> value2 : roomProcessor.getPath().values()) {
 //            if (value.isCalculating()) continue;
-
+            ActionRoute value = value2.getActionRoute();
 
             WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
             int nodestatus[] = value.getDag().getNodeStatus(value.getDagId());

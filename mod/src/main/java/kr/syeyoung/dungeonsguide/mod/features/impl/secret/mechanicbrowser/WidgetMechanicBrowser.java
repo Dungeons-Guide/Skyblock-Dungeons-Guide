@@ -93,7 +93,7 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
             current.setValue("Nothing");
             color.setValue(0xFFAA0000);
         } else {
-            ActionRoute route = grp.getPath("MECH-BROWSER");
+            ActionRoute route = grp.getPath("MECH-BROWSER").getActionRoute();
             current.setValue(route.toString());
             color.setValue(0xFFFFFF00);
         }
@@ -120,7 +120,7 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
             current.setValue("Nothing");
             color.setValue(0xFFAA0000);
         } else {
-            ActionRoute route = grp.getPath("MECH-BROWSER");
+            ActionRoute route = grp.getPath("MECH-BROWSER").getActionRoute();
             current.setValue(route.toString());
             color.setValue(0xFFFFFF00);
         }

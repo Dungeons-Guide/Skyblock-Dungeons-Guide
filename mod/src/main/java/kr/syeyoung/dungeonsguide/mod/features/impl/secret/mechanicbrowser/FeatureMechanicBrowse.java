@@ -32,6 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.IPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectPositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
@@ -129,8 +130,8 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         if (grp.getPath("MECH-BROWSER") == null)
             fr.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
         else {
-            ActionRoute route = grp.getPath("MECH-BROWSER");
-            fr.drawString(route.toString(), fr.getStringWidth("Selected: ") + 2,2, 0xFFFFFF00);
+            IPathDisplayEngine<?> route = grp.getPath("MECH-BROWSER");
+            fr.drawString(route.getActionRoute().toString(), fr.getStringWidth("Selected: ") + 2,2, 0xFFFFFF00);
         }
         fr.drawString("Open Chat to Select Secrets", 2, fr.FONT_HEIGHT + 5, 0xFFAAAAAA);
     }

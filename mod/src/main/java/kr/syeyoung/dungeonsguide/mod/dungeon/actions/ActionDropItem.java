@@ -62,13 +62,6 @@ public class ActionDropItem extends AbstractAction {
         }
         return (predicate == null || predicate.apply(item.get(0)));
     }
-    @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        BlockPos pos = target.getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, true);
-        RenderUtils.drawTextAtWorld("Drop Item", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
-    }
-
 
     @Override
     public String toString() {

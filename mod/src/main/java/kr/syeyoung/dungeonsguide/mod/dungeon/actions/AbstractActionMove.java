@@ -119,179 +119,22 @@ public abstract class AbstractActionMove extends AbstractAction {
 //        );
 //    }
 
-    @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        draw(dungeonRoom, partialTicks, actionRouteProperties, flag, getBeaconTargetPos(dungeonRoom), poses, FeatureRegistry.SECRET_FREEZE_LINES.isEnabled());
-        {
-//            double cx = 0, cy =0 , cz = 0;
-//            int cnt = 0;
-//            for (OffsetVec3 _offsetVec3 : targets.stream().flatMap( a-> a.getOffsetPointSet().stream()).collect(Collectors.toList())) {
-//                Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
-//                cx += offsetVec3.xCoord;
-//                cy += offsetVec3.yCoord;
-//                cz += offsetVec3.zCoord;
-//                cnt ++;
-//            }
-//            cx /= cnt;
-//            cy /= cnt;
-//            cz /= cnt;
-        }
-    }
-
-    static void draw(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag, BlockPos target, PathfindResult poses, boolean flag2) {
-        float distance = MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()));
-        float multiplier = distance / 120f; //mobs only render ~120 blocks away
-        if (flag) multiplier *= 2.0f;
-        float scale = 0.45f * multiplier;
-        scale *= 25.0 / 6.0;
-        if (actionRouteProperties.isBeacon()) {
-            RenderUtils.renderBeaconBeam(target.getX(), target.getY(), target.getZ(), actionRouteProperties.getBeaconBeamColor(), partialTicks);
-            RenderUtils.highlightBlock(target, actionRouteProperties.getBeaconColor(), partialTicks);
-        }
-        RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, flag ? 2f : 1f, true, false, partialTicks);
-
-        RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, flag ? 2f : 1f, true, false, partialTicks);
-
-        if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
-            if (poses != null){
-                AbstractActionMove.drawLinesPathfindNode(poses.getNodeList(), actionRouteProperties.getLineColor(), (float) actionRouteProperties.getLineWidth(), partialTicks);
-
-                int cnt = 0;
-                int warp = 0;
-                for (PathfindResult.PathfindNode pose : poses.getNodeList()) {
-                    cnt ++;
-                    if (pose.getType() != null && pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
-                        RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
-                    }
-
-                    if (warp == 1) {
-                        BlockPos pos = new BlockPos(Math.floor(pose.getX()), Math.floor(pose.getY()) -1 , Math.floor(pose.getZ()));
-                        RenderUtils.highlightBox(Blocks.stone.getSelectedBoundingBox(null, pos).expand(0.003, 0.003, 0.003), Color.green, partialTicks, true);
-                        warp = flag2 ? 0 : 2;
-                    }
-                    if (pose.getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP &&
-                            ((flag2 && Minecraft.getMinecraft().thePlayer.getDistanceSq(pose.getX(), pose.getY(), pose.getZ()) < 25) || (!flag2 && cnt < 2)) && warp < 2) {
-                        warp = 1;
-                    }
-
-                }
-            }
-        }
-    }
-
-    public static void drawLinesPathfindNode(List<PathfindResult.PathfindNode> poses, AColor colour, float thickness, float partialTicks) {
-        if (poses.size() == 0) return;
-        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
-        WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
-
-        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
-        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
-        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-realX, -realY, -realZ);
-        GlStateManager.disableTexture2D();
-        GlStateManager.disableLighting();
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GL11.glLineWidth(thickness);
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-
-        if ((poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK ) && poses.get(0).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
-            GlStateManager.disableDepth();
-            GlStateManager.depthMask(false);
-        }
 
 
-//        GlStateManager.color(colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue()/ 255f, colour.getAlpha() / 255f);
-        GlStateManager.color(1,1,1,1);
-        worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
-        int num = 0;
-
-        PathfindResult.PathfindNode lastNode = null;
-        for (PathfindResult.PathfindNode pos:poses) {
-            int i = RenderUtils.getColorAt(num++ * 10,0, colour);
-            worldRenderer.pos(pos.getX(), pos.getY(), pos.getZ()).color(
-                    ((i >> 16) &0xFF)/255.0f,
-                    ((i >> 8) &0xFF)/255.0f,
-                    (i &0xFF)/255.0f,
-                    ((i >> 24) &0xFF)/255.0f
-            ).endVertex();
-
-            if (lastNode != null && lastNode.getType() != pos.getType()) {
-                Tessellator.getInstance().draw();
-                worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
-
-
-                if ((pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK)&& pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
-                    GlStateManager.disableDepth();
-                    GlStateManager.depthMask(false);
-                } else {
-                    GlStateManager.enableDepth();
-                    GlStateManager.depthMask(true);
-                }
-
-                worldRenderer.pos(pos.getX(), pos.getY(), pos.getZ()).color(
-                        ((i >> 16) &0xFF)/255.0f,
-                        ((i >> 8) &0xFF)/255.0f,
-                        (i &0xFF)/255.0f,
-                        ((i >> 24) &0xFF)/255.0f
-                ).endVertex();
-            }
-            lastNode = pos;
-
-        }
-        Tessellator.getInstance().draw();
-
-        GlStateManager.translate(realX, realY, realZ);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.enableTexture2D();
-        GlStateManager.enableDepth();
-        GlStateManager.depthMask(true);
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        GlStateManager.popMatrix();
-        GL11.glLineWidth(1);
-    }
-
-    private int tick = -1;
-    private PathfindResult poses;
-    private PathfinderExecutor executor;
-    @Override
-    public void onTick(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
-        tick = (tick+1) % Math.max(1, actionRouteProperties.getLineRefreshRate());
-        if (executor == null && actionRouteProperties.isPathfind()) {
-            forceRefresh(dungeonRoom);
-        }
-        if (executor != null && (poses == null || !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled())) {
-            poses = executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
-        }
-
-        if (tick == 0 && actionRouteProperties.isPathfind() && executor != null) {
-            if (actionRouteProperties.getLineRefreshRate() != -1 && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() && executor.isComplete()) {
-                executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
-            }
-        }
-    }
-
-    @Override
-    public void cleanup(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
-        executor = null;
-    }
-
-    public void forceRefresh(DungeonRoom dungeonRoom) {
+    public PathfindRequest getPathfindRequest(DungeonRoom dungeonRoom) {
         GeneralRoomProcessor generalRoomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
-        if (executor == null) executor = generalRoomProcessor.loadPrecalculatedByHash(new PathfindRequest(
+        return new PathfindRequest(
                 generalRoomProcessor.getAlgorithmSetting(),
                 dungeonRoom.getDungeonRoomInfo(),
                 dungeonRoom.getMechanics().entrySet().stream().filter(b -> {
                     return  (b.getValue() instanceof DungeonDoorState || b.getValue() instanceof DungeonOnewayDoorState);
                 }).filter(b -> !((WorldMutatingMechanicState)b.getValue()).isBlocking(dungeonRoom)).map(Map.Entry::getKey).collect(Collectors.toSet()),
                 getTargetOffsetPointSet()
-        ).getHash());
-        if (executor == null) executor = generalRoomProcessor.createEntityPathTo(getPathfindBoundingBox(dungeonRoom));
-        if (executor != null) executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
+        );
+    }
+
+    public void forceRefresh(DungeonRoom dungeonRoom) {
+        throw new UnsupportedOperationException("BRUH");
     }
 
 

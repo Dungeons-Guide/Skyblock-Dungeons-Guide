@@ -63,19 +63,16 @@ public class ActionRoute {
     @Getter
     private transient List<ActionDAGNode> order;
 
+    @Getter
     private final DungeonRoom dungeonRoom;
 
-    @Getter
-    private final ActionRouteProperties actionRouteProperties;
-
-    public ActionRoute(DungeonRoom dungeonRoom, String mechanic, String state, ActionRouteProperties actionRouteProperties, AlgorithmSetting algorithmSetting)throws PathfindImpossibleException  {
+    public ActionRoute(DungeonRoom dungeonRoom, String mechanic, String state, AlgorithmSetting algorithmSetting)throws PathfindImpossibleException  {
         this(mechanic +" -> "+state, dungeonRoom, new ActionDAGBuilder(dungeonRoom)
-                .requires(new ActionChangeState(mechanic, state), algorithmSetting).build(), actionRouteProperties);
+                .requires(new ActionChangeState(mechanic, state), algorithmSetting).build());
     }
 
-    public ActionRoute(String name, DungeonRoom dungeonRoom, ActionDAG dag, ActionRouteProperties actionRouteProperties) throws PathfindImpossibleException  {
+    public ActionRoute(String name, DungeonRoom dungeonRoom, ActionDAG dag) throws PathfindImpossibleException  {
         this.name = name;
-        this.actionRouteProperties = actionRouteProperties;
         this.checkCanCancel = (dg) -> false;
         this.dag = dag;
         this.dungeonRoom = dungeonRoom;
@@ -161,10 +158,6 @@ public class ActionRoute {
         });
     }
     public AbstractAction next() {
-        if (!(getCurrentAction() instanceof  ActionMove || getCurrentAction() instanceof  ActionMoveNearestAir))
-            getCurrentAction().cleanup(dungeonRoom, actionRouteProperties);
-        if (this.current -1 >= 0 && (actions.get(this.current-1) instanceof ActionMove || actions.get(this.current-1) instanceof ActionMoveNearestAir))
-            actions.get(this.current-1).cleanup(dungeonRoom, actionRouteProperties);
         current ++;
         if (current >= actions.size()) {
             current = actions.size() - 1;
@@ -188,42 +181,20 @@ public class ActionRoute {
 
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (calculating) return;
-        getCurrentAction().onPlayerInteract(dungeonRoom, event, actionRouteProperties );
+        getCurrentAction().onPlayerInteract(dungeonRoom, event );
     }
     public void onLivingDeath(LivingDeathEvent event) {
         if (calculating) return;
-        getCurrentAction().onLivingDeath(dungeonRoom, event, actionRouteProperties );
-    }
-    public void onRenderWorld(float partialTicks, boolean flag) {
-        if (calculating) return;
-
-
-        if (current -1 >= 0) {
-            AbstractAction abstractAction = actions.get(current - 1);
-            if(((abstractAction instanceof ActionMove && ((ActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) >= 25)
-                            || (abstractAction instanceof ActionMoveNearestAir  && ((ActionMoveNearestAir) abstractAction).getTarget().getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) >= 25))){
-                abstractAction.onRenderWorld(dungeonRoom, partialTicks, actionRouteProperties, flag );
-            }
-        }
-        getCurrentAction().onRenderWorld(dungeonRoom, partialTicks, actionRouteProperties, flag);
-
-
-
-        getCurrentAction().onRenderWorld(dungeonRoom, partialTicks, actionRouteProperties, flag);
+        getCurrentAction().onLivingDeath(dungeonRoom, event );
     }
 
     private final Function<DungeonRoom, Boolean> checkCanCancel;
-    public void onRenderScreen(float partialTicks) {
-        if (calculating) return;
-        getCurrentAction().onRenderScreen(dungeonRoom, partialTicks, actionRouteProperties);
-    }
 
     public void onTick() {
         if (calculating) return;
         AbstractAction currentAction = getCurrentAction();
 
-        currentAction.onTick(dungeonRoom, actionRouteProperties);
-        if (this.current -1 >= 0 && (actions.get(this.current-1) instanceof ActionMove || actions.get(this.current-1) instanceof ActionMoveNearestAir)) actions.get(this.current-1).onTick(dungeonRoom, actionRouteProperties );
+        currentAction.onTick(dungeonRoom);
 
         if (checkCanCancel != null && checkCanCancel.apply(dungeonRoom)) { // action change state
             this.current = actions.size() - 1;
@@ -252,7 +223,7 @@ public class ActionRoute {
 
     public void onLivingInteract(PlayerInteractEntityEvent event) {
         if (calculating) return;
-        getCurrentAction().onLivingInteract(dungeonRoom, event, actionRouteProperties );
+        getCurrentAction().onLivingInteract(dungeonRoom, event );
     }
 
 }

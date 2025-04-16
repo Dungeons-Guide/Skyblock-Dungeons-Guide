@@ -18,13 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -49,11 +47,7 @@ public class AtomicAction extends AbstractAction {
         this.name = name;
     }
 
-    public AbstractAction next(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
-        if (!(getCurrentAction() instanceof  ActionMove || getCurrentAction() instanceof  ActionMoveNearestAir))
-            getCurrentAction().cleanup(dungeonRoom, actionRouteProperties);
-        if (this.current -1 >= 0 && (actions.get(this.current-1) instanceof ActionMove || actions.get(this.current-1) instanceof ActionMoveNearestAir))
-            actions.get(this.current-1).cleanup(dungeonRoom, actionRouteProperties);
+    public AbstractAction next() {
         current ++;
         return getCurrentAction();
     }
@@ -72,55 +66,32 @@ public class AtomicAction extends AbstractAction {
 
 
     @Override
-    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRouteProperties actionRouteProperties) {
-        getCurrentAction().onPlayerInteract(dungeonRoom, event, actionRouteProperties );
+    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event) {
+        getCurrentAction().onPlayerInteract(dungeonRoom, event);
     }
 
     @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        if (current -1 >= 0) {
-            AbstractAction abstractAction = actions.get(current - 1);
-            if(((abstractAction instanceof ActionMove && ((ActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) >= 25)
-                    || (abstractAction instanceof ActionMoveNearestAir  && ((ActionMoveNearestAir) abstractAction).getTarget().getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) >= 25))){
-                abstractAction.onRenderWorld(dungeonRoom, partialTicks, actionRouteProperties, flag );
-            }
-        }
-        getCurrentAction().onRenderWorld(dungeonRoom, partialTicks, actionRouteProperties, flag);
+    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event) {
+        getCurrentAction().onLivingDeath(dungeonRoom, event);
     }
 
     @Override
-    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRouteProperties actionRouteProperties) {
-        getCurrentAction().onLivingDeath(dungeonRoom, event, actionRouteProperties );
+    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event) {
+        getCurrentAction().onLivingInteract(dungeonRoom, event);
     }
 
     @Override
-    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties) {
-        getCurrentAction().onRenderScreen(dungeonRoom, partialTicks, actionRouteProperties);
-    }
-
-    @Override
-    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRouteProperties actionRouteProperties) {
-        getCurrentAction().onLivingInteract(dungeonRoom, event, actionRouteProperties );
-    }
-
-    @Override
-    public void onTick(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
+    public void onTick(DungeonRoom dungeonRoom) {
         AbstractAction currentAction = getCurrentAction();
 
-        currentAction.onTick(dungeonRoom, actionRouteProperties);
-        if (this.current -1 >= 0 && (actions.get(this.current-1) instanceof ActionMove || actions.get(this.current-1) instanceof ActionMoveNearestAir)) actions.get(this.current-1).onTick(dungeonRoom, actionRouteProperties );
+        currentAction.onTick(dungeonRoom);
         if (this.actions.get(this.actions.size() - 1) instanceof ActionChangeState && this.actions.get(this.actions.size() - 1).isComplete(dungeonRoom)) {
             this.current = this.actions.size() - 1;
         }
 
         if (currentAction.isComplete(dungeonRoom)) {
-            next(dungeonRoom, actionRouteProperties);
+            next();
         }
-    }
-
-    @Override
-    public void cleanup(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
-        super.cleanup(dungeonRoom, actionRouteProperties);
     }
 
     @Override

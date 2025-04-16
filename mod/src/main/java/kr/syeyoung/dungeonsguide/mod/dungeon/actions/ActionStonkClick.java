@@ -21,18 +21,14 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
-import java.awt.*;
 import java.util.Map;
 
 @Data
@@ -53,18 +49,12 @@ public class ActionStonkClick extends AbstractAction {
     }
 
     @Override
-    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRouteProperties actionRouteProperties) {
+    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event) {
         if (clicked) return;
         if (target.getBlockPos(dungeonRoom).equals(event.pos) &&
                 (predicate == null || predicate.apply(event.entityLiving.getHeldItem()))) {
             clicked = true;
         }
-    }
-    @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        BlockPos pos = target.getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, false);
-        RenderUtils.drawTextAtWorld("Stonk&Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
     @Override

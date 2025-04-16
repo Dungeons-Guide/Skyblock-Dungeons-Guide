@@ -20,16 +20,12 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
-import java.awt.*;
 import java.util.function.Predicate;
 
 @Data
@@ -49,7 +45,7 @@ public class ActionClickSet extends AbstractAction {
 
     private boolean clicked = false;
     @Override
-    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRouteProperties actionRouteProperties) {
+    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event) {
         if (clicked) return;
         for (OffsetPoint pt2: target.getOffsetPointList()) {
             if (pt2.getBlockPos(dungeonRoom).equals(event.pos) && predicate.test(event.entityLiving.getHeldItem())) {
@@ -59,22 +55,6 @@ public class ActionClickSet extends AbstractAction {
 
     }
 
-    @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        float xAcc = 0;
-        float yAcc = 0;
-        float zAcc = 0;
-        int size = target.getOffsetPointList().size();
-        for (OffsetPoint offsetPoint : target.getOffsetPointList()) {
-            BlockPos pos = offsetPoint.getBlockPos(dungeonRoom);
-            xAcc += pos.getX() + 0.5f;
-            yAcc += pos.getY()+ 0.5f;
-            zAcc += pos.getZ()+ 0.5f;
-            RenderUtils.highlightBlock(offsetPoint.getBlockPos(dungeonRoom), new Color(0, 255,255,50),partialTicks, true);
-        }
-
-        RenderUtils.drawTextAtWorld("Click", xAcc / size, yAcc / size, zAcc / size, 0xFFFFFF00, 0.02f, false, false, partialTicks);
-    }
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
         return clicked;

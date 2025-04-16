@@ -21,17 +21,13 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
-import java.awt.*;
 import java.util.function.Predicate;
 
 @Data
@@ -60,7 +56,7 @@ public class ActionKill extends AbstractAction {
 
     private boolean killed = false;
     @Override
-    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRouteProperties actionRouteProperties) {
+    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event) {
         if (killed) return;
 
         Vec3 spawnLoc = DungeonActionContext.getSpawnLocation().get(event.entity.getEntityId());
@@ -68,12 +64,6 @@ public class ActionKill extends AbstractAction {
         if (target.getBlockPos(dungeonRoom).distanceSq(spawnLoc.xCoord, spawnLoc.yCoord, spawnLoc.zCoord) > radius * radius) return;
         if (!predicate.test(event.entity)) return;
         killed = true;
-    }
-    @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        BlockPos pos = target.getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
-        RenderUtils.drawTextAtWorld("Spawn", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
     @Override

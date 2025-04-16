@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
@@ -31,33 +30,22 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import java.util.Map;
 
 public abstract class AbstractAction {
-    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRouteProperties actionRouteProperties){
+    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event){
 
     }
 
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
+    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event) {
 
     }
 
-    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRouteProperties actionRouteProperties) {
+    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event) {
 
     }
 
-    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties) {
+    public void onTick(DungeonRoom dungeonRoom) {
 
     }
 
-    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    public void onTick(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    public void cleanup(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
-
-    }
 
     public boolean isComplete(DungeonRoom dungeonRoom) {
         return false;

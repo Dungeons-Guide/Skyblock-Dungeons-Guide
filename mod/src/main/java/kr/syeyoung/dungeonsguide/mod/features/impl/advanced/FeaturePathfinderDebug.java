@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractActionMove;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.ClassicPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PrecalculatedPathfinder;
@@ -73,7 +73,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
                 Color c = Color.getHSBColor(cnt / ((float)instance.size() * pfDebugPts.size()), 1.0f, 1.0f);
 
                 GlStateManager.disableDepth();
-                AbstractActionMove.drawLinesPathfindNode(res.getNodeList(),
+                ClassicPathDisplayEngine.drawLinesPathfindNode(res.getNodeList(),
                         new AColor(c.getRGB(),true), 3.0f, event.partialTicks);
                 GlStateManager.enableDepth();
 
