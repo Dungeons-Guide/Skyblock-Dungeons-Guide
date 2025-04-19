@@ -724,12 +724,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     fakeContext,
                     Collections.emptySet());
 
-
-            fakeContext.getScaffoldParser().getDungeonRoomList().add(dungeonRoom);
-            for (Point p : points) {
-                fakeContext.getScaffoldParser().getRoomMap().put(p, dungeonRoom);
-            }
-
+            fakeContext.getScaffoldParser().insertRoom(dungeonRoom);
         }
     }
 

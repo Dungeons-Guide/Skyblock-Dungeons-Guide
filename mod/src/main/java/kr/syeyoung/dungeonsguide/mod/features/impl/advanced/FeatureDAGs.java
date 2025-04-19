@@ -29,8 +29,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.IPathDisplayEngine;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -81,9 +83,12 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) return;
-        GeneralRoomProcessor roomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
+        RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
+        if (roomRouteHandler == null) return;
+
+
         int defaultLvCount = 0;
-        for (Map.Entry<String, IPathDisplayEngine<?>> stringActionRouteEntry : roomProcessor.getPath().entrySet()) {
+        for (Map.Entry<String, IPathDisplayEngine<?>> stringActionRouteEntry : roomRouteHandler.getPath().entrySet()) {
 //            if (stringActionRouteEntry.getValue().isCalculating()) continue;
 
             ActionDAGNode rootNode = stringActionRouteEntry.getValue().getActionRoute().getDag().getActionDAGNode();
@@ -137,7 +142,8 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) return;
-        GeneralRoomProcessor roomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
+        RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
+        if (roomRouteHandler == null) return;
 
         // we got all positions in above tick.
 
@@ -145,7 +151,7 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
         fr.drawString("Black=Disabled / Pink=Current / Dark Green=Parent Completed / Green=Completed", 0 ,0, 0xFFFFFF00);
         GL11.glLineWidth(5.0f);
 
-        for (IPathDisplayEngine<?> value2 : roomProcessor.getPath().values()) {
+        for (IPathDisplayEngine<?> value2 : roomRouteHandler.getPath().values()) {
 //            if (value.isCalculating()) continue;
             ActionRoute value = value2.getActionRoute();
 

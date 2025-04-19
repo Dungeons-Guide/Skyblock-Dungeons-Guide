@@ -459,6 +459,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     public void onDungeonRoomDiscover(DungeonRoomDiscoveredEvent discoveredEvent) {
         DungeonRoom dungeonRoom = discoveredEvent.getDungeonRoom();
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+        if (dungeonContext != dungeonRoom.getContext()) return;
+
         RoomInfo roomInfo = new RoomInfo();
         for (EntityData value : entityDataMap.values()) {
             if (dungeonRoom.getUnitPoints().contains(dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(new BlockPos(value.trajectory.getFirst().pos)))) {

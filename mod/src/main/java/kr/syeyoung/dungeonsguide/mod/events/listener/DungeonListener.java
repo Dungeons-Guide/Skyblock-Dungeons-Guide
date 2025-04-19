@@ -88,8 +88,10 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class DungeonListener {
 
@@ -173,6 +175,31 @@ public class DungeonListener {
 
 
 
+    private WeakReference<DungeonRoom> lastRoom = null;
+    @SubscribeEvent
+    public void onTickDetectRoomTransfer(TickEvent.ClientTickEvent ev) {
+        if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
+
+
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+        if (!SkyblockStatus.isOnDungeon() || context == null) return;
+        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        if (thePlayer == null) return;
+        if (context.getScaffoldParser() == null) return;
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+        DungeonRoom currentRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
+        DungeonRoom oldRoom = lastRoom == null ? null : lastRoom.get();
+        boolean isActuallyInCurrent = currentRoom == null || currentRoom.getRoomBounds().isFullyWithin(thePlayer.getPositionVector());
+        if (!isActuallyInCurrent) currentRoom = null;
+
+        lastRoom = new WeakReference<>(currentRoom);
+
+        if (oldRoom == currentRoom) return;
+        if (oldRoom != null)
+            MinecraftForge.EVENT_BUS.post(new DungeonRoomExitEvent(oldRoom));
+        if (currentRoom != null)
+            MinecraftForge.EVENT_BUS.post(new DungeonRoomEnterEvent(currentRoom));
+    }
 
 
     @SubscribeEvent

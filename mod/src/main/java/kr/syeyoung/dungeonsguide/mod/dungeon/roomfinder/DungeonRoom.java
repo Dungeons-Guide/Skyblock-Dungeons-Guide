@@ -123,10 +123,7 @@ public class DungeonRoom  {
             }
         }
 
-        context.getScaffoldParser().getDungeonRoomList().add(this);
-        for (Point p : unitPoints) {
-            context.getScaffoldParser().getRoomMap().put(p, this);
-        }
+        context.getScaffoldParser().insertRoom(this);
 
         this.color = this.dungeonRoomInfo.getColor();
         this.context = context;
@@ -283,7 +280,7 @@ public class DungeonRoom  {
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,16), new Vector2d(0, -16), new Vector2d(16, 0), new Vector2d(-16 , 0));
 
     private void buildDoors(Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
-        if (getDungeonRoomInfo().getMechanics().values().stream().noneMatch(a -> a instanceof DungeonRoomDoor2State)) {
+        if (getDungeonRoomInfo().getMechanics().values().stream().noneMatch(a -> a instanceof DungeonRoomDoor2State.DungeonRoomDoor2Data)) {
             Set<Tuple<BlockPos, EDungeonDoorType>> positions = new HashSet<>();
             BlockPos pos = context.getScaffoldParser().getDungeonMapLayout().roomPointToWorldPoint(minRoomPt).add(16, 0, 16);
             for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : doorsAndStates) {

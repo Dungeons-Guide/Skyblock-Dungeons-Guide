@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.triggers.mechanicbrowser;
 
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -25,14 +25,15 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.IPathDisplayEngine;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectPositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
@@ -111,8 +112,8 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) return;
-        if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
-        GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
+        RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
+        if (roomRouteHandler == null) return;
 
         double scale = FeatureMechanicBrowse.this.<Double>getParameter("scale").getValue();
         GlStateManager.scale(scale, scale, 1.0);
@@ -127,10 +128,10 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("Selected: ", 2,2, 0xFFAAAAAA);
-        if (grp.getPath("MECH-BROWSER") == null)
+        if (roomRouteHandler.getPath("MECH-BROWSER") == null)
             fr.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
         else {
-            IPathDisplayEngine<?> route = grp.getPath("MECH-BROWSER");
+            IPathDisplayEngine<?> route = roomRouteHandler.getPath("MECH-BROWSER");
             fr.drawString(route.getActionRoute().toString(), fr.getStringWidth("Selected: ") + 2,2, 0xFFFFFF00);
         }
         fr.drawString("Open Chat to Select Secrets", 2, fr.FONT_HEIGHT + 5, 0xFFAAAAAA);

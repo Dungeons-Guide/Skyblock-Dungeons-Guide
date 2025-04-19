@@ -37,6 +37,7 @@ import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventHolder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISecret;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -1175,8 +1176,10 @@ public class CommandDgDebug extends CommandBase {
             Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
 
             DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
-            GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
-            grp.pathfind("COMMAND", args[1], args[2], FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND.getRouteProperties());
+            RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
+            if (roomRouteHandler == null) return;
+
+            roomRouteHandler.pathfind("COMMAND", args[1], args[2], FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND.getRouteProperties());
         } catch (Exception t) {
             t.printStackTrace();
         }
@@ -1501,10 +1504,12 @@ public class CommandDgDebug extends CommandBase {
             Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
 
             DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
-            GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
+
+            RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
+            if (roomRouteHandler == null) return;
             // performance testing (lol)
             for (String s : dungeonRoom.getMechanics().keySet()) {
-                grp.pathfind("COMMAND-" + s, s, "navigate", FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND.getRouteProperties());
+                roomRouteHandler.pathfind("COMMAND-" + s, s, "navigate", FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND.getRouteProperties());
             }
         } catch (Exception t) {
             t.printStackTrace();

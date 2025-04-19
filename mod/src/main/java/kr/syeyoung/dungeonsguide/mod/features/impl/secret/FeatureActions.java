@@ -30,6 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.IPathDisplayEngine;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
@@ -68,7 +69,9 @@ public class FeatureActions extends TextHUDFeature {
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) return false;
-        return dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor;
+        RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
+        if (roomRouteHandler == null) return false;
+        return  true;
     }
 
 
@@ -106,8 +109,9 @@ public class FeatureActions extends TextHUDFeature {
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
+        RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
 
-        for (IPathDisplayEngine path2 : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getPath().values()) {
+        for (IPathDisplayEngine path2 : roomRouteHandler.getPath().values()) {
             ActionRoute path = path2.getActionRoute();
             actualBit.addChild(new TextSpan(getStyle("pathfinding"), "Pathfinding "));
             actualBit.addChild(new TextSpan(getStyle("mechanic"), path.toString()+"\n"));

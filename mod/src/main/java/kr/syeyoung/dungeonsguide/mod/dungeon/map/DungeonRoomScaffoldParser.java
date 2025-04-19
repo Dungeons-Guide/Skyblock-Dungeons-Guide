@@ -64,6 +64,18 @@ public class DungeonRoomScaffoldParser {
     @Getter
     private int undiscoveredRoom = 0;
 
+    public void insertRoom(DungeonRoom dungeonRoom) {
+        dungeonRoomList.add(dungeonRoom);
+        for (Point p : dungeonRoom.getUnitPoints()) {
+            if (roomMap.containsKey(p)) {
+                throw new IllegalStateException("This should not happen");
+            }
+            roomMap.put(p, dungeonRoom);
+        }
+
+        MinecraftForge.EVENT_BUS.post(new DungeonRoomDiscoveredEvent(dungeonRoom));
+    }
+
     public void processMap(MapData mapData2) {
         int roomHeight = (int) ((128.0 - dungeonMapLayout.getOriginPoint().y) / (dungeonMapLayout.getUnitRoomSize().height + dungeonMapLayout.getMapRoomGap()));
         int roomWidth = (int) ((128.0 - dungeonMapLayout.getOriginPoint().x) / (dungeonMapLayout.getUnitRoomSize().width + dungeonMapLayout.getMapRoomGap()));
@@ -127,16 +139,13 @@ public class DungeonRoomScaffoldParser {
                     // END
 
 
-                    dungeonRoomList.add(room);
                     for (Point p : room.getUnitPoints()) {
-                        roomMap.put(p, room);
                         potential.remove(p);
                     }
+                    insertRoom(room);
                     if (room.getRoomProcessor() != null && room.getRoomProcessor().readGlobalChat()) {
                         context.getGlobalRoomProcessors().add(room.getRoomProcessor());
                     }
-
-                    MinecraftForge.EVENT_BUS.post(new DungeonRoomDiscoveredEvent(room));
                 } else if (color == 85) {
                     undiscoveredRoom++;
                     potential.add(new Point(x,y));

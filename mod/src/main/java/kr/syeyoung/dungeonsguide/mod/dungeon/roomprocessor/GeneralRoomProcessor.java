@@ -138,164 +138,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
         pathfinderWorld = new CoordinateMapBackedPathfindWorld(dungeonRoom.getCoordinateMap(), algorithmSetting, dungeonRoom.getRoomBounds(), poses);
     }
 
-    private boolean ticked = false;
-
-    public void createSmartRoute() {
-        ActionDAGBuilder actionDAGBuilder = new ActionDAGBuilder(dungeonRoom);
-        for (Map.Entry<String, DungeonMechanicState> value : getDungeonRoom().getMechanics().entrySet()) {
-            if (value.getValue() instanceof ISecret && !((ISecret) value.getValue()).isFound(getDungeonRoom())) {
-                try {
-                    actionDAGBuilder.requires(new ActionChangeState(value.getKey(), "found"), algorithmSetting);
-                } catch (PathfindImpossibleException e) {
-                    ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
-                    e.printStackTrace();
-                    continue;
-                }
-            } else if (value.getValue() instanceof DungeonRedstoneKeyState && value.getValue().getCurrentState().equalsIgnoreCase("unobtained")) {
-                try {
-                    actionDAGBuilder.requires(new ActionChangeState(value.getKey(), "obtained-self"), algorithmSetting);
-                } catch (PathfindImpossibleException e) {
-                    ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
-                    e.printStackTrace();
-                    continue;
-                }
-            }
-        }
-
-        try {
-            ActionDAG dag = actionDAGBuilder.build();
-//                if (dag.getActionDAGNode().getPotentialRequires().size() != 0) {
-            ActionRoute actionRoute = new ActionRoute("Smart Route", dungeonRoom, dag);
-            path.put("smart", new ClassicPathDisplayEngine(actionRoute, FeatureRegistry.SECRET_LINE_PROPERTIES_SMART_ROUTE.getRouteProperties()));
-//                }
-        } catch (PathfindImpossibleException e) {
-            ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to everything failed due to "+e.getMessage());
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void tick() {
-        boolean shouldPathfind = !ticked;
-        if (!ticked) {
-            if (!getDungeonRoom().getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) {
-                shouldPathfind = false;
-            } else {
-                ticked = true;
-            }
-        }
-
-
-        if (shouldPathfind && FeatureRegistry.SECRET_AUTO_START.isEnabled()) {
-            searchForNextTarget();
-        }
-        if (shouldPathfind && FeatureRegistry.SECRET_SMART_AUTO_START.isEnabled()) {
-            createSmartRoute();
-        }
-        if (shouldPathfind && FeatureRegistry.SECRET_PATHFIND_ALL.isEnabled()) {
-            for (Map.Entry<String, DungeonMechanicState> value : getDungeonRoom().getMechanics().entrySet()) {
-                if (value.getValue() instanceof ISecret && !((ISecret) value.getValue()).isFound(getDungeonRoom())) {
-                    ISecret secret = (ISecret) value.getValue();
-                    try {
-                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isBat() && secret instanceof DungeonSecretBatState)
-                            pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_BAT.getRouteProperties());
-                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isChest() && secret instanceof DungeonSecretChestState)
-                            pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_CHEST.getRouteProperties());
-                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isEssence() && secret instanceof DungeonSecretEssenceState)
-                            pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_ESSENCE.getRouteProperties());
-                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isItemdrop() && secret instanceof DungeonSecretItemDropState)
-                            pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_ITEM_DROP.getRouteProperties());
-                    } catch (Exception e) {
-                        ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
-                    }
-                }
-            }
-        }
-        if (shouldPathfind && FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled()) {
-            for (Map.Entry<String, DungeonMechanicState> value : getDungeonRoom().getMechanics().entrySet()) {
-                if (value.getValue() instanceof DungeonRoomDoorState) {
-                    DungeonRoomDoorState dungeonDoor = (DungeonRoomDoorState) value.getValue();
-                    if (dungeonDoor.getDoorfinder().getType().isHeadToBlood()) {
-                        try {
-                            pathfind(value.getKey(), "navigate", FeatureRegistry.SECRET_BLOOD_RUSH_LINE_PROPERTIES.getRouteProperties());
-                        } catch (Exception e) {
-                            ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
-                        }
-                    }
-                } else if (value.getValue() instanceof DungeonRoomDoor2State) {
-                    DungeonRoomDoor2State dungeonDoor = (DungeonRoomDoor2State) value.getValue();
-                    if (dungeonDoor.isHeadtoBlood(dungeonRoom)) {
-                        try {
-                            pathfind(value.getKey(), "navigate", FeatureRegistry.SECRET_BLOOD_RUSH_LINE_PROPERTIES.getRouteProperties());
-                        } catch (Exception e) {
-                            ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
-                        }
-                    }
-                }
-            }
-        }
-
-        Set<String> toRemove = new HashSet<>();
-        path.entrySet().forEach(a -> {
-            a.getValue().tick();
-            a.getValue().getActionRoute().onTick();
-            if (a.getValue().getActionRoute().getCurrentAction() instanceof ActionComplete)
-                toRemove.add(a.getKey());
-        });
-        toRemove.forEach(path::remove);
-
-
         for (DungeonMechanicState value : dungeonRoom.getMechanics().values()) {
             if (value instanceof ISecret) ((ISecret) value).tick(dungeonRoom);
-        }
-
-        if (toRemove.contains("AUTO-BROWSE") && FeatureRegistry.SECRET_AUTO_BROWSE_NEXT.isEnabled()) {
-            searchForNextTarget();
-        }
-    }
-    private final Set<String> visited = new HashSet<String>();
-
-    public void searchForNextTarget() {
-        if (getDungeonRoom().getCurrentState() == DungeonRoom.RoomState.FINISHED) {
-            cancelAll();
-            return;
-        }
-
-        BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
-
-        double lowestCost = 99999999999999.0;
-        Map.Entry<String, DungeonMechanicState> lowestWeightMechanic = null;
-        for (Map.Entry<String, DungeonMechanicState> mech: dungeonRoom.getMechanics().entrySet()) {
-            if (!(mech.getValue() instanceof ISecret)) continue;
-            if (visited.contains(mech.getKey())) continue;
-            if (!((ISecret) mech.getValue()).isFound(getDungeonRoom())) {
-                double cost = 0;
-                if (mech.getValue() instanceof DungeonSecretBatState &&
-                        ((ISecret)mech.getValue()).getPreRequisite().size() == 0) {
-                    cost += -100000000;
-                }
-                if (mech.getValue().getRepresentingPoint() == null) continue;
-                BlockPos blockpos = mech.getValue().getRepresentingPoint().getBlockPos(getDungeonRoom());
-
-                cost += blockpos.distanceSq(pos);
-                cost += ((ISecret) mech.getValue()).getPreRequisite().size() * 100;
-
-                if (cost < lowestCost) {
-                    lowestCost = cost;
-                    lowestWeightMechanic = mech;
-                }
-            }
-        }
-        if (lowestWeightMechanic != null) {
-            visited.add(lowestWeightMechanic.getKey());
-            try {
-                pathfind("AUTO-BROWSE", lowestWeightMechanic.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND.getRouteProperties());
-            } catch (Exception e) {
-                ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+lowestWeightMechanic.getKey()+":found failed due to "+e.getMessage());
-                e.printStackTrace();
-            }
-        } else {
-            visited.clear();
         }
     }
 
@@ -326,47 +173,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 value.getValue().highlight(new Color(0,255,255,50), value.getKey(), partialTicks);
             }
         }
-
-
-
-//
-//        ActionRoute finalSmallest = getBestFit(partialTicks);
-        path.values().forEach(a -> {
-            a.renderActionRoute(partialTicks);
-        });
-    }
-
-    private IPathDisplayEngine<?> getBestFit(float partialTicks) {
-
-        IPathDisplayEngine smallest = null;
-        double smallestTan = 0.002;
-        for (IPathDisplayEngine value2 : path.values()) {
-            ActionRoute value = value2.getActionRoute();
-
-            BlockPos target;
-            if (value.getCurrentAction() instanceof ActionMove) {
-                target = new BlockPos(((ActionMove) value.getCurrentAction()).getTargetVec3().getPos(dungeonRoom));
-            } else if (value.getCurrentAction() instanceof ActionMoveNearestAir) {
-                target = ((ActionMoveNearestAir) value.getCurrentAction()).getTarget().getBlockPos(dungeonRoom);
-            } else if (value.getCurrent() >= 1 && value.getActions().get(value.getCurrent()-1) instanceof ActionMove) {
-                target = new BlockPos(((ActionMove)value.getActions().get(value.getCurrent()-1)).getTargetVec3().getPos(dungeonRoom));
-            } else if (value.getCurrent() >= 1 && value.getActions().get(value.getCurrent()-1) instanceof ActionMoveNearestAir) {
-                target = ((ActionMoveNearestAir)value.getActions().get(value.getCurrent()-1)).getTarget().getBlockPos(dungeonRoom);
-            } else continue;
-
-            if (((ActionRouteProperties) value2.getSettings()).getLineRefreshRate() != -1 &&
-                    ((ActionRouteProperties) value2.getSettings()).isPathfind() && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled()) continue;
-
-            Entity e = Minecraft.getMinecraft().getRenderViewEntity();
-
-            double vectorV = VectorUtils.distSquared(e.getLook(partialTicks), e.getPositionEyes(partialTicks), new Vec3(target).addVector(0.5,0.5,0.5));
-
-            if (vectorV < smallestTan) {
-                smallest = value2;
-                smallestTan = vectorV;
-            }
-        }
-        return smallest;
     }
 
     @Override
@@ -460,30 +266,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
 
-    @Getter
-    private Map<String, IPathDisplayEngine<?>> path = new HashMap<>();
-
-    public IPathDisplayEngine<?> getPath(String id){
-        return path.get(id);
-    }
-
-    public String pathfind(String mechanic, String state, ActionRouteProperties actionRouteProperties)throws PathfindImpossibleException  {
-        String str = UUID.randomUUID().toString();
-        pathfind(str, mechanic, state, actionRouteProperties);
-        return str;
-    }
-    public void pathfind(String id, String mechanic, String state, ActionRouteProperties actionRouteProperties)throws PathfindImpossibleException {
-        path.put(id, new ClassicPathDisplayEngine(new ActionRoute(getDungeonRoom(), mechanic, state, algorithmSetting), actionRouteProperties));
-    }
-    public void cancelAll() {
-        path.clear();
-    }
-    public void cancel(String id) {
-        path.remove(id);
-    }
-
-
-
     @Override
     public void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event) {
 
@@ -500,61 +282,12 @@ public class GeneralRoomProcessor implements RoomProcessor {
         }
     }
 
-    @Override
-    public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
-        if (FeatureRegistry.SECRET_NEXT_KEY.isEnabled() && FeatureRegistry.SECRET_NEXT_KEY.<Integer>getParameter("key").getValue() == keyInputEvent.getKey()) {
-            if (!getDungeonRoom().getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) {
-                return;
-            }
-
-            searchForNextTarget();
-
-        } else if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getKeybind() == keyInputEvent.getKey() && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {
-            IPathDisplayEngine engine = getBestFit(0);
-            ActionRoute actionRoute = engine.getActionRoute();
-            // Because no route found!
-            if (actionRoute == null) return;
-            // actually do force refresh because of force freeze pathfind
-            if (actionRoute.getCurrentAction() instanceof ActionMove) {
-                ActionMove ac = (ActionMove) actionRoute.getCurrentAction();
-                ac.forceRefresh(getDungeonRoom());
-            } else if (actionRoute.getCurrentAction() instanceof ActionMoveNearestAir) {
-                ActionMoveNearestAir ac = (ActionMoveNearestAir) actionRoute.getCurrentAction();
-                ac.forceRefresh(getDungeonRoom());
-            } else if (actionRoute.getCurrent() >= 1 && actionRoute.getActions().get(actionRoute.getCurrent()-1) instanceof ActionMove) {
-//                engine.forceRefresh();
-                ((ActionMove)actionRoute.getActions().get(actionRoute.getCurrent()-1)).forceRefresh(dungeonRoom);
-            } else if (actionRoute.getCurrent() >= 1 && actionRoute.getActions().get(actionRoute.getCurrent()-1) instanceof ActionMoveNearestAir) {
-                ((ActionMoveNearestAir)actionRoute.getActions().get(actionRoute.getCurrent()-1)).forceRefresh(dungeonRoom);
-            }
-
-            if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isPathfind() && !((ActionRouteProperties)engine.getSettings()).isPathfind()) {
-                ((ActionRouteProperties)engine.getSettings()).setPathfind(true);
-                ((ActionRouteProperties)engine.getSettings()).setLineRefreshRate(FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getRefreshRate());
-            }
-        } else if (FeatureRegistry.SECRET_SMART_KEYBIND.isEnabled() && FeatureRegistry.SECRET_SMART_KEYBIND.<Integer>getParameter("key").getValue() == keyInputEvent.getKey()) {
-            if (!getDungeonRoom().getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) {
-                return;
-            }
-
-            createSmartRoute();
-        }
-    }
-
-    @Override
-    public void onInteract(PlayerInteractEntityEvent event) {
-        path.values().forEach(a -> {
-            a.getActionRoute().onLivingInteract(event);
-        });
-    }
 
     private boolean last = false;
     private BlockPos lastChest;
+
     @Override
     public void onInteractBlock(PlayerInteractEvent event) {
-        path.values().forEach(a -> {
-            a.getActionRoute().onPlayerInteract(event);
-        });
 
         if (event.pos != null) {
             IBlockState iBlockState = event.world.getBlockState(event.pos);
@@ -616,9 +349,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onEntityDeath(LivingDeathEvent deathEvent) {
-        path.values().forEach(a -> {
-            a.getActionRoute().onLivingDeath(deathEvent);
-        });
         if (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getRoom() == getDungeonRoom()) {
             if (deathEvent.entity instanceof EntityBat) {
                 for (GuiScreen screen : EditingContext.getEditingContext().getGuiStack()) {
@@ -641,6 +371,16 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 }
             }
         }
+    }
+
+    @Override
+    public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
+
+    }
+
+    @Override
+    public void onInteract(PlayerInteractEntityEvent event) {
+
     }
 
     public static final IBlockState STONE = Blocks.stone.getStateFromMeta(2);

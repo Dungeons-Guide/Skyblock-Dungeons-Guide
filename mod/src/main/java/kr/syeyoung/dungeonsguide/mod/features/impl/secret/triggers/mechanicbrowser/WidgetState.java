@@ -16,36 +16,44 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.triggers.mechanicbrowser;
 
+import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 
-public class WidgetTeleport extends AnnotatedWidget {
+public class WidgetState extends AnnotatedWidget {
 
     @Bind(variableName = "state")
     public final BindableAttribute<String> state = new BindableAttribute<>(String.class);
 
     private DungeonRoom dungeonRoom;
     private String  mechanic;
+    private String s;
 
-    public WidgetTeleport(DungeonRoom dungeonRoom, String mechanic) {
+    public WidgetState(DungeonRoom dungeonRoom, String mechanic, String s) {
         super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/state.gui"));
-        state.setValue("§eTeleport To");
+        state.setValue(s);
         this.dungeonRoom = dungeonRoom;
         this.mechanic = mechanic;
+        this.s = s;
     }
 
     @On(functionName = "navigate")
     public void navigate() {
-        BlockPos pos = dungeonRoom.getMechanics().get(mechanic).getRepresentingPoint().getBlockPos(dungeonRoom);
-//        Minecraft.getMinecraft().thePlayer.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
-        MinecraftServer.getServer().getEntityWorld().getClosestPlayer(0,0,0,1000000000).setPositionAndUpdate(pos.getX(),pos.getY(),pos.getZ());
+        try {
+            RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
+            if (roomRouteHandler == null) return;
+            roomRouteHandler.pathfind("MECH-BROWSER", mechanic, s, FeatureRegistry.SECRET_LINE_PROPERTIES_SECRET_BROWSER.getRouteProperties());
+        } catch (Exception e) {
+            ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+mechanic+":"+state+" failed due to "+e.getMessage());
+        }
     }
 }

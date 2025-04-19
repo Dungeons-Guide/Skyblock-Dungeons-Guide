@@ -16,14 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.triggers.mechanicbrowser;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
@@ -87,13 +87,14 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
     public WidgetMechanicBrowser(DungeonRoom dungeonRoom) {
         super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/browser.gui"));
         scale.setValue(FeatureRegistry.SECRET_BROWSE.getScale());
-        GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
+        RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
+
         this.dungeonRoom =dungeonRoom;
-        if (grp.getPath("MECH-BROWSER") == null) {
+        if (roomRouteHandler.getPath("MECH-BROWSER") == null) {
             current.setValue("Nothing");
             color.setValue(0xFFAA0000);
         } else {
-            ActionRoute route = grp.getPath("MECH-BROWSER").getActionRoute();
+            ActionRoute route = roomRouteHandler.getPath("MECH-BROWSER").getActionRoute();
             current.setValue(route.toString());
             color.setValue(0xFFFFFF00);
         }
@@ -115,12 +116,12 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
     }
 
     public void update() {
-        GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
-        if (grp.getPath("MECH-BROWSER") == null) {
+        RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
+        if (roomRouteHandler.getPath("MECH-BROWSER") == null) {
             current.setValue("Nothing");
             color.setValue(0xFFAA0000);
         } else {
-            ActionRoute route = grp.getPath("MECH-BROWSER").getActionRoute();
+            ActionRoute route = roomRouteHandler.getPath("MECH-BROWSER").getActionRoute();
             current.setValue(route.toString());
             color.setValue(0xFFFFFF00);
         }
@@ -128,8 +129,8 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
 
     @On(functionName = "cancel")
     public void cancel() {
-        GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
-        grp.cancel("MECH-BROWSER");
+        RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
+        roomRouteHandler.cancel("MECH-BROWSER");
     }
 
     @Override

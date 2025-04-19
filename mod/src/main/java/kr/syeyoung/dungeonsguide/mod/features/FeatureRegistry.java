@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.mod.features;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
-import kr.syeyoung.dungeonsguide.mod.config.types.TCKeybind;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.advanced.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.*;
@@ -42,14 +41,15 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.FeaturePartyReady;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui.FeatureCustomPartyFinder;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FeatureViewPlayerStatsOnJoin;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.*;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser.FeatureMechanicBrowse;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.triggers.*;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.triggers.mechanicbrowser.FeatureMechanicBrowse;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.FeatureRequestCalculation;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.FeaturePrecalcList;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.LiveRouteRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.solvers.*;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import lombok.Getter;
-import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,21 +119,16 @@ public class FeatureRegistry {
     public static final PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_CHEST = register(new PathfindLineProperties("Pathfinding & Secrets.Display All", "Chest Line Settings", "Line Settings when pathfind to Chest, when using above feature", "secret.lineproperties.apf.chest", true, SECRET_LINE_PROPERTIES_PATHFINDALL_PARENT));
     public static final PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_BAT = register(new PathfindLineProperties("Pathfinding & Secrets.Display All", "Bat Line Settings", "Line Settings when pathfind to Bat, when using above feature", "secret.lineproperties.apf.bat", true, SECRET_LINE_PROPERTIES_PATHFINDALL_PARENT));
     public static final FeaturePathfindToAll SECRET_PATHFIND_ALL = register(new FeaturePathfindToAll());
+    public static final LiveRouteRegistry SECRET_ROUTE_REGISTRY = register(new LiveRouteRegistry());
 
     // Display One
     public static final PathfindLineProperties SECRET_LINE_PROPERTIES_AUTOPATHFIND = register(new PathfindLineProperties("Pathfinding & Secrets.Display One", "Line Settings", "Line Settings when pathfinding using above features", "secret.lineproperties.autopathfind", true, null));
-    public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Pathfinding & Secrets.Display One", "Auto Pathfind to new secret upon pressing a key", "Auto browse the best next secret when you press key.\nPress settings to edit the key", "secret.keyfornext", false) {{
-        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to navigate to next best secret", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
-    }});
-    public static final SimpleFeature SECRET_AUTO_START = register(new SimpleFeature("Pathfinding & Secrets.Display One", "Auto pathfind to new secret", "Auto browse best secret upon entering the room.", "secret.autouponenter", false));
-    public static final SimpleFeature SECRET_AUTO_BROWSE_NEXT = register(new SimpleFeature("Pathfinding & Secrets.Display One", "Auto Pathfind to next secret", "Auto browse best next secret after current one completes.\nthe first pathfinding of first secret needs to be triggered first in order for this option to work", "secret.autobrowse", false));
+
+    public static final SimpleFeature SECRET_AUTO_START = register(new FeatureSingleTargetPathfind());
 
     // Smart Route
     public static final PathfindLineProperties SECRET_LINE_PROPERTIES_SMART_ROUTE = register(new PathfindLineProperties("Pathfinding & Secrets.Smart Route", "Line Settings", "Line Settings when pathfinding using above features", "secret.lineproperties.smartroute", true, null));
-    public static final SimpleFeature SECRET_SMART_AUTO_START = register(new SimpleFeature("Pathfinding & Secrets.Smart Route", "Auto pathfind to new secret", "Generate smart route going through all secrets upon entering the room.", "secret.smartroute", false));
-    public static final SimpleFeature SECRET_SMART_KEYBIND = register(new SimpleFeature("Pathfinding & Secrets.Smart Route", "Auto generate smart route upon pressing a key", "Generate smart route going through all secrets upon entering the room.\nPress settings to edit the key", "secret.smartroutekeynext", false) {{
-        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to navigate to next best secret", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
-    }});
+    public static final SimpleFeature SECRET_SMART_AUTO_START = register(new FeatureSmartRoute());
 
     // Secret Browser
     public static final PathfindLineProperties SECRET_LINE_PROPERTIES_SECRET_BROWSER = register(new PathfindLineProperties("Pathfinding & Secrets.Secret Browser", "Line Settings", "Line Settings when pathfinding using Secret Browser", "secret.lineproperties.secretbrowser", true, null));

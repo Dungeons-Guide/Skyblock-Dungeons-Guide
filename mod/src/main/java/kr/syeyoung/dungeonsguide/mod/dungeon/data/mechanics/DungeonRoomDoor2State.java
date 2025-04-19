@@ -51,8 +51,8 @@ public class DungeonRoomDoor2State implements DungeonMechanicState {
 
     private Vector2d getIdentifier(DungeonRoom dungeonRoom) {
         BlockPos pos = data.pfPoint.getBlockPos(dungeonRoom).subtract(dungeonRoom.getRoomBounds().getMin());
-        double xWat = Math.round(pos.getX() / 16) / 2.0 - 0.5;
-        double zWat = Math.round(pos.getZ() / 16) / 2.0 - 0.5;
+        double xWat = Math.round(pos.getX() / 16.0) / 2.0 - 0.5;
+        double zWat = Math.round(pos.getZ() / 16.0) / 2.0 - 0.5;
         return new Vector2d(xWat, zWat);
     }
 
@@ -76,7 +76,7 @@ public class DungeonRoomDoor2State implements DungeonMechanicState {
 //        return doorfinder.getType().isKeyRequired() ? "key" : "normal";
         Vector2d id = getIdentifier(room);
         for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : room.getDoorsAndStates()) {
-            if (doorsAndState.getFirst().equals(id)) {
+            if (doorsAndState.getFirst().equals(id) && doorsAndState.getSecond() != EDungeonDoorType.NONE) {
                 return doorsAndState.getSecond().isKeyRequired() ? "key" : "normal";
             }
         }
