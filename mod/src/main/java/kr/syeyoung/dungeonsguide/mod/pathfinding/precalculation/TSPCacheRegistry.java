@@ -16,6 +16,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationProgress;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPresetRegistry;
@@ -37,6 +39,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class TSPCacheRegistry {
@@ -48,8 +51,31 @@ public class TSPCacheRegistry {
                     .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
                     .setNameFormat("DG-TSPCache-%d").build()));
 
-    public void updateTooltip() {
+    private AtomicInteger remaining = new AtomicInteger();
 
+
+    private UUID tspCacheBuilding = UUID.randomUUID();
+
+    private volatile WidgetNotificationProgress progress;
+    private volatile WidgetNotificationProgress.Progress requestProgress;
+
+    public void updateTooltip() {
+        int rem = remaining.get();
+        if (FeatureRegistry.NOTIFICATIONS.getRootWidget() == null) return;
+        if (rem == 0) {
+            FeatureRegistry.NOTIFICATIONS.getRootWidget().removeNotification(tspCacheBuilding);
+            progress = null;
+            requestProgress = null;
+            return;
+        }
+        if (progress == null) {
+            progress = new WidgetNotificationProgress(tspCacheBuilding, "TSP Cache Building Progress");
+            requestProgress = new WidgetNotificationProgress.Progress ("Remaining... "+remaining.get(),null, null, false);
+            progress.addProgress(requestProgress);
+            FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(tspCacheBuilding, progress);
+        }
+
+        requestProgress.setMessage("Remaining... "+remaining.get());
     }
 
     private final File dir;
@@ -84,26 +110,41 @@ public class TSPCacheRegistry {
             TSPCacheCalculationTask task = new TSPCacheCalculationTask(new AtomicInteger(1), value);
             calculationTaskWeakHashMap.put(value, task);
 
+            if (task.cnt.getAndIncrement() == 0)
+                remaining.incrementAndGet();
             scheduler.schedule(() -> {
-                if (task.cnt.decrementAndGet() != 0) return;
+                if (task.cnt.decrementAndGet() != 0) {
+                    return;
+                }
                 try {
                     task.run();
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
+                } finally {
+                    remaining.decrementAndGet();
+                    updateTooltip();
                 }
             }, 5, TimeUnit.SECONDS);
         }
+        updateTooltip();
     }
 
     public void invalidateTSPCache(RoomPreset roomPreset) {
         TSPCacheCalculationTask task = calculationTaskWeakHashMap.computeIfAbsent(roomPreset, (roomPreset1) -> new TSPCacheCalculationTask(new AtomicInteger(0), roomPreset));
-        task.cnt.incrementAndGet();
+        if (task.cnt.getAndIncrement() == 0)
+            remaining.incrementAndGet();
+        updateTooltip();
         scheduler.schedule(() -> {
-            if (task.cnt.decrementAndGet() != 0) return;
+            if (task.cnt.decrementAndGet() != 0) {
+                return;
+            }
             try {
                 task.run();
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
+            } finally {
+                remaining.decrementAndGet();
+                updateTooltip();
             }
         }, 5, TimeUnit.SECONDS);
     }
@@ -123,6 +164,17 @@ public class TSPCacheRegistry {
         private RoomPreset roomPreset;
 
         public void run() throws NoSuchAlgorithmException {
+
+            Set<String> precalcIds = new HashSet<>(roomPreset.getPrecalculations());
+
+            String hashIn = precalcIds
+                    .stream().sorted()
+                    .collect(Collectors.joining(";"));
+
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            String hash = Hex.encodeHexString(md.digest(hashIn.getBytes()));
+
+            if (getTSPCache(hash) != null) return;
 
             DungeonRoomInfo dungeonRoomInfo = DungeonRoomInfoRegistry.getByUUID(roomPreset.getRoomId());
 
@@ -157,15 +209,6 @@ public class TSPCacheRegistry {
                 for (AbstractActionMove listOfMove : listOfMoves) {
                     vec3.add(listOfMove.getTargetVec3());
                 }
-
-                Set<String> precalcIds = new HashSet<>(roomPreset.getPrecalculations());
-
-                String hashIn = precalcIds
-                        .stream().sorted()
-                        .collect(Collectors.joining(";"));
-
-                MessageDigest md = MessageDigest.getInstance("MD5");
-                String hash = Hex.encodeHexString(md.digest(hashIn.getBytes()));
 
                 TSPCache tspCache = new TSPCache(vec3, hash);
 
