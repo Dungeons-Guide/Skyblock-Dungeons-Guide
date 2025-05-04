@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
-import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPreset;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetPrecalcList;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;

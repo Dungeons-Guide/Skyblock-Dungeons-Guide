@@ -35,6 +35,7 @@ import java.util.LinkedList;
 @AllArgsConstructor
 public class PrecalculatedPathfinder implements IPathfinder {
     private int rotation;
+    private PathfindPrecalculation.ReferenceCountedByteBufferWrapper buffer;
     private ByteBuffer array;
 
     private int xStart, yStart, zStart;
@@ -43,7 +44,8 @@ public class PrecalculatedPathfinder implements IPathfinder {
 
     private int roomXMin, roomYMin, roomZMin;
     private int roomXLen, roomZLen;
-    public PrecalculatedPathfinder(int rotation, int xStart, int yStart, int zStart, int xLen, int yLen, int zLen, ByteBuffer data) {
+    private boolean closed = false;
+    public PrecalculatedPathfinder(int rotation, int xStart, int yStart, int zStart, int xLen, int yLen, int zLen, PathfindPrecalculation.ReferenceCountedByteBufferWrapper data) {
         this.rotation = rotation;
         this.xStart = xStart;
         this.yStart = yStart;
@@ -51,7 +53,8 @@ public class PrecalculatedPathfinder implements IPathfinder {
         this.xLen = xLen;
         this.yLen = yLen;
         this.zLen = zLen;
-        this.array = data;
+        this.array = data.getByteBuffer();
+        this.buffer = data;
     }
 
 
@@ -128,23 +131,12 @@ public class PrecalculatedPathfinder implements IPathfinder {
     }
 
     public void close() {
-        try {
-            destroyDirectByteBuffer(array);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
+        if (!closed) {
+            closed = true;
+            buffer.release();
+            array = null;
         }
     }
-    public static void destroyDirectByteBuffer(ByteBuffer toBeDestroyed)
-            throws IllegalArgumentException, IllegalAccessException,
-            InvocationTargetException, SecurityException, NoSuchMethodException {
-        Method cleanerMethod = toBeDestroyed.getClass().getMethod("cleaner");
-        cleanerMethod.setAccessible(true);
-        Object cleaner = cleanerMethod.invoke(toBeDestroyed);
-        Method cleanMethod = cleaner.getClass().getMethod("clean");
-        cleanMethod.setAccessible(true);
-        cleanMethod.invoke(cleaner);
-    }
-
     @AllArgsConstructor @Getter
     public static class CachedPathfindNode {
         private int x, y, z;

@@ -4,15 +4,21 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.IPathfinder;
 import lombok.Data;
+import lombok.Getter;
 import org.apache.commons.io.input.CountingInputStream;
 
 import java.io.*;
+import java.lang.ref.SoftReference;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.InflaterInputStream;
 
 @Data
@@ -67,6 +73,8 @@ public class PathfindPrecalculation {
         if (!actual.equals(magicValue)) throw new IllegalStateException("Expected magic value "+magicValue+" Instead got "+actual);
     }
 
+    private int xStart, yStart, zStart, xLen, yLen, zLen;
+
     private void parsePathfindV2Header(File f) throws IOException {
         try (FileInputStream fis = new FileInputStream(f)) {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fis);
@@ -99,11 +107,80 @@ public class PathfindPrecalculation {
             expectMagicValue(dis, "NODE");
             this.compressed = dis.readBoolean();
             this.start = countingInputStream.getCount();
+
+            DataInputStream dataInputStream;
+            if (compressed) {
+                InflaterInputStream gzipInputStream = new InflaterInputStream(dis);
+                dataInputStream = new DataInputStream(gzipInputStream);
+            } else {
+                dataInputStream = new DataInputStream(dis);
+            }
+            this.xStart = dataInputStream.readShort();
+            this.yStart = dataInputStream.readShort();
+            this.zStart = dataInputStream.readShort();
+            this.xLen = dataInputStream.readShort();
+            this.yLen = dataInputStream.readShort();
+            this.zLen = dataInputStream.readShort();
+            dataInputStream.close();
         }
     }
 
+    private SoftReference<ReferenceCountedByteBufferWrapper> byteBufferWeakReference = new SoftReference<>(null);
+
+    public static class ReferenceCountedByteBufferWrapper {
+        private AtomicInteger reference = new AtomicInteger(0);
+        private AtomicBoolean killed = new AtomicBoolean(false);
+
+        @Getter
+        private ByteBuffer byteBuffer;
+
+        public ReferenceCountedByteBufferWrapper(ByteBuffer byteBuffer) {
+            this.byteBuffer = byteBuffer;
+        }
+
+
+        private boolean use() {
+            if (killed.get()) return false;
+            if (reference.getAndIncrement() == 0) return false;
+            return true;
+        }
+
+        public void release() {
+            if (reference.decrementAndGet() == 0) {
+                cleanup();
+                byteBuffer = null;
+            }
+        }
+
+        private void cleanup() {
+            try {
+                if (killed.compareAndSet(false, true))
+                    destroyDirectByteBuffer(byteBuffer);
+            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        public static void destroyDirectByteBuffer(ByteBuffer toBeDestroyed)
+                throws IllegalArgumentException, IllegalAccessException,
+                InvocationTargetException, SecurityException, NoSuchMethodException {
+            Method cleanerMethod = toBeDestroyed.getClass().getMethod("cleaner");
+            cleanerMethod.setAccessible(true);
+            Object cleaner = cleanerMethod.invoke(toBeDestroyed);
+            Method cleanMethod = cleaner.getClass().getMethod("clean");
+            cleanMethod.setAccessible(true);
+            cleanMethod.invoke(cleaner);
+        }
+
+    }
 
     public IPathfinder createPathfinder(int rotation) throws IOException {
+        {
+            ReferenceCountedByteBufferWrapper buffer = byteBufferWeakReference.get();
+            if (buffer != null && buffer.use()) {
+                return new PrecalculatedPathfinder(rotation, xStart, yStart, zStart, xLen, yLen, zLen, buffer);
+            }
+        }
+
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             fileInputStream.skip(start);
             DataInputStream dataInputStream;
@@ -124,11 +201,15 @@ public class PathfindPrecalculation {
 
 //            byte[] b = new byte[xLen * yLen * zLen * 8];
 //            dataInputStream.readFully(b);
+
             ByteBuffer buffer = ByteBuffer.allocateDirect(xLen * yLen * zLen * 8); // use off-heap buffer.
             ReadableByteChannel channel = Channels.newChannel(dataInputStream);
             while (channel.read(buffer) > 0);
+            ReferenceCountedByteBufferWrapper wrapper = new ReferenceCountedByteBufferWrapper(buffer);
+            wrapper.use();
+            byteBufferWeakReference = new SoftReference<>(wrapper);
 
-            return new PrecalculatedPathfinder(rotation, xStart, yStart, zStart, xLen, yLen, zLen, buffer);
+            return new PrecalculatedPathfinder(rotation, xStart, yStart, zStart, xLen, yLen, zLen, wrapper);
         }
     }
 }

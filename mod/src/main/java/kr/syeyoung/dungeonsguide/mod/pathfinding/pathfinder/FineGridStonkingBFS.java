@@ -458,6 +458,8 @@ public class FineGridStonkingBFS implements IPathfinder {
         return MathHelper.sqrt_float(x * x + y * y + z * z);
     }
 
+    @Override
+    public void close()  {}
 
 
     @RequiredArgsConstructor

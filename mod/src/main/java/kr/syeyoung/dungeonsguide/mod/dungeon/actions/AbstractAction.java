@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -52,7 +53,7 @@ public abstract class AbstractAction {
         return false;
     }
 
-    public double evalulateCost(RoomState state, DungeonRoom room, TSPCache tspCache) { return 0; }
+    public double evalulateCost(RoomState state, DungeonRoom room, TSPCache tspCache, RoomPresetPathPlanner pathPlanner) { return 0; }
 
     public boolean isIdempotent() { return false; }
     public boolean isSanityCheck() { return false; }

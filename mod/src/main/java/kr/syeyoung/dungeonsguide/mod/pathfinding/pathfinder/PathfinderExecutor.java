@@ -26,7 +26,7 @@ import net.minecraft.util.Vec3;
 
 import java.util.Collections;
 
-public class PathfinderExecutor {
+public class PathfinderExecutor implements AutoCloseable {
     private boolean invalidate = false;
     @Getter
     private volatile Vec3 target;
@@ -69,5 +69,9 @@ public class PathfinderExecutor {
         PathfindResult route = pathfinder.getRoute(target);
         if (route == null) return lastRoute = pathfinder.getRoute(this.target);
         else return lastRoute = route;
+    }
+
+    public void close() {
+        pathfinder.close();
     }
 }

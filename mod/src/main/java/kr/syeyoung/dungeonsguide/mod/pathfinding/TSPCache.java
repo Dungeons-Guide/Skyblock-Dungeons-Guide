@@ -40,16 +40,15 @@ public class TSPCache {
     }
 
     public synchronized void addToCache(PathfindPrecalculation precalculation) throws IOException {
-        PrecalculatedPathfinder iPathfinder = (PrecalculatedPathfinder) precalculation.createPathfinder(dungeonRoom.getRoomMatcher().getRotation());
-        iPathfinder.init(generalRoomProcessor.getPathfinderWorld(), null);
-        double[] arr = new double[locationsInCache.size()];
-        for (int i = 0; i < locationsInCache.size(); i++) {
-            Vec3 offsetVec3 = locationsInCache.get(i);
-            arr[i] = iPathfinder.getCost(offsetVec3);
+        try (PrecalculatedPathfinder iPathfinder = (PrecalculatedPathfinder) precalculation.createPathfinder(dungeonRoom.getRoomMatcher().getRotation())) {
+            iPathfinder.init(generalRoomProcessor.getPathfinderWorld(), null);
+            double[] arr = new double[locationsInCache.size()];
+            for (int i = 0; i < locationsInCache.size(); i++) {
+                Vec3 offsetVec3 = locationsInCache.get(i);
+                arr[i] = iPathfinder.getCost(offsetVec3);
+            }
+            cache.put(precalculation.getTargetHash(), arr);
         }
-        cache.put(precalculation.getTargetHash(), arr);
-
-        iPathfinder.close();
     }
 
     private int binarySearchIndexOf(Vec3 pos) {

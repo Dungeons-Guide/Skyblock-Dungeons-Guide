@@ -10,7 +10,7 @@ import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
-import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPreset;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationProgress;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step1.WidgetPrecalcStep1Calculating;

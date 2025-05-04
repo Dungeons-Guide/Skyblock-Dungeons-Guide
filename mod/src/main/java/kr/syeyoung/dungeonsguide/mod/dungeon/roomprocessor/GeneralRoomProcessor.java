@@ -20,9 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -30,24 +28,15 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISecret;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.PathfindLineProperties;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.ClassicPathDisplayEngine;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.IPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.BoundingBox;
-import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.FineGridStonkingBFS;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.IPathfinder;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculationRegistry;
-import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.RoomPreset;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.CoordinateMapBackedPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonAddSet;
@@ -61,8 +50,6 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindStrategy;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.state.IBlockState;
@@ -88,7 +75,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -107,17 +93,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
         algorithmSetting = roomPreset.getEffectiveAlgorithmSetting(dungeonRoom.getDungeonRoomInfo());
 
         setupPathfinderWorld();
-
-        pathfindLoaderThread.submit(() -> {
-            try {
-                this.loadPrecalculations();
-            } catch (Exception e) {
-                if (e.getMessage() == null || !e.getMessage().contains("Chunk not loaded")) {
-                    FeatureCollectDiagnostics.queueSendLogAsync(e);
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     private void setupPathfinderWorld() {
@@ -395,10 +370,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
         pathfinderWorld.resetChunk(chunkX, chunkZ);
     }
 
-    private static final ExecutorService pathfindLoaderThread = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newFixedThreadPool(8,
-            new ThreadFactoryBuilder()
-                    .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
-                    .setNameFormat("DG-PathfindLoader-%d").build()));
 
 
     private final Map<Vec3, WeakReference<PathfinderExecutor>> activePathfind = new HashMap<>();
@@ -431,68 +402,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
     private AlgorithmSetting algorithmSetting;
     @Getter
     private RoomPreset roomPreset;
-
-    private void loadPrecalculations() {
-        Set<String> pathfinders = roomPreset.getPrecalculations();
-        if (pathfinders != null) {
-            for (String precalcId : pathfinders) {
-                loadPrecalculated(precalcId);
-            }
-        }
-    }
-
-    private final Map<String, WeakReference<PathfinderExecutor>> idExecutor = new HashMap<>();
-    private final Map<String, PathfindPrecalculation> idCalculation = new HashMap<>();
-    public void loadPrecalculated(String id) {
-        PathfindPrecalculation cachedPathfinder = PathfindPrecalculationRegistry.getINSTANCE().getById(id);
-        if (cachedPathfinder == null) return;
-        if (idCalculation.containsKey(id)) return;
-        idCalculation.put(cachedPathfinder.getTargetHash(), cachedPathfinder);
-    }
-
-    public PathfindPrecalculation loadPrecalculatedUnloadedByHash(String hash) {
-        if (!idCalculation.containsKey(hash)) {
-            if (nextShowedWarning < System.currentTimeMillis()) {
-                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cPrecalculation "+hash+" in room "+dungeonRoom.getDungeonRoomInfo().getName()+" is §4§lMISSING §cin currently applied preset §e"+roomPreset.getParent().getPresetName()+"§c. There may be some problems in pathfinding. Please add precalculations at /dg -> Pathfinding & Secrets -> Precalculations");
-                nextShowedWarning = System.currentTimeMillis() + 30000L;
-            }
-            return null;
-        }
-
-        return idCalculation.get(hash);
-    }
-
-    private long nextShowedWarning = 0;
-    public synchronized PathfinderExecutor loadPrecalculatedByHash(String hash) {
-        if (!idCalculation.containsKey(hash)) {
-            if (nextShowedWarning < System.currentTimeMillis()) {
-                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cPrecalculation "+hash+" in room "+dungeonRoom.getDungeonRoomInfo().getName()+" is §4§lMISSING §cin currently applied preset §e"+roomPreset.getParent().getPresetName()+"§c. There may be some problems in pathfinding. Please add precalculations at /dg -> Pathfinding & Secrets -> Precalculations");
-                nextShowedWarning = System.currentTimeMillis() + 30000L;
-            }
-            return null;
-        }
-
-        if (idExecutor.containsKey(hash)) {
-            WeakReference<PathfinderExecutor> executorSoftReference = idExecutor.get(hash);
-            PathfinderExecutor executor = executorSoftReference.get();
-            if (executor != null) return executor;
-            idExecutor.remove(hash);
-        };
-
-        System.out.println("LOADING:: "+hash);
-        PathfindPrecalculation precalculation = idCalculation.get(hash);
-
-        try {
-            IPathfinder pathfinder = precalculation.createPathfinder(dungeonRoom.getRoomMatcher().getRotation());
-            PathfinderExecutor executor1 = new PathfinderExecutor(pathfinder, BoundingBox.of(AxisAlignedBB.fromBounds(0,0,0,0,0,0)), pathfinderWorld);
-            idExecutor.put(precalculation.getTargetHash(), new WeakReference<>(executor1));
-            executor1.doStep();
-            return executor1;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
 
     public static class Generator implements RoomProcessorGenerator<GeneralRoomProcessor> {

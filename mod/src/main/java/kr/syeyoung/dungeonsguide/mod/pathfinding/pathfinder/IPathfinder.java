@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.IPathfindWorld;
 import net.minecraft.util.Vec3;
 
-public interface IPathfinder {
+public interface IPathfinder extends AutoCloseable {
     void init(IPathfindWorld dungeonRoom, BoundingBox destination);
     boolean doOneStep();
 
@@ -31,4 +31,6 @@ public interface IPathfinder {
     Vec3 getTarget();
     PathfindResult getRoute(Vec3 from);
     double getCost(Vec3 from);
+
+    void close();
 }

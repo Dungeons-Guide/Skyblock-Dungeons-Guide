@@ -7,6 +7,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.util.Vec3;
@@ -27,7 +28,7 @@ public class TravelingSalesman {
         return p1Node.checkImpossible(dagId, solution, nodeIdx);
     }
 
-    public static PartialCalculationResult annealing(int dagId, ActionDAG dag, Vec3 start, DungeonRoom dungeonRoom, TSPCache cache) {
+    public static PartialCalculationResult annealing(int dagId, ActionDAG dag, Vec3 start, DungeonRoom dungeonRoom, TSPCache cache, RoomPresetPathPlanner pathPlanner) {
         Random r = new Random();
         int cnt = 0;
         int actualMoves = 0;
@@ -85,7 +86,7 @@ public class TravelingSalesman {
             double cost = 0;
             for (int i = 0; i < currentSolution.size(); i++) {
                 ActionDAGNode actionDAGNode = currentSolution.get(i);
-                cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, cache);
+                cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, cache, pathPlanner);
                 if (cost == Double.POSITIVE_INFINITY) break;
             }
             if (cost < localMinCost) {
@@ -131,7 +132,7 @@ public class TravelingSalesman {
         return new PartialCalculationResult(dagId, localMinCostRoute, localMinCost, cnt);
     }
 
-    public static PartialCalculationResult bruteforce(int dagId, ActionDAG dag, Vec3 start, DungeonRoom dungeonRoom, TSPCache cache) {
+    public static PartialCalculationResult bruteforce(int dagId, ActionDAG dag, Vec3 start, DungeonRoom dungeonRoom, TSPCache cache, RoomPresetPathPlanner pathPlanner) {
         int[] nodeStatus = dag.getNodeStatus(dagId);
         int cnt = 0;
         double localMinCost = Double.POSITIVE_INFINITY;
@@ -149,7 +150,7 @@ public class TravelingSalesman {
             roomState.setPlayerPos(start);
             double cost = 0;
             for (ActionDAGNode actionDAGNode : actionDAGNodes) {
-                cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, cache);
+                cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, cache, pathPlanner);
                 if (cost == Double.POSITIVE_INFINITY) break;
             }
             if (cost < localMinCost) {

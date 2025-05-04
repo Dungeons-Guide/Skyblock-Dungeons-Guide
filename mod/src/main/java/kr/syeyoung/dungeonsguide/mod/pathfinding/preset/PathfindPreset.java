@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation;
+package kr.syeyoung.dungeonsguide.mod.pathfinding.preset;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

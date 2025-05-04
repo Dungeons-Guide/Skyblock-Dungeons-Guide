@@ -24,10 +24,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonBreakableWall
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTombState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicData;
-import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPreset;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.CoordinateMapBackedPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.ICoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import lombok.Getter;

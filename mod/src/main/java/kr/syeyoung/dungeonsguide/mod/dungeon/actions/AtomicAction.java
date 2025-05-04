@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import lombok.Getter;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -99,10 +100,10 @@ public class AtomicAction extends AbstractAction {
     }
 
     @Override
-    public double evalulateCost(RoomState state, DungeonRoom room, TSPCache tspCache) {
+    public double evalulateCost(RoomState state, DungeonRoom room, TSPCache tspCache, RoomPresetPathPlanner pathPlanner) {
         double cost = 0;
         for (int i = 0; i < getActions().size(); i++) {
-            cost += getActions().get(i).evalulateCost(state, room, tspCache);
+            cost += getActions().get(i).evalulateCost(state, room, tspCache, pathPlanner );
         }
         return cost;
     }

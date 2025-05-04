@@ -13,6 +13,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.PathfinderExecutor;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -46,10 +47,12 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ActionRouteP
         private int tick = -1;
         private PathfindResult poses;
     }
+    private RoomPresetPathPlanner pathPlanner;
 
     public ClassicPathDisplayEngine(ActionRoute actionRoute, ActionRouteProperties initialRouteProperties) {
         this.actionRoute = actionRoute;
         this.dungeonRoom = actionRoute.getDungeonRoom();
+        this.pathPlanner = new RoomPresetPathPlanner(actionRoute.getDungeonRoom().getContext().getPreset().getRoomPreset(actionRoute.getDungeonRoom().getDungeonRoomInfo().getUuid()));
         this.actionRouteProperties = initialRouteProperties;
     }
 
@@ -73,7 +76,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ActionRouteP
         ActionMoveContext ctx = executorWeakHashMap.get(actionMove);
 
         GeneralRoomProcessor generalRoomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
-        if (ctx.executor == null) ctx.executor = generalRoomProcessor.loadPrecalculatedByHash(actionMove.getPathfindRequest(dungeonRoom).getHash());
+        if (ctx.executor == null) ctx.executor = pathPlanner.loadPrecalculatedByHash(actionMove.getPathfindRequest(dungeonRoom).getHash(), dungeonRoom);
         if (ctx.executor == null) ctx.executor = generalRoomProcessor.createEntityPathTo(actionMove.getPathfindBoundingBox(dungeonRoom));
         if (ctx.executor != null) ctx.executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
     }

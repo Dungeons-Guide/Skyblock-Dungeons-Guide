@@ -29,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Vec3;
@@ -113,14 +114,16 @@ public class ActionRoute {
 
             TSPCache tspCache = new TSPCache((GeneralRoomProcessor) dungeonRoom.getRoomProcessor(), dungeonRoom, Collections.EMPTY_LIST, Collections.singletonList(start));
 
+            RoomPresetPathPlanner pathPlanner = new RoomPresetPathPlanner(dungeonRoom.getContext().getPreset().getRoomPreset(dungeonRoom.getDungeonRoomInfo().getUuid()));
+
             boolean finalAnnealing = annealing;
             try {
                 List<TravelingSalesman.PartialCalculationResult> results = IntStream.range(0, dag.getCount())
                         .parallel()
                         .mapToObj((dagId) -> {
                             if (finalAnnealing)
-                                return TravelingSalesman.annealing(dagId, dag, start, dungeonRoom, tspCache);
-                            else return TravelingSalesman.bruteforce(dagId, dag, start, dungeonRoom, tspCache);
+                                return TravelingSalesman.annealing(dagId, dag, start, dungeonRoom, tspCache, pathPlanner);
+                            else return TravelingSalesman.bruteforce(dagId, dag, start, dungeonRoom, tspCache, pathPlanner);
                         })
                         .collect(Collectors.toList());
                 TravelingSalesman.PartialCalculationResult minCostRoute = results.stream()

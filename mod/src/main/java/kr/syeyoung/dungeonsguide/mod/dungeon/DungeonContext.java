@@ -30,8 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapConstantRetriever;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.MapPlayerProcessor;
-import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.PathfinderExecutor;
-import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPreset;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
@@ -53,10 +52,8 @@ import net.minecraftforge.common.MinecraftForge;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
-import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DungeonContext {
     @Getter @Setter

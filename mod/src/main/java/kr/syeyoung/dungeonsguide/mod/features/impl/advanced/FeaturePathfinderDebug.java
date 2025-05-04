@@ -105,6 +105,9 @@ public class FeaturePathfinderDebug extends SimpleFeature {
     public void onCommand(String[] args) {
         if (args[1].equals("reset")) {
             pfDebugPts.clear();
+            for (PrecalculatedPathfinder precalculatedPathfinder : instance) {
+                precalculatedPathfinder.close();
+            }
             instance.clear();
         } else if (args[1].equals("load")) {
             try {

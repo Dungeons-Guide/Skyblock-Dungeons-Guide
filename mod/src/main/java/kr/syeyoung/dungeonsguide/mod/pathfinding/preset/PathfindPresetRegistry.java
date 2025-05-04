@@ -1,8 +1,8 @@
-package kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation;
+package kr.syeyoung.dungeonsguide.mod.pathfinding.preset;
 
-import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.TSPCacheRegistry;
 import lombok.Getter;
 
 import java.io.File;

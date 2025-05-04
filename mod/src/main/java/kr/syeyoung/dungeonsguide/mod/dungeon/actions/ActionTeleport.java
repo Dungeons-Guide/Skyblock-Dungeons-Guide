@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import net.minecraft.util.Vec3;
 
 public class ActionTeleport extends AbstractAction {
@@ -46,7 +47,7 @@ public class ActionTeleport extends AbstractAction {
     }
 
     @Override
-    public double evalulateCost(RoomState state, DungeonRoom room, TSPCache tspCache) {
+    public double evalulateCost(RoomState state, DungeonRoom room, TSPCache tspCache, RoomPresetPathPlanner pathPlanner) {
         state.setPlayerPos(new Vec3(target.getBlockPos(room)));
         return 0;
     }
