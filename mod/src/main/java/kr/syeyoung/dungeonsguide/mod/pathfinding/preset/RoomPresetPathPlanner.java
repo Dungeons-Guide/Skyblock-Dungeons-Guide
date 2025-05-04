@@ -19,6 +19,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.TSPCacheRegistry
 import lombok.Getter;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
+import sun.misc.Cleaner;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -72,6 +73,9 @@ public class RoomPresetPathPlanner {
             PathfinderExecutor executor1 = new PathfinderExecutor(pathfinder, BoundingBox.of(AxisAlignedBB.fromBounds(0,0,0,0,0,0)),
                     ((GeneralRoomProcessor)dungeonRoom.getRoomProcessor()).getPathfinderWorld());
             executor1.doStep();
+
+            Cleaner.create(executor1, pathfinder::close); // WELLLLLL... well... well...
+
             return executor1;
         } catch (IOException e) {
             e.printStackTrace();
