@@ -61,7 +61,7 @@ public class BitCachingCoordinateMap<T extends Enum<T>> implements ICoordinateMa
 
     public void invalidateCache(int x, int y, int z) {
         if (x < minX || z < minZ || x >= maxX || z >= maxZ || y < minY || y >= maxY) return;
-        bitStorage.store(x, y, z, 0);
+        bitStorage.store(x - minX, y - minY, z - minZ, 0);
     }
 
     @Override
