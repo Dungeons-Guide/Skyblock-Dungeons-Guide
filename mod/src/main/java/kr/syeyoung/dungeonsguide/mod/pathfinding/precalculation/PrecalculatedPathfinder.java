@@ -64,6 +64,13 @@ public class PrecalculatedPathfinder implements IPathfinder {
         this.roomZLen = dungeonRoom.getZwidth() / 2;
     }
 
+
+    public void init2() {
+        this.roomXMin = -2;
+        this.roomYMin = 0;
+        this.roomZMin = - 2;
+    }
+
     @Override
     public boolean doOneStep() {
         return true;

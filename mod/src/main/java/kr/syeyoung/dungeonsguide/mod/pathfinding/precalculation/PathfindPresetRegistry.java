@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation;
 
+import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import lombok.Getter;
@@ -40,7 +41,8 @@ public class PathfindPresetRegistry {
             if (value.isOverridingParentAlgorithmSetting())
                 AlgorithmSettingRegistry.registerAlgorithmSetting(value.getAlgorithmSetting());
         }
-
+        if (TSPCacheRegistry.getINSTANCE() != null)
+            TSPCacheRegistry.getINSTANCE().loadPreset(preset);
     }
 
     public PathfindPreset getPreset(String presetId) {

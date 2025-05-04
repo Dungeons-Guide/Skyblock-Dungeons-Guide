@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPresetRe
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculationRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.TSPCacheRegistry;
 import lombok.Getter;
 
 import javax.crypto.BadPaddingException;
@@ -68,6 +69,10 @@ public class DungeonFacade {
         {
             new File(Main.getConfigDir(), "presets").mkdirs();
             new PathfindPresetRegistry(new File(Main.getConfigDir(), "presets"));
+        }
+        {
+            new File(Main.getConfigDir(), "tspCache").mkdirs();
+            new TSPCacheRegistry(new File(Main.getConfigDir(), "tspCache"));
         }
     }
 }

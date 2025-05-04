@@ -8,9 +8,13 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import lombok.Getter;
 import net.minecraft.nbt.CompressedStreamTools;
+import org.apache.commons.codec.binary.Hex;
 
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 public class RoomPreset implements Cloneable {
@@ -19,7 +23,7 @@ public class RoomPreset implements Cloneable {
 
     private AlgorithmSetting algorithmSetting;
     private Set<String> precalculations = new HashSet<>();
-    private String tspCache;
+    private volatile String tspCache;
 
     public RoomPreset(PathfindPreset parent, UUID roomId) {
         this.parent = parent;
@@ -31,10 +35,32 @@ public class RoomPreset implements Cloneable {
     public void addPrecalculation(String precalculation) {
         this.precalculations.add(precalculation);
         parent.markDirty();
+        TSPCacheRegistry.getINSTANCE().invalidateTSPCache(this);
+        tspCache = null;
     }
     public void removePrecalculation(String precalculation) {
         this.precalculations.remove(precalculation);
         parent.markDirty();
+        TSPCacheRegistry.getINSTANCE().invalidateTSPCache(this);
+        tspCache = null;
+    }
+
+    public String getTSPCache() {
+        if (this.tspCache != null) return tspCache;
+
+        Set<String> precalcIds = new HashSet<>(precalculations);
+
+        String hashIn = precalcIds
+                .stream().sorted()
+                .collect(Collectors.joining(";"));
+
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            String hash = Hex.encodeHexString(md.digest(hashIn.getBytes()));
+            return this.tspCache = hash;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Set<String> getPrecalculations() {
@@ -75,9 +101,9 @@ public class RoomPreset implements Cloneable {
         for (JsonElement element : jsonObject.get("precalculations").getAsJsonArray()) {
             roomPreset.precalculations.add(element.getAsString());
         }
-        if (jsonObject.has("tspCache"))
-            roomPreset.tspCache = jsonObject.get("tspCache").isJsonNull() ? null : jsonObject.get("tspCache").getAsString();
-
+        {
+            roomPreset.getTSPCache();
+        }
         if (jsonObject.has("algorithmSetting")) {
 
             String algoSettings = jsonObject.get("algorithmSetting").getAsString();
@@ -102,7 +128,6 @@ public class RoomPreset implements Cloneable {
         }
         res.addProperty("id", roomId.toString());
         res.add("precalculations", array);
-        res.addProperty("tspCache", tspCache);
 
         try {
             if (algorithmSetting != null) {
@@ -126,7 +151,7 @@ public class RoomPreset implements Cloneable {
         try {
             RoomPreset roomPreset = (RoomPreset) super.clone();
             roomPreset.precalculations = new HashSet<>(this.precalculations);
-//            roomPreset.tspCache = null;
+            roomPreset.tspCache = tspCache;
             roomPreset.parent = null;
             roomPreset.algorithmSetting = this.algorithmSetting;
             return roomPreset;

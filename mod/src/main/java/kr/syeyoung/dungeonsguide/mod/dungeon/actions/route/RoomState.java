@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions.route;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.util.Vec3;
@@ -26,7 +28,14 @@ import java.util.*;
 
 @Getter @Setter
 public class RoomState {
+    private DungeonRoom dungeonRoom;
     private Vec3 playerPos;
+    private OffsetVec3 playerPosOff = new OffsetVec3();
+
+    public void setPlayerPos(Vec3 playerPos) {
+        this.playerPos = playerPos;
+        this.playerPosOff.setPosInWorld(dungeonRoom, playerPos);
+    }
 
     public int openMechanicsBitset;
     private final List<String> openMechanicsIndex;

@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation;
 
+import com.google.common.collect.Sets;
 import com.sun.nio.file.ExtendedWatchEventModifier;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
 public class PathfindPrecalculationRegistry {
@@ -35,7 +37,18 @@ public class PathfindPrecalculationRegistry {
                 WatchService ws = fs.newWatchService();
 
                 Path pTemp = dir.toPath();
-                pTemp.register(ws, new WatchEvent.Kind[] {StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY}, ExtendedWatchEventModifier.FILE_TREE);
+                WatchEvent.Kind[] kinds = new WatchEvent.Kind[] {StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY};
+                Files.walkFileTree(pTemp, new SimpleFileVisitor<Path>() {
+
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                        if (Files.isDirectory(dir))
+                            dir.register(ws, kinds);
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+
+                pTemp.register(ws, kinds);
 
                 while(!Thread.interrupted())
                 {
@@ -43,6 +56,19 @@ public class PathfindPrecalculationRegistry {
                         WatchKey k = ws.take();
                         for (WatchEvent<?> e : k.pollEvents()) {
                             Path c = (Path) e.context();
+                            if (e.kind() == StandardWatchEventKinds.ENTRY_CREATE && Files.isDirectory(c)) {
+                                c.register(ws, kinds);
+                                Files.walkFileTree(c, new SimpleFileVisitor<Path>() {
+                                    @Override
+                                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                                        if (file.getFileName().toString().endsWith(".pfres"))
+                                            register(new PathfindPrecalculation(c.toFile()));
+                                        return FileVisitResult.CONTINUE;
+                                    }
+                                });
+                                continue;
+                            }
+
                             if (!c.getFileName().toString().endsWith(".pfres")) continue;
 
                             if (e.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
@@ -64,7 +90,7 @@ public class PathfindPrecalculationRegistry {
                         e.printStackTrace();
                     }
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }

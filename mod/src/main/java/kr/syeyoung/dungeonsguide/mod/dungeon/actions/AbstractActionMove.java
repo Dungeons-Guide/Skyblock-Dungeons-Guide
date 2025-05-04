@@ -29,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.TSPCacheRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.PathfinderExecutor;
@@ -174,7 +175,8 @@ public abstract class AbstractActionMove extends AbstractAction {
         }
 
 
-        double cost = generalRoomProcessor.getTspCache().getCost(hash, state.getPlayerPos());
+        kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.TSPCache tspCache1 = TSPCacheRegistry.getINSTANCE().getTSPCache(generalRoomProcessor.getRoomPreset().getTSPCache());
+        double cost = tspCache1.getCost(hash, state.getPlayerPosOff());
         if (cost >= 0) {
             state.setPlayerPos(bpos);
             return cost;
@@ -197,7 +199,7 @@ public abstract class AbstractActionMove extends AbstractAction {
             return cost;
         }
 
-        System.out.println(state.getPlayerPos());
+//        System.out.println(state.getPlayerPos());
 
         PathfinderExecutor executor = generalRoomProcessor.loadPrecalculatedByHash(hash);
 

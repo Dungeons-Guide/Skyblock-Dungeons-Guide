@@ -431,6 +431,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Getter
     private AlgorithmSetting algorithmSetting;
+    @Getter
     private RoomPreset roomPreset;
 
     private void loadPrecalculations() {
@@ -444,41 +445,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         }
 
 
-        // build tsp cache.
-        ActionDAG dag = AdditionalInfoCaculatedDungeonRoomInfo.buildReferencingAllPossibleThings(dungeonRoom, algorithmSetting);
-        List<AbstractActionMove> listOfMoves = new ArrayList<>();
-        for (ActionDAGNode actionDAGNode : dag.getAllNodes()) {
-            if (actionDAGNode.getAction() instanceof AtomicAction) {
-                for (AbstractAction actionInAtomicAction : ((AtomicAction) actionDAGNode.getAction()).getActions()) {
-                    if (actionInAtomicAction instanceof AbstractActionMove) {
-                        listOfMoves.add((AbstractActionMove) actionInAtomicAction);
-                    }
-                }
-            } else if (actionDAGNode.getAction() instanceof AbstractActionMove) {
-                listOfMoves.add((AbstractActionMove) actionDAGNode.getAction());
-            }
-        }
-
-        List<OffsetVec3> vec3 = new ArrayList<>();
-        for (AbstractActionMove listOfMove : listOfMoves) {
-            vec3.add(listOfMove.getTargetVec3());
-        }
-
-        long start = System.currentTimeMillis();
-
-        tspCache = new TSPCache(this, dungeonRoom, vec3, Collections.EMPTY_LIST);
-        for (PathfindPrecalculation value : idCalculation.values()) {
-            try {
-                tspCache.addToCache(value);
-            } catch (IOException e) { e.printStackTrace(); }
-        }
-        ChatTransmitter.sendDebugChat("Building TSP Cache took "+(System.currentTimeMillis() - start)+"ms");
-
     }
-
-
-    @Getter
-    private TSPCache tspCache;
 
     private final Map<String, WeakReference<PathfinderExecutor>> idExecutor = new HashMap<>();
     private final Map<String, PathfindPrecalculation> idCalculation = new HashMap<>();

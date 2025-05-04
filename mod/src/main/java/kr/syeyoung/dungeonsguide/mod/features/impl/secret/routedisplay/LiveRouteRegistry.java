@@ -39,7 +39,7 @@ public class LiveRouteRegistry extends SimpleFeature {
 
     public RoomRouteHandler getRoomHandler(DungeonRoom dungeonRoom) {
         if (dungeonRoom == null) return null;
-        return roomRoomRouteRegistryMap.get(dungeonRoom);
+        return roomRoomRouteRegistryMap.computeIfAbsent(dungeonRoom, RoomRouteHandler::new);
     }
 
 

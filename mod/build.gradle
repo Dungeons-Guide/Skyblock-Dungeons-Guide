@@ -94,8 +94,7 @@ dependencies {
     }
     shadowImpl 'com.github.Dungeons-Guide:DiscordIPC:d403df89'
     shadowImpl "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
-    shadowImpl('com.fasterxml.jackson.core:jackson-databind:2.18.2') {
-    }
+    shadowImpl('com.fasterxml.jackson.core:jackson-databind:2.18.2')
     shadowImpl 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.18.1'
 
     compileOnly "org.projectlombok:lombok:1.18.20"

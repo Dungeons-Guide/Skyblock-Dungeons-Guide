@@ -44,6 +44,7 @@ public class TravelingSalesman {
 
 
         RoomState roomState = new RoomState(mechanicNames);
+        roomState.setDungeonRoom(dungeonRoom);
         while(true) {
             cnt++;
 
@@ -144,6 +145,7 @@ public class TravelingSalesman {
             cnt++;
 
             RoomState roomState = new RoomState(mechanicNames);
+            roomState.setDungeonRoom(dungeonRoom);
             roomState.setPlayerPos(start);
             double cost = 0;
             for (ActionDAGNode actionDAGNode : actionDAGNodes) {
