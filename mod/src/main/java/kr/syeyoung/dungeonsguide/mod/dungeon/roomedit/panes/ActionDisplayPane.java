@@ -24,9 +24,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MTextField;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MButton;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MTextField;
 
 import java.awt.*;
 

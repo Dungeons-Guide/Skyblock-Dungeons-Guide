@@ -20,9 +20,9 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.panes;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MTooltip;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MTooltipText;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MTooltip;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MTooltipText;
 import kr.syeyoung.dungeonsguide.mod.utils.ArrayUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;

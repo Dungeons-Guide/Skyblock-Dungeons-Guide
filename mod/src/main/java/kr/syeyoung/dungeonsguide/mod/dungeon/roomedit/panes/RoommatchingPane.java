@@ -19,9 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.panes;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MTextField;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MButton;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MTextField;
 
 import java.awt.*;
 import java.util.UUID;

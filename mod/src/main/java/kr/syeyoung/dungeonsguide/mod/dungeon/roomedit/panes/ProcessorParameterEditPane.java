@@ -23,9 +23,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MParameter;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MButton;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MParameter;
 
 import java.awt.*;
 import java.util.ArrayList;

@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MTooltip;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MTooltip;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.AbsLocationPopup;

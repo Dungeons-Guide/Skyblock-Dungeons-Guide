@@ -19,10 +19,10 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabelAndElement;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MTextField;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MLabel;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MLabelAndElement;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MTextField;
 
 import java.awt.*;
 

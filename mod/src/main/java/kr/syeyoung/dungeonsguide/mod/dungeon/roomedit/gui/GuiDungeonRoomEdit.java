@@ -21,9 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.panes.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.gui.MGui;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MPanelScaledGUI;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MTabbedPane;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MPanelScaledGUI;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MTabbedPane;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
