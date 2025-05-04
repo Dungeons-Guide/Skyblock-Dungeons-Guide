@@ -75,9 +75,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ActionRouteP
         if (!executorWeakHashMap.containsKey(actionMove)) executorWeakHashMap.put(actionMove, new ActionMoveContext());
         ActionMoveContext ctx = executorWeakHashMap.get(actionMove);
 
-        GeneralRoomProcessor generalRoomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
         if (ctx.executor == null) ctx.executor = pathPlanner.loadPrecalculatedByHash(actionMove.getPathfindRequest(dungeonRoom).getHash(), dungeonRoom);
-        if (ctx.executor == null) ctx.executor = generalRoomProcessor.createEntityPathTo(actionMove.getPathfindBoundingBox(dungeonRoom));
         if (ctx.executor != null) ctx.executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
     }
 

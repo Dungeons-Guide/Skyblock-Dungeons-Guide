@@ -92,6 +92,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         roomPreset = dungeonRoom.getContext().getPreset().getRoomPreset(dungeonRoom.getDungeonRoomInfo().getUuid());
         algorithmSetting = roomPreset.getEffectiveAlgorithmSetting(dungeonRoom.getDungeonRoomInfo());
 
+        // TODO: move pathfiner world to somewhere outside later.
         setupPathfinderWorld();
     }
 
@@ -371,32 +372,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
 
-
-    private final Map<Vec3, WeakReference<PathfinderExecutor>> activePathfind = new HashMap<>();
-
-
-    public PathfinderExecutor createEntityPathTo(BoundingBox pos) {
-        if (activePathfind.containsKey(pos.center())) {
-            WeakReference<PathfinderExecutor> executorWeakReference = activePathfind.get(pos.center());
-            PathfinderExecutor executor = executorWeakReference.get();
-            if (executor != null) {
-                return executor;
-            }
-        }
-        if (true)
-            return null;
-        FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.SECRET_PATHFIND_STRATEGY.getPathfindStrat();
-        PathfinderExecutor executor;
-        if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID_SMART) {
-            executor = new PathfinderExecutor(new FineGridStonkingBFS(algorithmSetting), pos, pathfinderWorld);
-        } else {
-            return  null;
-        }
-        activePathfind.put(pos.center(), new WeakReference<>(executor));
-        dungeonRoom.getContext().getExecutor().registerExecutor(executor);
-
-        return executor;
-    }
 
     @Getter
     private AlgorithmSetting algorithmSetting;
