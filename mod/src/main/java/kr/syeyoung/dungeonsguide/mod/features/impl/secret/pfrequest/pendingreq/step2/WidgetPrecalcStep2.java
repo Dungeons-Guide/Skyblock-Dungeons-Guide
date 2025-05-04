@@ -1,36 +1,20 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step2;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
-import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.VersionInfo;
-import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationProgress;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.FeatureRequestCalculation;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.PathfindPrecalculationRequestSet;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.WidgetPendingRequestPage;
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
+import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.io.IOUtils;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class WidgetPrecalcStep2 extends AnnotatedImportOnlyWidget {
 

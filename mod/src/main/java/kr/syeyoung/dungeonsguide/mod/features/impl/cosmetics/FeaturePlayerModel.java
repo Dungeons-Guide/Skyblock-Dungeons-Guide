@@ -21,9 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCString;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.widget.WidgetNicknamePrefix;
 import kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.widget.WidgetPlayerModel;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 
 public class FeaturePlayerModel extends SimpleFeature {
     public FeaturePlayerModel() {

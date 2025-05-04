@@ -1,14 +1,14 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings;
 
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.AbsLocationPopup;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
+import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.AbsLocationPopup;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;

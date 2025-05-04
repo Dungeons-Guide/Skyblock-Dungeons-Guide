@@ -22,8 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCString;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.widget.WidgetNicknamePrefix;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.CompatLayer;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 
 public class FeatureNicknamePrefix extends SimpleFeature {
     public FeatureNicknamePrefix() {

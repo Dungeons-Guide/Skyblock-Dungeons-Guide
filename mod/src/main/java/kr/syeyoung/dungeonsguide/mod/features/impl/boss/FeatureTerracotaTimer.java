@@ -27,7 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyl
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.entity.boss.BossStatus;
 

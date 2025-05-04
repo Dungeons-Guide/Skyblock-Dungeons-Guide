@@ -27,7 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.frontpage.Wi
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.frontpage.WidgetRemoteRequestList;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.frontpage.WidgetRequestSetsList;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.remotereq.RemoteCache;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import lombok.Getter;
 
 import java.util.*;

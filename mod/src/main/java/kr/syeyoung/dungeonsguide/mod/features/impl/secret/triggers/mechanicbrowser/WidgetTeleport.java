@@ -19,10 +19,10 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.triggers.mechanicbrowser;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
+import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;

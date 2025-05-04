@@ -22,18 +22,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.ElementTreeWalkIterator;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
+import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
+import kr.syeyoung.dungeonsguide.mod.gui.ElementTreeWalkIterator;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
 
 public class TCEnum<T extends Enum<T>> implements FeatureTypeHandler<T> {
     @Getter

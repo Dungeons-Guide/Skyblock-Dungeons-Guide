@@ -20,8 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics;
 
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.widget.WidgetNicknameColor;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.CompatLayer;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 
 public class FeatureNicknameColor extends SimpleFeature {
     public FeatureNicknameColor() {

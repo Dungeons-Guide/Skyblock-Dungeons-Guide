@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 
 public interface MapOverlay {
     double getX(float partialTicks);

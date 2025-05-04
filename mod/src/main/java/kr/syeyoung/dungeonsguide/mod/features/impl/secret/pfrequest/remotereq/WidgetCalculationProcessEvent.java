@@ -19,9 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.remotereq;
 
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import net.minecraft.util.ResourceLocation;
 
 public class WidgetCalculationProcessEvent extends AnnotatedImportOnlyWidget {

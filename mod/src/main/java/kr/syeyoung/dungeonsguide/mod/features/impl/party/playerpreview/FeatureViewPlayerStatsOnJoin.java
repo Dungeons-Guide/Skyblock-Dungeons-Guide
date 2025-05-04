@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.DataRendererEditor;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget.WidgetProfileViewer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.CompatLayer;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.CompatLayer;
 import kr.syeyoung.dungeonsguide.mod.overlay.AbsPosPositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;

@@ -19,13 +19,13 @@
 package kr.syeyoung.dungeonsguide.mod.overlay;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
-import kr.syeyoung.dungeonsguide.mod.guiv2.RootDom;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
+import kr.syeyoung.dungeonsguide.mod.gui.RootDom;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import lombok.Getter;

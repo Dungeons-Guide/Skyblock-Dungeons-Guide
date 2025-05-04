@@ -19,15 +19,15 @@
 package kr.syeyoung.dungeonsguide.mod.config.types.coloredit;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
+import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;

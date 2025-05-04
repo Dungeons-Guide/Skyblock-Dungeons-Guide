@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.config.types;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import lombok.*;
 import net.minecraft.client.Minecraft;
 

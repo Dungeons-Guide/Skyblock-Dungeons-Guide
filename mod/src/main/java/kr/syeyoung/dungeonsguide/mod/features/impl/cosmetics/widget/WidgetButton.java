@@ -18,17 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.widget;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.util.ResourceLocation;
-
-import java.util.Locale;
 
 public class WidgetButton extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "text")

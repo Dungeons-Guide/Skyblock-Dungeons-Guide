@@ -20,13 +20,11 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.spiritleap;
 
 
 
-import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui.WidgetPartyFinder;
-import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapterChestOverride;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
+import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapterChestOverride;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -35,12 +33,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.event.GuiOpenEvent;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL30;
 
 public class FeatureCustomLeapGui extends SimpleFeature {
     public FeatureCustomLeapGui() {

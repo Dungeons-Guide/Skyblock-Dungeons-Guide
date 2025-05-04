@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.WidgetLinePropertiesEditor;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 
 import java.util.LinkedHashMap;
 

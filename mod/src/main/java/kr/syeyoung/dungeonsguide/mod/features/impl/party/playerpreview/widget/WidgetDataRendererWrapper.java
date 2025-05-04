@@ -20,16 +20,16 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.IDataRenderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MinecraftTooltip;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MouseTooltip;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
+import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MinecraftTooltip;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MouseTooltip;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.gui.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 
 import java.awt.*;
 import java.util.Collections;

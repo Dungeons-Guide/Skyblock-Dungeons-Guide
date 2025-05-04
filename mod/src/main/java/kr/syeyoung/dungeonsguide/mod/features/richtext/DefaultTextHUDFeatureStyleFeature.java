@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCRTextStyleMap;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.config.WidgetTextStyleConfig;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 
 import java.util.HashMap;
 import java.util.HashSet;

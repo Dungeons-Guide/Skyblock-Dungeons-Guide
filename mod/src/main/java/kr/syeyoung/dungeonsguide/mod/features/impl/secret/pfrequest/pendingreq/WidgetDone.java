@@ -3,16 +3,10 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.PathfindPrecalculationRequestSet;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.remotereq.WidgetRequestDetails;
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Navigator;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.Navigator;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.util.ResourceLocation;
-
-import java.lang.ref.WeakReference;
 
 public class WidgetDone extends AnnotatedImportOnlyWidget {
     private PathfindPrecalculationRequestSet requestSet;

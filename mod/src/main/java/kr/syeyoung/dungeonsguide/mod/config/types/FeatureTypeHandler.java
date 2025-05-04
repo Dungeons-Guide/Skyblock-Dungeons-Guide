@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.config.types;
 
 import com.google.gson.JsonElement;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 
 public interface FeatureTypeHandler<T> {
     T deserialize(JsonElement element);

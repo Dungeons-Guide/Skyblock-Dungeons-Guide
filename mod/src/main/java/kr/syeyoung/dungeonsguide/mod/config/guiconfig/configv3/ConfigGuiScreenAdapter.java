@@ -19,9 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3;
 
 import kr.syeyoung.dungeonsguide.mod.config.Config;
-import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
+import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import net.minecraft.client.gui.GuiScreen;
 
 public class ConfigGuiScreenAdapter extends GuiScreenAdapter {

@@ -20,15 +20,12 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss.waypoints;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.TCAColor;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
-import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
-import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.FeatureF7TerminalWaypoints;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.PathfindLineProperties;
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.function.Function;

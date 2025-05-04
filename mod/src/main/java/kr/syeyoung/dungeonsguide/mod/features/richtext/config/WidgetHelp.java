@@ -18,16 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.richtext.config;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MinecraftTooltip;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MouseTooltip;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MinecraftTooltip;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MouseTooltip;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class WidgetHelp extends AnnotatedImportOnlyWidget {
     public WidgetHelp() {

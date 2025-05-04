@@ -5,11 +5,10 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.s
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step1.WidgetPrecalcStep1Calculating;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step2.WidgetPrecalcStep2;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step2.WidgetStep2Uploading;
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Placeholder;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import net.minecraft.util.ResourceLocation;
 
 public class WidgetPendingRequestPage extends AnnotatedImportOnlyWidget {

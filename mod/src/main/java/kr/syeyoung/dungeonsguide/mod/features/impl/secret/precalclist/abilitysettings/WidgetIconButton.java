@@ -1,11 +1,10 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Passthrough;
-import net.minecraft.client.gui.GuiScreen;
+import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Passthrough;
 import net.minecraft.util.ResourceLocation;
 
 @Passthrough(exportName = "disabled", bindName = "disabled", type = Boolean.class)

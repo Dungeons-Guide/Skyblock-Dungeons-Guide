@@ -1,13 +1,11 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Passthrough;
+import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Passthrough;
 import net.minecraft.util.ResourceLocation;
-
-import java.text.Bidi;
 
 @Passthrough(bindName = "click", exportName = "click", type = Runnable.class)
 @Passthrough(bindName = "disabled", exportName = "disabled", type = Boolean.class)

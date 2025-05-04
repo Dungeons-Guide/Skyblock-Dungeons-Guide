@@ -19,10 +19,10 @@
 package kr.syeyoung.dungeonsguide.mod.features.richtext;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.DefaultFontRenderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.FontRenderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.Shader;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ITextStyle;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.fonts.DefaultFontRenderer;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.fonts.FontRenderer;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.shaders.Shader;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.styles.ITextStyle;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

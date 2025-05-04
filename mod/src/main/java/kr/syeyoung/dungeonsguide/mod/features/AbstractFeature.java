@@ -22,7 +22,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.DefaultConfigurePageWidget;
 import kr.syeyoung.dungeonsguide.mod.config.types.FeatureTypeHandler;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import lombok.Getter;
 import lombok.Setter;
 

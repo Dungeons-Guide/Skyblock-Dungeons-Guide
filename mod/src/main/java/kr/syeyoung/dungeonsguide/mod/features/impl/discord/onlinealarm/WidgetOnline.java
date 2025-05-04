@@ -20,9 +20,9 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.onlinealarm;
 
 import kr.syeyoung.dungeonsguide.mod.discord.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.TTL;
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import net.minecraft.util.ResourceLocation;
 
 public class WidgetOnline extends AnnotatedWidget implements TTL {

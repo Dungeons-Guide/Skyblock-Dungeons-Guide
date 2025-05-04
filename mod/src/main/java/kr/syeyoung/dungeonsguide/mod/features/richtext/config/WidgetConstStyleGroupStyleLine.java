@@ -19,14 +19,14 @@
 package kr.syeyoung.dungeonsguide.mod.features.richtext.config;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Text;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MinecraftTooltip;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MouseTooltip;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.Text;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MinecraftTooltip;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MouseTooltip;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import net.minecraft.util.ResourceLocation;
 

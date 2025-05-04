@@ -18,10 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MouseTooltip;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
+import kr.syeyoung.dungeonsguide.mod.gui.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MouseTooltip;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
 
 import java.util.Collections;
 import java.util.List;

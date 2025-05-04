@@ -18,14 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.mod.overlay;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.Minecraft;
-
-import java.util.function.Supplier;
 
 @RequiredArgsConstructor
 public class AbsPosPositioner implements Positioner {
