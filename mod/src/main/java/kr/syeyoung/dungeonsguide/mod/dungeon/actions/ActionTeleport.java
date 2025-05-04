@@ -24,8 +24,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import net.minecraft.util.Vec3;
 
-import java.util.Map;
-
 public class ActionTeleport extends AbstractAction {
     private OffsetPoint target;
     public ActionTeleport(OffsetPoint target) {
@@ -48,7 +46,7 @@ public class ActionTeleport extends AbstractAction {
     }
 
     @Override
-    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization, TSPCache tspCache) {
+    public double evalulateCost(RoomState state, DungeonRoom room, TSPCache tspCache) {
         state.setPlayerPos(new Vec3(target.getBlockPos(room)));
         return 0;
     }

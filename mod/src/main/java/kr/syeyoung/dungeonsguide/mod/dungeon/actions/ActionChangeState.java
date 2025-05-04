@@ -31,8 +31,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.Minecraft;
 
-import java.util.Map;
-
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionChangeState extends AbstractAction {
@@ -74,7 +72,7 @@ public class ActionChangeState extends AbstractAction {
     }
 
     @Override
-    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization, TSPCache tspCache) {
+    public double evalulateCost(RoomState state, DungeonRoom room, TSPCache tspCache) {
         DungeonMechanicState mechanic = room.getMechanics().get(mechanicName);
         if (mechanic instanceof DungeonTombState || mechanic instanceof DungeonOnewayDoorState || mechanic instanceof DungeonDoorState || mechanic instanceof DungeonBreakableWallState) {
             if (this.state.equals("open")) {

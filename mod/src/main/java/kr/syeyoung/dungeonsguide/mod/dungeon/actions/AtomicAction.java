@@ -28,7 +28,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -100,10 +99,10 @@ public class AtomicAction extends AbstractAction {
     }
 
     @Override
-    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization, TSPCache tspCache) {
+    public double evalulateCost(RoomState state, DungeonRoom room, TSPCache tspCache) {
         double cost = 0;
         for (int i = 0; i < getActions().size(); i++) {
-            cost += getActions().get(i).evalulateCost(state, room, memoization, tspCache);
+            cost += getActions().get(i).evalulateCost(state, room, tspCache);
         }
         return cost;
     }

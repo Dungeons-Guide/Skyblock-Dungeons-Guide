@@ -27,8 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
-import java.util.Map;
-
 public abstract class AbstractAction {
     public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event){
 
@@ -54,7 +52,7 @@ public abstract class AbstractAction {
         return false;
     }
 
-    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization, TSPCache tspCache) { return 0; }
+    public double evalulateCost(RoomState state, DungeonRoom room, TSPCache tspCache) { return 0; }
 
     public boolean isIdempotent() { return false; }
     public boolean isSanityCheck() { return false; }

@@ -27,7 +27,7 @@ public class TravelingSalesman {
         return p1Node.checkImpossible(dagId, solution, nodeIdx);
     }
 
-    public static PartialCalculationResult annealing(int dagId, ActionDAG dag, Vec3 start, DungeonRoom dungeonRoom, Map<String, Object> memoization, TSPCache cache) {
+    public static PartialCalculationResult annealing(int dagId, ActionDAG dag, Vec3 start, DungeonRoom dungeonRoom, TSPCache cache) {
         Random r = new Random();
         int cnt = 0;
         int actualMoves = 0;
@@ -85,7 +85,7 @@ public class TravelingSalesman {
             double cost = 0;
             for (int i = 0; i < currentSolution.size(); i++) {
                 ActionDAGNode actionDAGNode = currentSolution.get(i);
-                cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, memoization, cache);
+                cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, cache);
                 if (cost == Double.POSITIVE_INFINITY) break;
             }
             if (cost < localMinCost) {
@@ -131,7 +131,7 @@ public class TravelingSalesman {
         return new PartialCalculationResult(dagId, localMinCostRoute, localMinCost, cnt);
     }
 
-    public static PartialCalculationResult bruteforce(int dagId, ActionDAG dag, Vec3 start, DungeonRoom dungeonRoom, Map<String, Object> memoization, TSPCache cache) {
+    public static PartialCalculationResult bruteforce(int dagId, ActionDAG dag, Vec3 start, DungeonRoom dungeonRoom, TSPCache cache) {
         int[] nodeStatus = dag.getNodeStatus(dagId);
         int cnt = 0;
         double localMinCost = Double.POSITIVE_INFINITY;
@@ -149,7 +149,7 @@ public class TravelingSalesman {
             roomState.setPlayerPos(start);
             double cost = 0;
             for (ActionDAGNode actionDAGNode : actionDAGNodes) {
-                cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, memoization, cache);
+                cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, cache);
                 if (cost == Double.POSITIVE_INFINITY) break;
             }
             if (cost < localMinCost) {

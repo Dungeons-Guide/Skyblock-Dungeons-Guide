@@ -118,8 +118,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 }
             }
         });
-
-
     }
 
     private void setupPathfinderWorld() {
@@ -435,16 +433,12 @@ public class GeneralRoomProcessor implements RoomProcessor {
     private RoomPreset roomPreset;
 
     private void loadPrecalculations() {
-
-
         Set<String> pathfinders = roomPreset.getPrecalculations();
         if (pathfinders != null) {
             for (String precalcId : pathfinders) {
                 loadPrecalculated(precalcId);
             }
         }
-
-
     }
 
     private final Map<String, WeakReference<PathfinderExecutor>> idExecutor = new HashMap<>();

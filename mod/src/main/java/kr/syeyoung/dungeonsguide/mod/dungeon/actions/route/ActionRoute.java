@@ -113,15 +113,14 @@ public class ActionRoute {
 
             TSPCache tspCache = new TSPCache((GeneralRoomProcessor) dungeonRoom.getRoomProcessor(), dungeonRoom, Collections.EMPTY_LIST, Collections.singletonList(start));
 
-            Map<String, Object> memoization = new ConcurrentHashMap<>();
             boolean finalAnnealing = annealing;
             try {
                 List<TravelingSalesman.PartialCalculationResult> results = IntStream.range(0, dag.getCount())
                         .parallel()
                         .mapToObj((dagId) -> {
                             if (finalAnnealing)
-                                return TravelingSalesman.annealing(dagId, dag, start, dungeonRoom, memoization, tspCache);
-                            else return TravelingSalesman.bruteforce(dagId, dag, start, dungeonRoom, memoization, tspCache);
+                                return TravelingSalesman.annealing(dagId, dag, start, dungeonRoom, tspCache);
+                            else return TravelingSalesman.bruteforce(dagId, dag, start, dungeonRoom, tspCache);
                         })
                         .collect(Collectors.toList());
                 TravelingSalesman.PartialCalculationResult minCostRoute = results.stream()

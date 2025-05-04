@@ -29,8 +29,6 @@ import lombok.EqualsAndHashCode;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
-import java.util.Map;
-
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionStonkClick extends AbstractAction {
@@ -68,7 +66,7 @@ public class ActionStonkClick extends AbstractAction {
     }
 
     @Override
-    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization, TSPCache tspCache) {
+    public double evalulateCost(RoomState state, DungeonRoom room, TSPCache tspCache) {
         return 5;
     }
 }
