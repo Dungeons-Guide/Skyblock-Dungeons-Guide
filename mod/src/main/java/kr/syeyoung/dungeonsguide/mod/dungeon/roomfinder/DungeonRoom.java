@@ -202,6 +202,7 @@ public class DungeonRoom  {
     }
 
     public Map<String, DungeonMechanicState> getMechanics() {
+        if (dungeonRoomInfo == null) return Collections.EMPTY_MAP;
         if (_mechanics == null || EditingContext.getEditingContext() != null) {
             _mechanics = new HashMap<>();
             for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicDataEntry : dungeonRoomInfo.getMechanics().entrySet()) {

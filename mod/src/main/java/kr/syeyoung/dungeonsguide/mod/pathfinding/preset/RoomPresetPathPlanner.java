@@ -83,8 +83,10 @@ public class RoomPresetPathPlanner {
         }
     }
 
+    private TSPCache tspCache;
     public TSPCache getTSPCache() {
-        return TSPCacheRegistry.getINSTANCE().getTSPCache(preset.getTSPCache());
+        if (tspCache != null) return tspCache;
+        return tspCache = TSPCacheRegistry.getINSTANCE().getTSPCache(preset.getTSPCache());
     }
 
 }

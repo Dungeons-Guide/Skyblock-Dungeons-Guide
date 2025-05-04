@@ -61,9 +61,9 @@ public class OffsetVec3 implements Cloneable {
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             vector2d = VectorUtils.rotateClockwise(vector2d);
             if (i % 2 == 0) {
-                vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks()[0].length - 2; // + Z
+                vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks()[0].length; // + Z len is 32x+1
             } else {
-                vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks().length - 2; // + X
+                vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks().length; // + X len is 32x+1
             }
         }
 
@@ -77,9 +77,9 @@ public class OffsetVec3 implements Cloneable {
         for (int i = 0; i < rotation; i++) {
             vector2d = VectorUtils.rotateClockwise(vector2d);
             if (i % 2 == 0) {
-                vector2d.x += xWid - 2; // + Z
+                vector2d.x += xWid + 2; // + Z
             } else {
-                vector2d.x += zWid - 2; // + X
+                vector2d.x += zWid + 2; // + X
             }
         }
 

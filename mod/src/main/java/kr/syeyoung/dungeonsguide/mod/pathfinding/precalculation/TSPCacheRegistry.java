@@ -48,6 +48,10 @@ public class TSPCacheRegistry {
                     .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
                     .setNameFormat("DG-TSPCache-%d").build()));
 
+    public void updateTooltip() {
+
+    }
+
     private final File dir;
     @Getter
     private static TSPCacheRegistry INSTANCE;
