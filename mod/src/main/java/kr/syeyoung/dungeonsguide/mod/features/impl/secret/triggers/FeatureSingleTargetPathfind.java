@@ -155,7 +155,7 @@ public class FeatureSingleTargetPathfind extends SimpleFeature {
         if (lowestWeightMechanic != null) {
             visited.add(lowestWeightMechanic.getKey());
             try {
-                roomRouteHandler.pathfind("AUTO-BROWSE", lowestWeightMechanic.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND.getRouteProperties());
+                roomRouteHandler.pathfind("AUTO-BROWSE", lowestWeightMechanic.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND::createPathDisplayEngine);
             } catch (Exception e) {
                 ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+lowestWeightMechanic.getKey()+":found failed due to "+e.getMessage());
                 e.printStackTrace();

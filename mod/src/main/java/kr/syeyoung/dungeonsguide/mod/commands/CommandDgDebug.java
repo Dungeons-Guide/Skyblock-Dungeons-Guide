@@ -1175,7 +1175,7 @@ public class CommandDgDebug extends CommandBase {
             RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
             if (roomRouteHandler == null) return;
 
-            roomRouteHandler.pathfind("COMMAND", args[1], args[2], FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND.getRouteProperties());
+            roomRouteHandler.pathfind("COMMAND", args[1], args[2], FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND::createPathDisplayEngine);
         } catch (Exception t) {
             t.printStackTrace();
         }
@@ -1505,7 +1505,7 @@ public class CommandDgDebug extends CommandBase {
             if (roomRouteHandler == null) return;
             // performance testing (lol)
             for (String s : dungeonRoom.getMechanics().keySet()) {
-                roomRouteHandler.pathfind("COMMAND-" + s, s, "navigate", FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND.getRouteProperties());
+                roomRouteHandler.pathfind("COMMAND-" + s, s, "navigate", FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND::createPathDisplayEngine);
             }
         } catch (Exception t) {
             t.printStackTrace();

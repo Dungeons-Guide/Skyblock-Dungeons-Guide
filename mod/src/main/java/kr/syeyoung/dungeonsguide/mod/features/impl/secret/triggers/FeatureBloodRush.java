@@ -70,7 +70,7 @@ public class FeatureBloodRush extends SimpleFeature {
                 DungeonRoomDoorState dungeonDoor = (DungeonRoomDoorState) value.getValue();
                 if (dungeonDoor.getDoorfinder().getType().isHeadToBlood()) {
                     try {
-                        handler.pathfind(value.getKey(), "navigate", FeatureRegistry.SECRET_BLOOD_RUSH_LINE_PROPERTIES.getRouteProperties());
+                        handler.pathfind("blood-rush", value.getKey(), "navigate", FeatureRegistry.SECRET_BLOOD_RUSH_LINE_PROPERTIES::createPathDisplayEngine);
                     } catch (Exception e) {
                         ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
                     }
@@ -79,7 +79,7 @@ public class FeatureBloodRush extends SimpleFeature {
                 DungeonRoomDoor2State dungeonDoor = (DungeonRoomDoor2State) value.getValue();
                 if (dungeonDoor.isHeadtoBlood(dungeonRoom)) {
                     try {
-                        handler.pathfind(value.getKey(), "navigate", FeatureRegistry.SECRET_BLOOD_RUSH_LINE_PROPERTIES.getRouteProperties());
+                        handler.pathfind("blood-rush", value.getKey(), "navigate", FeatureRegistry.SECRET_BLOOD_RUSH_LINE_PROPERTIES::createPathDisplayEngine);
                     } catch (Exception e) {
                         ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
                     }

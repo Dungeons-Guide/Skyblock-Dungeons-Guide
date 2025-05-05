@@ -121,7 +121,7 @@ public class FeatureSmartRoute extends SimpleFeature {
         try {
             ActionDAG dag = actionDAGBuilder.build();
             ActionRoute actionRoute = new ActionRoute("Smart Route", dungeonRoom, dag);
-            roomRouteHandler.getPath().put("smart", new ClassicPathDisplayEngine(actionRoute, FeatureRegistry.SECRET_LINE_PROPERTIES_SMART_ROUTE.getRouteProperties()));
+            roomRouteHandler.getPath().put("smart", FeatureRegistry.SECRET_LINE_PROPERTIES_SMART_ROUTE.createPathDisplayEngine(actionRoute));
 //
         } catch (PathfindImpossibleException e) {
             ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to everything failed due to "+e.getMessage());

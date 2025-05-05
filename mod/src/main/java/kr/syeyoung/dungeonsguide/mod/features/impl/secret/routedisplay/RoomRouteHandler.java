@@ -2,10 +2,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.ClassicPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.IPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import lombok.Getter;
@@ -14,6 +12,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class RoomRouteHandler {
     @Getter
@@ -68,14 +67,20 @@ public class RoomRouteHandler {
         return path.get(id);
     }
 
-    public String pathfind(String mechanic, String state, ActionRouteProperties actionRouteProperties)throws PathfindImpossibleException {
+    public String pathfind(String mechanic, String state, Function<ActionRoute, IPathDisplayEngine<?>> converter) throws PathfindImpossibleException {
         String str = UUID.randomUUID().toString();
-        pathfind(str, mechanic, state, actionRouteProperties);
+        pathfind(str, mechanic, state, converter);
         return str;
     }
-    public void pathfind(String id, String mechanic, String state, ActionRouteProperties actionRouteProperties)throws PathfindImpossibleException {
-        path.put(id, new ClassicPathDisplayEngine(new ActionRoute(dungeonRoom, mechanic, state, algorithmSetting), actionRouteProperties));
+
+    public void pathfind(String id, String mechanic, String state, Function<ActionRoute, IPathDisplayEngine<?>> converter) throws PathfindImpossibleException {
+        pathfind(id, converter.apply(new ActionRoute(dungeonRoom, mechanic, state, algorithmSetting)));
     }
+    public void pathfind(String id, IPathDisplayEngine<?> pathDisplayEngine) {
+        path.put(id, pathDisplayEngine);
+    }
+
+
     public void cancelAll() {
         path.clear();
     }

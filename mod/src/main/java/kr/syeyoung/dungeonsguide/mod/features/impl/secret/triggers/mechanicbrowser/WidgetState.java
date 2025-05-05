@@ -50,7 +50,7 @@ public class WidgetState extends AnnotatedWidget {
         try {
             RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
             if (roomRouteHandler == null) return;
-            roomRouteHandler.pathfind("MECH-BROWSER", mechanic, s, FeatureRegistry.SECRET_LINE_PROPERTIES_SECRET_BROWSER.getRouteProperties());
+            roomRouteHandler.pathfind("MECH-BROWSER", mechanic, s, FeatureRegistry.SECRET_LINE_PROPERTIES_SECRET_BROWSER::createPathDisplayEngine);
         } catch (Exception e) {
             ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+mechanic+":"+state+" failed due to "+e.getMessage());
         }

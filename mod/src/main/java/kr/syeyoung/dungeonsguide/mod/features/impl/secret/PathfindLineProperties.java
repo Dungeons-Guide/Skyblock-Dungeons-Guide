@@ -20,10 +20,13 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.WidgetLinePropertiesEditor;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.ClassicPathDisplayEngine;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.IPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 
 import java.util.LinkedHashMap;
@@ -88,6 +91,11 @@ public class PathfindLineProperties extends SimpleFeature {
     public AColor getTargetColor() {
         return isGlobal() ? parent.getTargetColor() : this.<AColor>getParameter("beamTargetColor").getValue();
     }
+
+    public IPathDisplayEngine<?> createPathDisplayEngine(ActionRoute route) {
+        return new ClassicPathDisplayEngine(route, getRouteProperties());
+    }
+
     public ActionRouteProperties getRouteProperties() {
         ActionRouteProperties actionRouteProperties = new ActionRouteProperties();
         actionRouteProperties.setPathfind(isPathfind());
