@@ -18,25 +18,26 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
+import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.mod.config.types.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.WidgetLinePropertiesEditor;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.ClassicPathDisplayEngine;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.IPathDisplayEngine;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic.ClassicPathDisplayEngine;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic.ClassicPathEngineLineProperties;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 public class PathfindLineProperties extends SimpleFeature {
-    public PathfindLineProperties getParent() {
-        return parent;
-    }
 
+    @Getter
     private PathfindLineProperties parent;
     public PathfindLineProperties(String category, String name, String description, String key, boolean useParent, PathfindLineProperties parent) {
         super(category, name, description, key);
@@ -44,16 +45,62 @@ public class PathfindLineProperties extends SimpleFeature {
         this.parameters = new LinkedHashMap<>();
         if (parent != null)
             addParameter("useGlobal", new FeatureParameter<Boolean>("useGlobal", "Use Global Settings instead of this", "Completely ignore these settings, then use the parent one:: '"+parent.getName()+"'",  useParent, TCBoolean.INSTANCE));
-        addParameter("pathfind", new FeatureParameter<Boolean>("pathfind", "Enable Pathfinding", "Enable pathfind for secrets",  useParent, TCBoolean.INSTANCE));
-        addParameter("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the pathfind line", new AColor(0xFFFF0000, true), TCAColor.INSTANCE));
-        addParameter("lineWidth", new FeatureParameter<Double>("lineWidth", "Line Thickness", "Thickness of the pathfind line",1.0, TCDouble.INSTANCE)
-                .setWidgetGenerator((param) -> new ParameterItem(param, new TCDouble.DoubleEditWidget(param, 0.1, Double.POSITIVE_INFINITY))));
-        addParameter("linerefreshrate", new FeatureParameter<Integer>("linerefreshrate", "Line Refreshrate", "Ticks to wait per line refresh. Specify it to -1 to don't refresh line at all", 10, TCInteger.INSTANCE));
-        addParameter("beacon", new FeatureParameter<Boolean>("beacon", "Enable Beacons", "Enable beacons for pathfind line targets",  true, TCBoolean.INSTANCE));
-        addParameter("beamColor", new FeatureParameter<AColor>("beamColor", "Beam Color", "Color of the beacon beam", new AColor(0x77FF0000, true), TCAColor.INSTANCE));
-        addParameter("beamTargetColor", new FeatureParameter<AColor>("beamTargetColor", "Target Color", "Color of the target", new AColor(0x33FF0000, true), TCAColor.INSTANCE));
+        setSetting(PathDisplayEngineSettingRegistry.getRegistration("classic").createConfiguration());
+
     }
 
+    @Setter
+    private PathDisplayEngineSetting<?> setting;
+
+    public void setSetting(PathDisplayEngineSetting<?> setting) {
+        if (getSetting() != null) {
+            oldSettingCache.put(getSetting().getRegistration().getJsonName(), getSetting());
+        }
+        this.setting = setting;
+        oldSettingCache.put(setting.getRegistration().getJsonName(), setting);
+    }
+
+    private Map<String, PathDisplayEngineSetting<?>> oldSettingCache = new HashMap<>();
+
+    public PathDisplayEngineSetting<?> getOldSetting(String jsonName) {
+        return oldSettingCache.get(jsonName);
+    }
+
+    public PathDisplayEngineSetting<?> getSetting() {
+        return isGlobal() ? parent.getSetting() : setting;
+    }
+
+
+    public IPathDisplayEngine<?> createPathDisplayEngine(ActionRoute route) {
+        return getSetting().createPathDisplayEngine(route);
+    }
+
+
+    @Override
+    public void loadConfig(JsonObject jsonObject) {
+        super.loadConfig(jsonObject);
+
+        if (jsonObject.has("type") && jsonObject.has("data")) {
+            String str = jsonObject.get("type").getAsString();
+            PathDisplayEngineSettingRegistration<?> setting = PathDisplayEngineSettingRegistry.getRegistration(str);
+            PathDisplayEngineSetting<?> setting1 = setting.createConfiguration();
+            setting1.deserialize(jsonObject.getAsJsonObject("data"));
+            setSetting(setting1);
+        } else if (jsonObject.has("lineWidth")) { // classic.
+            PathDisplayEngineSettingRegistration<?> setting = PathDisplayEngineSettingRegistry.getRegistration("classic");
+            PathDisplayEngineSetting<?> setting1 = setting.createConfiguration();
+            setting1.deserialize(jsonObject);
+            setSetting(setting1);
+        }
+    }
+
+    @Override
+    public JsonObject saveConfig() {
+        JsonObject jsonObject = super.saveConfig();
+        jsonObject.addProperty("type", setting.getRegistration().getJsonName());
+        jsonObject.add("data", setting.serialize());
+        return jsonObject;
+    }
 
     @Override
     public boolean isDisableable() {
@@ -68,43 +115,5 @@ public class PathfindLineProperties extends SimpleFeature {
     public boolean isGlobal() {
         if (parent == null) return false;
         return this.<Boolean>getParameter("useGlobal").getValue();
-    }
-
-    public boolean isPathfind() {
-        return isGlobal() ? parent.isPathfind() : this.<Boolean>getParameter("pathfind").getValue();
-    }
-    public AColor getLineColor() {
-        return isGlobal() ? parent.getLineColor() : this.<AColor>getParameter("lineColor").getValue();
-    }
-    public double getLineWidth() {
-        return isGlobal() ? parent.getLineWidth() : this.<Double>getParameter("lineWidth").getValue();
-    }
-    public int getRefreshRate() {
-        return isGlobal() ? parent.getRefreshRate() : this.<Integer>getParameter("linerefreshrate").getValue();
-    }
-    public boolean isBeacon() {
-        return isGlobal() ? parent.isBeacon() : this.<Boolean>getParameter("beacon").getValue();
-    }
-    public AColor getBeamColor() {
-        return isGlobal() ? parent.getBeamColor() : this.<AColor>getParameter("beamColor").getValue();
-    }
-    public AColor getTargetColor() {
-        return isGlobal() ? parent.getTargetColor() : this.<AColor>getParameter("beamTargetColor").getValue();
-    }
-
-    public IPathDisplayEngine<?> createPathDisplayEngine(ActionRoute route) {
-        return new ClassicPathDisplayEngine(route, getRouteProperties());
-    }
-
-    public ActionRouteProperties getRouteProperties() {
-        ActionRouteProperties actionRouteProperties = new ActionRouteProperties();
-        actionRouteProperties.setPathfind(isPathfind());
-        actionRouteProperties.setLineColor(getLineColor());
-        actionRouteProperties.setLineWidth(getLineWidth());
-        actionRouteProperties.setLineRefreshRate(getRefreshRate());
-        actionRouteProperties.setBeacon(isBeacon());
-        actionRouteProperties.setBeaconBeamColor(getBeamColor());
-        actionRouteProperties.setBeaconColor(getTargetColor());
-        return actionRouteProperties;
     }
 }

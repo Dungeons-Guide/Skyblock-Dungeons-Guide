@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.waypoints;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.FeatureF7TerminalWaypoints;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.PreviewWorld;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic.PreviewWorld;
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;

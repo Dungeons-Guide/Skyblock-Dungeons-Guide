@@ -1,16 +1,15 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleClickingSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleMoveSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
@@ -35,11 +34,11 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ClassicPathDisplayEngine implements IPathDisplayEngine<ActionRouteProperties> {
+public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathEngineLineProperties> {
     private final Map<AbstractActionMove, ActionMoveContext> executorWeakHashMap = new WeakHashMap<>();
     private final ActionRoute actionRoute;
     private final DungeonRoom dungeonRoom;
-    private ActionRouteProperties actionRouteProperties;
+    private ClassicPathEngineLineProperties classicPathEngineLineProperties;
 
     private static class ActionMoveContext {
         private boolean mark = false;
@@ -49,11 +48,11 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ActionRouteP
     }
     private RoomPresetPathPlanner pathPlanner;
 
-    public ClassicPathDisplayEngine(ActionRoute actionRoute, ActionRouteProperties initialRouteProperties) {
+    public ClassicPathDisplayEngine(ActionRoute actionRoute, ClassicPathEngineLineProperties initialRouteProperties) {
         this.actionRoute = actionRoute;
         this.dungeonRoom = actionRoute.getDungeonRoom();
         this.pathPlanner = new RoomPresetPathPlanner(actionRoute.getDungeonRoom().getContext().getPreset().getRoomPreset(actionRoute.getDungeonRoom().getDungeonRoomInfo().getUuid()));
-        this.actionRouteProperties = initialRouteProperties;
+        this.classicPathEngineLineProperties = initialRouteProperties;
     }
 
     @Override
@@ -93,16 +92,16 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ActionRouteP
             ActionMoveContext ctx = executorWeakHashMap.get(actionMove);
             ctx.mark = true;
 
-            ctx.tick = (ctx.tick+1) % Math.max(1, actionRouteProperties.getLineRefreshRate());
-            if (ctx.executor == null && actionRouteProperties.isPathfind()) {
+            ctx.tick = (ctx.tick+1) % Math.max(1, classicPathEngineLineProperties.getLineRefreshRate());
+            if (ctx.executor == null && classicPathEngineLineProperties.isPathfind()) {
                 forceRefresh(actionMove);
             }
             if (ctx.executor != null && (ctx.poses == null || !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled())) {
                 ctx.poses = ctx.executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
             }
 
-            if (ctx.tick == 0 && actionRouteProperties.isPathfind() && ctx.executor != null) {
-                if (actionRouteProperties.getLineRefreshRate() != -1 && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() && ctx.executor.isComplete()) {
+            if (ctx.tick == 0 && classicPathEngineLineProperties.isPathfind() && ctx.executor != null) {
+                if (classicPathEngineLineProperties.getLineRefreshRate() != -1 && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() && ctx.executor.isComplete()) {
                     ctx.executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
                 }
             }
@@ -116,13 +115,13 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ActionRouteP
     }
 
     @Override
-    public ActionRouteProperties getSettings() {
-        return actionRouteProperties;
+    public ClassicPathEngineLineProperties getSettings() {
+        return classicPathEngineLineProperties;
     }
 
     @Override
-    public void setSettings(ActionRouteProperties settings) {
-        this.actionRouteProperties = settings;
+    public void setSettings(ClassicPathEngineLineProperties settings) {
+        this.classicPathEngineLineProperties = settings;
     }
 
     @Override
@@ -269,9 +268,9 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ActionRouteP
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         float scale = 0.45f * multiplier;
         scale *= 25.0 / 6.0;
-        if (actionRouteProperties.isBeacon()) {
-            RenderUtils.renderBeaconBeam(target.getX(), target.getY(), target.getZ(), actionRouteProperties.getBeaconBeamColor(), partialTicks);
-            RenderUtils.highlightBlock(target, actionRouteProperties.getBeaconColor(), partialTicks);
+        if (classicPathEngineLineProperties.isBeacon()) {
+            RenderUtils.renderBeaconBeam(target.getX(), target.getY(), target.getZ(), classicPathEngineLineProperties.getBeaconBeamColor(), partialTicks);
+            RenderUtils.highlightBlock(target, classicPathEngineLineProperties.getBeaconColor(), partialTicks);
         }
         RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, 1f, true, false, partialTicks);
 
@@ -279,7 +278,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ActionRouteP
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
             if (poses != null){
-                drawLinesPathfindNode(poses.getNodeList(), actionRouteProperties.getLineColor(), (float) actionRouteProperties.getLineWidth(), partialTicks);
+                drawLinesPathfindNode(poses.getNodeList(), classicPathEngineLineProperties.getLineColor(), (float) classicPathEngineLineProperties.getLineWidth(), partialTicks);
 
                 int cnt = 0;
                 int warp = 0;

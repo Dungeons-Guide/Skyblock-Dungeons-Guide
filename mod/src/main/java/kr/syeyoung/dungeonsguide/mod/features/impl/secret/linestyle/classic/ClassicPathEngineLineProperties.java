@@ -16,13 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.actions.route;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import lombok.Builder;
 import lombok.Data;
 
-@Data
-public class ActionRouteProperties {
+@Data @Builder(toBuilder = true)
+public class ClassicPathEngineLineProperties {
     private boolean pathfind;
     private int lineRefreshRate;
     private AColor lineColor;

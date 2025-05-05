@@ -16,9 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.PathfindLineProperties;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic.PreviewWorld;
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
@@ -51,9 +52,9 @@ import java.util.List;
 
 public class WidgetPreview extends Widget implements Renderer {
 
-    private PathfindLineProperties lineProperties;
+    private ClassicPathDisplayEngineRegistration.ClassicPathDisplayEngineSetting lineProperties;
 
-    public WidgetPreview(PathfindLineProperties lineProperties) {
+    public WidgetPreview(ClassicPathDisplayEngineRegistration.ClassicPathDisplayEngineSetting lineProperties) {
         this.lineProperties = lineProperties;
     }
     @Override

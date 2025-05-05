@@ -26,14 +26,14 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCKeybind;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic.ClassicPathEngineLineProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.styles.IPathDisplayEngine;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import net.minecraft.client.Minecraft;
@@ -86,8 +86,8 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
             else continue;
 
 
-            if (((ActionRouteProperties) value2.getSettings()).getLineRefreshRate() != -1 &&
-                    ((ActionRouteProperties) value2.getSettings()).isPathfind() && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled()) continue;
+            if (((ClassicPathEngineLineProperties) value2.getSettings()).getLineRefreshRate() != -1 &&
+                    ((ClassicPathEngineLineProperties) value2.getSettings()).isPathfind() && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled()) continue;
 
             Entity e = Minecraft.getMinecraft().getRenderViewEntity();
 
@@ -135,9 +135,9 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
                 ((ActionMoveNearestAir) actionRoute.getActions().get(actionRoute.getCurrent() - 1)).forceRefresh(currentRoom);
             }
 
-            if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isPathfind() && !((ActionRouteProperties) engine.getSettings()).isPathfind()) {
-                ((ActionRouteProperties) engine.getSettings()).setPathfind(true);
-                ((ActionRouteProperties) engine.getSettings()).setLineRefreshRate(FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getRefreshRate());
+            if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isPathfind() && !((ClassicPathEngineLineProperties) engine.getSettings()).isPathfind()) {
+                ((ClassicPathEngineLineProperties) engine.getSettings()).setPathfind(true);
+                ((ClassicPathEngineLineProperties) engine.getSettings()).setLineRefreshRate(FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getRefreshRate());
             }
         }
     }

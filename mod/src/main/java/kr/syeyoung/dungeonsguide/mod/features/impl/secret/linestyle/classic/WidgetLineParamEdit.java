@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
@@ -30,20 +30,12 @@ import net.minecraft.util.ResourceLocation;
 import java.util.function.Function;
 
 public class WidgetLineParamEdit extends AnnotatedImportOnlyWidget {
-    @Bind(variableName = "parentToggle")
-    public final BindableAttribute<String> parentToggle = new BindableAttribute<>(String.class, "true");
-
-    @Bind(variableName = "globalToggle")
-    public final BindableAttribute<String> globalToggle = new BindableAttribute<>(String.class, "true");
     @Bind(variableName = "pathfindToggle")
     public final BindableAttribute<String> pathfindToggle = new BindableAttribute<>(String.class, "true");
 
     @Bind(variableName = "beaconToggle")
     public final BindableAttribute<String> beaconToggle = new BindableAttribute<>(String.class, "true");
 
-
-    @Bind(variableName = "useParent")
-    public final BindableAttribute<Widget> useParent = new BindableAttribute<>(Widget.class);
     @Bind(variableName = "pathfindEnable")
     public final BindableAttribute<Widget> pathfindEnable = new BindableAttribute<>(Widget.class);
     @Bind(variableName = "linecolor")
@@ -61,31 +53,16 @@ public class WidgetLineParamEdit extends AnnotatedImportOnlyWidget {
 
 
 
-    private <T> Widget generateConfigWidget(PathfindLineProperties lineProperties, String key, Function<FeatureParameter<T>, Widget> converter) {
+    private <T> Widget generateConfigWidget(ClassicPathDisplayEngineRegistration.ClassicPathDisplayEngineSetting lineProperties, String key, Function<FeatureParameter<T>, Widget> converter) {
         FeatureParameter<T> featureParameter = lineProperties.getParameter(key);
         return converter.apply(featureParameter);
     }
 
-    public WidgetLineParamEdit(PathfindLineProperties lineProperties) {
-        super(new ResourceLocation("dungeonsguide:gui/features/lineProperties/paramEditor.gui"));
-
-        if (lineProperties.getParent() == null || !lineProperties.isGlobal()) {
-            parentToggle.setValue("true");
-        } else {
-            parentToggle.setValue("false");
-        }
-        globalToggle.setValue(lineProperties.getParent() != null ? "true" : "false");
+    public WidgetLineParamEdit(ClassicPathDisplayEngineRegistration.ClassicPathDisplayEngineSetting lineProperties) {
+        super(new ResourceLocation("dungeonsguide:gui/features/lineProperties/styles/classic.gui"));
 
         pathfindToggle.setValue(lineProperties.isPathfind() ? "true" : "false");
         beaconToggle.setValue(lineProperties.isBeacon() ? "true": "false");
-
-        if (lineProperties.getParent() != null) {
-            useParent.setValue(generateConfigWidget(lineProperties, "useGlobal", TCBoolean.BooleanEditWidget::new));
-
-            ((TCBoolean.BooleanEditWidget)useParent.getValue()).isEnabled.addOnUpdate((old, neu) -> {
-                parentToggle.setValue(neu ? "false" : "true");
-            });
-        }
 
 
         pathfindEnable.setValue(this.generateConfigWidget(lineProperties, "pathfind", TCBoolean.BooleanEditWidget::new));

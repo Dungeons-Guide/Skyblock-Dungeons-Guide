@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.PathfindLineProperties;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
@@ -31,11 +31,15 @@ public class WidgetLinePropertiesEditor extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "preview")
     public final BindableAttribute<Widget> preview = new BindableAttribute<>(Widget.class);
 
-    private PathfindLineProperties lineProperties;
-    public WidgetLinePropertiesEditor(PathfindLineProperties lineProperties) {
+    private PathfindLineProperties parent;
+    public WidgetLinePropertiesEditor(PathfindLineProperties parent) {
         super(new ResourceLocation("dungeonsguide:gui/features/lineProperties/editor.gui"));
-        this.config.setValue(new WidgetLineParamEdit(lineProperties));
-        this.preview.setValue(new WidgetPreview(lineProperties));
-        this.lineProperties = lineProperties;
+        this.config.setValue(new WidgetLineParamEditParent(this, parent));
+        this.preview.setValue(parent.getSetting().createPreviewWidget());
+        this.parent = parent;
+    }
+
+    public void updatePreview() {
+        preview.setValue(parent.getSetting().createPreviewWidget());
     }
 }

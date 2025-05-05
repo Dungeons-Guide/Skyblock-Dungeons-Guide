@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
