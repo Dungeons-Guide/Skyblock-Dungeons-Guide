@@ -77,7 +77,7 @@ public class DungeonBreakableWallState implements WorldMutatingMechanicState {
         }
 
         builder = builder.requires(new AtomicAction.Builder()
-                            .requires(new ActionBreakWithSuperBoom(getRepresentingPoint()))
+                            .requires(new ActionBreakWithSuperBoom(data.secretPoint))
                             .requires(() -> {
                                 int leastY = Integer.MAX_VALUE;
                                 OffsetPoint thatPt = null;

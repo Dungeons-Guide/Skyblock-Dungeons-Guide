@@ -10,6 +10,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleMoveSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplayEngine;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.LineRenderUtils;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
@@ -222,7 +223,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
     public void renderActionBreakWithSuperboom(ActionBreakWithSuperBoom superBoom, DungeonRoom dungeonRoom, float partialTicks) {
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
-        BlockPos blockpos = superBoom.getTarget().getBlockPos(dungeonRoom);
+        BlockPos blockpos = superBoom.getTarget().getOffsetPointList().get(0).getBlockPos(dungeonRoom);
 
         Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
 
@@ -303,141 +304,11 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         }
 
         if (actionMove instanceof ActionMoveSpot)
-            renderDebug((ActionMoveSpot) actionMove, dungeonRoom, partialTicks);
+            LineRenderUtils.renderDebug((ActionMoveSpot) actionMove, dungeonRoom, partialTicks);
         else if (actionMove instanceof ActionMove)
-            renderDebug((ActionMove) actionMove, dungeonRoom, partialTicks);
+            LineRenderUtils.renderDebug((ActionMove) actionMove, dungeonRoom, partialTicks);
     }
 
-    public static void renderDebug(ActionMoveSpot actionMoveSpot, DungeonRoom dungeonRoom, float partialTicks) {
-        List<PossibleMoveSpot> targets = actionMoveSpot.getTargets();
-        if (FeatureRegistry.DEBUG_ST.isEnabled()) {
-            int i = 0;
-            for (PossibleMoveSpot spot : targets) {
-                GlStateManager.disableAlpha();
-                i++;
-                Color c = Color.getHSBColor(
-                        1.0f * i / targets.size(), 0.5f, 1.0f
-                );
-                Color actual;
-
-
-                GlStateManager.disableAlpha();
-                if (!spot.isBlocked()) {
-                    actual = new Color(c.getRGB() & 0xFFFFFF | 0x90000000, true);
-                    PossibleMoveSpot spot2 = RaytraceHelper.chooseMinimalY2(Arrays.asList(spot)).get(0);
-                    for (OffsetVec3 _vec3 : spot2.getOffsetPointSet()) {
-                        Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
-                        RenderUtils.highlightBox(
-                                new AxisAlignedBB(
-                                        offsetVec3.xCoord - 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord - 0.25f,
-                                        offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.026f, offsetVec3.zCoord + 0.25f
-                                ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
-                                actual,
-                                partialTicks,
-                                true
-                        );
-                    }
-                }
-                actual = new Color(c.getRGB() & 0xFFFFFF | 0x10000000, true);
-                for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
-                    Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
-                    RenderUtils.highlightBox(
-                            new AxisAlignedBB(
-                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
-                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.475f, offsetVec3.zCoord + 0.25f
-                            ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
-                            actual,
-                            partialTicks,
-                            true
-                    );
-                }
-                double cx = 0, cy = 0, cz = 0;
-                for (OffsetVec3 _offsetVec3 : spot.getOffsetPointSet()) {
-                    Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
-                    cx += offsetVec3.xCoord;
-                    cy += offsetVec3.yCoord;
-                    cz += offsetVec3.zCoord;
-                }
-                cx /= spot.getOffsetPointSet().size();
-                cy /= spot.getOffsetPointSet().size();
-                cz /= spot.getOffsetPointSet().size();
-                cy += 0.2f;
-                RenderUtils.drawTextAtWorld(
-                        spot.getClusterId() + "/" + spot.isBlocked() + " / " + spot.getOffsetPointSet().size(), (float) cx, (float) cy, (float) cz, actual.getRGB() | 0xFF000000, 0.01f, false, true, partialTicks);
-
-
-                GlStateManager.enableAlpha();
-            }
-        }
-    }
-
-    public void renderDebug(ActionMove actionMove, DungeonRoom dungeonRoom, float partialTicks) {
-        List<PossibleClickingSpot> targets = actionMove.getTargets();
-        if (FeatureRegistry.DEBUG_ST.isEnabled()) {
-
-            int i = 0;
-            for (PossibleClickingSpot spot : RaytraceHelper.chooseMinimalY(targets)) {
-                GlStateManager.disableAlpha();
-                i++;
-                Color c = Color.getHSBColor(
-                        1.0f * i / targets.size(), 0.5f, 1.0f
-                );
-                Color actual = new Color(c.getRGB() & 0xFFFFFF | 0x90000000, true);
-                for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
-                    Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
-                    RenderUtils.highlightBox(
-                            new AxisAlignedBB(
-                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord - 0.25f,
-                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.026f, offsetVec3.zCoord + 0.25f
-                            ).expand(0.0020000000949949026, 0.0020000000949949026, 0.0020000000949949026),
-                            actual,
-                            partialTicks,
-                            true
-                    );
-                }
-            }
-
-            i = 0;
-            for (PossibleClickingSpot spot : targets) {
-                GlStateManager.disableAlpha();
-                i++;
-                Color c = Color.getHSBColor(
-                        1.0f * i / targets.size(), 0.5f, 1.0f
-                );
-                Color actual = new Color(c.getRGB() & 0xFFFFFF | 0x10000000, true);
-                for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
-                    Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
-                    RenderUtils.highlightBox(
-                            new AxisAlignedBB(
-                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
-                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.475f, offsetVec3.zCoord + 0.25f
-                            ).expand(0.0020000000949949026, 0.0020000000949949026, 0.0020000000949949026),
-                            actual,
-                            partialTicks,
-                            true
-                    );
-                }
-
-                double cx = 0, cy = 0, cz = 0;
-                for (OffsetVec3 _offsetVec3 : spot.getOffsetPointSet()) {
-                    Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
-                    cx += offsetVec3.xCoord;
-                    cy += offsetVec3.yCoord;
-                    cz += offsetVec3.zCoord;
-                }
-                cx /= spot.getOffsetPointSet().size();
-                cy /= spot.getOffsetPointSet().size();
-                cz /= spot.getOffsetPointSet().size();
-                cy += 0.2f;
-                RenderUtils.drawTextAtWorld(
-                        Arrays.stream(spot.getTools())
-                                .map(a -> a == null ? "null" : a.getBreakingPower() + ":" + a.getHarvestLv()).collect(Collectors.joining(";"))
-                                + ":::" + spot.getClusterId() + "/" + spot.isStonkingReq(), (float) cx, (float) cy, (float) cz, actual.getRGB(), 0.01f, false, true, partialTicks);
-
-
-            }
-        }
-    }
 
 
     public static void drawLinesPathfindNode(List<PathfindResult.PathfindNode> poses, AColor colour, float thickness, float partialTicks) {

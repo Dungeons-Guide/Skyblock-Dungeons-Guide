@@ -20,17 +20,25 @@ package kr.syeyoung.dungeonsguide.mod.utils;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonDoor;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.*;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -814,6 +822,170 @@ public class RenderUtils {
         GlStateManager.popMatrix();
 //...
 
+    }
+
+
+    public static AxisAlignedBB highlightBlockStencil(BlockPos blockPos, float partialTicks, AColor color, boolean depth) {
+        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
+        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
+        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
+        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-realX, -realY, -realZ);
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
+        GL11.glClearStencil(0);
+        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
+        GlStateManager.enableAlpha();
+
+        GL11.glStencilMask(0xFF);
+        GL11.glColorMask(false, false, false, false);
+        GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
+        GL11.glStencilOp(GL11.GL_KEEP, depth ? GL11.GL_KEEP : GL11.GL_REPLACE, GL11.GL_REPLACE);
+        GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
+        GL11.glPolygonOffset(-1.0f, -1.0f);
+
+
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer vertexBuffer = tessellator.getWorldRenderer();
+        vertexBuffer.begin(7, DefaultVertexFormats.BLOCK);
+
+        if (depth) {
+            GlStateManager.enableDepth();
+            GlStateManager.depthMask(false);
+        } else {
+            GlStateManager.disableDepth();
+        }
+        GlStateManager.enableTexture2D();
+        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+
+        double minX = 1e9, minY = 1e9, minZ = 1e9, maxX = -1e9, maxY = -1e9, maxZ = -1e9;
+        {
+            BlockPos pos = blockPos;
+            minX = Math.min(minX, pos.getX());
+            maxX = Math.max(maxX, pos.getX() + 1);
+            minY = Math.min(minY, pos.getY());
+            maxY = Math.max(maxY, pos.getY() + 1);
+            minZ = Math.min(minZ, pos.getZ());
+            maxZ = Math.max(maxZ, pos.getZ() + 1);
+            IBlockState iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(pos);
+            if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
+                TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(pos);
+                TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
+                specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
+            } else {
+                blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
+                        blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, pos),
+                        iBlockState.getBlock(), pos, vertexBuffer, true);
+            }
+        }
+
+        tessellator.draw();
+        if (depth) {
+            GlStateManager.depthMask(true);
+            GlStateManager.disableDepth();
+        }
+
+        GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
+
+        GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
+        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+        GL11.glColorMask(true, true, true, true);
+
+        // now render highlight.
+
+        GlStateManager.popMatrix();
+
+        AxisAlignedBB bb= new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
+        RenderUtils.highlightBox(bb, color, partialTicks, false);
+
+        GL11.glDisable(GL11.GL_STENCIL_TEST);
+
+        GlStateManager.enableDepth();
+        return bb;
+    }
+    public static AxisAlignedBB highlightBlocksStencil(List<BlockPos> blockPos, float partialTicks, AColor color) {
+        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
+        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
+        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
+        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-realX, -realY, -realZ);
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
+        GL11.glClearStencil(0);
+        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
+        GlStateManager.enableAlpha();
+
+        GL11.glStencilMask(0xFF);
+        GL11.glColorMask(false, false, false, false);
+        GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
+        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
+        GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
+        GL11.glPolygonOffset(-1.0f, -1.0f);
+
+
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer vertexBuffer = tessellator.getWorldRenderer();
+        vertexBuffer.begin(7, DefaultVertexFormats.BLOCK);
+
+        GlStateManager.enableDepth();
+        GlStateManager.depthMask(false);
+        GlStateManager.enableTexture2D();
+        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+
+        double minX = 1e9, minY = 1e9, minZ = 1e9, maxX = -1e9, maxY = -1e9, maxZ = -1e9;
+        for (BlockPos pos : blockPos) {
+            minX = Math.min(minX, pos.getX());
+            maxX = Math.max(maxX, pos.getX() + 1);
+            minY = Math.min(minY, pos.getY());
+            maxY = Math.max(maxY, pos.getY() + 1);
+            minZ = Math.min(minZ, pos.getZ());
+            maxZ = Math.max(maxZ, pos.getZ() + 1);
+            IBlockState iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(pos);
+            if (iBlockState == null || iBlockState.getBlock() == Blocks.air) continue;
+            if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
+                TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(pos);
+                TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
+                specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
+            } else {
+                blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
+                        blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, pos),
+                        iBlockState.getBlock(), pos, vertexBuffer, true);
+            }
+        }
+
+        tessellator.draw();
+        GlStateManager.depthMask(true);
+        GlStateManager.disableDepth();
+
+        GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
+
+        GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
+        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+        GL11.glColorMask(true, true, true, true);
+
+        // now render highlight.
+
+        GlStateManager.popMatrix();
+
+        AxisAlignedBB bb= new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
+        RenderUtils.highlightBox(bb, color, partialTicks, false);
+
+        GL11.glDisable(GL11.GL_STENCIL_TEST);
+
+        GlStateManager.enableDepth();
+        return bb;
     }
 
     public static void highlightBox(AxisAlignedBB  axisAlignedBB, Color c, float partialTicks, boolean depth) {

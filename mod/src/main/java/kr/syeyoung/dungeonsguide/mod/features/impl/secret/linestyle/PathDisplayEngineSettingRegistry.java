@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle;
 
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.arrowpath.NeoRouteDisplayEngineRegistration;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic.ClassicPathDisplayEngineRegistration;
 
 import java.util.HashMap;
@@ -16,11 +17,12 @@ public class PathDisplayEngineSettingRegistry {
         return registrationList.get(name);
     }
 
-    public static void register(ClassicPathDisplayEngineRegistration registration) {
+    public static void register(PathDisplayEngineSettingRegistration<?> registration) {
         registrationList.put(registration.getJsonName(), registration);
     }
     static {
         register(ClassicPathDisplayEngineRegistration.INSTANCE);
+        register(NeoRouteDisplayEngineRegistration.INSTANCE);
     }
 
 }

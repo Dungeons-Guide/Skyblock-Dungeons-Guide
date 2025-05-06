@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
@@ -30,14 +31,14 @@ import net.minecraft.init.Blocks;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionBreakWithSuperBoom extends AbstractAction {
-    private OffsetPoint target;
+    private OffsetPointSet target;
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
-        return target.getBlock(dungeonRoom) == Blocks.air;
+        return target.getOffsetPointList().get(0).getBlock(dungeonRoom) == Blocks.air;
     }
 
-    public ActionBreakWithSuperBoom(OffsetPoint target) {
+    public ActionBreakWithSuperBoom(OffsetPointSet target) {
         this.target = target;
     }
 

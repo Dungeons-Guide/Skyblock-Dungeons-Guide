@@ -69,7 +69,7 @@ public class DungeonTombState implements DungeonMechanicState, WorldMutatingMech
 
         builder = builder
                 .requires(new AtomicAction.Builder()
-                        .requires(new ActionBreakWithSuperBoom(data.secretPoint.getOffsetPointList().get(0)))
+                        .requires(new ActionBreakWithSuperBoom(data.secretPoint))
                         .requires(new ActionMoveNearestAir(data.secretPoint.getOffsetPointList().get(0)))
                         .build("MoveAndBreakSuperboom"), algorithmSetting);
 
