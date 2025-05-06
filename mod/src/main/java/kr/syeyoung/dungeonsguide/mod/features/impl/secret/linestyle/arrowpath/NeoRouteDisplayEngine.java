@@ -198,7 +198,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
             zAcc += pos.getZ()+ 0.5f;
             list.add(pos);
         }
-        RenderUtils.highlightBlocksStencil(list, partialTicks, new AColor(0, 255,255,50));
+        RenderUtils.highlightBlocksStencil(list, partialTicks, new AColor(0, 255,255,50), true);
 
         RenderUtils.drawTextAtWorld("Click", xAcc / size, yAcc / size, zAcc / size, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
@@ -443,7 +443,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
         double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
         double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
 
-        AxisAlignedBB bb = RenderUtils.highlightBlocksStencil(blockPos, partialTicks, color);
+        AxisAlignedBB bb = RenderUtils.highlightBlocksStencil(blockPos, partialTicks, color, true);
 
 
         GlStateManager.enableDepth();

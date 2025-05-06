@@ -825,7 +825,7 @@ public class RenderUtils {
     }
 
 
-    public static AxisAlignedBB highlightBlockStencil(BlockPos blockPos, float partialTicks, AColor color, boolean depth) {
+    public static AxisAlignedBB highlightBlockStencil(BlockPos blockPos, float partialTicks, Color color, boolean depth) {
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
@@ -881,7 +881,7 @@ public class RenderUtils {
             } else {
                 blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
                         blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, pos),
-                        iBlockState.getBlock(), pos, vertexBuffer, true);
+                        iBlockState.getBlock(), pos, vertexBuffer, depth ? true : false);
             }
         }
 
@@ -909,7 +909,7 @@ public class RenderUtils {
         GlStateManager.enableDepth();
         return bb;
     }
-    public static AxisAlignedBB highlightBlocksStencil(List<BlockPos> blockPos, float partialTicks, AColor color) {
+    public static AxisAlignedBB highlightBlocksStencil(List<BlockPos> blockPos, float partialTicks, Color color, boolean depth) {
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
@@ -938,8 +938,12 @@ public class RenderUtils {
         WorldRenderer vertexBuffer = tessellator.getWorldRenderer();
         vertexBuffer.begin(7, DefaultVertexFormats.BLOCK);
 
-        GlStateManager.enableDepth();
-        GlStateManager.depthMask(false);
+        if (depth) {
+            GlStateManager.enableDepth();
+            GlStateManager.depthMask(false);
+        } else {
+            GlStateManager.disableDepth();
+        }
         GlStateManager.enableTexture2D();
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
@@ -953,7 +957,6 @@ public class RenderUtils {
             minZ = Math.min(minZ, pos.getZ());
             maxZ = Math.max(maxZ, pos.getZ() + 1);
             IBlockState iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(pos);
-            if (iBlockState == null || iBlockState.getBlock() == Blocks.air) continue;
             if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
                 TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(pos);
                 TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
@@ -961,14 +964,15 @@ public class RenderUtils {
             } else {
                 blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
                         blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, pos),
-                        iBlockState.getBlock(), pos, vertexBuffer, true);
+                        iBlockState.getBlock(), pos, vertexBuffer, depth ? true : false);
             }
         }
 
         tessellator.draw();
-        GlStateManager.depthMask(true);
-        GlStateManager.disableDepth();
-
+        if (depth) {
+            GlStateManager.depthMask(true);
+            GlStateManager.disableDepth();
+        }
         GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
 
         GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);

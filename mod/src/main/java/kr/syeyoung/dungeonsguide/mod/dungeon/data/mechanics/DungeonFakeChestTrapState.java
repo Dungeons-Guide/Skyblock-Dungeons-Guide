@@ -92,13 +92,15 @@ public class DungeonFakeChestTrapState implements DungeonMechanicState {
         if (data.tnts.getOffsetPointList().isEmpty()) return;
         OffsetPoint firstPoint = data.tnts.getOffsetPointList().get(0);
         BlockPos pos = data.chest.getBlockPos(room);
-        RenderUtils.highlightBlock(pos, color, partialTicks);
+        RenderUtils.highlightBlockStencil(pos, partialTicks, color, false);
         RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.75f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0.25f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
 
+        List<BlockPos> list = new ArrayList<>();
         for (OffsetPoint offsetPoint : data.tnts.getOffsetPointList()) {
-            RenderUtils.highlightBlock(offsetPoint.getBlockPos(room), color, partialTicks);
+            list.add(offsetPoint.getBlockPos(room));
         }
+        RenderUtils.highlightBlocksStencil(list, partialTicks, color, false);
 
         if (data.chestCache != null && FeatureRegistry.DEBUG_ST.isEnabled())
             data.chestCache.render(partialTicks, room);

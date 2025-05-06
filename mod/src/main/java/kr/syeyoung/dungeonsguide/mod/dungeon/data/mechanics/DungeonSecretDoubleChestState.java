@@ -39,6 +39,7 @@ import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -136,8 +137,7 @@ public class DungeonSecretDoubleChestState implements DungeonMechanicState, ISec
     @Override
     public void highlight(Color color, String name, float partialTicks) {
         BlockPos pos = getSecretPoint().getBlockPos(room);
-        RenderUtils.highlightBlock(pos, color, partialTicks);
-        RenderUtils.highlightBlock(data.secretPoint2.getBlockPos(room), color, partialTicks);
+        RenderUtils.highlightBlocksStencil(Arrays.asList(pos, data.secretPoint2.getBlockPos(room)), partialTicks, color, false);
         RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }

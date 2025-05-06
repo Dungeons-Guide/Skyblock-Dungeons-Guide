@@ -73,9 +73,11 @@ public class DungeonFireTrapState implements DungeonMechanicState {
         RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.75f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0.25f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
 
+        List<BlockPos> list = new ArrayList<>();
         for (OffsetPoint offsetPoint : data.dispensers.getOffsetPointList()) {
-            RenderUtils.highlightBlock(offsetPoint.getBlockPos(room), color, partialTicks);
+            list.add(offsetPoint.getBlockPos(room));
         }
+        RenderUtils.highlightBlocksStencil(list, partialTicks, color, false);
     }
 
     @Override

@@ -70,7 +70,7 @@ public class DungeonMushroomState implements DungeonMechanicState {
     @Override
     public void highlight(Color color, String name, float partialTicks) {
         BlockPos pos = data.secretPoint.getBlockPos(room);
-        RenderUtils.highlightBlock(pos, color, partialTicks);
+        RenderUtils.highlightBlockStencil(pos, partialTicks, color, false);
         RenderUtils.drawTextAtWorld("M-" + name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
