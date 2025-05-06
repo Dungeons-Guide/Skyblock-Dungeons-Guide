@@ -475,7 +475,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
         };
 
         double size = 1;
-        double zLee = 0.01;
+        double zLee = 0.0001;
         double[][] faces = {
                 {bb.minX-zLee, (bb.minX+bb.maxX)/2 - size/2, (bb.minX+bb.maxX)/2 + size/2, bb.maxX+zLee},
                 {bb.minY-zLee, (bb.minY+bb.maxY)/2 - size/2, (bb.minY+bb.maxY)/2 + size/2, bb.maxY+zLee},
@@ -545,10 +545,10 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
 
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
             {
-                worldRenderer.pos(quadBL.xCoord, quadBL.yCoord, quadBL.zCoord).tex(0, 0).endVertex();
-                worldRenderer.pos(quadBR.xCoord, quadBR.yCoord, quadBR.zCoord).tex(1, 0).endVertex();
-                worldRenderer.pos(quadTR.xCoord, quadTR.yCoord, quadTR.zCoord).tex(1, -len / 0.1).endVertex();
-                worldRenderer.pos(quadTL.xCoord, quadTL.yCoord, quadTL.zCoord).tex(0, -len / 0.1).endVertex();
+                worldRenderer.pos(quadBL.xCoord, quadBL.yCoord, quadBL.zCoord).tex(0, -animate).endVertex();
+                worldRenderer.pos(quadBR.xCoord, quadBR.yCoord, quadBR.zCoord).tex(1, -animate).endVertex();
+                worldRenderer.pos(quadTR.xCoord, quadTR.yCoord, quadTR.zCoord).tex(1, -len / 0.1-animate).endVertex();
+                worldRenderer.pos(quadTL.xCoord, quadTL.yCoord, quadTL.zCoord).tex(0, -len / 0.1-animate).endVertex();
             }
             Tessellator.getInstance().draw();
         }
