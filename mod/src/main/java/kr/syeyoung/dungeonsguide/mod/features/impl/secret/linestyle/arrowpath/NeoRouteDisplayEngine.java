@@ -480,7 +480,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         };
 
         double size = 1;
-        double zLee = 0.0001;
+        double zLee = 0.001;
         double[][] faces = {
                 {bb.minX-zLee, (bb.minX+bb.maxX)/2 - size/2, (bb.minX+bb.maxX)/2 + size/2, bb.maxX+zLee},
                 {bb.minY-zLee, (bb.minY+bb.maxY)/2 - size/2, (bb.minY+bb.maxY)/2 + size/2, bb.maxY+zLee},
