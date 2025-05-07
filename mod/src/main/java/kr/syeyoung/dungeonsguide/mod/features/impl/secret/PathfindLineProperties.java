@@ -45,7 +45,7 @@ public class PathfindLineProperties extends SimpleFeature {
         this.parameters = new LinkedHashMap<>();
         if (parent != null)
             addParameter("useGlobal", new FeatureParameter<Boolean>("useGlobal", "Use Global Settings instead of this", "Completely ignore these settings, then use the parent one:: '"+parent.getName()+"'",  useParent, TCBoolean.INSTANCE));
-        setSetting(PathDisplayEngineSettingRegistry.getRegistration("classic").createConfiguration());
+        setSetting(PathDisplayEngineSettingRegistry.getRegistration("neoroute").createConfiguration());
 
     }
 

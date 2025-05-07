@@ -36,7 +36,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
+public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplayEngineLineProperties> {
 
     private final Map<AbstractActionMove, ActionMoveContext> executorWeakHashMap = new WeakHashMap<>();
     private final ActionRoute actionRoute;
@@ -50,10 +50,11 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
     }
     private RoomPresetPathPlanner pathPlanner;
 
-    public NeoRouteDisplayEngine(ActionRoute actionRoute) {
+    public NeoRouteDisplayEngine(ActionRoute actionRoute, NeoRouteDisplayEngineLineProperties settings) {
         this.actionRoute = actionRoute;
         this.dungeonRoom = actionRoute.getDungeonRoom();
         this.pathPlanner = new RoomPresetPathPlanner(actionRoute.getDungeonRoom().getContext().getPreset().getRoomPreset(actionRoute.getDungeonRoom().getDungeonRoomInfo().getUuid()));
+        this.settings = settings;
     }
 
     @Override
@@ -116,7 +117,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
     }
 
     @Getter @Setter
-    private Object settings;
+    private NeoRouteDisplayEngineLineProperties settings;
 
     @Override
     public void renderActionRoute(float partialTicks) {
@@ -236,18 +237,22 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
         float distance = MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         float scale = 0.45f * multiplier;
+        scale *= (float) settings.getDestinationSize();
         scale *= 25.0 / 6.0;
 
-        RenderUtils.renderBeaconBeam(target.getX(), target.getY(), target.getZ(), new AColor(0, 128, 128, 30), partialTicks);
-        RenderUtils.highlightBlock(target, new AColor(0, 128, 128, 128), partialTicks);
+        if (getSettings().isEnableBeacon()) {
+            RenderUtils.renderBeaconBeam(target.getX(), target.getY(), target.getZ(), settings.getBeamColor(), partialTicks);
+            RenderUtils.highlightBlock(target, settings.getBeaconColor(), partialTicks);
+        }
 
-        RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, 1f, true, false, partialTicks);
-
-        RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
+        if (settings.getDestinationSize() != 0) {
+            RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, (float) settings.getDestinationSize(), true, false, partialTicks);
+            RenderUtils.drawTextAtWorld(String.format("%.2f", MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) + "m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, (float) settings.getDestinationSize(), true, false, partialTicks);
+        }
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
             if (poses != null){
-                drawLinesPathfindNode(context.segment, new AColor(0, 255, 255, 100),10.0f, partialTicks);
+                drawLinesPathfindNode(context.segment, settings.getBackground(), settings.getArrow(), partialTicks);
 
                 PathfindResult.PathfindNode last = null;
                 for (PathfindResult.PathfindNode pose : poses.getNodeList()) {
@@ -306,7 +311,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
         }
     }
 
-    public static List<PathSegment> transformPathfindResult(List<PathfindResult.PathfindNode> poses) {
+    public List<PathSegment> transformPathfindResult(List<PathfindResult.PathfindNode> poses) {
         if (poses.isEmpty()) return Collections.emptyList();
         if (poses.size() == 1)return Collections.emptyList();
 
@@ -340,8 +345,8 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
         }
         result.add(segments.get(segments.size()-1)); // segment merging.
 
-        double rad =1;
-        double thickness = 0.3;
+        double rad = settings.getSmooth();
+        double thickness = settings.getWidth();
 
         List<PathSegment> realResult = new ArrayList<>();
         for (int i = 0; i < result.size(); i++) {
@@ -500,7 +505,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
 
     private static final ResourceLocation arrow = new ResourceLocation("dungeonsguide:textures/arrow.png");
     public static final ResourceLocation abilities = new ResourceLocation("dungeonsguide:textures/features/precalclist/abilities.png");
-    public static void drawIcon(int iconIdx, PathSegment segment, AColor colour, float partialTicks, double animate) {
+    public static void drawIcon(int iconIdx, PathSegment segment, AColor colour, AColor texture, float partialTicks, double animate) {
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.color(1,1,1,1);
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
@@ -541,7 +546,9 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
             GlStateManager.enableTexture2D();
             textureManager.bindTexture(arrow);
 
-            GlStateManager.color(0, 1, 0, 1.0F);
+            i = RenderUtils.getColorAt(0,0,0, texture);
+            r= ((i >> 16) &0xFF)/255.0f; g=((i >> 8) &0xFF)/255.0f; b=(i &0xFF)/255.0f; a=((i >> 24) &0xFF)/255.0f;
+            GlStateManager.color(r, g, b, a);
 
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
             {
@@ -609,7 +616,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
 //        }
     }
 
-    public static void drawLinesNormal(List<PathSegment> poses, int from, int to, PathfindResult.PathfindNode.NodeType type, AColor colour, float partialTicks, double animate) {
+    public void drawLinesNormal(List<PathSegment> poses, int from, int to, PathfindResult.PathfindNode.NodeType type, AColor colour, AColor texture, float partialTicks, double animate) {
         if (type == PathfindResult.PathfindNode.NodeType.STONK_WALK || type == PathfindResult.PathfindNode.NodeType.STONK_EXIT) {
             GlStateManager.disableDepth();
         } else {
@@ -638,7 +645,9 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
         GlStateManager.enableTexture2D();
         textureManager.bindTexture(arrow);
 
-        GlStateManager.color(0, 1, 0, 1.0F);
+        i = RenderUtils.getColorAt(0,0,0, texture);
+        r= ((i >> 16) &0xFF)/255.0f; g=((i >> 8) &0xFF)/255.0f; b=(i &0xFF)/255.0f; a=((i >> 24) &0xFF)/255.0f;
+        GlStateManager.color(r, g, b, a);
 
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         for (int j = from; j < to; j++) {
@@ -652,7 +661,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
         Tessellator.getInstance().draw();
 
     }
-    public static void drawLinesPathfindNode(List<PathSegment> poses, AColor colour, float thickness, float partialTicks) {
+    public void drawLinesPathfindNode(List<PathSegment> poses, AColor colour, AColor texture, float partialTicks) {
         if (poses.size() == 0) return;
         double speed = 250;
         double animate = -(System.currentTimeMillis() % speed) / speed;
@@ -679,11 +688,11 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<Object> {
 
             PathfindResult.PathfindNode.NodeType nodeType = poses.get(st).nodeType;
             if (nodeType == PathfindResult.PathfindNode.NodeType.ETHERWARP)
-                drawIcon(40, poses.get(st), colour, partialTicks, animate);
+                drawIcon(40, poses.get(st), colour, texture, partialTicks, animate);
             else if (nodeType == PathfindResult.PathfindNode.NodeType.ENDERPEARL)
-                drawIcon(41, poses.get(st), colour, partialTicks, animate);
+                drawIcon(41, poses.get(st), colour, texture, partialTicks, animate);
             else
-                drawLinesNormal(poses, st, toIdx, poses.get(st).nodeType, colour, partialTicks, animate);
+                drawLinesNormal(poses, st, toIdx, poses.get(st).nodeType, colour, texture, partialTicks, animate);
         }
 
         GlStateManager.disableBlend();

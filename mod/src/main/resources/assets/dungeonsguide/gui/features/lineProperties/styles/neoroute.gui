@@ -1,0 +1,54 @@
+<col slot="true">
+    <size height="5"/>
+    <WrapGrid minimumWidth="200" gap="5">
+        <row crossAlign="CENTER">
+            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Path Background Color" color="#FFFFFFFF"/></align></flexible>
+            <flexible fit="TIGHT"><slot bind:child="linecolor"/></flexible>
+        </row>
+        <row crossAlign="CENTER">
+            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Path Arrow Color" color="#FFFFFFFF"/></align></flexible>
+            <flexible fit="TIGHT"><slot bind:child="arrowcolor"/></flexible>
+        </row>
+        <row crossAlign="CENTER">
+            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Path Width" color="#FFFFFFFF"/></align></flexible>
+            <flexible fit="TIGHT"><slot bind:child="pathwidth"/></flexible>
+        </row>
+        <row crossAlign="CENTER">
+            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Path Smoothness" color="#FFFFFFFF"/></align></flexible>
+            <flexible fit="TIGHT"><slot bind:child="pathsmoothness"/></flexible>
+        </row>
+        <row crossAlign="CENTER">
+            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Path Arrow Animation Speed" color="#FFFFFFFF"/></align></flexible>
+            <flexible fit="TIGHT"><slot bind:child="animationSpeed"/></flexible>
+        </row>
+        <row crossAlign="CENTER">
+            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Destination Text Size" color="#FFFFFFFF"/></align></flexible>
+            <flexible fit="TIGHT"><slot bind:child="destinationTextSize"/></flexible>
+        </row>
+    </WrapGrid>
+    <size height="10"/>
+    <row crossAlign="CENTER">
+        <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Enable Beacons" color="#FFFFFF00"/></align></flexible>
+        <slot bind:child="beaconEnable"/>
+    </row>
+    <size height="5"/>
+
+    <SelectiveContainer bind:visible="beaconToggle">
+        <row slot="true">
+            <size width="10"/>
+            <flexible>
+                <WrapGrid minimumWidth="200" gap="5">
+                    <row crossAlign="CENTER">
+                        <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Beam Color" color="#FFFFFFFF"/></align></flexible>
+                        <flexible fit="TIGHT"><slot bind:child="beamcolor"/></flexible>
+                    </row>
+                    <row crossAlign="CENTER">
+                        <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Target Color" color="#FFFFFFFF"/></align></flexible>
+                        <flexible fit="TIGHT"><slot bind:child="targetcolor"/></flexible>
+                    </row>
+                </WrapGrid>
+            </flexible>
+        </row>
+        <size width="0" height="0" slot="false"/>
+    </SelectiveContainer>
+</col>
