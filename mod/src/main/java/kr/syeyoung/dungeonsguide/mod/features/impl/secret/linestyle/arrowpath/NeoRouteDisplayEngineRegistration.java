@@ -56,21 +56,55 @@ public class NeoRouteDisplayEngineRegistration implements PathDisplayEngineSetti
 
         public NeoRouteDisplayEngineLineProperties getSettings() {
             return NeoRouteDisplayEngineLineProperties.builder()
-                    .background(this.<AColor>getParameter("lineColor").getValue())
-                    .arrow(this.<AColor>getParameter("arrowColor").getValue())
-                    .width(this.<Double>getParameter("lineWidth").getValue())
-                    .smooth(this.<Double>getParameter("lineSmooth").getValue())
-                    .animationSpeed(this.<Double>getParameter("animationSpeed").getValue())
-                    .destinationSize(this.<Double>getParameter("destinationSize").getValue())
-                    .enableBeacon(this.<Boolean>getParameter("beacon").getValue())
-                    .beamColor(this.<AColor>getParameter("beamColor").getValue())
-                    .beaconColor(this.<AColor>getParameter("beamTargetColor").getValue())
+                    .background(getLineColor())
+                    .arrow(getArrowColor())
+                    .width(getLineWidth())
+                    .smooth(getLineSmoothness())
+                    .animationSpeed(getAnimationSpeed())
+                    .destinationSize(getDestinationSize())
+                    .enableBeacon(isBeacon())
+                    .beamColor(getBeamColor())
+                    .beaconColor(getBeaconColor())
                     .build();
         }
+
+        public AColor getLineColor() {
+            return this.<AColor>getParameter("lineColor").getValue();
+        }
+
+        public AColor getArrowColor() {
+            return this.<AColor>getParameter("arrowColor").getValue();
+        }
+
+        public Double getLineWidth() {
+            return this.<Double>getParameter("lineWidth").getValue();
+        }
+
+        public Double getLineSmoothness() {
+            return this.<Double>getParameter("lineSmooth").getValue();
+        }
+
+        public Double getAnimationSpeed() {
+            return this.<Double>getParameter("animationSpeed").getValue();
+        }
+
+        public Double getDestinationSize() {
+            return this.<Double>getParameter("destinationSize").getValue();
+        }
+
+        public AColor getBeaconColor() {
+            return this.<AColor>getParameter("beamTargetColor").getValue();
+        }
+
 
         public boolean isBeacon() {
             return this.<Boolean>getParameter("beacon").getValue();
         }
+
+        public AColor getBeamColor() {
+            return this.<AColor>getParameter("beamColor").getValue();
+        }
+
 
         @Override
         public PathDisplayEngineSettingRegistration<NeoRouteDisplayEngineLineProperties> getRegistration() {
@@ -84,7 +118,7 @@ public class NeoRouteDisplayEngineRegistration implements PathDisplayEngineSetti
 
         @Override
         public Widget createPreviewWidget() {
-            return new Placeholder();
+            return new WidgetPreview(this);
         }
     }
 }

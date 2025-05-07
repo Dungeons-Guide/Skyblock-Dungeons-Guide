@@ -99,7 +99,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             }
             if (ctx.executor != null && (ctx.poses == null || !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled())) {
                 ctx.poses = ctx.executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
-                ctx.segment = transformPathfindResult(ctx.poses.getNodeList());
+                ctx.segment = transformPathfindResult(ctx.poses.getNodeList(), settings.getWidth(), settings.getSmooth());
             }
 
             if (ctx.executor != null) {
@@ -302,7 +302,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         double texCulLenFrom, texCulLenTo;
     }
     private static final  Map<PathfindResult.PathfindNode.NodeType, Integer> nodeTypeGroupMap = new HashMap<>();
-    {
+    static {
         nodeTypeGroupMap.put(PathfindResult.PathfindNode.NodeType.ETHERWARP, 1);
         nodeTypeGroupMap.put(PathfindResult.PathfindNode.NodeType.ENDERPEARL, 2);
         for (PathfindResult.PathfindNode.NodeType value : PathfindResult.PathfindNode.NodeType.values()) {
@@ -311,7 +311,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         }
     }
 
-    public List<PathSegment> transformPathfindResult(List<PathfindResult.PathfindNode> poses) {
+    public static List<PathSegment> transformPathfindResult(List<PathfindResult.PathfindNode> poses, double width, double smooth) {
         if (poses.isEmpty()) return Collections.emptyList();
         if (poses.size() == 1)return Collections.emptyList();
 
@@ -345,8 +345,8 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         }
         result.add(segments.get(segments.size()-1)); // segment merging.
 
-        double rad = settings.getSmooth();
-        double thickness = settings.getWidth();
+        double rad = smooth;
+        double thickness = width;
 
         List<PathSegment> realResult = new ArrayList<>();
         for (int i = 0; i < result.size(); i++) {
@@ -616,7 +616,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 //        }
     }
 
-    public void drawLinesNormal(List<PathSegment> poses, int from, int to, PathfindResult.PathfindNode.NodeType type, AColor colour, AColor texture, float partialTicks, double animate) {
+    public static void drawLinesNormal(List<PathSegment> poses, int from, int to, PathfindResult.PathfindNode.NodeType type, AColor colour, AColor texture, float partialTicks, double animate) {
         if (type == PathfindResult.PathfindNode.NodeType.STONK_WALK || type == PathfindResult.PathfindNode.NodeType.STONK_EXIT) {
             GlStateManager.disableDepth();
         } else {
@@ -663,8 +663,10 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
     }
     public void drawLinesPathfindNode(List<PathSegment> poses, AColor colour, AColor texture, float partialTicks) {
         if (poses.size() == 0) return;
-        double speed = 250;
-        double animate = -(System.currentTimeMillis() % speed) / speed;
+        double speed = settings.getAnimationSpeed();
+        double animate = System.currentTimeMillis() / 1000.0 * speed;
+        animate = animate - Math.floor(animate);
+        animate *= -1;
 
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
 
