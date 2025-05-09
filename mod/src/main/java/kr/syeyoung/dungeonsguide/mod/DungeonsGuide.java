@@ -208,6 +208,7 @@ public class DungeonsGuide implements DGInterface {
         if (System.getProperty("dg.safe") == null) {
             try {
                 NativeLoader.extractLibraryAndLoad("waterboard");
+                NativeLoader.extractLibraryAndLoad("dptsp");
             } catch (IOException | UnsatisfiedLinkError e) {
                 e.printStackTrace();
             }

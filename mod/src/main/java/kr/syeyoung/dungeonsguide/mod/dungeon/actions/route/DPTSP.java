@@ -24,8 +24,11 @@ public class DPTSP {
     private final RoomPresetPathPlanner pathPlanner;
     private final ActionDAG dag;
     private final Vec3 start;
+    private final double startX;
+    private final double startY;
+    private final double startZ;
     private final DungeonRoom dungeonRoom;
-
+    private TSPCache cache;
 
 
     private ActionDAGNode[] bitNodes;
@@ -33,6 +36,7 @@ public class DPTSP {
 
     private ActionDAGNode[][] orNodes;
     private int[] orIdIdxMapping;
+    private boolean[] sanity;
 
     private int[] nodeType;
     private ActionDAGNode[] everyNode;
@@ -51,13 +55,47 @@ public class DPTSP {
         this.pathPlanner = new RoomPresetPathPlanner(dungeonRoom.getContext().getPreset().getRoomPreset(dungeonRoom.getDungeonRoomInfo().getUuid()));
         this.dag = dag;
         this.start = start;
+        this.startX = start.xCoord;
+        this.startY = start.yCoord;
+        this.startZ = start.zCoord;
         this.dungeonRoom = dungeonRoom;
 
         setup();
+        solve();
     }
 
+
+
+    private RoomState roomState;
+//
+//    // jni requires.
+//    public EvalRes evaluate(double x, double y, double z, int mechanic, int node) {
+//        roomState.setPlayerPos(new Vec3(x, y, z));
+//        roomState.setOpenMechanicsBitset(mechanic);
+//        double cost = everyNode[node].getAction().evalulateCost(roomState, dungeonRoom, cache, pathPlanner);
+//        return new EvalRes(roomState.getPlayerPos().xCoord, roomState.getPlayerPos().yCoord, roomState.getPlayerPos().zCoord, roomState.openMechanicsBitset, cost);
+//    }
+//
+//    @AllArgsConstructor
+//    public static class EvalRes {
+//        public double x;
+//        public double y;
+//        public double z;
+//        public int mechanic;
+//        public double cost;
+//    }
+
     public void solve() {
-        solution = runTSPNative();
+        long handle = startCoroutine();
+        while (true) {
+            roomState.setPlayerPos(new Vec3(getX(handle), getY(handle), getZ(handle)));
+            roomState.setOpenMechanicsBitset(getMech(handle));
+            double cost = everyNode[getNode(handle)].getAction().evalulateCost(roomState, dungeonRoom,cache, pathPlanner);
+            boolean res = resumeCoroutine(handle, roomState.getPlayerPos().xCoord, roomState.getPlayerPos().yCoord, roomState.getPlayerPos().zCoord, roomState.openMechanicsBitset, cost);
+            if (res) break;
+        }
+        solution = getResult(handle, dag.getActionDAGNode().getId());
+        destoryCoroutine(handle);
     }
 
     private void setup() {
@@ -70,6 +108,7 @@ public class DPTSP {
         nodeType = new int[dag.getAllNodes().size()];
         require = new long[dag.getAllNodes().size()];
         or = new int[dag.getAllNodes().size()][];
+        sanity = new boolean[dag.getAllNodes().size()];
 
 
         label: for (int i = 0; i < dag.getAllNodes().size(); i++) {
@@ -131,106 +170,26 @@ public class DPTSP {
             for (int j = 0; j < everyNode[i].getOr().size(); j++) {
                 or[i][j] = everyNode[i].getOr().get(j).getId();
             }
+            sanity[i] = everyNode[i].getAction().isSanityCheck();
         }
 
         System.out.println(requireBitSize + " / " + mult);
+
+        roomState = new RoomState(mechanicNames);
+        roomState.setDungeonRoom(dungeonRoom);
+        cache = new TSPCache((GeneralRoomProcessor) dungeonRoom.getRoomProcessor(), dungeonRoom, Collections.EMPTY_LIST, Collections.singletonList(start));
     }
 
+    private native long startCoroutine();
+    private native boolean resumeCoroutine(long handle, double x, double y, double z, int mech, double cost);
+    private native double getX(long handle);
+    private native double getY(long handle);
+    private native double getZ(long handle);
+    private native int getNode(long handle);
+    private native int getMech(long handle);
+    private native int[] getResult(long handle, int target);
+    private native void destoryCoroutine(long handle);
 
-    @AllArgsConstructor @Data @EqualsAndHashCode
-    public class VisitedSet implements Comparable<VisitedSet> {
-        private long requiresBitset;
-        private int[] orChoice;
-
-        public VisitedSet clone() {
-            return new VisitedSet(requiresBitset, Arrays.copyOf(orChoice, orChoice.length));
-        }
-
-        public boolean contains(int node) {
-            if (nodeType[node] == 0) return false;
-            if (nodeType[node] == 1) return (requiresBitset & (1L << requireIdBitMapping[node])) > 0;
-            int orIdx = nodeType[node]-2;
-            int indexInIndx = orIdIdxMapping[node];
-            return orChoice[orIdx] == indexInIndx;
-        }
-        public boolean canBeAdded(int node) {
-            if (nodeType[node] == 0) return false;
-            if (nodeType[node] == 1) return (requiresBitset & (1L << requireIdBitMapping[node])) == 0;
-            int orIdx = nodeType[node]-2;
-            return orChoice[orIdx] == 0;
-        }
-
-        public void add(int node) {
-            if (nodeType[node] == 0) return;
-            if (nodeType[node] == 1) {
-                requiresBitset |= (1L << requireIdBitMapping[node]);
-                return;
-            }
-            int orIdx = nodeType[node]-2;
-            int indexInIndx = orIdIdxMapping[node];
-            orChoice[orIdx] = indexInIndx;
-        }
-        public VisitedSet subtract(int node) {
-            if (nodeType[node] == 0) return null;
-            if (nodeType[node] == 1) return new VisitedSet(requiresBitset ^ (1L << requireIdBitMapping[node]), Arrays.copyOf(orChoice, orChoice.length));
-            int orIdx = nodeType[node]-2;
-            int indexInIndx = orIdIdxMapping[node];
-            int[] newOrChoice = Arrays.copyOf(orChoice, orChoice.length);
-            newOrChoice[orIdx] = 0;
-            return new VisitedSet(requiresBitset, newOrChoice);
-        }
-
-
-        @Override
-        public int compareTo(@NotNull DPTSP.VisitedSet o) {
-            if (this.requiresBitset != o.requiresBitset) return this.requiresBitset < o.requiresBitset ? 1 : -1;
-            for (int i = 0; i < this.orChoice.length; i++) {
-                if (this.orChoice[i] != o.orChoice[i]) return this.orChoice[i] < o.orChoice[i] ? 1 : -1;
-            }
-            return 0;
-        }
-    }
-
-    @AllArgsConstructor @Data @EqualsAndHashCode
-    public static class MemoKey implements Comparable<MemoKey> {
-        private VisitedSet set;
-        private int last;
-
-
-        @Override
-        public int compareTo(@NotNull DPTSP.MemoKey o) {
-            int cmp = set.compareTo(o.set);
-            if (cmp != 0) return cmp;
-            if (this.last != o.last) return this.last < o.last ? 1 : -1;
-            return 0;
-        }
-    }
-
-    @AllArgsConstructor @Data
-    public static class MemoElement {
-        private double cost;
-        private Vec3 pos;
-        private MemoKey prev;
-        private int openKey;
-    }
-
-    private boolean canVisit(MemoKey memoKey, int node) {
-        if (nodeType[node] == 0) return false; // don't visit.
-        if (!memoKey.set.canBeAdded(node)) return false;
-        if ((memoKey.set.requiresBitset & require[node]) != require[node]) return false;
-
-        boolean flag = or[node].length != 0;
-        for (int nodeID : or[node]) {
-            if (nodeType[nodeID] == 0 || memoKey.set.contains(nodeID)) {
-                flag = false;
-                break;
-            }
-        }
-        if (flag) return false;
-        return true;
-    }
-
-    private native int[] runTSPNative();
 
 
     public List<ActionDAGNode> reconstructPath() {
@@ -240,4 +199,5 @@ public class DPTSP {
         }
         return nodes;
     }
+
 }
