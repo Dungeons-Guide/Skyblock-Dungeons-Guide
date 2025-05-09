@@ -98,51 +98,7 @@ public class ActionRoute {
 
             long startttt = System.currentTimeMillis();
 
-
-            int minCount = 0;
-            boolean annealing = false;
-            for (int i = 0; i < dag.getCount(); i++) {
-                for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(i)) {
-                    minCount++;
-                    if (minCount > 100000) {
-                        annealing = true;
-                        break;
-                    }
-                }
-            }
-            ChatTransmitter.sendDebugChat("With "+minCount+" Sorts :: Annealing? "+annealing);
-
-            TSPCache tspCache = new TSPCache((GeneralRoomProcessor) dungeonRoom.getRoomProcessor(), dungeonRoom, Collections.EMPTY_LIST, Collections.singletonList(start));
-
-            RoomPresetPathPlanner pathPlanner = new RoomPresetPathPlanner(dungeonRoom.getContext().getPreset().getRoomPreset(dungeonRoom.getDungeonRoomInfo().getUuid()));
-
-            boolean finalAnnealing = annealing;
             try {
-//                List<TravelingSalesman.PartialCalculationResult> results = IntStream.range(0, dag.getCount())
-//                        .parallel()
-//                        .mapToObj((dagId) -> {
-//                            if (finalAnnealing)
-//                                return TravelingSalesman.annealing(dagId, dag, start, dungeonRoom, tspCache, pathPlanner);
-//                            else return TravelingSalesman.bruteforce(dagId, dag, start, dungeonRoom, tspCache, pathPlanner);
-//                        })
-//                        .collect(Collectors.toList());
-//                TravelingSalesman.PartialCalculationResult minCostRoute = results.stream()
-//                        .min(Comparator.comparingDouble(a -> a.getCost())).orElse(null);
-//
-//                int cnt = results.stream().mapToInt(a -> a.getSearchSpace()).sum();
-//
-//                if (minCostRoute == null) {
-//                    try {
-//                        Thread.sleep(30000);
-//                    } catch (InterruptedException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                }
-//
-//                this.dagId = minCostRoute == null ? 0 : minCostRoute.getDagId();
-//                order = minCostRoute == null ? new ArrayList<>() : minCostRoute.getRoute();
-//                ChatTransmitter.sendDebugChat("ActionRoute has " + cnt + " Possible subroutes :: Chosen route with " + (minCostRoute == null ? Double.POSITIVE_INFINITY : minCostRoute.getCost()) + " cost with Id " + dagId);
-
                 DPTSP dptsp = new DPTSP(dag, start, dungeonRoom);
                 order = dptsp.reconstructPath();
                 List<AbstractAction> nodes = order.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
@@ -150,15 +106,69 @@ public class ActionRoute {
                 actions = nodes;
                 current = 0;
                 ChatTransmitter.sendDebugChat("Pathfinding took " + (System.currentTimeMillis() - startttt) + "ms");
-
-
                 calculating = false;
-            } catch (OutOfMemoryError e) {
-                e.printStackTrace();
-                ChatTransmitter.sendDebugChat("OOM While calc");
+            } catch (Throwable t) {
+                t.printStackTrace();
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                int minCount = 0;
+                boolean annealing = false;
+                for (int i = 0; i < dag.getCount(); i++) {
+                    for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(i)) {
+                        minCount++;
+                        if (minCount > 100000) {
+                            annealing = true;
+                            break;
+                        }
+                    }
+                }
+                ChatTransmitter.sendDebugChat("With "+minCount+" Sorts :: Annealing? "+annealing);
+
+                TSPCache tspCache = new TSPCache((GeneralRoomProcessor) dungeonRoom.getRoomProcessor(), dungeonRoom, Collections.EMPTY_LIST, Collections.singletonList(start));
+
+                RoomPresetPathPlanner pathPlanner = new RoomPresetPathPlanner(dungeonRoom.getContext().getPreset().getRoomPreset(dungeonRoom.getDungeonRoomInfo().getUuid()));
+
+                boolean finalAnnealing = annealing;
+                try {
+                    List<TravelingSalesman.PartialCalculationResult> results = IntStream.range(0, dag.getCount())
+                            .parallel()
+                            .mapToObj((dagId) -> {
+                                if (finalAnnealing)
+                                    return TravelingSalesman.annealing(dagId, dag, start, dungeonRoom, tspCache, pathPlanner);
+                                else return TravelingSalesman.bruteforce(dagId, dag, start, dungeonRoom, tspCache, pathPlanner);
+                            })
+                            .collect(Collectors.toList());
+                    TravelingSalesman.PartialCalculationResult minCostRoute = results.stream()
+                            .min(Comparator.comparingDouble(a -> a.getCost())).orElse(null);
+
+                    int cnt = results.stream().mapToInt(a -> a.getSearchSpace()).sum();
+
+                    if (minCostRoute == null) {
+                        try {
+                            Thread.sleep(30000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                    this.dagId = minCostRoute == null ? 0 : minCostRoute.getDagId();
+                    order = minCostRoute == null ? new ArrayList<>() : minCostRoute.getRoute();
+                    ChatTransmitter.sendDebugChat("ActionRoute has " + cnt + " Possible subroutes :: Chosen route with " + (minCostRoute == null ? Double.POSITIVE_INFINITY : minCostRoute.getCost()) + " cost with Id " + dagId);
+
+                    List<AbstractAction> nodes = order.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
+                    nodes.add(new ActionComplete());
+                    actions = nodes;
+                    current = 0;
+                    ChatTransmitter.sendDebugChat("Pathfinding took " + (System.currentTimeMillis() - startttt) + "ms");
+
+
+                    calculating = false;
+                } catch (OutOfMemoryError e) {
+                    e.printStackTrace();
+                    ChatTransmitter.sendDebugChat("OOM While calc");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

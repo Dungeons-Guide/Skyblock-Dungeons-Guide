@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions.route;
 
+import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
@@ -67,6 +68,8 @@ public class DPTSP {
 
 
     private RoomState roomState;
+
+    private static boolean nativeLoaded = true;
 //
 //    // jni requires.
 //    public EvalRes evaluate(double x, double y, double z, int mechanic, int node) {
@@ -86,18 +89,30 @@ public class DPTSP {
 //    }
 
     public void solve() {
-        long handle = startCoroutine();
-        try {
-            while (true) {
-                roomState.setPlayerPos(new Vec3(getX(handle), getY(handle), getZ(handle)));
-                roomState.setOpenMechanicsBitset(getMech(handle));
-                double cost = everyNode[getNode(handle)].getAction().evalulateCost(roomState, dungeonRoom, cache, pathPlanner);
-                boolean res = resumeCoroutine(handle, roomState.getPlayerPos().xCoord, roomState.getPlayerPos().yCoord, roomState.getPlayerPos().zCoord, roomState.openMechanicsBitset, cost);
-                if (!res) break;
+
+        if (nativeLoaded) {
+            try {
+                long handle = startCoroutine();
+                try {
+                    while (true) {
+                        roomState.setPlayerPos(new Vec3(getX(handle), getY(handle), getZ(handle)));
+                        roomState.setOpenMechanicsBitset(getMech(handle));
+                        double cost = everyNode[getNode(handle)].getAction().evalulateCost(roomState, dungeonRoom, cache, pathPlanner);
+                        boolean res = resumeCoroutine(handle, roomState.getPlayerPos().xCoord, roomState.getPlayerPos().yCoord, roomState.getPlayerPos().zCoord, roomState.openMechanicsBitset, cost);
+                        if (!res) break;
+                    }
+                    solution = getResult(handle, dag.getActionDAGNode().getId());
+                } finally {
+                    destoryCoroutine(handle);
+                }
+            } catch (UnsatisfiedLinkError e) {
+                ChatTransmitter.addToQueue("§eDungeons Guide :: §fTSP Path Planner :: §cNative Library is not loaded. Falling back to old planners");
+                nativeLoaded = true;
+                throw e;
             }
-            solution = getResult(handle, dag.getActionDAGNode().getId());
-        } finally {
-            destoryCoroutine(handle);
+        } else {
+            ChatTransmitter.addToQueue("§eDungeons Guide :: §fTSP Path Planner :: §cNative Library is not loaded. Falling back to old planners");
+            throw new RuntimeException("");
         }
     }
 
@@ -202,5 +217,8 @@ public class DPTSP {
         }
         return nodes;
     }
+
+
+
 
 }
