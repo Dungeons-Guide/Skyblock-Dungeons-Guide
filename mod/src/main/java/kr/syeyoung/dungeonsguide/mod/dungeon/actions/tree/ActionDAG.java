@@ -127,6 +127,87 @@ public class ActionDAG {
         }
         return enabled;
     }
+    public int[] getNodeStatusAll() {
+        int[] enabled = new int[allNodes.size()];
+        // 0: disabled
+        // 1: completed
+        // 2: pruned due to parent completed
+        // 3: enabled
+        boolean[] visited = new boolean[allNodes.size()];
+        boolean[] complete = new boolean[allNodes.size()];
+        Stack<Integer> stack = new Stack<>();
+        stack.add(allNodes.size() - 1);
+        while (!stack.isEmpty()) {
+            int idx = stack.peek();
+            ActionDAGNode current = allNodes.get(idx);
+            boolean found = false;
+            List<ActionDAGNode> ummmdfssearch = current.getAllChildren();
+            for (int i = 0; i <  ummmdfssearch.size(); i++) {
+                ActionDAGNode next = ummmdfssearch.get(i);
+                if (visited[next.getId()]) continue;
+                stack.push(next.getId());
+                found = true;
+                break;
+            }
+            if (found) continue;
+
+            idx = stack.pop();
+            enabled[idx] = 3;
+            visited[idx] = true;
+
+            if (current.getAction().isComplete(dungeonRoom)) {
+                if (current.getAction().childComplete()) {
+                    // check if children are complete
+                    boolean smh = false;
+                    for (ActionDAGNode potentialRequire : current.getRequire()) {
+                        if (!complete[potentialRequire.getId()]) {
+                            smh = true;
+                            break;
+                        }
+                    }
+                    if (!smh) {
+                        smh = !current.getOr().isEmpty();
+                        for (ActionDAGNode potentialRequire : current.getOr()) {
+                            if (complete[potentialRequire.getId()]) {
+                                smh = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (smh) {
+                        complete[idx] = false;
+                    } else {
+                        complete[idx] = true;
+                        enabled[idx] = 1;
+                    }
+                } else {
+                    complete[idx] = true;
+                    enabled[idx] = 1;
+                }
+            }
+        }
+        Queue<Integer> toVisit = new LinkedList<>();
+        toVisit.add(allNodes.size() - 1);
+        while (!toVisit.isEmpty()) {
+            int node = toVisit.poll();
+            boolean smh = allNodes.get(node).getRequiredBy().size() == 0;
+            for (ActionDAGNode actionDAGNode : allNodes.get(node).getRequiredBy()) {
+                if (enabled[actionDAGNode.getId()] == 3) {
+                    smh = true;
+                    break;
+                }
+            }
+            if (!smh) {
+                enabled[node] = 2;
+            }
+
+            for (ActionDAGNode potentialRequire : allNodes.get(node).getAllChildren()) {
+                toVisit.add(potentialRequire.getId());
+            }
+        }
+        return enabled;
+    }
+
 
 
     public class TopologicalSortIterator implements Iterator<List<ActionDAGNode>> {

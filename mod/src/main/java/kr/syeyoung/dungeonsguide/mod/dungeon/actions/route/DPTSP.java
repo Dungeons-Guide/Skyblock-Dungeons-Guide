@@ -87,20 +87,23 @@ public class DPTSP {
 
     public void solve() {
         long handle = startCoroutine();
-        while (true) {
-            roomState.setPlayerPos(new Vec3(getX(handle), getY(handle), getZ(handle)));
-            roomState.setOpenMechanicsBitset(getMech(handle));
-            double cost = everyNode[getNode(handle)].getAction().evalulateCost(roomState, dungeonRoom,cache, pathPlanner);
-            boolean res = resumeCoroutine(handle, roomState.getPlayerPos().xCoord, roomState.getPlayerPos().yCoord, roomState.getPlayerPos().zCoord, roomState.openMechanicsBitset, cost);
-            if (res) break;
+        try {
+            while (true) {
+                roomState.setPlayerPos(new Vec3(getX(handle), getY(handle), getZ(handle)));
+                roomState.setOpenMechanicsBitset(getMech(handle));
+                double cost = everyNode[getNode(handle)].getAction().evalulateCost(roomState, dungeonRoom, cache, pathPlanner);
+                boolean res = resumeCoroutine(handle, roomState.getPlayerPos().xCoord, roomState.getPlayerPos().yCoord, roomState.getPlayerPos().zCoord, roomState.openMechanicsBitset, cost);
+                if (!res) break;
+            }
+            solution = getResult(handle, dag.getActionDAGNode().getId());
+        } finally {
+            destoryCoroutine(handle);
         }
-        solution = getResult(handle, dag.getActionDAGNode().getId());
-        destoryCoroutine(handle);
     }
 
     private void setup() {
         List<ActionDAGNode> dagNodeList = new ArrayList<>();
-        int[] nodeStatus = dag.getNodeStatus(0);
+        int[] nodeStatus = dag.getNodeStatusAll();
 
 
         requireIdBitMapping = new int[dag.getAllNodes().size()];
