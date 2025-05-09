@@ -17,4 +17,10 @@ public class NeoRouteDisplayEngineLineProperties {
     private boolean enableBeacon;
     private AColor beaconColor;
     private AColor beamColor;
+
+    private boolean enableEtherwarpTracer;
+    private AColor etherwarpTracerColor;
+    private float etherwarpTracerWidth;
+    private double etherwarpTracerDist;
+    private boolean etherwarpTracerDisableEtherwarpRoute;
 }

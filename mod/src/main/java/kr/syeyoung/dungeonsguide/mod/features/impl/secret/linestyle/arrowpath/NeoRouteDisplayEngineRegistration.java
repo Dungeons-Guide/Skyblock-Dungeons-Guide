@@ -47,6 +47,15 @@ public class NeoRouteDisplayEngineRegistration implements PathDisplayEngineSetti
             addParameter("beacon", new FeatureParameter<Boolean>("beacon", "Enable Beacons", "Enable beacons for pathfind line targets",  true, TCBoolean.INSTANCE));
             addParameter("beamColor", new FeatureParameter<AColor>("beamColor", "Beam Color", "Color of the beacon beam", new AColor(0x77FF0000, true), TCAColor.INSTANCE));
             addParameter("beamTargetColor", new FeatureParameter<AColor>("beamTargetColor", "Target Color", "Color of the target", new AColor(0x33FF0000, true), TCAColor.INSTANCE));
+
+            addParameter("etherwarpTracer", new FeatureParameter<Boolean>("etherwarpTracer", "Enable Etherwarp Tracer", "Enable tracer for etherwarps",  true, TCBoolean.INSTANCE));
+            addParameter("etherwarpTracerColor", new FeatureParameter<AColor>("etherwarpTracerColor", "Etherwarp Tracer Color", "Color of the tracer line", new AColor(0xFFFFFFFF, true), TCAColor.INSTANCE));
+            addParameter("etherwarpTracerWidth", new FeatureParameter<Double>("etherwarpTracerWidth", "Etherwarp Tracer Width", "Thickness of the tracer line",3.0, TCDouble.INSTANCE)
+                    .setWidgetGenerator((param) -> new ParameterItem(param, new TCDouble.DoubleEditWidget(param, 1, Double.POSITIVE_INFINITY))));
+            addParameter("etherwarpTracerDist", new FeatureParameter<Double>("etherwarpTracerDist", "Etherwarp Tracer Dist", "When to trigger tracer (sq dist)",3.0, TCDouble.INSTANCE)
+                    .setWidgetGenerator((param) -> new ParameterItem(param, new TCDouble.DoubleEditWidget(param, 0.01, Double.POSITIVE_INFINITY))));
+            addParameter("etherwarpTracerDisableEtherwarpRoute", new FeatureParameter<Boolean>("etherwarpTracerDisableEtherwarpRoute", "Disable etherwarp icon display when tracer is visible", "Disable etherwarp icon display when tracer is visible",  false, TCBoolean.INSTANCE));
+
         }
 
         @Override
@@ -65,6 +74,11 @@ public class NeoRouteDisplayEngineRegistration implements PathDisplayEngineSetti
                     .enableBeacon(isBeacon())
                     .beamColor(getBeamColor())
                     .beaconColor(getBeaconColor())
+                    .etherwarpTracerWidth(getEtherwarpTracerWidth())
+                    .etherwarpTracerColor(getEtherwarpTracerColor())
+                    .etherwarpTracerDist(getEtherwarpTracerDist())
+                    .etherwarpTracerDisableEtherwarpRoute(disableEtherwarpPath())
+                    .enableEtherwarpTracer(isEtherwarpTracer())
                     .build();
         }
 
@@ -105,6 +119,13 @@ public class NeoRouteDisplayEngineRegistration implements PathDisplayEngineSetti
             return this.<AColor>getParameter("beamColor").getValue();
         }
 
+        public AColor getEtherwarpTracerColor() {
+            return this.<AColor>getParameter("etherwarpTracerColor").getValue();
+        }
+        public float getEtherwarpTracerWidth() {return this.<Double>getParameter("etherwarpTracerWidth").getValue().floatValue(); }
+        public double getEtherwarpTracerDist() {return this.<Double>getParameter("etherwarpTracerDist").getValue(); }
+        public boolean isEtherwarpTracer() {return this.<Boolean>getParameter("etherwarpTracer").getValue(); }
+        public boolean disableEtherwarpPath() {return this.<Boolean>getParameter("etherwarpTracerDisableEtherwarpRoute").getValue(); }
 
         @Override
         public PathDisplayEngineSettingRegistration<NeoRouteDisplayEngineLineProperties> getRegistration() {

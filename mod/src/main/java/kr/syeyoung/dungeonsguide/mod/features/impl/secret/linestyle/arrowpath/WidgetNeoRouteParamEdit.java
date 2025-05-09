@@ -34,8 +34,6 @@ import java.util.function.Function;
 
 public class WidgetNeoRouteParamEdit extends AnnotatedImportOnlyWidget {
 
-    @Bind(variableName = "beaconToggle")
-    public final BindableAttribute<String> beaconToggle = new BindableAttribute<>(String.class, "true");
 
     @Bind(variableName = "linecolor")
     public final BindableAttribute<Widget> linecolor = new BindableAttribute<>(Widget.class);
@@ -50,7 +48,8 @@ public class WidgetNeoRouteParamEdit extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "destinationTextSize")
     public final BindableAttribute<Widget> destinationTextSize = new BindableAttribute<>(Widget.class);
 
-
+    @Bind(variableName = "beaconToggle")
+    public final BindableAttribute<String> beaconToggle = new BindableAttribute<>(String.class, "true");
     @Bind(variableName = "beaconEnable")
     public final BindableAttribute<Widget> beaconEnable = new BindableAttribute<>(Widget.class);
     @Bind(variableName = "beamcolor")
@@ -58,6 +57,19 @@ public class WidgetNeoRouteParamEdit extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "targetcolor")
     public final BindableAttribute<Widget> targetcolor = new BindableAttribute<>(Widget.class);
 
+
+    @Bind(variableName = "etherwarpTracerToggle")
+    public final BindableAttribute<String> etherwarpTracerToggle = new BindableAttribute<>(String.class, "true");
+    @Bind(variableName = "etherwarpTracerEnable")
+    public final BindableAttribute<Widget> etherwarpTracerEnable = new BindableAttribute<>(Widget.class);
+    @Bind(variableName = "etherwarpTracerColor")
+    public final BindableAttribute<Widget> etherwarpTracerColor = new BindableAttribute<>(Widget.class);
+    @Bind(variableName = "etherwarpTracerWidth")
+    public final BindableAttribute<Widget> etherwarpTracerWidth = new BindableAttribute<>(Widget.class);
+    @Bind(variableName = "etherwarpTracerTriggerDist")
+    public final BindableAttribute<Widget> etherwarpTracerTriggerDist = new BindableAttribute<>(Widget.class);
+    @Bind(variableName = "disableTexturedPath")
+    public final BindableAttribute<Widget> disableTexturedPath = new BindableAttribute<>(Widget.class);
 
 
     private <T> Widget generateConfigWidget(NeoRouteDisplayEngineRegistration.ArrowPathDisplayEngineSetting lineProperties, String key, Function<FeatureParameter<T>, Widget> converter) {
@@ -68,7 +80,6 @@ public class WidgetNeoRouteParamEdit extends AnnotatedImportOnlyWidget {
     public WidgetNeoRouteParamEdit(NeoRouteDisplayEngineRegistration.ArrowPathDisplayEngineSetting lineProperties) {
         super(new ResourceLocation("dungeonsguide:gui/features/lineProperties/styles/neoroute.gui"));
 
-        beaconToggle.setValue(lineProperties.isBeacon() ? "true": "false");
 
         linecolor.setValue(this.generateConfigWidget(lineProperties, "lineColor", TCAColor.ColorEditWidget::new));
         arrowcolor.setValue(this.generateConfigWidget(lineProperties, "arrowColor", TCAColor.ColorEditWidget::new));
@@ -77,12 +88,23 @@ public class WidgetNeoRouteParamEdit extends AnnotatedImportOnlyWidget {
         animationSpeed.setValue(this.<Double>generateConfigWidget(lineProperties, "animationSpeed", (a) -> new TCDouble.DoubleEditWidget(a, 0, Double.POSITIVE_INFINITY)));
         destinationTextSize.setValue(this.<Double>generateConfigWidget(lineProperties, "destinationSize", (a) -> new TCDouble.DoubleEditWidget(a, 0, Double.POSITIVE_INFINITY)));
 
+        beaconToggle.setValue(lineProperties.isBeacon() ? "true": "false");
         beaconEnable.setValue(this.generateConfigWidget(lineProperties, "beacon", TCBoolean.BooleanEditWidget::new));
         beamcolor.setValue(this.generateConfigWidget(lineProperties, "beamColor", TCAColor.ColorEditWidget::new));
         targetcolor.setValue(this.generateConfigWidget(lineProperties, "beamTargetColor", TCAColor.ColorEditWidget::new));
 
         ((TCBoolean.BooleanEditWidget)beaconEnable.getValue()).isEnabled.addOnUpdate((old, neu) -> {
             beaconToggle.setValue(neu ? "true" : "false");
+        });
+
+        etherwarpTracerToggle.setValue(lineProperties.isEtherwarpTracer() ? "true" : "false");
+        etherwarpTracerEnable.setValue(this.generateConfigWidget(lineProperties, "etherwarpTracer", TCBoolean.BooleanEditWidget::new));
+        etherwarpTracerColor.setValue(this.generateConfigWidget(lineProperties, "etherwarpTracerColor", TCAColor.ColorEditWidget::new));
+        etherwarpTracerWidth.setValue(this.<Double>generateConfigWidget(lineProperties, "etherwarpTracerWidth", (a) -> new TCDouble.DoubleEditWidget(a, 1, Double.POSITIVE_INFINITY)));
+        etherwarpTracerTriggerDist.setValue(this.<Double>generateConfigWidget(lineProperties, "etherwarpTracerDist",  (a) -> new TCDouble.DoubleEditWidget(a, 0.01, Double.POSITIVE_INFINITY)));
+        disableTexturedPath.setValue(this.generateConfigWidget(lineProperties, "etherwarpTracerDisableEtherwarpRoute", TCBoolean.BooleanEditWidget::new));
+        ((TCBoolean.BooleanEditWidget)etherwarpTracerEnable.getValue()).isEnabled.addOnUpdate((old, neu) -> {
+            etherwarpTracerToggle.setValue(neu ? "true" : "false");
         });
     }
 }

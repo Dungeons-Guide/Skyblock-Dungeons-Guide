@@ -254,6 +254,17 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             if (poses != null){
                 drawLinesPathfindNode(context.segment, settings.getBackground(), settings.getArrow(), partialTicks);
 
+                Vec3 pos = Minecraft.getMinecraft().thePlayer.getPositionVector();
+                if (settings.isEnableEtherwarpTracer()) {
+                    for (PathSegment segment : context.segment) {
+                        if (segment.nodeType == PathfindResult.PathfindNode.NodeType.ETHERWARP && segment.from.squareDistanceTo(pos) < settings.getEtherwarpTracerDist()) {
+                            RenderUtils.drawLinesVec3(Arrays.asList(
+                                    Minecraft.getMinecraft().thePlayer.getPositionEyes(partialTicks),
+                                    segment.to.addVector(0, -0.5, 0)), settings.getEtherwarpTracerColor(), settings.getEtherwarpTracerWidth(), partialTicks, false);
+                        }
+                    }
+                }
+
                 PathfindResult.PathfindNode last = null;
                 for (PathfindResult.PathfindNode pose : poses.getNodeList()) {
                     if (pose.getType() != null &&
@@ -505,7 +516,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
     private static final ResourceLocation arrow = new ResourceLocation("dungeonsguide:textures/arrow.png");
     public static final ResourceLocation abilities = new ResourceLocation("dungeonsguide:textures/features/precalclist/abilities.png");
-    public static void drawIcon(int iconIdx, PathSegment segment, AColor colour, AColor texture, float partialTicks, double animate) {
+    public static void drawIcon(int iconIdx, PathSegment segment, AColor colour, AColor texture, float partialTicks, double animate, boolean path) {
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.color(1,1,1,1);
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
@@ -518,7 +529,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         if (!flag) {
             GlStateManager.disableDepth();
         }
-        {
+        if (path){
             Vec3 normal;
             if (flag) {
                 normal = dir.crossProduct(renderManager.livingPlayer.getLookVec()).normalize();
@@ -590,21 +601,17 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         GlStateManager.enableDepth();
         GlStateManager.popMatrix();
 
-
-
-        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x_fix, y_fix, z_fix);
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.disableCull();
 
+        GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
+        GL11.glPolygonOffset(-1.0f, -1.0f);
         BlockPos pos = new BlockPos(Math.floor(segment.to.xCoord), Math.floor(segment.to.yCoord) -1 , Math.floor(segment.to.zCoord));
-        RenderUtils.highlightBox(Blocks.stone.getSelectedBoundingBox(null, pos).expand(0.003, 0.003, 0.003), Color.green, partialTicks, true);
+        RenderUtils._highlightBlock(pos, Color.green, partialTicks, true);
+        GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
 
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
@@ -689,10 +696,14 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             int toIdx = i; i--;
 
             PathfindResult.PathfindNode.NodeType nodeType = poses.get(st).nodeType;
-            if (nodeType == PathfindResult.PathfindNode.NodeType.ETHERWARP)
-                drawIcon(40, poses.get(st), colour, texture, partialTicks, animate);
-            else if (nodeType == PathfindResult.PathfindNode.NodeType.ENDERPEARL)
-                drawIcon(41, poses.get(st), colour, texture, partialTicks, animate);
+            if (nodeType == PathfindResult.PathfindNode.NodeType.ETHERWARP) {
+                boolean path = true;
+                if (settings.isEtherwarpTracerDisableEtherwarpRoute() && settings.isEnableEtherwarpTracer()) {
+                    if (Minecraft.getMinecraft().thePlayer.getPositionVector().squareDistanceTo(poses.get(st).from) < settings.getEtherwarpTracerDist()) path = false;
+                }
+                drawIcon(40, poses.get(st), colour, texture, partialTicks, animate, path);
+            } else if (nodeType == PathfindResult.PathfindNode.NodeType.ENDERPEARL)
+                drawIcon(41, poses.get(st), colour, texture, partialTicks, animate, true);
             else
                 drawLinesNormal(poses, st, toIdx, poses.get(st).nodeType, colour, texture, partialTicks, animate);
         }

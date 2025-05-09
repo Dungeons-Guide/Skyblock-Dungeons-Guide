@@ -51,4 +51,37 @@
         </row>
         <size width="0" height="0" slot="false"/>
     </SelectiveContainer>
+    <size height="5"/>
+
+    <row crossAlign="CENTER">
+        <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Enable Etherwarp Tracer (tracer line to etherwarp target)" color="#FFFFFF00"/></align></flexible>
+        <slot bind:child="etherwarpTracerEnable"/>
+    </row>
+    <size height="5"/>
+    <SelectiveContainer bind:visible="etherwarpTracerToggle">
+        <row slot="true">
+            <size width="10"/>
+            <flexible>
+                <WrapGrid minimumWidth="200" gap="5">
+                    <row crossAlign="CENTER">
+                        <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Etherwarp Tracer Color" color="#FFFFFFFF"/></align></flexible>
+                        <flexible fit="TIGHT"><slot bind:child="etherwarpTracerColor"/></flexible>
+                    </row>
+                    <row crossAlign="CENTER">
+                        <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Etherwarp Tracer Thickness" color="#FFFFFFFF"/></align></flexible>
+                        <flexible fit="TIGHT"><slot bind:child="etherwarpTracerWidth"/></flexible>
+                    </row>
+                    <row crossAlign="CENTER">
+                        <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Etherwarp Tracer Trigger Dist" color="#FFFFFFFF"/></align></flexible>
+                        <flexible fit="TIGHT"><slot bind:child="etherwarpTracerTriggerDist"/></flexible>
+                    </row>
+                    <row crossAlign="CENTER">
+                        <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Disable textured path while visible" color="#FFFFFFFF"/></align></flexible>
+                        <flexible fit="TIGHT"><slot bind:child="disableTexturedPath"/></flexible>
+                    </row>
+                </WrapGrid>
+            </flexible>
+        </row>
+        <size width="0" height="0" slot="false"/>
+    </SelectiveContainer>
 </col>
