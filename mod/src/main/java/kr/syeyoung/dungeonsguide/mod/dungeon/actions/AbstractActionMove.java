@@ -174,6 +174,7 @@ public abstract class AbstractActionMove extends AbstractAction {
 
         if (cost == -2) {
             PathfindPrecalculation precalculation = pathPlanner.getPrecalcByHash(hash);
+            if (precalculation == null) return Double.POSITIVE_INFINITY;
             try {
                 tspCache.addToCache(precalculation);
             } catch (IOException e) { throw new RuntimeException(e); }

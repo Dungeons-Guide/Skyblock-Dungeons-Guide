@@ -49,15 +49,19 @@ public class PrecalculatedStonk {
     @Getter
     private final List<String> dependentRouteBlocker;
     @Getter
-    private final OffsetPoint target;
+    private final OffsetPoint[] targets;
 
     public PrecalculatedStonk(
             @JsonProperty("dependentRouteBlocker") List<String> dependentRouteBlocker,
             @JsonProperty("spots") List<PossibleClickingSpot>[] spots,
+            @JsonProperty("targets") OffsetPoint[] targets,
             @JsonProperty("target") OffsetPoint target) {
         this.spots = spots;
         this.dependentRouteBlocker = dependentRouteBlocker;
-        this.target = target;
+        if (target != null)
+            this.targets = new OffsetPoint[] {target};
+        else
+            this.targets = targets;
     }
 
     public List<PossibleClickingSpot> getPrecalculatedStonk(Collection<String> openBlockers) {
@@ -70,7 +74,7 @@ public class PrecalculatedStonk {
         return spots[spotIdx];
     }
 
-    public static PrecalculatedStonk createOne(OffsetPoint offsetPoint, DungeonRoomInfo dri) {
+    public static PrecalculatedStonk createOne(DungeonRoomInfo dri, OffsetPoint... offsetPoint) {
         List<String> calculateFor = new ArrayList<>();
 
         // create fake room.
@@ -81,13 +85,15 @@ public class PrecalculatedStonk {
             if (value.getValue() instanceof DungeonTombState.DungeonTombData) continue;
             if (value.getValue() instanceof DungeonBreakableWallState.DungeonBreakableWallData) continue; // well... let's just assume they don't exist lol
 //            if (value.getValue() instanceof DungeonDoorState) continue; // welll.... closable door is not something oyu wanna work with
-            for (OffsetPoint blockedPoint : ((WorldMutatingMechanicData) value.getValue()).blockedPoints()) {
-                int xDiff = Math.abs(blockedPoint.getX() - offsetPoint.getX());
-                int yDiff = Math.abs(blockedPoint.getY() - offsetPoint.getY());
-                int zDiff = Math.abs(blockedPoint.getZ() - offsetPoint.getZ());
-                if (Math.max(xDiff, Math.max(yDiff, zDiff)) <= 5) {
-                    calculateFor.add(value.getKey());
-                    break;
+            label: for (OffsetPoint point : offsetPoint) {
+                for (OffsetPoint blockedPoint : ((WorldMutatingMechanicData) value.getValue()).blockedPoints()) {
+                    int xDiff = Math.abs(blockedPoint.getX() - point.getX());
+                    int yDiff = Math.abs(blockedPoint.getY() - point.getY());
+                    int zDiff = Math.abs(blockedPoint.getZ() - point.getZ());
+                    if (Math.max(xDiff, Math.max(yDiff, zDiff)) <= 5) {
+                        calculateFor.add(value.getKey());
+                        break label;
+                    }
                 }
             }
 
@@ -98,10 +104,15 @@ public class PrecalculatedStonk {
             for (int i1 = 0; i1 < calculateFor.size(); i1++) {
                 if (((i >> i1) & 0x1) > 0) included.add(calculateFor.get(i1));
             }
+            List<List<PossibleClickingSpot>> list = new ArrayList<>();
+            for (OffsetPoint point : offsetPoint) {
+                list.add(RaytraceHelper.raycast(new DRIWorld(dri, included), new BlockPos(point.getX(), point.getY()+70, point.getZ())));
+            }
+            List<PossibleClickingSpot> res = list.size() == 1 ? list.get(0) : RaytraceHelper.combine(list);
 
-            spots[i] = RaytraceHelper.raycast(new DRIWorld(dri, included), new BlockPos(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()));
+            spots[i] = res;
         }
-        return new PrecalculatedStonk(calculateFor, spots, offsetPoint);
+        return new PrecalculatedStonk(calculateFor, spots, offsetPoint, null);
     }
 
     public void render(float partialTicks, DungeonRoom dungeonRoom) {

@@ -41,7 +41,7 @@ public class ActionUtils {
         AtomicAction.Builder build(AtomicAction.Builder builder) throws PathfindImpossibleException;
     }
 
-    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, List<PossibleClickingSpot> spots, OffsetPoint target, ActionDAGAccepter eachBuild, boolean guard, AlgorithmSetting settings) throws PathfindImpossibleException {
+    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, List<PossibleClickingSpot> spots, OffsetPoint[] target, ActionDAGAccepter eachBuild, boolean guard, AlgorithmSetting settings) throws PathfindImpossibleException {
         spots = spots.stream().filter(a -> {
             {
                 RequiredTool pickaxe = a.getTools()[0];
@@ -125,15 +125,17 @@ public class ActionUtils {
 //                builder1 = builder.or(new ActionStupidGuard());
 
 
+            AtomicAction.Builder builder2 = new AtomicAction.Builder();
+            for (OffsetPoint offsetPoint : target) {
+                builder2.requires(integerListEntry.getKey().right ? new ActionStonkClick(offsetPoint) : new ActionClick(offsetPoint));
+            }
             if (integerListEntry.getKey().right) {
-                builder1 = builder1.or(new AtomicAction.Builder()
-                        .requires(new ActionStonkClick(target))
+                builder1 = builder1.or(builder2
                         .requires(new ActionMove(integerListEntry.getValue(), dungeonRoom))
                         .build("MoveAndStonkClick"), settings);
                 last = eachBuild.build(builder1);
             } else {
-                builder1 = builder1.or(new AtomicAction.Builder()
-                        .requires(new ActionClick(target))
+                builder1 = builder1.or(builder2
                         .requires(new ActionMove(integerListEntry.getValue(), dungeonRoom))
                         .build("MoveAndClick"), settings);
                 last = eachBuild.build(builder1);
@@ -170,7 +172,7 @@ public class ActionUtils {
                 }
             }
             last = buildActionMoveAndClick(builder, dungeonRoom,
-                    precalculatedStonk.getPrecalculatedStonk(newBlockers), precalculatedStonk.getTarget(),
+                    precalculatedStonk.getPrecalculatedStonk(newBlockers), precalculatedStonk.getTargets(),
                     builder1 -> {
                         for (String newBlocker : newBlockers) {
                             if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonBreakableWallState) continue;
@@ -216,7 +218,7 @@ public class ActionUtils {
                 dungeonRoom.getDungeonRoomInfo().getWorld() != null ?
                         new DRIWorld(dungeonRoom.getDungeonRoomInfo(), openBlockers) : dungeonRoom.getCachedWorld(), new BlockPos(target.getX(), target.getY(), target.getZ())
         ));
-        return buildActionMoveAndClick(builder, dungeonRoom, spots, target, eachBuild, false, algorithmSetting);
+        return buildActionMoveAndClick(builder, dungeonRoom, spots, new OffsetPoint[]{target}, eachBuild, false, algorithmSetting);
     }
 
 

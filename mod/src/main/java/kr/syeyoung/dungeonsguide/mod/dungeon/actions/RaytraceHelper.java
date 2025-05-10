@@ -53,6 +53,61 @@ public class RaytraceHelper {
     public static List<PossibleClickingSpot> raycast(World w, BlockPos target) {
         return raycast(w, target, (a,b,c) -> RaytraceHelper.canStand(w,a,b,c));
     }
+
+    public static List<PossibleClickingSpot> combine(List<List<PossibleClickingSpot>> possibleClickingSpotList) {
+        Map<OffsetVec3, List<PossibleClickingSpot>> clickingSpot = new HashMap<>();
+        for (List<PossibleClickingSpot> possibleClickingSpots : possibleClickingSpotList) {
+            for (PossibleClickingSpot possibleClickingSpot : possibleClickingSpots) {
+                for (OffsetVec3 offsetVec3 : possibleClickingSpot.getOffsetPointSet()) {
+                    clickingSpot.computeIfAbsent(offsetVec3, (a) -> new ArrayList<>())
+                            .add(possibleClickingSpot);
+                }
+            }
+        }
+        clickingSpot.entrySet().removeIf(elem -> elem.getValue().size() != possibleClickingSpotList.size());
+
+
+        Map<OffsetVec3, RequiredTool[]> actualReq = new HashMap<>();
+        Map<OffsetVec3, Boolean> stonk = new HashMap<>();
+
+        for (Map.Entry<OffsetVec3, List<PossibleClickingSpot>> offsetVec3ListEntry : clickingSpot.entrySet()) {
+
+            RequiredTool[] tools = new RequiredTool[3];
+            boolean stonkingReq = offsetVec3ListEntry.getValue().get(0).isStonkingReq();
+            for (PossibleClickingSpot possibleClickingSpot : offsetVec3ListEntry.getValue()) {
+                stonkingReq |= possibleClickingSpot.isStonkingReq();
+                for (int i = 0; i < tools.length; i++) {
+                    if (tools[i] == null) {
+                        tools[i] = possibleClickingSpot.getTools()[i];
+                        continue;
+                    }
+                    if (possibleClickingSpot.getTools()[i] == null) continue;
+
+                    tools[i].setBreakingPower(Math.max(tools[i].getBreakingPower(), possibleClickingSpot.getTools()[i].getBreakingPower()));
+                    tools[i].setHarvestLv(Math.max(tools[i].getHarvestLv(), possibleClickingSpot.getTools()[i].getHarvestLv()));
+                }
+            }
+            actualReq.put(offsetVec3ListEntry.getKey(), tools);
+            stonk.put(offsetVec3ListEntry.getKey(), stonkingReq);
+        }
+
+
+        List<PossibleClickingSpot> spots = actualReq.entrySet().stream()
+                .collect(Collectors.<Map.Entry<OffsetVec3, RequiredTool[]>, String>groupingBy(a -> {
+                    return Arrays.stream(a.getValue())
+                            .map(b -> b == null ? "n" : b.getBreakingPower() + ":" + b.getHarvestLv()).collect(Collectors.joining(";"))+";"+stonk.get(a.getKey());
+                })).values().stream()
+                .map(entries -> {
+                    return new PossibleClickingSpot(
+                            entries.get(0).getValue(),
+                            entries.stream().map(Map.Entry::getKey)
+                                    .collect(Collectors.toList()),
+                            stonk.get(entries.get(0).getKey()), 0
+                    );
+                }).collect(Collectors.toList());
+        return doClustering(spots);
+    }
+
     public static List<PossibleClickingSpot> raycast(World w, BlockPos target, CalculateIsBlocked calculateIsBlocked) {
         IBlockState targetBlockState = w.getBlockState(target);
         AxisAlignedBB bb = targetBlockState.getBlock().getSelectedBoundingBox(w, target);

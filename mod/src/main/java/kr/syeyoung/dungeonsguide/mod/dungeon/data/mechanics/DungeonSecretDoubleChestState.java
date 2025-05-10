@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISecret;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 public class DungeonSecretDoubleChestState implements DungeonMechanicState, ISecret {
@@ -112,26 +114,37 @@ public class DungeonSecretDoubleChestState implements DungeonMechanicState, ISec
         if (!"found".equalsIgnoreCase(action))
             throw new PathfindImpossibleException(action + " is not valid state for secret");
         if (action.equals("found") && getSecretStatus(room) == SecretStatus.FOUND) return;
-        builder = builder.requires(new AtomicAction.Builder()
-                .requires(new ActionClick(data.secretPoint))
-                .requires(new ActionClick(data.secretPoint2))
-                .requires(new ActionMoveNearestAir(data.secretPoint))
-                .build("MoveAndClick"), algorithmSetting);
 
-        boolean doneDoor = false;
-        for (String str : data.preRequisite) {
-            if (room.getMechanics().get(str) instanceof DungeonOnewayDoorState) {
-                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
-                doneDoor = true;
-            }
-        }
-        if (doneDoor)
-            builder = builder.requires(new ActionRoot(), algorithmSetting);
-        for (String str : data.preRequisite) {
-            if (str.isEmpty()) continue;
-            if (room.getMechanics().get(str) instanceof DungeonOnewayDoorState) continue;
-            builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
-        }
+
+        List<String> requiredRequisite = data.preRequisite.stream().filter(a -> {
+            return room.getMechanics().get(a.split(":")[0]) instanceof DungeonOnewayDoorState;
+        }).collect(Collectors.toList());
+        List<String> optionalRequisite = data.preRequisite.stream().filter(a -> {
+            return !requiredRequisite.contains(a);
+        }).collect(Collectors.toList());
+
+
+        if (data.secretCache != null)
+            ActionUtils.buildActionMoveAndClick(builder, room, data.secretCache, optionalRequisite, requiredRequisite, algorithmSetting);
+        else
+            ActionUtils.buildActionMoveAndClick(builder, room, data.secretPoint, builder1 -> {
+                boolean doneDoor = false;
+                for (String str : data.preRequisite) {
+                    if (room.getMechanics().get(str.split(":")[0]) instanceof DungeonOnewayDoorState) {
+                        builder1.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
+                        doneDoor = true;
+                    }
+                }
+                if (doneDoor)
+                    builder1 = builder1.requires(new ActionRoot(), algorithmSetting);
+                for (String str : data.preRequisite) {
+                    if (str.isEmpty()) continue;
+                    if (room.getMechanics().get(str) instanceof DungeonOnewayDoorState) continue;
+                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]), algorithmSetting);
+                }
+                return null;
+            }, algorithmSetting);
+
     }
 
     @Override
@@ -196,6 +209,7 @@ public class DungeonSecretDoubleChestState implements DungeonMechanicState, ISec
         private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
         private OffsetPoint secretPoint2 = new OffsetPoint(0, 0, 0);
         private List<String> preRequisite = new ArrayList<String>();
+        private PrecalculatedStonk secretCache;
 
 
         public DungeonSecretDoubleChestData() {
@@ -209,7 +223,9 @@ public class DungeonSecretDoubleChestState implements DungeonMechanicState, ISec
         public DungeonSecretDoubleChestData clone() throws CloneNotSupportedException {
             DungeonSecretDoubleChestData data = new DungeonSecretDoubleChestData();
             data.secretPoint = (OffsetPoint) secretPoint.clone();
+            data.secretPoint2 = (OffsetPoint) secretPoint2.clone();
             data.preRequisite = new ArrayList<String>(preRequisite);
+            data.secretCache = secretCache;
             ;
             return data;
         }

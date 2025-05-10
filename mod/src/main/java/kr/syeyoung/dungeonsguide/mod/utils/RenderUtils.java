@@ -24,10 +24,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -878,6 +875,17 @@ public class RenderUtils {
                 TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(pos);
                 TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                 specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
+
+                for (EnumFacing value : EnumFacing.HORIZONTALS) {
+                    BlockPos newPos = pos.add(value.getDirectionVec());
+                    iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(newPos);
+
+                    if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
+                        tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(newPos);
+                        specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
+                        specialRenderer.renderTileEntityAt(tileEntity, newPos.getX(), newPos.getY(), newPos.getZ(), partialTicks, -1);
+                    }
+                }
             } else {
                 blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
                         blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, pos),
@@ -961,6 +969,17 @@ public class RenderUtils {
                 TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(pos);
                 TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                 specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
+
+                for (EnumFacing value : EnumFacing.HORIZONTALS) {
+                    BlockPos newPos = pos.add(value.getDirectionVec());
+                    iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(newPos);
+
+                    if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
+                        tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(newPos);
+                        specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
+                        specialRenderer.renderTileEntityAt(tileEntity, newPos.getX(), newPos.getY(), newPos.getZ(), partialTicks, -1);
+                    }
+                }
             } else {
                 blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
                         blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, pos),
