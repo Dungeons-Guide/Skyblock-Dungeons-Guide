@@ -107,7 +107,7 @@ public class TSPCacheRegistry {
     public void loadPreset(PathfindPreset preset) {
         for (RoomPreset value : preset.getPresets().values()) {
             if (mapping.containsKey(value.getTSPCache())) continue;
-            TSPCacheCalculationTask task = new TSPCacheCalculationTask(new AtomicInteger(1), value);
+            TSPCacheCalculationTask task = new TSPCacheCalculationTask(new AtomicInteger(0), value);
             calculationTaskWeakHashMap.put(value, task);
 
             if (task.cnt.getAndIncrement() == 0)
@@ -119,6 +119,7 @@ public class TSPCacheRegistry {
                 try {
                     task.run();
                 } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
                     throw new RuntimeException(e);
                 } finally {
                     remaining.decrementAndGet();
@@ -141,6 +142,7 @@ public class TSPCacheRegistry {
             try {
                 task.run();
             } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
                 throw new RuntimeException(e);
             } finally {
                 remaining.decrementAndGet();
@@ -164,77 +166,81 @@ public class TSPCacheRegistry {
         private RoomPreset roomPreset;
 
         public void run() throws NoSuchAlgorithmException {
-
-            Set<String> precalcIds = new HashSet<>(roomPreset.getPrecalculations());
-
-            String hashIn = precalcIds
-                    .stream().sorted()
-                    .collect(Collectors.joining(";"));
-
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            String hash = Hex.encodeHexString(md.digest(hashIn.getBytes()));
-
-            if (getTSPCache(hash) != null) return;
-
-            DungeonRoomInfo dungeonRoomInfo = DungeonRoomInfoRegistry.getByUUID(roomPreset.getRoomId());
-
-            DRIWorld driWorld = new DRIWorld(dungeonRoomInfo);
-            DungeonContext fakeContext = new DungeonContext("TEST DG", driWorld, roomPreset.getParent());
             try {
-                DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(
-                        new Dimension(16, 16),
-                        5,
-                        new Point(0, 0),
-                        new BlockPos(0, 70, 0)
-                );
-                fakeContext.setScaffoldParser(new DungeonRoomScaffoldParser(dungeonMapLayout, fakeContext));
-                DungeonRoom dungeonRoom = new DungeonRoom(fakeContext);
+                Set<String> precalcIds = new HashSet<>(roomPreset.getPrecalculations());
 
-                // build tsp cache.
-                ActionDAG dag = AdditionalInfoCaculatedDungeonRoomInfo.buildReferencingAllPossibleThings(dungeonRoom, roomPreset.getEffectiveAlgorithmSetting(dungeonRoomInfo));
-                List<AbstractActionMove> listOfMoves = new ArrayList<>();
-                for (ActionDAGNode actionDAGNode : dag.getAllNodes()) {
-                    if (actionDAGNode.getAction() instanceof AtomicAction) {
-                        for (AbstractAction actionInAtomicAction : ((AtomicAction) actionDAGNode.getAction()).getActions()) {
-                            if (actionInAtomicAction instanceof AbstractActionMove) {
-                                listOfMoves.add((AbstractActionMove) actionInAtomicAction);
-                            }
-                        }
-                    } else if (actionDAGNode.getAction() instanceof AbstractActionMove) {
-                        listOfMoves.add((AbstractActionMove) actionDAGNode.getAction());
-                    }
-                }
+                String hashIn = precalcIds
+                        .stream().sorted()
+                        .collect(Collectors.joining(";"));
 
-                List<OffsetVec3> vec3 = new ArrayList<>();
-                for (AbstractActionMove listOfMove : listOfMoves) {
-                    vec3.add(listOfMove.getTargetVec3());
-                }
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                String hash = Hex.encodeHexString(md.digest(hashIn.getBytes()));
 
-                TSPCache tspCache = new TSPCache(vec3, hash);
+                if (getTSPCache(hash) != null) return;
 
-                long start = System.currentTimeMillis();
-                Set<String> pathfinders = roomPreset.getPrecalculations();
-                for (String pathfinder : pathfinders) {
-                    PathfindPrecalculation cachedPathfinder = PathfindPrecalculationRegistry.getINSTANCE().getById(pathfinder);
-                    try {
-                        tspCache.addToCache(cachedPathfinder);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                System.out.println("TSP CAche building for "+roomPreset.getRoomId().toString()+" took "+(System.currentTimeMillis()-start)+"ms");
+                DungeonRoomInfo dungeonRoomInfo = DungeonRoomInfoRegistry.getByUUID(roomPreset.getRoomId());
 
-                mapping.put(hash, tspCache);
-
-
+                DRIWorld driWorld = new DRIWorld(dungeonRoomInfo);
+                DungeonContext fakeContext = new DungeonContext("TEST DG", driWorld, roomPreset.getParent());
                 try {
-                    CBORMapper cborMapper = new CBORMapper();
-                    cborMapper.writeValue(new File(dir, tspCache.getId()+".cache"), tspCache);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(
+                            new Dimension(16, 16),
+                            5,
+                            new Point(0, 0),
+                            new BlockPos(0, 70, 0)
+                    );
+                    fakeContext.setScaffoldParser(new DungeonRoomScaffoldParser(dungeonMapLayout, fakeContext));
+                    DungeonRoom dungeonRoom = new DungeonRoom(fakeContext);
+
+                    // build tsp cache.
+                    ActionDAG dag = AdditionalInfoCaculatedDungeonRoomInfo.buildReferencingAllPossibleThings(dungeonRoom, roomPreset.getEffectiveAlgorithmSetting(dungeonRoomInfo));
+                    List<AbstractActionMove> listOfMoves = new ArrayList<>();
+                    for (ActionDAGNode actionDAGNode : dag.getAllNodes()) {
+                        if (actionDAGNode.getAction() instanceof AtomicAction) {
+                            for (AbstractAction actionInAtomicAction : ((AtomicAction) actionDAGNode.getAction()).getActions()) {
+                                if (actionInAtomicAction instanceof AbstractActionMove) {
+                                    listOfMoves.add((AbstractActionMove) actionInAtomicAction);
+                                }
+                            }
+                        } else if (actionDAGNode.getAction() instanceof AbstractActionMove) {
+                            listOfMoves.add((AbstractActionMove) actionDAGNode.getAction());
+                        }
+                    }
+
+                    List<OffsetVec3> vec3 = new ArrayList<>();
+                    for (AbstractActionMove listOfMove : listOfMoves) {
+                        vec3.add(listOfMove.getTargetVec3());
+                    }
+
+                    TSPCache tspCache = new TSPCache(vec3, hash);
+
+                    long start = System.currentTimeMillis();
+                    Set<String> pathfinders = roomPreset.getPrecalculations();
+                    for (String pathfinder : pathfinders) {
+                        PathfindPrecalculation cachedPathfinder = PathfindPrecalculationRegistry.getINSTANCE().getById(pathfinder);
+                        try {
+                            tspCache.addToCache(cachedPathfinder);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    System.out.println("TSP CAche building for " + roomPreset.getRoomId().toString() + " took " + (System.currentTimeMillis() - start) + "ms");
+
+                    mapping.put(hash, tspCache);
+
+
+                    try {
+                        CBORMapper cborMapper = new CBORMapper();
+                        cborMapper.writeValue(new File(dir, tspCache.getId() + ".cache"), tspCache);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } finally {
+                    fakeContext.cleanup();
                 }
-            } finally {
-                fakeContext.cleanup();
+            } catch (Throwable t) {
+                t.printStackTrace();
+                throw t;
             }
         }
     }
