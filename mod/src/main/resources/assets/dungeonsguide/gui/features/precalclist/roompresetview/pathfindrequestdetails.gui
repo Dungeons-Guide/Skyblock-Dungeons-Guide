@@ -31,7 +31,7 @@
         </flexible>
     </row>
     <size width="120" height="15">
-        <RoundButton text="View on virtual world"/>
+        <RoundButton text="View on virtual world" on:click="view"/>
     </size>
     <size height="3"/>
     <line dir="HORIZONTAL" thickness="1" color="#FFFFFFFF"/>

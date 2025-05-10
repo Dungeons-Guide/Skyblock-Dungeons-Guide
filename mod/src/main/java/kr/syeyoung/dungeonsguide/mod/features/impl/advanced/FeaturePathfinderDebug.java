@@ -21,17 +21,26 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedStonk;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonOnewayLeverState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic.ClassicPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.IPathfinder;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PrecalculatedPathfinder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
@@ -39,7 +48,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FeaturePathfinderDebug extends SimpleFeature {
 
@@ -47,14 +58,88 @@ public class FeaturePathfinderDebug extends SimpleFeature {
         super("Debug", "Pathfind Result Debug", "View pfres file", "etc.pfresdebug", false);
     }
 
-    private List<PrecalculatedPathfinder> instance = new ArrayList<>();
+    public List<PathfindRequest> requests = new ArrayList<>();
+    public List<PathfindPrecalculation> precalcs = new ArrayList<>();
 
+    private List<IPathfinder> instance = new ArrayList<>();
 
     private List<Vec3> pfDebugPts = new ArrayList<>();
 
+    private int renderRequests(int st, DungeonRoom drm, float partialTicks) {
+        int cnt = requests.size() + precalcs.size();
+        int i = st;
+        for (PathfindRequest request : requests) {
+            i++;
+            Color c = Color.getHSBColor(
+                    1.0f * i / cnt , 0.5f, 1.0f
+            );
+            Color actual = new Color(c.getRGB(), true);
+
+            double cx = 0, cy =0 , cz = 0;
+            for (OffsetVec3 offsetVec3 : request.getTarget()) {
+                Vec3 pos = offsetVec3.getPos(drm);
+
+                RenderUtils.highlightBox(
+                        new AxisAlignedBB(
+                                offsetVec3.xCoord - 0.025f, offsetVec3.yCoord + 0.025f + 70, offsetVec3.zCoord - 0.025f,
+                                offsetVec3.xCoord + 0.025f, offsetVec3.yCoord + 0.075f + 70, offsetVec3.zCoord + 0.025f
+                        ),
+                        actual,
+                        partialTicks,
+                        false
+                );
+                cx += offsetVec3.xCoord;
+                cy += offsetVec3.yCoord + 70;
+                cz += offsetVec3.zCoord;
+            }
+
+            cx /= request.getTarget().size();
+            cy /= request.getTarget().size();
+            cz /= request.getTarget().size();
+            cy += 0.2f;
+            RenderUtils.drawTextAtWorld("Request: "+request.getHash(), (float) cx, (float) cy, (float) cz, actual.getRGB(), 0.01f, false, true, partialTicks);
+        }
+        return i;
+    }
+    private int renderPrecalcs(int st, DungeonRoom drm, float partialTicks) {
+        int cnt = requests.size() + precalcs.size();
+        int i = st;
+        for (PathfindPrecalculation request : precalcs) {
+            i++;
+            Color c = Color.getHSBColor(
+                    1.0f * i / cnt , 0.5f, 1.0f
+            );
+            Color actual = new Color(c.getRGB(), true);
+
+            double cx = 0, cy =0 , cz = 0;
+            for (OffsetVec3 offsetVec3 : request.getTargetLocations()) {
+                Vec3 pos = offsetVec3.getPos(drm);
+
+                RenderUtils.highlightBox(
+                        new AxisAlignedBB(
+                                offsetVec3.xCoord - 0.025f, offsetVec3.yCoord + 0.075f + 70, offsetVec3.zCoord - 0.025f,
+                                offsetVec3.xCoord + 0.025f, offsetVec3.yCoord + 0.125f + 70, offsetVec3.zCoord + 0.025f
+                        ),
+                        actual,
+                        partialTicks,
+                        false
+                );
+                cx += offsetVec3.xCoord;
+                cy += offsetVec3.yCoord + 70;
+                cz += offsetVec3.zCoord;
+            }
+
+            cx /= request.getTargetLocations().size();
+            cy /= request.getTargetLocations().size();
+            cz /= request.getTargetLocations().size();
+            cy += 0.4f;
+            RenderUtils.drawTextAtWorld("Precalc: "+request.getId()+"/"+request.getTargetHash(), (float) cx, (float) cy, (float) cz, actual.getRGB(), 0.01f, false, true, partialTicks);
+        }
+        return i;
+    }
+
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void renderworldLast(RenderWorldLastEvent event) {
-        if (instance == null) return;
 
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null) return;
@@ -63,14 +148,17 @@ public class FeaturePathfinderDebug extends SimpleFeature {
         );
         if (drm == null) return;
 
+        int i = renderRequests(0, drm, event.partialTicks);
+        i = renderPrecalcs(i, drm, event.partialTicks);
+
 
         int cnt = 0;
         for (Vec3 pfDebugPt : pfDebugPts) {
-            for (PrecalculatedPathfinder precalculatedPathfinder : instance) {
+            for (IPathfinder precalculatedPathfinder : instance) {
                 PathfindResult res = precalculatedPathfinder.getRoute(pfDebugPt);
                 if (res == null) continue;
                 cnt++;
-                Color c = Color.getHSBColor(cnt / ((float)instance.size() * pfDebugPts.size()), 1.0f, 1.0f);
+                Color c = Color.getHSBColor(cnt / ((float)precalcs.size() * pfDebugPts.size()), 1.0f, 1.0f);
 
                 GlStateManager.disableDepth();
                 ClassicPathDisplayEngine.drawLinesPathfindNode(res.getNodeList(),
@@ -102,10 +190,23 @@ public class FeaturePathfinderDebug extends SimpleFeature {
         }
     }
 
+    @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = false)
+    public void onDungeonUnload(DungeonLeftEvent event) {
+        precalcs.clear();
+        requests.clear();
+        pfDebugPts.clear();
+        for (IPathfinder precalculatedPathfinder : instance) {
+            precalculatedPathfinder.close();
+        }
+        instance.clear();
+    }
+
     public void onCommand(String[] args) {
         if (args[1].equals("reset")) {
+            precalcs.clear();
+            requests.clear();
             pfDebugPts.clear();
-            for (PrecalculatedPathfinder precalculatedPathfinder : instance) {
+            for (IPathfinder precalculatedPathfinder : instance) {
                 precalculatedPathfinder.close();
             }
             instance.clear();
@@ -127,6 +228,29 @@ public class FeaturePathfinderDebug extends SimpleFeature {
             pfDebugPts.add(Minecraft.getMinecraft().thePlayer.getPositionVector());
         } else if (args[1].equals("clearpt")) {
             pfDebugPts.clear();
+        } else if (args[1].equals("stonkmech")) {
+
+            DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+            if (dungeonContext == null) return;
+            DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
+                    dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())
+            );
+            if (drm == null) return;
+            FeatureRegistry.DEBUG_ST.change(
+                    drm.getMechanics().get(args[2])
+            );
+        } else if (args[1].equals("stonkmech2")) {
+            DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+            if (dungeonContext == null) return;
+            DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
+                    dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())
+            );
+            if (drm == null) return;
+            DungeonOnewayLeverState.DungeonOnewayLeverData mechanic1 = (DungeonOnewayLeverState.DungeonOnewayLeverData) drm.getDungeonRoomInfo().getMechanics().get(args[2]);
+
+                mechanic1.setLeverCache(PrecalculatedStonk.createOne(
+                        drm.getDungeonRoomInfo(), mechanic1.getLeverPoint()
+                ));
         }
     }
 }

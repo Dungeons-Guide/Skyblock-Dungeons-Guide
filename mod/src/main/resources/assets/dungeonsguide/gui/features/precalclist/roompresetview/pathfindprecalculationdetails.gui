@@ -58,7 +58,7 @@
     </row>
     <row>
         <size width="120" height="15">
-            <RoundButton text="View on virtual world"/>
+            <RoundButton text="View on virtual world" on:click="view"/>
         </size>
         <size width="5"/>
         <SelectiveContainer bind:visible="modifiable">

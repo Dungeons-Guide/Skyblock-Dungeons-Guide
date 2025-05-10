@@ -21,6 +21,10 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleClickingSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedStonk;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
@@ -31,6 +35,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +45,7 @@ public class FeatureStonkDebug extends SimpleFeature {
         super("Debug", "Stonk Debug", "Toggles stonk debug", "stdebug", false);
     }
 
-    private List<PossibleClickingSpot> spots;
+    public List<PossibleClickingSpot> spots;
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onInteract(PlayerInteractEvent event) {
         if (event.entityPlayer.getHeldItem() == null ||
@@ -59,6 +64,17 @@ public class FeatureStonkDebug extends SimpleFeature {
 //            this.spots = null;
         }
         System.out.println(event.action);
+    }
+
+    public void change(DungeonMechanicState data) {
+        if (data instanceof DungeonOnewayLeverState) this.spots = ((DungeonOnewayLeverState) data).getData().getLeverCache().getPrecalculatedStonk(Collections.emptySet());
+        else if (data instanceof DungeonSecretChestState) this.spots = ((DungeonSecretChestState) data).getData().getSecretCache().getPrecalculatedStonk(Collections.emptySet());
+        else if (data instanceof DungeonSecretDoubleChestState) this.spots = ((DungeonSecretDoubleChestState) data).getData().getSecretCache().getPrecalculatedStonk(Collections.emptySet());
+        else if (data instanceof DungeonSecretEssenceState) this.spots = ((DungeonSecretEssenceState) data).getData().getSecretCache().getPrecalculatedStonk(Collections.emptySet());
+        else if (data instanceof DungeonWizardCrystalState) this.spots = ((DungeonWizardCrystalState) data).getData().getSecretCache().getPrecalculatedStonk(Collections.emptySet());
+        else if (data instanceof DungeonRedstoneKeyState) this.spots = ((DungeonRedstoneKeyState) data).getData().getSecretCache().getPrecalculatedStonk(Collections.emptySet());
+        else if (data instanceof DungeonLeverState) this.spots = ((DungeonLeverState) data).getData().getLeverCache().getPrecalculatedStonk(Collections.emptySet());
+        else if (data instanceof DungeonFakeChestTrapState) this.spots = ((DungeonFakeChestTrapState) data).getData().getChestCache().getPrecalculatedStonk(Collections.emptySet());
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true)

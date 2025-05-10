@@ -110,6 +110,7 @@ public class RaytraceHelper {
 
     public static List<PossibleClickingSpot> raycast(World w, BlockPos target, CalculateIsBlocked calculateIsBlocked) {
         IBlockState targetBlockState = w.getBlockState(target);
+        targetBlockState.getBlock().setBlockBoundsBasedOnState(w, target);
         AxisAlignedBB bb = targetBlockState.getBlock().getSelectedBoundingBox(w, target);
 
         Map<Vec3, RequiredTool[]> actualReq = new HashMap<>();
@@ -326,6 +327,7 @@ public class RaytraceHelper {
         }
 
         for (OffsetVec3 vec3 : clusterId.keySet()) {
+//            int cnt = 0;
             for (EnumFacing face : EnumFacing.VALUES) {
                 OffsetVec3 newVec3 = new OffsetVec3(
                         vec3.xCoord + face.getFrontOffsetX() * 0.5,
@@ -336,6 +338,8 @@ public class RaytraceHelper {
                 clusterId.put(vec3, -2);
                 break;
             }
+//            if (cnt < 4)
+//                clusterId.put(vec3, -2);
         }
         int lastId = 0;
 

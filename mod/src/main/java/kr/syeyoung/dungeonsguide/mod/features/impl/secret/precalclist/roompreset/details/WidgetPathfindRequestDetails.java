@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.details;
 
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetAbilitySettings;
@@ -48,5 +49,10 @@ public class WidgetPathfindRequestDetails extends AnnotatedImportOnlyWidget {
         StringSelection selection = new StringSelection(request.getId());
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(selection, selection);
+    }
+
+    @On(functionName = "view")
+    public void view() {
+        FeatureRegistry.DEBUG_PFRES.requests.add(request);
     }
 }
