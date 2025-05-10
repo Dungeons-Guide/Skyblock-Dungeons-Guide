@@ -26,10 +26,24 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.HashSet;
+import java.util.Set;
 
 public class NativeLoader {
 
+    private static final Set<String> blacklisted = new HashSet<>();
+    private static final boolean blacklistAll;
+    static  {
+
+        String blacklists = System.getProperty("dg.native_blacklist", "");
+        for (String s : blacklists.split(",")) {
+            blacklisted.add(s);
+        }
+        blacklistAll = blacklisted.contains("all");
+    }
     public static void extractLibraryAndLoad(String name) throws IOException {
+        if (blacklisted.contains(name)) throw new RuntimeException("Blacklisted native library: "+name);
+
         String libName = System.mapLibraryName(name);
         String dir = Platform.ARCH;
 

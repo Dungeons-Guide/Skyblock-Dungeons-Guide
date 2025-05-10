@@ -205,15 +205,11 @@ public class DungeonsGuide implements DGInterface {
 
         progressbar.step("Loading Native Libraries");
 
-        if (System.getProperty("dg.safe") == null) {
-            try {
-                NativeLoader.extractLibraryAndLoad("waterboard");
-                NativeLoader.extractLibraryAndLoad("dptsp");
-            } catch (IOException | UnsatisfiedLinkError e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("Prevented loading native library!!");
+        try {
+            NativeLoader.extractLibraryAndLoad("waterboard");
+            NativeLoader.extractLibraryAndLoad("dptsp");
+        } catch (IOException | UnsatisfiedLinkError | RuntimeException e) {
+            e.printStackTrace();
         }
 
         progressbar.step("Registering Events & Commands");
