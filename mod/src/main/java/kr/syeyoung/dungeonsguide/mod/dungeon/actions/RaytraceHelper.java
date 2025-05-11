@@ -108,6 +108,18 @@ public class RaytraceHelper {
         return doClustering(spots);
     }
 
+    public static class StonkCalculationResult {
+        private boolean possible;
+        private RequiredTool[] lastStonk;
+        private RequiredTool[] normalStonk;
+        private int count;
+    }
+
+    private static StonkCalculationResult calculateStonk() {
+        return null;
+    }
+
+
     public static List<PossibleClickingSpot> raycast(World w, BlockPos target, CalculateIsBlocked calculateIsBlocked) {
         IBlockState targetBlockState = w.getBlockState(target);
         targetBlockState.getBlock().setBlockBoundsBasedOnState(w, target);
@@ -325,8 +337,11 @@ public class RaytraceHelper {
                 clusterMap.put(Vec3, spot);
             }
         }
+        List<OffsetVec3> sortedClusterId = clusterId.keySet().stream().sorted(
+                Comparator.<OffsetVec3>comparingDouble(a -> a.xCoord).thenComparingDouble(a -> a.yCoord).thenComparingDouble(a -> a.zCoord)
+        ).collect(Collectors.toList());
 
-        for (OffsetVec3 vec3 : clusterId.keySet()) {
+        for (OffsetVec3 vec3 : sortedClusterId) {
 //            int cnt = 0;
             for (EnumFacing face : EnumFacing.VALUES) {
                 OffsetVec3 newVec3 = new OffsetVec3(
@@ -343,7 +358,7 @@ public class RaytraceHelper {
         }
         int lastId = 0;
 
-        for (OffsetVec3 Vec3 : clusterId.keySet()) {
+        for (OffsetVec3 Vec3 : sortedClusterId) {
             int id = clusterId.get(Vec3);
             if (id != -1) continue;
             id = ++lastId;
@@ -372,9 +387,18 @@ public class RaytraceHelper {
         }
 
         Queue<OffsetVec3> chk = new LinkedList<>();
-        for (OffsetVec3 vec3 : clusterId.keySet()) {
+        for (OffsetVec3 vec3 : sortedClusterId) {
             if (clusterId.get(vec3) == -2) {
-                chk.add(vec3);
+                for (EnumFacing face : EnumFacing.VALUES) {
+                    OffsetVec3 newVec3 = new OffsetVec3(
+                            vec3.xCoord + face.getFrontOffsetX() * 0.5,
+                            vec3.yCoord + face.getFrontOffsetY() * 0.5,
+                            vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                    );
+                    if (!clusterId.containsKey(newVec3) || clusterId.get(newVec3) == -2) continue;
+                    chk.add(vec3);
+                    break;
+                }
             }
         }
 
@@ -405,7 +429,7 @@ public class RaytraceHelper {
                 }
             }
         }
-        for (OffsetVec3 Vec3 : clusterId.keySet()) {
+        for (OffsetVec3 Vec3 : sortedClusterId) {
             int id = clusterId.get(Vec3);
             if (id != -2) continue;
             id = ++lastId;
@@ -433,6 +457,7 @@ public class RaytraceHelper {
             }
         }
         return clusterMap.keySet().stream()
+                .filter(a -> clusterId.get(a) != -2)
                 .collect(Collectors.groupingBy(a -> {
                     return new ImmutablePair<>(clusterId.get(a), clusterMap.get(a));
                 })).entrySet().stream().map(
@@ -506,7 +531,11 @@ public class RaytraceHelper {
             }
         }
 
-        for (OffsetVec3 vec3 : clusterId.keySet()) {
+        List<OffsetVec3> sortedClusterId = clusterId.keySet().stream().sorted(
+                Comparator.<OffsetVec3>comparingDouble(a -> a.xCoord).thenComparingDouble(a -> a.yCoord).thenComparingDouble(a -> a.zCoord)
+        ).collect(Collectors.toList());
+
+        for (OffsetVec3 vec3 : sortedClusterId) {
             for (EnumFacing face : EnumFacing.VALUES) {
                 OffsetVec3 newVec3 = new OffsetVec3(
                         vec3.xCoord + face.getFrontOffsetX() * 0.5,
@@ -520,7 +549,7 @@ public class RaytraceHelper {
         }
         int lastId = 0;
 
-        for (OffsetVec3 Vec3 : clusterId.keySet()) {
+        for (OffsetVec3 Vec3 : sortedClusterId) {
             int id = clusterId.get(Vec3);
             if (id != -1) continue;
             id = ++lastId;
@@ -549,9 +578,18 @@ public class RaytraceHelper {
         }
 
         Queue<OffsetVec3> chk = new LinkedList<>();
-        for (OffsetVec3 vec3 : clusterId.keySet()) {
+        for (OffsetVec3 vec3 : sortedClusterId) {
             if (clusterId.get(vec3) == -2) {
-                chk.add(vec3);
+                for (EnumFacing face : EnumFacing.VALUES) {
+                    OffsetVec3 newVec3 = new OffsetVec3(
+                            vec3.xCoord + face.getFrontOffsetX() * 0.5,
+                            vec3.yCoord + face.getFrontOffsetY() * 0.5,
+                            vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                    );
+                    if (!clusterId.containsKey(newVec3) || clusterId.get(newVec3) == -2) continue;
+                    chk.add(vec3);
+                    break;
+                }
             }
         }
 
@@ -582,7 +620,7 @@ public class RaytraceHelper {
                 }
             }
         }
-        for (OffsetVec3 Vec3 : clusterId.keySet()) {
+        for (OffsetVec3 Vec3 : sortedClusterId) {
             int id = clusterId.get(Vec3);
             if (id != -2) continue;
             id = ++lastId;
