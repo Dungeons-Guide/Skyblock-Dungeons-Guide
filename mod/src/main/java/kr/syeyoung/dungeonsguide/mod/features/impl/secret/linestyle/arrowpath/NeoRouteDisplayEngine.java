@@ -10,9 +10,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.LineRenderUtils;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.LiveRouteRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
+import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
+import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,12 +27,16 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.data.AnimationMetadataSection;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.*;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 
 import java.awt.*;
 import java.util.*;
@@ -514,7 +521,8 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
     }
 
-    private static final ResourceLocation arrow = new ResourceLocation("dungeonsguide:textures/arrow.png");
+
+    public static final ResourceLocation arrow = new ResourceLocation("dungeonsguide:textures/arrow.png");
     public static final ResourceLocation abilities = new ResourceLocation("dungeonsguide:textures/features/precalclist/abilities.png");
     public static void drawIcon(int iconIdx, PathSegment segment, AColor colour, AColor texture, float partialTicks, double animate, boolean path) {
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
@@ -555,7 +563,13 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
             TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
             GlStateManager.enableTexture2D();
-            textureManager.bindTexture(arrow);
+            textureManager.bindTexture(TextureMap.locationBlocksTexture);
+
+            ShaderProgram shaderProgram = ShaderManager.getShader("shaders/repeat");
+            shaderProgram.useShader();
+            TextureAtlasSprite sprite = FeatureRegistry.SECRET_ROUTE_REGISTRY.sprite;
+            shaderProgram.uploadUniform("position", sprite.getMinU(), sprite.getMinV());
+            shaderProgram.uploadUniform("size", sprite.getMaxU() - sprite.getMinU(), sprite.getMaxV() - sprite.getMinV());
 
             i = RenderUtils.getColorAt(0,0,0, texture);
             r= ((i >> 16) &0xFF)/255.0f; g=((i >> 8) &0xFF)/255.0f; b=(i &0xFF)/255.0f; a=((i >> 24) &0xFF)/255.0f;
@@ -569,6 +583,8 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                 worldRenderer.pos(quadTL.xCoord, quadTL.yCoord, quadTL.zCoord).tex(0, -len / 0.1-animate).endVertex();
             }
             Tessellator.getInstance().draw();
+
+            GL20.glUseProgram(0);
         }
         if (!flag) {
             GlStateManager.enableDepth();
@@ -650,7 +666,14 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
         GlStateManager.enableTexture2D();
-        textureManager.bindTexture(arrow);
+        textureManager.bindTexture(TextureMap.locationBlocksTexture);
+
+        ShaderProgram shaderProgram = ShaderManager.getShader("shaders/repeat");
+        shaderProgram.useShader();
+        TextureAtlasSprite sprite = FeatureRegistry.SECRET_ROUTE_REGISTRY.sprite;
+        shaderProgram.uploadUniform("position", sprite.getMinU(), sprite.getMinV());
+        shaderProgram.uploadUniform("size", sprite.getMaxU() - sprite.getMinU(), sprite.getMaxV() - sprite.getMinV());
+
 
         i = RenderUtils.getColorAt(0,0,0, texture);
         r= ((i >> 16) &0xFF)/255.0f; g=((i >> 8) &0xFF)/255.0f; b=(i &0xFF)/255.0f; a=((i >> 24) &0xFF)/255.0f;
@@ -667,6 +690,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         }
         Tessellator.getInstance().draw();
 
+        GL20.glUseProgram(0);
     }
     public void drawLinesPathfindNode(List<PathSegment> poses, AColor colour, AColor texture, float partialTicks) {
         if (poses.size() == 0) return;

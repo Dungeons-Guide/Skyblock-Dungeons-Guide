@@ -10,10 +10,14 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonRoomDiscoveredEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.arrowpath.NeoRouteDisplayEngine;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -26,7 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LiveRouteRegistry extends SimpleFeature {
     private Map<DungeonRoom, RoomRouteHandler> roomRoomRouteRegistryMap = new ConcurrentHashMap<>();
-    public static final LiveRouteRegistry INSTANCE = new LiveRouteRegistry();
 
     public LiveRouteRegistry() {
         super("Pathfinding & Secrets", "Beacon&Route Displayer", "This is an internal feature that displays routes and beacons", "secrets.routeregistry");
@@ -118,5 +121,12 @@ public class LiveRouteRegistry extends SimpleFeature {
         RoomRouteHandler roomRouteHandler = getRoomHandler(getRoomIn());
         if (roomRouteHandler == null) return;
         roomRouteHandler.onEntityDeath(event);
+    }
+
+    public TextureAtlasSprite sprite;
+
+    @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
+    public void onTextureStitch(TextureStitchEvent.Pre event) {
+         sprite = event.map.registerSprite(new ResourceLocation("dungeonsguide", "arrow"));
     }
 }
