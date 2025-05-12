@@ -874,17 +874,23 @@ public class RenderUtils {
             if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
                 TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(pos);
                 TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
-                specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
+                if (specialRenderer != null) {
+                    specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
+                    for (EnumFacing value : EnumFacing.HORIZONTALS) {
+                        BlockPos newPos = pos.add(value.getDirectionVec());
+                        iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(newPos);
 
-                for (EnumFacing value : EnumFacing.HORIZONTALS) {
-                    BlockPos newPos = pos.add(value.getDirectionVec());
-                    iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(newPos);
-
-                    if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
-                        tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(newPos);
-                        specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
-                        specialRenderer.renderTileEntityAt(tileEntity, newPos.getX(), newPos.getY(), newPos.getZ(), partialTicks, -1);
+                        if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
+                            tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(newPos);
+                            specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
+                            if (specialRenderer != null)
+                                specialRenderer.renderTileEntityAt(tileEntity, newPos.getX(), newPos.getY(), newPos.getZ(), partialTicks, -1);
+                        }
                     }
+                } else {
+                    blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
+                            blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, pos),
+                            iBlockState.getBlock(), pos, vertexBuffer, depth ? true : false);
                 }
             } else {
                 blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
@@ -968,17 +974,23 @@ public class RenderUtils {
             if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
                 TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(pos);
                 TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
-                specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
+                if (specialRenderer != null) {
+                    specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
+                    for (EnumFacing value : EnumFacing.HORIZONTALS) {
+                        BlockPos newPos = pos.add(value.getDirectionVec());
+                        iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(newPos);
 
-                for (EnumFacing value : EnumFacing.HORIZONTALS) {
-                    BlockPos newPos = pos.add(value.getDirectionVec());
-                    iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(newPos);
-
-                    if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
-                        tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(newPos);
-                        specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
-                        specialRenderer.renderTileEntityAt(tileEntity, newPos.getX(), newPos.getY(), newPos.getZ(), partialTicks, -1);
+                        if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
+                            tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(newPos);
+                            specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
+                            if (specialRenderer != null)
+                                specialRenderer.renderTileEntityAt(tileEntity, newPos.getX(), newPos.getY(), newPos.getZ(), partialTicks, -1);
+                        }
                     }
+                } else {
+                    blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
+                            blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, pos),
+                            iBlockState.getBlock(), pos, vertexBuffer, depth ? true : false);
                 }
             } else {
                 blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
