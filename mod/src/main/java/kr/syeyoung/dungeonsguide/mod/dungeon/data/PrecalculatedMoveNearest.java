@@ -81,7 +81,7 @@ public class PrecalculatedMoveNearest {
                 int xDiff = Math.abs(blockedPoint.getX() - offsetPoint.getX());
                 int yDiff = Math.abs(blockedPoint.getY() - offsetPoint.getY());
                 int zDiff = Math.abs(blockedPoint.getZ() - offsetPoint.getZ());
-                if (Math.max(xDiff, Math.max(yDiff, zDiff)) <= 5) {
+                if (Math.max(xDiff, Math.max(yDiff, zDiff)) <= 15) {
                     calculateFor.add(value.getKey());
                     break;
                 }
@@ -96,7 +96,7 @@ public class PrecalculatedMoveNearest {
             }
 
             spots[i] = RaytraceHelper.findMovespots(new DRIWorld(dri, included), new BlockPos(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()),
-                    a -> a.squareDistanceTo(vec) <= 25, 6);
+                    a -> a.squareDistanceTo(vec) <= 15*15, 6);
         }
         return new PrecalculatedMoveNearest(calculateFor, spots, offsetPoint);
     }
