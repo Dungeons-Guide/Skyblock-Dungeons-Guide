@@ -79,6 +79,9 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<Boolean> enderpearl = new BindableAttribute<>(Boolean.class);
     @Bind(variableName = "stonkLength")
     public final BindableAttribute<String> stonkLength = new BindableAttribute<>(String.class);
+    @Bind(variableName = "slowstonk")
+    public final BindableAttribute<Boolean> slowstonk = new BindableAttribute<>(Boolean.class);
+
 
     @Bind(variableName = "offsetValidator")
     public final BindableAttribute offsetValidator = new BindableAttribute(Predicate.class, (Predicate<String>) val -> {
@@ -148,6 +151,7 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
         enderchest.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F)));
         tntpearl.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F)));
         enderpearl.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F)));
+        slowstonk.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F)));
     }
 
 
@@ -211,7 +215,8 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
                 tntpearl.getValue(),
                 etherwarpOffset.getValue(),
                 maxEtherwarp.getValue(),
-                etherwarpLeeway.getValue()
+                etherwarpLeeway.getValue(),
+                slowstonk.getValue()
         );
         PopupMgr.getPopupMgr(getDomElement()).closePopup(algorithmSetting);
     }

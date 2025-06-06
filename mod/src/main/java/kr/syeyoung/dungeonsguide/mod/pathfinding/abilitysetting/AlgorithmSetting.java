@@ -48,6 +48,7 @@ public class AlgorithmSetting implements Cloneable {
     private final ToolSettings pickaxe;
     private final ToolSettings shovel;
     private final ToolSettings axe;
+    private final boolean allowSlowStonkPath;
 
     private final int hasteLevel;
 
@@ -80,6 +81,7 @@ public class AlgorithmSetting implements Cloneable {
         this.stonkDown = nbt.getBoolean("stonkDown");
         this.stonkTeleport = nbt.getBoolean("stonkTeleport");
         this.stonkEChest = nbt.getBoolean("stonkEChest");
+        this.allowSlowStonkPath = nbt.hasKey("slowStonk") ? nbt.getBoolean("slowStonk") : true;
         this.routeEtherwarp = nbt.getBoolean("routeEtherwarp");
         this.maxStonk = nbt.getInteger("maxStonk");
         this.enderpearl = nbt.getBoolean("enderpearl");
@@ -93,7 +95,7 @@ public class AlgorithmSetting implements Cloneable {
         this.axeSpeed = axe == null ? -1 : axe.getSpeed(hasteLevel) / 30.0;
     }
 
-    public AlgorithmSetting(ToolSettings pickaxe, ToolSettings shovel, ToolSettings axe, int hasteLevel, boolean stonkDown, boolean stonkTeleport, boolean stonkEChest, boolean routeEtherwarp, int maxStonk, boolean enderpearl, boolean tntpearl, double etherwarpOffset, int etherwarpRadius, double etherwarpLeeway) {
+    public AlgorithmSetting(ToolSettings pickaxe, ToolSettings shovel, ToolSettings axe, int hasteLevel, boolean stonkDown, boolean stonkTeleport, boolean stonkEChest, boolean routeEtherwarp, int maxStonk, boolean enderpearl, boolean tntpearl, double etherwarpOffset, int etherwarpRadius, double etherwarpLeeway, boolean slowStonk) {
         this.pickaxe = pickaxe;
         this.shovel = shovel;
         this.axe = axe;
@@ -112,6 +114,7 @@ public class AlgorithmSetting implements Cloneable {
         this.pickaxeSpeed = pickaxe == null ? -1 : pickaxe.getSpeed(hasteLevel);
         this.shovelSpeed = shovel == null ? -1 : shovel.getSpeed(hasteLevel) / 30.0;
         this.axeSpeed = axe == null ? -1 : axe.getSpeed(hasteLevel) / 30.0;
+        this.allowSlowStonkPath = slowStonk;
     }
 
 
@@ -124,6 +127,7 @@ public class AlgorithmSetting implements Cloneable {
         nbt.setTag("pickaxe", pickaxe == null ? new NBTTagByte((byte)0) : pickaxe.serialize());
         nbt.setTag("shovel", shovel == null ? new NBTTagByte((byte)0) : shovel.serialize());
         nbt.setTag("axe", axe == null ? new NBTTagByte((byte)0) : axe.serialize());
+        nbt.setBoolean("slowStonk", allowSlowStonkPath);
 
         nbt.setBoolean("stonkDown", stonkDown);
         nbt.setBoolean("stonkTeleport", stonkTeleport);

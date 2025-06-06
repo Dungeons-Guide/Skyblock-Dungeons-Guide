@@ -6,7 +6,7 @@ import java.util.Set;
 public class AlgorithmSettingRegistry {
     private static final Set<AlgorithmSetting> ALGORITHM_SETTINGS = new HashSet<>();
 
-    public static final AlgorithmSetting STANDARD_DEFAULT_ALGORITHM_SETTING = new AlgorithmSetting(null, null, null, 0, true, true, false, true, 14, false, false, 0.4, 61, 0.0625);
+    public static final AlgorithmSetting STANDARD_DEFAULT_ALGORITHM_SETTING = new AlgorithmSetting(null, null, null, 0, true, true, false, true, 14, false, false, 0.4, 61, 0.0625, false);
 
     static {
         registerAlgorithmSetting(STANDARD_DEFAULT_ALGORITHM_SETTING);

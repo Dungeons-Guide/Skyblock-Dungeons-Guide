@@ -125,6 +125,14 @@
                             <kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.WidgetEfficiencyButton selected="false" disabled="false" bind:text="hasteLevel" on:click="hasteEdit" bind:ref="hasteButton"/>
                         </size>
                     </row>
+                    <size height="3"/>
+
+                    <row>
+                        <flexible>
+                            <SimpleToggleButton width="40" height="14" text="Allow Slow Stonk In path" bind:enabled="slowstonk"/>
+                        </flexible>
+                    </row>
+                    <Text text="This option enables stonk paths that contain non instabreak blocks. This option is not for stonk-clicks." size="8" color="#FF777777"/>
                 </col>
             </padding>
 

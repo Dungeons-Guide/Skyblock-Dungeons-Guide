@@ -49,7 +49,9 @@ public class InstaBreakFactorCalculatingCoordinateMap implements ICoordinateMap<
                 && b.getBlockHardness(world, pos) <= algorithmSetting.getShovelSpeed()) {
         } else if (algorithmSetting.getAxeSpeed() > 0 && b.isToolEffective("axe", iBlockState) && b.getBlockHardness(world, pos) <= algorithmSetting.getAxeSpeed()) {
         } else {
-            return algorithmSetting.getPickaxe() != null && algorithmSetting.getPickaxe().getTool().canHarvestBlock(b) ? BreakFactor.MAYBE_HARD : BreakFactor.MAYBE_HARD;
+            if (!algorithmSetting.isAllowSlowStonkPath())
+                return BreakFactor.NO;
+            return BreakFactor.MAYBE_HARD;
         }
         return BreakFactor.INSTABREAK;
     }
