@@ -19,12 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.commands;
 
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.*;
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedMoveNearest;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
 import kr.syeyoung.dungeonsguide.launcher.Main;
@@ -56,6 +53,7 @@ import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.GameSettings;
@@ -462,18 +460,37 @@ public class CommandDgDebug extends CommandBase {
 
     private void process2() throws IOException {
 
-        int cnt = 0;
-        CBORMapper objectMapper = new CBORMapper();
+//        int cnt = 0;
+//        CBORMapper objectMapper = new CBORMapper();
+//        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+//            System.out.println(dungeonRoomInfo.getName());
+//            byte[] str = objectMapper.writeValueAsBytes(dungeonRoomInfo);
+//            DungeonRoomInfo info2 = objectMapper.readValue(str, DungeonRoomInfo.class);
+//
+//            System.out.println(dungeonRoomInfo.equals(info2) +" :: "+dungeonRoomInfo.getName());
+//            cnt++;
+//        }
+//        System.out.println(cnt);
+
+
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
-            System.out.println(dungeonRoomInfo.getName());
-            byte[] str = objectMapper.writeValueAsBytes(dungeonRoomInfo);
-            DungeonRoomInfo info2 = objectMapper.readValue(str, DungeonRoomInfo.class);
+            for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicDataEntry : dungeonRoomInfo.getMechanics().entrySet()) {
+                if (stringDungeonMechanicDataEntry.getValue() instanceof DungeonCrusherTrapState.DungeonCrusherTrapData) {
+                    OffsetPointSet crusherBlocks = ((DungeonCrusherTrapState.DungeonCrusherTrapData) stringDungeonMechanicDataEntry.getValue()).getStarting();
+                    IBlockState blockState = dungeonRoomInfo.getBlock(crusherBlocks.getOffsetPointList().get(0), 0);
 
-            System.out.println(dungeonRoomInfo.equals(info2) +" :: "+dungeonRoomInfo.getName());
-            cnt++;
+
+
+                    OffsetPointSet ops = ((DungeonCrusherTrapState.DungeonCrusherTrapData) stringDungeonMechanicDataEntry.getValue()).getDangerRegion();
+                    for (OffsetPoint offsetPoint : ops.getOffsetPointList()) {
+                        if (dungeonRoomInfo.getBlock(offsetPoint, 0) == blockState) {
+                            System.out.println("how: "+dungeonRoomInfo.getName());
+                            dungeonRoomInfo.setBlock(offsetPoint, Blocks.air.getDefaultState());
+                        }
+                    }
+                }
+            }
         }
-        System.out.println(cnt);
-
     }
 
     private void loadRoomsCommand() {
