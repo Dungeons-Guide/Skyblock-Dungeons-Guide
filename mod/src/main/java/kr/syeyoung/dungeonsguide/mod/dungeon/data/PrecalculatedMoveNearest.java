@@ -102,10 +102,17 @@ public class PrecalculatedMoveNearest {
     }
     public static PrecalculatedMoveNearest createOneItem(OffsetPoint offsetPoint, DungeonRoomInfo dri) {
         List<String> calculateFor = new ArrayList<>();
+        List<String> defaultEnable = new ArrayList<>();
         for (Map.Entry<String, DungeonMechanicData> value : dri.getMechanics().entrySet()) {
             if (!(value.getValue() instanceof WorldMutatingMechanicData)) continue;
-            if (value.getValue() instanceof DungeonTombState.DungeonTombData) continue;
-            if (value.getValue() instanceof DungeonBreakableWallState.DungeonBreakableWallData) continue; // well... let's just assume they don't exist lol
+            if (value.getValue() instanceof DungeonTombState.DungeonTombData) {
+                defaultEnable.add(value.getKey());
+                continue;
+            }
+            if (value.getValue() instanceof DungeonBreakableWallState.DungeonBreakableWallData) {
+                defaultEnable.add(value.getKey());
+                continue; // well... let's just assume they don't exist lol
+            }
 //            if (value.getValue() instanceof DungeonDoorState) continue; // welll.... closable door is not something oyu wanna work with
             for (OffsetPoint blockedPoint : ((WorldMutatingMechanicData) value.getValue()).blockedPoints()) {
                 int xDiff = Math.abs(blockedPoint.getX() - offsetPoint.getX());
@@ -125,6 +132,7 @@ public class PrecalculatedMoveNearest {
         );
         for (int i = 0; i < (1 << calculateFor.size()); i++) {
             List<String> included = new ArrayList<>();
+            included.addAll(defaultEnable);
             for (int i1 = 0; i1 < calculateFor.size(); i1++) {
                 if (((i >> i1) & 0x1) > 0) included.add(calculateFor.get(i1));
             }
