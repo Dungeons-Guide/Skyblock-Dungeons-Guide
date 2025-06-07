@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 
 import com.google.common.collect.Sets;
+import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
@@ -35,14 +36,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntitySkull;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 @Data
 public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret {
@@ -55,12 +64,50 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
     }
 
     private boolean essenceWasThere = false;
-
+    private boolean found = false;
+    private int nearbyTicks = 0;
     public void tick(DungeonRoom dungeonRoom) {
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
         IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
         if (blockState.getBlock() == Blocks.skull) {
             essenceWasThere = true;
+            List<EntityArmorStand> entities = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityArmorStand.class, AxisAlignedBB.fromBounds(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
+            TileEntity tileEntity = dungeonRoom.getCachedWorld().getTileEntity(pos);
+
+            if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 25) {
+                if (tileEntity instanceof TileEntitySkull) {
+                    String texture = ((TileEntitySkull) tileEntity).getPlayerProfile().getProperties().get("textures").stream().findFirst().map(a -> a.getValue()).orElse(null);
+                    if (texture == null) return;
+                    for (EntityArmorStand entity : entities) {
+                        ItemStack itemStackIn = entity.getEquipmentInSlot(4);
+                        System.out.println(itemStackIn);
+                        if (itemStackIn == null) continue;
+                        if (itemStackIn.getItem() != Items.skull) continue;
+
+                        if (itemStackIn.hasTagCompound()) {
+                            NBTTagCompound nbttagcompound = itemStackIn.getTagCompound();
+                            if (nbttagcompound.hasKey("SkullOwner", 10)) {
+                                GameProfile gameprofile = NBTUtil.readGameProfileFromNBT(nbttagcompound.getCompoundTag("SkullOwner"));
+
+                                if (texture.equals(gameprofile.getProperties().get("textures").stream().findFirst().map(a -> a.getValue()).orElse(null))) {
+                                    found = true;
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else if (blockState.getBlock() == Blocks.air && essenceWasThere) {
+            found = true;
+        } else if (blockState.getBlock() == Blocks.air && !essenceWasThere) {
+            if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 25) {
+                nearbyTicks++;
+            }
+            if (nearbyTicks > 100) {
+                essenceWasThere = true;
+                found = true;
+            }
         }
 
     }
@@ -71,17 +118,9 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
     }
 
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
-        BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
-        IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
-        if (blockState.getBlock() == Blocks.skull) {
-            essenceWasThere = true;
-            return SecretStatus.DEFINITELY_NOT;
-        } else {
-            if (essenceWasThere)
-                return SecretStatus.FOUND;
-            return SecretStatus.NOT_SURE;
-        }
-
+        if (found) return SecretStatus.FOUND;
+        if (essenceWasThere) return SecretStatus.DEFINITELY_NOT;
+        return SecretStatus.NOT_SURE;
     }
 
     @Override
