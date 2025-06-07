@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.*;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPresetRegistry;
@@ -19,10 +20,6 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilityset
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Navigator;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.Modal;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.ModalAsk;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.ModalConfirm;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
@@ -114,7 +111,13 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
     public void delete() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 
-        ModalConfirm modalMessage = new ModalConfirm("Deleting can not be reverted");
+        if (preset == PathfindPresetRegistry.DEFAULT_PRESET) {
+            ModalMessage modalMessage = new ModalMessage("Default preset can not be deleted");
+            PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Error", modalMessage, true), null);
+            return;
+        }
+
+        ModalConfirm modalMessage = new ModalConfirm("You're trying to delete: "+preset.getPresetName()+"\n\nDeleting can not be reverted");
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Are you sure?", modalMessage, true), (a) -> {
             if (a == null) return;
             if (a == Boolean.TRUE) {

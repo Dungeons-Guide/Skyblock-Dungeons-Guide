@@ -37,6 +37,7 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketInjector;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
+import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.gui.PassthroughManager;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.fonts.DefaultFontRenderer;
@@ -283,6 +284,9 @@ public class DungeonsGuide implements DGInterface {
         }
         DiscordIntegrationManager.INSTANCE.isLoaded();
 
+        for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+            abstractFeature.init();
+        }
 
 
         TimeScoreUtil.init();

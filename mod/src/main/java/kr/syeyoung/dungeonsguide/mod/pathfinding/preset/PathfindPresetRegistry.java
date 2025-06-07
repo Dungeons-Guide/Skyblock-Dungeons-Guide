@@ -32,7 +32,7 @@ public class PathfindPresetRegistry {
 
 
     public void register(PathfindPreset preset) {
-        if (presetsById.containsKey(preset.getPresetId())) throw new IllegalStateException("Dupliucate preset:: "+preset.getPresetId());
+        if (presetsById.containsKey(preset.getPresetId())) throw new IllegalStateException("Duplicate preset:: "+preset.getPresetId());
         this.loadedPresets.add(preset);
         this.presetsById.put(preset.getPresetId(), preset);
 

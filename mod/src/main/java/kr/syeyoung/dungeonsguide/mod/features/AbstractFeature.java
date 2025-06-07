@@ -54,6 +54,8 @@ public abstract class AbstractFeature implements IFeature {
         this.key = key;
     }
 
+    public void init() {}
+
     @Getter
     @Setter
     private boolean enabled = true;

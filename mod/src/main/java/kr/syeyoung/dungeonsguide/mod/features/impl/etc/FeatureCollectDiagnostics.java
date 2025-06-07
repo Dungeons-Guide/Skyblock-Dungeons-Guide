@@ -83,6 +83,10 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
     @Override
     public void loadConfig(JsonObject jsonObject) {
         super.loadConfig(jsonObject);
+    }
+
+    @Override
+    public void init() {
         if (!this.<Boolean>getParameter("prompted").getValue()) {
             Scaler scaler = new Scaler();
             scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());

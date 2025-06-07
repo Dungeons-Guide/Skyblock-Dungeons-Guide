@@ -12,7 +12,9 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -62,5 +64,29 @@ public class WidgetPrecalcStep2 extends AnnotatedImportOnlyWidget {
 
         this.requestSet.createRequest();
         this.parent.updateStep();
+    }
+
+    @On(functionName = "openGuide")
+    public void openGuide() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
+        try {
+            Desktop.getDesktop().browse(new URI("https://docs.dungeons.guide/docs/pathfinding/precalculation/introduction"));
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @On(functionName = "openDir")
+    public void openDir() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
+        File f = this.requestSet.getZipFile();
+        try {
+            Desktop.getDesktop().browse(f.getParentFile().toURI());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

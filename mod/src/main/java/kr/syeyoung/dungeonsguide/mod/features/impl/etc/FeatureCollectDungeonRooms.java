@@ -122,8 +122,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @Override
-    public void loadConfig(JsonObject jsonObject) {
-        super.loadConfig(jsonObject);
+    public void init() {
         if (!this.<Boolean>getParameter("prompted").getValue()) {
             Scaler scaler = new Scaler();
             scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());

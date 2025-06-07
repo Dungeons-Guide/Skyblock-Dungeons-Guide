@@ -145,6 +145,7 @@ public class FeatureRegistry {
     public static final FeaturePathfindStrategy SECRET_PATHFIND_STRATEGY = register(new FeaturePathfindStrategy());
     public static final FeatureRequestCalculation SECRET_PATHFIND_REQUEST = register(new FeatureRequestCalculation());
     public static final FeaturePrecalcList SECRET_PRECALC_LIST = register(new FeaturePrecalcList());
+    public static final FeatureDefaultPresetLoader LOAD_DEFAULT_PRESET = register(new FeatureDefaultPresetLoader());
 
     public static final FeatureActions SECRET_ACTIONS = register(new FeatureActions());
     public static final FeatureDAGs SECRET_DAGS = register(new FeatureDAGs());

@@ -40,11 +40,11 @@
             <size height="15">
                 <row>
                     <flexible>
-                        <RoundButton text="Open guide"/>
+                        <RoundButton text="Open guide" on:click="openGuide"/>
                     </flexible>
                     <size width="5"/>
                     <flexible>
-                        <RoundButton text="Open directory"/>
+                        <RoundButton text="Open directory" on:click="openDir"/>
                     </flexible>
                 </row>
             </size>
