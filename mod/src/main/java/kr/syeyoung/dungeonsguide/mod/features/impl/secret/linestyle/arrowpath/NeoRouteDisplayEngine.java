@@ -287,7 +287,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                     if (last != null && last.getType() == PathfindResult.PathfindNode.NodeType.SUPERBOOM) {
                         BlockPos test = new BlockPos(pose.getX(), pose.getY(), pose.getZ());
                         for (Map.Entry<String, DungeonMechanicState> stringDungeonMechanicStateEntry : dungeonRoom.getMechanics().entrySet()) {
-                            if (stringDungeonMechanicStateEntry.getValue() instanceof WorldMutatingMechanicState) {
+                            if (stringDungeonMechanicStateEntry.getValue() instanceof WorldMutatingMechanicState && ((WorldMutatingMechanicState) stringDungeonMechanicStateEntry.getValue()).isBlocking(dungeonRoom)) {
                                 List<OffsetPoint> offsetPointList = ((WorldMutatingMechanicState)stringDungeonMechanicStateEntry.getValue()).blockedPoints();
                                 List<BlockPos> blocks = offsetPointList.stream().map(a -> a.getBlockPos(dungeonRoom)).collect(Collectors.toList());
                                 for (BlockPos block : blocks) {
