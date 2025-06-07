@@ -143,6 +143,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
 
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null) return;
+        if (dungeonContext.getScaffoldParser() == null) return;
         DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
                 dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())
         );

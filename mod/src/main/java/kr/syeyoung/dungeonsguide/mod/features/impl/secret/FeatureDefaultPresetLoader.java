@@ -17,7 +17,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.io.FileUtils;
-import org.tukaani.xz.XZInputStream;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;

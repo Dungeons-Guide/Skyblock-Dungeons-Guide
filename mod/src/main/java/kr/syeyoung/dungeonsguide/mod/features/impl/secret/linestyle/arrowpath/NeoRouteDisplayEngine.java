@@ -106,7 +106,8 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             }
             if (ctx.executor != null && (ctx.poses == null || !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled())) {
                 ctx.poses = ctx.executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
-                ctx.segment = transformPathfindResult(ctx.poses.getNodeList(), settings.getWidth(), settings.getSmooth());
+                if (ctx.poses != null)
+                    ctx.segment = transformPathfindResult(ctx.poses.getNodeList(), settings.getWidth(), settings.getSmooth());
             }
 
             if (ctx.executor != null) {
