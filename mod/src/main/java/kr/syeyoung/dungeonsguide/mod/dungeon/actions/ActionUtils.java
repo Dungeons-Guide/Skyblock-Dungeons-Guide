@@ -171,6 +171,19 @@ public class ActionUtils {
                     notBlockers.add(optionalSubset.get(i1));
                 }
             }
+
+            boolean flag = false;
+            for (String newBlocker : newBlockers) {
+                if (!dungeonRoom.getMechanics().get(newBlocker).getCurrentState().equals("open") &&
+                        !dungeonRoom.getMechanics().get(newBlocker).getAvailableActions().contains("open"))
+                    flag = true;
+            }
+            for (String notBlocker : notBlockers) {
+                if (!dungeonRoom.getMechanics().get(notBlocker).getCurrentState().equals("closed") &&
+                        !dungeonRoom.getMechanics().get(notBlocker).getAvailableActions().contains("closed"))
+                    flag = true;
+            }
+            if (flag) continue;
             last = buildActionMoveAndClick(builder, dungeonRoom,
                     precalculatedStonk.getPrecalculatedStonk(newBlockers), precalculatedStonk.getTargets(),
                     builder1 -> {
@@ -275,6 +288,19 @@ public class ActionUtils {
                     notBlockers.add(optionalSubset.get(i1));
                 }
             }
+            boolean flag = false;
+            for (String newBlocker : newBlockers) {
+                if (!dungeonRoom.getMechanics().get(newBlocker).getCurrentState().equals("open") &&
+                        !dungeonRoom.getMechanics().get(newBlocker).getAvailableActions().contains("open"))
+                    flag = true;
+            }
+            for (String notBlocker : notBlockers) {
+                if (!dungeonRoom.getMechanics().get(notBlocker).getCurrentState().equals("closed") &&
+                        !dungeonRoom.getMechanics().get(notBlocker).getAvailableActions().contains("closed"))
+                    flag = true;
+            }
+            if (flag) continue;
+
             last = buildActionMoveAnd(builder, dungeonRoom,
                     precalculatedStonk.getPrecalculatedStonk(newBlockers),
                     name,
