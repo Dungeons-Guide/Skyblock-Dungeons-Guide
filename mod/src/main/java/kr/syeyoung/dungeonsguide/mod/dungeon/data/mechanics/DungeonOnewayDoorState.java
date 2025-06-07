@@ -33,7 +33,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
@@ -93,8 +96,16 @@ public class DungeonOnewayDoorState implements DungeonMechanicState, WorldMutati
 
     @Override
     public boolean isBlocking(DungeonRoom dungeonRoom) {
+
         for (OffsetPoint offsetPoint : data.secretPoint.getOffsetPointList()) {
-            if (offsetPoint.getBlock(dungeonRoom) != Blocks.air) return true;
+            if (offsetPoint.getBlock(dungeonRoom) != Blocks.air) {
+                BlockPos blockPos = offsetPoint.getBlockPos(dungeonRoom);
+                if (!Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityFallingBlock.class, new AxisAlignedBB(
+                        blockPos.getX(), blockPos.getY() - 4, blockPos.getZ(),
+                        blockPos.getX() + 1, blockPos.getY() + 1, blockPos.getZ() + 1
+                )).isEmpty()) return false;
+                return true;
+            }
         }
         return false;
     }
