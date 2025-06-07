@@ -216,6 +216,30 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         BlockPos pos = actionClick.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlockStencil(pos, partialTicks,new AColor(0, 255,0,100), false);
         RenderUtils.drawTextAtWorld("Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
+
+        Vec3 from = new Vec3(pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5);
+        Vec3 eyePos = Minecraft.getMinecraft().thePlayer.getPositionEyes(partialTicks);
+        Vec3 lookVec = from.subtract(eyePos).normalize();
+
+        if (Minecraft.getMinecraft().thePlayer.getLook(partialTicks).dotProduct(lookVec) < 0.7) return;
+
+        MovingObjectPosition objectPosition = Minecraft.getMinecraft().objectMouseOver;
+        if (objectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+            BlockPos blockPos = objectPosition.getBlockPos();
+            for (Map.Entry<String, DungeonMechanicState> stringDungeonMechanicStateEntry : dungeonRoom.getMechanics().entrySet()) {
+                if (stringDungeonMechanicStateEntry.getValue() instanceof WorldMutatingMechanicState && ((WorldMutatingMechanicState) stringDungeonMechanicStateEntry.getValue()).isBlocking(dungeonRoom)) {
+                    List<OffsetPoint> offsetPointList = ((WorldMutatingMechanicState)stringDungeonMechanicStateEntry.getValue()).blockedPoints();
+                    List<BlockPos> blocks = offsetPointList.stream().map(a -> a.getBlockPos(dungeonRoom)).collect(Collectors.toList());
+                    for (BlockPos block : blocks) {
+                        if (blockPos.equals(block)) {
+                            highlightSuperboom(blocks, partialTicks, new AColor(255, 0, 0, 50));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     public void renderActionStonkClick(ActionStonkClick actionStonkClick, DungeonRoom dungeonRoom, float partialTicks) {

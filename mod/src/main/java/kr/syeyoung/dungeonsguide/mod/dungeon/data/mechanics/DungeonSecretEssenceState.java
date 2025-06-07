@@ -76,7 +76,12 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
 
             if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 25) {
                 if (tileEntity instanceof TileEntitySkull) {
-                    String texture = ((TileEntitySkull) tileEntity).getPlayerProfile().getProperties().get("textures").stream().findFirst().map(a -> a.getValue()).orElse(null);
+                    String texture = Optional.ofNullable(((TileEntitySkull) tileEntity).getPlayerProfile())
+                            .map(a -> a.getProperties())
+                            .map(a -> a.get("textures"))
+                            .flatMap(a -> a.stream().findFirst())
+                            .map(a -> a.getValue()).orElse(null);
+
                     if (texture == null) return;
                     for (EntityArmorStand entity : entities) {
                         ItemStack itemStackIn = entity.getEquipmentInSlot(4);
