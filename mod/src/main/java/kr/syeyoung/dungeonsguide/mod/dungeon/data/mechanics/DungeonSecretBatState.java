@@ -36,14 +36,15 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 @Data
 public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
@@ -78,9 +79,30 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
         return getSecretStatus(dungeonRoom) == SecretStatus.FOUND;
     }
 
+    private int nearbyTicks;
     @Override
     public void tick(DungeonRoom dungeonRoom) {
-        // nothin
+        if (didKillBat) return;
+
+        BlockPos bpos = data.secretPoint.getBlockPos(dungeonRoom);
+        Vec3 pos = new Vec3(bpos);
+        for (Map.Entry<Integer, Vec3> integerVec3Entry : DungeonActionContext.getSpawnLocation().entrySet()) {
+            if (integerVec3Entry.getValue().squareDistanceTo(pos) < 100) {
+                Entity e = Minecraft.getMinecraft().theWorld.getEntityByID(integerVec3Entry.getKey());
+                if (e == null) continue;
+                if (!(e instanceof EntityBat)) continue;
+                if (e.isDead) continue;
+                return; // bat is not dead.
+            }
+        }
+
+        // can't find the bat!!!
+        if (bpos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 49) {
+            nearbyTicks++;
+        }
+        if (nearbyTicks > 100) {
+            didKillBat = true;
+        }
     }
 
     @Override
