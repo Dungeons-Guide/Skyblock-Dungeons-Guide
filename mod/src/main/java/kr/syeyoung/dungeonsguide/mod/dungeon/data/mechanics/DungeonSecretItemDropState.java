@@ -38,6 +38,7 @@ import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Items;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
@@ -63,44 +64,44 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
         return getSecretStatus(dungeonRoom) == SecretStatus.FOUND;
     }
 
-    private boolean itemdropFound = false;
+    private SecretStatus status = SecretStatus.NOT_SURE;
+    private boolean absolutelyFound = false;
+    private int nearbyTicks = 0;
     public void tick(DungeonRoom dungeonRoom) {
+        if (absolutelyFound) return;
+
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
-        if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 2) {
+        boolean itemFound = false;
+        for (EntityItem entityItem : Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()))) {
+            if (entityItem.getEntityItem().getItem() == Items.dye) continue;
+            itemFound = true;
+        }
+
+        if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 40) {
+            nearbyTicks++;
             List<EntityItem> items = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()));
-            if (items.size() == 0) {
-                itemdropFound = true; // was there, but gone!
-                ChatTransmitter.sendDebugChat("Assume at " + ISecret.toString(pos) + "found.");
+            if (itemFound) {
+                status = SecretStatus.DEFINITELY_NOT;
+            } else if (status != SecretStatus.FOUND && nearbyTicks > 40) {
+                status = SecretStatus.FOUND;
+                ChatTransmitter.sendDebugChat("Assume at " + ISecret.toString(pos) + "found? " + items.size());
             }
         }
-        if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 100) {
-            List<EntityItem> items = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()));
-            if (items.size() != 0) {
-                itemdropFound = false;
-//                    ChatTransmitter.sendDebugChat("Assume at "+ISecret.toString(pos)+" not found? "+items.size());
-            } else if (!itemdropFound) {
-                itemdropFound = true; // was there, but gone!
-                ChatTransmitter.sendDebugChat("Assume at " + ISecret.toString(pos) + "found? " + items.size());
+
+        if (!absolutelyFound) {
+            Vec3 pos2 = new Vec3(pos);
+            for (Integer pickedup : DungeonActionContext.getPickedups()) {
+                if (DungeonActionContext.getSpawnLocation().get(pickedup) == null) continue;
+                if (DungeonActionContext.getSpawnLocation().get(pickedup).squareDistanceTo(pos2) < 4) {
+                    status = SecretStatus.FOUND;
+                    absolutelyFound = true;
+                }
             }
         }
     }
 
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
-        BlockPos bpos = data.secretPoint.getBlockPos(dungeonRoom);
-        if (itemdropFound) {
-            return SecretStatus.FOUND;
-        }
-        Vec3 pos = new Vec3(bpos);
-        for (Integer pickedup : DungeonActionContext.getPickedups()) {
-            if (DungeonActionContext.getSpawnLocation().get(pickedup) == null) continue;
-            if (DungeonActionContext.getSpawnLocation().get(pickedup).squareDistanceTo(pos) < 4) {
-                itemdropFound = true;
-                return SecretStatus.FOUND;
-            }
-        }
-
-        return !itemdropFound ? SecretStatus.DEFINITELY_NOT : SecretStatus.NOT_SURE;
-
+        return status;
     }
 
     @Override
