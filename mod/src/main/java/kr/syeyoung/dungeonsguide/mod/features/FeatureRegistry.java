@@ -177,6 +177,8 @@ public class FeatureRegistry {
         categoryDescription.put("Pathfinding & Secrets", "Access pathfind&secret related settings here. Blood Rush & Secrets Waypoints & Secret Lines");
         categoryDescription.put("Pathfinding & Secrets.Blood Rush", "Start pathfind to nearest wither/blood doors");
         categoryDescription.put("Pathfinding & Secrets.Display One", "Start pathfind to nearest secret");
+        categoryDescription.put("Pathfinding & Secrets.Secret Browser", "Browse mechanics & secrets in a room and trigger pathfind using ui");
+        categoryDescription.put("Pathfinding & Secrets.Smart Route", "Generate a route that goes through all secrets in a room efficiently. Prefer this over Display One");
         categoryDescription.put("Pathfinding & Secrets.Display All", "Start pathfind to All secrets. Disable pathfind option inside to use this only for beacons");
         categoryDescription.put("Global HUD", "Configure settings that affect all the HUDs. Scale & Quick Text colors");
     }
