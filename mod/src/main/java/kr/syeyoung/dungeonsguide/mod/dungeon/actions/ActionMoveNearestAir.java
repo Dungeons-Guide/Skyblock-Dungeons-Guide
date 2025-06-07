@@ -29,16 +29,20 @@ import net.minecraft.client.Minecraft;
 @EqualsAndHashCode(callSuper=false)
 public class ActionMoveNearestAir extends AbstractActionMove {
     @Getter
-    private OffsetPoint target;
+    private OffsetVec3 target;
 
     public ActionMoveNearestAir(OffsetPoint target) {
-        super(new OffsetVec3(target.getX()+0.5, target.getY(), target.getZ()+0.5), target);
+        super(new OffsetVec3(target.getX()+0.5, target.getY(), target.getZ()+0.5));
+        this.target = new OffsetVec3(target.getX()+0.5, target.getY(), target.getZ()+0.5);
+    }
+    public ActionMoveNearestAir(OffsetVec3 target) {
+        super(target);
         this.target = target;
     }
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
-        return target.getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 25;
+        return target.getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) < 25;
     }
 
     @Override

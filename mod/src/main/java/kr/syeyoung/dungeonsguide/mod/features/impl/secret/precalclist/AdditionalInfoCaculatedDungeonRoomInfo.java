@@ -299,22 +299,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
 
                 List<List<OffsetVec3>> toPfTo = new ArrayList<>();
                 for (AbstractActionMove action : actionChangeStateListEntry.getValue()) {
-                    if (action instanceof ActionMove) {
-                        toPfTo.add(
-                                ((ActionMove) action).getTargets().stream().flatMap(a -> a.getOffsetPointSet().stream())
-                                        .collect(Collectors.toList())
-                        );
-                    } else if (action instanceof ActionMoveSpot) {
-                        toPfTo.add(
-                                ((ActionMoveSpot) action).getTargets().stream().flatMap(a -> a.getOffsetPointSet().stream())
-                                        .collect(Collectors.toList())
-                        );
-                    } else if (action instanceof ActionMoveNearestAir) {
-                        OffsetPoint offsetPoint = ((ActionMoveNearestAir) action).getTarget();
-                        toPfTo.add(
-                                Collections.singletonList(new OffsetVec3(offsetPoint.getX(), offsetPoint.getY(), offsetPoint.getZ()))
-                        );
-                    }
+                    toPfTo.add(action.getTargetOffsetPointSet());
                 }
 
                 for (List<OffsetVec3> offsetVec3s : toPfTo) {

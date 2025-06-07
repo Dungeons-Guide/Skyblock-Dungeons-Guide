@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
@@ -60,7 +61,7 @@ public class DungeonRoomDoor2State implements DungeonMechanicState {
     public void buildAction(String action, ActionDAGBuilder builder, AlgorithmSetting algorithmSetting) throws PathfindImpossibleException {
         if (!"navigate".equalsIgnoreCase(action))
             throw new PathfindImpossibleException(action + " is not valid state for secret");
-        builder.requires(new ActionMoveNearestAir(data.pfPoint), algorithmSetting);
+        builder.requires(new ActionMoveNearestAir(new OffsetVec3(data.pfPoint.getX(), data.pfPoint.getY(), data.pfPoint.getZ())), algorithmSetting);
     }
 
     @Override

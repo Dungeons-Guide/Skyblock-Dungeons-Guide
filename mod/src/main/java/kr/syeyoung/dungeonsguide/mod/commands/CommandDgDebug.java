@@ -308,8 +308,6 @@ public class CommandDgDebug extends CommandBase {
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
             for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicEntry : dungeonRoomInfo.getMechanics().entrySet()) {
                 DungeonMechanicData mechanic = stringDungeonMechanicEntry.getValue();
-                if (!(mechanic instanceof DungeonOnewayLeverState.DungeonOnewayLeverData)) continue;
-
                 if (mechanic instanceof DungeonFakeChestTrapState.DungeonFakeChestTrapData) {
                     DungeonFakeChestTrapState.DungeonFakeChestTrapData mechanic1 = (DungeonFakeChestTrapState.DungeonFakeChestTrapData) mechanic;
                     mechanic1.setChestCache(PrecalculatedStonk.createOne(
