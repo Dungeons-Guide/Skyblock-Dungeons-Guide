@@ -86,11 +86,6 @@ public class PathfindLineProperties extends SimpleFeature {
             PathDisplayEngineSetting<?> setting1 = setting.createConfiguration();
             setting1.deserialize(jsonObject.getAsJsonObject("data"));
             setSetting(setting1);
-        } else if (jsonObject.has("lineWidth")) { // classic.
-            PathDisplayEngineSettingRegistration<?> setting = PathDisplayEngineSettingRegistry.getRegistration("classic");
-            PathDisplayEngineSetting<?> setting1 = setting.createConfiguration();
-            setting1.deserialize(jsonObject);
-            setSetting(setting1);
         }
     }
 
