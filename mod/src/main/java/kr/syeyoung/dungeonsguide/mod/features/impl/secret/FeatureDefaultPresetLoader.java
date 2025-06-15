@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.Notification;
@@ -59,7 +60,7 @@ public class FeatureDefaultPresetLoader extends SimpleFeature {
                 progressForTopRight.addProgress(progress);
                 File downloadTarget;
                 try {
-                    downloadTarget = File.createTempFile("dg-default-preset-download", ".zip");
+                    downloadTarget = new File(DungeonsGuide.getDungeonsGuide().getTempDir(), "dg-default-preset-download-"+System.currentTimeMillis()+".zip");
                     downloadTarget.deleteOnExit();
                     HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
                     connection.setRequestMethod("GET");
@@ -98,7 +99,7 @@ public class FeatureDefaultPresetLoader extends SimpleFeature {
                 WidgetNotificationProgress.Progress openingFile = new WidgetNotificationProgress.Progress("Opening File...", null, null, false);
                 progressForTopRight.addProgress(openingFile);
                 PathfindPreset preset;
-                try (java.util.zip.ZipFile zipFile = new ZipFile(downloadTarget)) {
+                try (ZipFile zipFile = new ZipFile(downloadTarget)) {
 
                     if (!"Dungeons Guide Preset Export".equals(zipFile.getComment())) {
                         throw new IllegalArgumentException("File is not valid pathfind preset export");

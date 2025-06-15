@@ -254,10 +254,10 @@ public class PathfindPrecalculationRequestSet {
 
                 File outdir;
                 List<File> files;
-                try {
-                    Path p = Files.createTempDirectory("dg-pfrequest-gen");
-                    outdir = p.toFile();
-                    System.out.println("Writing to " + p);
+                try
+                {
+                    outdir = new File(DungeonsGuide.getDungeonsGuide().getTempDir(), "dg-pfrequest-gen-"+System.currentTimeMillis()); outdir.mkdirs();
+                    System.out.println("Writing to " + outdir);
                     files = requests.stream().collect(Collectors.groupingBy(a ->
                             new ImmutablePair<>(a.getDungeonRoomInfo().getUuid(), a.getOpenMech().stream().sorted(String::compareTo).collect(Collectors.joining(",")))
                     )).entrySet().parallelStream().flatMap(stuff -> {

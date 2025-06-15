@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod;
 
 import com.google.common.collect.Sets;
-import com.sun.jna.internal.Cleaner;
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
@@ -103,6 +102,9 @@ public class DungeonsGuide implements DGInterface {
     private SkyblockStatus skyblockStatus;
 
     @Getter
+    private File tempDir = new File(Main.getConfigDir(), "tmp");
+
+    @Getter
     public static final ThreadGroup THREAD_GROUP = new ThreadGroup("Dungeons Guide");
 
     public static final DefaultThreadFactory THREAD_FACTORY = new DefaultThreadFactory();
@@ -184,6 +186,8 @@ public class DungeonsGuide implements DGInterface {
 
 
         progressbar.step("Creating Configuration");
+
+        tempDir.mkdirs();
 
         File configFile = new File(Main.getConfigDir(), "config.json");
         if (!configFile.exists()) {
