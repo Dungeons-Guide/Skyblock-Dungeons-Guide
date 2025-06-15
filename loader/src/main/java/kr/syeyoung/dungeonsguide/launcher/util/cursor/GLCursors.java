@@ -96,7 +96,7 @@ public class GLCursors {
                         break;
                     case LWJGLUtil.PLATFORM_LINUX:
                         if (value.getLinux() != -1)
-                            c = createCursorLinux(value.getLinux());
+                            c = createCursorLinux(value.getLinux(), value.getXcursor());
                         break;
                     case LWJGLUtil.PLATFORM_MACOSX:
                         if (value.getMacos() != null)
@@ -205,12 +205,14 @@ public class GLCursors {
         handle.position(0);
         return createCursor(handle);
     }
-    private static Cursor createCursorLinux(int cursor) throws LWJGLException, InstantiationException, InvocationTargetException, IllegalAccessException {
+    private static Cursor createCursorLinux(int cursor, String xcursor) throws LWJGLException, InstantiationException, InvocationTargetException, IllegalAccessException {
 //        Display
         long display = (long) linuxDisplayGetDisplay.invoke(null);
-        Pointer fontCursor = X11.INSTANCE.XCreateFontCursor(new Pointer(display), cursor);
-        long iconPtr = Pointer.nativeValue(fontCursor);
 
+        Pointer fontCursor = XCursor.INSTANCE.XcursorLibraryLoadCursor(new Pointer(display), xcursor);
+        if (fontCursor == null || Pointer.nativeValue(fontCursor) == 0)
+            fontCursor = X11.INSTANCE.XCreateFontCursor(new Pointer(display), cursor);
+        long iconPtr = Pointer.nativeValue(fontCursor);
         return createCursor(iconPtr);
     }
     private static Cursor createCursorMac(String cursor) throws LWJGLException, InstantiationException, InvocationTargetException, IllegalAccessException {

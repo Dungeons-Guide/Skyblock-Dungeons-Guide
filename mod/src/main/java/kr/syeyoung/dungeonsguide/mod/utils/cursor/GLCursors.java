@@ -23,6 +23,7 @@ import com.google.common.base.Throwables;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
+import kr.syeyoung.dungeonsguide.launcher.util.cursor.XCursor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
@@ -97,7 +98,7 @@ public class GLCursors {
                         break;
                     case LWJGLUtil.PLATFORM_LINUX:
                         if (value.getLinux() != -1)
-                            c = createCursorLinux(value.getLinux());
+                            c = createCursorLinux(value.getLinux(), value.getXcursor());
                         break;
                     case LWJGLUtil.PLATFORM_MACOSX:
                         if (value.getMacos() != null)
@@ -198,6 +199,7 @@ public class GLCursors {
     private static Foundation F_INSTANCE;
     private static User32 U_INSTANCE;
     private static X11 X_INSTANCE;
+    private static XCursor X_CURSOR_INSTANCE;
     private static Cursor createCursorWindows(int cursor) throws LWJGLException, InstantiationException, InvocationTargetException, IllegalAccessException {
         if (U_INSTANCE == null) U_INSTANCE= (User32) Native.loadLibrary("User32", User32.class);
         User32 user32 = U_INSTANCE;
@@ -220,10 +222,13 @@ public class GLCursors {
         return createCursor(handle);
     }
 
-    private static Cursor createCursorLinux(int cursor) throws LWJGLException, InstantiationException, InvocationTargetException, IllegalAccessException {
+    private static Cursor createCursorLinux(int cursor, String xCursor) throws LWJGLException, InstantiationException, InvocationTargetException, IllegalAccessException {
         if (X_INSTANCE == null) X_INSTANCE = (X11) Native.loadLibrary("X11", X11.class);
+        if (X_CURSOR_INSTANCE == null) X_CURSOR_INSTANCE = (XCursor) Native.loadLibrary("Xcursor", XCursor.class);
         long display = (long) linuxDisplayGetDisplay.invoke(null);
-        Pointer fontCursor = X_INSTANCE.XCreateFontCursor(new Pointer(display), cursor);
+        Pointer fontCursor = X_CURSOR_INSTANCE.XcursorLibraryLoadCursor(new Pointer(display), xCursor);
+        if (fontCursor == null || Pointer.nativeValue(fontCursor) == 0)
+            fontCursor = X_INSTANCE.XCreateFontCursor(new Pointer(display), cursor);
         long iconPtr = Pointer.nativeValue(fontCursor);
 
         return createCursor(iconPtr);
