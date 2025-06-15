@@ -45,20 +45,21 @@ public class NativeLoader {
         if (blacklisted.contains(name)) throw new RuntimeException("Blacklisted native library: "+name);
 
         String libName = System.mapLibraryName(name);
-        String dir = Platform.ARCH;
+        String dir;
 
-        if (!(dir.equals("aarch64") || dir.equals("x86") || dir.equals("x86_64"))) {
-            if (Platform.is64Bit()) {
-                dir = "x86_64";
-            } else {
-                dir = "x86";
-            }
+        if (Platform.isARM()) {
+            dir = "aarch64";
+        } else if (Platform.is64Bit()) {
+            dir = "x86_64";
+        } else {
+            dir = "x86";
         }
+
 
         String resourceLoc = "/native/"+dir+"/"+libName;
 
         System.out.println("Extracting "+name+" from "+resourceLoc);
-        System.out.println("Arch: "+Platform.ARCH +" | OS: "+Platform.getOSType());
+        System.out.println("Arch: "+dir +" | OS: "+Platform.getOSType());
 
         File targetExtractionPath = new File("native/"+libName);
         targetExtractionPath.getParentFile().mkdirs();

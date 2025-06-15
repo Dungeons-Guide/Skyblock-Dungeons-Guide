@@ -459,13 +459,13 @@ public class DungeonsGuide implements DGInterface {
             executorService.shutdownNow();
         }
 
-        try {
-            Cleaner cleaner = Cleaner.getCleaner();
-            Thread t = ReflectionHelper.getPrivateValue(Cleaner.class, cleaner, "cleanerThread");
-            t.stop();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            Cleaner cleaner = Cleaner.getCleaner();
+//            Thread t = ReflectionHelper.getPrivateValue(Cleaner.class, cleaner, "cleanerThread");
+//            t.stop();
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
 
         THREAD_GROUP.interrupt();
         THREAD_GROUP.stop();
