@@ -83,9 +83,9 @@ public class FeatureDefaultPresetLoader extends SimpleFeature {
 
 
                             long elapsed = System.currentTimeMillis() - startTime;
-                            double speed = (progress.getCurrent().get() / 1024.0) / (elapsed / 1000.0 + 1) / 1024.0; // KB/s
+                            double speed = (progress.getCurrent().get() / 1024.0) / (elapsed / 1000.0 + 1) / 1024.0; // MB/s
                             long remainingBytes = contentLength - progress.getCurrent().get();
-                            long etaMillis = (long) ((remainingBytes / 1024.0) / (speed + 0.1) * 1000);
+                            long etaMillis = (long) ((remainingBytes / 1024.0 / 1024.0) / (speed + 0.1) * 1000);
 
                             progress.setMessage("Downloading ("+ FileUtils.byteCountToDisplaySize(contentLength)+") "+String.format("%.2f", speed)+"MB/s" + " ETA: "+(etaMillis/1000)+" Seconds");
                         }
