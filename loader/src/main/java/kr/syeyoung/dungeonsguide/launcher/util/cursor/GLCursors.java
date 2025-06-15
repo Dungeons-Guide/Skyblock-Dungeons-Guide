@@ -31,13 +31,11 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.input.Cursor;
+import org.lwjgl.opengl.Display;
 import sun.misc.Unsafe;
 
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -61,6 +59,9 @@ public class GLCursors {
     private static Constructor constructor;
     private static Field cursorField;
 
+    private static Class linuxDisplay;
+    private static Method linuxDisplayGetDisplay;
+
     private static Map<EnumCursor, Cursor> enumCursorCursorMap = new HashMap<>();
 
 
@@ -74,6 +75,9 @@ public class GLCursors {
             constructor.setAccessible(true);
             cursorField = Cursor.class.getDeclaredField("cursors");
             cursorField.setAccessible(true);
+            linuxDisplay = Class.forName("org.lwjgl.opengl.LinuxDisplay");
+            linuxDisplayGetDisplay = linuxDisplay.getDeclaredMethod("getDisplay");
+            linuxDisplayGetDisplay.setAccessible(true);
         } catch (NoSuchFieldException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -202,8 +206,9 @@ public class GLCursors {
         return createCursor(handle);
     }
     private static Cursor createCursorLinux(int cursor) throws LWJGLException, InstantiationException, InvocationTargetException, IllegalAccessException {
-        X11.Display display = X11.INSTANCE.XOpenDisplay(null);
-        Pointer fontCursor = X11.INSTANCE.XCreateFontCursor(display, cursor);
+//        Display
+        long display = (long) linuxDisplayGetDisplay.invoke(null);
+        Pointer fontCursor = X11.INSTANCE.XCreateFontCursor(new Pointer(display), cursor);
         long iconPtr = Pointer.nativeValue(fontCursor);
 
         return createCursor(iconPtr);

@@ -24,13 +24,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 
 public interface X11 extends Library {
-    public Pointer XCreateFontCursor(Display display,
+    public Pointer XCreateFontCursor(Pointer display,
                                int shape);
-    public Display XOpenDisplay(String var1);
-
-    public static class Display extends PointerType {
-        public Display() {
-        }
-    }
 
 }

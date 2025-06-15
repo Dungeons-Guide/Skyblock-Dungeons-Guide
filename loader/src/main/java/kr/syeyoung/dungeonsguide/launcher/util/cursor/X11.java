@@ -25,13 +25,7 @@ import com.sun.jna.PointerType;
 
 public interface X11 extends Library {
     X11 INSTANCE = (X11) Native.loadLibrary("X11", X11.class);
-    public Pointer XCreateFontCursor(Display display,
+    public Pointer XCreateFontCursor(Pointer display,
                                int shape);
-    public Display XOpenDisplay(String var1);
-
-    public static class Display extends PointerType {
-        public Display() {
-        }
-    }
 
 }
