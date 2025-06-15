@@ -12,6 +12,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificatio
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationProgress;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculationRegistry;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.TSPCacheRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPresetRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
@@ -184,6 +185,7 @@ public class FeatureDefaultPresetLoader extends SimpleFeature {
 
                 PathfindPresetRegistry.getINSTANCE().unregister(PathfindPresetRegistry.DEFAULT_PRESET);
                 PathfindPresetRegistry.DEFAULT_PRESET = preset;
+                TSPCacheRegistry.getINSTANCE().loadPreset(preset);
 
                 UUID newuuid = UUID.randomUUID();
                 FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(newuuid, new WidgetNotificationAutoClose(newuuid, Notification.builder()
