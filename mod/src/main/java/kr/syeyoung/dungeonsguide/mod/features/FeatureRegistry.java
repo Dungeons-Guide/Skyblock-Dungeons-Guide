@@ -142,7 +142,6 @@ public class FeatureRegistry {
     public static final FeatureCreateRefreshLine SECRET_CREATE_REFRESH_LINE = register(new FeatureCreateRefreshLine());
     public static final FeatureFreezePathfind SECRET_FREEZE_LINES = register(new FeatureFreezePathfind());
     public static final FeatureTogglePathfind SECRET_TOGGLE_KEY = register(new FeatureTogglePathfind());
-    public static final FeaturePathfindStrategy SECRET_PATHFIND_STRATEGY = register(new FeaturePathfindStrategy());
     public static final FeatureRequestCalculation SECRET_PATHFIND_REQUEST = register(new FeatureRequestCalculation());
     public static final FeaturePrecalcList SECRET_PRECALC_LIST = register(new FeaturePrecalcList());
     public static final FeatureDefaultPresetLoader LOAD_DEFAULT_PRESET = register(new FeatureDefaultPresetLoader());
