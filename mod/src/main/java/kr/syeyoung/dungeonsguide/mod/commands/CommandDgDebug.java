@@ -19,6 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.commands;
 
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
+import kr.syeyoung.dungeonsguide.mod.config.onboarding.OnboardingCard;
+import kr.syeyoung.dungeonsguide.mod.config.onboarding.OnboardingPage;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.*;
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
@@ -50,10 +52,8 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
-import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.GameSettings;
@@ -101,7 +101,6 @@ public class CommandDgDebug extends CommandBase {
             "mockdungeonstart",
             "saverooms",
             "loadrooms",
-            "reloadah",
             "brand",
             "pathfind",
             "process",
@@ -160,9 +159,6 @@ public class CommandDgDebug extends CommandBase {
                 break;
             case "loadrooms":
                 loadRoomsCommand();
-                break;
-            case "reloadah":
-                reloadAHCommand();
                 break;
             case "brand":
                 brandCommand();
@@ -460,6 +456,13 @@ public class CommandDgDebug extends CommandBase {
 
     private void process2() throws IOException {
 
+        GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("page1/pf.gui")));
+        new Thread(DungeonsGuide.THREAD_GROUP, () -> {
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                Minecraft.getMinecraft().displayGuiScreen(adapter);
+            });
+        }).start();
+
 //        int cnt = 0;
 //        CBORMapper objectMapper = new CBORMapper();
 //        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
@@ -473,24 +476,28 @@ public class CommandDgDebug extends CommandBase {
 //        System.out.println(cnt);
 
 
-        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
-            for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicDataEntry : dungeonRoomInfo.getMechanics().entrySet()) {
-                if (stringDungeonMechanicDataEntry.getValue() instanceof DungeonCrusherTrapState.DungeonCrusherTrapData) {
-                    OffsetPointSet crusherBlocks = ((DungeonCrusherTrapState.DungeonCrusherTrapData) stringDungeonMechanicDataEntry.getValue()).getStarting();
-                    IBlockState blockState = dungeonRoomInfo.getBlock(crusherBlocks.getOffsetPointList().get(0), 0);
+//        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+//            for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicDataEntry : dungeonRoomInfo.getMechanics().entrySet()) {
+//                if (stringDungeonMechanicDataEntry.getValue() instanceof DungeonCrusherTrapState.DungeonCrusherTrapData) {
+//                    OffsetPointSet crusherBlocks = ((DungeonCrusherTrapState.DungeonCrusherTrapData) stringDungeonMechanicDataEntry.getValue()).getStarting();
+//                    IBlockState blockState = dungeonRoomInfo.getBlock(crusherBlocks.getOffsetPointList().get(0), 0);
+//
+//
+//
+//                    OffsetPointSet ops = ((DungeonCrusherTrapState.DungeonCrusherTrapData) stringDungeonMechanicDataEntry.getValue()).getDangerRegion();
+//                    for (OffsetPoint offsetPoint : ops.getOffsetPointList()) {
+//                        if (dungeonRoomInfo.getBlock(offsetPoint, 0) == blockState) {
+//                            System.out.println("how: "+dungeonRoomInfo.getName());
+//                            dungeonRoomInfo.setBlock(offsetPoint, Blocks.air.getDefaultState());
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
-
-
-                    OffsetPointSet ops = ((DungeonCrusherTrapState.DungeonCrusherTrapData) stringDungeonMechanicDataEntry.getValue()).getDangerRegion();
-                    for (OffsetPoint offsetPoint : ops.getOffsetPointList()) {
-                        if (dungeonRoomInfo.getBlock(offsetPoint, 0) == blockState) {
-                            System.out.println("how: "+dungeonRoomInfo.getName());
-                            dungeonRoomInfo.setBlock(offsetPoint, Blocks.air.getDefaultState());
-                        }
-                    }
-                }
-            }
-        }
+//        for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+//            System.out.println(abstractFeature.getCategory() +" - " +abstractFeature.getName()+"/ "+abstractFeature.getKey());
+//        }
     }
 
     private void loadRoomsCommand() {
@@ -504,17 +511,6 @@ public class CommandDgDebug extends CommandBase {
             e.printStackTrace();
         }
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cAn error has occurred while loading roomdata"));
-    }
-
-    private void reloadAHCommand() {
-        try {
-            AhUtils.loadAuctions();
-        } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException |
-                 InvalidAlgorithmParameterException | NoSuchPaddingException | BadPaddingException |
-                 KeyStoreException | IllegalBlockSizeException | KeyManagementException e) {
-            e.printStackTrace();
-        }
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fReloaded Ah data"));
     }
 
     private void brandCommand() {

@@ -318,7 +318,6 @@ public class FeatureRegistry {
     public static final FeatureDetectFreeze FREEZE_DETECTOR = register(new FeatureDetectFreeze());
 
     public static final FeatureTooltipDungeonStat ETC_DUNGEONSTAT = register(new FeatureTooltipDungeonStat());
-    public static final FeatureTooltipPrice ETC_PRICE = register(new FeatureTooltipPrice());
     public static final FeatureDecreaseExplosionSound ETC_EXPLOSION_SOUND = register(new FeatureDecreaseExplosionSound());
 
     public static final FeatureUpdateAlarm ETC_TEST = register(new FeatureUpdateAlarm());

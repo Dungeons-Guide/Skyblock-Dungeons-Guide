@@ -47,7 +47,6 @@ import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
 import kr.syeyoung.dungeonsguide.mod.resources.DGTexturePack;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
-import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.BlockCache;
 import kr.syeyoung.dungeonsguide.mod.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
@@ -267,8 +266,6 @@ public class DungeonsGuide implements DGInterface {
         registerEventsForge(PlayerManager.INSTANCE);
         registerEventsForge(StaticResourceCache.INSTANCE);
         registerEventsForge(OverlayManager.getEventHandler());
-
-        registerEventsForge(new AhUtils());
 
 
         progressbar.step("Opening connection");
