@@ -25,4 +25,6 @@ public interface IFeature {
 
     void loadConfig(JsonObject jsonObject);
     JsonObject saveConfig();
+
+    boolean shouldShowOnConfig();
 }

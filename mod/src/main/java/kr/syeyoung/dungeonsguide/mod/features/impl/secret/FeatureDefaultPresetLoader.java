@@ -207,4 +207,9 @@ public class FeatureDefaultPresetLoader extends SimpleFeature {
             }
         }).start();
     }
+
+    @Override
+    public boolean shouldShowOnConfig() {
+        return false;
+    }
 }

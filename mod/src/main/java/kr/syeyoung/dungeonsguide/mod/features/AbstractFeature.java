@@ -116,4 +116,9 @@ public abstract class AbstractFeature implements IFeature {
     public boolean isDisableable() {
         return true;
     }
+
+    @Override
+    public boolean shouldShowOnConfig() {
+        return true;
+    }
 }

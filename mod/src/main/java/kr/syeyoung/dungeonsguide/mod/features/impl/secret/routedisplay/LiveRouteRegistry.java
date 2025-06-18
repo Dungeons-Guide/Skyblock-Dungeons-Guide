@@ -129,4 +129,9 @@ public class LiveRouteRegistry extends SimpleFeature {
     public void onTextureStitch(TextureStitchEvent.Pre event) {
          sprite = event.map.registerSprite(new ResourceLocation("dungeonsguide", "arrow"));
     }
+
+    @Override
+    public boolean shouldShowOnConfig() {
+        return false;
+    }
 }

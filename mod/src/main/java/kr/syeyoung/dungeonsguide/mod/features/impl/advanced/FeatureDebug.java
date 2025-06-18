@@ -25,8 +25,6 @@ public class FeatureDebug extends SimpleFeature {
 
     public FeatureDebug() {
         super("Debug", "Debug", "Toggles debug mode", "debug", false);
-
-
     }
 
 

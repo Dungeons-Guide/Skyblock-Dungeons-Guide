@@ -49,6 +49,7 @@ import java.util.*;
 public class FeatureDAGs extends RawRenderingGuiFeature {
     public FeatureDAGs() {
         super("Debug", "DAG Renderer", "View DAG of actions that needs to be taken", "secret.dagview", false, 500, 500);
+        setEnabled(false);
     }
 
     public boolean isHUDViewable() {

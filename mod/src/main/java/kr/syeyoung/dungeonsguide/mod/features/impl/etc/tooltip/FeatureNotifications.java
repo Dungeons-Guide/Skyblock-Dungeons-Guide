@@ -49,6 +49,11 @@ public class FeatureNotifications extends AbstractGuiFeature {
         return true;
     }
 
+    @Override
+    public boolean shouldShowOnConfig() {
+        return false;
+    }
+
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onTick(DGTickEvent tickEvent) {
 //        if (progressUpdate) {

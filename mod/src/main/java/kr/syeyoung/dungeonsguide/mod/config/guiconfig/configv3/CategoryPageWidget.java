@@ -59,7 +59,9 @@ public class CategoryPageWidget extends AnnotatedImportOnlyWidget {
 
     public List<Widget> buildMenu(String category) {
         return FeatureRegistry.getFeaturesByCategory()
-                .getOrDefault(category, Collections.emptyList()).stream().map(
+                .getOrDefault(category, Collections.emptyList()).stream()
+                .filter(a -> a.shouldShowOnConfig())
+                .map(
                         a -> new FeatureItem(a)
                 ).collect(Collectors.toList());
     }
