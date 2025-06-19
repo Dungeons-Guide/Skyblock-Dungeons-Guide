@@ -125,9 +125,10 @@ public class CompatLayer extends Widget implements Layouter, Renderer {
     }
 
     @Override
-    public void keyPressed(char typedChar, int keyCode) {
-        if (!getDomElement().isFocused()) return;
+    public boolean keyPressed(char typedChar, int keyCode) {
+        if (!getDomElement().isFocused()) return false;
         panel.keyPressed0(typedChar, keyCode);
+        return false;
     }
 
     @Override

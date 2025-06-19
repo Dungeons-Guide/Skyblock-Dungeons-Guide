@@ -74,8 +74,8 @@ public class TCKeybind implements FeatureTypeHandler<Integer> {
         }
 
         @Override
-        public void keyPressed(char typedChar, int keyCode) {
-            if (!listen) return;
+        public boolean keyPressed(char typedChar, int keyCode) {
+            if (!listen) return false;
             if (keyCode == 1) {
                 currentKey = 0;
             } else if (keyCode != 0) {
@@ -86,6 +86,7 @@ public class TCKeybind implements FeatureTypeHandler<Integer> {
             listen = false;
             parameter.setValue(currentKey);
             value.setValue(GameSettings.getKeyDisplayString(currentKey));
+            return true;
         }
     }
 }

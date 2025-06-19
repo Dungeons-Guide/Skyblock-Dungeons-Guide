@@ -252,13 +252,13 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
     }
 
     @Override
-    public void keyPressed(char typedChar, int keycode) {
-        if (!getDomElement().isFocused()) return;
+    public boolean keyPressed(char typedChar, int keycode) {
+        if (!getDomElement().isFocused()) return false;
         if (selectionStart == -1) {
             if (keycode == 199) { // home
                 setCursor0(0);
                 xOffset = 0;
-                return;
+                return true;
             }
 
             if (keycode == 207) { // end
@@ -266,32 +266,32 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
 
                 int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue());
                 xOffset = Math.max(0, width - getDomElement().getSize().getWidth()+10);
-                return;
+                return true;
             }
 
             if (keycode == 203) { // left
                 setCursor0(this.cursor-1);;
                 if (cursor < 0) setCursor0(0);
-                return;
+                return true;
             }
 
             if (keycode == 205) { // right
                 setCursor0(this.cursor+1);
                 if (cursor > value.getValue().length()) setCursor0(value.getValue().length());
-                return;
+                return true;
             }
 
             // backspace
             if (keycode == 14 && cursor > 0) {
                 value.setValue(this.value.getValue().substring(0, cursor-1) + this.value.getValue().substring(cursor));
                 setCursor0(this.cursor-1);
-                return;
+                return true;
             }
 
             //del
             if (keycode == 211 && cursor < value.getValue().length()) {
                 value.setValue(this.value.getValue().substring(0, cursor) + this.value.getValue().substring(cursor+1));
-                return;
+                return true;
             }
 
             // paste
@@ -326,7 +326,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
                         e.printStackTrace();
                     }
                 }
-                return;
+                return true;
             }
 
             // text
@@ -336,14 +336,14 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
                                 + typedChar
                                 + this.value.getValue().substring(this.cursor));
                 this.setCursor0(this.cursor+1);;
-                return;
+                return true;
             }
         } else {
             if (keycode == 199) { // home
                 setCursor0(0);
                 selectionStart = -1;
                 xOffset =0;
-                return;
+                return true;
             }
 
             if (keycode == 207) { // end
@@ -351,19 +351,19 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
                 setCursor0(value.getValue().length());
                 int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue());
                 xOffset = Math.max(0, width - getDomElement().getSize().getWidth()+10);
-                return;
+                return true;
             }
 
             if (keycode == 203) { // left
                 setCursor0(selectionStart);
                 selectionStart = -1;
-                return;
+                return true;
             }
 
             if (keycode == 205) { // right
                 setCursor0(selectionEnd);
                 selectionStart = -1;
-                return;
+                return true;
             }
 
             // backspace
@@ -371,7 +371,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
                 value.setValue(this.value.getValue().substring(0, selectionStart) + this.value.getValue().substring(selectionEnd));
                 setCursor0(selectionStart);
                 selectionStart = -1;
-                return;
+                return true;
             }
 
             //del
@@ -379,7 +379,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
                 value.setValue(this.value.getValue().substring(0, selectionStart) + this.value.getValue().substring(selectionEnd));
                 setCursor0(selectionStart);
                 selectionStart = -1;
-                return;
+                return true;
             }
 
             // paste
@@ -412,7 +412,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
                     }
                     selectionStart = -1;
                 }
-                return;
+                return true;
             }
             boolean shouldCopy = false;
             if (keycode == 46) {
@@ -430,7 +430,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
                 StringSelection selection = new StringSelection(value.getValue().substring(selectionStart, selectionEnd));
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selection, selection);
-                return;
+                return true;
             }
 
             // text
@@ -441,9 +441,10 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
                                 + this.value.getValue().substring(this.selectionEnd));
                 setCursor0(this.selectionStart + 1);
                 selectionStart = -1;
-                return;
+                return true;
             }
         }
+        return false;
     }
     public boolean isPrintableChar( char c ) {
         Character.UnicodeBlock block = Character.UnicodeBlock.of( c );

@@ -82,7 +82,7 @@ public abstract class Widget {
     }
     public void keyReleased(char typedChar, int keyCode) {}
     public void keyHeld(char typedChar, int keyCode) {}
-    public void keyPressed(char typedChar, int keyCode) {}
+    public boolean keyPressed(char typedChar, int keyCode) { return false; }
     public void mouseExited(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {}
     public void mouseEntered(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {}
 

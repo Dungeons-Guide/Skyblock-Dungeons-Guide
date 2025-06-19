@@ -147,14 +147,16 @@ public class DomElement {
         requestRelayout();
     }
 
-    public void keyPressed0(char typedChar, int keyCode) {
+    public boolean keyPressed0(char typedChar, int keyCode) {
+        boolean handled = false;
         for (DomElement childComponent  : children) {
-            childComponent.keyPressed0(typedChar, keyCode);
+            handled |= childComponent.keyPressed0(typedChar, keyCode);
             if (widget instanceof Stack) break;
         }
 
 //        if (isFocused())
-            widget.keyPressed(typedChar, keyCode);
+        handled |= widget.keyPressed(typedChar, keyCode);
+        return handled;
     }
     public void keyHeld0(char typedChar, int keyCode) {
         for (DomElement childComponent  : children) {

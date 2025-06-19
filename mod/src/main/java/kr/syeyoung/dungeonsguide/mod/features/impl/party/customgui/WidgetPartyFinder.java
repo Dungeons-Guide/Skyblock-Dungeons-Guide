@@ -474,9 +474,11 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     }
 
     @Override
-    public void keyPressed(char typedChar, int keyCode) {
+    public boolean keyPressed(char typedChar, int keyCode) {
         if (keyCode == 63) {
             refresh();
+            return true;
         }
+        return false;
     }
 }

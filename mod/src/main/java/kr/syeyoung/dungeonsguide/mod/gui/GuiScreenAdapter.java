@@ -152,20 +152,21 @@ public class GuiScreenAdapter extends GuiScreen {
 
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
+
+        try {
+            if (view.keyPressed0(typedChar, keyCode)) return;
+        } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
+
+                e.printStackTrace();
+        }
+
         if (keyCode == 1 && allowEsc) {
             this.mc.displayGuiScreen((GuiScreen)parent);
             if (this.mc.currentScreen == null) {
                 this.mc.setIngameFocus();
             }
             return;
-        }
-
-        try {
-            view.keyPressed0(typedChar, keyCode);
-        } catch (Exception e) {
-            FeatureCollectDiagnostics.queueSendLogAsync(e);
-
-                e.printStackTrace();
         }
     }
 
