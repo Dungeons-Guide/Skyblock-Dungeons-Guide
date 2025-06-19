@@ -68,6 +68,7 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.entity.Entity;
@@ -299,9 +300,6 @@ public class DungeonsGuide implements DGInterface {
         ProgressManager.pop(progressbar);
 
         VersionInfo.checkAndOpen();
-
-
-
 
 
         Minecraft.getMinecraft().refreshResources();

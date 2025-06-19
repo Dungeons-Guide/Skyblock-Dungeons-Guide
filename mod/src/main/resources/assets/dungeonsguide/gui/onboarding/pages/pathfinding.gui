@@ -8,13 +8,16 @@
                     <WrapGrid minimumWidth="120" gap="10">
                         <OnboardingCard id="routes" toggleGroup="pathfinding" selected="true" bind:controller="controller">
                             <Include include="dungeonsguide:gui/onboarding/standard_card_content.gui"
-                                     title="Secret Routes" description="§eRecommended Setting. §fGenerate an optimized route that goes through every secret in the room." slot="body" preview="true">
+                                     title="Secret Routes" description="§eRecommended Setting. §fGenerate an optimized route that goes through every secret in the room. Press 'F' to regenerate." slot="body" preview="true">
                                 <size height="400" slot="tooltip">
                                     <ResourceImage location="dungeonsguide:textures/onboarding/pf_route.png" width="1800" height="1126" textureWidth="1800" textureHeight="1126"/>
                                 </size>
                             </Include>
                             <slot slot="setting">
-                                <feature id="secret.smartroute"><_enabled>true</_enabled></feature>
+                                <feature id="secret.smartroute">
+                                    <_enabled>true</_enabled>
+                                    <key>33</key>
+                                </feature>
                                 <feature id="secret.lineproperties.smartroute">
                                     <_>{"$enabled":true,"type":"neoroute","data":{"arrowColor":{"color":-1,"chroma":false,"chromaSpeed":0.0},"etherwarpTracerDisableEtherwarpRoute":true,"beamTargetColor":{"color":872349696,"chroma":false,"chromaSpeed":0.0},"lineColor":{"color":1677787135,"chroma":false,"chromaSpeed":0.0},"etherwarpTracerDist":3.0,"lineWidth":0.30000001192092896,"etherwarpTracer":false,"etherwarpTracerColor":{"color":-1,"chroma":false,"chromaSpeed":0.0},"animationSpeed":0.10000000149011612,"beacon":true,"etherwarpTracerWidth":3.0,"lineSmooth":0.5,"beamColor":{"color":2013200384,"chroma":false,"chromaSpeed":0.0},"destinationSize":1.0}}</_>
                                 </feature>
