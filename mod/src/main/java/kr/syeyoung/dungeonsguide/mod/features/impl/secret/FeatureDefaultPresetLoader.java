@@ -23,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
@@ -40,7 +41,15 @@ public class FeatureDefaultPresetLoader extends SimpleFeature {
     @Override
     public void init() {
         if (PathfindPresetRegistry.getINSTANCE().getPreset("0d4644ea-a02a-4407-a7f3-f9cd33b27ee7") == null && isEnabled()) {
-            download("https://presets.dungeons.guide/default%20preset.zip");
+            String[] str = {
+                    "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"
+            };
+            String[] conv = new String[str.length];
+            for (int i = 0; i < str.length; i++) {
+                conv[i] = "https://presets.dungeons.guide/defaultpreset/default%20preset.zip."+str[i];
+            }
+
+            download(conv);
         } else if (PathfindPresetRegistry.getINSTANCE().getPreset("0d4644ea-a02a-4407-a7f3-f9cd33b27ee7") != null) {
             PathfindPresetRegistry.getINSTANCE().unregister(PathfindPresetRegistry.DEFAULT_PRESET);
             PathfindPresetRegistry.DEFAULT_PRESET = PathfindPresetRegistry.getINSTANCE().getPreset("0d4644ea-a02a-4407-a7f3-f9cd33b27ee7");
@@ -48,7 +57,7 @@ public class FeatureDefaultPresetLoader extends SimpleFeature {
     }
 
     private AtomicBoolean loading = new AtomicBoolean();
-    public void download(String url) {
+    public void download(String[] url) {
         if (loading.getAndSet(true)) return;
 
         final UUID calcuuid = UUID.randomUUID();
@@ -57,50 +66,92 @@ public class FeatureDefaultPresetLoader extends SimpleFeature {
 
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
             try {
-                WidgetNotificationProgress.Progress progress = new WidgetNotificationProgress.Progress("Downloading", null, null, false);
-                progressForTopRight.addProgress(progress);
-                File downloadTarget;
+                File[] downloadTarget = new File[url.length];
+
+                WidgetNotificationProgress.Progress progress2 = new WidgetNotificationProgress.Progress("Downloading Files (0/" + url.length + ")", new AtomicLong(0), new AtomicLong(url.length), true);
+                progressForTopRight.addProgress(progress2);
                 try {
-                    downloadTarget = new File(DungeonsGuide.getDungeonsGuide().getTempDir(), "dg-default-preset-download-"+System.currentTimeMillis()+".zip");
-                    downloadTarget.deleteOnExit();
-                    HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.setRequestProperty("User-Agent", "DungeonsGuide/" + VersionInfo.VERSION);
-                    connection.connect();
+                    for (int i = 0; i < url.length; i++) {
+                        progress2.setMessage("Downloading Files ("+(i+1)+"/"+url.length+")");
+                        progress2.getCurrent().incrementAndGet();
 
-                    long contentLength = Long.parseLong(connection.getHeaderField("Content-Length"));
-                    progressForTopRight.removeProgress(progress);
-                    progress = new WidgetNotificationProgress.Progress("Downloading ("+ FileUtils.byteCountToDisplaySize(contentLength)+")", new AtomicLong(), new AtomicLong(contentLength), true);
-                    progressForTopRight.addProgress(progress);
-                    long startTime = System.currentTimeMillis();
+                        WidgetNotificationProgress.Progress progress = new WidgetNotificationProgress.Progress("Downloading", null, null, false);
+                        progressForTopRight.addProgress(progress);
+                        try {
+                            downloadTarget[i] = new File(DungeonsGuide.getDungeonsGuide().getTempDir(), "dg-default-preset-download-" + System.currentTimeMillis() + ".zip." + i);
+                            downloadTarget[i].deleteOnExit();
+                            HttpsURLConnection connection = (HttpsURLConnection) new URL(url[i]).openConnection();
+                            connection.setRequestMethod("GET");
+                            connection.setRequestProperty("User-Agent", "DungeonsGuide/" + VersionInfo.VERSION);
+                            connection.connect();
 
-                    try (BufferedInputStream in = new BufferedInputStream(connection.getInputStream());
-                         FileOutputStream fileOutputStream = new FileOutputStream(downloadTarget)) {
-                        byte dataBuffer[] = new byte[1024*1024];
-                        int bytesRead;
-                        while ((bytesRead = in.read(dataBuffer, 0, 1024*1024)) != -1) {
-                            fileOutputStream.write(dataBuffer, 0, bytesRead);
+                            long contentLength = Long.parseLong(connection.getHeaderField("Content-Length"));
+                            progressForTopRight.removeProgress(progress);
+                            progress = new WidgetNotificationProgress.Progress("Downloading (" + FileUtils.byteCountToDisplaySize(contentLength) + ")", new AtomicLong(), new AtomicLong(contentLength), true);
+                            progressForTopRight.addProgress(progress);
+                            long startTime = System.currentTimeMillis();
 
-                            progress.getCurrent().addAndGet(bytesRead);
+                            try (BufferedInputStream in = new BufferedInputStream(connection.getInputStream());
+                                 FileOutputStream fileOutputStream = new FileOutputStream(downloadTarget[i])) {
+                                byte dataBuffer[] = new byte[1024 * 1024];
+                                int bytesRead;
+                                while ((bytesRead = in.read(dataBuffer, 0, 1024 * 1024)) != -1) {
+                                    fileOutputStream.write(dataBuffer, 0, bytesRead);
+
+                                    progress.getCurrent().addAndGet(bytesRead);
 
 
-                            long elapsed = System.currentTimeMillis() - startTime;
-                            double speed = (progress.getCurrent().get() / 1024.0) / (elapsed / 1000.0 + 1) / 1024.0; // MB/s
-                            long remainingBytes = contentLength - progress.getCurrent().get();
-                            long etaMillis = (long) ((remainingBytes / 1024.0 / 1024.0) / (speed + 0.1) * 1000);
+                                    long elapsed = System.currentTimeMillis() - startTime;
+                                    double speed = (progress.getCurrent().get() / 1024.0) / (elapsed / 1000.0 + 1) / 1024.0; // MB/s
+                                    long remainingBytes = contentLength - progress.getCurrent().get();
+                                    long etaMillis = (long) ((remainingBytes / 1024.0 / 1024.0) / (speed + 0.1) * 1000);
 
-                            progress.setMessage("Downloading ("+ FileUtils.byteCountToDisplaySize(contentLength)+") "+String.format("%.2f", speed)+"MB/s" + " ETA: "+(etaMillis/1000)+" Seconds");
+                                    progress.setMessage("Downloading (" + FileUtils.byteCountToDisplaySize(contentLength) + ") " + String.format("%.2f", speed) + "MB/s" + " ETA: " + (etaMillis / 1000) + " Seconds");
+                                }
+                            }
+                        } finally {
+                            progressForTopRight.removeProgress(progress);
                         }
                     }
                 } finally {
-                    progressForTopRight.removeProgress(progress);
+                    progressForTopRight.removeProgress(progress2);
                 }
 
+
+
+                WidgetNotificationProgress.Progress combining = new WidgetNotificationProgress.Progress("Combining Files (0/" + url.length + ")", new AtomicLong(0), new AtomicLong(url.length), true);
+                progressForTopRight.addProgress(combining);
+                File combinedFile;
+                try {
+                    combinedFile = new File(DungeonsGuide.getDungeonsGuide().getTempDir(), "dg-default-preset-download-" + System.currentTimeMillis() + ".zip");
+                    combinedFile.deleteOnExit();
+                    try (FileOutputStream fos = new FileOutputStream(combinedFile);
+                         FileChannel outChannel = fos.getChannel()) {
+
+                        for (File part : downloadTarget) {
+                            combining.setMessage("Combining Files ("+(combining.getCurrent().incrementAndGet())+"/"+url.length+")");
+
+                            try (FileInputStream fis = new FileInputStream(part);
+                                 FileChannel inChannel = fis.getChannel()) {
+                                long size = inChannel.size();
+                                long transferred = 0;
+                                while (transferred < size) {
+                                    transferred += inChannel.transferTo(transferred, size - transferred, outChannel);
+                                }
+                            }
+                        }
+                    }
+                    for (File file : downloadTarget) {
+                        Files.deleteIfExists(file.toPath());
+                    }
+                } finally {
+                    progressForTopRight.removeProgress(combining);
+                }
 
                 WidgetNotificationProgress.Progress openingFile = new WidgetNotificationProgress.Progress("Opening File...", null, null, false);
                 progressForTopRight.addProgress(openingFile);
                 PathfindPreset preset;
-                try (ZipFile zipFile = new ZipFile(downloadTarget)) {
+                try (ZipFile zipFile = new ZipFile(combinedFile)) {
 
                     if (!"Dungeons Guide Preset Export".equals(zipFile.getComment())) {
                         throw new IllegalArgumentException("File is not valid pathfind preset export");
