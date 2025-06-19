@@ -44,7 +44,6 @@ public class WidgetMapDemo extends Widget implements Renderer {
         }
         renderCtx.pushClip(buildContext.getAbsBounds(), buildContext.getSize(), 0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight());
 
-        System.out.println(buildContext.getSize() );
         Size featureRect = getDomElement().getSize();
         Gui.drawRect(0, 0, (int) featureRect.getWidth(), (int) featureRect.getWidth(), RenderUtils.getColorAt(0,0, featureDungeonMap2.getMapConfiguration().getBackgroundColor()));
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;

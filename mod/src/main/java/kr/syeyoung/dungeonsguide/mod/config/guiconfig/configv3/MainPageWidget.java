@@ -97,6 +97,24 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
             e.printStackTrace();
         }
     }
+    @On(functionName = "modrinth")
+    public void modrinth() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        try {
+            Desktop.getDesktop().browse(new URI("https://modrinth.com/mod/dungeons-guide"));
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+    @On(functionName = "docs")
+    public void docs() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        try {
+            Desktop.getDesktop().browse(new URI("https://docs.dungeons.guide/"));
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
 
     @On(functionName = "setupwizard")
     public void setupwizard() {
