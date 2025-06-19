@@ -26,7 +26,7 @@
                             <slot slot="setting">
                                 <feature id="secret.bloodrush"><_enabled>true</_enabled></feature>
                                 <feature id="secret.lineproperties.bloodrush">
-                                    <_>{"$enabled":true,"type":"neoroute","data":{"arrowColor":{"color":-1,"chroma":false,"chromaSpeed":0.0},"etherwarpTracerDisableEtherwarpRoute":true,"beamTargetColor":{"color":872349696,"chroma":false,"chromaSpeed":0.0},"lineColor":{"color":1677787135,"chroma":false,"chromaSpeed":0.0},"etherwarpTracerDist":3.0,"lineWidth":0.30000001192092896,"etherwarpTracer":false,"etherwarpTracerColor":{"color":-1,"chroma":false,"chromaSpeed":0.0},"animationSpeed":0.10000000149011612,"beacon":true,"etherwarpTracerWidth":3.0,"lineSmooth":0.5,"beamColor":{"color":2013200384,"chroma":false,"chromaSpeed":0.0},"destinationSize":1.0}}</_>
+                                    <_>{"$enabled":true,"type":"neoroute","data":{"arrowColor":{"color":-1,"chroma":false,"chromaSpeed":0.0},"etherwarpTracerDisableEtherwarpRoute":true,"beamTargetColor":{"color":872349696,"chroma":false,"chromaSpeed":0.0},"lineColor":{"color":1694433530,"chroma":false,"chromaSpeed":0.0},"etherwarpTracerDist":3.0,"lineWidth":0.30000001192092896,"etherwarpTracer":false,"etherwarpTracerColor":{"color":-1,"chroma":false,"chromaSpeed":0.0},"animationSpeed":0.10000000149011612,"beacon":true,"etherwarpTracerWidth":3.0,"lineSmooth":0.5,"beamColor":{"color":2013200384,"chroma":false,"chromaSpeed":0.0},"destinationSize":1.0}}</_>
                                 </feature>
                             </slot>
                         </OnboardingCard>

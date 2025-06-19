@@ -63,6 +63,11 @@
             <Text text="Click on GUI Config to configure HUDs, including enabling or disabling them" size="8" color="#FFFFFF00"/>
             <size height="10"/>
             <Text text="There is go back button on top left" size="8" color="#FFFFFF00"/>
+            <row mainAlign="END">
+                <size width="150" height="20">
+                    <RoundButton text="First Time Setup Wizard" on:click="setupwizard"/>
+                </size>
+            </row>
         </col>
     </padding>
 </ScrollablePanel>

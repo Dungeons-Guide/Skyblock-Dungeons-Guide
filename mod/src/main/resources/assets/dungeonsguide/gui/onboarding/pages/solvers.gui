@@ -77,7 +77,7 @@
                             </slot>
                         </OnboardingCard>
                     </WrapGrid>
-                    <Variable bind:target="prevPage" value="pages/pathfinding.gui"/>
+                    <Variable bind:target="prevPage" value="pages/etcpathfinding.gui"/>
                     <Variable bind:target="nextPage" value="pages/hud.gui"/>
                     <Variable bind:target="requiredGroup" value=""/>
                 </col>
