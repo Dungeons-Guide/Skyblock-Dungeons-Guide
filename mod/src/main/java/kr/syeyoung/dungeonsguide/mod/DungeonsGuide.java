@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandDgDebug;
@@ -28,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.commands.CommandDungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandReparty;
 import kr.syeyoung.dungeonsguide.mod.config.Config;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ConfigGuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.config.onboarding.OnboardingPage;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CustomNetworkPlayerInfo;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
@@ -38,7 +40,9 @@ import kr.syeyoung.dungeonsguide.mod.events.listener.PacketInjector;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.PassthroughManager;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.fonts.DefaultFontRenderer;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
@@ -306,6 +310,9 @@ public class DungeonsGuide implements DGInterface {
         if (Minecraft.getMinecraft().getNetHandler() != null)
             Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler", packetInjector);
 
+        if (firstTimeUsingDG) {
+            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")), null, false));
+        }
     }
 
     // hotswap fails in dev env due to intellij auto log collection or smth. it holds ref to stacktrace.
@@ -493,56 +500,6 @@ public class DungeonsGuide implements DGInterface {
         }
         glypthWidths[0xed02] = 1;
     }
-
-    private boolean showedStartUpGuide;
-    @SubscribeEvent
-    public void onGuiOpen(GuiOpenEvent guiOpenEvent){
-        if(!showedStartUpGuide){
-            showedStartUpGuide = true;
-
-            if(isFirstTimeUsingDG()){
-                GuiScreen originalGUI = guiOpenEvent.gui;
-                guiOpenEvent.gui = new GuiScreen() {
-                    final String welcomeText = "Thank you for installing §eDungeonsGuide§f, the most intelligent skyblock dungeon mod!\nThe gui for relocating GUI Elements and enabling or disabling features can be opened by typing §e/dg\nType §e/dg help §fto view full list of commands offered by dungeons guide!";
-
-                    @Override
-                    public void initGui() {
-                        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-                        this.buttonList.add(new GuiButton(0, sr.getScaledWidth()/2-100,sr.getScaledHeight()-70 ,"Continue"));
-                    }
-
-                    @Override
-                    protected void actionPerformed(GuiButton button) throws IOException {
-                        super.actionPerformed(button);
-                        if (button.id == 0) {
-                            Minecraft.getMinecraft().displayGuiScreen(originalGUI);
-                        }
-                    }
-
-                    @Override
-                    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-                        super.drawBackground(1);
-
-                        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-                        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-                        fontRenderer.drawString("§eWelcome To DungeonsGuide", (sr.getScaledWidth()-fontRenderer.getStringWidth("Welcome To DungeonsGuide"))/2,40,0xFFFF0000);
-                        int tenth = sr.getScaledWidth() / 10;
-                        Gui.drawRect(tenth, 70,sr.getScaledWidth()-tenth, sr.getScaledHeight()-80, 0xFF5B5B5B);
-
-                        String[] split = welcomeText.split("\n");
-                        for (int i = 0; i < split.length; i++) {
-                            fontRenderer.drawString(split[i].replace("\t", "    "), tenth + 2,i*fontRenderer.FONT_HEIGHT + 72, 0xFFFFFFFF);
-                        }
-
-                        super.drawScreen(mouseX, mouseY, partialTicks);
-                    }
-
-                };
-            }
-
-        }
-    }
-
 
 
     public SkyblockStatus getSkyblockStatus() {

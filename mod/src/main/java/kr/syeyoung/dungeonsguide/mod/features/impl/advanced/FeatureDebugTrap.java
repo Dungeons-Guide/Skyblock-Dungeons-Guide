@@ -38,6 +38,7 @@ public class FeatureDebugTrap extends TextHUDFeature {
         super("Debug", "Display the current amount of bat entities", "", "advanced.bat");
         registerDefaultStyle("base", DefaultingDelegatingTextStyle.derive("Feature Default - Base", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("batsamm", DefaultingDelegatingTextStyle.derive("Feature Default - Batsamm", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
+        setEnabled(false);
     }
 
     static List<Long> avgStorage = new ArrayList<>();
