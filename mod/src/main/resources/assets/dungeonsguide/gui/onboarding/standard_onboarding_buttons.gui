@@ -1,0 +1,16 @@
+<wrapper nextBtnLabel="Next" disableNext="false" disablePrev="false">
+    <padding top="10" right="15" left="15" bottom="10">
+        <row>
+            <size width="60">
+                <RoundButton text="Previous" bind:click="prev" bind:disabled="disablePrev"/>
+            </size>
+            <flexible><size/></flexible>
+            <size width="70">
+            </size>
+            <size width="10"/>
+            <size width="50">
+                <RoundButton bind:text="nextBtnLabel" bind:click="next" bind:disabled="disableNext"/>
+            </size>
+        </row>
+    </padding>
+</wrapper>

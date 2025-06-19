@@ -18,10 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.mod.gui.xml;
 
+import kr.syeyoung.dungeonsguide.mod.config.onboarding.OnboardingCard;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.image.ResourceImage;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.image.URLImage;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.HoverTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.gui.view.TestView;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.Parser;
@@ -121,8 +123,10 @@ public class DomElementRegistry {
         register("ItemStack", new ExportedWidgetConverter(ItemStackRender::new));
         register("Passthrough", new ExportedWidgetConverter(Passthrough::new));
         register("Include", new DelegatingWidgetConverter(null));
+        register("Variable", new ExportedWidgetConverter(Variable::new));
 
-
+        register("OnboardingCard", new ExportedWidgetConverter(OnboardingCard::new)); // ugh.  don't like this.
+        register("HoverTooltip", new ExportedWidgetConverter(HoverTooltip::new));
     }
 
     private static final Map<ResourceLocation, Parser> cache = new HashMap<>();

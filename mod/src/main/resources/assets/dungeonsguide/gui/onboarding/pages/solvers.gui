@@ -1,0 +1,91 @@
+<Include include="dungeonsguide:gui/onboarding/onboarding_layout.gui" title="Dungeons Guide Quick Setup Wizard">
+    <slot>
+        <ScrollablePanel direction="VERTICAL">
+            <padding top="20" left="20" bottom="20" right="20">
+                <col>
+                    <size width="0" height="0">
+                        <OnboardingCard id="$default" toggleGroup="" bind:controller="controller">
+                            <slot slot="setting">
+                                <feature id="solver.bombdefuse"><_enabled>false</_enabled></feature>
+                                <feature id="solver.trivia"><_enabled>false</_enabled></feature>
+                                <feature id="solver.box"><_enabled>false</_enabled></feature>
+                                <feature id="solver.silverfish"><_enabled>false</_enabled></feature>
+                                <feature id="solver.icepath"><_enabled>false</_enabled></feature>
+                                <feature id="solver.blaze"><_enabled>false</_enabled></feature>
+                                <feature id="solver.teleport"><_enabled>false</_enabled></feature>
+                                <feature id="solver.creeper"><_enabled>false</_enabled></feature>
+                                <feature id="solver.waterboard"><_enabled>false</_enabled></feature>
+                                <feature id="solver.tictactoe"><_enabled>false</_enabled></feature>
+                                <feature id="solver.riddle"><_enabled>false</_enabled></feature>
+
+
+                                <feature id="bossfight.terminals.startswith"><_enabled>false</_enabled></feature>
+                                <feature id="bossfight.terminals.selectallcolor"><_enabled>false</_enabled></feature>
+                                <feature id="bossfight.terminals.selectinorder"><_enabled>false</_enabled></feature>
+                                <feature id="bossfight.terminals.navigate"><_enabled>false</_enabled></feature>
+                                <feature id="bossfight.terminals.correctpane"><_enabled>false</_enabled></feature>
+                                <feature id="bossfight.terminals.melody"><_enabled>false</_enabled></feature>
+                                <feature id="bossfight.samecolorterminal"><_enabled>false</_enabled></feature>
+                                <feature id="Dungeon.Bossfight.simonsays2"><_enabled>false</_enabled></feature>
+                                <feature id="Dungeon.Bossfight.arrowpath"><_enabled>false</_enabled></feature>
+
+                                <feature id="Dungeon.Bossfight.realLividBox"><_enabled>false</_enabled></feature>
+                            </slot>
+                        </OnboardingCard>
+                    </size>
+
+                    <Text text="Dungeon Solvers" size="12" color="#FFFFFFFF"/>
+                    <size height="20"/>
+                    <WrapGrid minimumWidth="120" gap="10">
+                        <OnboardingCard id="puzzle" toggleGroup="" selected="true" bind:controller="controller">
+                            <Include include="dungeonsguide:gui/onboarding/standard_card_content.gui"
+                                     title="Puzzle Solvers" description="Dungeons Guide presents you with the best possible solution for puzzle rooms." slot="body"/>
+                            <slot slot="setting">
+                                <feature id="solver.bombdefuse"><_enabled>true</_enabled></feature>
+                                <feature id="solver.trivia"><_enabled>true</_enabled></feature>
+                                <feature id="solver.box"><_enabled>true</_enabled></feature>
+                                <feature id="solver.silverfish"><_enabled>true</_enabled></feature>
+                                <feature id="solver.icepath"><_enabled>true</_enabled></feature>
+                                <feature id="solver.blaze"><_enabled>true</_enabled></feature>
+                                <feature id="solver.teleport"><_enabled>true</_enabled></feature>
+                                <feature id="solver.creeper"><_enabled>true</_enabled></feature>
+                                <feature id="solver.waterboard"><_enabled>true</_enabled></feature>
+                                <feature id="solver.tictactoe"><_enabled>true</_enabled></feature>
+                                <feature id="solver.riddle"><_enabled>true</_enabled></feature>
+                            </slot>
+                        </OnboardingCard>
+                        <OnboardingCard id="terminals" toggleGroup="" selected="true" bind:controller="controller">
+                            <Include include="dungeonsguide:gui/onboarding/standard_card_content.gui"
+                                     title="Terminal Solvers" description="Enable DG Terminal/Device Solvers for F7/M7 Goldor Phase." slot="body"/>
+                            <slot slot="setting">
+                                <feature id="bossfight.terminals.startswith"><_enabled>true</_enabled></feature>
+                                <feature id="bossfight.terminals.selectallcolor"><_enabled>true</_enabled></feature>
+                                <feature id="bossfight.terminals.selectinorder"><_enabled>true</_enabled></feature>
+                                <feature id="bossfight.terminals.navigate"><_enabled>true</_enabled></feature>
+                                <feature id="bossfight.terminals.correctpane"><_enabled>true</_enabled></feature>
+                                <feature id="bossfight.terminals.melody"><_enabled>true</_enabled></feature>
+                                <feature id="bossfight.samecolorterminal"><_enabled>true</_enabled></feature>
+                                <feature id="Dungeon.Bossfight.simonsays2"><_enabled>true</_enabled></feature>
+                                <feature id="Dungeon.Bossfight.arrowpath"><_enabled>true</_enabled></feature>
+                            </slot>
+                        </OnboardingCard>
+                        <OnboardingCard id="terminals" toggleGroup="" selected="true" bind:controller="controller">
+                            <Include include="dungeonsguide:gui/onboarding/standard_card_content.gui"
+                                     title="Livid Solver" description="Box real Livid for F5" slot="body"/>
+                            <slot slot="setting">
+                                <feature id="Dungeon.Bossfight.realLividBox"><_enabled>true</_enabled></feature>
+                            </slot>
+                        </OnboardingCard>
+                    </WrapGrid>
+                    <Variable bind:target="prevPage" value="pages/pathfinding.gui"/>
+                    <Variable bind:target="nextPage" value="pages/hud.gui"/>
+                    <Variable bind:target="requiredGroup" value=""/>
+                </col>
+            </padding>
+        </ScrollablePanel>
+    </slot>
+
+    <slot slot="buttons">
+        <Include include="dungeonsguide:gui/onboarding/standard_onboarding_buttons.gui" on:prev="prev" on:next="next" bind:disableNext="nextButtonDisabled"/>
+    </slot>
+</Include>

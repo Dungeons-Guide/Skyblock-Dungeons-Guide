@@ -1,0 +1,24 @@
+
+<wrapper title="title" description="description" preview="false">
+<!--    <size height="100">-->
+        <padding left="10" top="15" right="10" bottom="15">
+            <col>
+                <Text bind:text="title" size="12" color="#FFFFFFFF"/>
+                <size height="5"/>
+                <Text bind:text="description" size="8" color="#FFFFFFFF" align="CENTER"/>
+                <size height="5"/>
+                <SelectiveContainer bind:visible="preview">
+                    <size height="0" width="0" slot="false"/>
+                    <HoverTooltip slot="true">
+                        <Text text="Show Preview" color="#FFCCCCCC" size="8"/>
+                        <slot bind:_="_tooltip" slot="tooltip">
+                            <size width="100" height="100">
+                                <Placeholder/>
+                            </size>
+                        </slot>
+                    </HoverTooltip>
+                </SelectiveContainer>
+            </col>
+        </padding>
+<!--    </size>-->
+</wrapper>

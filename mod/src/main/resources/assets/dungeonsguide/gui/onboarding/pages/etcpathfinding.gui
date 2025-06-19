@@ -1,0 +1,61 @@
+<Include include="dungeonsguide:gui/onboarding/onboarding_layout.gui" title="Dungeons Guide Quick Setup Wizard">
+    <slot>
+        <ScrollablePanel direction="VERTICAL">
+            <padding top="20" left="20" bottom="20" right="20">
+                <col>
+                    <size width="0" height="0">
+                        <OnboardingCard id="$default" toggleGroup="" bind:controller="controller">
+                            <slot slot="setting">
+                                <feature id="secret.bloodrush"><_enabled>false</_enabled></feature>
+                                <feature id="secret.mechanicbrowse"><_enabled>false</_enabled></feature>
+                            </slot>
+                        </OnboardingCard>
+                    </size>
+
+                    <Text text="Additional Pathfinding Features" size="12" color="#FFFFFFFF"/>
+                    <size height="20"/>
+                    <WrapGrid minimumWidth="120" gap="10">
+                        <OnboardingCard id="bloodrush" toggleGroup="" selected="false" bind:controller="controller">
+                            <Include include="dungeonsguide:gui/onboarding/standard_card_content.gui"
+                                     title="Blood Rush" description="Generate route to wither doors when you enter room" slot="body" preview="true">
+                                <size height="400" slot="tooltip">
+                                    <ResourceImage location="dungeonsguide:textures/onboarding/etc_bloodrush.png" width="1800" height="1126" textureWidth="1800" textureHeight="1126"/>
+                                </size>
+                            </Include>
+
+                            <slot slot="setting">
+                                <feature id="secret.bloodrush"><_enabled>true</_enabled></feature>
+                                <feature id="secret.lineproperties.bloodrush">
+                                    <_>{"$enabled":true,"type":"neoroute","data":{"arrowColor":{"color":-1,"chroma":false,"chromaSpeed":0.0},"etherwarpTracerDisableEtherwarpRoute":true,"beamTargetColor":{"color":872349696,"chroma":false,"chromaSpeed":0.0},"lineColor":{"color":1677787135,"chroma":false,"chromaSpeed":0.0},"etherwarpTracerDist":3.0,"lineWidth":0.30000001192092896,"etherwarpTracer":false,"etherwarpTracerColor":{"color":-1,"chroma":false,"chromaSpeed":0.0},"animationSpeed":0.10000000149011612,"beacon":true,"etherwarpTracerWidth":3.0,"lineSmooth":0.5,"beamColor":{"color":2013200384,"chroma":false,"chromaSpeed":0.0},"destinationSize":1.0}}</_>
+                                </feature>
+                            </slot>
+                        </OnboardingCard>
+                        <OnboardingCard id="mechanicbrowser" toggleGroup="" selected="true" bind:controller="controller">
+                            <Include include="dungeonsguide:gui/onboarding/standard_card_content.gui"
+                                     title="Secret Browser" description="Browse secrets in a room with overlay. Generate a manual route by clicking on them." slot="body" preview="true">
+                                <size height="200" slot="tooltip">
+                                    <ResourceImage location="dungeonsguide:textures/onboarding/etc_browser.png" width="668" height="740" textureWidth="668" textureHeight="740"/>
+                                </size>
+                            </Include>
+                            <slot slot="setting">
+                                <feature id="secret.mechanicbrowse">
+                                    <_>{"scale":1.0,"$enabled":true,"$pos":{"x":-17.0,"y":8.0,"xType":2,"yType":0,"width":158.0,"height":175.5}}</_>
+                                </feature>
+                                <feature id="secret.lineproperties.secretbrowser">
+                                    <_>{"$enabled":true,"type":"neoroute","data":{"arrowColor":{"color":-1,"chroma":false,"chromaSpeed":0.0},"etherwarpTracerDisableEtherwarpRoute":true,"beamTargetColor":{"color":872349696,"chroma":false,"chromaSpeed":0.0},"lineColor":{"color":1677787135,"chroma":false,"chromaSpeed":0.0},"etherwarpTracerDist":3.0,"lineWidth":0.30000001192092896,"etherwarpTracer":false,"etherwarpTracerColor":{"color":-1,"chroma":false,"chromaSpeed":0.0},"animationSpeed":0.10000000149011612,"beacon":true,"etherwarpTracerWidth":3.0,"lineSmooth":0.5,"beamColor":{"color":2013200384,"chroma":false,"chromaSpeed":0.0},"destinationSize":1.0}}</_>
+                                </feature>
+                            </slot>
+                        </OnboardingCard>
+                    </WrapGrid>
+                    <Variable bind:target="prevPage" value="pages/pathfinding.gui"/>
+                    <Variable bind:target="nextPage" value="pages/solvers.gui"/>
+                    <Variable bind:target="requiredGroup" value=""/>
+                </col>
+            </padding>
+        </ScrollablePanel>
+    </slot>
+
+    <slot slot="buttons">
+        <Include include="dungeonsguide:gui/onboarding/standard_onboarding_buttons.gui" on:prev="prev" on:next="next" bind:disableNext="nextButtonDisabled"/>
+    </slot>
+</Include>

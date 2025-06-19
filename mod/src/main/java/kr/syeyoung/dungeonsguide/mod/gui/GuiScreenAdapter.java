@@ -47,6 +47,7 @@ public class GuiScreenAdapter extends GuiScreen {
     protected boolean isOpen = false;
 
     protected Stack<RootDom> domStack = new Stack<>();
+    @Getter
 
     protected GuiScreen parent;
     protected boolean allowEsc;

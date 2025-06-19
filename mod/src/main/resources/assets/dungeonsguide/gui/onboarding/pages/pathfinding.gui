@@ -1,0 +1,75 @@
+<Include include="dungeonsguide:gui/onboarding/onboarding_layout.gui" title="Dungeons Guide Quick Setup Wizard">
+    <slot>
+        <ScrollablePanel direction="VERTICAL">
+            <padding top="20" left="20" bottom="20" right="20">
+                <col>
+                    <Text text="How should Dungeons Guide present you with Secrets?" size="12" color="#FFFFFFFF"/>
+                    <size height="20"/>
+                    <WrapGrid minimumWidth="120" gap="10">
+                        <OnboardingCard id="routes" toggleGroup="pathfinding" selected="true" bind:controller="controller">
+                            <Include include="dungeonsguide:gui/onboarding/standard_card_content.gui"
+                                     title="Secret Routes" description="§eRecommended Setting. §fGenerate an optimized route that goes through every secret in the room." slot="body" preview="true">
+                                <size height="400" slot="tooltip">
+                                    <ResourceImage location="dungeonsguide:textures/onboarding/pf_route.png" width="1800" height="1126" textureWidth="1800" textureHeight="1126"/>
+                                </size>
+                            </Include>
+                            <slot slot="setting">
+                                <feature id="secret.smartroute"><_enabled>true</_enabled></feature>
+                                <feature id="secret.lineproperties.smartroute">
+                                    <_>{"$enabled":true,"type":"neoroute","data":{"arrowColor":{"color":-1,"chroma":false,"chromaSpeed":0.0},"etherwarpTracerDisableEtherwarpRoute":true,"beamTargetColor":{"color":872349696,"chroma":false,"chromaSpeed":0.0},"lineColor":{"color":1677787135,"chroma":false,"chromaSpeed":0.0},"etherwarpTracerDist":3.0,"lineWidth":0.30000001192092896,"etherwarpTracer":false,"etherwarpTracerColor":{"color":-1,"chroma":false,"chromaSpeed":0.0},"animationSpeed":0.10000000149011612,"beacon":true,"etherwarpTracerWidth":3.0,"lineSmooth":0.5,"beamColor":{"color":2013200384,"chroma":false,"chromaSpeed":0.0},"destinationSize":1.0}}</_>
+                                </feature>
+                                <feature id="secret.secretpathfind.allbrowse"><_enabled>false</_enabled></feature>
+                                <feature id="secret.autouponenter"><_enabled>false</_enabled></feature>
+                            </slot>
+                        </OnboardingCard>
+                        <OnboardingCard id="beacon" toggleGroup="pathfinding" bind:controller="controller">
+                            <Include include="dungeonsguide:gui/onboarding/standard_card_content.gui"
+                                     title="Beacons Only" description="Show beacons on every secret at same time without any lines" slot="body" preview="true">
+                                <size height="400" slot="tooltip">
+                                    <ResourceImage location="dungeonsguide:textures/onboarding/pf_beacons.png" width="1800" height="1126" textureWidth="1800" textureHeight="1126"/>
+                                </size>
+                            </Include>
+                            <slot slot="setting">
+                                <feature id="secret.lineproperties.apf.parent">
+                                    <_>{"$enabled":true,"type":"classic","data":{"beacon":true,"pathfind":false,"beamTargetColor":{"color":872349696,"chroma":false,"chromaSpeed":0.0},"lineColor":{"color":-65536,"chroma":false,"chromaSpeed":0.0},"lineWidth":1.0,"beamColor":{"color":2013200384,"chroma":false,"chromaSpeed":0.0},"linerefreshrate":10}}</_>
+                                </feature>
+                                <feature id="secret.lineproperties.apf.itemdrop">
+                                    <_>{"useGlobal":true,"$enabled":true,"type":"classic","data":{"beacon":true,"pathfind":true,"beamTargetColor":{"color":872349696,"chroma":false,"chromaSpeed":0.0},"lineColor":{"color":-65536,"chroma":false,"chromaSpeed":0.0},"lineWidth":1.0,"beamColor":{"color":2013200384,"chroma":false,"chromaSpeed":0.0},"linerefreshrate":10}}</_>
+                                </feature>
+                                <feature id="secret.lineproperties.apf.bat">
+                                    <_>{"useGlobal":true,"$enabled":true,"type":"classic","data":{"beacon":true,"pathfind":true,"beamTargetColor":{"color":872349696,"chroma":false,"chromaSpeed":0.0},"lineColor":{"color":-65536,"chroma":false,"chromaSpeed":0.0},"lineWidth":1.0,"beamColor":{"color":2013200384,"chroma":false,"chromaSpeed":0.0},"linerefreshrate":10}}</_>
+                                </feature>
+                                <feature id="secret.lineproperties.apf.chest">
+                                    <_>{"useGlobal":true,"$enabled":true,"type":"classic","data":{"beacon":true,"pathfind":true,"beamTargetColor":{"color":872349696,"chroma":false,"chromaSpeed":0.0},"lineColor":{"color":-65536,"chroma":false,"chromaSpeed":0.0},"lineWidth":1.0,"beamColor":{"color":2013200384,"chroma":false,"chromaSpeed":0.0},"linerefreshrate":10}}</_>
+                                </feature>
+                                <feature id="secret.lineproperties.apf.essence">
+                                    <_>{"useGlobal":true,"$enabled":true,"type":"classic","data":{"beacon":true,"pathfind":true,"beamTargetColor":{"color":872349696,"chroma":false,"chromaSpeed":0.0},"lineColor":{"color":-65536,"chroma":false,"chromaSpeed":0.0},"lineWidth":1.0,"beamColor":{"color":2013200384,"chroma":false,"chromaSpeed":0.0},"linerefreshrate":10}}</_>
+                                </feature>
+
+                                <feature id="secret.smartroute"><_enabled>false</_enabled></feature>
+                                <feature id="secret.secretpathfind.allbrowse"><_enabled>true</_enabled></feature>
+                                <feature id="secret.autouponenter"><_enabled>false</_enabled></feature>
+                            </slot>
+                        </OnboardingCard>
+                        <OnboardingCard id="custom" toggleGroup="pathfinding" bind:controller="controller">
+                            <Include include="dungeonsguide:gui/onboarding/standard_card_content.gui"
+                                     title="Nothing" description="Don't show any beacons or lines" slot="body"/>
+                            <slot slot="setting">
+                                <feature id="secret.smartroute"><_enabled>false</_enabled></feature>
+                                <feature id="secret.secretpathfind.allbrowse"><_enabled>false</_enabled></feature>
+                                <feature id="secret.autouponenter"><_enabled>false</_enabled></feature>
+                            </slot>
+                        </OnboardingCard>
+                    </WrapGrid>
+                    <Variable bind:target="prevPage" value="pages/front.gui"/>
+                    <Variable bind:target="nextPage" value="pages/etcpathfinding.gui"/>
+                    <Variable bind:target="requiredGroup" value="pathfinding"/>
+                </col>
+            </padding>
+        </ScrollablePanel>
+    </slot>
+
+    <slot slot="buttons">
+        <Include include="dungeonsguide:gui/onboarding/standard_onboarding_buttons.gui" on:prev="prev" on:next="next" bind:disableNext="nextButtonDisabled"/>
+    </slot>
+</Include>

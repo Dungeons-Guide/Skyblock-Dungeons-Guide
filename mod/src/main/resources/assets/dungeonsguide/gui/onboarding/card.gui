@@ -1,0 +1,7 @@
+<RoundRect radius="5" bind:backgroundColor="borderColor">
+    <padding left="1" top="1" right="1" bottom="1">
+        <RoundRect radius="4" bind:backgroundColor="backgroundColor">
+            <slot bind:_="_body"/>
+        </RoundRect>
+    </padding>
+</RoundRect>

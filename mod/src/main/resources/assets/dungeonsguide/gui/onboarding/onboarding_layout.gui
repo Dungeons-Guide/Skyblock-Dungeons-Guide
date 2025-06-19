@@ -1,0 +1,35 @@
+<wrapper title="Title">
+    <PopupManager>
+        <bgcolor backgroundColor="#FF1A1B2D">
+            <align vAlign="CENTER" hAlign="CENTER">
+                <ConstrainedBox maxWidth="550" maxHeight="350">
+                    <RoundRect backgroundColor="#FF284580" radius="5">
+                        <padding left="2" top="2" right="2" bottom="2">
+                            <col>
+                                <size height="50">
+                                    <slot bind:child="_title">
+                                        <col crossAlign="CENTER" mainAlign="CENTER">
+                                            <Text bind:text="title" size="16" color="#FFFFFFFF"/>
+                                        </col>
+                                    </slot>
+                                </size>
+                                <line dir="HORIZONTAL" color="#FF32569B" thickness="1"/>
+                                <flexible>
+                                    <bgcolor backgroundColor="#FF040407">
+                                        <slot bind:_="_"/>
+                                    </bgcolor>
+                                </flexible>
+                                <size height="3"/>
+                                <size height="40">
+                                    <bgcolor backgroundColor="#FF101A19">
+                                        <slot bind:_="_buttons"/>
+                                    </bgcolor>
+                                </size>
+                            </col>
+                        </padding>
+                    </RoundRect>
+                </ConstrainedBox>
+            </align>
+        </bgcolor>
+    </PopupManager>
+</wrapper>

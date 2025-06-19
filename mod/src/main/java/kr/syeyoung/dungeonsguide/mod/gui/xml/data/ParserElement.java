@@ -31,4 +31,5 @@ public interface ParserElement {
     <T> T getConvertedAttributeValue(Class<T> clazz, String attribute);
 
     List<ParserElement> getChildren();
+    String getBody();
 }

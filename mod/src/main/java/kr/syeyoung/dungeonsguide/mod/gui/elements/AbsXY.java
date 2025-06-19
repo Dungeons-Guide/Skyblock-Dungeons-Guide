@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
+import scala.collection.immutable.IntMap;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +41,9 @@ public class AbsXY extends AnnotatedExportOnlyWidget implements Layouter {
 
     @Export(attributeName = "y")
     public final BindableAttribute<Double> y = new BindableAttribute<>(Double.class, 0.0);
+
+    @Export(attributeName = "passthroughTrueWidthHeight")
+    public final BindableAttribute<Boolean> passthroughTrue = new BindableAttribute<>(Boolean.class, false);
 
     public AbsXY() {
         x.addOnUpdate(this::setLocations);
@@ -57,7 +61,8 @@ public class AbsXY extends AnnotatedExportOnlyWidget implements Layouter {
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
         DomElement child = buildContext.getChildren().get(0);
         Size size = child.getLayouter().layout(child, new ConstraintBox(
-                0,constraintBox.getMaxWidth() - x.getValue(), 0, constraintBox.getMaxHeight()-y.getValue()
+                0,passthroughTrue.getValue() ? constraintBox.getMaxWidth() : constraintBox.getMaxWidth() - x.getValue(), 0,
+                passthroughTrue.getValue() ? constraintBox.getMaxHeight() : constraintBox.getMaxHeight()-y.getValue()
         ));
         child.setRelativeBound(new Rect(x.getValue(), y.getValue(), size.getWidth(), size.getHeight()));
         return new Size(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());

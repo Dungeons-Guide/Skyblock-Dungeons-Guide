@@ -1,0 +1,285 @@
+<Include include="dungeonsguide:gui/onboarding/onboarding_layout.gui" title="Dungeons Guide Quick Setup Wizard">
+    <slot>
+        <ScrollablePanel direction="VERTICAL">
+            <padding top="20" left="20" bottom="20" right="20">
+                <col>
+                    <size width="0" height="0">
+                        <OnboardingCard id="$default" toggleGroup="" bind:controller="controller">
+                            <slot slot="setting">
+                            </slot>
+                        </OnboardingCard>
+                    </size>
+
+                    <Text text="HUD Settings" size="12" color="#FFFFFFFF"/>
+                    <size height="20"/>
+                    <WrapGrid minimumWidth="120" gap="10">
+                        <OnboardingCard id="recommended" toggleGroup="hud" selected="true" bind:controller="controller">
+                            <Include include="dungeonsguide:gui/onboarding/standard_card_content.gui"
+                                     title="Recommended" description="§eRecommended Settings." slot="body" preview="true">
+                                <size height="400" slot="tooltip">
+                                    <ResourceImage location="dungeonsguide:textures/onboarding/hud_recommended.png" width="1800" height="1126" textureWidth="1800" textureHeight="1126"/>
+                                </size>
+                            </Include>
+                            <slot slot="setting">
+                                <feature id="advanced.coords">
+                                    <_>{"alignment":"LEFT","$enabled":true,"$pos":{"x":8.0,"y":315.0,"xType":0,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.map2">
+                                    <_>{"name_style":"SNAP","name_scale":1.0,"scale":1.0,"border_color":{"color":-1,"chroma":false,"chromaSpeed":0.0},"map_rotation":"VERTICAL","selfstyle":"HEAD","border_thickness":2.0,"drawname":false,"iconStyle":"CHECKMARK_AND_COUNT","otherscale":1.0,"iconCenter":true,"background_color":{"color":570425344,"chroma":false,"chromaSpeed":0.0},"iconRotation":"ROTATE","selfscale":1.0,"name_color":{"color":-1,"chroma":false,"chromaSpeed":0.0},"otherstyle":"HEAD","name_padding":2.0,"iconScale":1.0,"$enabled":true,"$pos":{"x":8.0,"y":8.0,"xType":0,"yType":0,"width":153.5,"height":153.5},"overrides":{"9139cb1c-b6f3-4bac-92de-909b1eb73449":{"drawName":false,"nameOverride":"Water Board","iconLocation":"dungeonsguide:map/overrides/icon_waterboard.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"990f6e4c-f7cf-4d27-ae91-11219b85861f":{"drawName":false,"nameOverride":"Ice Fill","iconLocation":"dungeonsguide:map/overrides/icon_icefill.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"6367a338-dd48-4c30-9e03-7ff6b5c7a936":{"drawName":false,"nameOverride":"Bomb Defuse","iconLocation":"dungeonsguide:map/overrides/icon_bombdefuse.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"a053f4fa-d6b2-4aef-ae3e-97c7eee0252e":{"drawName":false,"nameOverride":"Ice Path","iconLocation":"dungeonsguide:map/overrides/icon_icepath.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"d3e61abf-4198-4520-a950-a03761a0eb6f":{"drawName":false,"nameOverride":"Higher Or Lower (TD)","iconLocation":"dungeonsguide:map/overrides/icon_blaze_td.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"ffd5411b-6ff4-4f60-b387-72f00510ec50":{"drawName":false,"nameOverride":"Teleport Maze","iconLocation":"dungeonsguide:map/overrides/icon_teleport.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"11982f7f-703e-4d98-9d27-4e07ba3fef71":{"drawName":false,"nameOverride":"Creeper Beams","iconLocation":"dungeonsguide:map/overrides/icon_creeperbeam.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"c2ea0a41-d495-437f-86cc-235a71c49f22":{"drawName":false,"nameOverride":"Three Weirdos","iconLocation":"dungeonsguide:map/overrides/icon_threeweirdo.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"b2dce4ed-2bda-4303-a4d7-3ebb914db318":{"drawName":false,"nameOverride":"Quiz","iconLocation":"dungeonsguide:map/overrides/icon_quiz.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"cf6d49d3-4f1e-4ec9-836e-049573793ddd":{"drawName":false,"nameOverride":"Boulder","iconLocation":"dungeonsguide:map/overrides/icon_boulder.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"cf44c95c-950e-49e0-aa4c-82c2b18d0acc":{"drawName":false,"nameOverride":"Higher Or Lower (DT)","iconLocation":"dungeonsguide:map/overrides/icon_blaze_dt.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"5000be9d-3081-4a5e-8563-dd826705663a":{"drawName":false,"nameOverride":"Tic Tac Toe","iconLocation":"dungeonsguide:map/overrides/icon_tictactoe.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"}},"bosshead":{"MINIBOSS":{"iconType":"HEAD","iconSize":1.0},"WRONG_LIVID":{"iconType":"HEAD","iconSize":1.0},"TERMINALS":{"iconType":"HEAD","iconSize":1.0},"CRYSTALS":{"iconType":"HEAD","iconSize":1.0},"ANIMALS":{"iconType":"HEAD","iconSize":1.0},"GOLEM":{"iconType":"HEAD","iconSize":1.0},"TERRACOTA":{"iconType":"HEAD","iconSize":1.0},"ENEMIES":{"iconType":"HEAD","iconSize":1.0},"BOSS":{"iconType":"HEAD","iconSize":1.0}}}</_>
+                                </feature>
+                                <feature id="secret.actionview">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":0.0,"y":200.0,"xType":0,"yType":0}}</_>
+                                </feature>
+                                <feature id="bossfight.health">
+                                    <_>{"formatHealth":true,"ignoreInattackable":false,"totalHealth":false,"alignment":"LEFT","$enabled":true,"$pos":{"x":8.0,"y":111.5,"xType":0,"yType":1}}</_>
+                                </feature>
+                                <feature id="bossfight.spiritbear">
+                                    <_>{"alignment":"CENTER","$enabled":true,"$pos":{"x":-16.0,"y":36.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="bossfight.spiritbowdisplay">
+                                    <_>{"alignment":"CENTER","$enabled":true,"$pos":{"x":-16.0,"y":18.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="bossfight.terracota">
+                                    <_>{"alignment":"CENTER","$enabled":true,"$pos":{"x":-16.0,"y":36.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="bossfight.phasedisplay">
+                                    <_>{"alignment":"CENTER","$enabled":true,"$pos":{"x":-16.0,"y":54.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="party.list">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":8.0,"y":-56.5,"xType":0,"yType":1}}</_>
+                                </feature>
+                                <feature id="party.readylist">
+                                    <_>{"alignment":"LEFT","$enabled":true,"$pos":{"x":8.0,"y":-158.5,"xType":0,"yType":1}}</_>
+                                </feature>
+                                <feature id="secret.fairysoulwarn">
+                                    <_>{"roomuids":["340c5665-e59b-42c1-bf84-8fc03d38981f","a7321dea-d35f-44f9-a5b0-0bcaf414dc12","2f7927cc-4ce0-4f02-a81a-88d5709248e8","d4a015ae-f123-4696-8fb6-719b5a21b623","296fd7ea-4ac5-46e5-beb9-5d27019e3796","af86da97-0140-44cf-a922-0af8f0885568","7a594650-2a42-46e5-81a6-9b7d198e9c1c","0877607a-b8a2-433a-b893-f4de7c83378a","1ae1d65c-2c72-4ed6-afab-84d0de759e1e","a069f006-0728-4952-8d9f-1d318cee60d8"],"alignment":"CENTER","$enabled":true,"$pos":{"x":0.0,"y":109.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungen.watcherwarn">
+                                    <_>{"alignment":"CENTER","$enabled":true,"$pos":{"x":0.0,"y":145.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.lowhealthwarn">
+                                    <_>{"threshold":500,"alignment":"LEFT","$enabled":false,"$pos":{"x":441.0,"y":18.0,"xType":0,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.score">
+                                    <_>{"alignment":"CENTER","verbose":true,"$enabled":true,"$pos":{"x":0.0,"y":-152.0,"xType":1,"yType":2}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.tombs">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":-92.0,"y":109.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.totaltombs">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":214.0,"y":18.0,"xType":0,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.secretsroom">
+                                    <_>{"alignment":"CENTER","$enabled":true,"$pos":{"x":0.0,"y":-237.0,"xType":1,"yType":2}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.secrets">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":-21.0,"y":183.5,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.igtime">
+                                    <_>{"alignment":"RIGHT","$enabled":false,"$pos":{"x":177.0,"y":-91.5,"xType":1,"yType":1}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.realtime">
+                                    <_>{"alignment":"RIGHT","$enabled":true,"$pos":{"x":-17.0,"y":95.5,"xType":2,"yType":1}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.milestone">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":47.0,"y":119.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.deaths">
+                                    <_>{"alignment":"LEFT","$enabled":true,"$pos":{"x":8.0,"y":-24.5,"xType":0,"yType":1}}</_>
+                                </feature>
+                                <feature id="dungeon.roomname">
+                                    <_>{"alignment":"CENTER","$enabled":true,"$pos":{"x":-16.0,"y":72.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="etc.abilitycd2">
+                                    <_>{"disable":false,"alignment":"RIGHT","decimal":0,"$enabled":true,"$pos":{"x":-17.0,"y":138.5,"xType":2,"yType":1}}</_>
+                                </feature>
+                                <feature id="qol.cooldown">
+                                    <_>{"alignment":"LEFT","$enabled":true,"$pos":{"x":69.0,"y":9.0,"xType":1,"yType":1}}</_>
+                                </feature>
+                            </slot>
+                        </OnboardingCard>
+                        <OnboardingCard id="terminals" toggleGroup="hud" bind:controller="controller">
+                            <Include include="dungeonsguide:gui/onboarding/standard_card_content.gui"
+                                     title="Minimal" description="Minimalistic HUD." slot="body" preview="true">
+                                <size height="400" slot="tooltip">
+                                    <ResourceImage location="dungeonsguide:textures/onboarding/hud_minimal.png" width="1800" height="1126" textureWidth="1800" textureHeight="1126"/>
+                                </size>
+                            </Include>
+                            <slot slot="setting">
+                                <feature id="advanced.coords">
+                                    <_>{"alignment":"LEFT","$enabled":true,"$pos":{"x":8.0,"y":315.0,"xType":0,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.map2">
+                                    <_>{"name_style":"SNAP","name_scale":1.0,"scale":1.0,"border_color":{"color":-1,"chroma":false,"chromaSpeed":0.0},"map_rotation":"VERTICAL","selfstyle":"HEAD","border_thickness":2.0,"drawname":false,"iconStyle":"CHECKMARK_AND_COUNT","otherscale":1.0,"iconCenter":true,"background_color":{"color":570425344,"chroma":false,"chromaSpeed":0.0},"iconRotation":"ROTATE","selfscale":1.0,"name_color":{"color":-1,"chroma":false,"chromaSpeed":0.0},"otherstyle":"HEAD","name_padding":2.0,"iconScale":1.0,"$enabled":true,"$pos":{"x":8.0,"y":8.0,"xType":0,"yType":0,"width":153.5,"height":153.5},"overrides":{"9139cb1c-b6f3-4bac-92de-909b1eb73449":{"drawName":false,"nameOverride":"Water Board","iconLocation":"dungeonsguide:map/overrides/icon_waterboard.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"990f6e4c-f7cf-4d27-ae91-11219b85861f":{"drawName":false,"nameOverride":"Ice Fill","iconLocation":"dungeonsguide:map/overrides/icon_icefill.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"6367a338-dd48-4c30-9e03-7ff6b5c7a936":{"drawName":false,"nameOverride":"Bomb Defuse","iconLocation":"dungeonsguide:map/overrides/icon_bombdefuse.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"a053f4fa-d6b2-4aef-ae3e-97c7eee0252e":{"drawName":false,"nameOverride":"Ice Path","iconLocation":"dungeonsguide:map/overrides/icon_icepath.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"d3e61abf-4198-4520-a950-a03761a0eb6f":{"drawName":false,"nameOverride":"Higher Or Lower (TD)","iconLocation":"dungeonsguide:map/overrides/icon_blaze_td.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"ffd5411b-6ff4-4f60-b387-72f00510ec50":{"drawName":false,"nameOverride":"Teleport Maze","iconLocation":"dungeonsguide:map/overrides/icon_teleport.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"11982f7f-703e-4d98-9d27-4e07ba3fef71":{"drawName":false,"nameOverride":"Creeper Beams","iconLocation":"dungeonsguide:map/overrides/icon_creeperbeam.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"c2ea0a41-d495-437f-86cc-235a71c49f22":{"drawName":false,"nameOverride":"Three Weirdos","iconLocation":"dungeonsguide:map/overrides/icon_threeweirdo.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"b2dce4ed-2bda-4303-a4d7-3ebb914db318":{"drawName":false,"nameOverride":"Quiz","iconLocation":"dungeonsguide:map/overrides/icon_quiz.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"cf6d49d3-4f1e-4ec9-836e-049573793ddd":{"drawName":false,"nameOverride":"Boulder","iconLocation":"dungeonsguide:map/overrides/icon_boulder.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"cf44c95c-950e-49e0-aa4c-82c2b18d0acc":{"drawName":false,"nameOverride":"Higher Or Lower (DT)","iconLocation":"dungeonsguide:map/overrides/icon_blaze_dt.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"5000be9d-3081-4a5e-8563-dd826705663a":{"drawName":false,"nameOverride":"Tic Tac Toe","iconLocation":"dungeonsguide:map/overrides/icon_tictactoe.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"}},"bosshead":{"MINIBOSS":{"iconType":"HEAD","iconSize":1.0},"WRONG_LIVID":{"iconType":"HEAD","iconSize":1.0},"TERMINALS":{"iconType":"HEAD","iconSize":1.0},"CRYSTALS":{"iconType":"HEAD","iconSize":1.0},"ANIMALS":{"iconType":"HEAD","iconSize":1.0},"GOLEM":{"iconType":"HEAD","iconSize":1.0},"TERRACOTA":{"iconType":"HEAD","iconSize":1.0},"ENEMIES":{"iconType":"HEAD","iconSize":1.0},"BOSS":{"iconType":"HEAD","iconSize":1.0}}}</_>
+                                </feature>
+                                <feature id="secret.actionview">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":0.0,"y":200.0,"xType":0,"yType":0}}</_>
+                                </feature>
+                                <feature id="bossfight.health">
+                                    <_>{"formatHealth":true,"ignoreInattackable":false,"totalHealth":false,"alignment":"LEFT","$enabled":false,"$pos":{"x":8.0,"y":111.5,"xType":0,"yType":1}}</_>
+                                </feature>
+                                <feature id="bossfight.spiritbear">
+                                    <_>{"alignment":"CENTER","$enabled":false,"$pos":{"x":-16.0,"y":36.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="bossfight.spiritbowdisplay">
+                                    <_>{"alignment":"CENTER","$enabled":false,"$pos":{"x":-16.0,"y":18.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="bossfight.terracota">
+                                    <_>{"alignment":"CENTER","$enabled":false,"$pos":{"x":-16.0,"y":36.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="bossfight.phasedisplay">
+                                    <_>{"alignment":"CENTER","$enabled":false,"$pos":{"x":-16.0,"y":54.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="party.list">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":8.0,"y":-56.5,"xType":0,"yType":1}}</_>
+                                </feature>
+                                <feature id="party.readylist">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":8.0,"y":-158.5,"xType":0,"yType":1}}</_>
+                                </feature>
+                                <feature id="secret.fairysoulwarn">
+                                    <_>{"roomuids":["340c5665-e59b-42c1-bf84-8fc03d38981f","a7321dea-d35f-44f9-a5b0-0bcaf414dc12","2f7927cc-4ce0-4f02-a81a-88d5709248e8","d4a015ae-f123-4696-8fb6-719b5a21b623","296fd7ea-4ac5-46e5-beb9-5d27019e3796","af86da97-0140-44cf-a922-0af8f0885568","7a594650-2a42-46e5-81a6-9b7d198e9c1c","0877607a-b8a2-433a-b893-f4de7c83378a","1ae1d65c-2c72-4ed6-afab-84d0de759e1e","a069f006-0728-4952-8d9f-1d318cee60d8"],"alignment":"CENTER","$enabled":false,"$pos":{"x":0.0,"y":109.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungen.watcherwarn">
+                                    <_>{"alignment":"CENTER","$enabled":true,"$pos":{"x":0.0,"y":145.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.lowhealthwarn">
+                                    <_>{"threshold":500,"alignment":"LEFT","$enabled":false,"$pos":{"x":441.0,"y":18.0,"xType":0,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.score">
+                                    <_>{"alignment":"CENTER","verbose":true,"$enabled":true,"$pos":{"x":0.0,"y":-152.0,"xType":1,"yType":2}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.tombs">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":-92.0,"y":109.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.totaltombs">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":214.0,"y":18.0,"xType":0,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.secretsroom">
+                                    <_>{"alignment":"CENTER","$enabled":false,"$pos":{"x":0.0,"y":-237.0,"xType":1,"yType":2}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.secrets">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":-21.0,"y":183.5,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.igtime">
+                                    <_>{"alignment":"RIGHT","$enabled":false,"$pos":{"x":177.0,"y":-91.5,"xType":1,"yType":1}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.realtime">
+                                    <_>{"alignment":"RIGHT","$enabled":false,"$pos":{"x":215.0,"y":120.5,"xType":1,"yType":1}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.milestone">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":47.0,"y":119.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.deaths">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":8.0,"y":-24.5,"xType":0,"yType":1}}</_>
+                                </feature>
+                                <feature id="dungeon.roomname">
+                                    <_>{"alignment":"CENTER","$enabled":false,"$pos":{"x":-16.0,"y":72.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="etc.abilitycd2">
+                                    <_>{"disable":false,"alignment":"RIGHT","decimal":0,"$enabled":false,"$pos":{"x":-108.0,"y":102.5,"xType":1,"yType":1}}</_>
+                                </feature>
+                                <feature id="qol.cooldown">
+                                    <_>{"alignment":"LEFT","$enabled":true,"$pos":{"x":69.0,"y":9.0,"xType":1,"yType":1}}</_>
+                                </feature>
+                            </slot>
+                        </OnboardingCard>
+                        <OnboardingCard id="nothing" toggleGroup="hud"  bind:controller="controller">
+                            <Include include="dungeonsguide:gui/onboarding/standard_card_content.gui"
+                                     title="Nothing" description="Don't Show any DG Hud's" slot="body" preview="true">
+                                <size height="400" slot="tooltip">
+                                    <ResourceImage location="dungeonsguide:textures/onboarding/hud_nothing.png" width="1800" height="1126" textureWidth="1800" textureHeight="1126"/>
+                                </size>
+                            </Include>
+                            <slot slot="setting">
+                                <feature id="advanced.coords">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":8.0,"y":315.0,"xType":0,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.map2">
+                                    <_>{"name_style":"SNAP","name_scale":1.0,"scale":1.0,"border_color":{"color":-1,"chroma":false,"chromaSpeed":0.0},"map_rotation":"VERTICAL","selfstyle":"HEAD","border_thickness":2.0,"drawname":false,"iconStyle":"CHECKMARK_AND_COUNT","otherscale":1.0,"iconCenter":true,"background_color":{"color":570425344,"chroma":false,"chromaSpeed":0.0},"iconRotation":"ROTATE","selfscale":1.0,"name_color":{"color":-1,"chroma":false,"chromaSpeed":0.0},"otherstyle":"HEAD","name_padding":2.0,"iconScale":1.0,"$enabled":false,"$pos":{"x":8.0,"y":8.0,"xType":0,"yType":0,"width":153.5,"height":153.5},"overrides":{"9139cb1c-b6f3-4bac-92de-909b1eb73449":{"drawName":false,"nameOverride":"Water Board","iconLocation":"dungeonsguide:map/overrides/icon_waterboard.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"990f6e4c-f7cf-4d27-ae91-11219b85861f":{"drawName":false,"nameOverride":"Ice Fill","iconLocation":"dungeonsguide:map/overrides/icon_icefill.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"6367a338-dd48-4c30-9e03-7ff6b5c7a936":{"drawName":false,"nameOverride":"Bomb Defuse","iconLocation":"dungeonsguide:map/overrides/icon_bombdefuse.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"a053f4fa-d6b2-4aef-ae3e-97c7eee0252e":{"drawName":false,"nameOverride":"Ice Path","iconLocation":"dungeonsguide:map/overrides/icon_icepath.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"d3e61abf-4198-4520-a950-a03761a0eb6f":{"drawName":false,"nameOverride":"Higher Or Lower (TD)","iconLocation":"dungeonsguide:map/overrides/icon_blaze_td.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"ffd5411b-6ff4-4f60-b387-72f00510ec50":{"drawName":false,"nameOverride":"Teleport Maze","iconLocation":"dungeonsguide:map/overrides/icon_teleport.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"11982f7f-703e-4d98-9d27-4e07ba3fef71":{"drawName":false,"nameOverride":"Creeper Beams","iconLocation":"dungeonsguide:map/overrides/icon_creeperbeam.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"c2ea0a41-d495-437f-86cc-235a71c49f22":{"drawName":false,"nameOverride":"Three Weirdos","iconLocation":"dungeonsguide:map/overrides/icon_threeweirdo.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"b2dce4ed-2bda-4303-a4d7-3ebb914db318":{"drawName":false,"nameOverride":"Quiz","iconLocation":"dungeonsguide:map/overrides/icon_quiz.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"cf6d49d3-4f1e-4ec9-836e-049573793ddd":{"drawName":false,"nameOverride":"Boulder","iconLocation":"dungeonsguide:map/overrides/icon_boulder.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"cf44c95c-950e-49e0-aa4c-82c2b18d0acc":{"drawName":false,"nameOverride":"Higher Or Lower (DT)","iconLocation":"dungeonsguide:map/overrides/icon_blaze_dt.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"},"5000be9d-3081-4a5e-8563-dd826705663a":{"drawName":false,"nameOverride":"Tic Tac Toe","iconLocation":"dungeonsguide:map/overrides/icon_tictactoe.png","textureLocation":"","iconRotation":"ROTATE","style":"ICON"}},"bosshead":{"MINIBOSS":{"iconType":"HEAD","iconSize":1.0},"WRONG_LIVID":{"iconType":"HEAD","iconSize":1.0},"TERMINALS":{"iconType":"HEAD","iconSize":1.0},"CRYSTALS":{"iconType":"HEAD","iconSize":1.0},"ANIMALS":{"iconType":"HEAD","iconSize":1.0},"GOLEM":{"iconType":"HEAD","iconSize":1.0},"TERRACOTA":{"iconType":"HEAD","iconSize":1.0},"ENEMIES":{"iconType":"HEAD","iconSize":1.0},"BOSS":{"iconType":"HEAD","iconSize":1.0}}}</_>
+                                </feature>
+                                <feature id="secret.actionview">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":0.0,"y":200.0,"xType":0,"yType":0}}</_>
+                                </feature>
+                                <feature id="bossfight.health">
+                                    <_>{"formatHealth":true,"ignoreInattackable":false,"totalHealth":false,"alignment":"LEFT","$enabled":false,"$pos":{"x":8.0,"y":111.5,"xType":0,"yType":1}}</_>
+                                </feature>
+                                <feature id="bossfight.spiritbear">
+                                    <_>{"alignment":"CENTER","$enabled":false,"$pos":{"x":-16.0,"y":36.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="bossfight.spiritbowdisplay">
+                                    <_>{"alignment":"CENTER","$enabled":false,"$pos":{"x":-16.0,"y":18.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="bossfight.terracota">
+                                    <_>{"alignment":"CENTER","$enabled":false,"$pos":{"x":-16.0,"y":36.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="bossfight.phasedisplay">
+                                    <_>{"alignment":"CENTER","$enabled":false,"$pos":{"x":-16.0,"y":54.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="party.list">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":8.0,"y":-56.5,"xType":0,"yType":1}}</_>
+                                </feature>
+                                <feature id="party.readylist">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":8.0,"y":-158.5,"xType":0,"yType":1}}</_>
+                                </feature>
+                                <feature id="secret.fairysoulwarn">
+                                    <_>{"roomuids":["340c5665-e59b-42c1-bf84-8fc03d38981f","a7321dea-d35f-44f9-a5b0-0bcaf414dc12","2f7927cc-4ce0-4f02-a81a-88d5709248e8","d4a015ae-f123-4696-8fb6-719b5a21b623","296fd7ea-4ac5-46e5-beb9-5d27019e3796","af86da97-0140-44cf-a922-0af8f0885568","7a594650-2a42-46e5-81a6-9b7d198e9c1c","0877607a-b8a2-433a-b893-f4de7c83378a","1ae1d65c-2c72-4ed6-afab-84d0de759e1e","a069f006-0728-4952-8d9f-1d318cee60d8"],"alignment":"CENTER","$enabled":false,"$pos":{"x":0.0,"y":109.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungen.watcherwarn">
+                                    <_>{"alignment":"CENTER","$enabled":false,"$pos":{"x":0.0,"y":145.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.lowhealthwarn">
+                                    <_>{"threshold":500,"alignment":"LEFT","$enabled":false,"$pos":{"x":441.0,"y":18.0,"xType":0,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.score">
+                                    <_>{"alignment":"CENTER","verbose":true,"$enabled":false,"$pos":{"x":0.0,"y":-152.0,"xType":1,"yType":2}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.tombs">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":-92.0,"y":109.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.totaltombs">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":214.0,"y":18.0,"xType":0,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.secretsroom">
+                                    <_>{"alignment":"CENTER","$enabled":false,"$pos":{"x":0.0,"y":-237.0,"xType":1,"yType":2}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.secrets">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":-21.0,"y":183.5,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.igtime">
+                                    <_>{"alignment":"RIGHT","$enabled":false,"$pos":{"x":177.0,"y":-91.5,"xType":1,"yType":1}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.realtime">
+                                    <_>{"alignment":"RIGHT","$enabled":false,"$pos":{"x":215.0,"y":120.5,"xType":1,"yType":1}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.milestone">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":47.0,"y":119.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="dungeon.stats.deaths">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":8.0,"y":-24.5,"xType":0,"yType":1}}</_>
+                                </feature>
+                                <feature id="dungeon.roomname">
+                                    <_>{"alignment":"CENTER","$enabled":false,"$pos":{"x":-16.0,"y":72.0,"xType":1,"yType":0}}</_>
+                                </feature>
+                                <feature id="etc.abilitycd2">
+                                    <_>{"disable":false,"alignment":"RIGHT","decimal":0,"$enabled":false,"$pos":{"x":-108.0,"y":102.5,"xType":1,"yType":1}}</_>
+                                </feature>
+                                <feature id="qol.cooldown">
+                                    <_>{"alignment":"LEFT","$enabled":false,"$pos":{"x":69.0,"y":9.0,"xType":1,"yType":1}}</_>
+                                </feature>
+                            </slot>
+                        </OnboardingCard>
+                    </WrapGrid>
+                    <size height="5"/>
+                    <Text text="Not choosing any will keep your HUD settings as is" size="8" color="#FFCCCCCC"/>
+                    <Variable bind:target="prevPage" value="pages/solvers.gui"/>
+                    <Variable bind:target="nextPage" value="quit"/>
+                    <Variable bind:target="requiredGroup" value=""/>
+                </col>
+            </padding>
+        </ScrollablePanel>
+    </slot>
+
+    <slot slot="buttons">
+        <Include include="dungeonsguide:gui/onboarding/standard_onboarding_buttons.gui" nextBtnLabel="Finish" on:prev="prev" on:next="next" bind:disableNext="nextButtonDisabled"/>
+    </slot>
+</Include>

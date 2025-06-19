@@ -82,10 +82,10 @@ public class AbsLocationPopup extends AnnotatedImportOnlyWidget {
             size = new Size(size.getWidth(), 0);
         }
         this.x.setValue(
-                Layouter.clamp((absX.getValue() - rect.getX()) * rel.getWidth() / rect.getWidth(), 0, rel.getWidth()-size.getWidth()* rel.getWidth() / rect.getWidth())
+                Layouter.clamp((absX.getValue() - rect.getX()) * rel.getWidth() / rect.getWidth(), 0, rel.getWidth()-size.getWidth())
         );
         this.y.setValue(
-                Layouter.clamp((absY.getValue() - rect.getY()) * rel.getHeight() / rect.getHeight(), 0, rel.getHeight() - size.getHeight()* rel.getWidth() / rect.getWidth())
+                Layouter.clamp((absY.getValue() - rect.getY()) * rel.getHeight() / rect.getHeight(), 0, rel.getHeight() - size.getHeight())
         );
     }
 

@@ -42,6 +42,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.view.TestView;
@@ -456,12 +457,25 @@ public class CommandDgDebug extends CommandBase {
 
     private void process2() throws IOException {
 
-        GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("page1/pf.gui")));
+        GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")), null, false);
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 Minecraft.getMinecraft().displayGuiScreen(adapter);
             });
         }).start();
+        String features = "advanced.coords,dungeon.map2,secret.actionview,bossfight.health,bossfight.spiritbear,bossfight.spiritbowdisplay,bossfight.terracota,bossfight.phasedisplay,party.list,party.readylist,secret.fairysoulwarn,dungen.watcherwarn,dungeon.lowhealthwarn,dungeon.stats.score,dungeon.stats.tombs,dungeon.stats.totaltombs,dungeon.stats.secretsroom,dungeon.stats.secrets,dungeon.stats.igtime,dungeon.stats.realtime,dungeon.stats.milestone,dungeon.stats.deaths,dungeon.roomname,etc.abilitycd2,qol.cooldown";
+        StringBuilder sb = new StringBuilder();
+        Gson gson = new Gson();
+        for (String s : features.split(",")) {
+            sb.append("<feature id=\"").append(s).append("\">\n\t<_>");
+
+            JsonObject jsonObject = FeatureRegistry.getFeatureByKey(s).saveConfig();
+            jsonObject.remove("newstyle");
+            sb.append(jsonObject.toString());
+            sb.append("</_>\n</feature>\n");
+        }
+
+        System.out.println(sb.toString());
 
 //        int cnt = 0;
 //        CBORMapper objectMapper = new CBORMapper();

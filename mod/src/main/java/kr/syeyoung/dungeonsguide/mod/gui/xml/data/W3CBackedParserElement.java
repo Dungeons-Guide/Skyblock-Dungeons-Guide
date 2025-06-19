@@ -71,4 +71,15 @@ public class W3CBackedParserElement implements ParserElement {
         }
         return list;
     }
+
+    public String getBody() {
+        NodeList nodeList = backingElement.getChildNodes();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node n = nodeList.item(i);
+            if (!(n instanceof Text)) continue;
+            sb.append(((Text)n).getNodeValue());
+        }
+        return sb.toString();
+    }
 }
