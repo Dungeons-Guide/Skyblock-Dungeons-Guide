@@ -272,7 +272,7 @@
                     <size height="5"/>
                     <Text text="Not choosing any will keep your HUD settings as is" size="8" color="#FFCCCCCC"/>
                     <Variable bind:target="prevPage" value="pages/solvers.gui"/>
-                    <Variable bind:target="nextPage" value="quit"/>
+                    <Variable bind:target="nextPage" value="pages/done.gui"/>
                     <Variable bind:target="requiredGroup" value=""/>
                 </col>
             </padding>
@@ -280,6 +280,6 @@
     </slot>
 
     <slot slot="buttons">
-        <Include include="dungeonsguide:gui/onboarding/standard_onboarding_buttons.gui" nextBtnLabel="Finish" on:prev="prev" on:next="next" bind:disableNext="nextButtonDisabled"/>
+        <Include include="dungeonsguide:gui/onboarding/standard_onboarding_buttons.gui" on:prev="prev" on:next="next" bind:disableNext="nextButtonDisabled"/>
     </slot>
 </Include>

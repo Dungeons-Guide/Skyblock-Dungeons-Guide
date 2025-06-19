@@ -1,0 +1,38 @@
+<Include include="dungeonsguide:gui/onboarding/onboarding_layout.gui" title="Dungeons Guide Quick Setup Wizard">
+    <slot>
+        <ScrollablePanel direction="VERTICAL">
+            <padding top="20" left="20" bottom="20" right="20">
+                <col>
+                    <size width="0" height="0">
+                        <OnboardingCard id="$default" toggleGroup="" bind:controller="controller">
+                            <slot slot="setting">
+                                <feature id="secret.bloodrush"><_enabled>false</_enabled></feature>
+                                <feature id="secret.mechanicbrowse"><_enabled>false</_enabled></feature>
+                            </slot>
+                        </OnboardingCard>
+                    </size>
+
+                    <Text text="Setup Complete!" size="12" color="#FFFFFFFF"/>
+                    <size height="20"/>
+                    <Text text="Thank you for installing §eDungeonsGuide§f, the most intelligent skyblock dungeon mod!" size="8" color="#FFFFFFFF"/>
+                    <size height="10"/>
+                    <Text text="You can trigger this wizard again at §e/dg -> Setup Wizard" color="#FFCCCCCC" size="8"/>
+                    <size height="10"/>
+                    <Text text="You can access Dungeons Guide Menu by typing §e/dg" color="#FFFFFFFF" size="8"/>
+                    <size height="8"/>
+                    <Text text="Type §e/dg help §fto view full list of commands offered by dungeons guide!" color="#FFFFFFFF" size="8"/>
+                    <size height="20"/>
+                    <Text text="If you wish to enable §betherwarp/stonking §rcheck /dg -> Pathfinding &amp; Secrets -> Precalculations -> View Documentation." color="#FFFFFFFF" size="8"/>
+
+                    <Variable bind:target="prevPage" value="pages/hud.gui"/>
+                    <Variable bind:target="nextPage" value="quit"/>
+                    <Variable bind:target="requiredGroup" value=""/>
+                </col>
+            </padding>
+        </ScrollablePanel>
+    </slot>
+
+    <slot slot="buttons">
+        <Include include="dungeonsguide:gui/onboarding/standard_onboarding_buttons.gui" nextBtnLabel="Finish"  on:prev="prev" on:next="next" bind:disableNext="nextButtonDisabled"/>
+    </slot>
+</Include>
