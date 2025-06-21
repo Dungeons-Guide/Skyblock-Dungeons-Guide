@@ -24,6 +24,7 @@ plugins {
 }
 
 include 'mod'
-include 'loader'
+include '1.8.9-loader'
+include 'modapi'
 
 rootProject.name = "Dungeons Guide"

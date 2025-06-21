@@ -35,8 +35,8 @@ configurations {
 
 
 dependencies {
-    loaderOnly(project(path: ":loader", configuration: "remappedMod"))
-    loaderOnlyDev(project(path: ":loader", configuration: "unmappedMod"))
+    loaderOnly(project(path: ":1.8.9-loader", configuration: "remappedMod"))
+    loaderOnlyDev(project(path: ":1.8.9-loader", configuration: "unmappedMod"))
     modOnly(project(path: ":mod", configuration: "remappedMod"))
     modOnlyDev(project(path: ":mod", configuration: "unmappedMod"))
 }
@@ -63,7 +63,7 @@ task standaloneDevJar(type: Zip) {
     group = "build"
 
     archiveClassifier = "devStandalone"
-    dependsOn ":mod:build", ":loader:build"
+    dependsOn ":mod:build", ":1.8.9-loader:build"
     from(zipTree(configurations.loaderOnlyDev.files[0]))
     archiveFileName = configurations.modOnlyDev.files.name.get(0).replace(".jar", "")+"-standalone.jar"
     from(configurations.modOnlyDev.files) {
@@ -95,11 +95,11 @@ idea.project.settings {
         "Build Standalone Jars"(Gradle) {
             taskNames = ["build"]
         }
-        "Build Loader Only With Signing"(Gradle) {
-            taskNames = [":loader:build -Pdg.dosign=true"]
+        "Build 1.8.9-loader Only With Signing"(Gradle) {
+            taskNames = [":1.8.9-loader:build -Pdg.dosign=true"]
         }
-        "Build Loader Only"(Gradle) {
-            taskNames = [":loader:build"]
+        "Build 1.8.9-loader Only"(Gradle) {
+            taskNames = [":1.8.9-loader:build"]
         }
         "Build Mod Only With Signing"(Gradle) {
             taskNames = [":mod:build -Pdg.dosign=true"]

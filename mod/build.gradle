@@ -104,9 +104,9 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
 
 
-    compileOnly project(path: ":loader")
+    compileOnly project(path: ":1.8.9-loader")
 
-    devenvMod(project(path: ":loader", configuration: "unmappedMod"))
+    devenvMod(project(path: ":1.8.9-loader", configuration: "unmappedMod"))
     modLocalRuntime("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 }
 
