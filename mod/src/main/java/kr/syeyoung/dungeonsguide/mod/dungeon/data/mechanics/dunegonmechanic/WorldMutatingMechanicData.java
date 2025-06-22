@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 
 import java.util.List;
 

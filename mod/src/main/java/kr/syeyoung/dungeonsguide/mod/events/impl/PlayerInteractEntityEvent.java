@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-import kr.syeyoung.modapi.event.*;
-import lombok.AllArgsConstructor;
+import kr.syeyoung.modapi.event.Cancelable;
+import kr.syeyoung.modapi.event.UEvent;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.entity.Entity;

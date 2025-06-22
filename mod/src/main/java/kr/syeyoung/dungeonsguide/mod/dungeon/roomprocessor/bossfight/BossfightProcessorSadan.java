@@ -22,10 +22,8 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntityGiantZombie;
 import net.minecraft.entity.monster.EntityIronGolem;
-import net.minecraft.entity.passive.*;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.ArrayList;

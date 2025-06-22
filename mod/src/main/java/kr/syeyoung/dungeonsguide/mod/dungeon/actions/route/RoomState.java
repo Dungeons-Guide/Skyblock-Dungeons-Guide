@@ -24,7 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.util.Vec3;
 
-import java.util.*;
+import java.util.List;
 
 @Getter @Setter
 public class RoomState {

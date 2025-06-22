@@ -18,10 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.minecraft.util.EnumChatFormatting;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @RequiredArgsConstructor
 public class Team {

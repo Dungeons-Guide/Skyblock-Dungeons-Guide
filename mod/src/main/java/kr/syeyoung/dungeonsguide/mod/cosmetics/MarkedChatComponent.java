@@ -2,8 +2,6 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics;
 
 import com.google.common.collect.Iterators;
 import lombok.Setter;
-import net.minecraft.util.ChatComponentStyle;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 import org.jetbrains.annotations.NotNull;
@@ -11,8 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 
 public class MarkedChatComponent implements IChatComponent {
     @Setter

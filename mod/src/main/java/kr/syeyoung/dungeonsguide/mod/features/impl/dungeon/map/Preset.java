@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Map;

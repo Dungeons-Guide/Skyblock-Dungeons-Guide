@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-import kr.syeyoung.modapi.event.*;
+import kr.syeyoung.modapi.event.UEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

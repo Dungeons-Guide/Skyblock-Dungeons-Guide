@@ -18,12 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-import kr.syeyoung.modapi.event.*;
+import kr.syeyoung.modapi.event.UEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.network.play.server.S2FPacketSetSlot;
-import net.minecraft.network.play.server.S30PacketWindowItems;
 import net.minecraft.world.storage.MapData;
 
 @Data

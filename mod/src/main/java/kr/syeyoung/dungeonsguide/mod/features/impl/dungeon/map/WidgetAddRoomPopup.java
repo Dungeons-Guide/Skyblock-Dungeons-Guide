@@ -31,7 +31,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class WidgetAddRoomPopup extends AnnotatedImportOnlyWidget {

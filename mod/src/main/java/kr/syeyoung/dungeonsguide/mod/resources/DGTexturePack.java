@@ -23,7 +23,6 @@ import net.minecraft.client.resources.AbstractResourcePack;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.Set;
 
 public class DGTexturePack extends AbstractResourcePack {

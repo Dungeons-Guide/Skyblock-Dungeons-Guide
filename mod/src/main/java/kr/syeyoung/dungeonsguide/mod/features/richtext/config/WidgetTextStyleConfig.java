@@ -18,15 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.richtext.config;
 
-import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.BreakWord;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.RichText;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.styles.ITextStyle;
-import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextStyle;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.BreakWord;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.RichText;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.styles.ITextStyle;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import net.minecraft.util.ResourceLocation;
 

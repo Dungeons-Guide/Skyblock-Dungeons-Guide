@@ -24,12 +24,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonFakeChestTrap
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonFakeChestTrapState.DungeonFakeChestTrapData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.init.Blocks;
 

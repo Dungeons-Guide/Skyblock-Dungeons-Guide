@@ -33,7 +33,10 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.config.WidgetTextStyleCon
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class FeatureWarningOnPortal extends SimpleFeature {
     public FeatureWarningOnPortal() {

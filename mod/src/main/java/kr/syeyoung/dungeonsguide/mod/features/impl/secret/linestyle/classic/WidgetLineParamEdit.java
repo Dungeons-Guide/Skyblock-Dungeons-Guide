@@ -18,9 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic;
 
-import kr.syeyoung.dungeonsguide.mod.config.types.*;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCAColor;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.PathfindLineProperties;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;

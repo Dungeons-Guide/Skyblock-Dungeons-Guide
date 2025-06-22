@@ -30,7 +30,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
 import javax.vecmath.Vector2d;
-import java.io.Serializable;
 
 @Data
 @JsonFormat(shape = JsonFormat.Shape.ARRAY)

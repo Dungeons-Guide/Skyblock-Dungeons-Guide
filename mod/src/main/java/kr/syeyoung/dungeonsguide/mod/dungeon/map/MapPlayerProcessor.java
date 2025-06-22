@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.map;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import lombok.Getter;

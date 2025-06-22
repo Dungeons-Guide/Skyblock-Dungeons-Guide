@@ -20,8 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.data;
 
 import lombok.*;
 
-import java.io.Serializable;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

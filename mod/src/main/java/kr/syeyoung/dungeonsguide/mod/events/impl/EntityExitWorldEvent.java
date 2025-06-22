@@ -18,12 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-import kr.syeyoung.modapi.event.*;
+import kr.syeyoung.modapi.event.UEvent;
 import lombok.*;
-import net.minecraft.world.chunk.Chunk;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Data @AllArgsConstructor @NoArgsConstructor
 public class EntityExitWorldEvent extends UEvent {

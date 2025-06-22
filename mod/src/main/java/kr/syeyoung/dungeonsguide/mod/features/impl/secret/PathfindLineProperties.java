@@ -19,13 +19,11 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.mod.config.types.*;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic.ClassicPathDisplayEngine;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic.ClassicPathEngineLineProperties;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.*;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import lombok.Getter;
 import lombok.Setter;

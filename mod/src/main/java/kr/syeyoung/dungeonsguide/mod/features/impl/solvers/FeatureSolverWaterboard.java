@@ -18,7 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.solvers;
 
-import kr.syeyoung.dungeonsguide.mod.config.types.*;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 

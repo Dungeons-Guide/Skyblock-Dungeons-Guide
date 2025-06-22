@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.stomp;
 
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

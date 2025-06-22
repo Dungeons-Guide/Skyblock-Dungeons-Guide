@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.MarkerProvider;
 import kr.syeyoung.dungeonsguide.mod.config.types.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.MarkerData;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
@@ -60,7 +60,6 @@ import net.minecraft.world.WorldSettings;
 
 import java.lang.reflect.Type;
 import java.util.*;
-import java.util.List;
 
 //TODO: reduce gl drawcalls somehow
 

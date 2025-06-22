@@ -35,8 +35,8 @@ import net.minecraft.world.storage.MapData;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public class DungeonRoomScaffoldParser {
     @Getter

@@ -23,7 +23,8 @@ import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class SurgicalReplacer {
 

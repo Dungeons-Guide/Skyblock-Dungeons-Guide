@@ -1,10 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.util.Vec3;

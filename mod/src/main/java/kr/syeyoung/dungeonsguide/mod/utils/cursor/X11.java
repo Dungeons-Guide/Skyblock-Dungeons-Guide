@@ -19,9 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.utils.cursor;
 
 import com.sun.jna.Library;
-import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.PointerType;
 
 public interface X11 extends Library {
     public Pointer XCreateFontCursor(Pointer display,

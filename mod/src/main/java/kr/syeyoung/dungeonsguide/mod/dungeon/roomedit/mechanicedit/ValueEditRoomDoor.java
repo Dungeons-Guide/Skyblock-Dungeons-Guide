@@ -24,11 +24,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRoomDoor2Stat
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonRoomDoor2State.DungeonRoomDoor2Data;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MLabel;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MValue;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditCreator;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
 
 import java.awt.*;
 import java.util.Collections;

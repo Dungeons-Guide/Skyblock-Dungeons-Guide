@@ -23,13 +23,13 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonMushroomState
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonMushroomState.DungeonMushroomData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MLabel;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MLabelAndElement;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MTextField;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MValue;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 import java.awt.*;

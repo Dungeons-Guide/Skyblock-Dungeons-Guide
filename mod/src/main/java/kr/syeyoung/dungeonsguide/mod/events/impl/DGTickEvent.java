@@ -18,8 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.modapi.event.*;
+import kr.syeyoung.modapi.event.UEvent;
 
 public class DGTickEvent extends UEvent {
 }

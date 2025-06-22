@@ -25,7 +25,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class BossfightProcessorScarf extends GeneralBossfightProcessor {
     public BossfightProcessorScarf(boolean isMasterMode) {

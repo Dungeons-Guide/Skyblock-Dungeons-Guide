@@ -1,7 +1,10 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.arrowpath;
 
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
-import kr.syeyoung.dungeonsguide.mod.config.types.*;
+import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCAColor;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.AbstractPathDisplayEngineSetting;
@@ -9,7 +12,6 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplay
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.PathDisplayEngineSetting;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.PathDisplayEngineSettingRegistration;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.Placeholder;
 
 public class NeoRouteDisplayEngineRegistration implements PathDisplayEngineSettingRegistration<NeoRouteDisplayEngineLineProperties> {
     public static final NeoRouteDisplayEngineRegistration INSTANCE = new NeoRouteDisplayEngineRegistration();

@@ -18,9 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.List;
 
 @AllArgsConstructor
