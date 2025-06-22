@@ -20,15 +20,15 @@ package kr.syeyoung.dungeonsguide.mod.events.impl;
 
 import kr.syeyoung.dungeonsguide.mod.discord.InviteHandle;
 import kr.syeyoung.dungeonsguide.mod.discord.User;
+import kr.syeyoung.modapi.event.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
-public class DiscordUserInvitedEvent extends Event {
+public class DiscordUserInvitedEvent extends UEvent {
     private User discordUser;
     private InviteHandle handle;
 }

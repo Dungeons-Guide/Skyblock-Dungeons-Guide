@@ -31,6 +31,8 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.NameTagVisibility;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.Team;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.SubscribeEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.*;
@@ -40,8 +42,6 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.storage.MapData;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.*;
 
@@ -71,30 +71,30 @@ public class PacketListener {
     public void packetProcessPost(PacketProcessedEvent.Post post) {
         Packet packet = post.packet;
         if (packet instanceof S30PacketWindowItems) {
-            MinecraftForge.EVENT_BUS.post(new WindowUpdateEvent((S30PacketWindowItems) packet, null));
+            ModAPI.getAPI().getEventBus().fireEvent(new WindowUpdateEvent((S30PacketWindowItems) packet, null));
         } else if (packet instanceof S2FPacketSetSlot) {
-            MinecraftForge.EVENT_BUS.post(new WindowUpdateEvent( null, (S2FPacketSetSlot) packet));
+            ModAPI.getAPI().getEventBus().fireEvent(new WindowUpdateEvent(null, (S2FPacketSetSlot) packet));
         } else if (packet instanceof S23PacketBlockChange) {
             BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Post();
             blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(
                     ((S23PacketBlockChange) packet).getBlockPosition(), ((S23PacketBlockChange) packet).getBlockState()));
-            MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+            ModAPI.getAPI().getEventBus().fireEvent(blockUpdateEvent);
         } else if (packet instanceof S22PacketMultiBlockChange) {
             BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Post();
             for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : ((S22PacketMultiBlockChange) packet).getChangedBlocks()) {
                 blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(changedBlock.getPos(), changedBlock.getBlockState()));
             }
-            MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+            ModAPI.getAPI().getEventBus().fireEvent(blockUpdateEvent);
         } else if (packet instanceof S45PacketTitle) {
-            MinecraftForge.EVENT_BUS.post(new TitleEvent((S45PacketTitle) packet));
+            ModAPI.getAPI().getEventBus().fireEvent(new TitleEvent((S45PacketTitle) packet));
         } else if (packet instanceof S38PacketPlayerListItem) {
-            MinecraftForge.EVENT_BUS.post(new PlayerListItemPacketEvent((S38PacketPlayerListItem) packet));
+            ModAPI.getAPI().getEventBus().fireEvent(new PlayerListItemPacketEvent((S38PacketPlayerListItem) packet));
         }else if (packet instanceof S34PacketMaps) {
             MapData mapData = MapDataManager.INSTANCE.createMapData(((S34PacketMaps) packet).getMapId());
             try {
                 ((S34PacketMaps) packet).setMapdataTo(mapData);
             } catch (Exception ignored) {} // hypixel seem to be sending bad map datas.
-            MinecraftForge.EVENT_BUS.post(new MapUpdateEvent(((S34PacketMaps) packet).getMapId(), mapData));
+            ModAPI.getAPI().getEventBus().fireEvent(new MapUpdateEvent(((S34PacketMaps) packet).getMapId(), mapData));
         }
     }
 
@@ -106,13 +106,13 @@ public class PacketListener {
             blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(
                     ((S23PacketBlockChange) event.packet).getBlockPosition(),
                     ((S23PacketBlockChange) event.packet).getBlockState()));
-            MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+            ModAPI.getAPI().getEventBus().fireEvent(blockUpdateEvent);
         } else if (event.packet instanceof S22PacketMultiBlockChange) {
             BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Pre();
             for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : ((S22PacketMultiBlockChange) event.packet).getChangedBlocks()) {
                 blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(changedBlock.getPos(), changedBlock.getBlockState()));
             }
-            MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+            ModAPI.getAPI().getEventBus().fireEvent(blockUpdateEvent);
         } else if (packet instanceof S3BPacketScoreboardObjective) {
             S3BPacketScoreboardObjective objectivePkt = (S3BPacketScoreboardObjective) packet;
             if (objectivePkt.func_149338_e() == 2) {
@@ -232,7 +232,7 @@ public class PacketListener {
                 Chunk c = new Chunk(new CachedWorld(null, provider), ((S21PacketChunkData) packet).getChunkX(), ((S21PacketChunkData) packet).getChunkZ());
                 c.fillChunk(((S21PacketChunkData) packet).getExtractedDataBytes(), ((S21PacketChunkData) packet).getExtractedSize(), ((S21PacketChunkData) packet).func_149274_i());
                 ChunkUpdateEvent chunkUpdateEvent = new ChunkUpdateEvent(Collections.singletonList(c));
-                MinecraftForge.EVENT_BUS.post(chunkUpdateEvent);
+                ModAPI.getAPI().getEventBus().fireEvent(chunkUpdateEvent);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -248,14 +248,14 @@ public class PacketListener {
                     set.add(c);
                 }
                 ChunkUpdateEvent chunkUpdateEvent = new ChunkUpdateEvent(set);
-                MinecraftForge.EVENT_BUS.post(chunkUpdateEvent);
+                ModAPI.getAPI().getEventBus().fireEvent(chunkUpdateEvent);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (packet instanceof S13PacketDestroyEntities) {
-            MinecraftForge.EVENT_BUS.post(new EntityExitWorldEvent(((S13PacketDestroyEntities) packet).getEntityIDs()));
+            ModAPI.getAPI().getEventBus().fireEvent(new EntityExitWorldEvent(((S13PacketDestroyEntities) packet).getEntityIDs()));
         } else if (packet instanceof S0DPacketCollectItem) {
-            MinecraftForge.EVENT_BUS.post(new ItemPickupEvent(((S0DPacketCollectItem) packet).getCollectedItemEntityID(), ((S0DPacketCollectItem) packet).getEntityID()));
+            ModAPI.getAPI().getEventBus().fireEvent(new ItemPickupEvent(((S0DPacketCollectItem) packet).getCollectedItemEntityID(), ((S0DPacketCollectItem) packet).getEntityID()));
         }
     }
 

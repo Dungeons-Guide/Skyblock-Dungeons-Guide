@@ -21,6 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.events.annotations;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.features.IFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -51,7 +53,7 @@ public class EventHandlerRegistry {
 
     @AllArgsConstructor
     @Getter
-    private static class InvocationTarget<T extends Event> {
+    private static class InvocationTarget<T> {
         private final Class<T> targetEvent;
         private final IFeature feature;
         private final String targetName;
@@ -110,39 +112,75 @@ public class EventHandlerRegistry {
     }
 
     private static Map<Class<? extends Event>, IEventListener> registeredHandlers = new HashMap<>();
+    private static Map<Class<? extends UEvent>, ListenerRegistration> registrations = new HashMap<>();
 
     public static synchronized void registerActualListeners() {
-        for (Class<? extends Event> aClass : targets.keySet()) {
+        for (Class aClass : targets.keySet()) {
             if (registeredHandlers.containsKey(aClass)) continue;
+
             try {
-                Event ev = aClass.getConstructor().newInstance();
-                List<InvocationTarget> targetList = targets.get(aClass);
-                Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-                IEventListener registered;
-                ev.getListenerList().register(busID, EventPriority.NORMAL, registered = (event) -> {
-                    if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
-                    profiler.startSection("Dungeons Guide Event Handling");
-                    for (InvocationTarget target : targetList) {
+                if (Event.class.isAssignableFrom(aClass)) {
+                    Event ev = (Event) aClass.getConstructor().newInstance();
+                    List<InvocationTarget> targetList = targets.get(aClass);
+                    Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+                    IEventListener registered;
+                    ev.getListenerList().register(busID, EventPriority.NORMAL, registered = (event) -> {
                         if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
-                        profiler.startSection(target.getTargetName());
-                        try {
-                            if (target.condition == null || (target.condition.get() == Boolean.TRUE)) { // it is safe to use this here.
-                                target.invokeSite.invoke(event);
+                            profiler.startSection("Dungeons Guide UEvent Handling");
+                        for (InvocationTarget target : targetList) {
+                            if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                                profiler.startSection(target.getTargetName());
+                            try {
+                                if (target.condition == null || (target.condition.get() == Boolean.TRUE)) { // it is safe to use this here.
+                                    target.invokeSite.invoke(event);
+                                }
+                            } catch (Exception e) {
+                                FeatureCollectDiagnostics.queueSendLogAsync(e);
+                                logger.error("An error occurred while handling event: \nFeature = " + target.getFeature().getClass().getName(), e);
+                            } catch (Throwable t) {
+                                FeatureCollectDiagnostics.queueSendLogAsync(t);
+                                throw new RuntimeException("An catastrophic error occured while handling event: ", t);
                             }
-                        } catch (Exception e) {
-                            FeatureCollectDiagnostics.queueSendLogAsync(e);
-                            logger.error("An error occurred while handling event: \nFeature = " + target.getFeature().getClass().getName(), e);
-                        } catch (Throwable t) {
-                            FeatureCollectDiagnostics.queueSendLogAsync(t);
-                            throw new RuntimeException("An catastrophic error occured while handling event: ", t);
+                            if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                                profiler.endSection();
                         }
                         if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
-                        profiler.endSection();
-                    }
-                    if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
-                    profiler.endSection();
-                });
-                registeredHandlers.put(aClass, registered);
+                            profiler.endSection();
+                    });
+                    registeredHandlers.put(aClass, registered);
+                } else if (UEvent.class.isAssignableFrom(aClass)) {
+                    List<InvocationTarget> targetList = targets.get(aClass);
+                    Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+                    ListenerRegistration registration = ModAPI.getAPI().getEventBus().registerListener(
+                            aClass,
+                            ListenerPriority.THIRD, (event) -> {
+                                if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                                    profiler.startSection("Dungeons Guide UEvent Handling");
+                                for (InvocationTarget target : targetList) {
+                                    if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                                        profiler.startSection(target.getTargetName());
+                                    try {
+                                        if (target.condition == null || (target.condition.get() == Boolean.TRUE)) { // it is safe to use this here.
+                                            target.invokeSite.invoke(event);
+                                        }
+                                    } catch (Exception e) {
+                                        FeatureCollectDiagnostics.queueSendLogAsync(e);
+                                        logger.error("An error occurred while handling event: \nFeature = " + target.getFeature().getClass().getName(), e);
+                                    } catch (Throwable t) {
+                                        FeatureCollectDiagnostics.queueSendLogAsync(t);
+                                        throw new RuntimeException("An catastrophic error occured while handling event: ", t);
+                                    }
+                                    if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                                        profiler.endSection();
+                                }
+                                if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                                    profiler.endSection();
+
+                                return EventProcessResult.COMPLETE;
+                            }
+                    );
+                    registrations.put(aClass, registration);
+                }
             } catch (Exception e) {
                 throw new RuntimeException("An error occurred while registering listener for "+aClass.getName(), e);
             }
@@ -160,5 +198,10 @@ public class EventHandlerRegistry {
             }
         }
         registeredHandlers.clear();
+
+        for (Map.Entry<Class<? extends UEvent>, ListenerRegistration> classListenerRegistrationEntry : registrations.entrySet()) {
+            ModAPI.getAPI().getEventBus().unregisterListener(classListenerRegistrationEntry.getValue());
+        }
+        registrations.clear();
     }
 }

@@ -18,13 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
+import kr.syeyoung.modapi.event.*;
 import lombok.AllArgsConstructor;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.INetHandlerPlayClient;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 @AllArgsConstructor
-public abstract class PacketProcessedEvent extends Event {
+public abstract class PacketProcessedEvent extends UEvent {
     public Packet<INetHandlerPlayClient> packet;
     public static class Pre extends PacketProcessedEvent {
         public Pre(Packet<INetHandlerPlayClient> packet) {

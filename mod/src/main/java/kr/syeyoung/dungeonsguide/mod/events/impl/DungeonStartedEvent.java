@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.modapi.event.*;
 
-public class DungeonStartedEvent extends Event {
+public class DungeonStartedEvent extends UEvent {
 }

@@ -23,8 +23,8 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
-import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -97,7 +97,7 @@ public class StompManager {
                     logger.error("Failed to reconnect (disconnection) to Stomp with message: {}", String.valueOf(Throwables.getRootCause(e)));
                 }
                 stompConnection = new StompClient(new URI(StompManager.STOMP_URL), AuthManager.getInstance().getWorkingTokenOrNull());
-                MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
+                ModAPI.getAPI().getEventBus().fireEvent(new StompConnectedEvent(stompConnection));
             } catch (Exception e) {
                 logger.error("Failed to connect to Stomp with message: {}", String.valueOf(Throwables.getRootCause(e)));
             }

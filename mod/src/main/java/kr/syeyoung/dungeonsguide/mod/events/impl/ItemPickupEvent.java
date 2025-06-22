@@ -18,11 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
+import kr.syeyoung.modapi.event.*;
 import lombok.*;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Data @AllArgsConstructor @NoArgsConstructor
-public class ItemPickupEvent extends Event {
+public class ItemPickupEvent extends UEvent {
     @Getter @Setter
     private int itemId;
     @Getter @Setter

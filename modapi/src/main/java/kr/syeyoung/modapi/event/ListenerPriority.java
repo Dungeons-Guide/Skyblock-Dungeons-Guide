@@ -1,4 +1,4 @@
-package kr.syeyoung.modapi.events;
+package kr.syeyoung.modapi.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

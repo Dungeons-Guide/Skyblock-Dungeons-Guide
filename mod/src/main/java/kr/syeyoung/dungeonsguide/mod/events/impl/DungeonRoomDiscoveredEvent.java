@@ -19,12 +19,12 @@
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.modapi.event.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 @AllArgsConstructor @Getter @Setter
-public class DungeonRoomDiscoveredEvent extends Event {
+public class DungeonRoomDiscoveredEvent extends UEvent {
     private DungeonRoom dungeonRoom;
 }

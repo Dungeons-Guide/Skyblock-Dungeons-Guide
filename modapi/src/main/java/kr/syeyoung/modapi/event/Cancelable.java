@@ -1,4 +1,4 @@
-package kr.syeyoung.modapi.events;
+package kr.syeyoung.modapi.event;
 
 public interface Cancelable {
     boolean isCanceled();

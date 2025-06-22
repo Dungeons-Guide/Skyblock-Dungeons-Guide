@@ -22,15 +22,12 @@ import io.netty.channel.*;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PacketProcessedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RawPacketReceivedEvent;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C02PacketUseEntity;
-import net.minecraft.network.play.client.C0EPacketClickWindow;
-import net.minecraft.network.play.client.C0FPacketConfirmTransaction;
 import net.minecraft.network.play.server.*;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
@@ -66,7 +63,7 @@ public class PacketInjector extends ChannelDuplexHandler {
         try {
             if (doStuff) {
                 RawPacketReceivedEvent receivedEvent = new RawPacketReceivedEvent(packet);
-                MinecraftForge.EVENT_BUS.post(receivedEvent);
+                ModAPI.getAPI().getEventBus().fireEvent(receivedEvent);
                 packet = receivedEvent.packet;
             }
         } catch (Exception t) {
@@ -78,12 +75,12 @@ public class PacketInjector extends ChannelDuplexHandler {
         Packet finalPacket = packet;
         if (doStuff)
             Minecraft.getMinecraft().addScheduledTask(() -> {
-                MinecraftForge.EVENT_BUS.post(new PacketProcessedEvent.Pre(finalPacket));
+                ModAPI.getAPI().getEventBus().fireEvent(new PacketProcessedEvent.Pre(finalPacket));
             });
         super.channelRead(ctx, packet);
         if (doStuff)
             Minecraft.getMinecraft().addScheduledTask(() -> {
-                MinecraftForge.EVENT_BUS.post(new PacketProcessedEvent.Post(finalPacket));
+                ModAPI.getAPI().getEventBus().fireEvent(new PacketProcessedEvent.Post(finalPacket));
             });
     }
 
@@ -98,7 +95,7 @@ public class PacketInjector extends ChannelDuplexHandler {
             else
                 piee = new PlayerInteractEntityEvent(false, packet2.getAction() == C02PacketUseEntity.Action.INTERACT_AT, ((C02PacketUseEntity) packet).getEntityFromWorld(Minecraft.getMinecraft().theWorld));
             try {
-                if (MinecraftForge.EVENT_BUS.post(piee)) return;
+                if (ModAPI.getAPI().getEventBus().fireEvent(piee)) return;
             } catch (Exception e) {
                 FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();

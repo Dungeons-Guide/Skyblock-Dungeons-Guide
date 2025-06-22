@@ -46,6 +46,7 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -74,7 +75,6 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -91,7 +91,6 @@ import java.awt.*;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class DungeonListener {
 
@@ -180,7 +179,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent ev) {
         if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
-        MinecraftForge.EVENT_BUS.post(new DGTickEvent());
+        ModAPI.getAPI().getEventBus().fireEvent(new DGTickEvent());
 
         if (SkyblockStatus.isOnSkyblock() || SkyblockStatus.isOnDungeon()) {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
@@ -191,12 +190,12 @@ public class DungeonListener {
                 try {
                     if (DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isForceIsOnDungeon()) {
                         DungeonServerLaunchUtils.createContext();
-                        MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
+                        ModAPI.getAPI().getEventBus().fireEvent(new DungeonStartedEvent());
                     } else if (SkyblockStatus.isOnDungeon()) {
                         DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(new DungeonContext(
                                 SkyblockStatus.getLocationName(),
                                 Minecraft.getMinecraft().thePlayer.worldObj));
-                        MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
+                        ModAPI.getAPI().getEventBus().fireEvent(new DungeonStartedEvent());
                     }
                 } catch (IllegalStateException e) {
                     if (! "?".equals(e.getMessage()) && !"No door finder found".equals(e.getMessage())) {
@@ -256,9 +255,9 @@ public class DungeonListener {
 
         if (oldRoom == currentRoom) return;
         if (oldRoom != null)
-            MinecraftForge.EVENT_BUS.post(new DungeonRoomExitEvent(oldRoom));
+            ModAPI.getAPI().getEventBus().fireEvent(new DungeonRoomExitEvent(oldRoom));
         if (currentRoom != null)
-            MinecraftForge.EVENT_BUS.post(new DungeonRoomEnterEvent(currentRoom));
+            ModAPI.getAPI().getEventBus().fireEvent(new DungeonRoomEnterEvent(currentRoom));
     }
 
     @SubscribeEvent
@@ -334,7 +333,7 @@ public class DungeonListener {
         if (!SkyblockStatus.isOnDungeon()) return;
 
         if (clientChatReceivedEvent.type != 2 && clientChatReceivedEvent.message.getFormattedText().contains("§6> §e§lEXTRA STATS §6<")) {
-            MinecraftForge.EVENT_BUS.post(new DungeonEndedEvent());
+            ModAPI.getAPI().getEventBus().fireEvent(new DungeonEndedEvent());
         }
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

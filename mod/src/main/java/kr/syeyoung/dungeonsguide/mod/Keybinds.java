@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod;
 
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
-import net.minecraftforge.common.MinecraftForge;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.input.Keyboard;
@@ -33,7 +33,7 @@ public class Keybinds
         if (Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent()) {
             int key = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
             KeyBindPressedEvent keyBindPressedEvent = new KeyBindPressedEvent(key);
-            MinecraftForge.EVENT_BUS.post(keyBindPressedEvent);
+            ModAPI.getAPI().getEventBus().fireEvent(keyBindPressedEvent);
         }
     }
     @SubscribeEvent
@@ -41,7 +41,7 @@ public class Keybinds
         if (Mouse.getEventButtonState()) {
             int key = Mouse.getEventButton() - 100;
             KeyBindPressedEvent keyBindPressedEvent = new KeyBindPressedEvent(key);
-            MinecraftForge.EVENT_BUS.post(keyBindPressedEvent);
+            ModAPI.getAPI().getEventBus().fireEvent(keyBindPressedEvent);
         }
     }
 }

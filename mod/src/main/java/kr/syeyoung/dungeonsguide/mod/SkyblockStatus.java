@@ -29,10 +29,10 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -64,18 +64,18 @@ public class SkyblockStatus {
         skyblockStatus.updateStatus();
 
         if (!wasOnHypixel && skyblockStatus.isOnHypixel()) {
-            MinecraftForge.EVENT_BUS.post(new HypixelJoinedEvent());
+            ModAPI.getAPI().getEventBus().fireEvent(new HypixelJoinedEvent());
         }
         wasOnHypixel = skyblockStatus.isOnHypixel();
 
         if (isOnSkyblockPrev && !isOnSkyblock()) {
-            MinecraftForge.EVENT_BUS.post(new SkyblockLeftEvent());
+            ModAPI.getAPI().getEventBus().fireEvent(new SkyblockLeftEvent());
         } else if (!isOnSkyblockPrev && isOnSkyblock()) {
-            MinecraftForge.EVENT_BUS.post(new SkyblockJoinedEvent());
+            ModAPI.getAPI().getEventBus().fireEvent(new SkyblockJoinedEvent());
         }
 
         if (isOnDungeonPrev && !isOnDungeon() || isRunningDungeonPrev && !isDungeonRunning) {
-            MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
+            ModAPI.getAPI().getEventBus().fireEvent(new DungeonLeftEvent());
         }
 
 

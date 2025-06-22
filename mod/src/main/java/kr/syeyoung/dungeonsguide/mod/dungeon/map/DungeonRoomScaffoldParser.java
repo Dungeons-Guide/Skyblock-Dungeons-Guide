@@ -27,11 +27,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonRoomDiscoverEven
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonRoomDiscoveredEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.storage.MapData;
-import net.minecraftforge.common.MinecraftForge;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -73,7 +73,7 @@ public class DungeonRoomScaffoldParser {
             roomMap.put(p, dungeonRoom);
         }
 
-        MinecraftForge.EVENT_BUS.post(new DungeonRoomDiscoveredEvent(dungeonRoom));
+        ModAPI.getAPI().getEventBus().fireEvent(new DungeonRoomDiscoveredEvent(dungeonRoom));
     }
 
     public void processMap(MapData mapData2) {

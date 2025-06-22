@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.commands;
 
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
-import kr.syeyoung.dungeonsguide.mod.config.onboarding.OnboardingCard;
 import kr.syeyoung.dungeonsguide.mod.config.onboarding.OnboardingPage;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.*;
 import com.google.gson.*;
@@ -42,7 +41,6 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
-import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.view.TestView;
@@ -55,6 +53,7 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.GameSettings;
@@ -66,7 +65,6 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -77,7 +75,6 @@ import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.security.*;
-import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
@@ -1343,7 +1340,7 @@ public class CommandDgDebug extends CommandBase {
 
     private void reloadDungeonCommand() {
         try {
-            MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
+            ModAPI.getAPI().getEventBus().fireEvent(new DungeonLeftEvent());
 
             DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
             MapUtils.clearMap();

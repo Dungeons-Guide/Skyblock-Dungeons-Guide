@@ -197,7 +197,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
                 .filter(a -> a.getRoomProcessor() != null);
         UUID currentUID = dungeonRoomOpt.filter(a -> a.getDungeonRoomInfo() != null)
                 .map(a -> a.getDungeonRoomInfo().getUuid()).orElse(null);
-        // Event-ify above this.
+        // UEvent-ify above this.
 
         if (!Objects.equals(lastRoomUid, currentUID)) {
             if (currentUID == null)  {

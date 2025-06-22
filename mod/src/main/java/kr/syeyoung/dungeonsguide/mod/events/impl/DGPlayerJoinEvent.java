@@ -18,15 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
+import kr.syeyoung.modapi.event.*;
 import lombok.*;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Data @AllArgsConstructor @NoArgsConstructor
-public class DGPlayerJoinEvent extends Event {
+public class DGPlayerJoinEvent extends UEvent {
     private UUID uuid;
 }

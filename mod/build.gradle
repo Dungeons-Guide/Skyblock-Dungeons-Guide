@@ -103,11 +103,8 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:1.18.20"
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
 
-
+    compileOnly project(path: ":modapi")
     compileOnly project(path: ":1.8.9-loader")
-
-    devenvMod(project(path: ":1.8.9-loader", configuration: "unmappedMod"))
-    modLocalRuntime("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 }
 
 
@@ -116,45 +113,11 @@ loom {
         loom.customMinecraftManifest = "https://gist.githubusercontent.com/cyoung06/76a8208bd4575c17bdb138a0771c0886/raw/beb9ef6cc3c26abf5014d810133d21bedbffa9bb/1.8.9.json"
     }
     runs {
-        client {
-            ideConfigGenerated = true
-            name = "Launch Dungeons Guide"
-            runDir = '../runtime'
-            property('devauth.enabled', 'true')
-            property('dg.loader', 'devenv')
-            client()
-//            vmArgs.remove("-XstartOnFirstThread")
-        }
     }
     forge {
         pack200Provider.set(new dev.architectury.pack200.java.Pack200Adapter())
     }
 }
-
-import net.fabricmc.loom.configuration.providers.minecraft.library.MinecraftLibraryHelper;
-afterEvaluate {
-    loom.runs.named("client") {
-        programArgs("--mods", configurations.devenvMod.files
-                .collect { file("../runtime").relativePath(it) }.join(","))
-    }
-
-    println(loom.minecraftProvider)
-    var versionInfo = loom.minecraftProvider.getVersionInfo()
-//    var platform = net.fabricmc.loom.util.CurrentPlatform.INSTANCE
-    var libs = versionInfo.libraries()
-
-    def field = net.fabricmc.loom.configuration.providers.minecraft.MinecraftProvider.getDeclaredField('metadataProvider')
-    field.setAccessible(true)
-
-    var wtf = field.get(loom.minecraftProvider)
-    var res = MinecraftLibraryHelper.getLibrariesForPlatform(versionInfo, platform)
-    println(res);
-    println(libs)
-    println(wtf)
-
-
-}
-
 
 ext.genOutputDir = file("$buildDir/generated-resources")
 task generateVersionInfo {

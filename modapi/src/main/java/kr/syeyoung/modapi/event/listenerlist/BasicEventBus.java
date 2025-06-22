@@ -1,12 +1,11 @@
-package kr.syeyoung.modapi.events.listenerlist;
+package kr.syeyoung.modapi.event.listenerlist;
 
-import kr.syeyoung.modapi.events.*;
+import kr.syeyoung.modapi.event.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 public class BasicEventBus implements EventBus {
 
@@ -18,43 +17,45 @@ public class BasicEventBus implements EventBus {
     private Map<Class, BasicEventListeners<?>> directEventListeners = new HashMap<>();
     private Map<Class, List<BasicEventListeners<?>>> fireCache = new HashMap<>();
 
-    private <T extends Event> BasicEventListeners<T> getDirectEventListener(Class<T> t) {
+    private <T extends UEvent> BasicEventListeners<T> getDirectEventListener(Class<T> t) {
         if (directEventListeners.containsKey(t)) return (BasicEventListeners<T>) directEventListeners.get(t);
-        directEventListeners.put(t, new BasicEventListeners<T>());
+        directEventListeners.put(t, new BasicEventListeners<T>(t));
         return (BasicEventListeners<T>) directEventListeners.get(t);
     }
 
-    private <T extends Event> List<BasicEventListeners<? super T>> getFireTarget(Class<T> t) {
-        if (fireCache.containsKey(t)) return (List<BasicEventListeners<? super T>>) fireCache.get(t);
+    private <T extends UEvent> List<BasicEventListeners<? super T>> getFireTarget(Class<T> t) {
+        if (fireCache.containsKey(t)) return (List<BasicEventListeners<? super T>>) ((List) fireCache.get(t));
 
         Class c = t;
         List<BasicEventListeners<?>> listeners = new ArrayList<>();
-        while (Event.class.isAssignableFrom(c)) {
+        while (UEvent.class.isAssignableFrom(c)) {
             listeners.add(getDirectEventListener(c));
             c = c.getSuperclass();
         }
 
         fireCache.put(t, listeners);
-        return (List<BasicEventListeners<? super T>>) listeners;
+        return (List<BasicEventListeners<? super T>>) ((List) listeners);
     }
 
     @Override
-    public <T extends Event> void fireEvent(T t) {
+    public <T extends UEvent> boolean fireEvent(T t) {
         List<BasicEventListeners<? super T>> eventListeners = this.getFireTarget((Class<T>) t.getClass());
         for (int i = 0; i < ListenerPriority.SIZE; i++) {
             for (BasicEventListeners<? super T> eventListener : eventListeners) {
                 eventListener.invoke(t, i);
             }
         }
+
+        return t instanceof Cancelable && ((Cancelable) t).isCanceled();
     }
 
     @Override
-    public <T extends Event> ListenerRegistration<T> registerListener(Class<T> clazz, ListenerPriority priority, Function<T, EventProcessResult> invoke) {
+    public <T extends UEvent> ListenerRegistration<T> registerListener(Class<T> clazz, ListenerPriority priority, EventListener<T> invoke) {
         return getDirectEventListener(clazz).registerEventListener(priority, invoke);
     }
 
     @Override
-    public <T extends Event> boolean unregisterListener(ListenerRegistration<T> registration) {
+    public <T extends UEvent> boolean unregisterListener(ListenerRegistration<T> registration) {
         return getDirectEventListener(registration.getEventClass()).unregisterEventListener((BasicEventListeners.BasicListenerRegistration<T>) registration);
     }
 }

@@ -1,14 +1,11 @@
 package kr.syeyoung.modapi;
 
-import kr.syeyoung.modapi.data.Entity;
-import kr.syeyoung.modapi.data.World;
-import kr.syeyoung.modapi.events.EventBus;
+import kr.syeyoung.modapi.event.EventBus;
 
 public interface ModAPI {
     Platform getPlatform();
-
-    World getPlayerWorld();
-    Entity getPlayer();
-
     EventBus getEventBus();
+    static ModAPI getAPI() {
+        return ModAPIHolder.modAPI;
+    }
 }

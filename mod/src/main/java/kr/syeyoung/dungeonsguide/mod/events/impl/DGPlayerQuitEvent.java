@@ -18,14 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
+import kr.syeyoung.modapi.event.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.UUID;
 
 @Data @AllArgsConstructor @NoArgsConstructor
-public class DGPlayerQuitEvent extends Event {
+public class DGPlayerQuitEvent extends UEvent {
     private UUID uuid;
 }

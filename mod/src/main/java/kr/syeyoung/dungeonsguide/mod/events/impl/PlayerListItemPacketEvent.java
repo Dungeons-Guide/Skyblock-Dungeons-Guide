@@ -18,15 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
+import kr.syeyoung.modapi.event.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
-public class PlayerListItemPacketEvent extends Event {
+public class PlayerListItemPacketEvent extends UEvent {
     private S38PacketPlayerListItem packetPlayerListItem;
 }

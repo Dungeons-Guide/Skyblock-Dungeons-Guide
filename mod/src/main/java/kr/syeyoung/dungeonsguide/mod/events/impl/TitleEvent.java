@@ -18,15 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
+import kr.syeyoung.modapi.event.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.network.play.server.S45PacketTitle;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
-public class TitleEvent extends Event {
+public class TitleEvent extends UEvent {
     S45PacketTitle packetTitle;
 }

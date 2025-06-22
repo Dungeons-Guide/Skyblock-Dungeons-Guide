@@ -35,9 +35,9 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.Reply;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -152,7 +152,7 @@ public class DiscordIntegrationManager implements IPCListener {
         JDiscordRelation relation = JDiscordRelation.parse(data);
         JDiscordRelation old = relationMap.put(relation.getDiscordUser().getIdLong(), relation);
         Minecraft.getMinecraft().addScheduledTask(() -> {
-            MinecraftForge.EVENT_BUS.post(new DiscordUserUpdateEvent(old, relation));
+            ModAPI.getAPI().getEventBus().fireEvent(new DiscordUserUpdateEvent(old, relation));
         });
     }
     private void onActivityJoinRequest(Packet packet) {
@@ -166,7 +166,7 @@ public class DiscordIntegrationManager implements IPCListener {
                 data.getJSONObject("user")
                         .getString("avatar"));
         Minecraft.getMinecraft().addScheduledTask(() -> {
-            MinecraftForge.EVENT_BUS.post(new DiscordUserJoinRequestEvent(user));
+            ModAPI.getAPI().getEventBus().fireEvent(new DiscordUserJoinRequestEvent(user));
         });
     }
     private void onActivityInvite(Packet packet) {
@@ -174,7 +174,7 @@ public class DiscordIntegrationManager implements IPCListener {
         if (!data.getJSONObject("activity").getString("application_id").equals("816298079732498473"))
             return;
         Minecraft.getMinecraft().addScheduledTask(() -> {
-            MinecraftForge.EVENT_BUS.post(new DiscordUserInvitedEvent(
+            ModAPI.getAPI().getEventBus().fireEvent(new DiscordUserInvitedEvent(
                     new User(data.getJSONObject("user")
                             .getString("username"),
                             data.getJSONObject("user")

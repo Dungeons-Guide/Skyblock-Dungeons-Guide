@@ -18,17 +18,17 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
+import kr.syeyoung.modapi.event.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
 import net.minecraft.network.play.server.S30PacketWindowItems;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
-public class WindowUpdateEvent extends Event {
+public class WindowUpdateEvent extends UEvent {
     S30PacketWindowItems windowItems;
     S2FPacketSetSlot packetSetSlot;
 }

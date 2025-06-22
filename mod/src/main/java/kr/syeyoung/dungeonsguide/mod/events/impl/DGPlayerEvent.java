@@ -18,16 +18,16 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
+import kr.syeyoung.modapi.event.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.json.JSONObject;
 
 import java.util.UUID;
 
 @Data @AllArgsConstructor @NoArgsConstructor
-public class DGPlayerEvent extends Event {
+public class DGPlayerEvent extends UEvent {
     private UUID uuid;
     private String eventType;
     private JSONObject payload;

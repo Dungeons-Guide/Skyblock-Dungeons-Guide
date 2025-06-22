@@ -28,3 +28,10 @@ include '1.8.9-loader'
 include 'modapi'
 
 rootProject.name = "Dungeons Guide"
+
+var versions = ["1.8.9"]
+for (final def ver in versions) {
+    include(":"+ver)
+    var p = project(":"+ver)
+    p.projectDir = file("versions/${ver}")
+}

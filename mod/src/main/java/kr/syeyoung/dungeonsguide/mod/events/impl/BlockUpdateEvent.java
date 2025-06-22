@@ -18,17 +18,17 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
+import kr.syeyoung.modapi.event.*;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class BlockUpdateEvent extends Event {
+public abstract class BlockUpdateEvent extends UEvent {
     @Getter @Setter
     private Set<Tuple<BlockPos, IBlockState>> updatedBlocks = new HashSet<>();
 

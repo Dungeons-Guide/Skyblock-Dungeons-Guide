@@ -10,6 +10,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -45,7 +46,7 @@ public class DungeonServerLaunchUtils {
         lastLoadedRoom = dungeonRoomInfo;
         lastLoadedPreset = preset;
 
-        MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
+        ModAPI.getAPI().getEventBus().fireEvent(new DungeonLeftEvent());
         DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
 
 
