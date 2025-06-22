@@ -19,6 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod;
 
 import com.sun.jna.Platform;
+import net.minecraft.client.Minecraft;
+import org.lwjgl.LWJGLUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,13 +43,19 @@ public class NativeLoader {
         }
         blacklistAll = blacklisted.contains("all");
     }
+
+    private static String osName = System.getProperty("os.name").toLowerCase();
+    private static String osArch = System.getProperty("os.arch").toLowerCase();
+
+    private static boolean isAarch64 = osArch.contains("aarch64");
+
     public static void extractLibraryAndLoad(String name) throws IOException {
         if (blacklisted.contains(name)) throw new RuntimeException("Blacklisted native library: "+name);
 
         String libName = System.mapLibraryName(name);
         String dir;
 
-        if (Platform.isARM()) {
+        if (isAarch64) {
             dir = "aarch64";
         } else if (Platform.is64Bit()) {
             dir = "x86_64";
