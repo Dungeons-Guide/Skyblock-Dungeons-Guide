@@ -8,8 +8,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class WidgetModalChoosePrecalculation extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "cancel")
     public void cancel() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         PopupMgr.getPopupMgr(getDomElement()).closePopup(null);
     }
 }

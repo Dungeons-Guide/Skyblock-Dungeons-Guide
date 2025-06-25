@@ -27,9 +27,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -165,7 +166,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "click")
     public void onClick() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(slot, 0, 0);
     }
 

@@ -14,8 +14,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
@@ -50,7 +50,7 @@ public class WidgetRemoteRequestList extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "reload")
     public void reload() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         requestsApi.getValue().removeAllWidget();
         ApiFetcher.ex.submit(this::doReload);
     }
@@ -101,7 +101,7 @@ public class WidgetRemoteRequestList extends AnnotatedImportOnlyWidget {
 
         @On(functionName = "view")
         public void view() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
 
             Navigator.getNavigator(getDomElement()).openPage(new WidgetRequestDetails(requestId));
         }

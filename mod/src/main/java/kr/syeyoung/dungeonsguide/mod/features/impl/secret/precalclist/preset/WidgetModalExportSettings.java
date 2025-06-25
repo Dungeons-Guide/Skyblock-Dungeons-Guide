@@ -20,8 +20,8 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalcu
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculationRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import org.apache.commons.io.FileUtils;
@@ -51,7 +51,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
         this.preset = preset;
 
         includePrecalc.addOnUpdate((old, neu) -> {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         });
     }
 
@@ -59,7 +59,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "confirm")
     public void confirm() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
 
 
         File target = new File(Main.getConfigDir(), "presetExports");
@@ -194,7 +194,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "cancel")
     public void cancel() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
 
         PopupMgr.getPopupMgr(getDomElement()).closePopup(null);
     }

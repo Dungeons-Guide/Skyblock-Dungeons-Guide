@@ -35,8 +35,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
 
@@ -68,7 +69,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
             FeatureCollectDiagnostics.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDiagnostics.this.setEnabled(true);
             Minecraft.getMinecraft().displayGuiScreen(null);
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         }
 
         @On(functionName = "deny")
@@ -76,7 +77,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
             FeatureCollectDiagnostics.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDiagnostics.this.setEnabled(false);
             Minecraft.getMinecraft().displayGuiScreen(null);
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         }
     }
 

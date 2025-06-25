@@ -15,8 +15,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.FileUtils;
 
@@ -40,7 +40,7 @@ public class WidgetPrecalcStep1 extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "generateZip")
     public void generate() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
 
         try {
             long requiredBytes = requestSet.getCredits() * 2622037L;
@@ -132,7 +132,7 @@ public class WidgetPrecalcStep1 extends AnnotatedImportOnlyWidget {
 
             @On(functionName = "reload")
             public void reload() {
-                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
 
                 this.err.setValue("");
                 this.currCredit.setValue("Loading...");

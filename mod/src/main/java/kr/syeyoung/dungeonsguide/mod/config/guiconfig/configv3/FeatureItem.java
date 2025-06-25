@@ -28,8 +28,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
 public class FeatureItem extends AnnotatedImportOnlyWidget {
@@ -70,7 +71,7 @@ public class FeatureItem extends AnnotatedImportOnlyWidget {
         enabled.setValue(feature.isEnabled());
 
         enabled.addOnUpdate((old, neu) -> {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
             feature.setEnabled(neu);
         });
 
@@ -83,13 +84,13 @@ public class FeatureItem extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "configure")
     public void onEdit() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         Navigator.getNavigator(getDomElement()).openPage(feature.getConfigureWidget());
         // do stuff
     }
     @On(functionName = "relocate")
     public void onRelocate() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig((AbstractHUDFeature) feature)), Minecraft.getMinecraft().currentScreen));
         // do stuff
     }

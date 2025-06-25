@@ -26,8 +26,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.util.ResourceLocation;
 
 public class TCBoolean implements FeatureTypeHandler<Boolean> {
@@ -56,7 +56,7 @@ public class TCBoolean implements FeatureTypeHandler<Boolean> {
             super(new ResourceLocation("dungeonsguide:gui/config/parameter/boolean.gui"));
             isEnabled.setValue(featureParameter.getValue());
             isEnabled.addOnUpdate((old,neu) -> {
-                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
                 featureParameter.setValue(neu);
             });
         }

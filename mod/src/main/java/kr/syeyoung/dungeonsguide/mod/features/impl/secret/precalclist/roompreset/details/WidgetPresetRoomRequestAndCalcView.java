@@ -16,8 +16,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculationRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public class WidgetPresetRoomRequestAndCalcView extends AnnotatedImportOnlyWidge
 
     @On(functionName = "link")
     public void link() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         WidgetModalChoosePrecalculation choosePrecalculation = new WidgetModalChoosePrecalculation(
                 PathfindPrecalculationRegistry.getINSTANCE().getsByHash(request.getHash())
                         .stream()

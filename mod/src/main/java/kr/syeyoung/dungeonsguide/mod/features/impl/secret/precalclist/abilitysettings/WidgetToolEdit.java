@@ -6,9 +6,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.AllArgsConstructor;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemTool;
@@ -122,7 +122,7 @@ public class WidgetToolEdit extends AnnotatedImportOnlyWidget {
     }
 
     private void updateEfficiency(int i) {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
 
         for (BindableAttribute<Boolean> booleanBindableAttribute : effSelected) {
             booleanBindableAttribute.setValue(false);
@@ -135,7 +135,7 @@ public class WidgetToolEdit extends AnnotatedImportOnlyWidget {
     }
 
     public void updateChosen(ToolMaterialType material) {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
 
         for (BindableAttribute<Boolean> booleanBindableAttribute : selected) {
             booleanBindableAttribute.setValue(false);

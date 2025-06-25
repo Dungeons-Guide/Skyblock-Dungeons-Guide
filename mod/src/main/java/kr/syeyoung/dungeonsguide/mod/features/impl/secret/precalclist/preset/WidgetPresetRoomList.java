@@ -9,9 +9,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -156,7 +157,7 @@ public class WidgetPresetRoomList extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "cycleFilter")
     public void cycleFilter() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         currentFilter = RoomFilter.values()[(currentFilter.ordinal() + 1) % RoomFilter.values().length];
         this.filterText.setValue(currentFilter.display);
 
@@ -165,7 +166,7 @@ public class WidgetPresetRoomList extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "cycleSort")
     public void cycleSort() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         currentSort = RoomSort.SECRET.values()[(currentSort.ordinal() + 1) % RoomSort.values().length];
         this.sortText.setValue(currentSort.display);
 

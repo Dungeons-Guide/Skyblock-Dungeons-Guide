@@ -33,8 +33,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
@@ -235,7 +235,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
 
         @On(functionName = "inc")
         public void inc() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
             double newT = truth.getValue() + (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
             if (newT > max) newT = max;
             truth.setValue(newT);
@@ -244,7 +244,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
 
         @On(functionName = "dec")
         public void dec() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
             double newT = truth.getValue() - (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
             if (newT < min) newT = min;
             truth.setValue(newT);
@@ -261,7 +261,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
             super(new ResourceLocation("dungeonsguide:gui/config/text/editableCheckmark.gui"));
             isEnabled.exportTo(featureParameter);
             isEnabled.addOnUpdate((old,neu) -> {
-                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
             });
         }
     }

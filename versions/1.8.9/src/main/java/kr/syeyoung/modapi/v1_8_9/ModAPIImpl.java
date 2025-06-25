@@ -2,15 +2,20 @@ package kr.syeyoung.modapi.v1_8_9;
 
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.Platform;
+import kr.syeyoung.modapi.audio.USoundHandler;
 import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.event.listenerlist.BasicEventBus;
 import kr.syeyoung.modapi.util.USession;
+import kr.syeyoung.modapi.v1_8_9.audio.USoundHandlerImpl;
 import kr.syeyoung.modapi.v1_8_9.util.USessionImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.ForgeVersion;
 
 public class ModAPIImpl implements ModAPI {
-    public ModAPIImpl() {}
+    Minecraft delegate; // dummy to trick. TODO
+
+    public ModAPIImpl() {
+    }
 
 
     public static class PlatformImpl implements Platform {
@@ -48,5 +53,9 @@ public class ModAPIImpl implements ModAPI {
     @Override
     public USession getSession() {
         return new USessionImpl(Minecraft.getMinecraft().getSession());
+    }
+
+    public USoundHandler getSoundHandler() {
+        return new USoundHandlerImpl(Minecraft.getMinecraft().getSoundHandler());
     }
 }

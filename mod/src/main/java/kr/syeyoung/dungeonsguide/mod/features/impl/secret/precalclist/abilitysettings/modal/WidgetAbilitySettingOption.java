@@ -11,8 +11,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.util.ResourceLocation;
 
 public class WidgetAbilitySettingOption extends AnnotatedImportOnlyWidget {
@@ -34,14 +34,14 @@ public class WidgetAbilitySettingOption extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "select")
     public void select() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         PopupMgr.getPopupMgr(getDomElement()).closePopup(algorithmSetting);
     }
 
 
     @On(functionName = "derive")
     public void create() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
 
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(500, 500, "Create New Algorithm Setting", new WidgetCreateAbilitySettings(algorithmSetting), true), (a) -> {
             if (a != null) {

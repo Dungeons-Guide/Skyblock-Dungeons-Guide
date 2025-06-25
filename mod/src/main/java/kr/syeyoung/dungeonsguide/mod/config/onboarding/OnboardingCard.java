@@ -13,10 +13,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.ParserElement;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -174,7 +174,7 @@ public class OnboardingCard extends AnnotatedWidget {
         isPressed = false;
         if (!getDomElement().getAbsBounds().contains(absMouseX, absMouseY)) return;
         // do stuff
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
 
         if (selected.getValue())
             controller.getValue().unselect(id.getValue());

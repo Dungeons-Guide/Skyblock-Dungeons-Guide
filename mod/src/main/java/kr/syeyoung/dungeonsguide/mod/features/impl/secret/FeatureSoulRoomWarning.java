@@ -42,8 +42,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.ResourceLocation;
 
@@ -122,7 +123,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
 
             for (Map.Entry<String, BindableAttribute<Boolean>> value : ifOrnot.entrySet()) {
                 value.getValue().addOnUpdate((old, neu) -> {
-                    Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                    ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
                     if (neu) uids.getValue().add(value.getKey());
                     else uids.getValue().remove(value.getKey());
                 });
@@ -151,14 +152,14 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
 
         @On(functionName = "eall")
         public void enableAll() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
             for (BindableAttribute<Boolean> value : ifOrnot.values()) {
                 value.setValue(true);
             }
         }
         @On(functionName = "dall")
         public void disableAll() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
             for (BindableAttribute<Boolean> value : ifOrnot.values()) {
                 value.setValue(false);
             }

@@ -22,8 +22,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.util.ResourceLocation;
 
 public class ModalConfirm extends AnnotatedImportOnlyWidget {
@@ -37,14 +37,14 @@ public class ModalConfirm extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "confirm")
     public void ok() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
         if (popupMgr != null) popupMgr.closePopup(true);
     }
 
     @On(functionName = "cancel")
     public void no() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
         if (popupMgr != null) popupMgr.closePopup(false);
     }

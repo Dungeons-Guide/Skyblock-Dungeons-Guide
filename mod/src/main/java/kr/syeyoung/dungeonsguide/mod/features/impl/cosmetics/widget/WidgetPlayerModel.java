@@ -29,8 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.modapi.ModAPI;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -60,7 +59,7 @@ public class WidgetPlayerModel extends AnnotatedImportOnlyWidget {
         for (CosmeticData value : cosmeticsManager.getCosmeticDataMap().values()) {
             if (value.getCosmeticType().equals("model")) {
                 list.add(new WidgetButton2(cosmeticsManager.getPerms().contains(value.getReqPerm()), value.getData(), () -> {
-                    Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                    ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
                     currentSelected = value;
                     update();
                 }));
@@ -94,7 +93,7 @@ public class WidgetPlayerModel extends AnnotatedImportOnlyWidget {
                 || (currentSelected != null && !cosmeticsManager.getPerms().contains(currentSelected.getReqPerm()));
         if (disable) return;
 
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
 
         if (previouslySelected != null) {
             List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(ModAPI.getAPI().getSession().getUUID(), (a) -> new ArrayList<>());
@@ -114,14 +113,14 @@ public class WidgetPlayerModel extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "clear")
     public void onClear() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         currentSelected = null;
         update();
     }
 
     @On(functionName = "shop")
     public void openShop() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         try {
             Desktop.getDesktop().browse(new URI("https://store.dungeons.guide/"));
         } catch (IOException | URISyntaxException e) {

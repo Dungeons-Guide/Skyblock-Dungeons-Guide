@@ -178,7 +178,7 @@ fun createDelegateAndApi(expr: PsiReferenceExpression, clazz: PsiClass, impl: Ps
     for (parameter in paramList) {
         newMethod.parameterList.add(factory.createParameter(parameter.name, parameter.type))
     } // copied method perfectly
-
+    newMethod.body?.delete()
     clazz.add(newMethod)
 
 
@@ -225,7 +225,7 @@ fun PsiClass.maybeSearchForInterfaceAndImpl(): Pair<PsiClass, PsiClass>? {
     if (resultReal == null) return null;
     var interf = resultReal.implementsList?.referenceElements?.get(0)?.resolve() as? PsiClass
     if (interf == null) return null
-    return Pair(resultReal, interf);
+    return Pair(interf, resultReal);
 }
 
 class WrapInInterfaceQuickFix(val expr: PsiReferenceExpression, val source: PsiClass) : LocalQuickFix {

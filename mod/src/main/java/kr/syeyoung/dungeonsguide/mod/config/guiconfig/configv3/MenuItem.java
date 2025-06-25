@@ -24,8 +24,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class MenuItem extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "click")
     public void openPage() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         Navigator.getNavigator(getDomElement()).openPage(pageCreator.get());
     }
 }

@@ -31,9 +31,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.Text;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
@@ -140,7 +141,7 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
             super(new ResourceLocation("dungeonsguide:gui/config/popup/quickEnable.gui"));
             enabled.setValue(abstractHUDFeature.isEnabled());
             enabled.addOnUpdate((old, neu) -> {
-                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
                 abstractHUDFeature.setEnabled(neu);
             });
         }
@@ -154,7 +155,7 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
 
         @On(functionName = "configure")
         public void configure() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
             MainConfigWidget mainConfigWidget = new MainConfigWidget();
             GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(mainConfigWidget), Minecraft.getMinecraft().currentScreen);
             Minecraft.getMinecraft().displayGuiScreen(adapter);
