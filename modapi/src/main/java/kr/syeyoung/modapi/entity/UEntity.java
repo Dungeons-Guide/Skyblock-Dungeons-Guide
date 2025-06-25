@@ -39,4 +39,6 @@ public interface UEntity {
     double getPosY();
 
     double getPrevPosY();
+
+    double getHeight();
 }

@@ -21,10 +21,9 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.monster.EntityGiantZombie;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -128,43 +127,43 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
         return "Sadan";
     }
 
-    private EntityArmorStand sadanStand;
-    private EntityArmorStand diamondGiant;
-    private EntityArmorStand laserGiant;
-    private EntityArmorStand bigfootGiant;
-    private EntityArmorStand boulderGiant;
+    private UEntityArmorStand sadanStand;
+    private UEntityArmorStand diamondGiant;
+    private UEntityArmorStand laserGiant;
+    private UEntityArmorStand bigfootGiant;
+    private UEntityArmorStand boulderGiant;
     @Override
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
-        if (updateEvent.entityLiving instanceof EntityArmorStand) {
-            if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lSadan§r"))
-                sadanStand = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§c§d§lJolly Pink Giant"))
-                boulderGiant = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§c§4§lL.A.S.R."))
-                laserGiant = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§c§3§lThe Diamond Giant"))
-                diamondGiant = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§c§c§lBigfoot"))
-                bigfootGiant = (EntityArmorStand) updateEvent.entityLiving;
-        } else if (updateEvent.entityLiving instanceof EntityGiantZombie) {
+    public void onEntityUpdate(LivingEntityTickEvent updateEvent) {
+        if (updateEvent.getEntityLiving() instanceof UEntityArmorStand) {
+            if (updateEvent.getEntityLiving().getName().startsWith("§e﴾ §c§lSadan§r"))
+                sadanStand = (UEntityArmorStand) updateEvent.getEntityLiving();
+            else if (updateEvent.getEntityLiving().getName().startsWith("§c§d§lJolly Pink Giant"))
+                boulderGiant = (UEntityArmorStand) updateEvent.getEntityLiving();
+            else if (updateEvent.getEntityLiving().getName().startsWith("§c§4§lL.A.S.R."))
+                laserGiant = (UEntityArmorStand) updateEvent.getEntityLiving();
+            else if (updateEvent.getEntityLiving().getName().startsWith("§c§3§lThe Diamond Giant"))
+                diamondGiant = (UEntityArmorStand) updateEvent.getEntityLiving();
+            else if (updateEvent.getEntityLiving().getName().startsWith("§c§c§lBigfoot"))
+                bigfootGiant = (UEntityArmorStand) updateEvent.getEntityLiving();
+        } else if (updateEvent.getEntityLiving().getEntityType() == EntityType.GIANT) {
 
-            if (updateEvent.entityLiving.posY < 55) {
-                mapping.put(updateEvent.entityLiving.getEntityId(), 50);
-            } else if (Math.abs(updateEvent.entityLiving.posY - 84.0) < 0.01) {
-                boolean xS = Math.abs(updateEvent.entityLiving.posX - -16.5) < 0.01;
-                boolean xB = Math.abs(updateEvent.entityLiving.posX - -0.5) < 0.01;
-                boolean zS = Math.abs(updateEvent.entityLiving.posZ - 53.5) < 0.01;
-                boolean zB = Math.abs(updateEvent.entityLiving.posZ - 79.5) < 0.01;
+            if (updateEvent.getEntityLiving().getPosY() < 55) {
+                mapping.put(updateEvent.getEntityLiving().getEntityId(), 50);
+            } else if (Math.abs(updateEvent.getEntityLiving().getPosY() - 84.0) < 0.01) {
+                boolean xS = Math.abs(updateEvent.getEntityLiving().getPosX() - -16.5) < 0.01;
+                boolean xB = Math.abs(updateEvent.getEntityLiving().getPosX() - -0.5) < 0.01;
+                boolean zS = Math.abs(updateEvent.getEntityLiving().getPosZ() - 53.5) < 0.01;
+                boolean zB = Math.abs(updateEvent.getEntityLiving().getPosZ() - 79.5) < 0.01;
 
                 // 43 44 51 52
                 if (xS && zS) {
-                    mapping.put(updateEvent.entityLiving.getEntityId(), 52); // jolley
+                    mapping.put(updateEvent.getEntityLiving().getEntityId(), 52); // jolley
                 } else if (xS && zB) {
-                    mapping.put(updateEvent.entityLiving.getEntityId(), 43); // diamond
+                    mapping.put(updateEvent.getEntityLiving().getEntityId(), 43); // diamond
                 } else if (xB && zB) {
-                    mapping.put(updateEvent.entityLiving.getEntityId(), 51); // big foot
+                    mapping.put(updateEvent.getEntityLiving().getEntityId(), 51); // big foot
                 } else if (xB && zS) {
-                    mapping.put(updateEvent.entityLiving.getEntityId(), 49); // laser
+                    mapping.put(updateEvent.getEntityLiving().getEntityId(), 49); // laser
                 }
             }
             // lpx

@@ -25,7 +25,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import com.mojang.authlib.properties.Property;
 import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
@@ -39,7 +38,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.*;
+import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChunkUpdateEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonRoomDiscoveredEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
@@ -51,17 +53,22 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityArmorStand;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.event.events.EntityExitWorldEvent;
+import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -78,7 +85,6 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -144,7 +150,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         private int id;
         public String name;
         private String playerSkin;
-        private IChatComponent armorstand;
+        private String armorstand;
         private transient ItemStack[] armoritems = new ItemStack[5];
         private Map<String, Double> attributes = new HashMap<>();
 
@@ -319,44 +325,46 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onEntityAttributeUpdate(LivingEvent.LivingUpdateEvent event) {
-        if (event.entityLiving instanceof EntityArmorStand) {
+    public void onEntityAttributeUpdate(LivingEntityTickEvent event) {
+        if (event.getEntityLiving() instanceof UEntityArmorStand) {
             return;
         }
-        if (event.entity instanceof EntityArrow) {
+        if (event.getEntityLiving().getEntityType() == EntityType.ARROW) {
             return;
         }
-        EntityData entityData = entityDataMap.get(event.entity.getEntityId());
+        EntityData entityData = entityDataMap.get(event.getEntityLiving().getEntityId());
         if (entityData == null) {
 //            System.out.println("WTFF??? it's not on map?? "+event.entity);
             return;
         }
-        entityData.id = event.entity.getEntityId();
+        entityData.id = event.getEntityLiving().getEntityId();
 
-        if (event.entity instanceof EntityOtherPlayerMP && entityData.playerSkin == null) {
-            entityData.playerSkin = ((EntityOtherPlayerMP) event.entity).getGameProfile().getProperties().get("textures").stream().findFirst().map(Property::getValue).orElse(null);
+        if (event.getEntityLiving() instanceof UEntityPlayer && entityData.playerSkin == null) {
+            entityData.playerSkin = ((UEntityPlayer) event.getEntityLiving()).getSkinTexture();
         }
 
-        List<Entity> entityList = event.entity.worldObj.getEntitiesInAABBexcluding(event.entity, new AxisAlignedBB(-0.2,-0.2,-0.2,0.2,0.2,0.2).offset(event.entity.posX, event.entity.posY+event.entity.height, event.entity.posZ), e -> e instanceof EntityArmorStand);
-        Entity theEntity =entityList.stream().min(Comparator.comparingDouble(a -> Math.abs(a.posX - event.entityLiving.posX) + Math.abs(a.posZ - event.entityLiving.posZ))).orElse(null);
+        List<UEntity> entityList = ModAPI.getAPI().getWorld().getEntitiesWithinAabb(EntityType.ARMOR_STAND, new AABB(-0.2,-0.2,-0.2,0.2,0.2,0.2)
+                .addCoord(event.getEntityLiving().getPosX(), event.getEntityLiving().getPosY()+event.getEntityLiving().getHealth(), event.getEntityLiving().getPosZ()));
+        UEntityArmorStand theEntity = (UEntityArmorStand) entityList.stream().min(Comparator.comparingDouble(a -> Math.abs(a.getPosX() - event.getEntityLiving().getPosX()) + Math.abs(a.getPosZ() - event.getEntityLiving().getPosZ()))).orElse(null);
 
         if (theEntity != null && entityData.armorstand == null)
-            entityData.armorstand = theEntity.getDisplayName();
+            entityData.armorstand = theEntity.getName();
 
-        entityData.name = event.entityLiving.getName();
+        entityData.name = event.getEntityLiving().getName();
 
-        if (event.entityLiving.getHeldItem() != null)
-            entityData.armoritems[4] = event.entityLiving.getHeldItem();
-        if (event.entityLiving.getCurrentArmor(0) != null)
-            entityData.armoritems[0] = event.entityLiving.getCurrentArmor(0);
-        if (event.entityLiving.getCurrentArmor(1) != null)
-            entityData.armoritems[1] = event.entityLiving.getCurrentArmor(1);
-        if (event.entityLiving.getCurrentArmor(2) != null)
-            entityData.armoritems[2] = event.entityLiving.getCurrentArmor(2);
-        if (event.entityLiving.getCurrentArmor(3) != null)
-            entityData.armoritems[3] = event.entityLiving.getCurrentArmor(3);
-        if (entityData.trajectory.getLast() == null || entityData.trajectory.getLast().getPos() == null || entityData.trajectory.getLast().getPos().distanceSq(ModAPI.getAPI().TEMPWRAP(event.entity).getPositionVector()) > 0.1f) {
-            entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, ModAPI.getAPI().TEMPWRAP(event.entity).getPositionVector(), System.currentTimeMillis()));
+        // TODO later...
+//        if (event.entityLiving.getHeldItem() != null)
+//            entityData.armoritems[4] = event.entityLiving.getHeldItem();
+//        if (event.entityLiving.getCurrentArmor(0) != null)
+//            entityData.armoritems[0] = event.entityLiving.getCurrentArmor(0);
+//        if (event.entityLiving.getCurrentArmor(1) != null)
+//            entityData.armoritems[1] = event.entityLiving.getCurrentArmor(1);
+//        if (event.entityLiving.getCurrentArmor(2) != null)
+//            entityData.armoritems[2] = event.entityLiving.getCurrentArmor(2);
+//        if (event.entityLiving.getCurrentArmor(3) != null)
+//            entityData.armoritems[3] = event.entityLiving.getCurrentArmor(3);
+        if (entityData.trajectory.getLast() == null || entityData.trajectory.getLast().getPos() == null || entityData.trajectory.getLast().getPos().distanceSq(event.getEntityLiving().getPositionVector()) > 0.1f) {
+            entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, event.getEntityLiving().getPositionVector(), System.currentTimeMillis()));
         }
     }
 
@@ -736,7 +744,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             RenderUtils.drawTextAtWorld("??Unknown??", (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
         } else {
             if (entityData.getArmorstand() != null)
-                RenderUtils.drawTextAtWorld(entityData.getArmorstand().getFormattedText(), (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
+                RenderUtils.drawTextAtWorld(entityData.getArmorstand(), (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
             RenderUtils.drawTextAtWorld(entityData.getType(), (float) hovered.posX, (float) hovered.posY+3.2f, (float) hovered.posZ, 0xFF00FF00, 0.02f, false, true, event.partialTicks);
             Vector3D pos = entityData.getTrajectory().getFirst().getPos();
             RenderUtils.renderBeaconBeam(

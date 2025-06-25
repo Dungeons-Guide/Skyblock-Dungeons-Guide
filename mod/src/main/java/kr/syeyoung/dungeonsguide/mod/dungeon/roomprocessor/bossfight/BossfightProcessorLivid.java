@@ -20,16 +20,13 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
+import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,15 +76,15 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
 
     private int correctLivid = 14;
     @Override
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
+    public void onEntityUpdate(LivingEntityTickEvent updateEvent) {
         correctLivid = Minecraft.getMinecraft().theWorld.getChunkFromBlockCoords(new BlockPos(5, 108, 42)).getBlockMetadata(new BlockPos(5, 108, 42));
         realLividName = lividMetadata.get(correctLivid);
         prefix = lividColorPrefix.get(realLividName);
         // TODO FIX!!!
-        if (updateEvent.entityLiving.getName().startsWith(realLividName) && updateEvent.entityLiving instanceof EntityOtherPlayerMP) {
-            realLivid = (UEntityPlayer) ModAPI.getAPI().TEMPWRAP((EntityOtherPlayerMP) updateEvent.entityLiving);
-        } else if (updateEvent.entityLiving.getName().startsWith(prefix+"﴾ ") && updateEvent.entityLiving instanceof EntityArmorStand) {
-            lividStand = (UEntityArmorStand) ModAPI.getAPI().TEMPWRAP((EntityArmorStand) updateEvent.entityLiving);
+        if (updateEvent.getEntityLiving().getName().startsWith(realLividName) && updateEvent.getEntityLiving() instanceof UEntityPlayer) {
+            realLivid = (UEntityPlayer) updateEvent.getEntityLiving();
+        } else if (updateEvent.getEntityLiving().getName().startsWith(prefix+"﴾ ") && updateEvent.getEntityLiving() instanceof UEntityArmorStand) {
+            lividStand = (UEntityArmorStand) updateEvent.getEntityLiving();
         }
     }
 

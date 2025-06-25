@@ -21,10 +21,10 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 public interface RoomProcessor {
@@ -37,7 +37,7 @@ public interface RoomProcessor {
     boolean readGlobalChat();
 
     void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event);
-    void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent);
+    void onEntityUpdate(LivingEntityTickEvent updateEvent);
     void onEntityDeath(LivingDeathEvent deathEvent);
 
     void onKeybindPress(KeyBindPressedEvent keyInputEvent);

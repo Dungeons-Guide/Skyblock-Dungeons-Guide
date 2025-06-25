@@ -96,10 +96,12 @@ public class ModAPIImpl implements ModAPI {
     }
 
     private PacketInjector packetInjector = new PacketInjector();
+    private EventListener eventListener = new EventListener();
 
     @Override
     public void init() {
         MinecraftForge.EVENT_BUS.register(packetInjector);
+        MinecraftForge.EVENT_BUS.register(eventListener);
 
         if (Minecraft.getMinecraft().getNetHandler() != null)
             Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler", packetInjector);
@@ -108,6 +110,9 @@ public class ModAPIImpl implements ModAPI {
     @Override
     public void unload() {
         MinecraftForge.EVENT_BUS.unregister(packetInjector);
+        MinecraftForge.EVENT_BUS.unregister(eventListener);
+
+        packetInjector.cleanup();
     }
 
 

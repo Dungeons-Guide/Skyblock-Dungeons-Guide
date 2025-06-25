@@ -21,10 +21,10 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
-import net.minecraft.entity.item.EntityArmorStand;
+import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import net.minecraft.entity.monster.EntityGuardian;
-import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -130,48 +130,48 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
         return "The Professor";
     }
 
-    private EntityArmorStand profStand;
-    private EntityArmorStand laserGuard;
-    private EntityArmorStand chaosGuard;
-    private EntityArmorStand reinforcedGuard;
-    private EntityArmorStand healthyGuard;
+    private UEntityArmorStand profStand;
+    private UEntityArmorStand laserGuard;
+    private UEntityArmorStand chaosGuard;
+    private UEntityArmorStand reinforcedGuard;
+    private UEntityArmorStand healthyGuard;
     @Override
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
-        if (updateEvent.entityLiving instanceof EntityArmorStand) {
-            if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lThe Professor§r"))
-                profStand = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§cHealthy Guardian"))
-                healthyGuard = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§cChaos Guardian"))
-                chaosGuard = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§cLaser Guardian"))
-                laserGuard = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§cReinforced Guardian"))
-                reinforcedGuard = (EntityArmorStand) updateEvent.entityLiving;
+    public void onEntityUpdate(LivingEntityTickEvent updateEvent) {
+        if (updateEvent.getEntityLiving() instanceof UEntityArmorStand) {
+            if (updateEvent.getEntityLiving().getName().startsWith("§e﴾ §c§lThe Professor§r"))
+                profStand = (UEntityArmorStand) updateEvent.getEntityLiving();
+            else if (updateEvent.getEntityLiving().getName().startsWith("§cHealthy Guardian"))
+                healthyGuard = (UEntityArmorStand) updateEvent.getEntityLiving();
+            else if (updateEvent.getEntityLiving().getName().startsWith("§cChaos Guardian"))
+                chaosGuard = (UEntityArmorStand) updateEvent.getEntityLiving();
+            else if (updateEvent.getEntityLiving().getName().startsWith("§cLaser Guardian"))
+                laserGuard = (UEntityArmorStand) updateEvent.getEntityLiving();
+            else if (updateEvent.getEntityLiving().getName().startsWith("§cReinforced Guardian"))
+                reinforcedGuard = (UEntityArmorStand) updateEvent.getEntityLiving();
         }
-        if (updateEvent.entityLiving instanceof EntityGuardian) {
-            boolean xB = Math.abs(updateEvent.entityLiving.posX - 14.5) < 0.01;
-            boolean xS = Math.abs(updateEvent.entityLiving.posX - -11.5) < 0.01;
-            boolean zB = Math.abs(updateEvent.entityLiving.posZ - 14.5) < 0.01;
-            boolean zS = Math.abs(updateEvent.entityLiving.posZ - -11.5) < 0.01;
-            boolean yE = Math.abs(updateEvent.entityLiving.posY - 72.5) < 0.01;
+        if (updateEvent.getEntityLiving().getEntityType() == EntityType.GUARDIAN) {
+            boolean xB = Math.abs(updateEvent.getEntityLiving().getPosX() - 14.5) < 0.01;
+            boolean xS = Math.abs(updateEvent.getEntityLiving().getPosX() - -11.5) < 0.01;
+            boolean zB = Math.abs(updateEvent.getEntityLiving().getPosZ() - 14.5) < 0.01;
+            boolean zS = Math.abs(updateEvent.getEntityLiving().getPosZ() - -11.5) < 0.01;
+            boolean yE = Math.abs(updateEvent.getEntityLiving().getPosY() - 72.5) < 0.01;
 
             if (getCurrentPhase().equals("fight-3")) {
-                if (profStand != null && profStand.getPosition().distanceSq(updateEvent.entityLiving.getPosition().add(0, 2, 0)) < 5) {
-                    mapping.put(updateEvent.entityLiving.getEntityId(), 23);
+                if (profStand != null && profStand.getPositionVector().distanceSq(updateEvent.getEntityLiving().getPositionVector().add(0, 2, 0)) < 5) {
+                    mapping.put(updateEvent.getEntityLiving().getEntityId(), 23);
                 }
             }
 
             if (yE && xB && zB) {
-                mapping.put(updateEvent.entityLiving.getEntityId(), 18);
+                mapping.put(updateEvent.getEntityLiving().getEntityId(), 18);
             } else if (yE && xB && zS) {
-                mapping.put(updateEvent.entityLiving.getEntityId(), 19);
+                mapping.put(updateEvent.getEntityLiving().getEntityId(), 19);
             } else if (yE && xS && zB) {
-                mapping.put(updateEvent.entityLiving.getEntityId(), 17);
+                mapping.put(updateEvent.getEntityLiving().getEntityId(), 17);
             } else if (yE && xS && zS) {
-                mapping.put(updateEvent.entityLiving.getEntityId(), 20);
-            } else if (!mapping.containsKey(updateEvent.entityLiving.getEntityId())) {
-                mapping.put(updateEvent.entityLiving.getEntityId(), ((EntityGuardian) updateEvent.entityLiving).isElder() ? 21 : 22);
+                mapping.put(updateEvent.getEntityLiving().getEntityId(), 20);
+            } else if (!mapping.containsKey(updateEvent.getEntityLiving().getEntityId())) {
+                mapping.put(updateEvent.getEntityLiving().getEntityId(), ((EntityGuardian) updateEvent.getEntityLiving()).isElder() ? 21 : 22);
             }
         }
     }

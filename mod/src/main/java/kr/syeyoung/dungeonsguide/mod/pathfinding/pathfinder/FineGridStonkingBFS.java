@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.IPathfindWorld;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -71,7 +72,7 @@ public class FineGridStonkingBFS implements IPathfinder {
         this.dz = (int) (centerOfGravity.zCoord);
 
 
-        for (AxisAlignedBB boundingBox : destinationBB.getBoundingBoxes()) {
+        for (AABB boundingBox : destinationBB.getBoundingBoxes()) {
             for (int x = (int) Math.ceil(boundingBox.minX); x < boundingBox.maxX; x ++) {
                 for (int y = (int) Math.ceil(boundingBox.minY); y < boundingBox.maxY; y ++) {
                     for (int z = (int) Math.ceil(boundingBox.minZ); z < boundingBox.maxZ; z ++) {

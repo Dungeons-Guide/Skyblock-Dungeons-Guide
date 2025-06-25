@@ -16,6 +16,8 @@ public interface UWorld {
 
     UEntityPlayer getPlayerEntityByUuid(UUID uuid);
 
+    List<UEntity> getEntitiesWithinAabb(AABB bb);
+
     List<UEntity> getEntitiesWithinAabb(EntityType type, AABB bb);
 
     UMapData getMapData(UItemStack itemMap);

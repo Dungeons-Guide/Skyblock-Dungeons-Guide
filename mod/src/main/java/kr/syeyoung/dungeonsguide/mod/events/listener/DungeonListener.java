@@ -55,6 +55,7 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.events.EntityExitWorldEvent;
 import kr.syeyoung.modapi.event.events.ItemPickupEvent;
+import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -143,7 +144,7 @@ public class DungeonListener {
     }
 
     @SubscribeEvent
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent e) {
+    public void onEntityUpdate(LivingEntityTickEvent e) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

@@ -13,6 +13,7 @@ import net.minecraft.entity.item.*;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
@@ -112,6 +113,7 @@ public class UEntityImpl implements UEntity {
         bimap.put(EntityArmorStand.class, EntityType.ARMOR_STAND);
         bimap.put(EntityItemFrame.class, EntityType.ITEM_FRAME);
         bimap.put(EntityBlaze.class, EntityType.BLAZE);
+        bimap.put(EntityArrow.class, EntityType.ARROW);
     }
 
     @Override
@@ -141,4 +143,10 @@ public class UEntityImpl implements UEntity {
     public double getPrevPosY() {
         return delegate.prevPosY;
     }
+
+    @Override
+    public double getHeight() {
+        return delegate.height;
+    }
 }
+

@@ -18,7 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.pathfinding;
 
-import net.minecraft.util.AxisAlignedBB;
+import kr.syeyoung.modapi.data.AABB;
+import kr.syeyoung.modapi.data.Vector3D;
 import net.minecraft.util.Vec3;
 
 import java.util.ArrayList;
@@ -26,43 +27,41 @@ import java.util.List;
 
 
 public class BoundingBox {
-    private final List<AxisAlignedBB> boundingBoxes = new ArrayList<>();
+    private final List<AABB> boundingBoxes = new ArrayList<>();
 
-    public List<AxisAlignedBB> getBoundingBoxes() {
+    public List<AABB> getBoundingBoxes() {
         return boundingBoxes;
     }
 
-    public void addBoundingBox(AxisAlignedBB bb) {
+    public void addBoundingBox(AABB bb) {
         boundingBoxes.add(bb);
     }
 
-    public boolean isIn(Vec3 vec) {
-        for (AxisAlignedBB boundingBox : boundingBoxes) {
+    public boolean isIn(Vector3D vec) {
+        for (AABB boundingBox : boundingBoxes) {
             if (boundingBox.isVecInside(vec)) return true;
         }
         return false;
     }
 
     public boolean isIn(double x, double y, double z) {
-        for (AxisAlignedBB boundingBox : boundingBoxes) {
-            if (boundingBox.minX <= x && x <= boundingBox.maxX &&
-                boundingBox.minY <= y && y <= boundingBox.maxY &&
-                boundingBox.minZ <= z && z <= boundingBox.maxZ) return true;
+        for (AABB boundingBox : boundingBoxes) {
+            if (boundingBox.isVecInside(x,y,z)) return true;
         }
         return false;
     }
 
     public BoundingBox multiply(double scalar) {
         BoundingBox bb = new BoundingBox();
-        for (AxisAlignedBB a : boundingBoxes) {
-            bb.addBoundingBox(new AxisAlignedBB(a.minX * scalar, a.minY* scalar, a.minZ* scalar, a.maxX* scalar, a.maxY* scalar, a.maxZ* scalar));
+        for (AABB a : boundingBoxes) {
+            bb.addBoundingBox(new AABB(a.minX * scalar, a.minY* scalar, a.minZ* scalar, a.maxX* scalar, a.maxY* scalar, a.maxZ* scalar));
         }
         return bb;
     }
     public BoundingBox translate(double x, double y, double z) {
         BoundingBox bb = new BoundingBox();
-        for (AxisAlignedBB a : boundingBoxes) {
-            bb.addBoundingBox(new AxisAlignedBB(a.minX + x, a.minY + y, a.minZ + z, a.maxX + x, a.maxY + y, a.maxZ + z));
+        for (AABB a : boundingBoxes) {
+            bb.addBoundingBox(new AABB(a.minX + x, a.minY + y, a.minZ + z, a.maxX + x, a.maxY + y, a.maxZ + z));
         }
         return bb;
     }
@@ -70,7 +69,7 @@ public class BoundingBox {
     public Vec3 center() {
         double xSum = 0, ySum = 0, zSum = 0;
         double denominator = 0;
-        for (AxisAlignedBB boundingBox : boundingBoxes) {
+        for (AABB boundingBox : boundingBoxes) {
             double lcx = (boundingBox.minX + boundingBox.maxX) / 2;
             double lcy = (boundingBox.minY + boundingBox.maxY) / 2;
             double lcz = (boundingBox.minZ + boundingBox.maxZ) / 2;
@@ -98,7 +97,7 @@ public class BoundingBox {
         return boundingBoxes.hashCode();
     }
 
-    public static BoundingBox of(AxisAlignedBB bb) {
+    public static BoundingBox of(AABB bb) {
         BoundingBox boundingBox = new BoundingBox();
         boundingBox.addBoundingBox(bb);
         return boundingBox;

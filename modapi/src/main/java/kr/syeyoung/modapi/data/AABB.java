@@ -1,5 +1,8 @@
 package kr.syeyoung.modapi.data;
 
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode
 public class AABB {
     public final double minX;
     public final double minY;
@@ -39,5 +42,18 @@ public class AABB {
         return new AABB(minX + x, minY + y, minZ + z, maxX + x, maxY + y, maxZ + z);
     }
 
+    public boolean isVecInside(Vector3D vec) {
+        if (vec.x < minX || vec.x > maxX) return false;
+        if (vec.y < minY || vec.y > maxY) return false;
+        if (vec.z < minZ || vec.z > maxZ) return false;
+        return true;
+    }
+
+    public boolean isVecInside(double x, double y, double z) {
+        if (x < minX || x > maxX) return false;
+        if (y < minY || y > maxY) return false;
+        if (z < minZ || z > maxZ) return false;
+        return true;
+    }
 
 }

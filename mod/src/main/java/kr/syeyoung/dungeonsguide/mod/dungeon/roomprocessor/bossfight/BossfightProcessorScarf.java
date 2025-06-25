@@ -20,9 +20,9 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,24 +117,24 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
         return "Scarf";
     }
 
-    private EntityArmorStand scarfStand;
-    private EntityArmorStand priestStand;
-    private EntityArmorStand mageStand;
-    private EntityArmorStand berserkStand;
-    private EntityArmorStand archerStand;
+    private UEntityArmorStand scarfStand;
+    private UEntityArmorStand priestStand;
+    private UEntityArmorStand mageStand;
+    private UEntityArmorStand berserkStand;
+    private UEntityArmorStand archerStand;
     @Override
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
-        if (updateEvent.entityLiving instanceof EntityArmorStand) {
-            if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lScarf§r"))
-                scarfStand = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Archer"))
-                archerStand = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Mage"))
-                mageStand = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Priest"))
-                priestStand = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Warrior"))
-                berserkStand = (EntityArmorStand) updateEvent.entityLiving;
+    public void onEntityUpdate(LivingEntityTickEvent updateEvent) {
+        if (updateEvent.getEntityLiving() instanceof UEntityArmorStand) {
+            if (updateEvent.getEntityLiving().getName().startsWith("§e﴾ §c§lScarf§r"))
+                scarfStand = (UEntityArmorStand) updateEvent.getEntityLiving();
+            else if (updateEvent.getEntityLiving().getName().contains("§6§4§lUndead Archer"))
+                archerStand = (UEntityArmorStand) updateEvent.getEntityLiving();
+            else if (updateEvent.getEntityLiving().getName().contains("§6§4§lUndead Mage"))
+                mageStand = (UEntityArmorStand) updateEvent.getEntityLiving();
+            else if (updateEvent.getEntityLiving().getName().contains("§6§4§lUndead Priest"))
+                priestStand = (UEntityArmorStand) updateEvent.getEntityLiving();
+            else if (updateEvent.getEntityLiving().getName().contains("§6§4§lUndead Warrior"))
+                berserkStand = (UEntityArmorStand) updateEvent.getEntityLiving();
         }
     }
 

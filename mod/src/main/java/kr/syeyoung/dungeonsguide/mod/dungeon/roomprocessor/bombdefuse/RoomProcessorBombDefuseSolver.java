@@ -44,6 +44,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -54,7 +55,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.apache.commons.codec.binary.Base64;
 
@@ -343,7 +343,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
+    public void onEntityUpdate(LivingEntityTickEvent updateEvent) {
         super.onEntityUpdate(updateEvent);
         if (bugged) return;
 

@@ -44,6 +44,8 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.CoordinateMapBackedPathfindWorld;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.state.IBlockState;
@@ -53,14 +55,15 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.util.*;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -238,10 +241,10 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
     @Override
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
-        if (updateEvent.entityLiving instanceof EntityArmorStand &&
-                updateEvent.entityLiving.getName() != null &&
-                updateEvent.entityLiving.getName().contains("Mimic") &&
+    public void onEntityUpdate(LivingEntityTickEvent updateEvent) {
+        if (updateEvent.getEntityLiving().getEntityType() == EntityType.ARMOR_STAND &&
+                updateEvent.getEntityLiving().getName() != null &&
+                updateEvent.getEntityLiving().getName().contains("Mimic") &&
                 !dungeonRoom.getContext().isGotMimic()) {
             dungeonRoom.getContext().setGotMimic(true);
 //            Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-Mimic");

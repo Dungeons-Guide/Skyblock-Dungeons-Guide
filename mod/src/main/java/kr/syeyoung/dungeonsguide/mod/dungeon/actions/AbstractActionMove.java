@@ -31,11 +31,11 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.util.AxisAlignedBB;
 
 import java.io.IOException;
 import java.util.*;
@@ -74,7 +74,7 @@ public abstract class AbstractActionMove extends AbstractAction {
         BoundingBox boundingBox = new BoundingBox();
         for (OffsetVec3 offsetPoint : getTargetOffsetPointSet()) {
             Vector3D pos = offsetPoint.getPos(dungeonRoom);
-            boundingBox.addBoundingBox(new AxisAlignedBB(
+            boundingBox.addBoundingBox(new AABB(
                     pos.x - 0.1, pos.y - 0.1, pos.z - 0.1,
                     pos.x + 0.1, pos.y + 0.1, pos.z + 0.1
             ));
