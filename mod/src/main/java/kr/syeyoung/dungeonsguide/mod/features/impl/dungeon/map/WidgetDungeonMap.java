@@ -104,7 +104,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 if (mapOverlay.onClick(relMouseX + 64 - px, relMouseY + 64 - pz, getDomElement())) return true;
             }
         } else {
-            double yaw = ((Minecraft.getMinecraft().thePlayer.rotationYawHead) % 360 + 360) % 360;
+            double yaw = ((ModAPI.getAPI().getPlayer().getRotationYawHead()) % 360 + 360) % 360;
 
             Vector2d pt = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(ModAPI.getAPI().getPlayer().getPositionVector());
 

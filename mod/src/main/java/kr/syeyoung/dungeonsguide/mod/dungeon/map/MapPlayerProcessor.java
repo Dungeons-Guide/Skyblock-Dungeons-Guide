@@ -98,7 +98,7 @@ public class MapPlayerProcessor {
                 int players = 0;
 
                 for (String player : context.getPlayers()) {
-                    if (player.equals(Minecraft.getMinecraft().thePlayer.getName())) continue;
+                    if (player.equals(ModAPI.getAPI().getPlayer().getName())) continue;
                     if (!mapIconToPlayerMap.containsKey(player) && isPlayerNear(player, worldPos)) {
                         potentialPlayer = player;
                         players++;

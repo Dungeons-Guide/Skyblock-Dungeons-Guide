@@ -6,6 +6,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.MapConfiguration;
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -88,7 +89,7 @@ public class MapOverlayPlayer implements MapOverlay{
             GlStateManager.rotate((float) yaw, 0, 0, 1);
             GlStateManager.scale(settings.getIconSize(), settings.getIconSize(), 0);
             Gui.drawScaledCustomSizeModalRect(-4, -4, 128 - 16,
-                    name.equals(Minecraft.getMinecraft().thePlayer.getName()) ? 128 - 16 : 128 - 0, 16, -16, 8, 8, 128, 128);
+                    name.equals(ModAPI.getAPI().getPlayer().getName()) ? 128 - 16 : 128 - 0, 16, -16, 8, 8, 128, 128);
         } else {
             boolean flag1 = settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.HEAD_FLIP;
             GlStateManager.enableTexture2D();

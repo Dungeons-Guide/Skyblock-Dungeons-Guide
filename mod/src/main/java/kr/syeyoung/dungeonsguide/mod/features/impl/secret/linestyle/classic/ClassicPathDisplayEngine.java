@@ -284,7 +284,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
                 int warp = 0;
                 for (PathfindResult.PathfindNode pose : poses.getNodeList()) {
                     cnt ++;
-                    if (pose.getType() != null && pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+                    if (pose.getType() != null && pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) < 100) {
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }
 
@@ -294,7 +294,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
                         warp = flag2 ? 0 : 2;
                     }
                     if (pose.getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP &&
-                            ((flag2 && Minecraft.getMinecraft().thePlayer.getDistanceSq(pose.getX(), pose.getY(), pose.getZ()) < 25) || (!flag2 && cnt < 2)) && warp < 2) {
+                            ((flag2 && ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(pose.getX(), pose.getY(), pose.getZ()) < 25) || (!flag2 && cnt < 2)) && warp < 2) {
                         warp = 1;
                     }
 
@@ -329,7 +329,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         GL11.glLineWidth(thickness);
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
-        if ((poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK ) && poses.get(0).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+        if ((poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK ) && poses.get(0).distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) < 100) {
             GlStateManager.disableDepth();
             GlStateManager.depthMask(false);
         }
@@ -355,7 +355,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
                 worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
 
 
-                if ((pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK)&& pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+                if ((pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK)&& pos.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) < 100) {
                     GlStateManager.disableDepth();
                     GlStateManager.depthMask(false);
                 } else {

@@ -45,7 +45,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -158,8 +157,6 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
         if (necron == null) return;
         if (!necron.getCurrentPhase().startsWith("goldor-terminals")) return;
 
-
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
 
         Set<TabListEntry> playerList = getPlayerListCached();
 

@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.util.ResourceLocation;
 
 public class TestView extends AnnotatedImportOnlyWidget {
@@ -40,7 +40,7 @@ public class TestView extends AnnotatedImportOnlyWidget {
     @Override
     public void onMount() {
         super.onMount();
-        bindableAttribute.setValue(Minecraft.getMinecraft().thePlayer.getName());
+        bindableAttribute.setValue(ModAPI.getAPI().getPlayer().getName());
     }
 
     @On(functionName = "buttonClick")

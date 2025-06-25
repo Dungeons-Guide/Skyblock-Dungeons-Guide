@@ -184,7 +184,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         }
 
         Point player = getPlayerPos(currBoard);
-        boolean currYState = Minecraft.getMinecraft().thePlayer.getPosition().getY() < 68;
+        boolean currYState = ModAPI.getAPI().getPlayer().getPositionVector().y < 68;
         if (((currYState && !player.equals(lastPlayer)) || (currYState != yState) || (moved) || pathFindReq) && solution != null) {
             Point target = null;
             if (step < solution.size()) {
@@ -350,7 +350,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (bugged) return;
         if (!calcDone) return;
         if (solution == null) return;
-        if (Minecraft.getMinecraft().thePlayer.getPosition().getY() < 68) {
+        if (ModAPI.getAPI().getPlayer().getPositionVector().y < 68) {
             if (step < solution.size()) {
                 BoxPuzzleSolvingThread.BoxMove boxMove = solution.get(step);
                 int fromX = boxMove.x - boxMove.dx;

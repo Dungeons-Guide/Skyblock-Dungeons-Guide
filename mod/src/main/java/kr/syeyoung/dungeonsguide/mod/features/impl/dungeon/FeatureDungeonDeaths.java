@@ -35,8 +35,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
@@ -158,7 +158,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
             String nickname = "me";
             int deaths = getDeaths().getOrDefault(nickname, 0);
             getDeaths().put(nickname, deaths + 1);
-            context.getRecorder().createEvent(new DungeonDeathEvent(Minecraft.getMinecraft().thePlayer.getName(), txt, deaths));
+            context.getRecorder().createEvent(new DungeonDeathEvent(ModAPI.getAPI().getPlayer().getName(), txt, deaths));
             ChatTransmitter.sendDebugChat(new ChatComponentText("Death verified :: me / "+(deaths + 1)));
         }
     }

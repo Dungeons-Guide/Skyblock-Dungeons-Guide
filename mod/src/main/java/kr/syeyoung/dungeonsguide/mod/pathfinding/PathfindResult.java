@@ -18,11 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.pathfinding;
 
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec3i;
 
 import java.util.List;
 
@@ -49,10 +49,10 @@ public class PathfindResult {
 
         private NodeType type;
 
-        public double distanceSq(Vec3 position) {
-            return position.squareDistanceTo(new Vec3(x,y,z));
+        public double distanceSq(Vector3D position) {
+            return position.distanceSq(x,y,z);
         }
-        public double distanceSq(Vec3i position) {
+        public double distanceSq(VectorI3D position) {
             return position.distanceSq(x,y,z);
         }
 

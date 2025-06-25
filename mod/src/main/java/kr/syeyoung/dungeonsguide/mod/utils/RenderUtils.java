@@ -602,7 +602,7 @@ public class RenderUtils {
         GlStateManager.popMatrix();
     }
 
-    public static void drawLinesVec3(List<Vec3> poses, AColor colour, float thickness, float partialTicks, boolean depth) {
+    public static void drawLinesVec3(List<Vector3D> poses, AColor colour, float thickness, float partialTicks, boolean depth) {
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
@@ -628,9 +628,9 @@ public class RenderUtils {
         GlStateManager.color(1,1,1,1);
         worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
         int num = 0;
-        for (Vec3 pos:poses) {
+        for (Vector3D pos:poses) {
             int i = getColorAt(num++ * 10,0, colour);
-            worldRenderer.pos(pos.xCoord, pos.yCoord, pos.zCoord).color(
+            worldRenderer.pos(pos.x, pos.y, pos.z).color(
                     ((i >> 16) &0xFF)/255.0f,
                     ((i >> 8) &0xFF)/255.0f,
                     (i &0xFF)/255.0f,

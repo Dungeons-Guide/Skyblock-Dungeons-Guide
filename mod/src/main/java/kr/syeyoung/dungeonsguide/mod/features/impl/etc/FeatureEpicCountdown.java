@@ -28,6 +28,8 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
@@ -136,7 +138,7 @@ public class FeatureEpicCountdown extends SimpleFeature {
 
         if(!Objects.equals(string, lastSec)){
             if(actualSecondsLeft == 3   && sfxenabled){
-                Minecraft.getMinecraft().thePlayer.playSound("skyblock_dungeons_guide:readysetgo", 1F, 1F);
+                ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("dungeonsguide", "readysetgo"), 1);
             }
             if(actualSecondsLeft > 5){
                 Minecraft.getMinecraft().ingameGUI.displayTitle(string, "", 1, 10, 8);

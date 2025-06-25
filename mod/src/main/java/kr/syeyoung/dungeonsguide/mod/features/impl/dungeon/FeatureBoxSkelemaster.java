@@ -27,9 +27,11 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,14 +52,14 @@ public class FeatureBoxSkelemaster extends SimpleFeature  {
         
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        final BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        final Vector3D player = ModAPI.getAPI().getPlayer().getPositionVector();
         int val = this.<Integer>getParameter("radius").getValue();
         final int sq = val * val;
 
         List<EntityArmorStand> skeletonList = Minecraft.getMinecraft().theWorld.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
             @Override
             public boolean apply(@Nullable EntityArmorStand input) {
-                if (player.distanceSq(input.getPosition()) > sq) return false;
+                if (player.distanceSq(new VectorI3D(input.getPositionVector().xCoord, input.getPositionVector().yCoord, input.getPositionVector().zCoord)) > sq) return false;
                 if (!input.getAlwaysRenderNameTag()) return false;
                 return input.getName().contains("Skeleton Master");
             }

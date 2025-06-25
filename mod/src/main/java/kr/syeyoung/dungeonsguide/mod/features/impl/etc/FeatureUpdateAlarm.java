@@ -24,7 +24,8 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.util.ChatComponentText;
 
 public class FeatureUpdateAlarm extends SimpleFeature  {
@@ -39,7 +40,7 @@ public class FeatureUpdateAlarm extends SimpleFeature  {
         if (stompPayload != null) {
             ChatTransmitter.addToQueue(new ChatComponentText(stompPayload));
             stompPayload = null;
-            Minecraft.getMinecraft().thePlayer.playSound("random.successful_hit", 1f,1f);
+            ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("random.successful_hit"), 1);
         }
     }
 

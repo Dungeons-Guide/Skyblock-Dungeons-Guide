@@ -17,6 +17,7 @@ import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -216,11 +217,11 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         RenderUtils.highlightBlockStencil(pos, partialTicks,new AColor(0, 255,0,100), false);
         RenderUtils.drawTextAtWorld("Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
 
-        Vec3 from = new Vec3(pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5);
-        Vec3 eyePos = Minecraft.getMinecraft().thePlayer.getPositionEyes(partialTicks);
-        Vec3 lookVec = from.subtract(eyePos).normalize();
+        Vector3D from = new Vector3D(pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5);
+        Vector3D eyePos = ModAPI.getAPI().getPlayer().getPositionEyes(partialTicks);
+        Vector3D lookVec = from.subtract(eyePos).normalize();
 
-        if (Minecraft.getMinecraft().thePlayer.getLook(partialTicks).dotProduct(lookVec) < 0.7) return;
+        if (ModAPI.getAPI().getPlayer().getLook(partialTicks).dotProduct(lookVec) < 0.7) return;
 
         MovingObjectPosition objectPosition = Minecraft.getMinecraft().objectMouseOver;
         if (objectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
@@ -286,13 +287,13 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             if (poses != null){
                 drawLinesPathfindNode(context.segment, settings.getBackground(), settings.getArrow(), partialTicks);
 
-                Vec3 pos = Minecraft.getMinecraft().thePlayer.getPositionVector();
+                Vector3D pos = ModAPI.getAPI().getPlayer().getPositionVector();
                 if (settings.isEnableEtherwarpTracer()) {
                     for (PathSegment segment : context.segment) {
-                        if (segment.nodeType == PathfindResult.PathfindNode.NodeType.ETHERWARP && segment.from.squareDistanceTo(pos) < settings.getEtherwarpTracerDist()) {
+                        if (segment.nodeType == PathfindResult.PathfindNode.NodeType.ETHERWARP && segment.from.distanceSq(pos) < settings.getEtherwarpTracerDist()) {
                             RenderUtils.drawLinesVec3(Arrays.asList(
-                                    Minecraft.getMinecraft().thePlayer.getPositionEyes(partialTicks),
-                                    segment.to.addVector(0, -0.5, 0)), settings.getEtherwarpTracerColor(), settings.getEtherwarpTracerWidth(), partialTicks, false);
+                                    ModAPI.getAPI().getPlayer().getLook(partialTicks),
+                                    segment.to.add(0, -0.5, 0)), settings.getEtherwarpTracerColor(), settings.getEtherwarpTracerWidth(), partialTicks, false);
                         }
                     }
                 }
@@ -305,7 +306,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                             pose.getType() != PathfindResult.PathfindNode.NodeType.ENDERPEARL &&
                             pose.getType() != PathfindResult.PathfindNode.NodeType.ETHERWARP &&
                             pose.getType() != PathfindResult.PathfindNode.NodeType.SUPERBOOM &&
-                            pose.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+                            pose.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) < 100) {
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }
                     if (last != null && last.getType() == PathfindResult.PathfindNode.NodeType.SUPERBOOM) {
@@ -338,9 +339,9 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
     @AllArgsConstructor @Data
     public static class PathSegment {
-        Vec3 from, to;
-        Vec3 dir, side;
-        Vec3 BL, BR, TL, TR;
+        Vector3D from, to;
+        Vector3D dir, side;
+        Vector3D BL, BR, TL, TR;
         PathfindResult.PathfindNode.NodeType nodeType;
         double texCulLenFrom, texCulLenTo;
     }
@@ -360,17 +361,17 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         List<PathSegment> segments = new ArrayList<>();
         PathfindResult.PathfindNode last = null;
-        Vec3 up = new Vec3(0, 1, 0);
+        Vector3D up = new Vector3D(0, 1, 0);
         for (PathfindResult.PathfindNode pose : poses) {
             if (last != null) {
-                Vec3 from = new Vec3(last.getX(), last.getY(), last.getZ());
-                Vec3 to = new Vec3(pose.getX(), pose.getY(), pose.getZ());
-                Vec3 dir = to.subtract(from).normalize();
+                Vector3D from = new Vector3D(last.getX(), last.getY(), last.getZ());
+                Vector3D to = new Vector3D(pose.getX(), pose.getY(), pose.getZ());
+                Vector3D dir = to.subtract(from).normalize();
 
-                Vec3 normal = dir.crossProduct(up).normalize();
+                Vector3D normal = dir.crossProduct(up).normalize();
 
                 segments.add(new PathSegment(
-                        from.addVector(0, 0.05, 0), to.addVector(0, 0.05, 0), dir, normal, null,null,null,null, last.getType(),0 ,0
+                        from.add(0, 0.05, 0), to.add(0, 0.05, 0), dir, normal, null,null,null,null, last.getType(),0 ,0
                 ));
             }
             last = pose;
@@ -378,9 +379,9 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         List<PathSegment> result = new ArrayList<>();
         for (int i = 1; i < segments.size(); i++) {
-            Vec3 dir1 = segments.get(i-1).dir;
-            Vec3 dir2 = segments.get(i).dir;
-            if (dir1.xCoord == dir2.xCoord && dir2.yCoord == dir1.yCoord && dir1.zCoord == dir2.zCoord && segments.get(i-1).nodeType == segments.get(i).nodeType) {
+            Vector3D dir1 = segments.get(i-1).dir;
+            Vector3D dir2 = segments.get(i).dir;
+            if (dir1.x == dir2.x && dir2.y == dir1.y && dir1.z == dir2.z && segments.get(i-1).nodeType == segments.get(i).nodeType) {
                 segments.get(i).from = segments.get(i-1).from;
             } else {
                 result.add(segments.get(i-1));
@@ -402,29 +403,29 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             realResult.add(prev);
             for (int j = fromIdx + 1; j < toIdx; j++) {
                 PathSegment to = result.get(j);
-                double lenTo = to.to.subtract(to.from).lengthVector();
-                double lenFrom = prev.to.subtract(prev.from).lengthVector();
+                double lenTo = to.to.subtract(to.from).length();
+                double lenFrom = prev.to.subtract(prev.from).length();
                 double radTo = Math.min(lenTo/2, rad);
                 double radFrom = Math.min(lenFrom / 2, rad);
 
-                Vec3 scaledVecTo = new Vec3(to.dir.xCoord * radTo, to.dir.yCoord * radTo, to.dir.zCoord * radTo);
-                Vec3 scaledVecFrom = new Vec3(prev.dir.xCoord * radFrom, prev.dir.yCoord*radFrom, prev.dir.zCoord * radFrom);
-                Vec3 P2 = to.from;
+                Vector3D scaledVecTo = new Vector3D(to.dir.x * radTo, to.dir.y * radTo, to.dir.z * radTo);
+                Vector3D scaledVecFrom = new Vector3D(prev.dir.x * radFrom, prev.dir.y*radFrom, prev.dir.z * radFrom);
+                Vector3D P2 = to.from;
                 to.from = to.from.add(scaledVecTo);
                 prev.to = prev.to.subtract(scaledVecFrom);
-                Vec3 P1 = prev.to, P3 = to.from;
+                Vector3D P1 = prev.to, P3 = to.from;
 
                 PathSegment realPrev = prev;
                 for (double t = 0.1; t < 1.0; t += 0.1) {
-                    double xCoord = P1.xCoord * (1-t)*(1-t) + P2.xCoord * 2*(1-t) * t + P3.xCoord * t * t;
-                    double yCoord = P1.yCoord * (1-t)*(1-t) + P2.yCoord * 2*(1-t) * t + P3.yCoord * t * t;
-                    double zCoord = P1.zCoord * (1-t)*(1-t) + P2.zCoord * 2*(1-t) * t + P3.zCoord * t * t;
-                    Vec3 pt = new Vec3(xCoord, yCoord, zCoord);
+                    double x = P1.x * (1-t)*(1-t) + P2.x * 2*(1-t) * t + P3.x * t * t;
+                    double y = P1.y * (1-t)*(1-t) + P2.y * 2*(1-t) * t + P3.y * t * t;
+                    double z = P1.z * (1-t)*(1-t) + P2.z * 2*(1-t) * t + P3.z * t * t;
+                    Vector3D pt = new Vector3D(x, y, z);
 
-                    double xTangent = P1.xCoord * 2 * (t-1) + P2.xCoord * (2 - 4*t) + P3.xCoord * (2*t);
-                    double yTangent = P1.yCoord * 2 * (t-1) + P2.yCoord * (2 - 4*t) + P3.yCoord * (2*t);
-                    double zTangent = P1.zCoord * 2 * (t-1) + P2.zCoord * (2 - 4*t) + P3.zCoord * (2*t);
-                    Vec3 dir = new Vec3(xTangent, yTangent, zTangent);
+                    double xTangent = P1.x * 2 * (t-1) + P2.x * (2 - 4*t) + P3.x * (2*t);
+                    double yTangent = P1.y * 2 * (t-1) + P2.y * (2 - 4*t) + P3.y * (2*t);
+                    double zTangent = P1.z * 2 * (t-1) + P2.z * (2 - 4*t) + P3.z * (2*t);
+                    Vector3D dir = new Vector3D(xTangent, yTangent, zTangent);
 
                     realResult.add(realPrev = new PathSegment(
                             realPrev.to, pt, dir.normalize(), dir.crossProduct(up).normalize(), null, null, null, null, realPrev.nodeType, 0, 0
@@ -436,16 +437,16 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         }
 
         for (int i = 1; i < realResult.size(); i++) {
-            if (realResult.get(i).side.lengthVector() == 0)
+            if (realResult.get(i).side.length() == 0)
                 realResult.get(i).side = realResult.get(i-1).side;
         }
         for (int i = realResult.size()-2; i >= 0; i--) {
-            if (realResult.get(i).side.lengthVector() == 0)
+            if (realResult.get(i).side.length() == 0)
                 realResult.get(i).side = realResult.get(i+1).side;
         }
         for (PathSegment segment : realResult) {
-            if (segment.side.lengthVector() == 0)
-                segment.side = new Vec3(1, 0, 0);
+            if (segment.side.length() == 0)
+                segment.side = new Vector3D(1, 0, 0);
         }
 
 
@@ -455,11 +456,11 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             int toIdx = i; i--;
 
             PathSegment prev = realResult.get(fromIdx);
-            prev.BL = prev.from.subtract(prev.side.xCoord * thickness/2, prev.side.yCoord * thickness/2, prev.side.zCoord * thickness/2);
-            prev.BR = prev.from.addVector(prev.side.xCoord * thickness/2, prev.side.yCoord * thickness/2, prev.side.zCoord * thickness/2);
+            prev.BL = prev.from.subtract(prev.side.x * thickness/2, prev.side.y * thickness/2, prev.side.z * thickness/2);
+            prev.BR = prev.from.add(prev.side.x * thickness/2, prev.side.y * thickness/2, prev.side.z * thickness/2);
             for (int j = fromIdx+1; j < toIdx; j++) {
                 PathSegment curr = realResult.get(j);
-                Vec3 prevSideScaled = new Vec3(prev.side.xCoord * thickness/2, prev.side.yCoord * thickness/2, prev.side.zCoord * thickness/2);
+                Vector3D prevSideScaled = new Vector3D(prev.side.x * thickness/2, prev.side.y * thickness/2, prev.side.z * thickness/2);
 
                 prev.TL = prev.to.subtract(prevSideScaled);
                 prev.TR = prev.to.add(prevSideScaled);
@@ -469,12 +470,12 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                 prev = curr;
             }
             PathSegment to = realResult.get(toIdx-1);
-            to.TL = to.to.subtract(to.side.xCoord * thickness/2, to.side.yCoord * thickness/2, to.side.zCoord * thickness/2);
-            to.TR = to.to.addVector(to.side.xCoord * thickness/2, to.side.yCoord * thickness/2, to.side.zCoord * thickness/2);
+            to.TL = to.to.subtract(to.side.x * thickness/2, to.side.y * thickness/2, to.side.z * thickness/2);
+            to.TR = to.to.add(to.side.x * thickness/2, to.side.y * thickness/2, to.side.z * thickness/2);
         }
         double culLen = 0;
         for (PathSegment segment : realResult) {
-            double len = segment.to.subtract(segment.from).lengthVector();
+            double len = segment.to.subtract(segment.from).length();
             segment.texCulLenFrom = culLen / thickness;
             culLen += len;
             segment.texCulLenTo = culLen / thickness;
@@ -555,33 +556,33 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
 
-        boolean flag = renderManager.getDistanceToCamera(segment.from.xCoord, segment.from.yCoord, segment.from.zCoord) > 0.25;
-        Vec3 fixedFrom = flag ? segment.from.addVector(0, 1.5, 0) : segment.from;
-        Vec3 dir = segment.to.subtract(fixedFrom);
+        boolean flag = renderManager.getDistanceToCamera(segment.from.x, segment.from.y, segment.from.z) > 0.25;
+        Vector3D fixedFrom = flag ? segment.from.add(0, 1.5, 0) : segment.from;
+        Vector3D dir = segment.to.subtract(fixedFrom);
         if (!flag) {
             GlStateManager.disableDepth();
         }
         if (path){
-            Vec3 normal;
+            Vector3D normal;
             if (flag) {
-                normal = dir.crossProduct(renderManager.livingPlayer.getLookVec()).normalize();
-                if (normal.lengthVector() == 0) normal = new Vec3(1, 0, 0);
-                normal = new Vec3(normal.xCoord * 0.05, normal.yCoord * 0.05, normal.zCoord * 0.05);
+                normal = dir.crossProduct(ModAPI.getAPI().getPlayer().getLook(partialTicks)).normalize();
+                if (normal.length() == 0) normal = new Vector3D(1, 0, 0);
+                normal = new Vector3D(normal.x * 0.05, normal.y * 0.05, normal.z * 0.05);
             } else {
-                normal = new Vec3(segment.side.xCoord * 0.05, segment.side.yCoord * 0.05, segment.side.zCoord * 0.05);
+                normal = new Vector3D(segment.side.x * 0.05, segment.side.y * 0.05, segment.side.z * 0.05);
             }
 
             GlStateManager.disableTexture2D();
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-            double len = segment.to.subtract(segment.from).lengthVector();
+            double len = segment.to.subtract(segment.from).length();
             int i = RenderUtils.getColorAt(0, 0, 0, colour);
             float r = ((i >> 16) & 0xFF) / 255.0f, g = ((i >> 8) & 0xFF) / 255.0f, b = (i & 0xFF) / 255.0f, a = ((i >> 24) & 0xFF) / 255.0f;
-            Vec3 quadBL = fixedFrom.add(normal), quadBR = fixedFrom.subtract(normal), quadTL = segment.to.add(normal), quadTR = segment.to.subtract(normal);
+            Vector3D quadBL = fixedFrom.add(normal), quadBR = fixedFrom.subtract(normal), quadTL = segment.to.add(normal), quadTR = segment.to.subtract(normal);
             {
-                worldRenderer.pos(quadBL.xCoord, quadBL.yCoord, quadBL.zCoord).color(r, g, b, a).endVertex();
-                worldRenderer.pos(quadBR.xCoord, quadBR.yCoord, quadBR.zCoord).color(r, g, b, a).endVertex();
-                worldRenderer.pos(quadTR.xCoord, quadTR.yCoord, quadTR.zCoord).color(r, g, b, a).endVertex();
-                worldRenderer.pos(quadTL.xCoord, quadTL.yCoord, quadTL.zCoord).color(r, g, b, a).endVertex();
+                worldRenderer.pos(quadBL.x, quadBL.y, quadBL.z).color(r, g, b, a).endVertex();
+                worldRenderer.pos(quadBR.x, quadBR.y, quadBR.z).color(r, g, b, a).endVertex();
+                worldRenderer.pos(quadTR.x, quadTR.y, quadTR.z).color(r, g, b, a).endVertex();
+                worldRenderer.pos(quadTL.x, quadTL.y, quadTL.z).color(r, g, b, a).endVertex();
             }
             Tessellator.getInstance().draw();
 
@@ -601,10 +602,10 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
             {
-                worldRenderer.pos(quadBL.xCoord, quadBL.yCoord, quadBL.zCoord).tex(0, -animate).endVertex();
-                worldRenderer.pos(quadBR.xCoord, quadBR.yCoord, quadBR.zCoord).tex(1, -animate).endVertex();
-                worldRenderer.pos(quadTR.xCoord, quadTR.yCoord, quadTR.zCoord).tex(1, -len / 0.1-animate).endVertex();
-                worldRenderer.pos(quadTL.xCoord, quadTL.yCoord, quadTL.zCoord).tex(0, -len / 0.1-animate).endVertex();
+                worldRenderer.pos(quadBL.x, quadBL.y, quadBL.z).tex(0, -animate).endVertex();
+                worldRenderer.pos(quadBR.x, quadBR.y, quadBR.z).tex(1, -animate).endVertex();
+                worldRenderer.pos(quadTR.x, quadTR.y, quadTR.z).tex(1, -len / 0.1-animate).endVertex();
+                worldRenderer.pos(quadTL.x, quadTL.y, quadTL.z).tex(0, -len / 0.1-animate).endVertex();
             }
             Tessellator.getInstance().draw();
 
@@ -615,7 +616,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         }
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(segment.from.xCoord, segment.from.yCoord+0.5, segment.from.zCoord);
+        GlStateManager.translate(segment.from.x, segment.from.y+0.5, segment.from.z);
         GlStateManager.rotate(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
         GlStateManager.rotate(renderManager.playerViewX, 1.0f, 0.0f, 0.0f);
         GlStateManager.scale(1/32.0, -1/32.0, 1/32.0);
@@ -649,7 +650,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
         GL11.glPolygonOffset(-1.0f, -1.0f);
-        VectorI3D pos = new VectorI3D(Math.floor(segment.to.xCoord), Math.floor(segment.to.yCoord) -1 , Math.floor(segment.to.zCoord));
+        VectorI3D pos = new VectorI3D(Math.floor(segment.to.x), Math.floor(segment.to.y) -1 , Math.floor(segment.to.z));
         RenderUtils._highlightBlock(pos, Color.green, partialTicks, true);
         GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
 
@@ -680,11 +681,11 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         float r= ((i >> 16) &0xFF)/255.0f, g=((i >> 8) &0xFF)/255.0f, b=(i &0xFF)/255.0f, a=((i >> 24) &0xFF)/255.0f;
         for (int j = from; j < to; j++) {
             PathSegment pos = poses.get(j);
-            Vec3 quadBL = pos.BL, quadBR = pos.BR, quadTL = pos.TL, quadTR = pos.TR;
-            worldRenderer.pos(quadBL.xCoord, quadBL.yCoord, quadBL.zCoord).color(r,g,b,a).endVertex();
-            worldRenderer.pos(quadBR.xCoord, quadBR.yCoord, quadBR.zCoord).color(r,g,b,a).endVertex();
-            worldRenderer.pos(quadTR.xCoord, quadTR.yCoord, quadTR.zCoord).color(r,g,b,a).endVertex();
-            worldRenderer.pos(quadTL.xCoord, quadTL.yCoord, quadTL.zCoord).color(r,g,b,a).endVertex();
+            Vector3D quadBL = pos.BL, quadBR = pos.BR, quadTL = pos.TL, quadTR = pos.TR;
+            worldRenderer.pos(quadBL.x, quadBL.y, quadBL.z).color(r,g,b,a).endVertex();
+            worldRenderer.pos(quadBR.x, quadBR.y, quadBR.z).color(r,g,b,a).endVertex();
+            worldRenderer.pos(quadTR.x, quadTR.y, quadTR.z).color(r,g,b,a).endVertex();
+            worldRenderer.pos(quadTL.x, quadTL.y, quadTL.z).color(r,g,b,a).endVertex();
         }
         Tessellator.getInstance().draw();
 
@@ -706,11 +707,11 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         for (int j = from; j < to; j++) {
             PathSegment pos = poses.get(j);
-            Vec3 quadBL = pos.BL, quadBR = pos.BR, quadTL = pos.TL, quadTR = pos.TR;
-            worldRenderer.pos(quadBL.xCoord, quadBL.yCoord, quadBL.zCoord).tex(0, -pos.texCulLenFrom-animate).endVertex();
-            worldRenderer.pos(quadBR.xCoord, quadBR.yCoord, quadBR.zCoord).tex(1, -pos.texCulLenFrom-animate).endVertex();
-            worldRenderer.pos(quadTR.xCoord, quadTR.yCoord, quadTR.zCoord).tex(1, -pos.texCulLenTo-animate).endVertex();
-            worldRenderer.pos(quadTL.xCoord, quadTL.yCoord, quadTL.zCoord).tex(0,-pos.texCulLenTo-animate).endVertex();
+            Vector3D quadBL = pos.BL, quadBR = pos.BR, quadTL = pos.TL, quadTR = pos.TR;
+            worldRenderer.pos(quadBL.x, quadBL.y, quadBL.z).tex(0, -pos.texCulLenFrom-animate).endVertex();
+            worldRenderer.pos(quadBR.x, quadBR.y, quadBR.z).tex(1, -pos.texCulLenFrom-animate).endVertex();
+            worldRenderer.pos(quadTR.x, quadTR.y, quadTR.z).tex(1, -pos.texCulLenTo-animate).endVertex();
+            worldRenderer.pos(quadTL.x, quadTL.y, quadTL.z).tex(0,-pos.texCulLenTo-animate).endVertex();
         }
         Tessellator.getInstance().draw();
 
@@ -747,7 +748,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             if (nodeType == PathfindResult.PathfindNode.NodeType.ETHERWARP) {
                 boolean path = true;
                 if (settings.isEtherwarpTracerDisableEtherwarpRoute() && settings.isEnableEtherwarpTracer()) {
-                    if (Minecraft.getMinecraft().thePlayer.getPositionVector().squareDistanceTo(poses.get(st).from) < settings.getEtherwarpTracerDist()) path = false;
+                    if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(poses.get(st).from) < settings.getEtherwarpTracerDist()) path = false;
                 }
                 drawIcon(40, poses.get(st), colour, texture, partialTicks, animate, path);
             } else if (nodeType == PathfindResult.PathfindNode.NodeType.ENDERPEARL)

@@ -197,7 +197,7 @@ public class DungeonListener {
                     } else if (SkyblockStatus.isOnDungeon()) {
                         DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(new DungeonContext(
                                 SkyblockStatus.getLocationName(),
-                                Minecraft.getMinecraft().thePlayer.worldObj));
+                                Minecraft.getMinecraft().theWorld));
                         ModAPI.getAPI().getEventBus().fireEvent(new DungeonStartedEvent());
                     }
                 } catch (IllegalStateException e) {
@@ -433,8 +433,8 @@ public class DungeonListener {
                 if (FeatureRegistry.DEBUG.isEnabled() && dungeonRoom != null && dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor) {
 
                     GeneralRoomProcessor roomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
-                    Vec3 player = Minecraft.getMinecraft().thePlayer.getPositionVector();
-                    BlockPos real = new BlockPos(player.xCoord * 2, player.yCoord * 2, player.zCoord * 2);
+                    Vector3D player = ModAPI.getAPI().getPlayer().getPositionVector();
+                    BlockPos real = new BlockPos(player.x * 2, player.y * 2, player.z * 2);
                     try {
 
                         for (BlockPos allInBox : BlockPos.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
@@ -676,7 +676,8 @@ public class DungeonListener {
     public void onEntityDespawn2(EntityExitWorldEvent worldEvent) {
         for (int entityId : worldEvent.getEntityIds()) {
             Entity en = Minecraft.getMinecraft().theWorld.getEntityByID(entityId);
-            if (en instanceof EntityBat && en.getDistanceSqToEntity(Minecraft.getMinecraft().thePlayer) < 3025)
+            if (en instanceof EntityBat && new VectorI3D(en.getPositionVector().xCoord, en.getPositionVector().yCoord, en.getPositionVector().zCoord)
+                    .distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) < 3025)
                 DungeonActionContext.getKilleds().add(entityId);
         }
     }

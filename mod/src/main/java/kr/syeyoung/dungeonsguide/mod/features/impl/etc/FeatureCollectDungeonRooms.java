@@ -155,7 +155,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                 ENTER, MOVE, EXIT, DEATH
             }
             private Type type;
-            private Vec3 pos;
+            private Vector3D pos;
             private long time;
         }
         private LinkedList<EntityTrajectory> trajectory = new LinkedList<>();
@@ -312,8 +312,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (dungeonRoom == null) return;
         RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
         if (roomInfo == null) return;
-        if (roomInfo.playerTrajactory.size() == 0 || roomInfo.playerTrajactory.getLast().getPos() == null || roomInfo.playerTrajactory.getLast().getPos().squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) > 0.1f) {
-            roomInfo.playerTrajactory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, Minecraft.getMinecraft().thePlayer.getPositionVector(), System.currentTimeMillis()));
+        if (roomInfo.playerTrajactory.size() == 0 || roomInfo.playerTrajactory.getLast().getPos() == null || roomInfo.playerTrajactory.getLast().getPos().distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) > 0.1f) {
+            roomInfo.playerTrajactory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, ModAPI.getAPI().getPlayer().getPositionVector(), System.currentTimeMillis()));
         }
     }
 
@@ -745,7 +745,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                     new AColor(0, 255, 0, 255),
                     event.partialTicks
             );
-            List<Vec3> lines = new ArrayList<>();
+            List<Vector3D> lines = new ArrayList<>();
             for (EntityData.EntityTrajectory entityTrajectory : entityData.getTrajectory()) {
                 if (entityTrajectory.getPos() == null) {
                     RenderUtils.drawLinesVec3(lines, new AColor(0,255,0,255), 1.0f, event.partialTicks, false);

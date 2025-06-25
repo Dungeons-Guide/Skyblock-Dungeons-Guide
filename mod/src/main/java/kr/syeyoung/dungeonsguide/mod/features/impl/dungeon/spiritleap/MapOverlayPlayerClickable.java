@@ -108,7 +108,7 @@ public class MapOverlayPlayerClickable implements MapOverlay {
             GlStateManager.rotate((float) yaw, 0, 0, 1);
             GlStateManager.scale(settings.getIconSize(), settings.getIconSize(), 0);
             Gui.drawScaledCustomSizeModalRect(-4, -4, 128 - 16,
-                    name.equals(Minecraft.getMinecraft().thePlayer.getName()) ? 128 - 16 : 128 - 0, 16, -16, 8, 8, 128, 128);
+                    name.equals(ModAPI.getAPI().getPlayer().getName()) ? 128 - 16 : 128 - 0, 16, -16, 8, 8, 128, 128);
         } else {
             boolean flag1 = settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.HEAD_FLIP;
             GlStateManager.enableTexture2D();

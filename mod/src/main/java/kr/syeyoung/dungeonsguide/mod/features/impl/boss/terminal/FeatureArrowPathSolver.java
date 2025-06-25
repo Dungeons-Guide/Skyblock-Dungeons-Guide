@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
@@ -69,8 +69,8 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
 
-        if (depth && Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(-2,120,75) > 400) return;
-        if (!depth && Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(-2,120,75) > 25) return;
+        if (depth && ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(-2,120,75) > 400) return;
+        if (!depth && ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(-2,120,75) > 25) return;
 
         for (int y = 0; y < 5; y++){
             for (int x = 0; x < 5; x++) {
@@ -94,7 +94,7 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
 
 
-        if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(-2,120,75) > 400) return;
+        if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(-2,120,75) > 400) return;
 
         if (System.currentTimeMillis() < nextUpdate) return;
         World w = dc.getWorld();

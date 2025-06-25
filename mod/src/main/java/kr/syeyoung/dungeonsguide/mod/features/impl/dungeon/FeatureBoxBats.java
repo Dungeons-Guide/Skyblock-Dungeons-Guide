@@ -27,9 +27,10 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +51,7 @@ public class FeatureBoxBats extends SimpleFeature  {
         
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        final BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        final VectorI3D player = ModAPI.getAPI().getPlayer().getPosition();
         int val = this.<Integer>getParameter("radius").getValue();
         final int sq = val * val;
 
@@ -58,7 +59,7 @@ public class FeatureBoxBats extends SimpleFeature  {
             @Override
             public boolean apply(@Nullable EntityBat input) {
                 if (input != null && input.isInvisible()) return false;
-                return input != null && input.getDistanceSq(player) < sq;
+                return input != null && player.distanceSq(new VectorI3D(input.getPositionVector().xCoord, input.getPositionVector().yCoord, input.getPositionVector().zCoord)) < sq;
             }
         });
         AColor c = this.<AColor>getParameter("color").getValue();
