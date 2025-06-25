@@ -39,16 +39,12 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
-import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -108,7 +104,9 @@ public class CommandDungeonsGuide extends CommandBase {
     public void processCommand(ICommandSender sender, String[] args) {
 
         if (args.length == 0) {
-            target = new ConfigGuiScreenAdapter(null);
+            DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
+                Minecraft.getMinecraft().displayGuiScreen(new ConfigGuiScreenAdapter(null));
+            });
             return;
         }
 
@@ -120,7 +118,9 @@ public class CommandDungeonsGuide extends CommandBase {
                 break;
 
             case "gui":
-                target = new ConfigGuiScreenAdapter(null, new GlobalHUDScale(new HUDLocationConfig(null)));
+                DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
+                    Minecraft.getMinecraft().displayGuiScreen(new ConfigGuiScreenAdapter(null, new GlobalHUDScale(new HUDLocationConfig(null))));
+                });
                 break;
             case "pv":
                 pvCommand(args[1], sender); //args[1] is the player name
@@ -206,22 +206,6 @@ public class CommandDungeonsGuide extends CommandBase {
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §aSuccessfully set your Global HUD scale to " + args[1] + ". §eTo reset your Global HUD scale, run §6/dg " + args[0] + " reset§e."));
         FeatureRegistry.GLOBAL_HUD_SCALE.<Boolean>getParameter("mc").setValue(false);
         FeatureRegistry.GLOBAL_HUD_SCALE.<Double>getParameter("scale").setValue(theScale);
-    }
-
-    @Setter
-    private GuiScreen target;
-
-    @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent e) {
-        try {
-            if (target != null && e.phase == TickEvent.Phase.START) {
-                Minecraft.getMinecraft().displayGuiScreen(target);
-                target = null;
-            }
-        } catch (Exception t) {
-            FeatureCollectDiagnostics.queueSendLogAsync(t);
-            t.printStackTrace();
-        }
     }
 
     @Override

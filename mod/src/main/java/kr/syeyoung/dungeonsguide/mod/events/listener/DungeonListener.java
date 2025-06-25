@@ -53,6 +53,7 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.event.events.EntityExitWorldEvent;
 import kr.syeyoung.modapi.event.events.ItemPickupEvent;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
@@ -76,7 +77,6 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -176,10 +176,7 @@ public class DungeonListener {
 
 
     @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent ev) {
-        if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
-        ModAPI.getAPI().getEventBus().fireEvent(new DGTickEvent());
-
+    public void onTick(ClientTickEvent ev) {
         if (SkyblockStatus.isOnSkyblock() || SkyblockStatus.isOnDungeon()) {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (context != null) {
@@ -236,10 +233,7 @@ public class DungeonListener {
     private WeakReference<DungeonRoom> lastRoom = null;
 
     @SubscribeEvent
-    public void onTickDetectRoomTransfer(TickEvent.ClientTickEvent ev) {
-        if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
-
-
+    public void onTickDetectRoomTransfer(ClientTickEvent ev) {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (!SkyblockStatus.isOnDungeon() || context == null) return;
         UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();

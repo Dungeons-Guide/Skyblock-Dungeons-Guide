@@ -35,7 +35,7 @@ import kr.syeyoung.dungeonsguide.mod.cosmetics.CustomNetworkPlayerInfo;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketInjector;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
@@ -520,7 +520,7 @@ public class DungeonsGuide implements DGInterface {
     }
 
     @SubscribeEvent
-    public void onTick(DGTickEvent tickEvent) {
+    public void onTick(ClientTickEvent tickEvent) {
         for (Runnable task : tasks) {
             try {
                 task.run();

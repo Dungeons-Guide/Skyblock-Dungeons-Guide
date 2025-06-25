@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplayEngine;
@@ -72,7 +72,7 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
     Map<Integer, Integer> lvCount = new HashMap<>();
 
     @DGEventHandler
-    public void onTick(DGTickEvent tickEvent) {
+    public void onTick(ClientTickEvent tickEvent) {
         locations.clear();
         lvCount.clear();
         if (!isHUDViewable()) {

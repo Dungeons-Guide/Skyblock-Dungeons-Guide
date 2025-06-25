@@ -5,7 +5,7 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.modapi.ModAPI;
@@ -41,7 +41,7 @@ public class LiveRouteRegistry extends SimpleFeature {
 
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onTick(DGTickEvent event) {
+    public void onTick(ClientTickEvent event) {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) {
             roomRoomRouteRegistryMap.clear();
@@ -84,7 +84,7 @@ public class LiveRouteRegistry extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onTick2(DGTickEvent event) {
+    public void onTick2(ClientTickEvent event) {
         RoomRouteHandler roomRouteHandler = getRoomHandler(getRoomIn());
         if (roomRouteHandler == null) return;
         roomRouteHandler.tick();

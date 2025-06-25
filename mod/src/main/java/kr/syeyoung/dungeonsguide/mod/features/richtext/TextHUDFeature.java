@@ -22,7 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.MarkerProvider;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCEnum;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCRTextStyleMap;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.SkyblockLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
@@ -69,7 +69,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature {
         return new OverlayWidget(richText, OverlayType.UNDER_CHAT, new GUIRectPositioner(this::getFeatureRect), getClass().getSimpleName());
     }
     @DGEventHandler
-    public void onTick0(DGTickEvent dgTickEvent) {
+    public void onTick0(ClientTickEvent clientTickEvent) {
         try {
             checkVisibility();
             if (isHUDViewable()) {

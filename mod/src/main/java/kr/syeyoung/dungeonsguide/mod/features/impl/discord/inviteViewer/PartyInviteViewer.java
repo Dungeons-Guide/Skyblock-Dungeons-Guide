@@ -22,7 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserInvitedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserJoinRequestEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractGuiFeature;
@@ -56,7 +56,7 @@ public class PartyInviteViewer extends AbstractGuiFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void onTick(DGTickEvent tickEvent) {
+    public void onTick(ClientTickEvent tickEvent) {
         if (partyInviteViewer != null)
             partyInviteViewer.tick();
     }

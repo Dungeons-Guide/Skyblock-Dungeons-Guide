@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.events.impl;
+package kr.syeyoung.modapi.event.events;
 
 import kr.syeyoung.modapi.event.UEvent;
 
-public class DGTickEvent extends UEvent {
+public class ClientTickEvent extends UEvent {
 }

@@ -22,7 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.client.Minecraft;
@@ -76,7 +76,7 @@ public class FeatureTerminalSolvers extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onTick(DGTickEvent tickEvent) {
+    public void onTick(ClientTickEvent tickEvent) {
         if (!isEnabled()) return;
         if (solutionProvider == null) return;
         if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) {

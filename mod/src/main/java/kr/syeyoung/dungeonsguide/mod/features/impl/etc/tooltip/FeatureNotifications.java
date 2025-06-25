@@ -1,7 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip;
 
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
@@ -55,7 +55,7 @@ public class FeatureNotifications extends AbstractGuiFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void onTick(DGTickEvent tickEvent) {
+    public void onTick(ClientTickEvent tickEvent) {
 //        if (progressUpdate) {
 //            if (progress != null) {
 //                progress.update(progresses);

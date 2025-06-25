@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightPr
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorNecron;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.MarkerData;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
@@ -153,7 +153,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onTick(DGTickEvent event) {
+    public void onTick(ClientTickEvent event) {
         BossfightProcessor necron = getProcessor();
         if (necron == null) return;
         if (!necron.getCurrentPhase().startsWith("goldor-terminals")) return;

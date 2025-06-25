@@ -40,7 +40,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChunkUpdateEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonRoomDiscoveredEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -293,7 +293,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     private int lastNo = 0;
     private int totalSecret = 0;
     @DGEventHandler(ignoreDisabled = true)
-    public void onTick(DGTickEvent tickEvent) {
+    public void onTick(ClientTickEvent tickEvent) {
         int secret = FeatureRegistry.DUNGEON_SECRETS_ROOM.getLatestCurrSecrets();
         int total = FeatureRegistry.DUNGEON_SECRETS_ROOM.getLatestTotalSecrets();
         if (secret != lastNo || total != totalSecret) {

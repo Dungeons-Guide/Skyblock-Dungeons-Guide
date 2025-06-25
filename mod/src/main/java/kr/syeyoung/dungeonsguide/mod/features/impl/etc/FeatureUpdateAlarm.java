@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.modapi.ModAPI;
@@ -36,7 +36,7 @@ public class FeatureUpdateAlarm extends SimpleFeature  {
     private String stompPayload;
 
     @DGEventHandler
-    public void onTick(DGTickEvent event) {
+    public void onTick(ClientTickEvent event) {
         if (stompPayload != null) {
             ChatTransmitter.addToQueue(new ChatComponentText(stompPayload));
             stompPayload = null;

@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
@@ -100,7 +100,7 @@ public class FeatureEpicCountdown extends SimpleFeature {
     private String lastSec;
 
     @DGEventHandler
-    public void onTick(DGTickEvent event){
+    public void onTick(ClientTickEvent event){
         if(!isEnabled() || !SkyblockStatus.isOnDungeon()) return;
 
 

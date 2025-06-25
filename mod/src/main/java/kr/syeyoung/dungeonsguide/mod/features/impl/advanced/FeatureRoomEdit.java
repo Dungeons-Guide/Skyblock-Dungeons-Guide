@@ -36,7 +36,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
@@ -688,7 +688,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void onWorldLoad(DGTickEvent event) {
+    public void onWorldLoad(ClientTickEvent event) {
         if (flag && !setup) {
             setup = true;
             System.out.println(Minecraft.getMinecraft().theWorld);

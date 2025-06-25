@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.onlinealarm;
 
 import kr.syeyoung.dungeonsguide.mod.discord.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
@@ -47,7 +47,7 @@ public class PlayingDGAlarm extends AbstractGuiFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void onTick(DGTickEvent event) {
+    public void onTick(ClientTickEvent event) {
         if (onlinePeopleViewer != null)
             onlinePeopleViewer.tick();
     }

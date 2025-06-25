@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
@@ -390,7 +390,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
     }
 
     @DGEventHandler
-    public void onTick(DGTickEvent event) {
+    public void onTick(ClientTickEvent event) {
         EntityPlayerSP sp = Minecraft.getMinecraft().thePlayer;
         if (sp == null) return;
         if (sp.inventory == null || sp.inventory.armorInventory == null) return;

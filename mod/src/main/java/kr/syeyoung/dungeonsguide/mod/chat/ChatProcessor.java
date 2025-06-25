@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.chat;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.ChatComponentText;
@@ -28,7 +29,6 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -68,11 +68,10 @@ public class ChatProcessor {
 
     private long minimumNext = 0;
 
-    @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent clientTickEvent) {
+    @kr.syeyoung.modapi.event.SubscribeEvent
+    public void onTick(ClientTickEvent clientTickEvent) {
         try {
-            if (clientTickEvent.phase == TickEvent.Phase.START &&
-                    ModAPI.getAPI().getPlayer() != null && minimumNext < System.currentTimeMillis()) {
+            if (ModAPI.getAPI().getPlayer() != null && minimumNext < System.currentTimeMillis()) {
                 if (!chatQueue.isEmpty()) {
                     Tuple<String, Runnable> tuple = chatQueue.poll();
                     Minecraft.getMinecraft().thePlayer.sendChatMessage(tuple.getFirst());

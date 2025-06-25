@@ -31,12 +31,11 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManag
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
+import kr.syeyoung.modapi.event.SubscribeEvent;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.Collection;
 import java.util.Set;
@@ -55,9 +54,7 @@ public class SkyblockStatus {
 
 
     @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent ev) {
-        if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
-
+    public void onTick(ClientTickEvent ev) {
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
         boolean isOnDungeonPrev = isOnDungeon();
         boolean isOnSkyblockPrev = isOnSkyblock();
