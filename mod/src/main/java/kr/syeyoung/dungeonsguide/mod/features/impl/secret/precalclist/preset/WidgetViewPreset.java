@@ -63,7 +63,7 @@ public class WidgetViewPreset extends AnnotatedImportOnlyWidget {
                     additionalInfoCaculatedDungeonRoomInfoList.add(new AdditionalInfoCaculatedDungeonRoomInfo(dungeonRoomInfo, preset));
                 }
 
-                Minecraft.getMinecraft().addScheduledTask(() -> {
+                DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
 
                     roompreset.setValue(new WidgetPresetRoomList(preset, this, additionalInfoCaculatedDungeonRoomInfoList));
                     crunchData.setValue("done");

@@ -1,12 +1,12 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step2;
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.PathfindPrecalculationRequestSet;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.WidgetPendingRequestPage;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
 import java.lang.ref.WeakReference;
@@ -27,7 +27,7 @@ public class WidgetStep2Uploading extends AnnotatedImportOnlyWidget {
     }
 
     public void notifyDone() {
-        Minecraft.getMinecraft().addScheduledTask(() -> {
+        DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
             parent.updateStep();
         });
     }

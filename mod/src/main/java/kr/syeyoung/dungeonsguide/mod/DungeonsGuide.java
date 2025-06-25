@@ -35,11 +35,13 @@ import kr.syeyoung.dungeonsguide.mod.cosmetics.CustomNetworkPlayerInfo;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketInjector;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.PassthroughManager;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
@@ -54,6 +56,7 @@ import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
+import kr.syeyoung.modapi.event.SubscribeEvent;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -89,6 +92,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -500,5 +504,24 @@ public class DungeonsGuide implements DGInterface {
     @Override
     public Class<? extends GuiScreen> getModConfigGUI() {
         return ConfigGuiScreenAdapter.class;
+    }
+
+
+    private LinkedBlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
+
+    public void runNextTick(Runnable r) {
+        tasks.offer(r);
+    }
+
+    @SubscribeEvent
+    public void onTick(DGTickEvent tickEvent) {
+        for (Runnable task : tasks) {
+            try {
+                task.run();
+            } catch (Exception e) {
+                FeatureCollectDiagnostics.queueSendLogAsync(e);
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -22,6 +22,7 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PacketProcessedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RawPacketReceivedEvent;
@@ -77,12 +78,12 @@ public class PacketInjector extends ChannelDuplexHandler {
         // Hopefully this works? idk
         Packet finalPacket = packet;
         if (doStuff)
-            Minecraft.getMinecraft().addScheduledTask(() -> {
+            DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
                 ModAPI.getAPI().getEventBus().fireEvent(new PacketProcessedEvent.Pre(finalPacket));
             });
         super.channelRead(ctx, packet);
         if (doStuff)
-            Minecraft.getMinecraft().addScheduledTask(() -> {
+            DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
                 ModAPI.getAPI().getEventBus().fireEvent(new PacketProcessedEvent.Post(finalPacket));
             });
     }

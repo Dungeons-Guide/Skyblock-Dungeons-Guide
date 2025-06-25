@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.details;
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset.WidgetViewPreset;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.roompreset.mechanics.WidgetPresetRoomDetailsSecretPathfindRequest;
@@ -18,7 +19,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalcu
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -107,7 +107,7 @@ public class WidgetPresetRoomRequestAndCalcView extends AnnotatedImportOnlyWidge
                     ));
                 }
 
-                Minecraft.getMinecraft().addScheduledTask(() -> {
+                DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
                     parent.updateStatus();
                     if (this.precalculationsApi.getValue() != null)
                         for (Widget precalculation : precalculations) {

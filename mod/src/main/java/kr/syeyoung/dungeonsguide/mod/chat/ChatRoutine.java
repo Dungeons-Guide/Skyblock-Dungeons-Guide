@@ -91,7 +91,7 @@ public class ChatRoutine {
                     }
                     if (state == 2){
                         callback.accept(lol);
-                        Minecraft.getMinecraft().addScheduledTask(next);
+                        DungeonsGuide.getDungeonsGuide().runNextTick(next);
                         return ChatProcessResult.REMOVE_LISTENER;
                     }
                     return ChatProcessResult.NONE;
@@ -112,7 +112,7 @@ public class ChatRoutine {
                 public ChatProcessResult process(String txt, Map<String, Object> context) {
                     if (starting.test(txt)) {
                         callback.accept(txt);
-                        Minecraft.getMinecraft().addScheduledTask(next);
+                        DungeonsGuide.getDungeonsGuide().runNextTick(next);
                         return ChatProcessResult.REMOVE_LISTENER;
                     }
                     return ChatProcessResult.NONE;
@@ -131,12 +131,12 @@ public class ChatRoutine {
             GuiMultiplayer guiMultiplayer;
             Minecraft.getMinecraft().displayGuiScreen(guiMultiplayer = new GuiMultiplayer(new GuiMainMenu()));
             ses.schedule(() -> {
-                Minecraft.getMinecraft().addScheduledTask(() -> {
+                DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
                     guiMultiplayer.selectServer(0);
                     guiMultiplayer.connectToSelected();
 
                     ses.schedule(() -> {
-                        Minecraft.getMinecraft().addScheduledTask(next::run);
+                        DungeonsGuide.getDungeonsGuide().runNextTick(next::run);
                     }, 10, TimeUnit.SECONDS);
                 });
             }, 3, TimeUnit.SECONDS);
@@ -159,7 +159,7 @@ public class ChatRoutine {
         @Override
         public void execute(Runnable next) {
             ses.schedule(() -> {
-                Minecraft.getMinecraft().addScheduledTask(next);
+                DungeonsGuide.getDungeonsGuide().runNextTick(next);
             }, ms, TimeUnit.MILLISECONDS);
         }
     }

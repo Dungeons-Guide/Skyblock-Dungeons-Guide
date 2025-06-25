@@ -211,7 +211,7 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
                     .titleColor(0xFF00FF00)
                     .build(), 5000));
 
-            Minecraft.getMinecraft().addScheduledTask(() -> {
+            DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
                 addPreset(preset);
             });
         } catch (Exception e) {

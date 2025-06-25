@@ -124,7 +124,7 @@ public class CosmeticsManager {
         this.activeCosmeticByPlayerNameLowerCase = activeCosmeticByPlayerName;
     }
 
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void stompConnect(StompConnectedEvent e) {
 
         e.getStompInterface().subscribe("/topic/cosmetic.set", (stompClient, payload) -> {
@@ -382,7 +382,7 @@ public class CosmeticsManager {
     }
 
 
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onTabList(PlayerListItemPacketEvent packetPlayerListItem) {
         S38PacketPlayerListItem asd = packetPlayerListItem.getPacketPlayerListItem();
         if (asd.getAction() == S38PacketPlayerListItem.Action.ADD_PLAYER) {
@@ -424,11 +424,11 @@ public class CosmeticsManager {
         }
     }
 
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onUpdate(DGPlayerJoinEvent event) {
         refresh(event.getUuid());
     }
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onUpdate(DGPlayerQuitEvent event) {
         refresh(event.getUuid());
     }

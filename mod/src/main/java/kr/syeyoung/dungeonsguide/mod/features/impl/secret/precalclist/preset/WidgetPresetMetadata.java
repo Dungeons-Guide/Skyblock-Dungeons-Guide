@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
 import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -26,7 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPresetRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
@@ -197,7 +197,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
                         }
                     } finally {
                         FeatureRegistry.NOTIFICATIONS.getRootWidget().removeNotification(uid);
-                        Minecraft.getMinecraft().addScheduledTask(() -> {
+                        DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
                             parent.recalc();
                         });
                     }
@@ -239,7 +239,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
                 }
             } finally {
                 FeatureRegistry.NOTIFICATIONS.getRootWidget().removeNotification(uid);
-                Minecraft.getMinecraft().addScheduledTask(() -> {
+                DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
                     parent.recalc();
                 });
             }

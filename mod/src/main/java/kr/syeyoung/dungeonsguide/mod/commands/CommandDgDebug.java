@@ -461,7 +461,7 @@ public class CommandDgDebug extends CommandBase {
 
         GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")), null, false);
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
+            DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
                 Minecraft.getMinecraft().displayGuiScreen(adapter);
             });
         }).start();
@@ -1493,7 +1493,7 @@ public class CommandDgDebug extends CommandBase {
     private void testGuiCommand() {
         GuiScreenAdapter adapter = new GuiScreenAdapter(new TestView());
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
+            DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
                 Minecraft.getMinecraft().displayGuiScreen(adapter);
             });
         }).start();

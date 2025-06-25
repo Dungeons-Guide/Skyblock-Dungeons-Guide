@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
@@ -12,7 +13,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.AllArgsConstructor;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -180,7 +180,7 @@ public class WidgetPresetRoomList extends AnnotatedImportOnlyWidget {
 
         WidgetViewPreset.calculator.submit(() -> {
             List<Widget> widgets = rebuildList();
-            Minecraft.getMinecraft().addScheduledTask(() -> {
+            DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
                 roomsApi.getValue().removeAllWidget();
                 for (Widget widget : widgets) {
                     roomsApi.getValue().addWidget(widget);
