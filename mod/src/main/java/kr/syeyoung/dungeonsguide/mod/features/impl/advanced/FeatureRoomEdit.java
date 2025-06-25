@@ -64,7 +64,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -651,14 +650,9 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     if (updatedBlock.getBlock().getBlock() != Blocks.air && updatedBlock.getBlock().getBlock() != Blocks.barrier) {
                         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
                         float partialTicks = event.partialTicks;
-                        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
 
-                        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-                        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-                        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
+                        RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
 
-                        GlStateManager.pushMatrix();
-                        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
                         GlStateManager.disableLighting();
                         GlStateManager.enableAlpha();
 //                        GlStateManager.disableDepth();

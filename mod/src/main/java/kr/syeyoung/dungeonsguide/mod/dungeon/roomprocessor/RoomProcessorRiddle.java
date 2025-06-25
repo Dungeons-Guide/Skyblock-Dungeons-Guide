@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
-import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -26,14 +25,14 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
 import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -76,20 +75,20 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
             final VectorI3D low = getDungeonRoom().getRoomBounds().getMin();
             final VectorI3D high = getDungeonRoom().getRoomBounds().getMax();
             World w = getDungeonRoom().getContext().getWorld();
-            List<EntityArmorStand> armor = w.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
-                @Override
-                public boolean apply(@Nullable EntityArmorStand input) {
-                    BlockPos pos = input.getPosition();
-                    return low.getX() < pos.getX() && pos.getX() < high.getX()
-                            && low.getZ() < pos.getZ() && pos.getZ() < high.getZ() && TextUtils.stripColor(input.getName()).equalsIgnoreCase(name);
+            List<UEntity> armor = getDungeonRoom().getContext().getUworld().getEntitiesWithinAabb(EntityType.ARMOR_STAND,
+                    new AABB(low.getX(), 0, low.getZ(), high.getX(), 255, high.getZ()));
+            UEntity target = null;
+            for (UEntity uEntity : armor) {
+                if (TextUtils.stripColor(uEntity.getName()).equalsIgnoreCase(name)) {
+                    target = uEntity;
                 }
-            });
+            }
 
-            if (armor != null) {
+            if (target != null) {
                 this.chest = null;
-                BlockPos pos = armor.get(0).getPosition();
-                for (BlockPos allInBox : BlockPos.getAllInBox(pos.add(-1, 0, -1), pos.add(1, 0, 1))) {
-                    Block b = w.getChunkFromBlockCoords(allInBox).getBlock(allInBox);
+                VectorI3D pos = target.getPosition();
+                for (VectorI3D allInBox : VectorI3D.getAllInBox(pos.add(-1, 0, -1), pos.add(1, 0, 1))) {
+                    Block b = w.getBlockState(new BlockPos(allInBox.getX(), allInBox.getY(), allInBox.getZ())).getBlock();
 
                     if ((b == Blocks.chest || b == Blocks.trapped_chest)&& allInBox.distanceSq(pos) == 1 ) {
                         this.chest = allInBox;
@@ -101,7 +100,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
         }
     }
 
-    BlockPos chest;
+    VectorI3D chest;
 
     @Override
     public void drawWorld(float partialTicks) {

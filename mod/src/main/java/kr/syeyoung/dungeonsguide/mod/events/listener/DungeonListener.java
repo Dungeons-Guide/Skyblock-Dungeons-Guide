@@ -67,7 +67,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
 import net.minecraft.network.play.server.S21PacketChunkData;
 import net.minecraft.network.play.server.S26PacketMapChunkBulk;
 import net.minecraft.profiler.Profiler;
@@ -450,14 +449,7 @@ public class DungeonListener {
                                 RenderUtils.highlightBlock(allInBox, new Color(0x70FF0000,true), renderWorldLastEvent.partialTicks, false);
                                 Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
                                 float partialTicks = renderWorldLastEvent.partialTicks;
-                                Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
-
-                                double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-                                double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-                                double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
-
-                                GlStateManager.pushMatrix();
-                                GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+                                RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
                                 GlStateManager.translate(allInBox.getX(), allInBox.getY(), allInBox.getZ());
                                 GlStateManager.scale(0.5f, 0.5f, 0.5f);
                                 GlStateManager.translate(0.5f,0.5f,0.5f);

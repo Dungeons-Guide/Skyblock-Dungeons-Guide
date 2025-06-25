@@ -37,4 +37,6 @@ public interface ModAPI {
     URenderManager getRenderManager();
 
     UEntity TEMPWRAP(Object object);
+
+    UEntity getRenderViewEntity();
 }

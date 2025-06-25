@@ -19,12 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import kr.syeyoung.modapi.entity.EntityType;
-import kr.syeyoung.modapi.entity.UEntity;
-import kr.syeyoung.modapi.entity.UEntityArmorStand;
-import kr.syeyoung.modapi.entity.UEntityPlayer;
+import kr.syeyoung.modapi.entity.*;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
-import net.minecraft.entity.monster.EntityGuardian;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -171,7 +167,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
             } else if (yE && xS && zS) {
                 mapping.put(updateEvent.getEntityLiving().getEntityId(), 20);
             } else if (!mapping.containsKey(updateEvent.getEntityLiving().getEntityId())) {
-                mapping.put(updateEvent.getEntityLiving().getEntityId(), ((EntityGuardian) updateEvent.getEntityLiving()).isElder() ? 21 : 22);
+                mapping.put(updateEvent.getEntityLiving().getEntityId(), ((UEntityGuardian) updateEvent.getEntityLiving()).isElder() ? 21 : 22);
             }
         }
     }

@@ -18,17 +18,17 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers;
 
-import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -66,19 +66,19 @@ public class BDChamber {
     }
 
 
-    public <T extends Entity> T getEntityAt(Class<T> entity, int x, int y, int z) {
+    public <T extends UEntity> T getEntityAt(EntityType entity, int x, int y, int z) {
         final VectorI3D pos = getBlockPos(x,y,z);
         return getEntityAt(entity, pos);
     }
-    public <T extends Entity> T getEntityAt(Class<T> entity, final VectorI3D pos) {
-        List<T> entities = room.getContext().getWorld().getEntities(entity, new Predicate<T>() {
-            @Override
-            public boolean apply(@Nullable T input) {
-                BlockPos position = input.getPosition();
-                return position.getX() == pos.x && position.getY() == pos.y && position.getZ() == pos.z;
-            }
-        });
+    public <T extends UEntity> T getEntityAt(EntityType entity, final VectorI3D pos) {
+        List<UEntity> entities = room.getContext().getUworld().getEntitiesWithinAabb(entity, new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1,pos.getY()+1, pos.getZ()+1));
         if (entities.size() == 0) return null;
-        return entities.get(0);
+
+        for (UEntity uEntity : entities) {
+            VectorI3D pos1 = uEntity.getPosition();
+            if (pos.equals(pos1)) return (T) uEntity;
+        }
+
+        return null;
     }
 }

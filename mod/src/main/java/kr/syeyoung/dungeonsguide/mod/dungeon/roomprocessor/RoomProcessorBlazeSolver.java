@@ -31,9 +31,7 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
@@ -110,12 +108,6 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
         Vector3D pos = next.getPositionEyes(partialTicks);
         RenderUtils.drawTextAtWorld("NEXT", (float)pos.x, (float)pos.y, (float)pos.z, 0xFFFF0000, 0.5f, true, false, partialTicks);
 
-        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
-
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
-
 
         for (UEntity entity : blazeList) {
             GlStateManager.pushMatrix();
@@ -134,9 +126,8 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
             GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
             GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
 
-            GlStateManager.pushMatrix();
 
-            GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+            RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
 
             GlStateManager.colorMask(false, false, false, false);
             ModAPI.getAPI().getRenderManager().doRenderEntity(entity, x,y,z,f,partialTicks, true);

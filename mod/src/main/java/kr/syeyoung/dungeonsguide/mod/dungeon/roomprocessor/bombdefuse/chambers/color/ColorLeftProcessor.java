@@ -26,11 +26,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.G
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntityArmorStand;
+import kr.syeyoung.modapi.item.UItemStack;
 import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
@@ -68,7 +68,7 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
         World w = getChamber().getRoom().getContext().getWorld();
 
         if ((c1 = w.getBlockState(new BlockPos(b1p.getX(), b1p.getY(), b1p.getZ())).getBlock()) == w1 && s1t < 7) {
-            int semi = match(getChamber().getEntityAt(EntityArmorStand.class,b1p.add(0, 1, 0)));
+            int semi = match(getChamber().getEntityAt(EntityType.ARMOR_STAND,b1p.add(0, 1, 0)));
             if (s1 == semi) {
                 s1t++;
             } else {
@@ -77,7 +77,7 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
             }
         }
         if ((c2 = w.getBlockState(new BlockPos(b2p.getX(), b2p.getY(), b2p.getZ())).getBlock()) == w2 && s2t < 7) {
-            int semi = match(getChamber().getEntityAt(EntityArmorStand.class,b2p.add(0, 2, 0)));
+            int semi = match(getChamber().getEntityAt(EntityType.ARMOR_STAND,b2p.add(0, 2, 0)));
             if (s2 == semi) {
                 s2t++;
             } else {
@@ -86,7 +86,7 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
             }
         }
         if ((c3 =w.getBlockState(new BlockPos(b3p.getX(), b3p.getY(), b3p.getZ())).getBlock()) == w3 && s3t < 7) {
-            int semi = match(getChamber().getEntityAt(EntityArmorStand.class,b3p.add(0, 1, 0)));
+            int semi = match(getChamber().getEntityAt(EntityType.ARMOR_STAND,b3p.add(0, 1, 0)));
             if (s3== semi) {
                 s3t++;
             } else {
@@ -158,13 +158,12 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
         }
     }
 
-    private byte match(EntityArmorStand armorStand) {
+    private byte match(UEntityArmorStand armorStand) {
         if (armorStand == null) {
             return 0;
         }
-        ItemStack item = armorStand.getInventory()[4];
-        NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
-        String str = ((NBTTagCompound)list.get(0)).getString("Value");
+        UItemStack item = armorStand.getEquipmentInSlot(4);
+        String str = item.getSkullTexture();
         return (byte) (!integers.containsKey(str) ? 0 : integers.get(str));
     }
 

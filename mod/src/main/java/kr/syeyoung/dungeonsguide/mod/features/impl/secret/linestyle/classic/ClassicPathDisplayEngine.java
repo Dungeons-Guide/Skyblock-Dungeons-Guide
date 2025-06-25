@@ -22,7 +22,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -224,15 +223,8 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
         VectorI3D blockpos = superBoom.getTarget().getOffsetPointList().get(0).getBlockPos(dungeonRoom);
+        RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
 
-        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
-
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
         GlStateManager.disableLighting();
         GlStateManager.enableAlpha();
         GlStateManager.disableDepth();
@@ -315,15 +307,9 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
 
     public static void drawLinesPathfindNode(List<PathfindResult.PathfindNode> poses, AColor colour, float thickness, float partialTicks) {
         if (poses.size() == 0) return;
-        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
+        RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
 
-        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
-        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
-        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-realX, -realY, -realZ);
         GlStateManager.disableTexture2D();
         GlStateManager.disableLighting();
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -377,8 +363,6 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
 
         }
         Tessellator.getInstance().draw();
-
-        GlStateManager.translate(realX, realY, realZ);
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();

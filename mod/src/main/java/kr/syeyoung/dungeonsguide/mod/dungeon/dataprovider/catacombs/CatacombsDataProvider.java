@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.catacombs;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonSpecificDataProvider;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.UEntity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
@@ -65,7 +66,7 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
      * @return Block pos of the dungeon entrance
      */
     public VectorI3D findDoor(World w, String dungeonName) {
-        Collection<EntityArmorStand> armorStand = getMorts(w);
+        Collection<UEntity> armorStand = getMorts(w);
 
         if (!armorStand.isEmpty()) {
             EntityArmorStand mort = armorStand.iterator().next();

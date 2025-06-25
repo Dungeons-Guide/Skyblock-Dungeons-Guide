@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.entity.monster.EntityGuardian;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -26,6 +27,9 @@ public class UEntityDelegateFactory {
         }
         if (entity instanceof EntitySkeleton) {
             return new UEntitySkeletonImpl((EntitySkeleton) entity);
+        }
+        if (entity instanceof EntityGuardian) {
+            return new UEntityGuardianImpl((EntityGuardian) entity);
         }
         if (entity instanceof EntityArmorStand) {
             return new UEntityArmorStandImpl((EntityArmorStand) entity);

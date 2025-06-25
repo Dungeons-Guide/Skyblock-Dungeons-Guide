@@ -25,10 +25,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.B
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.item.ItemStack;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntityArmorStand;
+import kr.syeyoung.modapi.item.UItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
 public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
     public NumberRightProcessor(RoomProcessorBombDefuseSolver solver, BDChamber chamber) {
@@ -56,10 +56,10 @@ public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void tick() {
         super.tick();
-        a1 = match(getChamber().getEntityAt(EntityArmorStand.class,d1p));
-        a2 = match(getChamber().getEntityAt(EntityArmorStand.class,d2p));
-        a3 = match(getChamber().getEntityAt(EntityArmorStand.class,d3p));
-        a4 = match(getChamber().getEntityAt(EntityArmorStand.class,d4p));
+        a1 = match(getChamber().getEntityAt(EntityType.ARMOR_STAND,d1p));
+        a2 = match(getChamber().getEntityAt(EntityType.ARMOR_STAND,d2p));
+        a3 = match(getChamber().getEntityAt(EntityType.ARMOR_STAND,d3p));
+        a4 = match(getChamber().getEntityAt(EntityType.ARMOR_STAND,d4p));
     }
 
     @Override
@@ -88,13 +88,12 @@ public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
         }
     }
 
-    private int match(EntityArmorStand armorStand) {
+    private int match(UEntityArmorStand armorStand) {
         if (armorStand == null) {
             return -1;
         }
-        ItemStack item = armorStand.getInventory()[4];
-        NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
-        String str = ((NBTTagCompound)list.get(0)).getString("Value");
+        UItemStack item = armorStand.getEquipmentInSlot(4);
+        String str = item.getSkullTexture();
         return !integers.containsKey(str) ? -1 : integers.get(str);
     }
 

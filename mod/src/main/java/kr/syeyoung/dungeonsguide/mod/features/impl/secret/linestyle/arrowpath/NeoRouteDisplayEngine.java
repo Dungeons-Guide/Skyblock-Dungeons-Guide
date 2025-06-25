@@ -34,7 +34,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
@@ -490,17 +489,11 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
     private static void highlightSuperboom(List<VectorI3D> blockPos, float partialTicks, AColor color) {
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
-        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
-        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
-        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
-        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
 
         AABB bb = RenderUtils.highlightBlocksStencil(blockPos, partialTicks, color, true);
 
         GlStateManager.enableDepth();
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-realX, -realY, -realZ);
+        RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
         GlStateManager.enableAlpha();
@@ -727,14 +720,9 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         animate = animate - Math.floor(animate);
         animate *= -1;
 
-        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
 
-        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
-        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
-        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
+        RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
 
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-realX, -realY, -realZ);
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();

@@ -114,6 +114,7 @@ public class UEntityImpl implements UEntity {
         bimap.put(EntityItemFrame.class, EntityType.ITEM_FRAME);
         bimap.put(EntityBlaze.class, EntityType.BLAZE);
         bimap.put(EntityArrow.class, EntityType.ARROW);
+        bimap.put(EntitySilverfish.class, EntityType.SILVERFISH);
     }
 
     @Override

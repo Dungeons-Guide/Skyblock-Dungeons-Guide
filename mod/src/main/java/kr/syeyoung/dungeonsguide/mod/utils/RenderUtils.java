@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.utils;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonDoor;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
@@ -568,15 +569,10 @@ public class RenderUtils {
     }
 
     public static void drawLine(Vector3D pos1, Vector3D pos2, Color colour, float partialTicks , boolean depth) {
-        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
-
-        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
-        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
-        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-realX, -realY, -realZ);
+        
+        RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
+        
         GlStateManager.disableTexture2D();
         if (!depth) {
             GlStateManager.disableDepth();
@@ -594,7 +590,6 @@ public class RenderUtils {
         worldRenderer.pos(pos2.x, pos2.y, pos2.z).endVertex();
         Tessellator.getInstance().draw();
 
-        GlStateManager.translate(realX, realY, realZ);
         GlStateManager.disableBlend();
         if (!depth) {
             GlStateManager.enableDepth();
@@ -608,15 +603,9 @@ public class RenderUtils {
     }
 
     public static void drawLinesVec3(List<Vector3D> poses, AColor colour, float thickness, float partialTicks, boolean depth) {
-        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
-
-        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
-        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
-        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-realX, -realY, -realZ);
+        
+        RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
         GlStateManager.disableTexture2D();
         GlStateManager.disableLighting();
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -644,7 +633,6 @@ public class RenderUtils {
         }
         Tessellator.getInstance().draw();
 
-        GlStateManager.translate(realX, realY, realZ);
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
@@ -657,15 +645,9 @@ public class RenderUtils {
         GL11.glLineWidth(1);
     }
     public static void drawLines(List<VectorI3D> poses, AColor colour, float thickness, float partialTicks, boolean depth) {
-        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
-
-        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
-        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
-        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-realX, -realY, -realZ);
+        
+        RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
         GlStateManager.disableTexture2D();
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
@@ -692,7 +674,6 @@ public class RenderUtils {
         }
         Tessellator.getInstance().draw();
 
-        GlStateManager.translate(realX, realY, realZ);
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
@@ -707,15 +688,9 @@ public class RenderUtils {
 
     public static void drawLines(List<VectorI3D> poses, Color colour, float thickness, float partialTicks, boolean depth) {
         if (colour instanceof AColor) drawLines(poses, (AColor)colour, thickness, partialTicks,depth);
-        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
-
-        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
-        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
-        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-realX, -realY, -realZ);
+        
+        RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
         GlStateManager.disableTexture2D();
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
@@ -734,7 +709,6 @@ public class RenderUtils {
         }
         Tessellator.getInstance().draw();
 
-        GlStateManager.translate(realX, realY, realZ);
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
@@ -814,15 +788,7 @@ public class RenderUtils {
     }
 
     public static void highlightBlock(VectorI3D blockpos, Color c, float partialTicks, boolean depth) {
-        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
-
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
-
-        GlStateManager.pushMatrix();
-
-        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+        pushAndTranslateAccordingToRenderViewEntity(partialTicks);
         _highlightBlock(blockpos, c, partialTicks, depth);
         GlStateManager.popMatrix();
 //...
@@ -832,13 +798,7 @@ public class RenderUtils {
 
     public static AABB highlightBlockStencil(VectorI3D pos, float partialTicks, Color color, boolean depth) {
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
-        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
-        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
-        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
-        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-realX, -realY, -realZ);
+        pushAndTranslateAccordingToRenderViewEntity(partialTicks);
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
 
@@ -933,13 +893,7 @@ public class RenderUtils {
     }
     public static AABB highlightBlocksStencil(List<VectorI3D> blockPos, float partialTicks, Color color, boolean depth) {
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
-        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
-        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
-        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
-        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-realX, -realY, -realZ);
+        pushAndTranslateAccordingToRenderViewEntity(partialTicks);
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
 
@@ -1032,15 +986,8 @@ public class RenderUtils {
     }
 
     public static void highlightBox(AABB axisAlignedBB, Color c, float partialTicks, boolean depth) {
-        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
 
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
-
-        GlStateManager.pushMatrix();
-
-        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+        pushAndTranslateAccordingToRenderViewEntity(partialTicks);
 
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
@@ -1105,16 +1052,7 @@ public class RenderUtils {
 
     }
     public static void highlightBoxAColor(AABB  axisAlignedBB, AColor c, float partialTicks, boolean depth) {
-        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
-
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
-
-        GlStateManager.pushMatrix();
-
-        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
-
+        pushAndTranslateAccordingToRenderViewEntity(partialTicks);
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
@@ -1178,15 +1116,7 @@ public class RenderUtils {
 
     }
     public static void highlightBox(UEntity entity, AABB  axisAlignedBB, AColor c, float partialTicks, boolean depth) {
-        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
-
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
-
-        GlStateManager.pushMatrix();
-
-        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+        pushAndTranslateAccordingToRenderViewEntity(partialTicks);
 
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
@@ -1266,15 +1196,7 @@ public class RenderUtils {
     }
 
     public static void highlightBox(UEntity entity, AABB  axisAlignedBB, Color c, float partialTicks, boolean depth) {
-        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
-
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
-
-        GlStateManager.pushMatrix();
-
-        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+        pushAndTranslateAccordingToRenderViewEntity(partialTicks);
 
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
@@ -1354,15 +1276,7 @@ public class RenderUtils {
 
     }
     public static void highlightBox(UEntity entity, Color c, float partialTicks, boolean depth) {
-        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
-
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
-
-        GlStateManager.pushMatrix();
-
-        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+        pushAndTranslateAccordingToRenderViewEntity(partialTicks);
 
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
@@ -1445,15 +1359,7 @@ public class RenderUtils {
     }
 
     public static void highlightBox(UEntity entity, AColor c, float partialTicks, boolean depth) {
-        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
-
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
-
-        GlStateManager.pushMatrix();
-
-        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+        pushAndTranslateAccordingToRenderViewEntity(partialTicks);
 
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
@@ -1646,5 +1552,16 @@ public class RenderUtils {
                 y - (float) (sp.lastTickPosY + (sp.posY - sp.lastTickPosY) * partialTicks),
                 z - (float) (sp.lastTickPosZ + (sp.posZ - sp.lastTickPosZ) * partialTicks)
         );
+    }
+
+    public static void pushAndTranslateAccordingToRenderViewEntity(float partialTicks) {
+        UEntity viewing_from = ModAPI.getAPI().getRenderViewEntity();
+
+        double x_fix = viewing_from.getPrevPosX() + ((viewing_from.getPosX() - viewing_from.getPrevPosX()) * partialTicks);
+        double y_fix = viewing_from.getPrevPosY() + ((viewing_from.getPosY() - viewing_from.getPrevPosY()) * partialTicks);
+        double z_fix = viewing_from.getPrevPosZ() + ((viewing_from.getPosZ() - viewing_from.getPrevPosZ()) * partialTicks);
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
     }
 }

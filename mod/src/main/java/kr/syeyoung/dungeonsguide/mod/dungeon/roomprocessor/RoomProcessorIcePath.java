@@ -25,13 +25,13 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -49,7 +49,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
     private VectorI3D lastSilverfishLoc;
     private int sameTick;
 
-    private Entity silverfish;
+    private UEntity silverfish;
 
     private boolean err;
 
@@ -61,15 +61,8 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
     public void findSilverFishAndDoStuff() {
         final VectorI3D low = getDungeonRoom().getRoomBounds().getMin();
         final VectorI3D high = getDungeonRoom().getRoomBounds().getMax();
-        List<EntitySilverfish> silverfishs = getDungeonRoom().getContext().getWorld().getEntities(EntitySilverfish.class, new Predicate<EntitySilverfish>() {
-            @Override
-            public boolean apply(@Nullable EntitySilverfish input) {
-                if (input.isInvisible()) return false;
-                BlockPos pos = input.getPosition();
-                return low.getX() < pos.getX() && pos.getX() < high.getX()
-                        && low.getZ() < pos.getZ() && pos.getZ() < high.getZ();
-            }
-        });
+        List<UEntity> silverfishs = getDungeonRoom().getContext().getUworld().getEntitiesWithinAabb(EntityType.SILVERFISH,
+                new AABB(low.getX(), 0, low.getZ(), high.getX(), 255, high.getZ()));
 
         if (!silverfishs.isEmpty()) silverfish = silverfishs.get(0);
         if (silverfishs.isEmpty()) {
@@ -106,7 +99,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
 
     public void tick() {
         super.tick();
-        if (err || silverfish.isDead) {
+        if (err || silverfish.isDead()) {
             findSilverFishAndDoStuff();
             if (err) return;
         }

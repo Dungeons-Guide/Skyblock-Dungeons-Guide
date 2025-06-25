@@ -31,6 +31,10 @@ public class ModAPIImpl implements ModAPI {
         return new URenderManagerImpl(delegate.getRenderManager());
     }
 
+    public UEntity getRenderViewEntity() {
+        return delegate.getRenderViewEntity() == null ? null : UEntityDelegateFactory.createEntityFor(delegate.getRenderViewEntity());
+    }
+
 
     public static class PlatformImpl implements Platform {
 
@@ -114,7 +118,6 @@ public class ModAPIImpl implements ModAPI {
 
         packetInjector.cleanup();
     }
-
 
 
 }

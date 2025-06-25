@@ -25,10 +25,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.B
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.item.ItemStack;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntityArmorStand;
+import kr.syeyoung.modapi.item.UItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +56,7 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
         super.tick();
         if (answer != -1) return;
         for (int i = 0; i < 9; i++)
-            answers[i] = match(getChamber().getEntityAt(EntityArmorStand.class, grid[i].add(0, -1, 0)));
+            answers[i] = match(getChamber().getEntityAt(EntityType.ARMOR_STAND, grid[i].add(0, -1, 0)));
 
         answer = 0;
         for (int i =0; i < 9; i++) {
@@ -105,11 +105,10 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
         }
     }
 
-    private int match(EntityArmorStand armorStand) {
+    private int match(UEntityArmorStand armorStand) {
         if (armorStand == null) return -1;
-        ItemStack item = armorStand.getInventory()[4];
-        NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
-        String str = ((NBTTagCompound)list.get(0)).getString("Value");
+        UItemStack item = armorStand.getEquipmentInSlot(4);
+        String str = item.getSkullTexture();
         return !integers.containsKey(str) ? -1 : integers.get(str);
     }
 
