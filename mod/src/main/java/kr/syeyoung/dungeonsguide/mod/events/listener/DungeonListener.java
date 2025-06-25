@@ -77,7 +77,6 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -640,12 +639,12 @@ public class DungeonListener {
     @Getter
     private final Map<Integer, Vec3> entityIdToPosMap = new HashMap<>();
 
-    @SubscribeEvent
-    public void onEntitySpawn(EntityJoinWorldEvent spawn) {
+    @kr.syeyoung.modapi.event.SubscribeEvent
+    public void onEntitySpawn(EntityEnterWorldEvent spawn) {
 //        if (spawn.entity instanceof EntityBat)
 //            System.out.println(spawn.entity +" Spawned!! dist: "+spawn.entity.getDistanceToEntity(Minecraft.getMinecraft().thePlayer));
 
-        DungeonActionContext.getSpawnLocation().put(spawn.entity.getEntityId(), new Vector3D(spawn.entity.posX, spawn.entity.posY, spawn.entity.posZ));
+        DungeonActionContext.getSpawnLocation().put(spawn.getEntity().getEntityId(), new Vector3D(spawn.getEntity().getPosX(), spawn.getEntity().getPosY(), spawn.getEntity().getPosZ()));
     }
 
     @kr.syeyoung.modapi.event.SubscribeEvent

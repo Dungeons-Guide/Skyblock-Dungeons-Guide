@@ -60,10 +60,7 @@ import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
-import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import kr.syeyoung.modapi.event.events.EntityExitWorldEvent;
-import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
-import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
+import kr.syeyoung.modapi.event.events.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -72,8 +69,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -84,7 +79,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -208,36 +202,36 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onEntitySpawn(EntityJoinWorldEvent event) {
-        if (event.entity instanceof EntityArmorStand) {
+    public void onEntitySpawn(EntityEnterWorldEvent event) {
+        if (event.getEntity() instanceof UEntityArmorStand) {
             return;
         }
-        if (event.entity instanceof EntityArrow) {
+        if (event.getEntity().getEntityType() == EntityType.ARROW) {
             return;
         }
-        if (entityDataMap.get(event.entity.getEntityId()) != null) return;
+        if (entityDataMap.get(event.getEntity().getEntityId()) != null) return;
         EntityData entityData = new EntityData();
-        entityData.id = event.entity.getEntityId();
+        entityData.id = event.getEntity().getEntityId();
         entityData.trajectory.add(new EntityData.EntityTrajectory(
                 EntityData.EntityTrajectory.Type.ENTER,
-                ModAPI.getAPI().TEMPWRAP(event.entity).getPositionVector(),
+                event.getEntity().getPositionVector(),
                 System.currentTimeMillis()
         ));
-        entityData.type = event.entity.getClass().getSimpleName();
-        entityDataMap.put(event.entity.getEntityId(), entityData);
+        entityData.type = event.getEntity().getClass().getSimpleName();
+        entityDataMap.put(event.getEntity().getEntityId(), entityData);
 
-        Vec3 posVector = event.entity.getPositionVector();
+        Vector3D posVector = event.getEntity().getPositionVector();
         Point roompt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext())
                 .map(DungeonContext::getScaffoldParser)
                 .map(DungeonRoomScaffoldParser::getDungeonMapLayout)
                 .map(a -> a.worldPointToRoomPoint(
-                        new Vector3D(posVector.xCoord, posVector.yCoord, posVector.zCoord)
+                        new Vector3D(posVector.x, posVector.y, posVector.z)
                 )).orElse(null);
         if (roompt == null) return;;
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
         if (dungeonRoom != null && roomInfoMap.containsKey(dungeonRoom)) {
-            roomInfoMap.get(dungeonRoom).entityData.put(event.entity.getEntityId(), entityData);
+            roomInfoMap.get(dungeonRoom).entityData.put(event.getEntity().getEntityId(), entityData);
         }
     }
 

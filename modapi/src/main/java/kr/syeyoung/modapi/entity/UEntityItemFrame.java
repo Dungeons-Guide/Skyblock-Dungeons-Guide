@@ -4,4 +4,6 @@ import kr.syeyoung.modapi.item.UItemStack;
 
 public interface UEntityItemFrame extends UEntity {
     UItemStack getItem();
+
+    int getRotation();
 }

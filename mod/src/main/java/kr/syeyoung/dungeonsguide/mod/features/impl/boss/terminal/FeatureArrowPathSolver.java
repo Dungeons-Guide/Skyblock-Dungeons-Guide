@@ -29,18 +29,14 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityItemFrame;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import kr.syeyoung.modapi.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
@@ -100,29 +96,31 @@ public class FeatureArrowPathSolver extends SimpleFeature {
 
         if (System.currentTimeMillis() < nextUpdate) return;
         World w = dc.getWorld();
-        List<EntityItemFrame> frames = w.getEntities(EntityItemFrame.class, filter -> {
-            BlockPos pos = filter.getPosition();
-            if (pos.getX() != -2) return false;
-            if (pos.getZ() < 75 || pos.getZ() > 79) return false;
-            if (pos.getY() < 121 || pos.getY() > 125) return false;
-            ItemStack itemStack = filter.getDisplayedItem();
-            if (itemStack == null) return false;
-            if (itemStack.getItem() == Item.getItemFromBlock(Blocks.wool) || itemStack.getItem() == Items.arrow) return true;
-            return false;
-        });
+        List<UEntity> frames = dc.getUworld().getEntitiesWithinAabb(EntityType.ITEM_FRAME, new AABB(-2, 121, 75, -1, 125, 79));
+//        filter -> {
+//            BlockPos pos = filter.getPosition();
+//            if (pos.getX() != -2) return false;
+//            if (pos.getZ() < 75 || pos.getZ() > 79) return false;
+//            if (pos.getY() < 121 || pos.getY() > 125) return false;
+//            ItemStack itemStack = filter.getDisplayedItem();
+//            if (itemStack == null) return false;
+//            if (itemStack.getItem() == Item.getItemFromBlock(Blocks.wool) || itemStack.getItem() == Items.arrow) return true;
+//            return false;
+//        });
 
         int[][] mapping = new int[5][5];
         int[][] bfsAble = new int[5][5];
         int[][] solution = new int[5][5];
         Queue<Point> begin = new LinkedList<>();
-        for (EntityItemFrame frame : frames) {
+        for (UEntity entity : frames) {
+            UEntityItemFrame frame = (UEntityItemFrame) entity;
             int x = frame.getPosition().getZ() - 75;
             int y = frame.getPosition().getY() - 121;
 
-            if (frame.getDisplayedItem().getItem() == Items.arrow) {
+            if (frame.getItem().getItem() == Item.ARROW) {
                 mapping[y][x] = frame.getRotation()+1;
                 bfsAble[y][x] = 9999;
-            } else if (frame.getDisplayedItem().getMetadata() == EnumDyeColor.LIME.getMetadata()) {
+            } else if (frame.getItem().getMetadata() == 5) { // LIME WOOL.
                 mapping[y][x] = 10; // starting
                 bfsAble[y][x] = 99999;
             } else {

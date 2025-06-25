@@ -22,7 +22,13 @@ public class UItemStackImpl implements UItemStack {
         if (delegate.getItem() == Items.dye) return Item.DYE;
         if (delegate.getItem() == Items.map ) return Item.MAP;
         if (delegate.getItem() == Items.filled_map) return Item.FILLED_MAP;
+        if (delegate.getItem() == Items.arrow) return Item.ARROW;
         return Item.UNKNOWN;
+    }
+
+    @Override
+    public int getMetadata() {
+        return delegate.getMetadata();
     }
 
     @Override

@@ -24,7 +24,9 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -37,8 +39,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -1112,9 +1112,9 @@ public class RenderUtils {
         int rgb = RenderUtils.getColorAt(entity.getPosX() * 10,entity.getPosY() * 10,c);
         GlStateManager.color(((rgb >> 16) &0XFF)/ 255.0f, ((rgb>>8) &0XFF)/ 255.0f, (rgb & 0xff)/ 255.0f, ((rgb >> 24) & 0xFF) / 255.0f);
         if (axisAlignedBB == null) {
-            if (entity instanceof EntityArmorStand) {
+            if (entity instanceof UEntityArmorStand) {
                 axisAlignedBB = new AABB(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
-            } else if (entity instanceof EntityBat) {
+            } else if (entity.getEntityType() == EntityType.BAT) {
                 axisAlignedBB = new AABB(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
             } else {
                 axisAlignedBB = new AABB(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
@@ -1191,9 +1191,9 @@ public class RenderUtils {
         }
         GlStateManager.color(c.getRed()/ 255.0f, c.getGreen()/ 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);
         if (axisAlignedBB == null) {
-            if (entity instanceof EntityArmorStand) {
+            if (entity instanceof UEntityArmorStand) {
                 axisAlignedBB = new AABB(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
-            } else if (entity instanceof EntityBat) {
+            } else if (entity.getEntityType() == EntityType.BAT) {
                 axisAlignedBB = new AABB(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
             } else {
                 axisAlignedBB = new AABB(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
@@ -1271,9 +1271,9 @@ public class RenderUtils {
         }
         GlStateManager.color(c.getRed()/ 255.0f, c.getGreen()/ 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);
         AABB axisAlignedBB;
-        if (entity instanceof EntityArmorStand) {
+        if (entity instanceof UEntityArmorStand) {
             axisAlignedBB = new AABB(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
-        } else if (entity instanceof EntityBat) {
+        } else if (entity.getEntityType() == EntityType.BAT) {
             axisAlignedBB = new AABB(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
         } else {
             axisAlignedBB = new AABB(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
@@ -1357,9 +1357,9 @@ public class RenderUtils {
         GlStateManager.color(((rgb >> 16) &0XFF)/ 255.0f, ((rgb>>8) &0XFF)/ 255.0f, (rgb & 0xff)/ 255.0f, ((rgb >> 24) & 0xFF) / 255.0f);
 
         AABB axisAlignedBB;
-        if (entity instanceof EntityArmorStand) {
+        if (entity instanceof UEntityArmorStand) {
             axisAlignedBB = new AABB(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
-        } else if (entity instanceof EntityBat) {
+        } else if (entity.getEntityType() == EntityType.BAT) {
             axisAlignedBB = new AABB(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
         } else {
             axisAlignedBB = new AABB(-0.4, -1.5, -0.4, 0.4, 0, 0.4);

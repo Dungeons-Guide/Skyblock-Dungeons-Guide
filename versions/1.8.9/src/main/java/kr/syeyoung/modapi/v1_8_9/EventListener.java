@@ -3,9 +3,11 @@ package kr.syeyoung.modapi.v1_8_9;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UEntityLiving;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.event.events.EntityEnterWorldEvent;
 import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -25,6 +27,12 @@ public class EventListener {
 
         ModAPI.getAPI().getEventBus().fireEvent(new LivingEntityDeathEvent(
                 (UEntityLiving) UEntityDelegateFactory.createEntityFor(deathEvent.entityLiving)
+        ));
+    }
+    @SubscribeEvent
+    public void onEntityDeath(EntityJoinWorldEvent joinWorldEvent) {
+        ModAPI.getAPI().getEventBus().fireEvent(new EntityEnterWorldEvent(
+                UEntityDelegateFactory.createEntityFor(joinWorldEvent.entity)
         ));
     }
 
