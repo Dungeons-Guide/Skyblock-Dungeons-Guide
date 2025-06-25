@@ -51,7 +51,6 @@ import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
 import kr.syeyoung.dungeonsguide.mod.resources.DGTexturePack;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
-import kr.syeyoung.dungeonsguide.mod.utils.BlockCache;
 import kr.syeyoung.dungeonsguide.mod.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
@@ -141,9 +140,6 @@ public class DungeonsGuide implements DGInterface {
     @Getter
     private DungeonFacade dungeonFacade;
 
-    @Getter
-    private BlockCache blockCache;
-
     public DungeonsGuide(){
         instance = this;
     }
@@ -225,7 +221,6 @@ public class DungeonsGuide implements DGInterface {
 
         registerEventsForge(skyblockStatus);
         registerEventsForge(ChatTransmitter.INSTANCE);
-        registerEventsForge(new BlockCache());
         registerEventsForge(PassthroughManager.INSTANCE);
 
         FeatureRegistry.getFeatureList();
@@ -241,7 +236,6 @@ public class DungeonsGuide implements DGInterface {
         }
 
 
-        this.blockCache = new BlockCache();
 
         registerEventsForge(new DungeonListener());
         this.dungeonFacade = new DungeonFacade();

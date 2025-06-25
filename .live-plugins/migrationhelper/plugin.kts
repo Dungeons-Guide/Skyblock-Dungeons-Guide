@@ -1,13 +1,10 @@
 
-import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
@@ -15,20 +12,14 @@ import com.intellij.psi.*
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.MethodReferencesSearch
-import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtil
-import com.intellij.psi.util.parentOfType
 import com.intellij.refactoring.BaseRefactoringProcessor
-import com.intellij.refactoring.RefactoringManager
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
 import liveplugin.PluginUtil.showInConsole
 import liveplugin.registerInspection
-import liveplugin.registerIntention
 import liveplugin.show
-import kotlin.math.exp
 
 // depends-on-plugin com.intellij.java
 
