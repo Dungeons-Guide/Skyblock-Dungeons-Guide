@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 import com.google.gson.Gson;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.BossfightRenderSettings;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UEntity;

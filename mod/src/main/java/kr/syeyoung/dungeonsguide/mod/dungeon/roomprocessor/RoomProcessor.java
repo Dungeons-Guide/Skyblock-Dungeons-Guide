@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;

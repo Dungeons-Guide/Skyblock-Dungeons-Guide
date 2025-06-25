@@ -18,21 +18,21 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.predicates;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
 
-public class PredicateArmorStand implements Predicate<Entity> {
+public class PredicateArmorStand implements Predicate<UEntity> {
 
     public static final PredicateArmorStand INSTANCE = new PredicateArmorStand();
 
 
     @Override
-    public boolean test(@Nullable Entity input) {
-        return input instanceof EntityArmorStand;
+    public boolean test(@Nullable UEntity input) {
+        return input instanceof UEntityArmorStand;
     }
 
     @Override

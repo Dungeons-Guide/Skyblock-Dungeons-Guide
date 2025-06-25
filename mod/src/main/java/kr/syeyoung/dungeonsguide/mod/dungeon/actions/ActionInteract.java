@@ -22,11 +22,11 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.entity.Entity;
 
 import java.util.function.Predicate;
 
@@ -34,7 +34,7 @@ import java.util.function.Predicate;
 @EqualsAndHashCode(callSuper=false)
 public class ActionInteract extends AbstractAction {
     private OffsetPoint target;
-    private Predicate<Entity> predicate = entity -> false;
+    private Predicate<UEntity> predicate = entity -> false;
     private int radius;
 
     public ActionInteract(OffsetPoint target) {

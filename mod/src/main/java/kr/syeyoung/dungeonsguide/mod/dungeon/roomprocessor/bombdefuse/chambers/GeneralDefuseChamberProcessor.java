@@ -22,7 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;

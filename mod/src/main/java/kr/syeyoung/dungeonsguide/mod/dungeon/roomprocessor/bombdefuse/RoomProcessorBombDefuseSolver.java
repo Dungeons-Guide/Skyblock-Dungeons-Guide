@@ -37,7 +37,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.g
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.maze.MazeProcessorMatcher;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.number.NumberProcessorMatcher;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;

@@ -53,10 +53,7 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
-import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import kr.syeyoung.modapi.event.events.EntityExitWorldEvent;
-import kr.syeyoung.modapi.event.events.ItemPickupEvent;
-import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
+import kr.syeyoung.modapi.event.events.*;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -81,8 +78,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -143,7 +138,7 @@ public class DungeonListener {
         GlStateManager.enableAlpha();
     }
 
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onEntityUpdate(LivingEntityTickEvent e) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
@@ -163,7 +158,7 @@ public class DungeonListener {
         }
     }
 
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onDungeonLeave(DungeonLeftEvent ev) {
         DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
         if (!FeatureRegistry.ADVANCED_DEBUGGABLE_MAP.isEnabled()) {
@@ -175,7 +170,7 @@ public class DungeonListener {
 
 
 
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onTick(ClientTickEvent ev) {
         if (SkyblockStatus.isOnSkyblock() || SkyblockStatus.isOnDungeon()) {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
@@ -232,7 +227,7 @@ public class DungeonListener {
 
     private WeakReference<DungeonRoom> lastRoom = null;
 
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onTickDetectRoomTransfer(ClientTickEvent ev) {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (!SkyblockStatus.isOnDungeon() || context == null) return;
@@ -312,7 +307,7 @@ public class DungeonListener {
         GlStateManager.enableAlpha();
     }
 
-    @SubscribeEvent()
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public  void onMapUpdate(MapUpdateEvent mapUpdateEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
@@ -513,7 +508,7 @@ public class DungeonListener {
         }
     }
 
-    @SubscribeEvent()
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onKey2(KeyBindPressedEvent keyInputEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
@@ -537,7 +532,7 @@ public class DungeonListener {
         }
     }
 
-    @SubscribeEvent()
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onInteract(PlayerInteractEntityEvent interact) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
@@ -561,7 +556,7 @@ public class DungeonListener {
         }
     }
 
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onBlockChange(BlockUpdateEvent.Post postInteract) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
@@ -588,7 +583,7 @@ public class DungeonListener {
         }
     }
 
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onKeyInput(KeyBindPressedEvent keyInputEvent) {
         if (FeatureRegistry.DEBUG.isEnabled() && FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && keyInputEvent.getKey() == FeatureRegistry.ADVANCED_ROOMEDIT.<Integer>getParameter("key").getValue()) {
             EditingContext ec = EditingContext.getEditingContext();
@@ -657,12 +652,12 @@ public class DungeonListener {
         DungeonActionContext.getSpawnLocation().put(spawn.entity.getEntityId(), new Vector3D(spawn.entity.posX, spawn.entity.posY, spawn.entity.posZ));
     }
 
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onItemPickup(ItemPickupEvent event) {
         DungeonActionContext.getPickedups().add(event.getItem().getEntityId());
     }
 
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onEntityDespawn2(EntityExitWorldEvent worldEvent) {
         for (int entityId : worldEvent.getEntityIds()) {
             UEntity en = ModAPI.getAPI().getWorld().getEntityById(entityId);
@@ -671,7 +666,7 @@ public class DungeonListener {
         }
     }
 
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onChunkUpdate(PacketProcessedEvent.Post post) {
         if (!SkyblockStatus.isOnDungeon()) return;
         if (post.packet instanceof S21PacketChunkData) {

@@ -20,6 +20,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.storage.MapData;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,6 +48,7 @@ public class UWorldImpl implements UWorld {
         EntityPlayer player = delegate.getPlayerEntityByUUID(uuid);
         return player == null ? null : new UEntityPlayerImpl(player);
     }
+
 
     public List<UEntity> getEntitiesWithinAabb(EntityType entityType, AABB bb) {
         List<Entity> entities = delegate.getEntitiesWithinAABB(

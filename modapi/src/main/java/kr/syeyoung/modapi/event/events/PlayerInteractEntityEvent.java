@@ -16,13 +16,13 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.events.impl;
+package kr.syeyoung.modapi.event.events;
 
+import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.event.Cancelable;
 import kr.syeyoung.modapi.event.UEvent;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.entity.Entity;
 
 public class PlayerInteractEntityEvent extends UEvent implements Cancelable {
 
@@ -31,9 +31,9 @@ public class PlayerInteractEntityEvent extends UEvent implements Cancelable {
     @Getter @Setter
     private boolean interactAt;
     @Getter @Setter
-    private Entity entity;
+    private UEntity entity;
 
-    public PlayerInteractEntityEvent(boolean attack, boolean interactAt, Entity entity) {
+    public PlayerInteractEntityEvent(boolean attack, boolean interactAt, UEntity entity) {
         this.attack = attack;
         this.interactAt = interactAt;
         this.entity = entity;

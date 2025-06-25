@@ -6,7 +6,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UPlayerSelf;

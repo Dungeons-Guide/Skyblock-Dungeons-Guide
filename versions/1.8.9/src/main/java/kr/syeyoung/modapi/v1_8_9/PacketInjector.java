@@ -22,9 +22,10 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C02PacketUseEntity;
@@ -90,9 +91,11 @@ public class PacketInjector extends ChannelDuplexHandler {
             C02PacketUseEntity packet2 = (C02PacketUseEntity) packet;
             PlayerInteractEntityEvent piee;
             if (packet2.getAction() == C02PacketUseEntity.Action.ATTACK)
-                piee = new PlayerInteractEntityEvent(true, false, packet2.getEntityFromWorld(Minecraft.getMinecraft().theWorld));
+                piee = new PlayerInteractEntityEvent(true, false,
+                        UEntityDelegateFactory.createEntityFor(packet2.getEntityFromWorld(Minecraft.getMinecraft().theWorld)));
             else
-                piee = new PlayerInteractEntityEvent(false, packet2.getAction() == C02PacketUseEntity.Action.INTERACT_AT, ((C02PacketUseEntity) packet).getEntityFromWorld(Minecraft.getMinecraft().theWorld));
+                piee = new PlayerInteractEntityEvent(false, packet2.getAction() == C02PacketUseEntity.Action.INTERACT_AT,
+                        UEntityDelegateFactory.createEntityFor(((C02PacketUseEntity) packet).getEntityFromWorld(Minecraft.getMinecraft().theWorld)));
             try {
                 if (ModAPI.getAPI().getEventBus().fireEvent(piee)) return;
             } catch (Exception e) {

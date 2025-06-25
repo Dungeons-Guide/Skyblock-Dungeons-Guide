@@ -18,20 +18,20 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.predicates;
 
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
 
-public class PredicateNPC implements Predicate<Entity> {
+public class PredicateNPC implements Predicate<UEntity> {
 
     public static final PredicateNPC INSTANCE = new PredicateNPC();
 
     @Override
-    public boolean test(@Nullable Entity input) {
-        return input instanceof EntityOtherPlayerMP;
+    public boolean test(@Nullable UEntity input) {
+        return input instanceof UEntityPlayer;
     }
 
     @Override

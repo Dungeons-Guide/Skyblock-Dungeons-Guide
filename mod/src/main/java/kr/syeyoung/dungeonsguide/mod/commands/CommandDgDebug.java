@@ -253,8 +253,9 @@ public class CommandDgDebug extends CommandBase {
                         FeatureRegistry.ADVANCED_ROOMEDIT.getConfigureWidget()
                 ));
 
-                DungeonsGuide.getDungeonsGuide().getCommandDungeonsGuide().setTarget(adapter);
-
+                DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
+                    Minecraft.getMinecraft().displayGuiScreen(adapter);
+                });
                 break;
             case "dumpsettings":
                 dumpSettingsCommand();
