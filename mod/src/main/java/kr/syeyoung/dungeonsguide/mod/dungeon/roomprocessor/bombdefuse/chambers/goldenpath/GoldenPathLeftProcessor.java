@@ -67,7 +67,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
         VectorI3D lastLoc = new VectorI3D(4,0,0);
         visited.add(lastLoc);
         blocksolution.add(getChamber().getBlockPos(4,1,0));
-        BlockPos target = new BlockPos(4,0,5);
+        VectorI3D target = new VectorI3D(4,0,5);
         while (!lastLoc.equals(target)) {
             boolean solution2 = false;
             for (int i =0; i<vectors.length; i++) {

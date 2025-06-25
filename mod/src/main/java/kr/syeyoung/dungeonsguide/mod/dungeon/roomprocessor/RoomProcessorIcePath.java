@@ -46,7 +46,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
 
     private final List<VectorI3D> solution = new ArrayList<>();
 
-    private BlockPos lastSilverfishLoc;
+    private VectorI3D lastSilverfishLoc;
     private int sameTick;
 
     private Entity silverfish;
@@ -110,13 +110,14 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
             findSilverFishAndDoStuff();
             if (err) return;
         }
-        if (silverfish.getPosition().equals(lastSilverfishLoc)) {
+        VectorI3D silverFishPos = new VectorI3D(silverfish.getPosition().getX(), silverfish.getPosition().getY(), silverfish.getPosition().getZ());
+        if (silverFishPos.equals(lastSilverfishLoc)) {
             if (sameTick < 10) {
                 sameTick ++;
                 return;
             } else if (sameTick == 10) {
                 sameTick ++;
-                Point silverfish = getPointOfSilverFishOnMap(this.silverfish.getPosition());
+                Point silverfish = getPointOfSilverFishOnMap(silverFishPos);
                 List<Point> tempSol = solve(map, silverfish.x, silverfish.y, new Predicate<Point>() {
                     @Override
                     public boolean apply(@Nullable Point input) {
@@ -135,7 +136,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
             sameTick = 0;
         }
 
-        lastSilverfishLoc = silverfish.getPosition();
+        lastSilverfishLoc = silverFishPos;
     }
 
 
@@ -147,7 +148,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
         RenderUtils.drawLines(solution, FeatureRegistry.SOLVER_SILVERFISH.getLineColor(), (float) FeatureRegistry.SOLVER_SILVERFISH.getLineWidth(), partialTicks, true);
     }
 
-    public Point getPointOfSilverFishOnMap(BlockPos blockPos) {
+    public Point getPointOfSilverFishOnMap(VectorI3D blockPos) {
         for (int y = 0; y < map.length; y ++) {
             for (int x = 0; x < map[0].length; x++) {
                 if (map2[y][x].getBlockPos(getDungeonRoom()).equals(blockPos))

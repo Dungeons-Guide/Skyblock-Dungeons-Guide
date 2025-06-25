@@ -105,9 +105,11 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
         World w = dc.getWorld();
 
-        BlockPos pos = event.pos.add(1,0,0);
+        VectorI3D ePos = new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ());
+
+        VectorI3D pos = ePos.add(1,0,0);
         if (120 <= pos.getY() && pos.getY() <= 123 && pos.getX() == 111 && 92 <= pos.getZ() && pos.getZ() <= 95) {
-            if (w.getBlockState(event.pos).getBlock() != Blocks.stone_button) return;
+            if (w.getBlockState(new BlockPos(ePos.getX(), ePos.getY(), ePos.getZ())).getBlock() != Blocks.stone_button) return;
             if (pos.equals(orderClick.peek())) {
                 orderClick.poll();
             }

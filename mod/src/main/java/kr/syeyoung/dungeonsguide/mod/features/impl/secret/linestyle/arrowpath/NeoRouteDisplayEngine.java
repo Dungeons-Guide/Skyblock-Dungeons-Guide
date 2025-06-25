@@ -224,7 +224,8 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         MovingObjectPosition objectPosition = Minecraft.getMinecraft().objectMouseOver;
         if (objectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-            BlockPos blockPos = objectPosition.getBlockPos();
+            VectorI3D blockPos = new VectorI3D(objectPosition.getBlockPos().getX(), objectPosition.getBlockPos().getY(), objectPosition.getBlockPos().getZ());
+
             for (Map.Entry<String, DungeonMechanicState> stringDungeonMechanicStateEntry : dungeonRoom.getMechanics().entrySet()) {
                 if (stringDungeonMechanicStateEntry.getValue() instanceof WorldMutatingMechanicState && ((WorldMutatingMechanicState) stringDungeonMechanicStateEntry.getValue()).isBlocking(dungeonRoom)) {
                     List<OffsetPoint> offsetPointList = ((WorldMutatingMechanicState)stringDungeonMechanicStateEntry.getValue()).blockedPoints();

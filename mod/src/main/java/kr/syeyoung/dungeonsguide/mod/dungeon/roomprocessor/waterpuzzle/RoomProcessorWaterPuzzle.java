@@ -36,12 +36,10 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -299,12 +297,13 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
 
         if (solutionList == null || idx >= solutionList.size()) return;
         if (event.pos == null)return;
+        VectorI3D ePos = new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ());
 
         Waterboard.Action currentAction = solutionList.get(idx);
         VectorI3D pos = switchLoc.get(currentAction.getName());
         if (pos == null) return;
 
-        if (!event.pos.equals(pos) )  {
+        if (!ePos.equals(pos) )  {
             event.setCanceled(true);
             return;
         };
