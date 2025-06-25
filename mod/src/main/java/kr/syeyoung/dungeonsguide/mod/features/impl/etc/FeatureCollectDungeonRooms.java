@@ -52,6 +52,8 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -170,7 +172,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         public static class BlockUpdate {
             @AllArgsConstructor @Data
             public static class BlockUpdateData {
-                private BlockPos pos;
+                private VectorI3D pos;
                 private IBlockState block;
             }
 
@@ -183,7 +185,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         @Data @AllArgsConstructor
         public static class Interaction {
             private long time;
-            private BlockPos pos;
+            private VectorI3D pos;
         }
         private List<ChatMessage> systemMessages = new ArrayList<>();
         @Data @AllArgsConstructor
@@ -217,10 +219,13 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         entityData.type = event.entity.getClass().getSimpleName();
         entityDataMap.put(event.entity.getEntityId(), entityData);
 
+        Vec3 posVector = event.entity.getPositionVector();
         Point roompt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext())
                 .map(DungeonContext::getScaffoldParser)
                 .map(DungeonRoomScaffoldParser::getDungeonMapLayout)
-                .map(a -> a.worldPointToRoomPoint(event.entity.getPositionVector())).orElse(null);
+                .map(a -> a.worldPointToRoomPoint(
+                        new Vector3D(posVector.xCoord, posVector.yCoord, posVector.zCoord)
+                )).orElse(null);
         if (roompt == null) return;;
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
@@ -250,13 +255,13 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         }
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
-        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(event.pos);
+        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ()));
         DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
         if (dungeonRoom == null) return;
         RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
         if (roomInfo == null) return;
 
-        roomInfo.interactions.add(new RoomInfo.Interaction(System.currentTimeMillis(), event.pos));
+        roomInfo.interactions.add(new RoomInfo.Interaction(System.currentTimeMillis(), new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ())));
     }
 
     @DGEventHandler(ignoreDisabled = true)
@@ -265,7 +270,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (!event.message.getFormattedText().contains(":")) {
             // this is not user message.
             if (Minecraft.getMinecraft().thePlayer == null) return;
-            Vec3 pos = Minecraft.getMinecraft().thePlayer.getPositionVector();
+            Vector3D pos = ModAPI.getAPI().getPlayer().getPositionVector();
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
@@ -287,7 +292,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (secret != lastNo || total != totalSecret) {
             lastNo = secret;
             totalSecret = total;
-            Vec3 pos = Minecraft.getMinecraft().thePlayer.getPositionVector();
+            Vector3D pos = ModAPI.getAPI().getPlayer().getPositionVector();
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
@@ -302,7 +307,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null || dungeonContext.getScaffoldParser() == null) return;
-        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector());
+        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(ModAPI.getAPI().getPlayer().getPositionVector());
         DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
         if (dungeonRoom == null) return;
         RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
@@ -365,7 +370,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onChunkLoad(ChunkUpdateEvent chunkUpdateEvent) {
-        Set<Tuple<BlockPos, IBlockState>> updates = new HashSet<>();
+        Set<Tuple<VectorI3D, IBlockState>> updates = new HashSet<>();
         for (Chunk updatedChunk : chunkUpdateEvent.getUpdatedChunks()) {
             if (updatedChunk.isEmpty()) continue;
             if (initialChunkDataMap.containsKey(updatedChunk.getChunkCoordIntPair())) {
@@ -382,7 +387,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                             for (int y = 0; y < 16; y++) {
                                 for (int z = 0; z < 16; z++) {
                                     IBlockState blockState = neuSt.get(x,y,z);
-                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x,  i * 16 + y, prevChunk.z * 16 + z);
+                                    VectorI3D pos = new VectorI3D(prevChunk.x * 16 + x,  i * 16 + y, prevChunk.z * 16 + z);
                                     updates.add(new Tuple<>(pos, blockState));
                                 }
                             }
@@ -392,7 +397,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                         for (int x = 0; x < 16; x++) {
                             for (int y = 0; y < 16; y++) {
                                 for (int z = 0; z < 16; z++) {
-                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
+                                    VectorI3D pos = new VectorI3D(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
                                     updates.add(new Tuple<>(pos, air));
                                 }
                             }
@@ -402,7 +407,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                         for (int x = 0; x < 16; x++) {
                             for (int y = 0; y < 16; y++) {
                                 for (int z = 0; z < 16; z++) {
-                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
+                                    VectorI3D pos = new VectorI3D(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
                                     IBlockState prevState = prevSt.get(x,y,z);
                                     IBlockState neuState = neuSt.get(x,y,z);
                                     if (!neuState.equals(prevState)) {
@@ -433,7 +438,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     public void onBlockUpdate(BlockUpdateEvent.Pre blockUpdateEvent) {
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
-        Map<DungeonRoom, List<Tuple<BlockPos, IBlockState>>> updatePerRoom = blockUpdateEvent.getUpdatedBlocks().stream()
+        Map<DungeonRoom, List<Tuple<VectorI3D, IBlockState>>> updatePerRoom = blockUpdateEvent.getUpdatedBlocks().stream()
                 .filter(a -> {
                     Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(a.getFirst());
                     return dungeonContext.getScaffoldParser().getRoomMap().get(roompt) != null;
@@ -443,7 +448,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                             return dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
                         }));
 
-        for (Map.Entry<DungeonRoom, List<Tuple<BlockPos, IBlockState>>> dungeonRoomListEntry : updatePerRoom.entrySet()) {
+        for (Map.Entry<DungeonRoom, List<Tuple<VectorI3D, IBlockState>>> dungeonRoomListEntry : updatePerRoom.entrySet()) {
             if (dungeonRoomListEntry.getKey() == null) {
                 System.out.println("WTF!!!");
             }
@@ -463,7 +468,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
         RoomInfo roomInfo = new RoomInfo();
         for (EntityData value : entityDataMap.values()) {
-            if (dungeonRoom.getUnitPoints().contains(dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(new BlockPos(value.trajectory.getFirst().pos)))) {
+            Vec3 vec3 = value.trajectory.getFirst().pos;
+            if (dungeonRoom.getUnitPoints().contains(dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(new Vector3D(vec3.xCoord, vec3.yCoord, vec3.zCoord)))) {
                 roomInfo.entityData.put(value.id, value);
             }
         }
@@ -660,7 +666,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             for (int y = 0; y <  compound.getShort("Height"); y++) {
                 for (int z = 0; z < compound.getShort("Length"); z++) {
                     int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
-                    BlockPos pos = dungeonRoom.getRelativeBlockPosAt(x,y - 70,z);
+                    VectorI3D pos = dungeonRoom.getRelativeBlockPosAt(x,y - 70,z);
                     ChunkData chunkData = initialChunkDataMap.get(new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4));
 
                     IBlockState blockState;

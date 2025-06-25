@@ -32,14 +32,15 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
 
 import java.awt.*;
 import java.util.*;
@@ -58,14 +59,14 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
     private boolean didKillBat;
 
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
-        BlockPos bpos = data.secretPoint.getBlockPos(dungeonRoom);
+        VectorI3D bpos = data.secretPoint.getBlockPos(dungeonRoom);
         if (didKillBat) {
             return SecretStatus.FOUND;
         }
-        Vec3 spawn = new Vec3(bpos);
+        Vector3D spawn = new Vector3D(bpos);
         for (Integer killed : DungeonActionContext.getKilleds()) {
             if (DungeonActionContext.getSpawnLocation().get(killed) == null) continue;
-            if (DungeonActionContext.getSpawnLocation().get(killed).squareDistanceTo(spawn) < 100) {
+            if (DungeonActionContext.getSpawnLocation().get(killed).distanceSq(spawn) < 100) {
                 didKillBat = true;
                 return SecretStatus.FOUND;
             }
@@ -83,10 +84,10 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
     public void tick(DungeonRoom dungeonRoom) {
         if (didKillBat) return;
 
-        BlockPos bpos = data.secretPoint.getBlockPos(dungeonRoom);
-        Vec3 pos = new Vec3(bpos);
-        for (Map.Entry<Integer, Vec3> integerVec3Entry : DungeonActionContext.getSpawnLocation().entrySet()) {
-            if (integerVec3Entry.getValue().squareDistanceTo(pos) < 100) {
+        VectorI3D bpos = data.secretPoint.getBlockPos(dungeonRoom);
+        Vector3D pos = new Vector3D(bpos);
+        for (Map.Entry<Integer, Vector3D> integerVec3Entry : DungeonActionContext.getSpawnLocation().entrySet()) {
+            if (integerVec3Entry.getValue().distanceSq(pos) < 100) {
                 Entity e = Minecraft.getMinecraft().theWorld.getEntityByID(integerVec3Entry.getKey());
                 if (e == null) continue;
                 if (!(e instanceof EntityBat)) continue;
@@ -96,7 +97,7 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
         }
 
         // can't find the bat!!!
-        if (bpos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 49) {
+        if (bpos.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) < 49) {
             nearbyTicks++;
         }
         if (nearbyTicks > 100) {
@@ -145,7 +146,7 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
 
     @Override
     public void highlight(Color color, String name, float partialTicks) {
-        BlockPos pos = getSecretPoint().getBlockPos(room);
+        VectorI3D pos = getSecretPoint().getBlockPos(room);
         RenderUtils.highlightBlock(pos, color, partialTicks);
         RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);

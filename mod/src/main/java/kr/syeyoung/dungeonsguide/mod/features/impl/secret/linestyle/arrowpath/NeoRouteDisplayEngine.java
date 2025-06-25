@@ -16,6 +16,8 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -81,7 +83,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         ActionMoveContext ctx = executorWeakHashMap.get(actionMove);
 
         if (ctx.executor == null) ctx.executor = pathPlanner.loadPrecalculatedByHash(actionMove.getPathfindRequest(dungeonRoom).getHash(), dungeonRoom);
-        if (ctx.executor != null) ctx.executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
+        if (ctx.executor != null) ctx.executor.setTarget(ModAPI.getAPI().getPlayer().getPositionVector());
     }
 
     private void tickAction(AbstractAction action) {
@@ -102,14 +104,14 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                 forceRefresh(actionMove);
             }
             if (ctx.executor != null && (ctx.poses == null || !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled())) {
-                ctx.poses = ctx.executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
+                ctx.poses = ctx.executor.getRoute(ModAPI.getAPI().getPlayer().getPositionVector());
                 if (ctx.poses != null)
                     ctx.segment = transformPathfindResult(ctx.poses.getNodeList(), settings.getWidth(), settings.getSmooth());
             }
 
             if (ctx.executor != null) {
                 if (!FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() && ctx.executor.isComplete()) {
-                    ctx.executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
+                    ctx.executor.setTarget(ModAPI.getAPI().getPlayer().getPositionVector());
                 }
             }
             return;
@@ -133,7 +135,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         List<AbstractAction> actions = actionRoute.getActions();
         if (current -1 >= 0) {
             AbstractAction abstractAction = actions.get(current - 1);
-            if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) >= 25))) {
+            if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) >= 25))) {
                 drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
             }
         }
@@ -164,7 +166,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             List<AbstractAction> atomicActionActions = ((AtomicAction) currentAction).getActions();
             if (atomicActionCurrent -1 >= 0) {
                 AbstractAction abstractAction = atomicActionActions.get(atomicActionCurrent - 1);
-                if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) >= 25))) {
+                if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) >= 25))) {
                     drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
                 }
             }
@@ -174,19 +176,19 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
 
     public void renderActionKill(ActionKill actionKill, DungeonRoom dungeonRoom, float partialTicks) {
-        BlockPos pos = actionKill.getTarget().getBlockPos(dungeonRoom);
+        VectorI3D pos = actionKill.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
         RenderUtils.drawTextAtWorld("Spawn", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
     public void renderActionInteract(ActionInteract actionInteract, DungeonRoom dungeonRoom, float partialTicks) {
-        BlockPos pos = actionInteract.getTarget().getBlockPos(dungeonRoom);
+        VectorI3D pos = actionInteract.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
         RenderUtils.drawTextAtWorld("Interact", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
     public void renderActionDropItem(ActionDropItem dropItem, DungeonRoom dungeonRoom, float partialTicks) {
-        BlockPos pos = dropItem.getTarget().getBlockPos(dungeonRoom);
+        VectorI3D pos = dropItem.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, true);
         RenderUtils.drawTextAtWorld("Drop Item", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
@@ -196,9 +198,9 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         float yAcc = 0;
         float zAcc = 0;
         int size = actionClickSet.getTarget().getOffsetPointList().size();
-        List<BlockPos> list = new ArrayList<>();
+        List<VectorI3D> list = new ArrayList<>();
         for (OffsetPoint offsetPoint : actionClickSet.getTarget().getOffsetPointList()) {
-            BlockPos pos = offsetPoint.getBlockPos(dungeonRoom);
+            VectorI3D pos = offsetPoint.getBlockPos(dungeonRoom);
             xAcc += pos.getX() + 0.5f;
             yAcc += pos.getY()+ 0.5f;
             zAcc += pos.getZ()+ 0.5f;
@@ -210,7 +212,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
     }
 
     public void renderActionClick(ActionClick actionClick, DungeonRoom dungeonRoom, float partialTicks) {
-        BlockPos pos = actionClick.getTarget().getBlockPos(dungeonRoom);
+        VectorI3D pos = actionClick.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlockStencil(pos, partialTicks,new AColor(0, 255,0,100), false);
         RenderUtils.drawTextAtWorld("Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
 
@@ -226,8 +228,8 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             for (Map.Entry<String, DungeonMechanicState> stringDungeonMechanicStateEntry : dungeonRoom.getMechanics().entrySet()) {
                 if (stringDungeonMechanicStateEntry.getValue() instanceof WorldMutatingMechanicState && ((WorldMutatingMechanicState) stringDungeonMechanicStateEntry.getValue()).isBlocking(dungeonRoom)) {
                     List<OffsetPoint> offsetPointList = ((WorldMutatingMechanicState)stringDungeonMechanicStateEntry.getValue()).blockedPoints();
-                    List<BlockPos> blocks = offsetPointList.stream().map(a -> a.getBlockPos(dungeonRoom)).collect(Collectors.toList());
-                    for (BlockPos block : blocks) {
+                    List<VectorI3D> blocks = offsetPointList.stream().map(a -> a.getBlockPos(dungeonRoom)).collect(Collectors.toList());
+                    for (VectorI3D block : blocks) {
                         if (blockPos.equals(block)) {
                             highlightSuperboom(blocks, partialTicks, new AColor(255, 0, 0, 50));
                             break;
@@ -240,13 +242,13 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
     }
 
     public void renderActionStonkClick(ActionStonkClick actionStonkClick, DungeonRoom dungeonRoom, float partialTicks) {
-        BlockPos pos = actionStonkClick.getTarget().getBlockPos(dungeonRoom);
+        VectorI3D pos = actionStonkClick.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlockStencil(pos, partialTicks,new AColor(0, 255,0,100), false);
         RenderUtils.drawTextAtWorld("Stonk&Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
     public void renderActionBreakWithSuperboom(ActionBreakWithSuperBoom superBoom, DungeonRoom dungeonRoom, float partialTicks) {
-        List<BlockPos> pos = new ArrayList<>();
+        List<VectorI3D> pos = new ArrayList<>();
         for (OffsetPoint offsetPoint : superBoom.getTarget().getOffsetPointList()) {
             pos.add(offsetPoint.getBlockPos(dungeonRoom));
         }
@@ -257,13 +259,13 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
     public void drawActionMove(AbstractActionMove actionMove, DungeonRoom dungeonRoom, float partialTicks) {
         ActionMoveContext context = executorWeakHashMap.get(actionMove);
 
-        BlockPos target = actionMove.getBeaconTargetPos(dungeonRoom);
+        VectorI3D target = actionMove.getBeaconTargetPos(dungeonRoom);
         PathfindResult poses = context == null ? null : context.poses;
         boolean flag2 =  FeatureRegistry.SECRET_FREEZE_LINES.isEnabled();
 
 
 
-        float distance = MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()));
+        float distance = MathHelper.sqrt_double(target.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         float scale = 0.45f * multiplier;
         scale *= (float) settings.getDestinationSize();
@@ -276,7 +278,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         if (settings.getDestinationSize() != 0) {
             RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, (float) settings.getDestinationSize(), true, false, partialTicks);
-            RenderUtils.drawTextAtWorld(String.format("%.2f", MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) + "m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, (float) settings.getDestinationSize(), true, false, partialTicks);
+            RenderUtils.drawTextAtWorld(String.format("%.2f", MathHelper.sqrt_double(target.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()))) + "m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, (float) settings.getDestinationSize(), true, false, partialTicks);
         }
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
@@ -306,12 +308,12 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }
                     if (last != null && last.getType() == PathfindResult.PathfindNode.NodeType.SUPERBOOM) {
-                        BlockPos test = new BlockPos(pose.getX(), pose.getY(), pose.getZ());
+                        VectorI3D test = new VectorI3D(pose.getX(), pose.getY(), pose.getZ());
                         for (Map.Entry<String, DungeonMechanicState> stringDungeonMechanicStateEntry : dungeonRoom.getMechanics().entrySet()) {
                             if (stringDungeonMechanicStateEntry.getValue() instanceof WorldMutatingMechanicState && ((WorldMutatingMechanicState) stringDungeonMechanicStateEntry.getValue()).isBlocking(dungeonRoom)) {
                                 List<OffsetPoint> offsetPointList = ((WorldMutatingMechanicState)stringDungeonMechanicStateEntry.getValue()).blockedPoints();
-                                List<BlockPos> blocks = offsetPointList.stream().map(a -> a.getBlockPos(dungeonRoom)).collect(Collectors.toList());
-                                for (BlockPos block : blocks) {
+                                List<VectorI3D> blocks = offsetPointList.stream().map(a -> a.getBlockPos(dungeonRoom)).collect(Collectors.toList());
+                                for (VectorI3D block : blocks) {
                                     if (test.distanceSq(block) <= 2) {
                                         highlightSuperboom(blocks, partialTicks, new AColor(255, 0, 0, 50));
                                         break;
@@ -481,7 +483,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
     }
 
 
-    private static void highlightSuperboom(List<BlockPos> blockPos, float partialTicks, AColor color) {
+    private static void highlightSuperboom(List<VectorI3D> blockPos, float partialTicks, AColor color) {
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
@@ -489,7 +491,6 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
 
         AxisAlignedBB bb = RenderUtils.highlightBlocksStencil(blockPos, partialTicks, color, true);
-
 
         GlStateManager.enableDepth();
 
@@ -647,7 +648,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
         GL11.glPolygonOffset(-1.0f, -1.0f);
-        BlockPos pos = new BlockPos(Math.floor(segment.to.xCoord), Math.floor(segment.to.yCoord) -1 , Math.floor(segment.to.zCoord));
+        VectorI3D pos = new VectorI3D(Math.floor(segment.to.xCoord), Math.floor(segment.to.yCoord) -1 , Math.floor(segment.to.zCoord));
         RenderUtils._highlightBlock(pos, Color.green, partialTicks, true);
         GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
 

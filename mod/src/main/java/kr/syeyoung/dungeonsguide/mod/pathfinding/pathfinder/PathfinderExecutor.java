@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.IPathfindWorld;
+import kr.syeyoung.modapi.data.Vector3D;
 import lombok.Getter;
 import net.minecraft.util.Vec3;
 
@@ -29,7 +30,7 @@ import java.util.Collections;
 public class PathfinderExecutor implements AutoCloseable {
     private boolean invalidate = false;
     @Getter
-    private volatile Vec3 target;
+    private volatile Vector3D target;
 
     @Getter
     private IPathfindWorld dungeonRoom;
@@ -42,7 +43,8 @@ public class PathfinderExecutor implements AutoCloseable {
 
     public PathfinderExecutor(IPathfinder pathfinder, BoundingBox target, IPathfindWorld dungeonRoom) {
         this.pathfinder = pathfinder;
-        this.target = target.center();
+        Vec3 tv = target.center();
+        this.target = new Vector3D(tv.xCoord, tv.yCoord, tv.zCoord);
         this.dungeonRoom = dungeonRoom;
 
         pathfinder.init(dungeonRoom, target);
@@ -60,11 +62,11 @@ public class PathfinderExecutor implements AutoCloseable {
         return pathfinder.getCost(target);
     }
 
-    public void setTarget(Vec3 target) {
+    public void setTarget(Vector3D target) {
         this.target = target;
     }
 
-    public PathfindResult getRoute(Vec3 target) {
+    public PathfindResult getRoute(Vector3D target) {
         if (!isComplete) return lastRoute;
         PathfindResult route = pathfinder.getRoute(target);
         if (route == null) return lastRoute = pathfinder.getRoute(this.target);

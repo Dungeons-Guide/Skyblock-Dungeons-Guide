@@ -29,9 +29,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.client.Minecraft;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -54,7 +54,7 @@ public class ActionChangeState extends AbstractAction {
     public boolean isComplete(DungeonRoom dungeonRoom) {
         DungeonMechanicState mechanic = dungeonRoom.getMechanics().get(mechanicName);
         if (state.equalsIgnoreCase("navigate")) {
-            return Minecraft.getMinecraft().thePlayer.getDistanceSq(mechanic.getRepresentingPoint().getBlockPos(dungeonRoom)) < 36;
+            return ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(mechanic.getRepresentingPoint().getBlockPos(dungeonRoom)) < 36;
         }
         if (state.equalsIgnoreCase("click")) {
             return true;

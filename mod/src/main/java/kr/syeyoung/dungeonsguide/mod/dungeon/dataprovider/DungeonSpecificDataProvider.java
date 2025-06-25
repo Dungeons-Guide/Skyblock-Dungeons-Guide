@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
@@ -26,7 +27,7 @@ import javax.vecmath.Vector2d;
 
 public interface DungeonSpecificDataProvider {
 
-    BlockPos findDoor(World w, String dungeonName);
+    VectorI3D findDoor(World w, String dungeonName);
 
     Vector2d findDoorOffset(World w, String dungeonName);
     BossfightProcessor createBossfightProcessor(World w, String dungeonName);

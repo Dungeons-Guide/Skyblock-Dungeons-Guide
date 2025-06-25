@@ -29,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.CoordinateMapBackedPathfindWorld;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -52,8 +53,8 @@ public class DRIWorld extends World implements ICoordinateMap<IBlockState> {
     private List<String> openMechanics;
     private int shape;
 
-    private HashSet<BlockPos> poses = new HashSet<>();
-    private HashSet<BlockPos> open = new HashSet<>();
+    private HashSet<VectorI3D> poses = new HashSet<>();
+    private HashSet<VectorI3D> open = new HashSet<>();
     private AlgorithmSetting algorithmSetting;
 
     @Getter
@@ -72,11 +73,11 @@ public class DRIWorld extends World implements ICoordinateMap<IBlockState> {
         for (DungeonMechanicData value : dungeonRoomInfo.getMechanics().values()) {
             if (value instanceof DungeonTombState.DungeonTombData) {
                 for (OffsetPoint offsetPoint : ((DungeonTombState.DungeonTombData) value).blockedPoints()) {
-                    poses.add(new BlockPos(offsetPoint.getX(), offsetPoint.getY() + 70, offsetPoint.getZ()));
+                    poses.add(new VectorI3D(offsetPoint.getX(), offsetPoint.getY() + 70, offsetPoint.getZ()));
                 }
             } else if (value instanceof DungeonBreakableWallState.DungeonBreakableWallData) {
                 for (OffsetPoint offsetPoint : ((DungeonBreakableWallState.DungeonBreakableWallData) value).blockedPoints()) {
-                    poses.add(new BlockPos(offsetPoint.getX(), offsetPoint.getY() + 70, offsetPoint.getZ()));
+                    poses.add(new VectorI3D(offsetPoint.getX(), offsetPoint.getY() + 70, offsetPoint.getZ()));
                 }
             }
         } // TODO: construct actual mechanics.
@@ -84,7 +85,7 @@ public class DRIWorld extends World implements ICoordinateMap<IBlockState> {
         for (String openMechanic : openMechanics) {
             WorldMutatingMechanicData routeBlocker = (WorldMutatingMechanicData) dungeonRoomInfo.getMechanics().get(openMechanic);
             for (OffsetPoint offsetPoint : routeBlocker.blockedPoints()) {
-                open.add(new BlockPos(offsetPoint.getX(), offsetPoint.getY() +70, offsetPoint.getZ()));
+                open.add(new VectorI3D(offsetPoint.getX(), offsetPoint.getY() +70, offsetPoint.getZ()));
             }
         }
 
@@ -95,8 +96,8 @@ public class DRIWorld extends World implements ICoordinateMap<IBlockState> {
 
         pathfindWorld = new CoordinateMapBackedPathfindWorld(this, algorithmSetting, new RoomBounds(
                 dungeonRoomInfo.getShape(),
-                new BlockPos(0, 70, 0),
-                new BlockPos(dungeonRoomInfo.getWidth() -1, 70, dungeonRoomInfo.getLength() - 1)
+                new VectorI3D(0, 70, 0),
+                new VectorI3D(dungeonRoomInfo.getWidth() -1, 70, dungeonRoomInfo.getLength() - 1)
         ), poses);
     }
 

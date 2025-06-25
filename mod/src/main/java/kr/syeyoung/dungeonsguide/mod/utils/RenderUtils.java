@@ -20,6 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.utils;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonDoor;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -560,7 +562,7 @@ public class RenderUtils {
         GlStateManager.popMatrix();
     }
 
-    public static void drawLine(Vec3 pos1, Vec3 pos2, Color colour, float partialTicks , boolean depth) {
+    public static void drawLine(Vector3D pos1, Vector3D pos2, Color colour, float partialTicks , boolean depth) {
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
@@ -583,8 +585,8 @@ public class RenderUtils {
         GlStateManager.color(colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue()/ 255f, colour.getAlpha() / 255f);
         worldRenderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 
-        worldRenderer.pos(pos1.xCoord, pos1.yCoord, pos1.zCoord).endVertex();
-        worldRenderer.pos(pos2.xCoord, pos2.yCoord, pos2.zCoord).endVertex();
+        worldRenderer.pos(pos1.x, pos1.y, pos1.z).endVertex();
+        worldRenderer.pos(pos2.x, pos2.y, pos2.z).endVertex();
         Tessellator.getInstance().draw();
 
         GlStateManager.translate(realX, realY, realZ);
@@ -649,7 +651,7 @@ public class RenderUtils {
         GlStateManager.popMatrix();
         GL11.glLineWidth(1);
     }
-    public static void drawLines(List<BlockPos> poses, AColor colour, float thickness, float partialTicks, boolean depth) {
+    public static void drawLines(List<VectorI3D> poses, AColor colour, float thickness, float partialTicks, boolean depth) {
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
@@ -674,7 +676,7 @@ public class RenderUtils {
         GlStateManager.color(1,1,1,1);
         worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
         int num = 0;
-        for (BlockPos pos:poses) {
+        for (VectorI3D pos:poses) {
             int i = getColorAt(num++ * 10,0, colour);
             worldRenderer.pos(pos.getX() +0.5, pos.getY() +0.5, pos.getZ() +0.5).color(
                     ((i >> 16) &0xFF)/255.0f,
@@ -698,7 +700,7 @@ public class RenderUtils {
         GL11.glLineWidth(1);
     }
 
-    public static void drawLines(List<BlockPos> poses, Color colour, float thickness, float partialTicks, boolean depth) {
+    public static void drawLines(List<VectorI3D> poses, Color colour, float thickness, float partialTicks, boolean depth) {
         if (colour instanceof AColor) drawLines(poses, (AColor)colour, thickness, partialTicks,depth);
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
@@ -722,7 +724,7 @@ public class RenderUtils {
 
         GlStateManager.color(colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue()/ 255f, colour.getAlpha() / 255f);
         worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
-        for (BlockPos pos:poses) {
+        for (VectorI3D pos:poses) {
             worldRenderer.pos(pos.getX() +0.5, pos.getY() +0.5, pos.getZ() +0.5).endVertex();
         }
         Tessellator.getInstance().draw();
@@ -739,10 +741,10 @@ public class RenderUtils {
         GlStateManager.popMatrix();
     }
 
-    public static void highlightBlock(BlockPos blockpos, Color c, float partialTicks) {
+    public static void highlightBlock(VectorI3D blockpos, Color c, float partialTicks) {
         highlightBlock(blockpos,c,partialTicks,false);
     }
-    public static void _highlightBlock(BlockPos blockpos, Color c, float partialTicks, boolean depth) {
+    public static void _highlightBlock(VectorI3D blockpos, Color c, float partialTicks, boolean depth) {
 
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
@@ -806,7 +808,7 @@ public class RenderUtils {
 
     }
 
-    public static void highlightBlock(BlockPos blockpos, Color c, float partialTicks, boolean depth) {
+    public static void highlightBlock(VectorI3D blockpos, Color c, float partialTicks, boolean depth) {
         Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
 
         double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
@@ -823,7 +825,7 @@ public class RenderUtils {
     }
 
 
-    public static AxisAlignedBB highlightBlockStencil(BlockPos blockPos, float partialTicks, Color color, boolean depth) {
+    public static AxisAlignedBB highlightBlockStencil(VectorI3D pos, float partialTicks, Color color, boolean depth) {
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
@@ -864,25 +866,24 @@ public class RenderUtils {
 
         double minX = 1e9, minY = 1e9, minZ = 1e9, maxX = -1e9, maxY = -1e9, maxZ = -1e9;
         {
-            BlockPos pos = blockPos;
             minX = Math.min(minX, pos.getX());
             maxX = Math.max(maxX, pos.getX() + 1);
             minY = Math.min(minY, pos.getY());
             maxY = Math.max(maxY, pos.getY() + 1);
             minZ = Math.min(minZ, pos.getZ());
             maxZ = Math.max(maxZ, pos.getZ() + 1);
-            IBlockState iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(pos);
+            IBlockState iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.x, pos.y, pos.z));
             if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
-                TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(pos);
+                TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(pos.x, pos.y, pos.z));
                 TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                 if (specialRenderer != null) {
                     specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
-                    for (EnumFacing value : EnumFacing.HORIZONTALS) {
-                        BlockPos newPos = pos.add(value.getDirectionVec());
-                        iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(newPos);
+                    for (kr.syeyoung.modapi.data.EnumFacing value : kr.syeyoung.modapi.data.EnumFacing.HORIZONTALS) {
+                        VectorI3D newPos = pos.add(value.getDirectionVec());
+                        iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(newPos.x, newPos.y, newPos.z));
 
                         if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
-                            tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(newPos);
+                            tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(newPos.x, newPos.y, newPos.z));
                             specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                             if (specialRenderer != null)
                                 specialRenderer.renderTileEntityAt(tileEntity, newPos.getX(), newPos.getY(), newPos.getZ(), partialTicks, -1);
@@ -890,15 +891,16 @@ public class RenderUtils {
                     }
                 } else {
                     blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
-                            blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, pos),
-                            iBlockState.getBlock(), pos, vertexBuffer, depth ? true : false);
+                            blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
+                            iBlockState.getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
                 }
             } else {
                 blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
-                        blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, pos),
-                        iBlockState.getBlock(), pos, vertexBuffer, depth ? true : false);
+                        blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
+                        iBlockState.getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
             }
         }
+
 
         tessellator.draw();
         if (depth) {
@@ -924,7 +926,7 @@ public class RenderUtils {
         GlStateManager.enableDepth();
         return bb;
     }
-    public static AxisAlignedBB highlightBlocksStencil(List<BlockPos> blockPos, float partialTicks, Color color, boolean depth) {
+    public static AxisAlignedBB highlightBlocksStencil(List<VectorI3D> blockPos, float partialTicks, Color color, boolean depth) {
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
@@ -964,25 +966,25 @@ public class RenderUtils {
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
         double minX = 1e9, minY = 1e9, minZ = 1e9, maxX = -1e9, maxY = -1e9, maxZ = -1e9;
-        for (BlockPos pos : blockPos) {
+        for (VectorI3D pos : blockPos) {
             minX = Math.min(minX, pos.getX());
             maxX = Math.max(maxX, pos.getX() + 1);
             minY = Math.min(minY, pos.getY());
             maxY = Math.max(maxY, pos.getY() + 1);
             minZ = Math.min(minZ, pos.getZ());
             maxZ = Math.max(maxZ, pos.getZ() + 1);
-            IBlockState iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(pos);
+            IBlockState iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.x, pos.y, pos.z));
             if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
-                TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(pos);
+                TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(pos.x, pos.y, pos.z));
                 TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                 if (specialRenderer != null) {
                     specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
-                    for (EnumFacing value : EnumFacing.HORIZONTALS) {
-                        BlockPos newPos = pos.add(value.getDirectionVec());
-                        iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(newPos);
+                    for (kr.syeyoung.modapi.data.EnumFacing value : kr.syeyoung.modapi.data.EnumFacing.HORIZONTALS) {
+                        VectorI3D newPos = pos.add(value.getDirectionVec());
+                        iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(newPos.x, newPos.y, newPos.z));
 
                         if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
-                            tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(newPos);
+                            tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(newPos.x, newPos.y, newPos.z));
                             specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                             if (specialRenderer != null)
                                 specialRenderer.renderTileEntityAt(tileEntity, newPos.getX(), newPos.getY(), newPos.getZ(), partialTicks, -1);
@@ -990,13 +992,13 @@ public class RenderUtils {
                     }
                 } else {
                     blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
-                            blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, pos),
-                            iBlockState.getBlock(), pos, vertexBuffer, depth ? true : false);
+                            blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
+                            iBlockState.getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
                 }
             } else {
                 blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
-                        blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, pos),
-                        iBlockState.getBlock(), pos, vertexBuffer, depth ? true : false);
+                        blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
+                        iBlockState.getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
             }
         }
 

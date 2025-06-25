@@ -45,17 +45,17 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.WorldBackedCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.EditableChunkCache;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
@@ -93,7 +93,7 @@ public class DungeonRoom  {
     private WorldBackedCoordinateMap coordinateMap;
     private EditableChunkCache chunkCache;
 
-    public DungeonRoom(Set<Point> points, short shape, byte color, BlockPos min, BlockPos max, DungeonContext context, Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
+    public DungeonRoom(Set<Point> points, short shape, byte color, VectorI3D min, VectorI3D max, DungeonContext context, Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
         this.unitPoints = points;
         this.color = color;
         this.context = context;
@@ -131,7 +131,7 @@ public class DungeonRoom  {
 
         this.color = this.dungeonRoomInfo.getColor();
         this.context = context;
-        roomBounds = new RoomBounds(this.dungeonRoomInfo.getShape(), new BlockPos(0, 70, 0), new BlockPos(dungeonRoomInfo.getBlocks()[0].length - 1, 70, dungeonRoomInfo.getBlocks().length - 1));
+        roomBounds = new RoomBounds(this.dungeonRoomInfo.getShape(), new VectorI3D(0, 70, 0), new VectorI3D(dungeonRoomInfo.getBlocks()[0].length - 1, 70, dungeonRoomInfo.getBlocks().length - 1));
 
         minRoomPt = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
         for (Point pt : unitPoints) {
@@ -148,7 +148,7 @@ public class DungeonRoom  {
 
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
 
-        HashSet<BlockPos> poses = new HashSet<>();
+        HashSet<VectorI3D> poses = new HashSet<>();
         for (DungeonMechanicState value : getMechanics().values()) {
             if (value instanceof DungeonTombState) {
                 for (OffsetPoint offsetPoint : ((DungeonTombState) value).blockedPoints()) {
@@ -175,8 +175,8 @@ public class DungeonRoom  {
 
         for (int z = minZChunk; z <= maxZChunk; z++) {
             for (int x = minXChunk; x <= maxXChunk; x++) {
-                if (!getRoomBounds().canAccessAbsolute(new BlockPos(x * 16,0, z*16)) && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16+15,0, z*16+15))
-                && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16+15,0, z*16)) && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16,0, z*16+15))) {
+                if (!getRoomBounds().canAccessAbsolute(new VectorI3D(x * 16,0, z*16)) && !getRoomBounds().canAccessAbsolute(new VectorI3D(x * 16+15,0, z*16+15))
+                && !getRoomBounds().canAccessAbsolute(new VectorI3D(x * 16+15,0, z*16)) && !getRoomBounds().canAccessAbsolute(new VectorI3D(x * 16,0, z*16+15))) {
                     continue;
                 }
                 Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
@@ -286,15 +286,15 @@ public class DungeonRoom  {
 
     private void buildDoors(Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
         if (getDungeonRoomInfo().getMechanics().values().stream().noneMatch(a -> a instanceof DungeonRoomDoor2State.DungeonRoomDoor2Data)) {
-            Set<Tuple<BlockPos, EDungeonDoorType>> positions = new HashSet<>();
-            BlockPos pos = context.getScaffoldParser().getDungeonMapLayout().roomPointToWorldPoint(minRoomPt).add(16, 0, 16);
+            Set<Tuple<VectorI3D, EDungeonDoorType>> positions = new HashSet<>();
+            VectorI3D pos = context.getScaffoldParser().getDungeonMapLayout().roomPointToWorldPoint(minRoomPt).add(16, 0, 16);
             for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : doorsAndStates) {
                 Vector2d vector2d = doorsAndState.getFirst();
-                BlockPos neu = pos.add(vector2d.x * 32, 0, vector2d.y * 32);
+                VectorI3D neu = pos.add((int) (vector2d.x * 32), 0, (int) (vector2d.y * 32));
                 positions.add(new Tuple<>(neu, doorsAndState.getSecond()));
             }
 
-            for (Tuple<BlockPos, EDungeonDoorType> door : positions) {
+            for (Tuple<VectorI3D, EDungeonDoorType> door : positions) {
                 doors.add(new DungeonDoor(context.getWorld(), door.getFirst(), door.getSecond()));
             }
         }
@@ -345,12 +345,12 @@ public class DungeonRoom  {
         return null;
     }
 
-    public BlockPos getRelativeBlockPosAt(int x, int y, int z) {
-        return new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
+    public VectorI3D getRelativeBlockPosAt(int x, int y, int z) {
+        return new VectorI3D(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
     }
 
-    public Vec3 getRelativeVec3At(double x, double y, double z) {
-        return new Vec3(x,y,z).addVector(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
+    public Vector3D getRelativeVec3At(double x, double y, double z) {
+        return new Vector3D(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
     }
 
     public int getRelativeBlockDataAt(int x, int y, int z) {

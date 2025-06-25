@@ -24,11 +24,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,8 +53,8 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
     private int answer = -1;
     private final int[] correctAnswers = new int[9];
     private final int[] currentAnswers = new int[9];
-    private final BlockPos[] grid = new BlockPos[9];
-    private final BlockPos center;
+    private final VectorI3D[] grid = new VectorI3D[9];
+    private final VectorI3D center;
     @Override
     public void tick() {
         super.tick();
@@ -69,7 +69,7 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
         RenderUtils.drawTextAtWorld(answer == -1 ? "Answer not received yet. Visit left room to obtain solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
 
         for (int i = 0; i < 9; i++) {
-            BlockPos pos = grid[i];
+            VectorI3D pos = grid[i];
             int direction = correctAnswers[i];
             int direction2 = currentAnswers[i];
             String charac = arrows.get(direction);

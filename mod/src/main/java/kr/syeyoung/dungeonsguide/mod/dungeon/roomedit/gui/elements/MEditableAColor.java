@@ -21,11 +21,11 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
@@ -94,8 +94,8 @@ public class MEditableAColor extends MPanel {
             Rectangle startWith = new Rectangle((int)(absMouseX * getScale()), (int) (absMouseY* getScale()), (int) (100 * getScale()), (int) (90 * getScale()));
             if (startWith.x < 10) startWith.x = 10;
             if (startWith.y < 10) startWith.y = 10;
-            if (startWith.x + startWith.width > Minecraft.getMinecraft().displayWidth - 10) startWith.x = Minecraft.getMinecraft().displayWidth - 10 - startWith.width;
-            if (startWith.y + startWith.height > Minecraft.getMinecraft().displayHeight - 10) startWith.y = Minecraft.getMinecraft().displayHeight - 10 - startWith.height;
+            if (startWith.x + startWith.width > ModAPI.getAPI().getDisplayWidth() - 10) startWith.x = ModAPI.getAPI().getDisplayWidth() - 10 - startWith.width;
+            if (startWith.y + startWith.height > ModAPI.getAPI().getDisplayHeight() - 10) startWith.y = ModAPI.getAPI().getDisplayHeight() - 10 - startWith.height;
             portable.setBounds(startWith);
 
 

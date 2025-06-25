@@ -19,12 +19,12 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.spiritleap;
 
 
-
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -79,8 +79,8 @@ public class FeatureCustomLeapGui extends SimpleFeature {
             Scaler scaler = new Scaler();
             scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
             scaler.child.setValue(widgetSpiritLeap);
-            int x = (int) (Math.max(0, Minecraft.getMinecraft().displayWidth / 2 - 200 * scaler.scale.getValue()));
-            int y = (int) (Math.max(0, Minecraft.getMinecraft().displayHeight / 2 - 200 * scaler.scale.getValue()) + 100);
+            int x = (int) (Math.max(0, ModAPI.getAPI().getDisplayWidth() / 2 - 200 * scaler.scale.getValue()));
+            int y = (int) (Math.max(0, ModAPI.getAPI().getDisplayHeight() / 2 - 200 * scaler.scale.getValue()) + 100);
             guiScreenAdapter = new GuiScreenAdapterChestOverride(scaler, x, y);
         }
         guiScreenAdapter.setGuiChest((GuiChest) event.gui);

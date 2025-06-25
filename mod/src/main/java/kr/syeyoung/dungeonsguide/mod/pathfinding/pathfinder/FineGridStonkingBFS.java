@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.IPathfindWorld;
+import kr.syeyoung.modapi.data.Vector3D;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -411,20 +412,20 @@ public class FineGridStonkingBFS implements IPathfinder {
 
 
     @Override
-    public void setTarget(Vec3 from) {
+    public void setTarget(Vector3D from) {
     }
 
     @Override
-    public Vec3 getTarget() {
+    public Vector3D getTarget() {
         return null;
 //        return new OffsetVec3(lastSx / 2.0, lastSy / 2.0, lastSz / 2.0);
     }
 
     @Override
-    public PathfindResult getRoute(Vec3 from) {
-        int lastSx = (int) Math.round(from.xCoord * 2);
-        int lastSy = (int) Math.round(from.yCoord * 2);
-        int lastSz = (int) Math.round(from.zCoord * 2);
+    public PathfindResult getRoute(Vector3D from) {
+        int lastSx = (int) Math.round(from.x * 2);
+        int lastSy = (int) Math.round(from.y * 2);
+        int lastSz = (int) Math.round(from.z * 2);
 
 
         Node goalNode = openNode(lastSx, lastSy, lastSz);
@@ -442,10 +443,10 @@ public class FineGridStonkingBFS implements IPathfinder {
     }
 
     @Override
-    public double getCost(Vec3 from) {
-        int lastSx = (int) Math.round(from.xCoord * 2);
-        int lastSy = (int) Math.round(from.yCoord * 2);
-        int lastSz = (int) Math.round(from.zCoord * 2);
+    public double getCost(Vector3D from) {
+        int lastSx = (int) Math.round(from.x * 2);
+        int lastSy = (int) Math.round(from.y * 2);
+        int lastSz = (int) Math.round(from.z * 2);
 
 
         Node goalNode = openNode(lastSx, lastSy, lastSz);

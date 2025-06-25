@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -117,7 +118,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     @Override
     public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
         if (keyInputEvent.getKey() == FeatureRegistry.SOLVER_BOMBDEFUSE.<Integer>getParameter("key").getValue()) {
-            if (!getChamber().isWithinAbsolute(Minecraft.getMinecraft().thePlayer.getPosition())) {
+            if (!getChamber().isWithinAbsolute(ModAPI.getAPI().getPlayer().getPosition())) {
                 return;
             }
             onSendData();

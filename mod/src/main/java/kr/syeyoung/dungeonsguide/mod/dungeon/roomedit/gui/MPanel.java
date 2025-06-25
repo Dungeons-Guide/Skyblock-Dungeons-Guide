@@ -20,10 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MTooltip;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -168,7 +168,7 @@ public class MPanel {
     public void clip(int x, int y, int width, int height) {
         if (width < 0 || height < 0) return;
 
-        GL11.glScissor((int) (x  * scale), Minecraft.getMinecraft().displayHeight - (int) ((y + height) * scale), (int)(width* scale + scale) - 1, (int) (height * scale + scale) - 1);
+        GL11.glScissor((int) (x  * scale), ModAPI.getAPI().getDisplayHeight() - (int) ((y + height) * scale), (int)(width* scale + scale) - 1, (int) (height * scale + scale) - 1);
     }
 
     protected Rectangle determineClip(Rectangle rect1, Rectangle rect2) {

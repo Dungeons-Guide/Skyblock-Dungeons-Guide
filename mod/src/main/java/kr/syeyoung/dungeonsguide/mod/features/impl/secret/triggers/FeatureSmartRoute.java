@@ -42,8 +42,8 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.entity.UPlayerSelf;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -65,13 +65,13 @@ public class FeatureSmartRoute extends SimpleFeature {
 
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (!SkyblockStatus.isOnDungeon() || context == null) return;
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
             if (thePlayer == null) return;
             if (context.getScaffoldParser() == null) return;
             Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
             DungeonRoom currentRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
             if (currentRoom == null) return;
-            if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) return;
+            if (!currentRoom.getRoomBounds().isFullyWithin(thePlayer.getPositionVector())) return;
             RoomRouteHandler handler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(currentRoom);
             if (handler == null) return;
 

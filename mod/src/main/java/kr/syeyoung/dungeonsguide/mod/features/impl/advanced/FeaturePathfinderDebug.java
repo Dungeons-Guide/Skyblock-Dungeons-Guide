@@ -37,10 +37,11 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalcu
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PrecalculatedPathfinder;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Vector3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
@@ -60,7 +61,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
 
     private List<IPathfinder> instance = new ArrayList<>();
 
-    private List<Vec3> pfDebugPts = new ArrayList<>();
+    private List<Vector3D> pfDebugPts = new ArrayList<>();
 
     private int renderRequests(int st, DungeonRoom drm, float partialTicks) {
         int cnt = requests.size() + precalcs.size();
@@ -74,7 +75,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
 
             double cx = 0, cy =0 , cz = 0;
             for (OffsetVec3 offsetVec3 : request.getTarget()) {
-                Vec3 pos = offsetVec3.getPos(drm);
+                Vector3D pos = offsetVec3.getPos(drm);
 
                 RenderUtils.highlightBox(
                         new AxisAlignedBB(
@@ -110,7 +111,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
 
             double cx = 0, cy =0 , cz = 0;
             for (OffsetVec3 offsetVec3 : request.getTargetLocations()) {
-                Vec3 pos = offsetVec3.getPos(drm);
+//                Vector3D pos = offsetVec3.getPos(drm);
 
                 RenderUtils.highlightBox(
                         new AxisAlignedBB(
@@ -142,7 +143,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
         if (dungeonContext == null) return;
         if (dungeonContext.getScaffoldParser() == null) return;
         DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
-                dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())
+                dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(ModAPI.getAPI().getPlayer().getPositionVector())
         );
         if (drm == null) return;
 
@@ -151,7 +152,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
 
 
         int cnt = 0;
-        for (Vec3 pfDebugPt : pfDebugPts) {
+        for (Vector3D pfDebugPt : pfDebugPts) {
             for (IPathfinder precalculatedPathfinder : instance) {
                 PathfindResult res = precalculatedPathfinder.getRoute(pfDebugPt);
                 if (res == null) continue;
@@ -213,7 +214,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
                 PathfindPrecalculation pfc = new PathfindPrecalculation(new File(args[2]));
                 DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
                 DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
-                        dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())
+                        dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(ModAPI.getAPI().getPlayer().getPositionVector())
                 );
 
                 PrecalculatedPathfinder precalculatedPathfinder = (PrecalculatedPathfinder) pfc.createPathfinder(drm.getRoomMatcher().getRotation());
@@ -223,7 +224,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
                 e.printStackTrace();
             }
         } else if (args[1].equals("check")) {
-            pfDebugPts.add(Minecraft.getMinecraft().thePlayer.getPositionVector());
+            pfDebugPts.add(ModAPI.getAPI().getPlayer().getPositionVector());
         } else if (args[1].equals("clearpt")) {
             pfDebugPts.clear();
         } else if (args[1].equals("stonkmech")) {
@@ -231,7 +232,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null) return;
             DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
-                    dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())
+                    dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(ModAPI.getAPI().getPlayer().getPositionVector())
             );
             if (drm == null) return;
             FeatureRegistry.DEBUG_ST.change(
@@ -241,7 +242,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null) return;
             DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
-                    dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())
+                    dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(ModAPI.getAPI().getPlayer().getPositionVector())
             );
             if (drm == null) return;
             DungeonOnewayLeverState.DungeonOnewayLeverData mechanic1 = (DungeonOnewayLeverState.DungeonOnewayLeverData) drm.getDungeonRoomInfo().getMechanics().get(args[2]);

@@ -18,9 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.utils;
 
+import kr.syeyoung.modapi.data.Vector3D;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.util.Vec3;
 
 import javax.vecmath.Vector2d;
 
@@ -42,10 +42,10 @@ public class VectorUtils {
         private boolean back;
     }
 
-    public static double distSquared(Vec3 lookVec, Vec3 posVec, Vec3 objectVec) {
-        Vec3 v = objectVec.subtract(posVec);
+    public static double distSquared(Vector3D lookVec, Vector3D posVec, Vector3D objectVec) {
+        Vector3D v = objectVec.clone().subtract(posVec);
         double t = v.dotProduct(lookVec);
-        Vec3 p = posVec.addVector(lookVec.xCoord * t, lookVec.yCoord * t, lookVec.zCoord * t);
-        return p.squareDistanceTo(objectVec) / p.squareDistanceTo(posVec);
+        Vector3D p = posVec.clone().add(lookVec.x * t, lookVec.y * t, lookVec.z * t);
+        return p.distanceSq(objectVec) / p.distanceSq(posVec);
     }
 }

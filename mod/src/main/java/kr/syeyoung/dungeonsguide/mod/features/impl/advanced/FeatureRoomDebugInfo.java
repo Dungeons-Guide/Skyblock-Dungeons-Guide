@@ -29,6 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextS
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.entity.UPlayerSelf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -64,7 +66,7 @@ public class FeatureRoomDebugInfo extends TextHUDFeature {
         if (!FeatureRegistry.DEBUG.isEnabled()) return new TextSpan(new NullTextStyle(), "");
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return new TextSpan(new NullTextStyle(), "");
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
         if (context.getScaffoldParser() == null) return new TextSpan(new NullTextStyle(), "");
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);

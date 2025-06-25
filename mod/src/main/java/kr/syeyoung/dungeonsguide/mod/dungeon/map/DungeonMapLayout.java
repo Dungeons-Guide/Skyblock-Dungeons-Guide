@@ -18,10 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.map;
 
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -33,42 +33,42 @@ public class DungeonMapLayout {
     // top left room pos
     private final Point originPoint;
 
-    private final BlockPos worldMin;
+    private final VectorI3D worldMin;
 
 
-    public BlockPos mapPointToWorldPoint(Point mapPoint) {
+    public VectorI3D mapPointToWorldPoint(Point mapPoint) {
         int x = (int) ((mapPoint.x - originPoint.x + mapRoomGap / 2.0) / ((double) unitRoomSize.width + mapRoomGap) * 32 + worldMin.getX());
         int y = (int) ((mapPoint.y - originPoint.y + mapRoomGap / 2.0) / ((double) unitRoomSize.height + mapRoomGap) * 32 + worldMin.getZ());
-        return new BlockPos(x, 70, y);
+        return new VectorI3D(x, 70, y);
     }
 
     public Point roomPointToMapPoint(Point roomPoint) {
         return new Point(roomPoint.x * (unitRoomSize.width + mapRoomGap) + originPoint.x, roomPoint.y * (unitRoomSize.height + mapRoomGap) + originPoint.y);
     }
 
-    public BlockPos roomPointToWorldPoint(Point roomPoint) {
-        return new BlockPos(worldMin.getX() + (roomPoint.x * 32), worldMin.getY(), worldMin.getZ() + (roomPoint.y * 32));
+    public VectorI3D roomPointToWorldPoint(Point roomPoint) {
+        return new VectorI3D(worldMin.getX() + (roomPoint.x * 32), worldMin.getY(), worldMin.getZ() + (roomPoint.y * 32));
     }
 
-    public Point worldPointToRoomPoint(BlockPos worldPoint) {
+    public Point worldPointToRoomPoint(VectorI3D worldPoint) {
         if (worldMin == null) return null;
         return new Point((int) Math.floor((worldPoint.getX() - worldMin.getX()) / 32.0), (int) Math.floor((worldPoint.getZ() - worldMin.getZ()) / 32.0));
     }
-    public Point worldPointToRoomPoint(Vec3 worldPoint) {
+    public Point worldPointToRoomPoint(Vector3D worldPoint) {
         if (worldMin == null) return null;
-        return new Point((int) Math.floor((worldPoint.xCoord - worldMin.getX()) / 32.0), (int) Math.floor((worldPoint.zCoord - worldMin.getZ()) / 32.0));
+        return new Point((int) Math.floor((worldPoint.x - worldMin.getX()) / 32.0), (int) Math.floor((worldPoint.z - worldMin.getZ()) / 32.0));
     }
 
 
-    public Point worldPointToMapPoint(Vec3 worldPoint) {
+    public Point worldPointToMapPoint(Vector3D worldPoint) {
         if (worldMin == null) return null;
-        return new Point(originPoint.x + (int) ((worldPoint.xCoord - worldMin.getX()) / 32.0f * (unitRoomSize.width + mapRoomGap)) - mapRoomGap / 2, originPoint.y + (int) ((worldPoint.zCoord - worldMin.getZ()) / 32.0f * (unitRoomSize.height + mapRoomGap)) - mapRoomGap / 2);
+        return new Point(originPoint.x + (int) ((worldPoint.x - worldMin.getX()) / 32.0f * (unitRoomSize.width + mapRoomGap)) - mapRoomGap / 2, originPoint.y + (int) ((worldPoint.z - worldMin.getZ()) / 32.0f * (unitRoomSize.height + mapRoomGap)) - mapRoomGap / 2);
     }
 
-    public Vector2d worldPointToMapPointFLOAT(Vec3 worldPoint) {
+    public Vector2d worldPointToMapPointFLOAT(Vector3D worldPoint) {
         if (worldMin == null) return null;
-        double x = originPoint.x + ((worldPoint.xCoord - worldMin.getX()) / 32.0f * (unitRoomSize.width + mapRoomGap)) - mapRoomGap / 2.0;
-        double y = originPoint.y + ((worldPoint.zCoord - worldMin.getZ()) / 32.0f * (unitRoomSize.height + mapRoomGap)) - mapRoomGap / 2.0;
+        double x = originPoint.x + ((worldPoint.x - worldMin.getX()) / 32.0f * (unitRoomSize.width + mapRoomGap)) - mapRoomGap / 2.0;
+        double y = originPoint.y + ((worldPoint.z - worldMin.getZ()) / 32.0f * (unitRoomSize.height + mapRoomGap)) - mapRoomGap / 2.0;
         return new Vector2d(x, y);
     }
 

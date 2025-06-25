@@ -18,11 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
+import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.UEvent;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.Tuple;
 
 import java.util.HashSet;
@@ -30,7 +30,7 @@ import java.util.Set;
 
 public abstract class BlockUpdateEvent extends UEvent {
     @Getter @Setter
-    private Set<Tuple<BlockPos, IBlockState>> updatedBlocks = new HashSet<>();
+    private Set<Tuple<VectorI3D, IBlockState>> updatedBlocks = new HashSet<>();
 
     public static class Pre extends BlockUpdateEvent {}
     public static class Post extends BlockUpdateEvent {}

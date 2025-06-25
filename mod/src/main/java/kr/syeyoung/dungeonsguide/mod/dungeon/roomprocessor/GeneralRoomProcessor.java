@@ -41,6 +41,8 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.CoordinateMapBackedPathfindWorld;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.state.IBlockState;
@@ -86,7 +88,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
     private void setupPathfinderWorld() {
-        HashSet<BlockPos> poses = new HashSet<>();
+        HashSet<VectorI3D> poses = new HashSet<>();
         for (DungeonMechanicState value : dungeonRoom.getMechanics().values()) {
             if (value instanceof DungeonTombState) {
                 for (OffsetPoint offsetPoint : ((DungeonTombState) value).blockedPoints()) {
@@ -183,7 +185,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             ChatTransmitter.sendDebugChat(new ChatComponentText(chat.getFormattedText().replace('§', '&') + " - received"));
         }
         if (!chat.getFormattedText().contains("/")) return;
-        BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
+        VectorI3D pos = ModAPI.getAPI().getPlayer().getPosition();
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         Point pt1 = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(pos.add(2, 0, 2));
@@ -193,7 +195,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             secrets2 = -1;
             return;
         }
-        BlockPos pos2 = dungeonRoom.getRoomBounds().getMin().add(5, 0, 5);
+        VectorI3D pos2 = dungeonRoom.getRoomBounds().getMin().add(5, 0, 5);
 
         String text = chat.getFormattedText();
         int secretsIndex = text.indexOf("Secrets");
@@ -247,15 +249,17 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
 
     private boolean last = false;
-    private BlockPos lastChest;
+    private VectorI3D lastChest;
 
     @Override
     public void onInteractBlock(PlayerInteractEvent event) {
+        VectorI3D ePos = new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ());
+        kr.syeyoung.modapi.data.EnumFacing eFacing = kr.syeyoung.modapi.data.EnumFacing.VALUES[event.face.getIndex()];
 
-        if (event.pos != null) {
+        if (ePos != null) {
             IBlockState iBlockState = event.world.getBlockState(event.pos);
             if (iBlockState.getBlock() == Blocks.chest || iBlockState.getBlock() == Blocks.trapped_chest)
-                lastChest = event.pos;
+                lastChest = ePos;
         }
 
         if (event.entityPlayer.getHeldItem() != null &&
@@ -267,9 +271,9 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 GuiDungeonAddSet gdas = (GuiDungeonAddSet) ec.getCurrent();
                 if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
                     if (last)
-                        gdas.getEnd().setPosInWorld(getDungeonRoom(), event.pos);
+                        gdas.getEnd().setPosInWorld(getDungeonRoom(), ePos);
                     else
-                        gdas.getStart().setPosInWorld(getDungeonRoom(), event.pos);
+                        gdas.getStart().setPosInWorld(getDungeonRoom(), ePos);
 
                     last = !last;
                 }
@@ -281,12 +285,12 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
                     if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
                         OffsetPoint offsetPoint1 = (OffsetPoint) offsetPoint.getParameter().getNewData();
-                        offsetPoint1.setPosInWorld(getDungeonRoom(), event.pos);
+                        offsetPoint1.setPosInWorld(getDungeonRoom(), ePos);
                     }
                 }
             }
             try {
-                if (ec != null && event.pos != null && Minecraft.getMinecraft().theWorld.getBlockState(event.pos).getBlock() == Blocks.sponge) {
+                if (ec != null && ePos != null && Minecraft.getMinecraft().theWorld.getBlockState(event.pos).getBlock() == Blocks.sponge) {
                     int nextId = 1;
                     while (ec.getRoom().getDungeonRoomInfo().getMechanics().containsKey("ent-" + nextId)) nextId++;
                     DungeonRoomDoor2State.DungeonRoomDoor2Data door2 = new DungeonRoomDoor2State.DungeonRoomDoor2Data();
@@ -295,11 +299,13 @@ public class GeneralRoomProcessor implements RoomProcessor {
                     enumFacing = enumFacing.rotateY();
                     for (int x = -1; x <= 1; x++) {
                         for (int y = 0; y < 4; y++) {
-                            BlockPos pos = event.pos.add(enumFacing.getFrontOffsetX() * x, y, enumFacing.getFrontOffsetZ() * x);
+                            VectorI3D pos = ePos.add(enumFacing.getFrontOffsetX() * x, y, enumFacing.getFrontOffsetZ() * x);
                             door2.getBlocks().getOffsetPointList().add(new OffsetPoint(dungeonRoom, pos));
                         }
                     }
-                    door2.getPfPoint().setPosInWorld(dungeonRoom, event.pos.add(event.face.getDirectionVec()).add(event.face.getDirectionVec()));
+                    door2.getPfPoint().setPosInWorld(dungeonRoom, ePos
+                            .add(eFacing.getDirectionVec())
+                            .add(eFacing.getDirectionVec()));
                     if (ec.getCurrent() instanceof GuiDungeonRoomEdit) {
                         ((GuiDungeonRoomEdit) ec.getCurrent()).getSep().buildElements();
                     }
@@ -349,7 +355,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public static final IBlockState STONE = Blocks.stone.getStateFromMeta(2);
     @Override
     public void onBlockUpdate(BlockUpdateEvent blockUpdateEvent) {
-        for (Tuple<BlockPos, IBlockState> updatedBlock : blockUpdateEvent.getUpdatedBlocks()) {
+        for (Tuple<VectorI3D, IBlockState> updatedBlock : blockUpdateEvent.getUpdatedBlocks()) {
             if (updatedBlock.getSecond().equals(STONE)) continue;
             pathfinderWorld.resetBlock(updatedBlock.getFirst());
         }

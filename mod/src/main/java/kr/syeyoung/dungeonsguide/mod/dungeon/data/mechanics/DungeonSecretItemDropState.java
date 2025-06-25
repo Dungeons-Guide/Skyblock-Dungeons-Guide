@@ -35,6 +35,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -42,8 +45,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -72,14 +73,14 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
     public void tick(DungeonRoom dungeonRoom) {
         if (absolutelyFound) return;
 
-        BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
+        VectorI3D pos = data.secretPoint.getBlockPos(dungeonRoom);
         boolean itemFound = false;
         for (EntityItem entityItem : Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()))) {
             if (entityItem.getEntityItem().getItem() == Items.dye) continue;
             itemFound = true;
         }
 
-        if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 40) {
+        if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(pos) < 40) {
             nearbyTicks++;
             List<EntityItem> items = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()));
             if (itemFound) {
@@ -91,10 +92,10 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
         }
 
         if (!absolutelyFound) {
-            Vec3 pos2 = new Vec3(pos);
+            Vector3D pos2 = new Vector3D(pos);
             for (Integer pickedup : DungeonActionContext.getPickedups()) {
                 if (DungeonActionContext.getSpawnLocation().get(pickedup) == null) continue;
-                if (DungeonActionContext.getSpawnLocation().get(pickedup).squareDistanceTo(pos2) < 4) {
+                if (DungeonActionContext.getSpawnLocation().get(pickedup).distanceSq(pos2) < 4) {
                     status = SecretStatus.FOUND;
                     absolutelyFound = true;
                 }
@@ -135,7 +136,7 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
 
     @Override
     public void highlight(Color color, String name, float partialTicks) {
-        BlockPos pos = getSecretPoint().getBlockPos(room);
+        VectorI3D pos = getSecretPoint().getBlockPos(room);
         RenderUtils.highlightBlock(pos, color, partialTicks);
         RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);

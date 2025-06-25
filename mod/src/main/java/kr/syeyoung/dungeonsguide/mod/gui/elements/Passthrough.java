@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -61,8 +61,8 @@ public class Passthrough extends AnnotatedExportOnlyWidget implements Layouter, 
         double w = buildContext.getSize().getWidth();
         double h = buildContext.getSize().getHeight();
 
-        int screenHeight = Minecraft.getMinecraft().displayHeight;
-        int screenWidth = Minecraft.getMinecraft().displayWidth;
+        int screenHeight = ModAPI.getAPI().getDisplayHeight();
+        int screenWidth = ModAPI.getAPI().getDisplayWidth();
 
         Framebuffer framebuffer = PassthroughManager.INSTANCE.getFramebuffer();
 
@@ -70,9 +70,9 @@ public class Passthrough extends AnnotatedExportOnlyWidget implements Layouter, 
         GlStateManager.color(1f, 1f, 1f, 1f);
 
         double sx = rect.getX() / screenWidth;
-        double sy = (Minecraft.getMinecraft().displayHeight - rect.getY()) / screenHeight;
+        double sy = (ModAPI.getAPI().getDisplayHeight() - rect.getY()) / screenHeight;
         double ex = (rect.getX() + rect.getWidth())/ screenWidth;
-        double ey = (Minecraft.getMinecraft().displayHeight - rect.getY() - rect.getHeight()) / screenHeight;
+        double ey = (ModAPI.getAPI().getDisplayHeight() - rect.getY() - rect.getHeight()) / screenHeight;
 
         Gui.drawRect(0,0, (int) w, (int) h, PassthroughManager.INSTANCE.getFogColor());
 

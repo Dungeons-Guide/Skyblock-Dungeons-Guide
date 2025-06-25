@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
@@ -52,8 +53,8 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
                 OffsetPoint op = this.board.getOffsetPointList().get(x * 3 + y);
-                BlockPos bpos = op.getBlockPos(getDungeonRoom());
-                Block b = w.getChunkFromBlockCoords(bpos).getBlock(bpos);
+                VectorI3D bpos = op.getBlockPos(getDungeonRoom());
+                Block b = w.getBlockState(new BlockPos(bpos.getX(), bpos.getY(), bpos.getZ())).getBlock();
                 if (b == Blocks.stone_button) {
                     board[y][x] = 0;
                 } else if (b == Blocks.air){
@@ -185,7 +186,7 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
         super.drawWorld(partialTicks);
         if (!FeatureRegistry.SOLVER_TICTACTOE.isEnabled()) return;
         if (chosePos != -1) {
-            BlockPos block = board.getOffsetPointList().get(chosePos).getBlockPos(getDungeonRoom());
+            VectorI3D block = board.getOffsetPointList().get(chosePos).getBlockPos(getDungeonRoom());
             boolean whoseturn = false; // false => hype true => me
             if (lastBoard != null) {
                 int ones = 0;

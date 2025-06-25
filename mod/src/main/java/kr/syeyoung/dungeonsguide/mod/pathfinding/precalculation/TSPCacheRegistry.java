@@ -22,10 +22,10 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.Additional
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPresetRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.BlockPos;
 import org.apache.commons.codec.binary.Hex;
 
 import java.awt.*;
@@ -186,7 +186,7 @@ public class TSPCacheRegistry {
                             new Dimension(16, 16),
                             5,
                             new Point(0, 0),
-                            new BlockPos(0, 70, 0)
+                            new VectorI3D(0, 70, 0)
                     );
                     fakeContext.setScaffoldParser(new DungeonRoomScaffoldParser(dungeonMapLayout, fakeContext));
                     DungeonRoom dungeonRoom = new DungeonRoom(fakeContext);

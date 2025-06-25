@@ -22,9 +22,9 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleClickingSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 
 import java.util.Comparator;
 import java.util.List;
@@ -68,7 +68,7 @@ public class ActionMove extends AbstractActionMove {
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
         return targets.stream().flatMap(a -> a.getOffsetPointSet().stream()).anyMatch(
-                a-> a.getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) < 0.625
+                a-> ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(a.getPos(dungeonRoom)) < 0.625
         );
     }
 

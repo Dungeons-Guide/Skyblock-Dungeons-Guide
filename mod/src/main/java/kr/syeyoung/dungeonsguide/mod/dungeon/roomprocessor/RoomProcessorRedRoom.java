@@ -32,13 +32,13 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.EnumFacing;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector3f;
@@ -46,11 +46,11 @@ import javax.vecmath.Vector3f;
 public class RoomProcessorRedRoom extends GeneralRoomProcessor {
     public RoomProcessorRedRoom(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
-        BlockPos basePt = dungeonRoom.getRoomBounds().getMin().add(dungeonRoom.getRoomBounds().getMax());
-        this.basePt = new Vec3(basePt.getX() / 2.0f, basePt.getY() / 2.0f, basePt.getZ() / 2.0f);
+        VectorI3D basePt = dungeonRoom.getRoomBounds().getMin().add(dungeonRoom.getRoomBounds().getMax());
+        this.basePt = new Vector3D(basePt.getX() / 2.0f, basePt.getY() / 2.0f, basePt.getZ() / 2.0f);
     }
 
-    Vec3 basePt;
+    Vector3D basePt;
     int dir = 0;
 
     private final RichText richText = new RichText(new TextSpan(
@@ -61,8 +61,8 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
 
     @Override
     public void tick() {
-        BlockPos basePt = getDungeonRoom().getRoomBounds().getMin().add(getDungeonRoom().getRoomBounds().getMax());
-        this.basePt = new Vec3(basePt.getX() / 2.0f, basePt.getY() / 2.0f + 4, basePt.getZ() / 2.0f);
+        VectorI3D basePt = getDungeonRoom().getRoomBounds().getMin().add(getDungeonRoom().getRoomBounds().getMax());
+        this.basePt = new Vector3D(basePt.getX() / 2.0f, basePt.getY() / 2.0f + 4, basePt.getZ() / 2.0f);
         DungeonDoor real = null;
         for (DungeonDoor door : getDungeonRoom().getDoors()) {
             if (door.getType().isExist()) {
@@ -72,11 +72,11 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
         if (real != null) {
             OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), real.getPosition());
             offsetPoint = new OffsetPoint(33- offsetPoint.getX(), offsetPoint.getY(), 33 - offsetPoint.getZ());
-            BlockPos opposite =offsetPoint.getBlockPos(getDungeonRoom());
-            BlockPos dir = new BlockPos(real.getPosition().subtract(opposite));
-            dir = new BlockPos(MathHelper.clamp_int(dir.getX() / 10, -1, 1), 0, MathHelper.clamp_int(dir.getZ() / 10, -1, 1));
+            VectorI3D opposite =offsetPoint.getBlockPos(getDungeonRoom());
+            VectorI3D dir = real.getPosition().subtract(opposite);
+            dir = new VectorI3D(MathHelper.clamp_int(dir.getX() / 10, -1, 1), 0, MathHelper.clamp_int(dir.getZ() / 10, -1, 1));
 
-            this.basePt = new Vec3(opposite.add(dir.getX() * 6 + dir.getZ(), 3, dir.getZ() * 6 - dir.getX()));
+            this.basePt = new Vector3D(opposite.add(dir.getX() * 6 + dir.getZ(), 3, dir.getZ() * 6 - dir.getX()));
 
             if (dir.getX() > 0) this.dir = 270;
             else if (dir.getX() < 0) this.dir = 90;
@@ -89,18 +89,18 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
 
         if (getDungeonRoom().getDungeonRoomInfo().getProperties().containsKey("warning-pos")) {
             OffsetPoint offsetPoint = (OffsetPoint) getDungeonRoom().getDungeonRoomInfo().getProperties().get("warning-pos");
-            Vec3 pos = new Vec3(offsetPoint.getBlockPos(getDungeonRoom()));
-            pos = pos.addVector(0.5, 0, 0.5);
+            Vector3D pos = new Vector3D(offsetPoint.getBlockPos(getDungeonRoom()));
+            pos = pos.add(0.5, 0, 0.5);
             String dirStr = (String) getDungeonRoom().getDungeonRoomInfo().getProperties().get("warning-dir");
             EnumFacing dirFacing = EnumFacing.byName(dirStr);
             if (dirFacing != null) {
                 int rot = getDungeonRoom().getRoomMatcher().getRotation();
                 for (int i = 0; i < 4-rot; i++)
                     dirFacing = dirFacing.rotateY();
-                pos = pos.addVector(dirFacing.getFrontOffsetX() * 0.5, dirFacing.getFrontOffsetY() * 0.5, dirFacing.getFrontOffsetZ() * 0.5);
+                pos = pos.add(dirFacing.getFrontOffsetX() * 0.5, dirFacing.getFrontOffsetY() * 0.5, dirFacing.getFrontOffsetZ() * 0.5);
                 dir = (2-dirFacing.getHorizontalIndex())* 90; // don't ask me why
                 dirFacing = dirFacing.rotateY();
-                pos = pos.addVector(dirFacing.getFrontOffsetX() * 0.5, dirFacing.getFrontOffsetY() * 0.5, dirFacing.getFrontOffsetZ() * 0.5);
+                pos = pos.add(dirFacing.getFrontOffsetX() * 0.5, dirFacing.getFrontOffsetY() * 0.5, dirFacing.getFrontOffsetZ() * 0.5);
 
             }
 
@@ -118,7 +118,7 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
         {
             RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
 
-            Vector3f renderPos = RenderUtils.getRenderPos((float)basePt.xCoord,(float) basePt.yCoord, (float)basePt.zCoord, partialTicks);
+            Vector3f renderPos = RenderUtils.getRenderPos((float)basePt.x,(float) basePt.y, (float)basePt.z, partialTicks);
 
 
 

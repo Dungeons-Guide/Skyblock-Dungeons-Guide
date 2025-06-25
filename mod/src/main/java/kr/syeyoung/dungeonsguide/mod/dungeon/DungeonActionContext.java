@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon;
 
+import kr.syeyoung.modapi.data.Vector3D;
 import lombok.Getter;
-import net.minecraft.util.Vec3;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class DungeonActionContext {
     @Getter
-    private static final Map<Integer, Vec3> spawnLocation = new HashMap<>();
+    private static final Map<Integer, Vector3D> spawnLocation = new HashMap<>();
 
     @Getter
     private static final List<Integer> killeds = new ArrayList<>();

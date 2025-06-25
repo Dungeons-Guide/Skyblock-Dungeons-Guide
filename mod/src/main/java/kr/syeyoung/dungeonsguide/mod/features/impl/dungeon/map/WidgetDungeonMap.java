@@ -18,6 +18,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.entity.UPlayerSelf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
@@ -25,10 +28,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.storage.MapData;
 import org.lwjgl.opengl.GL11;
 
@@ -105,7 +106,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
         } else {
             double yaw = ((Minecraft.getMinecraft().thePlayer.rotationYawHead) % 360 + 360) % 360;
 
-            Vector2d pt = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(Minecraft.getMinecraft().thePlayer.getPositionEyes(0));
+            Vector2d pt = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(ModAPI.getAPI().getPlayer().getPositionVector());
 
             relMouseX /= mapConfiguration.getMapScale();
             relMouseY /= mapConfiguration.getMapScale();
@@ -134,7 +135,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
             for (MapOverlay marker : getOverlays.get()) {
                 double xCoord = marker.getX(0);
                 double zCoord = marker.getZ(0);
-                Vector2d loc = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(new Vec3(xCoord, 0, zCoord));
+                Vector2d loc = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(new Vector3D(xCoord, 0, zCoord));
                 double px = loc.x;
                 double pz = loc.y;
 
@@ -178,7 +179,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
     public void renderMap(float partialTicks, DungeonContext dungeonContext) {
         DungeonRoomScaffoldParser mapProcessor = dungeonContext.getScaffoldParser();
 
-        EntityPlayer p = Minecraft.getMinecraft().thePlayer;
+        UPlayerSelf p = ModAPI.getAPI().getPlayer();
 
 
         Size featureRect = getDomElement().getSize();
@@ -207,7 +208,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
 
         } else {
 
-            double yaw = ((p.prevRotationYawHead + (p.rotationYawHead - p.prevRotationYawHead) * partialTicks) % 360 + 360) % 360;
+            double yaw = ((p.getPrevRotationYawHead() + (p.getRotationYawHead() - p.getPrevRotationYawHead()) * partialTicks) % 360 + 360) % 360;
 
             boolean rotated = false;
             GlStateManager.scale(mapConfiguration.getMapScale(), mapConfiguration.getMapScale(), 0);
@@ -256,7 +257,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
             for (MapOverlay marker : getOverlays.get()) {
                 double xCoord = marker.getX(partialTicks);
                 double zCoord = marker.getZ(partialTicks);
-                Vector2d loc = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(new Vec3(xCoord, 0, zCoord));
+                Vector2d loc = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(new Vector3D(xCoord, 0, zCoord));
                 double px = loc.x;
                 double pz = loc.y;
 

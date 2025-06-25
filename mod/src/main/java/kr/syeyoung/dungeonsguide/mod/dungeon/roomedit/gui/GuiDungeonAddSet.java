@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MPanelScaledG
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MValue;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditOffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -87,8 +88,8 @@ public class GuiDungeonAddSet extends MGui {
         this.valueEditOffsetPointSet = processorParameterEditPane;
         scaledGUI.setBackgroundColor(new Color(17, 17, 17, 179));
         {
-            start = new OffsetPoint(EditingContext.getEditingContext().getRoom(), Minecraft.getMinecraft().thePlayer.getPosition());
-            end = new OffsetPoint(EditingContext.getEditingContext().getRoom(), Minecraft.getMinecraft().thePlayer.getPosition());
+            start = new OffsetPoint(EditingContext.getEditingContext().getRoom(), ModAPI.getAPI().getPlayer().getPosition());
+            end = new OffsetPoint(EditingContext.getEditingContext().getRoom(), ModAPI.getAPI().getPlayer().getPosition());
         }
         {
             MValue mValue = new MValue(start, Collections.emptyList());
@@ -140,6 +141,6 @@ public class GuiDungeonAddSet extends MGui {
         // update bounds
         int w = 200 * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor(),
                 h = 300 * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        getMainPanel().getChildComponents().get(0).setBounds(new Rectangle(10, Math.min((Minecraft.getMinecraft().displayHeight - h) / 2, Minecraft.getMinecraft().displayHeight),w,h));
+        getMainPanel().getChildComponents().get(0).setBounds(new Rectangle(10, Math.min((ModAPI.getAPI().getDisplayHeight() - h) / 2, ModAPI.getAPI().getDisplayHeight()),w,h));
     }
 }

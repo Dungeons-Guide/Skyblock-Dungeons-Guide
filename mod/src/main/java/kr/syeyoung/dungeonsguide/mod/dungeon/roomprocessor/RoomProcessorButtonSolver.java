@@ -21,8 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.BlockPos;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -39,8 +39,8 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
             return;
         }
 
-        buttons = new BlockPos[12];
-        woods = new BlockPos[12];
+        buttons = new VectorI3D[12];
+        woods = new VectorI3D[12];
         for (int i = 0; i < ops.getOffsetPointList().size(); i++) {
             buttons[i] = ops.getOffsetPointList().get(i).getBlockPos(dungeonRoom);
             woods[i] = buttons[i].add(0,-1,0);
@@ -49,8 +49,8 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
 
     private boolean bugged;
 
-    private BlockPos[] buttons;
-    private BlockPos[] woods;
+    private VectorI3D[] buttons;
+    private VectorI3D[] woods;
 
     private long clicked;
     private int clickedButton = -1;
@@ -103,12 +103,12 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
         if (bugged) return;
-        if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(woods[6]) > 100) return;
+        if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(woods[6]) > 100) return;
 
 
         for (int i = 0; i < woods.length; i++) {
             int data = result[i];
-            BlockPos pos = woods[i];
+            VectorI3D pos = woods[i];
 
             if (data == 0) {
                 RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, false);

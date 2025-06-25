@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.entity.Entity;
@@ -43,7 +44,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
     private OffsetPoint[][] map2;
     private final Set<OffsetPoint> endNode = new HashSet<OffsetPoint>();
 
-    private final List<BlockPos> solution = new ArrayList<BlockPos>();
+    private final List<VectorI3D> solution = new ArrayList<>();
 
     private BlockPos lastSilverfishLoc;
     private int sameTick;
@@ -58,8 +59,8 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
     }
 
     public void findSilverFishAndDoStuff() {
-        final BlockPos low = getDungeonRoom().getRoomBounds().getMin();
-        final BlockPos high = getDungeonRoom().getRoomBounds().getMax();
+        final VectorI3D low = getDungeonRoom().getRoomBounds().getMin();
+        final VectorI3D high = getDungeonRoom().getRoomBounds().getMax();
         List<EntitySilverfish> silverfishs = getDungeonRoom().getContext().getWorld().getEntities(EntitySilverfish.class, new Predicate<EntitySilverfish>() {
             @Override
             public boolean apply(@Nullable EntitySilverfish input) {

@@ -178,11 +178,11 @@ fun createDelegateAndApi(expr: PsiReferenceExpression, clazz: PsiClass, impl: Ps
     for (parameter in paramList) {
         newMethod.parameterList.add(factory.createParameter(parameter.name, parameter.type))
     } // copied method perfectly
+    val delegateMethod = newMethod.copy() as PsiMethod
     newMethod.body?.delete()
     clazz.add(newMethod)
 
 
-    val delegateMethod = newMethod.copy() as PsiMethod
     delegateMethod.addAfter(factory.createCodeBlock(), newMethod.parameterList)
 
     if (resolved is PsiMethod) {

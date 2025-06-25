@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements;
 
+import kr.syeyoung.modapi.ModAPI;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,11 +35,11 @@ public class MTooltipText extends MTooltip {
     private List<String> tooltipText = new ArrayList<>();
     @Override
     public Rectangle getBounds() {
-        return new Rectangle(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+        return new Rectangle(0,0, ModAPI.getAPI().getDisplayWidth(), ModAPI.getAPI().getDisplayHeight());
     }
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
-        GuiUtils.drawHoveringText(tooltipText, relMousex0, relMousey0, (int) (Minecraft.getMinecraft().displayWidth/getRelativeScale()), (int) (Minecraft.getMinecraft().displayHeight/getRelativeScale()), -1, Minecraft.getMinecraft().fontRendererObj);
+        GuiUtils.drawHoveringText(tooltipText, relMousex0, relMousey0, (int) (ModAPI.getAPI().getDisplayWidth()/getRelativeScale()), (int) (ModAPI.getAPI().getDisplayHeight()/getRelativeScale()), -1, Minecraft.getMinecraft().fontRendererObj);
     }
 }

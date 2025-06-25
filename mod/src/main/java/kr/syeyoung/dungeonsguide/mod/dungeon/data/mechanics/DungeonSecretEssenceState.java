@@ -34,6 +34,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -68,14 +70,14 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
     private boolean found = false;
     private int nearbyTicks = 0;
     public void tick(DungeonRoom dungeonRoom) {
-        BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
-        IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
+        VectorI3D pos = data.secretPoint.getBlockPos(dungeonRoom);
+        IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
         if (blockState.getBlock() == Blocks.skull) {
             essenceWasThere = true;
             List<EntityArmorStand> entities = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityArmorStand.class, AxisAlignedBB.fromBounds(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
-            TileEntity tileEntity = dungeonRoom.getCachedWorld().getTileEntity(pos);
+            TileEntity tileEntity = dungeonRoom.getCachedWorld().getTileEntity(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
 
-            if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 25) {
+            if (ModAPI.getAPI().getPlayer().getPosition().distanceSq(pos) < 25) {
                 if (tileEntity instanceof TileEntitySkull) {
                     String texture = Optional.ofNullable(((TileEntitySkull) tileEntity).getPlayerProfile())
                             .map(a -> a.getProperties())
@@ -107,7 +109,7 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
         } else if (blockState.getBlock() == Blocks.air && essenceWasThere) {
             found = true;
         } else if (blockState.getBlock() == Blocks.air && !essenceWasThere) {
-            if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 25) {
+            if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(pos) < 25) {
                 nearbyTicks++;
             }
             if (nearbyTicks > 100) {
@@ -159,7 +161,7 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
 
     @Override
     public void highlight(Color color, String name, float partialTicks) {
-        BlockPos pos = getSecretPoint().getBlockPos(room);
+        VectorI3D pos = getSecretPoint().getBlockPos(room);
         RenderUtils.highlightBlockStencil(pos, partialTicks, color, false);
         RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);

@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.chat;
 
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
@@ -71,9 +72,9 @@ public class ChatTransmitter {
 
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent clientTickEvent) {
-        if(clientTickEvent.phase != TickEvent.Phase.START && Minecraft.getMinecraft().thePlayer == null) return;
+        if(clientTickEvent.phase != TickEvent.Phase.START && ModAPI.getAPI().getPlayer() == null) return;
 
-        while (!receiveQueue.isEmpty() && Minecraft.getMinecraft().thePlayer != null) {
+        while (!receiveQueue.isEmpty() && ModAPI.getAPI().getPlayer() != null) {
             ClientChatReceivedEvent event = new ClientChatReceivedEvent((byte) 1, receiveQueue.poll());
             MinecraftForge.EVENT_BUS.post(event);
             if (!event.isCanceled()) {

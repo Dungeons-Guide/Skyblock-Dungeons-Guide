@@ -30,6 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -65,10 +66,10 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
     private LastMeasuredChestStatus lastMeasuredChestStatus = LastMeasuredChestStatus.WASNT_THERE;
 
     public void tick(DungeonRoom dungeonRoom) {
-        BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
-        IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
+        VectorI3D pos = data.secretPoint.getBlockPos(dungeonRoom);
+        IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
         if (blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest) {
-            TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
+            TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
             if (chest != null) {
                 if (chest.numPlayersUsing > 0) {
                     lastMeasuredChestStatus = LastMeasuredChestStatus.OPENED;
@@ -88,8 +89,8 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
     }
 
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
-        BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
-        IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
+        VectorI3D pos = data.secretPoint.getBlockPos(dungeonRoom);
+        IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
         if (lastMeasuredChestStatus != LastMeasuredChestStatus.WASNT_THERE)
             return (lastMeasuredChestStatus == LastMeasuredChestStatus.OPENED || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
 
@@ -98,7 +99,7 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
         } else if (blockState.getBlock() != Blocks.chest && blockState.getBlock() != Blocks.trapped_chest) {
             return SecretStatus.ERROR;
         } else {
-            TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
+            TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
             if (chest != null && chest.numPlayersUsing > 0) {
                 return SecretStatus.FOUND;
             } else {
@@ -155,7 +156,7 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
 
     @Override
     public void highlight(Color color, String name, float partialTicks) {
-        BlockPos pos = getSecretPoint().getBlockPos(room);
+        VectorI3D pos = getSecretPoint().getBlockPos(room);
         RenderUtils.highlightBlockStencil(pos, partialTicks, color, false);
         RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);

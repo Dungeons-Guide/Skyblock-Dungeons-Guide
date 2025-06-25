@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
@@ -60,8 +61,8 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
 
         DungeonRoom dungeonRoom = getDungeonRoom();
         World w = dungeonRoom.getContext().getWorld();
-        final BlockPos low = dungeonRoom.getRoomBounds().getMin();
-        final BlockPos high = dungeonRoom.getRoomBounds().getMax();
+        final VectorI3D low = dungeonRoom.getRoomBounds().getMin();
+        final VectorI3D high = dungeonRoom.getRoomBounds().getMax();
         entityList = new ArrayList<EntityArmorStand>(w.getEntities(EntityArmorStand.class, input -> {
             BlockPos pos = input.getPosition();
             return low.getX() < pos.getX() && pos.getX() < high.getX()

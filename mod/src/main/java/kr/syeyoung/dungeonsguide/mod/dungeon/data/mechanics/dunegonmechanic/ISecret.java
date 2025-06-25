@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import net.minecraft.util.BlockPos;
+import kr.syeyoung.modapi.data.VectorI3D;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public interface ISecret {
 
     List<String> getPreRequisite();
 
-    static String toString(BlockPos pos) {
+    static String toString(VectorI3D pos) {
         return pos.getX()+","+pos.getY()+","+pos.getZ();
     }
 }

@@ -124,7 +124,8 @@ public class SkyblockStatus {
     private static final Set<String> SKYBLOCK_IN_ALL_LANGUAGES = Sets.newHashSet("SKYBLOCK");
 
     public void updateStatus() {
-        forceIsOnDungeon = DungeonServerLaunchUtils.isDungeonIntegratedServerRunning() && Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().theWorld != null || forceIsOnDungeon2;
+        forceIsOnDungeon = DungeonServerLaunchUtils.isDungeonIntegratedServerRunning()
+                && ModAPI.getAPI().getPlayer() != null && Minecraft.getMinecraft().theWorld != null || forceIsOnDungeon2;
         if (forceIsOnDungeon) {
             locationName = "TEST DG";
         }

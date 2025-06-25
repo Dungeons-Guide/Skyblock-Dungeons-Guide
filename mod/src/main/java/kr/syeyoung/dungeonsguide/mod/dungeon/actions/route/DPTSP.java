@@ -10,7 +10,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
-import net.minecraft.util.Vec3;
+import kr.syeyoung.modapi.data.Vector3D;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class DPTSP {
     private final RoomPresetPathPlanner pathPlanner;
     private final ActionDAG dag;
-    private final Vec3 start;
+    private final Vector3D start;
     private final double startX;
     private final double startY;
     private final double startZ;
@@ -48,13 +48,13 @@ public class DPTSP {
 
     int[] solution;
 
-    public DPTSP(ActionDAG dag, Vec3 start, DungeonRoom dungeonRoom) {
+    public DPTSP(ActionDAG dag, Vector3D start, DungeonRoom dungeonRoom) {
         this.pathPlanner = new RoomPresetPathPlanner(dungeonRoom.getContext().getPreset().getRoomPreset(dungeonRoom.getDungeonRoomInfo().getUuid()));
         this.dag = dag;
         this.start = start;
-        this.startX = start.xCoord;
-        this.startY = start.yCoord;
-        this.startZ = start.zCoord;
+        this.startX = start.x;
+        this.startY = start.y;
+        this.startZ = start.z;
         this.dungeonRoom = dungeonRoom;
 
         setup();
@@ -91,10 +91,10 @@ public class DPTSP {
                 long handle = startCoroutine();
                 try {
                     while (true) {
-                        roomState.setPlayerPos(new Vec3(getX(handle), getY(handle), getZ(handle)));
+                        roomState.setPlayerPos(new Vector3D(getX(handle), getY(handle), getZ(handle)));
                         roomState.setOpenMechanicsBitset(getMech(handle));
                         double cost = everyNode[getNode(handle)].getAction().evalulateCost(roomState, dungeonRoom, cache, pathPlanner);
-                        boolean res = resumeCoroutine(handle, roomState.getPlayerPos().xCoord, roomState.getPlayerPos().yCoord, roomState.getPlayerPos().zCoord, roomState.openMechanicsBitset, cost);
+                        boolean res = resumeCoroutine(handle, roomState.getPlayerPos().x, roomState.getPlayerPos().y, roomState.getPlayerPos().z, roomState.openMechanicsBitset, cost);
                         if (!res) break;
                     }
                     solution = getResult(handle, dag.getActionDAGNode().getId());

@@ -9,9 +9,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleMoveSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.Vector3D;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -38,11 +38,11 @@ public class LineRenderUtils {
                     actual = new Color(c.getRGB() & 0xFFFFFF | 0x90000000, true);
                     PossibleMoveSpot spot2 = RaytraceHelper.chooseMinimalY2(Arrays.asList(spot)).get(0);
                     for (OffsetVec3 _vec3 : spot2.getOffsetPointSet()) {
-                        Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
+                        Vector3D offsetVec3 = _vec3.getPos(dungeonRoom);
                         RenderUtils.highlightBox(
                                 new AxisAlignedBB(
-                                        offsetVec3.xCoord - 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord - 0.25f,
-                                        offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.026f, offsetVec3.zCoord + 0.25f
+                                        offsetVec3.x - 0.25f, offsetVec3.y + 0.025f, offsetVec3.z - 0.25f,
+                                        offsetVec3.x + 0.25f, offsetVec3.y + 0.026f, offsetVec3.z + 0.25f
                                 ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
                                 actual,
                                 partialTicks,
@@ -52,11 +52,11 @@ public class LineRenderUtils {
                 }
                 actual = new Color(c.getRGB() & 0xFFFFFF | 0x10000000, true);
                 for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
-                    Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
+                    Vector3D offsetVec3 = _vec3.getPos(dungeonRoom);
                     RenderUtils.highlightBox(
                             new AxisAlignedBB(
-                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
-                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.475f, offsetVec3.zCoord + 0.25f
+                                    offsetVec3.x - 0.25f, offsetVec3.y - 0.025f, offsetVec3.z - 0.25f,
+                                    offsetVec3.x + 0.25f, offsetVec3.y + 0.475f, offsetVec3.z + 0.25f
                             ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
                             actual,
                             partialTicks,
@@ -65,10 +65,10 @@ public class LineRenderUtils {
                 }
                 double cx = 0, cy = 0, cz = 0;
                 for (OffsetVec3 _offsetVec3 : spot.getOffsetPointSet()) {
-                    Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
-                    cx += offsetVec3.xCoord;
-                    cy += offsetVec3.yCoord;
-                    cz += offsetVec3.zCoord;
+                    Vector3D offsetVec3 = _offsetVec3.getPos(dungeonRoom);
+                    cx += offsetVec3.x;
+                    cy += offsetVec3.y;
+                    cz += offsetVec3.z;
                 }
                 cx /= spot.getOffsetPointSet().size();
                 cy /= spot.getOffsetPointSet().size();
@@ -96,11 +96,11 @@ public class LineRenderUtils {
                 );
                 Color actual = new Color(c.getRGB() & 0xFFFFFF | 0x90000000, true);
                 for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
-                    Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
+                    Vector3D offsetVec3 = _vec3.getPos(dungeonRoom);
                     RenderUtils.highlightBox(
                             new AxisAlignedBB(
-                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord - 0.25f,
-                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.026f, offsetVec3.zCoord + 0.25f
+                                    offsetVec3.x - 0.25f, offsetVec3.y + 0.025f, offsetVec3.z - 0.25f,
+                                    offsetVec3.x + 0.25f, offsetVec3.y + 0.026f, offsetVec3.z + 0.25f
                             ).expand(0.0020000000949949026, 0.0020000000949949026, 0.0020000000949949026),
                             actual,
                             partialTicks,
@@ -118,11 +118,11 @@ public class LineRenderUtils {
                 );
                 Color actual = new Color(c.getRGB() & 0xFFFFFF | 0x10000000, true);
                 for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
-                    Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
+                    Vector3D offsetVec3 = _vec3.getPos(dungeonRoom);
                     RenderUtils.highlightBox(
                             new AxisAlignedBB(
-                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
-                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.475f, offsetVec3.zCoord + 0.25f
+                                    offsetVec3.x - 0.25f, offsetVec3.y - 0.025f, offsetVec3.z - 0.25f,
+                                    offsetVec3.x + 0.25f, offsetVec3.y + 0.475f, offsetVec3.z + 0.25f
                             ).expand(0.0020000000949949026, 0.0020000000949949026, 0.0020000000949949026),
                             actual,
                             partialTicks,
@@ -132,10 +132,10 @@ public class LineRenderUtils {
 
                 double cx = 0, cy = 0, cz = 0;
                 for (OffsetVec3 _offsetVec3 : spot.getOffsetPointSet()) {
-                    Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
-                    cx += offsetVec3.xCoord;
-                    cy += offsetVec3.yCoord;
-                    cz += offsetVec3.zCoord;
+                    Vector3D offsetVec3 = _offsetVec3.getPos(dungeonRoom);
+                    cx += offsetVec3.x;
+                    cy += offsetVec3.y;
+                    cz += offsetVec3.z;
                 }
                 cx /= spot.getOffsetPointSet().size();
                 cy /= spot.getOffsetPointSet().size();

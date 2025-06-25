@@ -40,6 +40,7 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -47,7 +48,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
@@ -109,7 +109,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
             }
             if (beacon) {
                 GlStateManager.pushMatrix();
-                RenderUtils.highlightBlock(new BlockPos(allWaypt.x, allWaypt.y, allWaypt.z), highlightColor, event.partialTicks, false);
+                RenderUtils.highlightBlock(new VectorI3D(allWaypt.x, allWaypt.y, allWaypt.z), highlightColor, event.partialTicks, false);
                 GlStateManager.popMatrix();
             }
 

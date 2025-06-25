@@ -21,16 +21,16 @@ package kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.IPathfindWorld;
-import net.minecraft.util.Vec3;
+import kr.syeyoung.modapi.data.Vector3D;
 
 public interface IPathfinder extends AutoCloseable {
     void init(IPathfindWorld dungeonRoom, BoundingBox destination);
     boolean doOneStep();
 
-    void setTarget(Vec3 from);
-    Vec3 getTarget();
-    PathfindResult getRoute(Vec3 from);
-    double getCost(Vec3 from);
+    void setTarget(Vector3D from);
+    Vector3D getTarget();
+    PathfindResult getRoute(Vector3D from);
+    double getCost(Vector3D from);
 
     void close();
 }

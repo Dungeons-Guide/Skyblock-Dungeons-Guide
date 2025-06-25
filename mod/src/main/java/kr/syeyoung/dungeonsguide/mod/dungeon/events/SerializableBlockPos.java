@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.events;
 
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.util.BlockPos;
@@ -30,7 +31,7 @@ public class SerializableBlockPos implements Serializable {
     private int y;
     private int z;
 
-    public SerializableBlockPos(BlockPos pos) {
+    public SerializableBlockPos(VectorI3D pos) {
         this.x = pos.getX();
         this.y = pos.getY();
         this.z = pos.getZ();

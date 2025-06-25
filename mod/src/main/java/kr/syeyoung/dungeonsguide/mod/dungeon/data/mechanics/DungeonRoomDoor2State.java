@@ -31,8 +31,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Data;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.Tuple;
 
 import javax.vecmath.Vector2d;
@@ -51,7 +51,7 @@ public class DungeonRoomDoor2State implements DungeonMechanicState {
 
 
     private Vector2d getIdentifier(DungeonRoom dungeonRoom) {
-        BlockPos pos = data.pfPoint.getBlockPos(dungeonRoom).subtract(dungeonRoom.getRoomBounds().getMin());
+        VectorI3D pos = data.pfPoint.getBlockPos(dungeonRoom).subtract(dungeonRoom.getRoomBounds().getMin());
         double xWat = Math.round(pos.getX() / 16.0) / 2.0 - 0.5;
         double zWat = Math.round(pos.getZ() / 16.0) / 2.0 - 0.5;
         return new Vector2d(xWat, zWat);
@@ -66,7 +66,7 @@ public class DungeonRoomDoor2State implements DungeonMechanicState {
 
     @Override
     public void highlight(Color color, String name, float partialTicks) {
-        BlockPos pos = data.pfPoint.getBlockPos(room);
+        VectorI3D pos = data.pfPoint.getBlockPos(room);
         RenderUtils.highlightBlock(pos, color, partialTicks);
         RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.75f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0.25f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);

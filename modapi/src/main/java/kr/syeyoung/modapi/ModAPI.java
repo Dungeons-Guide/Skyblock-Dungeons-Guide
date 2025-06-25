@@ -1,6 +1,7 @@
 package kr.syeyoung.modapi;
 
 import kr.syeyoung.modapi.audio.USoundHandler;
+import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.util.USession;
 
@@ -16,4 +17,10 @@ public interface ModAPI {
     USession getSession();
 
     USoundHandler getSoundHandler();
+
+    int getDisplayWidth();
+
+    int getDisplayHeight();
+
+    UPlayerSelf getPlayer();
 }

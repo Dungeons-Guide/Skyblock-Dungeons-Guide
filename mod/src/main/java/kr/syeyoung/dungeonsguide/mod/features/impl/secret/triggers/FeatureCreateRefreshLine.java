@@ -36,11 +36,10 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplay
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic.ClassicPathEngineLineProperties;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.UPlayerSelf;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -70,7 +69,7 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
         for (IPathDisplayEngine value2 : roomRouteHandler.getPath().values()) {
             ActionRoute value = value2.getActionRoute();
 
-            BlockPos target;
+            VectorI3D target;
             AbstractAction currentAction = value.getCurrentAction();
             if (currentAction instanceof AtomicAction) {
                 AbstractAction consider = ((AtomicAction) currentAction).getCurrentAction();
@@ -89,9 +88,11 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
             if (((ClassicPathEngineLineProperties) value2.getSettings()).getLineRefreshRate() != -1 &&
                     ((ClassicPathEngineLineProperties) value2.getSettings()).isPathfind() && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled()) continue;
 
-            Entity e = Minecraft.getMinecraft().getRenderViewEntity();
 
-            double vectorV = VectorUtils.distSquared(e.getLook(partialTicks), e.getPositionEyes(partialTicks), new Vec3(target).addVector(0.5,0.5,0.5));
+            double vectorV = VectorUtils.distSquared(
+                    ModAPI.getAPI().getPlayer().getLook(partialTicks),
+                    ModAPI.getAPI().getPlayer().getPositionEyes(partialTicks),
+                    new Vector3D(target).add(0.5,0.5,0.5));
 
             if (vectorV < smallestTan) {
                 smallest = value2;
@@ -106,13 +107,13 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
     public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (!SkyblockStatus.isOnDungeon() || context == null) return;
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
         if (thePlayer == null) return;
         if (context.getScaffoldParser() == null) return;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom currentRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (currentRoom == null) return;
-        if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) return;
+        if (!currentRoom.getRoomBounds().isFullyWithin(thePlayer.getPositionVector())) return;
         RoomRouteHandler handler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(currentRoom);
 
         if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getKeybind() == keyInputEvent.getKey() && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {

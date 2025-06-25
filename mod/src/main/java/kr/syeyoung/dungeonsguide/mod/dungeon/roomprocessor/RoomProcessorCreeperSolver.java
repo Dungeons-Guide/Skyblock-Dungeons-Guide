@@ -22,11 +22,12 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
@@ -54,19 +55,20 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
     private void findCreeperAndDoPoses() {
         World w = getDungeonRoom().getContext().getWorld();
         List<BlockPos> prismarines = new ArrayList<BlockPos>();
-        final BlockPos low = getDungeonRoom().getRoomBounds().getMin().add(0,-2,0);
-        final BlockPos high = getDungeonRoom().getRoomBounds().getMax().add(0,20,0);
+        final VectorI3D low = getDungeonRoom().getRoomBounds().getMin().add(0,-2,0);
+        final VectorI3D high = getDungeonRoom().getRoomBounds().getMax().add(0,20,0);
         final AxisAlignedBB axis = AxisAlignedBB.fromBounds(
                 low.getX() + 17, low.getY() + 7, low.getZ() + 17,
                 low.getX() + 16, low.getY() + 10.5, low.getZ() + 16
         );
 
-        for (BlockPos pos : BlockPos.getAllInBox(low, high)) {
-            Block b = getDungeonRoom().getCachedWorld().getBlockState(pos).getBlock();
+        for (VectorI3D pos : VectorI3D.getAllInBox(low, high)) {
+            Block b = getDungeonRoom().getCachedWorld().getBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ())).getBlock();
             if (b == Blocks.prismarine || b == Blocks.sea_lantern) {
-                for (EnumFacing face:EnumFacing.VALUES) {
-                    if (w.getBlockState(pos.offset(face)).getBlock() == Blocks.air) {
-                        prismarines.add(pos);
+                for (kr.syeyoung.modapi.data.EnumFacing face: kr.syeyoung.modapi.data.EnumFacing.VALUES) {
+                    VectorI3D newPos = pos.add(face.getDirectionVec());
+                    if (w.getBlockState(new BlockPos(newPos.getX(), newPos.getY(), newPos.getZ())).getBlock() == Blocks.air) {
+                        prismarines.add(new BlockPos(newPos.getX(), newPos.getY(), newPos.getZ()));
                         break;
                     }
                 }
@@ -127,10 +129,10 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
             Color color = colors[i % colors.length];
             boolean oneIsConnected = w.getChunkFromBlockCoords(poset[0]).getBlock(poset[0]) != Blocks.sea_lantern &&
                     w.getChunkFromBlockCoords(poset[1]).getBlock(poset[1]) != Blocks.sea_lantern;
-            RenderUtils.drawLine(new Vec3(poset[0].getX() +0.5, poset[0].getY() +0.5, poset[0].getZ()+0.5),
-                    new Vec3(poset[1].getX() +0.5, poset[1].getY() +0.5, poset[1].getZ()+0.5), oneIsConnected ? new Color(0,0,0,50) : color, partialTicks, true);
+            RenderUtils.drawLine(new Vector3D(poset[0].getX() +0.5, poset[0].getY() +0.5, poset[0].getZ()+0.5),
+                    new Vector3D(poset[1].getX() +0.5, poset[1].getY() +0.5, poset[1].getZ()+0.5), oneIsConnected ? new Color(0,0,0,50) : color, partialTicks, true);
         }
-        final BlockPos low = getDungeonRoom().getRoomBounds().getMin();
+        final VectorI3D low = getDungeonRoom().getRoomBounds().getMin();
         final AxisAlignedBB axis = AxisAlignedBB.fromBounds(
                 low.getX() + 17, low.getY() + 5, low.getZ() + 17,
                 low.getX() + 16, low.getY() + 8.5, low.getZ() + 16

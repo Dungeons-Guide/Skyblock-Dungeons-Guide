@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.gui.renderer;
 
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -99,7 +99,7 @@ public class RenderingContext {
             return false;
         }
         double x0 = clip.x;
-        double y0 = Minecraft.getMinecraft().displayHeight - clip.y - clip.height;
+        double y0 = ModAPI.getAPI().getDisplayHeight() - clip.y - clip.height;
         return (bounds.getX() + bounds.getWidth() > x0 &&
                 bounds.getY() + bounds.getHeight() > y0 &&
                 bounds.getX() < x0 + clip.width &&
@@ -127,7 +127,7 @@ public class RenderingContext {
         int resY = (int) (absBounds.getY() + y * yScale);
 
 
-        Rectangle newClip = new Rectangle(resX, Minecraft.getMinecraft().displayHeight - (resY+resHeight), resWidth, resHeight);
+        Rectangle newClip = new Rectangle(resX, ModAPI.getAPI().getDisplayHeight() - (resY+resHeight), resWidth, resHeight);
         newClip = previousClip.intersection(newClip);
 
         if (clips.size() == 0)

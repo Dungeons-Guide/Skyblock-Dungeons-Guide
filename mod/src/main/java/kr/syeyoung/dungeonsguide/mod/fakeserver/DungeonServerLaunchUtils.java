@@ -11,6 +11,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -24,7 +25,6 @@ import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.client.C00PacketLoginStart;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ReportedException;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -78,7 +78,7 @@ public class DungeonServerLaunchUtils {
                 new Dimension(16, 16),
                 5,
                 new Point(0,0),
-                new BlockPos(0,70,0)
+                new VectorI3D(0,70,0)
         );
         DungeonRoomScaffoldParser scaffoldParser1 = new DungeonRoomScaffoldParser(dungeonMapLayout, fakeContext);
         fakeContext.setScaffoldParser(scaffoldParser1);
@@ -98,8 +98,8 @@ public class DungeonServerLaunchUtils {
                 Sets.newHashSet(points),
                 shape,
                 dungeonRoomInfo.getColor(),
-                new BlockPos(0, 70, 0),
-                new BlockPos(32 * (dungeonRoomInfo.getWidth()/32) - 1, 70, 32 * (dungeonRoomInfo.getLength()/32) - 1),
+                new VectorI3D(0, 70, 0),
+                new VectorI3D(32 * (dungeonRoomInfo.getWidth()/32) - 1, 70, 32 * (dungeonRoomInfo.getLength()/32) - 1),
                 fakeContext,
                 Collections.emptySet());
 

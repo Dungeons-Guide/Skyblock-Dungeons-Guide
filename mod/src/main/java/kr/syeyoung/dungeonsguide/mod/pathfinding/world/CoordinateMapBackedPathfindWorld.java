@@ -3,8 +3,8 @@ package kr.syeyoung.dungeonsguide.mod.pathfinding.world;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.*;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
 
 import java.util.Set;
 
@@ -19,7 +19,7 @@ public class CoordinateMapBackedPathfindWorld implements IPathfindWorld {
 
     private RoomBounds roomBounds;
 
-    public CoordinateMapBackedPathfindWorld(ICoordinateMap<IBlockState> backingWorld, AlgorithmSetting algorithmSetting, RoomBounds roomBounds, Set<BlockPos> superboom) { // plan to remove roombounds.
+    public CoordinateMapBackedPathfindWorld(ICoordinateMap<IBlockState> backingWorld, AlgorithmSetting algorithmSetting, RoomBounds roomBounds, Set<VectorI3D> superboom) { // plan to remove roombounds.
         this.backingWorld = backingWorld;
 
         minx = roomBounds.getMinX() * 2 + 2; miny = 0; minz = roomBounds.getMinZ() * 2 + 2;
@@ -96,7 +96,7 @@ public class CoordinateMapBackedPathfindWorld implements IPathfindWorld {
 
 
 
-    public void resetBlock(BlockPos pos) { // I think it can be optimize due to how it is saved in arr
+    public void resetBlock(VectorI3D pos) { // I think it can be optimize due to how it is saved in arr
         for (int x = -2; x <= 2; x++) {
             for (int y = -5; y <= 5; y++) {
                 for (int z = -2; z <= 2; z++) {

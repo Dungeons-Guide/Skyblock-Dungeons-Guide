@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MRootPanel;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -55,7 +56,7 @@ public class MGui extends GuiScreen {
         Keyboard.enableRepeatEvents(true);
         isOpen = true;
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        mainPanel.setBounds(new Rectangle(0, 0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+        mainPanel.setBounds(new Rectangle(0, 0, ModAPI.getAPI().getDisplayWidth(), ModAPI.getAPI().getDisplayHeight()));
     }
 
     @Override
@@ -71,7 +72,7 @@ public class MGui extends GuiScreen {
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
-            mainPanel.render0(1, new Point(0, 0), new Rectangle(0, 0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight), i, j, i, j, partialTicks);
+            mainPanel.render0(1, new Point(0, 0), new Rectangle(0, 0, ModAPI.getAPI().getDisplayWidth(), ModAPI.getAPI().getDisplayHeight()), i, j, i, j, partialTicks);
             GlStateManager.popMatrix();
             GlStateManager.enableBlend();
             GlStateManager.enableDepth();

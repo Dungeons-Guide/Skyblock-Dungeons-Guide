@@ -47,6 +47,9 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.UPlayerSelf;
 import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -116,7 +119,7 @@ public class DungeonListener {
 
         if (context != null) {
 
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
             if (thePlayer == null) {
                 return;
             }
@@ -150,7 +153,7 @@ public class DungeonListener {
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context != null) {
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
             if (thePlayer == null) return;
             if (context.getBossfightProcessor() != null) context.getBossfightProcessor().onEntityUpdate(e);
             if (context.getScaffoldParser() != null) {
@@ -210,7 +213,7 @@ public class DungeonListener {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (SkyblockStatus.isOnDungeon() && context != null) {
 
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
             if (thePlayer == null) {
                 return;
             }
@@ -242,7 +245,7 @@ public class DungeonListener {
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (!SkyblockStatus.isOnDungeon() || context == null) return;
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
         if (thePlayer == null) return;
         if (context.getScaffoldParser() == null) return;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
@@ -271,7 +274,7 @@ public class DungeonListener {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context != null) {
 
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
 
             profiler.startSection("Dungeons Guide - RenderGameOverlay.Post :: Bossfight Processor");
             if (context.getBossfightProcessor() != null)
@@ -340,7 +343,7 @@ public class DungeonListener {
 
         if (context != null) {
 
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
             context.onChat(clientChatReceivedEvent);
 
             if (context.getBossfightProcessor() != null) {
@@ -415,7 +418,7 @@ public class DungeonListener {
 
             profiler.endStartSection("Dungeons Guide - RenderWorldLast :: Room Processor");
             if (context.getScaffoldParser() != null) {
-                EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
                 Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
 
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
@@ -448,47 +451,48 @@ public class DungeonListener {
                     } catch (Exception ignored) {}
 
                     if (FeatureRegistry.COMPARE_ROOM.toggleCompareStatus && dungeonRoom.getDungeonRoomInfo().hasSchematic()) {
-                        OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new BlockPos(0,0,0));
-                        for (BlockPos allInBox : BlockPos.getAllInBox(dungeonRoom.getRoomBounds().getMin().add(0, -60, 0), dungeonRoom.getRoomBounds().getMax().add(0, 180, 0))) {
-                            offsetPoint.setPosInWorld(dungeonRoom, allInBox);
-                            IBlockState blockState = dungeonRoom.getDungeonRoomInfo().getBlock(offsetPoint, dungeonRoom.getRoomMatcher().getRotation());
-                            if (!blockState.equals(dungeonRoom.getCachedWorld().getBlockState(allInBox))) {
-                                RenderUtils.highlightBlock(allInBox, new Color(0x70FF0000,true), renderWorldLastEvent.partialTicks, false);
-                                Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-                                float partialTicks = renderWorldLastEvent.partialTicks;
-                                Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
-
-                                double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-                                double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-                                double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
-
-                                GlStateManager.pushMatrix();
-                                GlStateManager.translate(-x_fix, -y_fix, -z_fix);
-                                GlStateManager.translate(allInBox.getX(), allInBox.getY(), allInBox.getZ());
-                                GlStateManager.scale(0.5f, 0.5f, 0.5f);
-                                GlStateManager.translate(0.5f,0.5f,0.5f);
-                                GlStateManager.disableLighting();
-                                GlStateManager.enableAlpha();
-                                GlStateManager.enableDepth();
-                                GlStateManager.depthMask(true);
-//                        GlStateManager.disableDepth();
-//                        GlStateManager.depthMask(false);
-                                GlStateManager.enableBlend();
-
-                                Tessellator tessellator = Tessellator.getInstance();
-                                WorldRenderer vertexBuffer = tessellator.getWorldRenderer();
-                                vertexBuffer.begin(7, DefaultVertexFormats.BLOCK);
-                                BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-//                        GlStateManager.color(1.0f,1.0f,1.0f,0.1f);
-                                blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld,
-                                        blockrendererdispatcher.getBlockModelShapes().getModelForState(blockState),
-                                        blockState, new BlockPos(0,0,0), vertexBuffer, false);
-                                tessellator.draw();
-
-                                GlStateManager.enableLighting();
-                                GlStateManager.popMatrix();
-                            }
-                        }
+                        OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new VectorI3D(0,0,0));
+                        // TODO: Maybe consider bringing it back
+//                        for (BlockPos allInBox : BlockPos.getAllInBox(dungeonRoom.getRoomBounds().getMin().add(0, -60, 0), dungeonRoom.getRoomBounds().getMax().add(0, 180, 0))) {
+//                            offsetPoint.setPosInWorld(dungeonRoom, allInBox);
+//                            IBlockState blockState = dungeonRoom.getDungeonRoomInfo().getBlock(offsetPoint, dungeonRoom.getRoomMatcher().getRotation());
+//                            if (!blockState.equals(dungeonRoom.getCachedWorld().getBlockState(allInBox))) {
+//                                RenderUtils.highlightBlock(allInBox, new Color(0x70FF0000,true), renderWorldLastEvent.partialTicks, false);
+//                                Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+//                                float partialTicks = renderWorldLastEvent.partialTicks;
+//                                Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
+//
+//                                double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
+//                                double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
+//                                double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
+//
+//                                GlStateManager.pushMatrix();
+//                                GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+//                                GlStateManager.translate(allInBox.getX(), allInBox.getY(), allInBox.getZ());
+//                                GlStateManager.scale(0.5f, 0.5f, 0.5f);
+//                                GlStateManager.translate(0.5f,0.5f,0.5f);
+//                                GlStateManager.disableLighting();
+//                                GlStateManager.enableAlpha();
+//                                GlStateManager.enableDepth();
+//                                GlStateManager.depthMask(true);
+////                        GlStateManager.disableDepth();
+////                        GlStateManager.depthMask(false);
+//                                GlStateManager.enableBlend();
+//
+//                                Tessellator tessellator = Tessellator.getInstance();
+//                                WorldRenderer vertexBuffer = tessellator.getWorldRenderer();
+//                                vertexBuffer.begin(7, DefaultVertexFormats.BLOCK);
+//                                BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+////                        GlStateManager.color(1.0f,1.0f,1.0f,0.1f);
+//                                blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld,
+//                                        blockrendererdispatcher.getBlockModelShapes().getModelForState(blockState),
+//                                        blockState, new BlockPos(0,0,0), vertexBuffer, false);
+//                                tessellator.draw();
+//
+//                                GlStateManager.enableLighting();
+//                                GlStateManager.popMatrix();
+//                            }
+//                        }
                     }
                 }
             }
@@ -525,7 +529,7 @@ public class DungeonListener {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null) {
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onKeybindPress(keyInputEvent);
@@ -549,7 +553,7 @@ public class DungeonListener {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null) {
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onInteract(interact);
@@ -575,7 +579,7 @@ public class DungeonListener {
 
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null) {
 
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onBlockUpdate(postInteract);
@@ -603,7 +607,7 @@ public class DungeonListener {
                     ChatTransmitter.addToQueue(new ChatComponentText("Not in dungeons"));
                     return;
                 }
-                EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
                 if (context.getScaffoldParser() != null) {
                     Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
                     DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
@@ -633,7 +637,7 @@ public class DungeonListener {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         if (context != null) {
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onInteractBlock(keyInputEvent);
@@ -659,7 +663,7 @@ public class DungeonListener {
 //        if (spawn.entity instanceof EntityBat)
 //            System.out.println(spawn.entity +" Spawned!! dist: "+spawn.entity.getDistanceToEntity(Minecraft.getMinecraft().thePlayer));
 
-        DungeonActionContext.getSpawnLocation().put(spawn.entity.getEntityId(), new Vec3(spawn.entity.posX, spawn.entity.posY, spawn.entity.posZ));
+        DungeonActionContext.getSpawnLocation().put(spawn.entity.getEntityId(), new Vector3D(spawn.entity.posX, spawn.entity.posY, spawn.entity.posZ));
     }
 
     @SubscribeEvent
@@ -729,7 +733,7 @@ public class DungeonListener {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         if (context != null) {
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onEntityDeath(deathEvent);

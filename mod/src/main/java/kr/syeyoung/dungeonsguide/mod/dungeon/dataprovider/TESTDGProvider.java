@@ -19,15 +19,15 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
-import net.minecraft.util.BlockPos;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.world.World;
 
 import javax.vecmath.Vector2d;
 
 public class TESTDGProvider implements DungeonSpecificDataProvider {
         @Override
-        public BlockPos findDoor(World w, String dungeonName) {
-            return new BlockPos(0, 0, 0);
+        public VectorI3D findDoor(World w, String dungeonName) {
+            return new VectorI3D(0, 0, 0);
         }
 
         @Override

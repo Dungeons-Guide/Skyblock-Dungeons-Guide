@@ -23,9 +23,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -39,14 +39,14 @@ public class MazeRightProcessor extends GeneralDefuseChamberProcessor {
         for (int x = 0; x < 9; x++) {
             for (int y =0; y< 6; y++) {
                 Block b = chamber.getBlock(x,0,y).getBlock();
-                BlockPos pos = chamber.getBlockPos(x,0,y);
+                VectorI3D pos = chamber.getBlockPos(x,0,y);
                 blockToBlockPosMap.put(b, pos);
             }
         }
     }
 
-    private final BlockPos center;
-    private final Map<Block, BlockPos> blockToBlockPosMap = new HashMap<Block, BlockPos>();
+    private final VectorI3D center;
+    private final Map<Block, VectorI3D> blockToBlockPosMap = new HashMap<Block, VectorI3D>();
     @Override
     public String getName() {
         return "mazeRight";
@@ -59,7 +59,7 @@ public class MazeRightProcessor extends GeneralDefuseChamberProcessor {
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
         RenderUtils.drawTextAtWorld(latestRequest == null ? "Request not received yet" : "Requested received "+latestRequest.getLocalizedName() , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-        BlockPos pos = blockToBlockPosMap.get(latestRequest);
+        VectorI3D pos = blockToBlockPosMap.get(latestRequest);
         if (pos == null) return;
         RenderUtils.highlightBlock(pos, new Color(0,255,0,100), partialTicks, false);
     }

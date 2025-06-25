@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.chat;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.ChatComponentText;
@@ -70,7 +71,8 @@ public class ChatProcessor {
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent clientTickEvent) {
         try {
-            if (clientTickEvent.phase == TickEvent.Phase.START && Minecraft.getMinecraft().thePlayer != null && minimumNext < System.currentTimeMillis()) {
+            if (clientTickEvent.phase == TickEvent.Phase.START &&
+                    ModAPI.getAPI().getPlayer() != null && minimumNext < System.currentTimeMillis()) {
                 if (!chatQueue.isEmpty()) {
                     Tuple<String, Runnable> tuple = chatQueue.poll();
                     Minecraft.getMinecraft().thePlayer.sendChatMessage(tuple.getFirst());

@@ -32,6 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Data;
 import net.minecraft.util.BlockPos;
 
@@ -86,7 +87,7 @@ public class DungeonLeverState implements DungeonMechanicState {
 
     @Override
     public void highlight(Color color, String name, float partialTicks) {
-        BlockPos pos = data.leverPoint.getBlockPos(room);
+        VectorI3D pos = data.leverPoint.getBlockPos(room);
         RenderUtils.highlightBlockStencil(pos, partialTicks, color, false);
         RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.75f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0.25f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);

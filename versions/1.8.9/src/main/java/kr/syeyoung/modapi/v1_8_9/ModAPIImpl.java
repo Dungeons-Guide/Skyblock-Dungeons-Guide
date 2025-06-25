@@ -3,10 +3,12 @@ package kr.syeyoung.modapi.v1_8_9;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.Platform;
 import kr.syeyoung.modapi.audio.USoundHandler;
+import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.event.listenerlist.BasicEventBus;
 import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.v1_8_9.audio.USoundHandlerImpl;
+import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerSP;
 import kr.syeyoung.modapi.v1_8_9.util.USessionImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.ForgeVersion;
@@ -57,5 +59,17 @@ public class ModAPIImpl implements ModAPI {
 
     public USoundHandler getSoundHandler() {
         return new USoundHandlerImpl(Minecraft.getMinecraft().getSoundHandler());
+    }
+
+    public int getDisplayWidth() {
+        return Minecraft.getMinecraft().displayWidth;
+    }
+
+    public int getDisplayHeight() {
+        return Minecraft.getMinecraft().displayHeight;
+    }
+
+    public UPlayerSelf getPlayer() {
+        return delegate.thePlayer == null ? null : new UEntityPlayerSP(delegate.thePlayer);
     }
 }

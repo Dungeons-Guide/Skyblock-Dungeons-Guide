@@ -22,6 +22,7 @@ import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.block.state.IBlockState;
@@ -48,32 +49,33 @@ public class BDChamber {
         return chamberBlocks.getOffsetPointList().get(z * 9 + x);
     }
 
-    public BlockPos getBlockPos(int x, int y, int z) {
+    public VectorI3D getBlockPos(int x, int y, int z) {
         return getOffsetPoint(x,z).getBlockPos(room).add(0,y,0);
     }
 
     public IBlockState getBlock(int x, int y, int z) {
-        BlockPos pos = getBlockPos(x,y,z);
-        return room.getCachedWorld().getBlockState(pos);
+        VectorI3D pos = getBlockPos(x,y,z);
+        return room.getCachedWorld().getBlockState(new BlockPos(pos.x, pos.y, pos.z));
     }
 
     public boolean isWithinAbsolute(int x, int y, int z) {
-        return isWithinAbsolute(new BlockPos(x,68,z));
+        return isWithinAbsolute(new VectorI3D(x,68,z));
     }
-    public boolean isWithinAbsolute(BlockPos pos) {
-        return chamberBlocks.getOffsetPointList().contains(new OffsetPoint(room, new BlockPos(pos.getX(), 68, pos.getZ())));
+    public boolean isWithinAbsolute(VectorI3D pos) {
+        return chamberBlocks.getOffsetPointList().contains(new OffsetPoint(room, new VectorI3D(pos.getX(), 68, pos.getZ())));
     }
 
 
     public <T extends Entity> T getEntityAt(Class<T> entity, int x, int y, int z) {
-        final BlockPos pos = getBlockPos(x,y,z);
+        final VectorI3D pos = getBlockPos(x,y,z);
         return getEntityAt(entity, pos);
     }
-    public <T extends Entity> T getEntityAt(Class<T> entity, final BlockPos pos) {
+    public <T extends Entity> T getEntityAt(Class<T> entity, final VectorI3D pos) {
         List<T> entities = room.getContext().getWorld().getEntities(entity, new Predicate<T>() {
             @Override
             public boolean apply(@Nullable T input) {
-                return input.getPosition().equals(pos);
+                BlockPos position = input.getPosition();
+                return position.getX() == pos.x && position.getY() == pos.y && position.getZ() == pos.z;
             }
         });
         if (entities.size() == 0) return null;

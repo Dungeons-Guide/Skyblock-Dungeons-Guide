@@ -25,13 +25,13 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.B
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.Block;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,11 +45,11 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
         b3 = chamber.getBlockPos(1,3,1);
     }
 
-    private final BlockPos center;
+    private final VectorI3D center;
 
-    private final BlockPos b1;
-    private final BlockPos b2;
-    private final BlockPos b3;
+    private final VectorI3D b1;
+    private final VectorI3D b2;
+    private final VectorI3D b3;
     private byte b1b = 0, b2b = 0, b3b = 0, c1b, c2b, c3b;
     private int answer = -1;
 

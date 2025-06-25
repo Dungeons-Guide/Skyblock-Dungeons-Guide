@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MPanelScaledG
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MTabbedPane;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.panes.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -69,6 +70,6 @@ public class GuiDungeonRoomEdit extends MGui {
         super.initGui();
         int w = 500 * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
         int h = 300 * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        getMainPanel().getChildComponents().get(0).setBounds(new Rectangle(Math.min((Minecraft.getMinecraft().displayWidth - w) / 2, Minecraft.getMinecraft().displayWidth), Math.min((Minecraft.getMinecraft().displayHeight - h) / 2, Minecraft.getMinecraft().displayHeight),w,h));
+        getMainPanel().getChildComponents().get(0).setBounds(new Rectangle(Math.min((ModAPI.getAPI().getDisplayWidth() - w) / 2, ModAPI.getAPI().getDisplayWidth()), Math.min((ModAPI.getAPI().getDisplayHeight() - h) / 2, ModAPI.getAPI().getDisplayHeight()),w,h));
     }
 }

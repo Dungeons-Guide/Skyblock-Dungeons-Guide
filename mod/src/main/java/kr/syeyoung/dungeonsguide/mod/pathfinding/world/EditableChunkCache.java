@@ -22,14 +22,15 @@
 
 package kr.syeyoung.dungeonsguide.mod.pathfinding.world;
 
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 public class EditableChunkCache extends ChunkCache {
-    public EditableChunkCache(World worldIn, BlockPos posFromIn, BlockPos posToIn, int subIn) {
-        super(worldIn, posFromIn, posToIn, subIn);
+    public EditableChunkCache(World worldIn, VectorI3D posFromIn, VectorI3D posToIn, int subIn) {
+        super(worldIn, new BlockPos(posFromIn.x, posFromIn.y, posFromIn.z), new BlockPos(posToIn.x, posToIn.y, posToIn.z), subIn);
     }
 
     public boolean isManaged(int cx, int cz) {

@@ -19,8 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
@@ -130,7 +130,7 @@ public class MPanelScaledGUI extends MPanel {
     public void clip(int x, int y, int width, int height) {
         if (width < 0 || height < 0) return;
 
-        GL11.glScissor((int) (x  * relativeScale), Minecraft.getMinecraft().displayHeight - (int) ((y + height+1) * relativeScale), (int)((width+1)* relativeScale), (int) ((height+1) * relativeScale));
+        GL11.glScissor((int) (x  * relativeScale), ModAPI.getAPI().getDisplayHeight() - (int) ((y + height+1) * relativeScale), (int)((width+1)* relativeScale), (int) ((height+1) * relativeScale));
     }
 
     @Override

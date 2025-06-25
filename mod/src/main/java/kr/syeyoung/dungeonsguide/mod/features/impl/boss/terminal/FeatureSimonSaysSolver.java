@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
@@ -44,8 +45,8 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         super("Bossfight.Floor 7","Simon Says Solver","Solver for Simon says device", "Dungeon.Bossfight.simonsays2");
     }
 
-    private final List<BlockPos> orderBuild = new ArrayList<BlockPos>();
-    private final LinkedList<BlockPos> orderClick = new LinkedList<BlockPos>();
+    private final List<VectorI3D> orderBuild = new ArrayList<>();
+    private final LinkedList<VectorI3D> orderClick = new LinkedList<>();
 
     @DGEventHandler
     public void drawWorld(RenderWorldLastEvent event) {
@@ -86,8 +87,8 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
 
 
         if (!wasButton) {
-            for (BlockPos allInBox : BlockPos.getAllInBox(new BlockPos(111, 120, 92), new BlockPos(111, 123, 95))) {
-                if (w.getBlockState(allInBox).getBlock() == Blocks.sea_lantern && !orderBuild.contains(allInBox)) {
+            for (VectorI3D allInBox : VectorI3D.getAllInBox(new VectorI3D(111, 120, 92), new VectorI3D(111, 123, 95))) {
+                if (w.getBlockState(new BlockPos(allInBox.getX(), allInBox.getY(), allInBox.getZ())).getBlock() == Blocks.sea_lantern && !orderBuild.contains(allInBox)) {
                     orderBuild.add(allInBox);
                 }
             }

@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.modapi.ModAPI;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -160,9 +160,9 @@ public class CompatLayer extends Widget implements Layouter, Renderer {
         Rectangle originalRect = context.currentClip();
         Rectangle rectangle = originalRect == null ? null : originalRect.getBounds();
         boolean isNotNull = rectangle != null;
-        if (rectangle == null) rectangle = new Rectangle(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+        if (rectangle == null) rectangle = new Rectangle(0,0, ModAPI.getAPI().getDisplayWidth(), ModAPI.getAPI().getDisplayHeight());
 
-        rectangle.y = Minecraft.getMinecraft().displayHeight - rectangle.y - rectangle.height;
+        rectangle.y = ModAPI.getAPI().getDisplayHeight() - rectangle.y - rectangle.height;
         rectangle.width /= scale;
         rectangle.height /= scale;
         rectangle.x /= scale;

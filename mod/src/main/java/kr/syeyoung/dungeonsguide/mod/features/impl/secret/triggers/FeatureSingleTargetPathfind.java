@@ -38,9 +38,9 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.util.BlockPos;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.UPlayerSelf;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -64,13 +64,13 @@ public class FeatureSingleTargetPathfind extends SimpleFeature {
 
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (!SkyblockStatus.isOnDungeon() || context == null) return;
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
             if (thePlayer == null) return;
             if (context.getScaffoldParser() == null) return;
             Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
             DungeonRoom currentRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
             if (currentRoom == null) return;
-            if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) return;
+            if (!currentRoom.getRoomBounds().isFullyWithin(thePlayer.getPositionVector())) return;
             RoomRouteHandler handler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(currentRoom);
             if (handler == null) return;
 
@@ -93,13 +93,13 @@ public class FeatureSingleTargetPathfind extends SimpleFeature {
     public void onTick(DGTickEvent tickEvent) {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (!SkyblockStatus.isOnDungeon() || context == null) return;
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
         if (thePlayer == null) return;
         if (context.getScaffoldParser() == null) return;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom currentRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (currentRoom == null) return;
-        if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) return;
+        if (!currentRoom.getRoomBounds().isFullyWithin(thePlayer.getPositionVector())) return;
         RoomRouteHandler handler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(currentRoom);
         if (handler == null) return;
         if (!triggered.contains(currentRoom)) return;
@@ -119,7 +119,7 @@ public class FeatureSingleTargetPathfind extends SimpleFeature {
             return;
         }
 
-        BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
+        VectorI3D pos = ModAPI.getAPI().getPlayer().getPosition();
 
         double lowestCost = 99999999999999.0;
         Map.Entry<String, DungeonMechanicState> lowestWeightMechanic = null;
@@ -133,7 +133,7 @@ public class FeatureSingleTargetPathfind extends SimpleFeature {
                     cost += -100000000;
                 }
                 if (mech.getValue().getRepresentingPoint() == null) continue;
-                BlockPos blockpos = mech.getValue().getRepresentingPoint().getBlockPos(dungeonRoom);
+                VectorI3D blockpos = mech.getValue().getRepresentingPoint().getBlockPos(dungeonRoom);
 
                 cost += blockpos.distanceSq(pos);
                 cost += ((ISecret) mech.getValue()).getPreRequisite().size() * 100;

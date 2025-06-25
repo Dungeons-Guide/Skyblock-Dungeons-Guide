@@ -12,6 +12,8 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
@@ -71,7 +73,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         ActionMoveContext ctx = executorWeakHashMap.get(actionMove);
 
         if (ctx.executor == null) ctx.executor = pathPlanner.loadPrecalculatedByHash(actionMove.getPathfindRequest(dungeonRoom).getHash(), dungeonRoom);
-        if (ctx.executor != null) ctx.executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
+        if (ctx.executor != null) ctx.executor.setTarget(ModAPI.getAPI().getPlayer().getPositionVector());
     }
 
     private void tickAction(AbstractAction action) {
@@ -93,12 +95,12 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
                 forceRefresh(actionMove);
             }
             if (ctx.executor != null && (ctx.poses == null || !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled())) {
-                ctx.poses = ctx.executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
+                ctx.poses = ctx.executor.getRoute(ModAPI.getAPI().getPlayer().getPositionVector());
             }
 
             if (ctx.tick == 0 && classicPathEngineLineProperties.isPathfind() && ctx.executor != null) {
                 if (classicPathEngineLineProperties.getLineRefreshRate() != -1 && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() && ctx.executor.isComplete()) {
-                    ctx.executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
+                    ctx.executor.setTarget(ModAPI.getAPI().getPlayer().getPositionVector());
                 }
             }
             return;
@@ -129,7 +131,8 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         List<AbstractAction> actions = actionRoute.getActions();
         if (current -1 >= 0) {
             AbstractAction abstractAction = actions.get(current - 1);
-            if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) >= 25))) {
+            if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom)
+                    .distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) >= 25))) {
                 drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
             }
         }
@@ -160,7 +163,8 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
             List<AbstractAction> atomicActionActions = ((AtomicAction) currentAction).getActions();
             if (atomicActionCurrent -1 >= 0) {
                 AbstractAction abstractAction = atomicActionActions.get(atomicActionCurrent - 1);
-                if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) >= 25))) {
+                if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom)
+                        .distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) >= 25))) {
                     drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
                 }
             }
@@ -170,19 +174,19 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
 
 
     public void renderActionKill(ActionKill actionKill, DungeonRoom dungeonRoom, float partialTicks) {
-        BlockPos pos = actionKill.getTarget().getBlockPos(dungeonRoom);
+        VectorI3D pos = actionKill.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
         RenderUtils.drawTextAtWorld("Spawn", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
     public void renderActionInteract(ActionInteract actionInteract, DungeonRoom dungeonRoom, float partialTicks) {
-        BlockPos pos = actionInteract.getTarget().getBlockPos(dungeonRoom);
+        VectorI3D pos = actionInteract.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
         RenderUtils.drawTextAtWorld("Interact", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
     public void renderActionDropItem(ActionDropItem dropItem, DungeonRoom dungeonRoom, float partialTicks) {
-        BlockPos pos = dropItem.getTarget().getBlockPos(dungeonRoom);
+        VectorI3D pos = dropItem.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, true);
         RenderUtils.drawTextAtWorld("Drop Item", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
@@ -193,7 +197,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         float zAcc = 0;
         int size = actionClickSet.getTarget().getOffsetPointList().size();
         for (OffsetPoint offsetPoint : actionClickSet.getTarget().getOffsetPointList()) {
-            BlockPos pos = offsetPoint.getBlockPos(dungeonRoom);
+            VectorI3D pos = offsetPoint.getBlockPos(dungeonRoom);
             xAcc += pos.getX() + 0.5f;
             yAcc += pos.getY()+ 0.5f;
             zAcc += pos.getZ()+ 0.5f;
@@ -204,13 +208,13 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
     }
 
     public void renderActionClick(ActionClick actionClick, DungeonRoom dungeonRoom, float partialTicks) {
-        BlockPos pos = actionClick.getTarget().getBlockPos(dungeonRoom);
+        VectorI3D pos = actionClick.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, false);
         RenderUtils.drawTextAtWorld("Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
     public void renderActionStonkClick(ActionStonkClick actionStonkClick, DungeonRoom dungeonRoom, float partialTicks) {
-        BlockPos pos = actionStonkClick.getTarget().getBlockPos(dungeonRoom);
+        VectorI3D pos = actionStonkClick.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, false);
         RenderUtils.drawTextAtWorld("Stonk&Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
@@ -218,7 +222,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
     public void renderActionBreakWithSuperboom(ActionBreakWithSuperBoom superBoom, DungeonRoom dungeonRoom, float partialTicks) {
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
-        BlockPos blockpos = superBoom.getTarget().getOffsetPointList().get(0).getBlockPos(dungeonRoom);
+        VectorI3D blockpos = superBoom.getTarget().getOffsetPointList().get(0).getBlockPos(dungeonRoom);
 
         Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
 
@@ -241,7 +245,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
         blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld,
                 blockrendererdispatcher.getBlockModelShapes().getModelForState(Blocks.tnt.getDefaultState()),
-                Blocks.tnt.getDefaultState(), blockpos, vertexBuffer, false);
+                Blocks.tnt.getDefaultState(), new BlockPos(blockpos.x, blockpos.y, blockpos.z), vertexBuffer, false);
         tessellator.draw();
 
         GlStateManager.enableLighting();
@@ -254,13 +258,13 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
     public void drawActionMove(AbstractActionMove actionMove, DungeonRoom dungeonRoom, float partialTicks) {
         ActionMoveContext context = executorWeakHashMap.get(actionMove);
 
-        BlockPos target = actionMove.getBeaconTargetPos(dungeonRoom);
+        VectorI3D target = actionMove.getBeaconTargetPos(dungeonRoom);
         PathfindResult poses = context == null ? null : context.poses;
         boolean flag2 =  FeatureRegistry.SECRET_FREEZE_LINES.isEnabled();
 
 
 
-        float distance = MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()));
+        float distance = MathHelper.sqrt_double(target.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         float scale = 0.45f * multiplier;
         scale *= 25.0 / 6.0;
@@ -270,7 +274,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         }
         RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, 1f, true, false, partialTicks);
 
-        RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
+        RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(target.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector())))+"m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
             if (poses != null){

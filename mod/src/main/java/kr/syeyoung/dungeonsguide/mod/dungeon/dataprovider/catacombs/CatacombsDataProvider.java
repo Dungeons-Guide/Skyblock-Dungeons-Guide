@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.catacombs;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonSpecificDataProvider;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
@@ -63,7 +64,7 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
      * @param dungeonName dungeon type e.g. master mode, currently unused
      * @return Block pos of the dungeon entrance
      */
-    public BlockPos findDoor(World w, String dungeonName) {
+    public VectorI3D findDoor(World w, String dungeonName) {
         Collection<EntityArmorStand> armorStand = getMorts(w);
 
         if (!armorStand.isEmpty()) {
@@ -74,7 +75,7 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
                 for (Vector2d vector2d:directions) {
                     BlockPos test = pos.add(vector2d.x * i, 0, vector2d.y * i);
                     if (w.getChunkFromBlockCoords(test).getBlock(test) == Blocks.iron_bars) {
-                        return pos.add(vector2d.x * (i + 2), -2, vector2d.y * (i+2));
+                        return new VectorI3D(pos.getX(), pos.getY(), pos.getZ()).add((int) (vector2d.x * (i + 2)), -2, (int) (vector2d.y * (i+2)));
                     }
                 }
             }

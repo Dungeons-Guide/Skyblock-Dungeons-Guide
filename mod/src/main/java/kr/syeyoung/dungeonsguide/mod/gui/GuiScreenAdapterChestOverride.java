@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.gui;
 
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -55,7 +56,7 @@ public class GuiScreenAdapterChestOverride extends GuiScreenAdapter {
         this.guiChest = guiChest;
         this.view.getContext().CONTEXT.put("chest", guiChest);
 
-        guiChest.setWorldAndResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+        guiChest.setWorldAndResolution(Minecraft.getMinecraft(), ModAPI.getAPI().getDisplayWidth(), ModAPI.getAPI().getDisplayHeight());
         guiChest.initGui();
     }
 

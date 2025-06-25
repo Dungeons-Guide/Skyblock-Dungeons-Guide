@@ -8,9 +8,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonOnewayDoorSta
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
+import kr.syeyoung.modapi.data.Vector3D;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.util.Vec3;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,7 +28,7 @@ public class TravelingSalesman {
         return p1Node.checkImpossible(dagId, solution, nodeIdx);
     }
 
-    public static PartialCalculationResult annealing(int dagId, ActionDAG dag, Vec3 start, DungeonRoom dungeonRoom, TSPCache cache, RoomPresetPathPlanner pathPlanner) {
+    public static PartialCalculationResult annealing(int dagId, ActionDAG dag, Vector3D start, DungeonRoom dungeonRoom, TSPCache cache, RoomPresetPathPlanner pathPlanner) {
         Random r = new Random();
         int cnt = 0;
         int actualMoves = 0;
@@ -132,7 +132,7 @@ public class TravelingSalesman {
         return new PartialCalculationResult(dagId, localMinCostRoute, localMinCost, cnt);
     }
 
-    public static PartialCalculationResult bruteforce(int dagId, ActionDAG dag, Vec3 start, DungeonRoom dungeonRoom, TSPCache cache, RoomPresetPathPlanner pathPlanner) {
+    public static PartialCalculationResult bruteforce(int dagId, ActionDAG dag, Vector3D start, DungeonRoom dungeonRoom, TSPCache cache, RoomPresetPathPlanner pathPlanner) {
         int[] nodeStatus = dag.getNodeStatus(dagId);
         int cnt = 0;
         double localMinCost = Double.POSITIVE_INFINITY;

@@ -30,8 +30,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle.fallback.
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLever;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
@@ -64,10 +68,10 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     private Simulator.Pt waterNodeStart;
     private Map<String, Simulator.Pt> waterNodeEnds = new HashMap<>();
     private Map<String, List<Simulator.Pt>> switchFlips = new LinkedHashMap<>(); // uhhh simulated annealing likes mainStream at first element. idk why. probably a bug but it works soooo :D
-    private Map<String, BlockPos> switchLoc = new HashMap<>();
+    private Map<String, VectorI3D> switchLoc = new HashMap<>();
     private List<String> targetDoors = new ArrayList<>();
 
-    private Map<Simulator.Pt, BlockPos> ptMapping = new HashMap<>();
+    private Map<Simulator.Pt, VectorI3D> ptMapping = new HashMap<>();
 
 
     private List<Waterboard.Action> solutionList = new ArrayList<>();
@@ -105,14 +109,15 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     private void buildLeverStates(){
         for (OffsetPoint offsetPoint : levers.getOffsetPointList()) {
             if (offsetPoint.getBlock(getDungeonRoom()) == Blocks.lever){
-                BlockPos pos = offsetPoint.getBlockPos(getDungeonRoom());
+                VectorI3D pos = offsetPoint.getBlockPos(getDungeonRoom());
                 World w=  getDungeonRoom().getContext().getWorld();
-                BlockLever.EnumOrientation enumOrientation = w.getBlockState(pos).getValue(BlockLever.FACING);
+                BlockLever.EnumOrientation enumOrientation = w.getBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ())).getValue(BlockLever.FACING);
                 EnumFacing enumFacing = enumOrientation.getFacing();
-                BlockPos newPos = pos.add(-enumFacing.getDirectionVec().getX(),0,-enumFacing.getDirectionVec().getZ());
+                VectorI3D newPos = pos.add(-enumFacing.getDirectionVec().getX(),0,-enumFacing.getDirectionVec().getZ());
 
-                int id = Block.getIdFromBlock(w.getBlockState(newPos).getBlock());
-                int data = w.getBlockState(newPos).getBlock().getMetaFromState(w.getBlockState(newPos));
+                IBlockState blockState = w.getBlockState(new BlockPos(newPos.getX(), newPos.getY(), newPos.getZ()));
+                int id =Block.getIdFromBlock(blockState.getBlock());
+                int data = blockState.getBlock().getMetaFromState(blockState);
 
                 switchFlips.put(id+":"+data, new ArrayList<>());
                 switchLoc.put(id+":"+data, pos);
@@ -296,7 +301,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
         if (event.pos == null)return;
 
         Waterboard.Action currentAction = solutionList.get(idx);
-        BlockPos pos = switchLoc.get(currentAction.getName());
+        VectorI3D pos = switchLoc.get(currentAction.getName());
         if (pos == null) return;
 
         if (!event.pos.equals(pos) )  {
@@ -345,15 +350,15 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
 
                 String key = solutionList.get(i).getName();
                 int moves = solutionList.get(i).getMove();
-                BlockPos pos = switchLoc.get(key);
+                VectorI3D pos = switchLoc.get(key);
                 if (pos != null) {
                     // target:
 
                     if (i == idx) {
                         GlStateManager.color(1,1,1,1);
                         RenderUtils.drawLine(
-                                Minecraft.getMinecraft().thePlayer.getPositionEyes(partialTicks),
-                                new Vec3(pos).addVector(0.5, 0, 0.5),
+                                ModAPI.getAPI().getPlayer().getPositionEyes(partialTicks),
+                                new Vector3D(pos).add(0.5, 0, 0.5),
                                 Color.green,
                                 partialTicks,
                                 false);

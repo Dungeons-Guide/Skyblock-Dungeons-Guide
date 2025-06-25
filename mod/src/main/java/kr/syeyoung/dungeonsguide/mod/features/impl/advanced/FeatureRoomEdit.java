@@ -49,6 +49,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
@@ -116,7 +118,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
         DungeonRoom dungeonRoom = context.getScaffoldParser().getDungeonRoomList().get(0);
         DungeonRoomInfo info = dungeonRoom.getDungeonRoomInfo();
 
-        OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new BlockPos(0,0,0));
+        OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new VectorI3D(0,0,0));
 
         NBTTagCompound compound = schematic;
         int w = compound.getShort("Width");
@@ -131,12 +133,12 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
         byte[] blocks = compound.getByteArray("Blocks");
         byte[] meta = compound.getByteArray("Data");
-        BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos();
+        VectorI3D mpos = new VectorI3D(0,0,0);
         for (int x = 1; x < compound.getShort("Width"); x++) {
             for (int y = 0; y < compound.getShort("Height"); y++) {
                 for (int z = 1; z < compound.getShort("Length"); z++) {
                     int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
-                    mpos.set(x,y,z);
+                    mpos.x = x;mpos.y = y;mpos.z = z;
                     offsetPoint.setPosInWorld(dungeonRoom, mpos);
 
                     Block b = Block.getBlockById(blocks[index] & 0xFF);
@@ -250,7 +252,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     }
                     extendedblockstorage.set(x & 0xF, y & 15, z & 0xF, block);
                     if ((block.getBlock() == Blocks.dispenser)) {
-                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new BlockPos(x, y, z),  block));
+                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new VectorI3D(x, y, z),  block));
                     }
                 }
             }
@@ -322,7 +324,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
             List<FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData> list = new ArrayList<>();
             for (JsonElement updatedBlocks : updates.getAsJsonObject().get("updatedBlocks").getAsJsonArray()) {
                 JsonArray pos = updatedBlocks.getAsJsonArray();
-                BlockPos bPos = new BlockPos(pos.get(0).getAsInt()-minX, pos.get(1).getAsInt(), pos.get(2).getAsInt()-minZ);
+                VectorI3D bPos = new VectorI3D(pos.get(0).getAsInt()-minX, pos.get(1).getAsInt(), pos.get(2).getAsInt()-minZ);
                 String[] block = pos.get(3).getAsString().split(":");
                 Block b = Block.getBlockById(Integer.parseInt(block[0]));
                 IBlockState blockState = b.getStateFromMeta(Integer.parseInt(block[1]));
@@ -382,7 +384,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     }
                     extendedblockstorage.set(x & 0xF, y & 15, z & 0xF, Block.getBlockById(blocks[index] & 0xFF).getStateFromMeta(meta[index] & 0xFF));
                     if ((blocks[index] & 0xFF) == 23) {
-                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new BlockPos(x, y, z),  Blocks.dropper.getStateFromMeta(meta[index] & 0xFF)));
+                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new VectorI3D(x, y, z),  Blocks.dropper.getStateFromMeta(meta[index] & 0xFF)));
                     }
                 }
             }
@@ -487,7 +489,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     }
                     extendedblockstorage.set(x & 0xF, y & 15, z & 0xF, Block.getBlockById(blocks[index] & 0xFF).getStateFromMeta(meta[index] & 0xFF));
                     if ((blocks[index] & 0xFF) == 23) {
-                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new BlockPos(x, y, z),  Blocks.dropper.getStateFromMeta(meta[index] & 0xFF)));
+                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new VectorI3D(x, y, z),  Blocks.dropper.getStateFromMeta(meta[index] & 0xFF)));
                     }
                 }
             }
@@ -634,11 +636,12 @@ public class FeatureRoomEdit  extends SimpleFeature {
             GlStateManager.enableCull();
             for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate blockUpdate : blockUpdates) {
                 for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
-                    if (Minecraft.getMinecraft().thePlayer.getDistanceSq(updatedBlock.getPos()) > 100)
+                    if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(updatedBlock.getPos()) > 100)
                         RenderUtils.highlightBlock(updatedBlock.getPos(), new Color(0x33FFFF00, true), event.partialTicks, false);
                     int meta1 = updatedBlock.getBlock().getBlock().getMetaFromState(updatedBlock.getBlock());
                     Block block1 = updatedBlock.getBlock().getBlock();
-                    IBlockState blockstate2 = Minecraft.getMinecraft().theWorld.getBlockState(updatedBlock.getPos());
+                    IBlockState blockstate2 = Minecraft.getMinecraft().theWorld.getBlockState(
+                            new BlockPos(updatedBlock.getPos().x, updatedBlock.getPos().y, updatedBlock.getPos().z));
                     int meta2 = blockstate2.getBlock().getMetaFromState(blockstate2);
                     Block block2 = blockstate2.getBlock();
                     if (block1 == block2 && meta2 == meta1)
@@ -669,7 +672,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 //                        GlStateManager.color(1.0f,1.0f,1.0f,0.1f);
                         blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld,
                                 blockrendererdispatcher.getBlockModelShapes().getModelForState(updatedBlock.getBlock()),
-                                updatedBlock.getBlock(), updatedBlock.getPos(), vertexBuffer, false);
+                                updatedBlock.getBlock(), new BlockPos(updatedBlock.getPos().x, updatedBlock.getPos().y, updatedBlock.getPos().z), vertexBuffer, false);
                         tessellator.draw();
 
                         GlStateManager.enableLighting();
@@ -699,7 +702,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     new Dimension(16, 16),
                     5,
                     new Point(0,0),
-                    new BlockPos(0,70,0)
+                    new VectorI3D(0,70,0)
             );
             DungeonRoomScaffoldParser scaffoldParser1 = new DungeonRoomScaffoldParser(dungeonMapLayout, fakeContext);
             fakeContext.setScaffoldParser(scaffoldParser1);
@@ -719,8 +722,8 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     Sets.newHashSet(points),
                     shape,
                     color,
-                    new BlockPos(0, 70, 0),
-                    new BlockPos(32 * xWid - 1, 70, 32 * zWid - 1),
+                    new VectorI3D(0, 70, 0),
+                    new VectorI3D(32 * xWid - 1, 70, 32 * zWid - 1),
                     fakeContext,
                     Collections.emptySet());
 

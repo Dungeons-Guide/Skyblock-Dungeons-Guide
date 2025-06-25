@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -279,8 +280,8 @@ public class GeneralEditPane extends MPanel {
             for (int y = 0; y <  compound.getShort("Height"); y++) {
                 for (int z = 0; z < compound.getShort("Length"); z++) {
                     int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
-                    BlockPos pos = dungeonRoom.getRelativeBlockPosAt(x,y - 70,z);
-                    IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
+                    VectorI3D pos = dungeonRoom.getRelativeBlockPosAt(x,y - 70,z);
+                    IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(new BlockPos(pos.x, pos.y, pos.z));
                     boolean acc = dungeonRoom.getRoomBounds().canAccessRelative(x,z);
                     int id = Block.getIdFromBlock(blockState.getBlock());
                     blocks[index] = acc ? (byte) id : 0;
@@ -290,7 +291,7 @@ public class GeneralEditPane extends MPanel {
                     }
 
                     if (blockState.getBlock().hasTileEntity(blockState)) {
-                        TileEntity tileEntity = dungeonRoom.getContext().getWorld().getTileEntity(pos);
+                        TileEntity tileEntity = dungeonRoom.getContext().getWorld().getTileEntity(new BlockPos(pos.x, pos.y, pos.z));
                         try {
                             final NBTTagCompound tileEntityCompound = new NBTTagCompound();
                             tileEntity.writeToNBT(tileEntityCompound);

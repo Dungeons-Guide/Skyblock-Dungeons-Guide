@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
@@ -43,10 +43,10 @@ public class MPopupMenu extends MTooltip {
             add(mPanel);
         }
 
-        if (y + h1 > Minecraft.getMinecraft().displayHeight)
-            y = Minecraft.getMinecraft().displayHeight - h1;
-        if (x + maxWidth+ 2 > Minecraft.getMinecraft().displayWidth)
-            x = Minecraft.getMinecraft().displayWidth - maxWidth-2;
+        if (y + h1 > ModAPI.getAPI().getDisplayHeight())
+            y = ModAPI.getAPI().getDisplayHeight() - h1;
+        if (x + maxWidth+ 2 > ModAPI.getAPI().getDisplayWidth())
+            x = ModAPI.getAPI().getDisplayWidth() - maxWidth-2;
         setBounds(new Rectangle(x,y,maxWidth+2, h1));
     }
 
@@ -68,10 +68,10 @@ public class MPopupMenu extends MTooltip {
         maxWidth += 2;
         maxWidth *= scale; h1 *= scale;
 
-        if (y + h1 > Minecraft.getMinecraft().displayHeight)
-            y = Minecraft.getMinecraft().displayHeight - h1;
-        if (x + maxWidth > Minecraft.getMinecraft().displayWidth)
-            x = Minecraft.getMinecraft().displayWidth - maxWidth;
+        if (y + h1 > ModAPI.getAPI().getDisplayHeight())
+            y = ModAPI.getAPI().getDisplayHeight() - h1;
+        if (x + maxWidth > ModAPI.getAPI().getDisplayWidth())
+            x = ModAPI.getAPI().getDisplayWidth() - maxWidth;
         setBounds(new Rectangle(x,y,maxWidth, h1));
     }
 

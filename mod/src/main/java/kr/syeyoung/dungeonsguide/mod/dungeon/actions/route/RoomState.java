@@ -20,19 +20,19 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions.route;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.modapi.data.Vector3D;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.Vec3;
 
 import java.util.List;
 
 @Getter @Setter
 public class RoomState {
     private DungeonRoom dungeonRoom;
-    private Vec3 playerPos;
+    private Vector3D playerPos;
     private OffsetVec3 playerPosOff = new OffsetVec3();
 
-    public void setPlayerPos(Vec3 playerPos) {
+    public void setPlayerPos(Vector3D playerPos) {
         this.playerPos = playerPos;
         this.playerPosOff.setPosInWorld(dungeonRoom, playerPos);
     }

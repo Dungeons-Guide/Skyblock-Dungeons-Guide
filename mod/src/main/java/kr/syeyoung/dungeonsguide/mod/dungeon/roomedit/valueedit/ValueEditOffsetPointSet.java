@@ -27,8 +27,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MValue;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -147,7 +147,7 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
             add.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {
-                    OffsetPoint offsetPoint = new OffsetPoint(EditingContext.getEditingContext().getRoom(), Minecraft.getMinecraft().thePlayer.getPosition());
+                    OffsetPoint offsetPoint = new OffsetPoint(EditingContext.getEditingContext().getRoom(), ModAPI.getAPI().getPlayer().getPosition());
                     MValue mValue;
                     MParameters.add(mValue = new MValue(offsetPoint, buildAddonsFor(offsetPoint)));
                     ((OffsetPointSet)parameter.getNewData()).getOffsetPointList().add(offsetPoint);

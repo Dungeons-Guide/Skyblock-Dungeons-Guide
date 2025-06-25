@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.B
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
@@ -54,7 +55,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
             new Point(1, 0)
     };
 
-    private final LinkedList<BlockPos> blocksolution = new LinkedList<BlockPos>();
+    private final LinkedList<VectorI3D> blocksolution = new LinkedList<>();
     private String goldenPathsolution;
     @Override
     public void tick() {
@@ -62,15 +63,15 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
         if (goldenPathsolution != null) return;
 
         List<Integer> solution = new ArrayList<Integer>();
-        Set<BlockPos> visited = new HashSet<BlockPos>();
-        BlockPos lastLoc = new BlockPos(4,0,0);
+        Set<VectorI3D> visited = new HashSet<>();
+        VectorI3D lastLoc = new VectorI3D(4,0,0);
         visited.add(lastLoc);
         blocksolution.add(getChamber().getBlockPos(4,1,0));
         BlockPos target = new BlockPos(4,0,5);
         while (!lastLoc.equals(target)) {
             boolean solution2 = false;
             for (int i =0; i<vectors.length; i++) {
-                BlockPos target2 = lastLoc.add(vectors[i].x, 0, vectors[i].y);
+                VectorI3D target2 = lastLoc.add(vectors[i].x, 0, vectors[i].y);
                 if (visited.contains(target2)) continue;
                 if (target2.getX() < 0 || target2.getZ() < 0 || target2.getX() > 8 || target2.getZ() > 5) continue;
 

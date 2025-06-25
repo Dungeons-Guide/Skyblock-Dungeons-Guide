@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.modapi.ModAPI;
 import org.lwjgl.opengl.GL20;
 
 import java.awt.*;
@@ -66,7 +66,7 @@ public class ColorWheel extends Widget implements Renderer, Layouter {
         shaderProgram.uploadUniform("value", hsv[2]);
         shaderProgram.uploadUniform("centerPos",
                 (float) (buildContext.getAbsBounds().getX()+buildContext.getAbsBounds().getWidth()/2),
-                Minecraft.getMinecraft().displayHeight - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight()/2));
+                ModAPI.getAPI().getDisplayHeight() - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight()/2));
         shaderProgram.uploadUniform("smoothness", 0.0f);
         context.drawRect(0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0xFFFFFFFF);
         GL20.glUseProgram(0);
@@ -81,7 +81,7 @@ public class ColorWheel extends Widget implements Renderer, Layouter {
         shaderProgram.uploadUniform("thickness", 1f);
         shaderProgram.uploadUniform("centerPos",
                 (float) (buildContext.getAbsBounds().getX()+rad+x),
-                Minecraft.getMinecraft().displayHeight - (float) (buildContext.getAbsBounds().getY() + rad+y));
+                ModAPI.getAPI().getDisplayHeight() - (float) (buildContext.getAbsBounds().getY() + rad+y));
         shaderProgram.uploadUniform("smoothness", 0.0f);
         context.drawRect(0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0xFFFFFFFF);
         GL20.glUseProgram(0);

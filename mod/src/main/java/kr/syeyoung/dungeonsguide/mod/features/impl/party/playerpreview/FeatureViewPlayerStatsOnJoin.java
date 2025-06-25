@@ -37,6 +37,7 @@ import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
@@ -131,7 +132,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         }
         if (gameProfile != null && widget == null) {
             int mouseX = Mouse.getX();
-            int mouseY = (Minecraft.getMinecraft().displayHeight - Mouse.getY());
+            int mouseY = (ModAPI.getAPI().getDisplayHeight() - Mouse.getY());
 
             double width = 220 * scaledResolution.getScaleFactor();
             double height = 220 * scaledResolution.getScaleFactor();

@@ -25,6 +25,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -137,7 +139,7 @@ public class WidgetPreview extends Widget implements Renderer {
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         GL11.glViewport(
                 (int) buildContext.getAbsBounds().getX(),
-                (int) (Minecraft.getMinecraft().displayHeight - buildContext.getAbsBounds().getY() - buildContext.getAbsBounds().getHeight()),
+                (int) (ModAPI.getAPI().getDisplayHeight() - buildContext.getAbsBounds().getY() - buildContext.getAbsBounds().getHeight()),
                 (int) buildContext.getAbsBounds().getWidth(),
                 (int) buildContext.getAbsBounds().getHeight());
 
@@ -221,7 +223,7 @@ public class WidgetPreview extends Widget implements Renderer {
         if (lineProperties.isBeacon()) {
             RenderUtils._renderBeaconBeam(2.5,2.5,4.5, lineProperties.getBeamColor(), partialTicks);
             GlStateManager.pushMatrix();
-            RenderUtils._highlightBlock(new BlockPos(2, 2, 4), lineProperties.getBeaconColor(), partialTicks, false);
+            RenderUtils._highlightBlock(new VectorI3D(2, 2, 4), lineProperties.getBeaconColor(), partialTicks, false);
             GlStateManager.popMatrix();
         }
 
@@ -250,7 +252,7 @@ public class WidgetPreview extends Widget implements Renderer {
 
 
 
-        GL11.glViewport(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+        GL11.glViewport(0,0,ModAPI.getAPI().getDisplayWidth(), ModAPI.getAPI().getDisplayHeight());
 
     }
 }

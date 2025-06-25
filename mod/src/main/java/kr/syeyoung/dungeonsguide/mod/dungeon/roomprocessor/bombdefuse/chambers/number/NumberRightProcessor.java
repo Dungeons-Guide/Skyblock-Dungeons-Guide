@@ -24,11 +24,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
 
 public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
     public NumberRightProcessor(RoomProcessorBombDefuseSolver solver, BDChamber chamber) {
@@ -48,11 +48,11 @@ public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
 
 
     private int answer = -1, d1, d2, d3 ,d4, a1, a2, a3, a4;
-    private final BlockPos d1p;
-    private final BlockPos d2p;
-    private final BlockPos d3p;
-    private final BlockPos d4p;
-    private final BlockPos center;
+    private final VectorI3D d1p;
+    private final VectorI3D d2p;
+    private final VectorI3D d3p;
+    private final VectorI3D d4p;
+    private final VectorI3D center;
     @Override
     public void tick() {
         super.tick();

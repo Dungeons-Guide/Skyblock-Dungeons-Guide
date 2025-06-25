@@ -21,8 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.data;
 import com.fasterxml.jackson.annotation.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
+import kr.syeyoung.modapi.data.Vector3D;
 import lombok.Data;
-import net.minecraft.util.Vec3;
 
 import javax.vecmath.Vector2d;
 
@@ -50,14 +50,14 @@ public class OffsetVec3 implements Cloneable {
         this.zCoord = zCoord;
     }
 
-    public OffsetVec3(DungeonRoom dungeonRoom, Vec3 pos) {
+    public OffsetVec3(DungeonRoom dungeonRoom, Vector3D pos) {
         setPosInWorld(dungeonRoom, pos);
     }
 
 
-    public void setPosInWorld(DungeonRoom dungeonRoom, Vec3 pos) {
-        double x = pos.xCoord - dungeonRoom.getRoomBounds().getMin().getX();
-        double y = pos.zCoord - dungeonRoom.getRoomBounds().getMin().getZ();
+    public void setPosInWorld(DungeonRoom dungeonRoom, Vector3D pos) {
+        double x = pos.x - dungeonRoom.getRoomBounds().getMin().getX();
+        double y = pos.z - dungeonRoom.getRoomBounds().getMin().getZ();
 
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             double temp = x;
@@ -72,7 +72,7 @@ public class OffsetVec3 implements Cloneable {
 
         this.xCoord = x;
         this.zCoord = y;
-        this.yCoord = pos.yCoord - dungeonRoom.getRoomBounds().getMin().getY();
+        this.yCoord = pos.y - dungeonRoom.getRoomBounds().getMin().getY();
     }
 
     public void setPosInWorld(int xWid, int zWid, int minX, int minY, int minZ, double x, double y, double z, int rotation) {
@@ -92,7 +92,7 @@ public class OffsetVec3 implements Cloneable {
     }
 
 
-    public Vec3 toRotatedRelBlockPos(DungeonRoom dungeonRoom) {
+    public Vector3D toRotatedRelBlockPos(DungeonRoom dungeonRoom) {
         Vector2d rot = new Vector2d(xCoord, zCoord);
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             rot = VectorUtils.rotateCounterClockwise(rot);
@@ -103,11 +103,11 @@ public class OffsetVec3 implements Cloneable {
             }
         }
 
-        return new Vec3(rot.x, yCoord, rot.y);
+        return new Vector3D(rot.x, yCoord, rot.y);
     }
 
 
-    public Vec3 toRotatedRelBlockPos(int rotation, int localZWid, int localXWid) {
+    public Vector3D toRotatedRelBlockPos(int rotation, int localZWid, int localXWid) {
         Vector2d rot = new Vector2d(xCoord, zCoord);
         for (int i = 0; i < rotation; i++) {
             rot = VectorUtils.rotateCounterClockwise(rot);
@@ -118,12 +118,12 @@ public class OffsetVec3 implements Cloneable {
             }
         }
 
-        return new Vec3(rot.x, yCoord, rot.y);
+        return new Vector3D(rot.x, yCoord, rot.y);
     }
 
-    public Vec3 getPos(DungeonRoom dungeonRoom) {
-        Vec3 relBp = toRotatedRelBlockPos(dungeonRoom);
-        return dungeonRoom.getRelativeVec3At(relBp.xCoord, relBp.yCoord, relBp.zCoord);
+    public Vector3D getPos(DungeonRoom dungeonRoom) {
+        Vector3D relBp = toRotatedRelBlockPos(dungeonRoom);
+        return dungeonRoom.getRelativeVec3At(relBp.x, relBp.y, relBp.z);
     }
 
 

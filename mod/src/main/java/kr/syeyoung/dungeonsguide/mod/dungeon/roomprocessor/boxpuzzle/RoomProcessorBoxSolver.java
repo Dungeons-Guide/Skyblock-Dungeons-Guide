@@ -28,6 +28,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerato
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -46,7 +48,7 @@ import java.util.Queue;
 public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
 
-    private BlockPos[][] poses = new BlockPos[7][7];
+    private VectorI3D[][] poses = new VectorI3D[7][7];
     private boolean bugged= true;
 
     private BoxPuzzleSolvingThread puzzleSolvingThread;
@@ -79,8 +81,8 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                     board[y][x] = -1;
                     continue;
                 }
-                BlockPos pos = poses[y][x];
-                Block b = w.getChunkFromBlockCoords(pos).getBlock(pos);
+                VectorI3D pos = poses[y][x];
+                Block b = w.getBlockState(new BlockPos(pos.x, pos.y, pos.z)).getBlock();
                 if (b == Blocks.air)
                     board[y][x] = 0;
                 else
@@ -117,7 +119,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (calcReq) {
             OffsetPointSet ops = (OffsetPointSet) getDungeonRoom().getDungeonRoomInfo().getProperties().get("board");
                 if (ops != null) {
-                    poses = new BlockPos[7][7];
+                    poses = new VectorI3D[7][7];
                     for (int y = 0; y < 7; y++) {
                         for (int x = 0; x < 7; x++) {
                             poses[y][x] = ops.getOffsetPointList().get(y * 7 + x).getBlockPos(getDungeonRoom());
@@ -148,8 +150,8 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 step = 0;
                 calcDone2 = false;
                 pathFindReq = true;
-                totalPath = new LinkedList<BlockPos>();
-                totalPushedBlocks = new LinkedList<BlockPos>();
+                totalPath = new LinkedList<>();
+                totalPushedBlocks = new LinkedList<>();
                 solution = new LinkedList<BoxPuzzleSolvingThread.BoxMove>();
                 return;
             } else{
@@ -190,7 +192,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 target = new Point(boxMove.x - boxMove.dx, boxMove.y - boxMove.dy);
             }
             List<Point> semi_pathFound = pathfind(currBoard, player, target);
-            pathFound = new LinkedList<BlockPos>();
+            pathFound = new LinkedList<>();
             for (Point point : semi_pathFound) {
                 pathFound.add(poses[point.y][point.x].add(0,-1,0));
             }
@@ -203,8 +205,8 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
     public void calcTotalPath() {
         Point player = new Point(0,6);
-        totalPath = new LinkedList<BlockPos>();
-        totalPushedBlocks = new LinkedList<BlockPos>();
+        totalPath = new LinkedList<>();
+        totalPushedBlocks = new LinkedList<>();
         byte[][] currBoard = buildCurrentState();
         for (int i = 0; i <= solution.size(); i++) {
             Point target = null;
@@ -225,12 +227,12 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 int fromX = boxMove.x - boxMove.dx;
                 int fromY = boxMove.y - boxMove.dy;
 
-                BlockPos pos = poses[fromY][fromX];
-                BlockPos pos2 = poses[boxMove.y][boxMove.x];
-                BlockPos dir = pos.subtract(pos2);
-                dir = new BlockPos(MathHelper.clamp_int(dir.getX(), -1,1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
+                VectorI3D pos = poses[fromY][fromX];
+                VectorI3D pos2 = poses[boxMove.y][boxMove.x];
+                VectorI3D dir = pos.subtract(pos2);
+                dir = new VectorI3D(MathHelper.clamp_int(dir.getX(), -1,1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
 
-                BlockPos highlight = pos2.add(dir);
+                VectorI3D highlight = pos2.add(dir);
                 totalPushedBlocks.add(highlight);
             }
         }
@@ -238,7 +240,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
     private boolean yState = true;
     public Point getPlayerPos(byte[][] map) {
-        BlockPos playerPos = Minecraft.getMinecraft().thePlayer.getPosition();
+        VectorI3D playerPos = ModAPI.getAPI().getPlayer().getPosition();
         int minDir = Integer.MAX_VALUE;
         Point pt = null;
         for (int y = 0; y < poses.length; y++) {
@@ -255,9 +257,9 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     }
 
     private List<BoxPuzzleSolvingThread.BoxMove> solution;
-    private List<BlockPos> pathFound;
-    private List<BlockPos> totalPath;
-    private List<BlockPos> totalPushedBlocks;
+    private List<VectorI3D> pathFound;
+    private List<VectorI3D> totalPath;
+    private List<VectorI3D> totalPushedBlocks;
     private Point lastPlayer;
 
     private static final java.util.List<Point> directions = Arrays.asList(new Point(-1,0), new Point(1,0), new Point(0,1), new Point(0,-1));
@@ -354,13 +356,13 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 int fromX = boxMove.x - boxMove.dx;
                 int fromY = boxMove.y - boxMove.dy;
 
-                BlockPos pos = poses[fromY][fromX];
-                BlockPos pos2 = poses[boxMove.y][boxMove.x];
-                BlockPos dir = pos.subtract(pos2);
-                dir = new BlockPos(MathHelper.clamp_int(dir.getX(), -1, 1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
+                VectorI3D pos = poses[fromY][fromX];
+                VectorI3D pos2 = poses[boxMove.y][boxMove.x];
+                VectorI3D dir = pos.subtract(pos2);
+                dir = new VectorI3D(MathHelper.clamp_int(dir.getX(), -1, 1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
 
-                BlockPos highlight = pos2.add(dir);
-                AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(MathHelper.clamp_double(Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(highlight), 100, 255) / 255);
+                VectorI3D highlight = pos2.add(dir);
+                AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(MathHelper.clamp_double(ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(highlight), 100, 255) / 255);
                 RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, partialTicks, false);
             }
 
@@ -373,7 +375,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             }
             if (totalPushedBlocks != null) {
                 for (int i = 0; i < totalPushedBlocks.size(); i++) {
-                    BlockPos pos = totalPushedBlocks.get(i);
+                    VectorI3D pos = totalPushedBlocks.get(i);
                     RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1),  FeatureRegistry.SOLVER_BOX.getTargetColor(), partialTicks, false);
                     RenderUtils.drawTextAtWorld("#"+i, pos.getX()+0.5f, pos.getY() +0.5f, pos.getZ() + 0.5f, i != step ?
                             RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor2()) : RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor()), 0.1f, false, false, partialTicks);

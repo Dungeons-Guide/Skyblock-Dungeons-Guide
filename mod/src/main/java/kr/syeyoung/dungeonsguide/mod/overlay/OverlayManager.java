@@ -28,6 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
@@ -83,14 +84,14 @@ public class OverlayManager {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("Dungeons Guide Overlay Lauout");
         try {
-            view.setRelativeBound(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
-            view.setAbsBounds(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
-            view.setSize(new Size(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+            view.setRelativeBound(new Rect(0,0, ModAPI.getAPI().getDisplayWidth(), ModAPI.getAPI().getDisplayHeight()));
+            view.setAbsBounds(new Rect(0,0, ModAPI.getAPI().getDisplayWidth(), ModAPI.getAPI().getDisplayHeight()));
+            view.setSize(new Size(ModAPI.getAPI().getDisplayWidth(), ModAPI.getAPI().getDisplayHeight()));
             view.getLayouter().layout(view, new ConstraintBox(
-                    Minecraft.getMinecraft().displayWidth,
-                    Minecraft.getMinecraft().displayWidth,
-                    Minecraft.getMinecraft().displayHeight,
-                    Minecraft.getMinecraft().displayHeight
+                    ModAPI.getAPI().getDisplayWidth(),
+                    ModAPI.getAPI().getDisplayWidth(),
+                    ModAPI.getAPI().getDisplayHeight(),
+                    ModAPI.getAPI().getDisplayHeight()
             ));
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
@@ -143,10 +144,10 @@ public class OverlayManager {
             Profiler profiler = Minecraft.getMinecraft().mcProfiler;
             profiler.startSection("Dungeons Guide Overlay Lauout");
             view.getLayouter().layout(view, new ConstraintBox(
-                    Minecraft.getMinecraft().displayWidth,
-                    Minecraft.getMinecraft().displayWidth,
-                    Minecraft.getMinecraft().displayHeight,
-                    Minecraft.getMinecraft().displayHeight
+                    ModAPI.getAPI().getDisplayWidth(),
+                    ModAPI.getAPI().getDisplayWidth(),
+                    ModAPI.getAPI().getDisplayHeight(),
+                    ModAPI.getAPI().getDisplayHeight()
             ));
             profiler.endSection();
         }

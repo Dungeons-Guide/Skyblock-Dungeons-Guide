@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.map;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
-import net.minecraft.util.BlockPos;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.util.ChatComponentText;
 
 import javax.vecmath.Vector2d;
@@ -31,7 +31,7 @@ import java.util.Set;
 
 // This class is responsible for matching the world to hand held map.
 public class DungeonMapConstantRetriever {
-    public static DungeonMapLayout beginParsingMap(byte[] mapData, BlockPos worldDoorLocation, Vector2d worldDoorDirection) {
+    public static DungeonMapLayout beginParsingMap(byte[] mapData, VectorI3D worldDoorLocation, Vector2d worldDoorDirection) {
         if (worldDoorLocation == null || worldDoorDirection == null) return null;
 
 //        context.createEvent(new DungeonNodataEvent("MAP_PROCESSOR_INIT"));
@@ -48,7 +48,7 @@ public class DungeonMapConstantRetriever {
         int mapRoomGap = mapDoorDimension.height;
 
         Point mapOriginPoint = obtainTopLeft(mapData, firstRoom, mapDoorDimension);
-        BlockPos worldMin = obtainWorldMin(mapData, firstRoom, mapOriginPoint, mapDoorDimension,
+        VectorI3D worldMin = obtainWorldMin(mapData, firstRoom, mapOriginPoint, mapDoorDimension,
                 mapDoorDirection, worldDoorDirection, worldDoorLocation);
 
         ChatTransmitter.sendDebugChat(new ChatComponentText("door Pos:" + worldDoorDirection));
@@ -67,9 +67,9 @@ public class DungeonMapConstantRetriever {
         int y = (int) ((mapPoint.y - topLeftMapPoint.y) / ((double) unitRoomDimension.height + doorDimensions.height));
         return new Point(x, y);
     }
-    private static BlockPos obtainWorldMin(byte[] mapData, Rectangle firstRoom, Point topLeftMapPoint, Dimension doorDimension,
+    private static VectorI3D obtainWorldMin(byte[] mapData, Rectangle firstRoom, Point topLeftMapPoint, Dimension doorDimension,
                                     Vector2d mapDoorOffset,
-                                    Vector2d worldDoorOffset, BlockPos worldDoor) {
+                                    Vector2d worldDoorOffset, VectorI3D worldDoor) {
         Point unitPoint = mapPointToRoomPoint(firstRoom.getLocation(), topLeftMapPoint, firstRoom.getSize(), doorDimension);
         unitPoint.translate(unitPoint.x + 1, unitPoint.y + 1); // basically, we make each room 2x2 large in this coordinate and get the center coord
         unitPoint.translate((int) mapDoorOffset.x, (int) mapDoorOffset.y);
@@ -79,7 +79,7 @@ public class DungeonMapConstantRetriever {
 
         int worldX = unitPoint.x * 16;
         int worldY = unitPoint.y * 16;
-        BlockPos worldMin = worldDoor.add(-worldX, 0, -worldY);
+        VectorI3D worldMin = worldDoor.add(-worldX, 0, -worldY);
         return worldMin;
     }
     private static  Point obtainTopLeft(byte[] mapData, Rectangle firstRoom, Dimension doorDimension) {

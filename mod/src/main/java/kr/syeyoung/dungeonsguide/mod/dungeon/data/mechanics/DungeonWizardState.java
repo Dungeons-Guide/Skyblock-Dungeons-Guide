@@ -28,9 +28,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.predicates.Predicate
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Data;
 import lombok.Setter;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ public class DungeonWizardState implements DungeonMechanicState {
 
     @Override
     public void highlight(Color color, String name, float partialTicks) {
-        BlockPos pos = data.secretPoint.getBlockPos(room);
+        VectorI3D pos = data.secretPoint.getBlockPos(room);
         RenderUtils.highlightBlock(pos, color, partialTicks);
         RenderUtils.drawTextAtWorld("W-" + name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);

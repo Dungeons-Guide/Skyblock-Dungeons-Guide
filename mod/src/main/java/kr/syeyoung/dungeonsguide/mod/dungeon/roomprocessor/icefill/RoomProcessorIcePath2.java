@@ -29,8 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerato
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -41,7 +41,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
-    private final List<List<BlockPos>> solution = new CopyOnWriteArrayList<List<BlockPos>>();
+    private final List<List<VectorI3D>> solution = new CopyOnWriteArrayList<List<VectorI3D>>();
 
 
 
@@ -71,7 +71,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
                 final int endY = Integer.parseInt(data.split(":")[5]);
 
                 final int[][] map = new int[height][width];
-                final BlockPos[][] map2 = new BlockPos[height][width];
+                final VectorI3D[][] map2 = new VectorI3D[height][width];
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
                         map2[y][x] = level.getOffsetPointList().get(y * width + x).getBlockPos(dungeonRoom);
@@ -86,7 +86,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
                         return;
                     }
                     hamiltonianPath.add(0,new Point(startX, startY));
-                    List<BlockPos> poses = new LinkedList<BlockPos>();
+                    List<VectorI3D> poses = new LinkedList<VectorI3D>();
                     for (int i = 0; i < hamiltonianPath.size(); i++) {
                         Point p = hamiltonianPath.get(i);
                         poses.add(map2[p.y][p.x]);
@@ -109,7 +109,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         if (!FeatureRegistry.SOLVER_ICEPATH.isEnabled()) return;
-        for (List<BlockPos> solution:this.solution)
+        for (List<VectorI3D> solution:this.solution)
             RenderUtils.drawLines(solution, FeatureRegistry.SOLVER_ICEPATH.getLineColor(), (float) FeatureRegistry.SOLVER_ICEPATH.getLineWidth(), partialTicks, true);
     }
 

@@ -30,9 +30,9 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Vector3D;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.Vec3;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -94,7 +94,7 @@ public class ActionRoute {
         current = 0;
         actions = new ArrayList<>();
         actions.add(new ActionRoot());
-        Vec3 start = Minecraft.getMinecraft().thePlayer.getPositionVector();
+        Vector3D start = ModAPI.getAPI().getPlayer().getPositionVector();
         pathCalculator.submit(() -> {
             ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
 

@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.B
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.item.ItemStack;
@@ -45,12 +46,12 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
         b3p = chamber.getBlockPos(7,1,4);
     }
 
-    private final BlockPos center;
+    private final VectorI3D center;
 
     private Block w1, w2, w3, c1, c2, c3;
-    private final BlockPos b1p;
-    private final BlockPos b2p;
-    private final BlockPos b3p;
+    private final VectorI3D b1p;
+    private final VectorI3D b2p;
+    private final VectorI3D b3p;
     private int s1, s2, s3;
     private int s1t, s2t, s3t;
     private boolean solutionBuilt;
@@ -65,7 +66,8 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
         super.tick();
         if (solutionBuilt) return;
         World w = getChamber().getRoom().getContext().getWorld();
-        if ((c1 = w.getBlockState(b1p).getBlock()) == w1 && s1t < 7) {
+
+        if ((c1 = w.getBlockState(new BlockPos(b1p.getX(), b1p.getY(), b1p.getZ())).getBlock()) == w1 && s1t < 7) {
             int semi = match(getChamber().getEntityAt(EntityArmorStand.class,b1p.add(0, 1, 0)));
             if (s1 == semi) {
                 s1t++;
@@ -74,7 +76,7 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
                 s1t = 0;
             }
         }
-        if ((c2 = w.getBlockState(b2p).getBlock()) == w2 && s2t < 7) {
+        if ((c2 = w.getBlockState(new BlockPos(b2p.getX(), b2p.getY(), b2p.getZ())).getBlock()) == w2 && s2t < 7) {
             int semi = match(getChamber().getEntityAt(EntityArmorStand.class,b2p.add(0, 2, 0)));
             if (s2 == semi) {
                 s2t++;
@@ -83,7 +85,7 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
                 s2t = 0;
             }
         }
-        if ((c3 =w.getBlockState(b3p).getBlock()) == w3 && s3t < 7) {
+        if ((c3 =w.getBlockState(new BlockPos(b3p.getX(), b3p.getY(), b3p.getZ())).getBlock()) == w3 && s3t < 7) {
             int semi = match(getChamber().getEntityAt(EntityArmorStand.class,b3p.add(0, 1, 0)));
             if (s3== semi) {
                 s3t++;

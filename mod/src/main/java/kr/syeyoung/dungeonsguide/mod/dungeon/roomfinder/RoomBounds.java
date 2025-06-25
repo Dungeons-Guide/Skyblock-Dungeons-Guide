@@ -1,8 +1,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder;
 
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Getter;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
 
 @Getter
 public class RoomBounds {
@@ -11,15 +11,15 @@ public class RoomBounds {
     private final int maxX;
     private final int maxZ;
 
-    private BlockPos min;
-    private BlockPos max;
+    private VectorI3D min;
+    private VectorI3D max;
 
     private final short shape;
 
     private final int unitLenX; // X
     private final int unitLenZ; // Z
 
-    public RoomBounds(short shape, BlockPos min, BlockPos max) {
+    public RoomBounds(short shape, VectorI3D min, VectorI3D max) {
         this.shape = shape;
         this.minX = min.getX();
         this.minZ = min.getZ();
@@ -36,7 +36,7 @@ public class RoomBounds {
         return canAccessRelative(x - minX, z - minZ);
     }
 
-    public boolean canAccessAbsolute(BlockPos pos) {
+    public boolean canAccessAbsolute(VectorI3D pos) {
         return canAccessRelative(pos.getX() - minX, pos.getZ() - minZ);
     }
 
@@ -59,11 +59,11 @@ public class RoomBounds {
     }
 
 
-    public boolean isFullyWithin(Vec3 vec) {
-        if (vec.xCoord * 2 <= minX * 2 + 3 || vec.zCoord * 2 <= minZ * 2 + 3) return false;
-        if (vec.xCoord * 2 >= maxX * 2 + 1 || vec.zCoord * 2 >= maxZ * 2 + 1) return false;
-        if (!canAccessRelative( (int) Math.floor((vec.xCoord * 2 - minX * 2 - 1) / 2), (int) Math.floor((vec.zCoord * 2 - minZ * 2 - 1) / 2))) return false;
-        if (!canAccessRelative( (int) Math.floor((vec.xCoord * 2 - minX * 2 + 1) / 2), (int) Math.floor((vec.zCoord * 2 - minZ * 2 + 1) / 2))) return false;
+    public boolean isFullyWithin(Vector3D vec) {
+        if (vec.x * 2 <= minX * 2 + 3 || vec.z * 2 <= minZ * 2 + 3) return false;
+        if (vec.x * 2 >= maxX * 2 + 1 || vec.z * 2 >= maxZ * 2 + 1) return false;
+        if (!canAccessRelative( (int) Math.floor((vec.x * 2 - minX * 2 - 1) / 2), (int) Math.floor((vec.z * 2 - minZ * 2 - 1) / 2))) return false;
+        if (!canAccessRelative( (int) Math.floor((vec.x * 2 - minX * 2 + 1) / 2), (int) Math.floor((vec.z * 2 - minZ * 2 + 1) / 2))) return false;
         return true;
     }
 }

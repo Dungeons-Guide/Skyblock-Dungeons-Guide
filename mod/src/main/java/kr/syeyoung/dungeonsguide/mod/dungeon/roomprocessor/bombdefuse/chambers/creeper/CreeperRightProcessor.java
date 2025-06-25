@@ -23,8 +23,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 
@@ -32,7 +32,7 @@ public class CreeperRightProcessor extends GeneralDefuseChamberProcessor {
     public CreeperRightProcessor(RoomProcessorBombDefuseSolver solver, BDChamber chamber) {
         super(solver, chamber);
 
-        poses = new BlockPos[9];
+        poses = new VectorI3D[9];
         for (int i = 0; i < 9; i++) {
             poses[i] = chamber.getBlockPos(3+(i%3), 1, 1+(i/3));
         }
@@ -46,8 +46,8 @@ public class CreeperRightProcessor extends GeneralDefuseChamberProcessor {
 
 
     private int answer = -1;
-    private final BlockPos[] poses;
-    private final BlockPos center;
+    private final VectorI3D[] poses;
+    private final VectorI3D center;
     @Override
     public void tick() {
         super.tick();

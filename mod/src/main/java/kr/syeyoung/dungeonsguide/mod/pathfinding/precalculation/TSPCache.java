@@ -2,9 +2,9 @@ package kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
+import kr.syeyoung.modapi.data.Vector3D;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.Vec3;
 
 import java.io.IOException;
 import java.util.*;
@@ -46,7 +46,7 @@ public class TSPCache {
             double[] arr = new double[locationsInCache.size()];
             for (int i = 0; i < locationsInCache.size(); i++) {
                 OffsetVec3 offsetVec3 = locationsInCache.get(i);
-                arr[i] = iPathfinder.getCost(new Vec3(offsetVec3.xCoord, offsetVec3.yCoord + 70, offsetVec3.zCoord));
+                arr[i] = iPathfinder.getCost(new Vector3D(offsetVec3.xCoord, offsetVec3.yCoord + 70, offsetVec3.zCoord));
             }
             cache.put(precalculation.getTargetHash(), arr);
         }

@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.gui;
 
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -54,8 +55,8 @@ public class PassthroughManager {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("Dungeons Guide - RenderGameOverlayEvent :: Passthrough");
 
-        int width = Minecraft.getMinecraft().displayWidth;
-        int height = Minecraft.getMinecraft().displayHeight;
+        int width = ModAPI.getAPI().getDisplayWidth();
+        int height = ModAPI.getAPI().getDisplayHeight();
 
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.loadIdentity();

@@ -23,10 +23,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.data.Vector3D;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.Vec3;
 
 import java.util.function.Predicate;
 
@@ -51,11 +51,11 @@ public class ActionInteract extends AbstractAction {
     public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event) {
         if (interacted) return;
 
-        Vec3 spawnLoc = DungeonActionContext.getSpawnLocation().get(event.getEntity().getEntityId());
+        Vector3D spawnLoc = DungeonActionContext.getSpawnLocation().get(event.getEntity().getEntityId());
         if (spawnLoc == null) {
             return;
         }
-        if (target.getBlockPos(dungeonRoom).distanceSq(spawnLoc.xCoord, spawnLoc.yCoord, spawnLoc.zCoord) > radius * radius) {
+        if (target.getBlockPos(dungeonRoom).distanceSq(spawnLoc.x, spawnLoc.y, spawnLoc.z) > radius * radius) {
             return;
         }
         if (!predicate.test(event.getEntity())) {

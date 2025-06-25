@@ -13,6 +13,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -72,7 +73,7 @@ public class WidgetEtherwarpPreview extends AnnotatedExportOnlyWidget implements
         shaderProgram.uploadUniform("radius", (float) buildContext.getAbsBounds().getWidth() * 1/3);
         shaderProgram.uploadUniform("centerPos",
                 (float) (buildContext.getAbsBounds().getX()+buildContext.getAbsBounds().getWidth()/2),
-                Minecraft.getMinecraft().displayHeight - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight() - 16*scaleFactor));
+                ModAPI.getAPI().getDisplayHeight() - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight() - 16*scaleFactor));
         shaderProgram.uploadUniform("smoothness", 0.0f);
 
         GlStateManager.color(1.0f, 0f, 0f, 0.3f);
@@ -178,7 +179,7 @@ public class WidgetEtherwarpPreview extends AnnotatedExportOnlyWidget implements
         shaderProgram.uploadUniform("radius", (float) buildContext.getAbsBounds().getWidth() * 1/3);
         shaderProgram.uploadUniform("centerPos",
                 (float) (buildContext.getAbsBounds().getX()+buildContext.getAbsBounds().getWidth()/2),
-                Minecraft.getMinecraft().displayHeight - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight() - 16*scaleFactor));
+                ModAPI.getAPI().getDisplayHeight() - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight() - 16*scaleFactor));
         shaderProgram.uploadUniform("smoothness", 0.0f);
         shaderProgram.uploadUniform("thickness", 1.0f);
         context.drawRect(-halfWidth,-size.getHeight(),halfWidth, 40, 0xFFFFFFFF);

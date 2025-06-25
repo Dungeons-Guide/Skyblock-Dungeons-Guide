@@ -28,8 +28,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonDoor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Getter;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 import java.util.Set;
@@ -68,7 +68,7 @@ public class DungeonRoomDoorState implements DungeonMechanicState {
 
     @Override
     public void highlight(Color color, String name, float partialTicks) {
-        BlockPos pos = offsetPoint.getBlockPos(room);
+        VectorI3D pos = offsetPoint.getBlockPos(room);
         RenderUtils.highlightBlock(pos, color, partialTicks);
         RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.75f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0.25f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);

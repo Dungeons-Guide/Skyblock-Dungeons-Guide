@@ -27,11 +27,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MIntegerSelec
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MLabel;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements.MLabelAndElement;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Getter;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 
@@ -115,9 +114,8 @@ public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
             setToHEre2.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {
-                    EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-                    BlockPos pos = new BlockPos(player.posX, player.posY, player.posZ);
-                    ((OffsetPoint)parameter2.getNewData()).setPosInWorld(EditingContext.getEditingContext().getRoom(),pos );
+                    VectorI3D pos = ModAPI.getAPI().getPlayer().getPosition();
+                    ((OffsetPoint)parameter2.getNewData()).setPosInWorld(EditingContext.getEditingContext().getRoom(), pos );
                 }
             });
             MLabelAndElement mLabelAndElement = new MLabelAndElement("set",setToHEre2);
@@ -152,7 +150,7 @@ public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new OffsetPoint(EditingContext.getEditingContext().getRoom(), Minecraft.getMinecraft().thePlayer.getPosition());
+            return new OffsetPoint(EditingContext.getEditingContext().getRoom(), ModAPI.getAPI().getPlayer().getPosition());
         }
 
         @Override

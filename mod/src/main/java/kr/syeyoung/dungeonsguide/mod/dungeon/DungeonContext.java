@@ -41,9 +41,9 @@ import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
@@ -81,7 +81,7 @@ public class DungeonContext {
     @Getter @Setter
     private long init = -1;
     @Getter @Setter
-    private BlockPos bossroomSpawnPos = null;
+    private VectorI3D bossroomSpawnPos = null;
     @Getter
     private boolean gotMimic = false;
 
@@ -120,7 +120,7 @@ public class DungeonContext {
 
 
     private final Vector2d doorOffset;
-    private final BlockPos door;
+    private final VectorI3D door;
 
     public DungeonContext(String dungeonName, World world) {
         this(dungeonName, world, FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset());
@@ -156,9 +156,9 @@ public class DungeonContext {
     private final Rectangle roomBoundary = new Rectangle(-10, -10, 138, 138);
 
     public void tick() {
-        if (scaffoldParser != null && bossRoomEnterSeconds == -1 && !roomBoundary.contains(scaffoldParser.getDungeonMapLayout().worldPointToMapPoint(Minecraft.getMinecraft().thePlayer.getPositionVector()))) {
+        if (scaffoldParser != null && bossRoomEnterSeconds == -1 && !roomBoundary.contains(scaffoldParser.getDungeonMapLayout().worldPointToMapPoint(ModAPI.getAPI().getPlayer().getPositionVector()))) {
             bossRoomEnterSeconds = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000;
-            bossroomSpawnPos = Minecraft.getMinecraft().thePlayer.getPosition();
+            bossroomSpawnPos =  ModAPI.getAPI().getPlayer().getPosition();
             ModAPI.getAPI().getEventBus().fireEvent(new BossroomEnterEvent());
             recorder.createEvent(new DungeonNodataEvent("BOSSROOM_ENTER"));
             DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(getDungeonName());
@@ -175,7 +175,7 @@ public class DungeonContext {
                     dungeonRoom.tryRematch();
                 }
             }
-            executor.setRoomIn(scaffoldParser.getRoomMap().get(getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())));
+            executor.setRoomIn(scaffoldParser.getRoomMap().get(getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(ModAPI.getAPI().getPlayer().getPositionVector())));
         }
 
 
@@ -243,7 +243,7 @@ public class DungeonContext {
             int x = Integer.parseInt(coords.split("/")[0]);
             int z = Integer.parseInt(coords.split("/")[1]);
             int secrets2 = Integer.parseInt(secrets);
-            Point roomPt = scaffoldParser.getDungeonMapLayout().worldPointToRoomPoint(new BlockPos(x, 70, z));
+            Point roomPt = scaffoldParser.getDungeonMapLayout().worldPointToRoomPoint(new VectorI3D(x, 70, z));
             ChatTransmitter.sendDebugChat(new ChatComponentText("Message from Other dungeons guide :: " + roomPt.x + " / " + roomPt.y + " total secrets " + secrets2));
             DungeonRoom dr = scaffoldParser.getRoomMap().get(roomPt);
             if (dr != null) {

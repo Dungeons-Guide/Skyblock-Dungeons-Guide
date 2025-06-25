@@ -24,11 +24,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +50,7 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
 
     private int answer = -1;
     private final int[] answers = new int[9];
-    private final BlockPos[] grid = new BlockPos[9];
+    private final VectorI3D[] grid = new VectorI3D[9];
     @Override
     public void tick() {
         super.tick();
@@ -76,7 +76,7 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
 
         if (answer == -1) return;
         for (int i = 0; i < 9; i++) {
-            BlockPos pos = grid[i];
+            VectorI3D pos = grid[i];
             int direction = answers[i];
             String charac = arrows.get(direction);
 

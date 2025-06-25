@@ -11,11 +11,11 @@ import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec4b;
@@ -68,7 +68,7 @@ public class MapOverlayPlayerClickable implements MapOverlay {
             if (iconName != null) {
                 Vec4b vec = context.getScaffoldParser().getLatestMapData().mapDecorations.get(iconName);
                 if (vec != null) {
-                    BlockPos worldPt = context.getScaffoldParser().getDungeonMapLayout().mapPointToWorldPoint(new Point(vec.func_176112_b() / 2 + 64, vec.func_176113_c()/2 + 64));
+                    VectorI3D worldPt = context.getScaffoldParser().getDungeonMapLayout().mapPointToWorldPoint(new Point(vec.func_176112_b() / 2 + 64, vec.func_176113_c()/2 + 64));
                     return new Vector3d(worldPt.getX(), worldPt.getZ(), vec.func_176111_d() * 360 / 16.0f);
                 }
             }

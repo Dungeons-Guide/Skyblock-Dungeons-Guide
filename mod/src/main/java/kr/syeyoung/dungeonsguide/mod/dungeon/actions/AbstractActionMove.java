@@ -31,11 +31,11 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
 
 import java.io.IOException;
 import java.util.*;
@@ -48,10 +48,10 @@ public abstract class AbstractActionMove extends AbstractAction {
     private String id;
 
     private OffsetVec3 targetVec3;
-    private BlockPos beaconTargetPos;
+    private VectorI3D beaconTargetPos;
     private List<OffsetVec3> targetOffsetPointSet;
 
-    public AbstractActionMove(OffsetVec3 targetVec3, BlockPos beaconPos, List<OffsetVec3> targetOffsetPtSet) {
+    public AbstractActionMove(OffsetVec3 targetVec3, VectorI3D beaconPos, List<OffsetVec3> targetOffsetPtSet) {
         this.targetVec3 = targetVec3;
         this.beaconTargetPos = beaconPos;
         this.targetOffsetPointSet = targetOffsetPtSet;
@@ -73,23 +73,23 @@ public abstract class AbstractActionMove extends AbstractAction {
         if (this.boundingBox != null) return boundingBox;
         BoundingBox boundingBox = new BoundingBox();
         for (OffsetVec3 offsetPoint : getTargetOffsetPointSet()) {
-            Vec3 pos = offsetPoint.getPos(dungeonRoom);
+            Vector3D pos = offsetPoint.getPos(dungeonRoom);
             boundingBox.addBoundingBox(new AxisAlignedBB(
-                    pos.xCoord - 0.1, pos.yCoord - 0.1, pos.zCoord - 0.1,
-                    pos.xCoord + 0.1, pos.yCoord + 0.1, pos.zCoord + 0.1
+                    pos.x - 0.1, pos.y - 0.1, pos.z - 0.1,
+                    pos.x + 0.1, pos.y + 0.1, pos.z + 0.1
             ));
         }
         return this.boundingBox = boundingBox;
     }
 
-    public BlockPos getBeaconTargetPos(DungeonRoom dungeonRoom) {
+    public VectorI3D getBeaconTargetPos(DungeonRoom dungeonRoom) {
         if (beaconTargetPos != null) return beaconTargetPos;
-        return beaconTargetPos = new BlockPos(targetVec3.getPos(dungeonRoom));
+        return beaconTargetPos = new VectorI3D(targetVec3.getPos(dungeonRoom));
     }
 
-    private Vec3 transformedTargetVec3;
+    private Vector3D transformedTargetVec3;
     private String vec3Str;
-    private Vec3 getTransformedTargetVec3(DungeonRoom dungeonRoom) {
+    private Vector3D getTransformedTargetVec3(DungeonRoom dungeonRoom) {
         if (transformedTargetVec3 != null) return transformedTargetVec3;
         this.transformedTargetVec3 = getTargetVec3().getPos(dungeonRoom);
         vec3Str = transformedTargetVec3.toString();
@@ -131,7 +131,7 @@ public abstract class AbstractActionMove extends AbstractAction {
 
     @Override
     public double evalulateCost(RoomState state, DungeonRoom room, TSPCache tspCache, RoomPresetPathPlanner pathPlanner) {
-        Vec3 bpos = getTransformedTargetVec3(room);
+        Vector3D bpos = getTransformedTargetVec3(room);
 
         if (hashCache == null) {
             hashCache = new String[1 << state.getOpenMechanicsIndex().size()];

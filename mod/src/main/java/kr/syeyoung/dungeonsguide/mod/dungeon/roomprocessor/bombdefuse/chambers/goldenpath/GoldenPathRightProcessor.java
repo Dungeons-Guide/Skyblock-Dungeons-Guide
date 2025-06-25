@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.B
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IChatComponent;
@@ -45,7 +46,7 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
 
-    private final BlockPos center;
+    private final VectorI3D center;
     // 1 up 2 right 3 down 4 left
     private static final Point[] vectors = new Point[] {
             new Point(0,1),
@@ -54,7 +55,7 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
             new Point(1, 0)
     };
 
-    private final LinkedList<BlockPos> blocksolution = new LinkedList<BlockPos>();
+    private final LinkedList<VectorI3D> blocksolution = new LinkedList<>();
 
     @Override
     public void drawWorld(float partialTicks) {
@@ -84,11 +85,11 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
             World w = getChamber().getRoom().getContext().getWorld();
             for (int x = 0; x <9; x++) {
                 for (int z =0; z < 6; z++) {
-                    BlockPos pos = getChamber().getBlockPos(x,1,z);
+                    VectorI3D pos = getChamber().getBlockPos(x,1,z);
                     if (blocksolution.contains(pos)) {
-                        w.setBlockState(pos, Blocks.light_weighted_pressure_plate.getDefaultState());
+                        w.setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Blocks.light_weighted_pressure_plate.getDefaultState());
                     } else {
-                        w.setBlockState(pos, Blocks.wooden_pressure_plate.getDefaultState());
+                        w.setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Blocks.wooden_pressure_plate.getDefaultState());
                     }
                 }
             }

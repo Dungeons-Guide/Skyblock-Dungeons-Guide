@@ -22,6 +22,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -89,8 +91,8 @@ public class MapPlayerProcessor {
             if (!mapIconToPlayerMap.containsValue(mapDecString)) {
                 int x = vec4.func_176112_b() / 2 + 64;
                 int y = vec4.func_176113_c() / 2 + 64;
-                BlockPos worldPos = context.getScaffoldParser().getDungeonMapLayout().mapPointToWorldPoint(new Point(x, y));
-                if (Minecraft.getMinecraft().thePlayer.getDistanceSq(worldPos) > lim) continue; // too far away
+                VectorI3D worldPos = context.getScaffoldParser().getDungeonMapLayout().mapPointToWorldPoint(new Point(x, y));
+                if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(worldPos) > lim) continue; // too far away
                 String potentialPlayer = null;
 
                 int players = 0;
@@ -110,7 +112,7 @@ public class MapPlayerProcessor {
         }
     }
 
-    private boolean isPlayerNear(String player, BlockPos mapPos) {
+    private boolean isPlayerNear(String player, VectorI3D mapPos) {
         EntityPlayer entityPlayer = mc.theWorld.getPlayerEntityByName(player);
 
         if (entityPlayer != null && !entityPlayer.isInvisible()) {

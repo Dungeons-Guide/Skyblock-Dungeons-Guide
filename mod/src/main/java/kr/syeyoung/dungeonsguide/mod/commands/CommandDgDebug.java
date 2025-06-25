@@ -57,8 +57,8 @@ import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.entity.UPlayerSelf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -530,7 +530,7 @@ public class CommandDgDebug extends CommandBase {
     }
 
     private void brandCommand() {
-        String serverBrand = Minecraft.getMinecraft().thePlayer.getClientBrand();
+        String serverBrand = ModAPI.getAPI().getPlayer().getClientBrand();
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
     }
 
@@ -1191,7 +1191,7 @@ public class CommandDgDebug extends CommandBase {
     private void pathfindCommand(String[] args) {
         try {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
             if (thePlayer == null) {
                 return;
             }
@@ -1519,7 +1519,7 @@ public class CommandDgDebug extends CommandBase {
     private void pFallCommand() {
         try {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
             if (thePlayer == null) {
                 return;
             }
@@ -1543,7 +1543,7 @@ public class CommandDgDebug extends CommandBase {
 
     private void partyCollectionCommand(String otherPlayerName, String fragbot, String offline) {
 
-        String sourcePlayer = Minecraft.getMinecraft().thePlayer.getName();
+        String sourcePlayer = ModAPI.getAPI().getPlayer().getName();
         String targetPlayer = otherPlayerName;
         String thirdPlayer = fragbot;
         String offlinePlayer = offline;
