@@ -80,7 +80,7 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
         correctLivid = Minecraft.getMinecraft().theWorld.getChunkFromBlockCoords(new BlockPos(5, 108, 42)).getBlockMetadata(new BlockPos(5, 108, 42));
         realLividName = lividMetadata.get(correctLivid);
         prefix = lividColorPrefix.get(realLividName);
-        // TODO FIX!!!
+
         if (updateEvent.getEntityLiving().getName().startsWith(realLividName) && updateEvent.getEntityLiving() instanceof UEntityPlayer) {
             realLivid = (UEntityPlayer) updateEvent.getEntityLiving();
         } else if (updateEvent.getEntityLiving().getName().startsWith(prefix+"﴾ ") && updateEvent.getEntityLiving() instanceof UEntityArmorStand) {
