@@ -28,6 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
@@ -67,7 +68,7 @@ public class WidgetNicknameColor extends AnnotatedImportOnlyWidget {
                 }));
             }
         }
-        List<ActiveCosmetic> activeCosmeticList =  cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getMinecraft().getSession().getProfile().getId(), (a) -> new ArrayList<>());
+        List<ActiveCosmetic> activeCosmeticList =  cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(ModAPI.getAPI().getSession().getUUID(), (a) -> new ArrayList<>());
         for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
             CosmeticData cosmeticData =  cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
             if (cosmeticData != null && cosmeticData.getCosmeticType().equals("ncolor")) {
@@ -89,7 +90,7 @@ public class WidgetNicknameColor extends AnnotatedImportOnlyWidget {
                         "§dFrom §r§r§a[RANK§r§6+§r§a] %prefix%%name%§r§7: §r§7TEST§r",
                         "§r§b[RANK§c+§b] %prefix%%name%§f: TEST",
                         "§r§bCo-op > §r§a[RANK§6+§a] %prefix%%name%§f: §rTEST§r"
-                }).replace("%name%", Minecraft.getMinecraft().getSession().getUsername())
+                }).replace("%name%", ModAPI.getAPI().getSession().getUsername())
                 .replace("%prefix%", currentSelected == null ? "" : currentSelected.getData()));
 
         boolean disable = currentSelected == previouslySelected
@@ -107,7 +108,7 @@ public class WidgetNicknameColor extends AnnotatedImportOnlyWidget {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 
         if (previouslySelected != null) {
-            List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getMinecraft().getSession().getProfile().getId(), (a) -> new ArrayList<>());
+            List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(ModAPI.getAPI().getSession().getUUID(), (a) -> new ArrayList<>());
             for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
                 if (activeCosmetic.getCosmeticData().equals(previouslySelected.getId())) {
                     cosmeticsManager.removeCosmetic(activeCosmetic);

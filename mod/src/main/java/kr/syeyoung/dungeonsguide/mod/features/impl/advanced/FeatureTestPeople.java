@@ -35,6 +35,7 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -94,7 +95,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
         System.out.println("Broadcast was a self broadcast with: " + username);
         PartyManager.INSTANCE.getPartyContext().addDgUser(username);
 
-//                String actualPayload = "ACK" + random + ":" + username + ":" + Minecraft.getMinecraft().getSession().getUsername();
+//                String actualPayload = "ACK" + random + ":" + username + ":" + ModAPI.getAPI().getSession().getUsername();
 //                StompManager.getInstance().send(new StompPayload().header("destination", "/app/party.broadcast").payload(
 //                        new JSONObject().put("partyID", PartyManager.INSTANCE.getPartyContext().getPartyID())
 //                                .put("payload", actualPayload).toString()
@@ -103,7 +104,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 //            } else if (payload.startsWith("ACK")){
 //                String ACKnick = payload.substring(3);
 //                String[] nicks = ACKnick.split(":");
-//                if(Objects.equals(nicks[0], Minecraft.getMinecraft().getSession().getUsername())) {
+//                if(Objects.equals(nicks[0], ModAPI.getAPI().getSession().getUsername())) {
 //                    FeatureTestPeople.addACK(new Tuple<String, String>(nicks[1], nicks[2]));
 //                }
     }
@@ -127,7 +128,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
         }
         logger.info("Sending self broadcast");
 //        int control = (new Random()).nextInt(1000);
-        String actualPayload = "C:" + Minecraft.getMinecraft().getSession().getUsername() + ":" + 222;
+        String actualPayload = "C:" + ModAPI.getAPI().getSession().getUsername() + ":" + 222;
         StompManager.getInstance().send(new StompPayload().header("destination", "/app/party.broadcast").payload(
                 new JSONObject().put("partyID", PartyManager.INSTANCE.getPartyContext().getPartyID())
                         .put("payload", actualPayload).toString()
@@ -433,7 +434,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
     }
 
     private boolean isDgUser(String partyRawMember) {
-        if (Objects.equals(partyRawMember, Minecraft.getMinecraft().getSession().getUsername())) return true;
+        if (Objects.equals(partyRawMember, ModAPI.getAPI().getSession().getUsername())) return true;
         return PartyManager.INSTANCE.getPartyContext().isDgUser(partyRawMember);
     }
 
@@ -452,7 +453,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
     String genPlayerText(String username) {
 
         if (SkyblockStatus.isOnDungeon()) {
-            if (Objects.equals(username, Minecraft.getMinecraft().getSession().getUsername())) {
+            if (Objects.equals(username, ModAPI.getAPI().getSession().getUsername())) {
                 return ": In Dungeon";
             } else if (isPlayerInDungeon(username)) {
                 return ": In Dungeon";

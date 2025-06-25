@@ -22,7 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
@@ -69,7 +69,7 @@ public class CommandReparty extends CommandBase {
                 reparting = false;
                 return;
             }
-            if (!pc.hasLeader(Minecraft.getMinecraft().getSession().getUsername())) {
+            if (!pc.hasLeader(ModAPI.getAPI().getSession().getUsername())) {
                 if (!noerror)
                     ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou're not the leader"));
                 reparting = false;
@@ -81,7 +81,7 @@ public class CommandReparty extends CommandBase {
                 reparting = false;
                 return;
             }
-            String members = pc.getPartyRawMembers().stream().filter(a -> !a.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername())).collect(Collectors.joining(" "));
+            String members = pc.getPartyRawMembers().stream().filter(a -> !a.equalsIgnoreCase(ModAPI.getAPI().getSession().getUsername())).collect(Collectors.joining(" "));
             String command = "/p invite "+members;
 
             ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eDisbanding Party..."));

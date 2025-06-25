@@ -31,6 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -55,7 +56,7 @@ public class PartyManager {
     public PartyContext getPartyContext(boolean createIfNeeded) {
         PartyContext pc =  partyContext == null && createIfNeeded ? partyContext = new PartyContext() : partyContext;
         if (createIfNeeded)
-            pc.addRawMember(Minecraft.getMinecraft().getSession().getUsername());
+            pc.addRawMember(ModAPI.getAPI().getSession().getUsername());
         return pc;
     }
 
@@ -264,7 +265,7 @@ public class PartyManager {
                     a.put("type", "party_invite_exist");
                 } else if (INVITE_PERM.match(str, null)) {
                     a.put("type", "party_invite_noexist");
-                    String username = Minecraft.getMinecraft().getSession().getUsername();
+                    String username = ModAPI.getAPI().getSession().getUsername();
                     if (partyContext != null && PartyManager.this.getPartyContext().hasMember(username)) {
                         PartyManager.this.getPartyContext().setAllInvite(true);
                     }
@@ -341,7 +342,7 @@ public class PartyManager {
                     String leader = processName(matches.get("1"));
                     partyContext = new PartyContext();
                     getPartyContext().setPartyOwner(leader);
-                    getPartyContext().addPartyMember(Minecraft.getMinecraft().getSession().getUsername());
+                    getPartyContext().addPartyMember(ModAPI.getAPI().getSession().getUsername());
                     context.put("type", "party_selfjoin_leader");
                     joined=  true;
                 } else if (ACCEPT_INVITE_MEMBERS.match(str, matches)) {
@@ -365,7 +366,7 @@ public class PartyManager {
             public ChatProcessResult process(String str, Map<String, Object> a) {
                 if (str.contains("§r§ejoined the dungeon group! (§r§b")) {
                     String username = TextUtils.stripColor(str).split(" ")[3];
-                    if (username.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername())) {
+                    if (username.equalsIgnoreCase(ModAPI.getAPI().getSession().getUsername())) {
                         partyContext = new PartyContext();
                         PartyManager.this.requestPartyList((str2) -> {
                             PartyManager.this.potentialInvitenessChange();
@@ -450,7 +451,7 @@ public class PartyManager {
         playerInvAntiSpam.clear();
 
         getPartyContext().setPartyExistHypixel(false);
-        getPartyContext().setPartyOwner(Minecraft.getMinecraft().getSession().getUsername());
+        getPartyContext().setPartyOwner(ModAPI.getAPI().getSession().getUsername());
         getPartyContext().setPartyModerator(new TreeSet<>(String.CASE_INSENSITIVE_ORDER)); getPartyContext().setMemberComplete(true);
         getPartyContext().setPartyMember(new TreeSet<>(String.CASE_INSENSITIVE_ORDER)); getPartyContext().setModeratorComplete(true);
         getPartyContext().setAllInvite(false);
@@ -475,10 +476,10 @@ public class PartyManager {
     }
 
     public boolean isLeader() {
-        return partyContext != null && getPartyContext().hasLeader(Minecraft.getMinecraft().getSession().getUsername()); // "getUsername"
+        return partyContext != null && getPartyContext().hasLeader(ModAPI.getAPI().getSession().getUsername()); // "getUsername"
     }
     public boolean isModerator() {
-        return partyContext != null && getPartyContext().hasModerator(Minecraft.getMinecraft().getSession().getUsername());
+        return partyContext != null && getPartyContext().hasModerator(ModAPI.getAPI().getSession().getUsername());
     }
     public boolean canInvite() {
         return isLeader() || isModerator() || (partyContext != null && getPartyContext().getAllInvite() != null && getPartyContext().getAllInvite());

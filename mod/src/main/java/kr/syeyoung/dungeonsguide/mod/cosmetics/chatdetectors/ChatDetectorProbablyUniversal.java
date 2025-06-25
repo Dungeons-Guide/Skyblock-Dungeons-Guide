@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors;
 
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.util.IChatComponent;
 
@@ -58,7 +58,7 @@ public class ChatDetectorProbablyUniversal implements IChatDetector {
                 }
                 continue label;
             }
-            if (potentialName.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername()))
+            if (potentialName.equalsIgnoreCase(ModAPI.getAPI().getSession().getUsername()))
                 return Collections.singletonList(new ReplacementContext(
                         name.length() - backLen, potentialName, null
                 ));

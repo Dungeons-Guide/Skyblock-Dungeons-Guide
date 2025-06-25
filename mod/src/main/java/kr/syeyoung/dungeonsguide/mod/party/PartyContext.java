@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.party;
 
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Data;
-import net.minecraft.client.Minecraft;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -97,6 +97,6 @@ public class PartyContext {
         return username.equalsIgnoreCase(partyOwner);
     }
     public boolean isSelfSolo() {
-        return hasLeader(Minecraft.getMinecraft().getSession().getUsername()) && getPartyRawMembers().size() == 1;
+        return hasLeader(ModAPI.getAPI().getSession().getUsername()) && getPartyRawMembers().size() == 1;
     }
 }
