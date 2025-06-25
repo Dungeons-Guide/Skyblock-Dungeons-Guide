@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.goldenpath;
 
+import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
@@ -25,7 +26,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.G
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -111,7 +111,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void onSendData() {
         if (goldenPathsolution == null) return;
-        Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-BDGP "+goldenPathsolution);
+        ChatProcessor.INSTANCE.addToChatQueue("/pc $DG-BDGP "+goldenPathsolution, null, false);
 
         ChatComponentText text = new ChatComponentText("$DG-BDGP "+goldenPathsolution);
         for (RoomProcessorBombDefuseSolver.ChamberSet ch: getSolver().getChambers()) {

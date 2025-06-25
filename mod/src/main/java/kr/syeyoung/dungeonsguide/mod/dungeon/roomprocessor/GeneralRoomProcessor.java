@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
@@ -221,7 +222,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         if (stack == 4 && dungeonRoom.getTotalSecrets() != secrets) {
             dungeonRoom.setTotalSecrets(secrets);
             if (FeatureRegistry.DUNGEON_INTERMODCOMM.isEnabled())
-                Minecraft.getMinecraft().thePlayer.sendChatMessage("/pchat $DG-Comm " + pos2.getX() + "/" + pos2.getZ() + " " + secrets);
+                ChatProcessor.INSTANCE.addToChatQueue("/pchat $DG-Comm " + pos2.getX() + "/" + pos2.getZ() + " " + secrets, null, false);
         }
     }
 

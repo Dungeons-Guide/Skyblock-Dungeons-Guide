@@ -30,6 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.entity.UPlayerSelf;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -112,8 +113,9 @@ public class SkyblockStatus {
 
     public static boolean isOnHypixel() {
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc == null || mc.thePlayer == null) return false;
-        String clientBrand = mc.thePlayer.getClientBrand();
+        UPlayerSelf playerSelf = ModAPI.getAPI().getPlayer();
+        if (mc == null || playerSelf == null) return false;
+        String clientBrand = playerSelf.getClientBrand();
         if (clientBrand == null) return false;
         if (!mc.isSingleplayer() && mc.loadingScreen != null) {
             return clientBrand.startsWith("Hypixel BungeeCord");

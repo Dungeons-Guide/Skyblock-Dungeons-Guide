@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse;
 
 
+import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
@@ -169,7 +170,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             w.flush();
             byte[] bytes = baos.toByteArray();
             String str = Base64.encodeBase64String(bytes);
-            Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-BD " +str);
+            ChatProcessor.INSTANCE.addToChatQueue("/pc $DG-BD " +str, null, false);
 
             for (ChamberSet ch:chambers) {
                 if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
