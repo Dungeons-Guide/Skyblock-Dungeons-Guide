@@ -18,20 +18,20 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.predicates;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityBat;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
 
-public class PredicateBat implements Predicate<Entity> {
+public class PredicateBat implements Predicate<UEntity> {
 
     public static final PredicateBat INSTANCE = new PredicateBat();
 
     @Override
-    public boolean test(@Nullable Entity input) {
-        return input instanceof EntityBat;
+    public boolean test(@Nullable UEntity input) {
+        return input != null && input.getEntityType() == EntityType.BAT;
     }
 
     @Override

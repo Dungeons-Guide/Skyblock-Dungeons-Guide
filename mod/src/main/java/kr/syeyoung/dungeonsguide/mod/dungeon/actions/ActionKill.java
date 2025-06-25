@@ -23,10 +23,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.entity.Entity;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
 import java.util.function.Predicate;
 
@@ -34,7 +34,7 @@ import java.util.function.Predicate;
 @EqualsAndHashCode(callSuper=false)
 public class ActionKill extends AbstractAction {
     private OffsetPoint target;
-    private Predicate<Entity> predicate = entity -> false;
+    private Predicate<UEntity> predicate = entity -> false;
     private int radius;
 
     public ActionKill(OffsetPoint target) {
@@ -56,13 +56,13 @@ public class ActionKill extends AbstractAction {
 
     private boolean killed = false;
     @Override
-    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event) {
+    public void onLivingDeath(DungeonRoom dungeonRoom, LivingEntityDeathEvent event) {
         if (killed) return;
 
-        Vector3D spawnLoc = DungeonActionContext.getSpawnLocation().get(event.entity.getEntityId());
+        Vector3D spawnLoc = DungeonActionContext.getSpawnLocation().get(event.getEntityLiving().getEntityId());
         if (spawnLoc == null) return;
         if (target.getBlockPos(dungeonRoom).distanceSq(spawnLoc.x, spawnLoc.y, spawnLoc.z) > radius * radius) return;
-        if (!predicate.test(event.entity)) return;
+        if (!predicate.test(event.getEntityLiving())) return;
         killed = true;
     }
 

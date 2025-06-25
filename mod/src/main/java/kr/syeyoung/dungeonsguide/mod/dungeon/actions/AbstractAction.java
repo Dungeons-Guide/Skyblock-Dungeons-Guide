@@ -24,8 +24,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
+import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 public abstract class AbstractAction {
@@ -33,7 +33,7 @@ public abstract class AbstractAction {
 
     }
 
-    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event) {
+    public void onLivingDeath(DungeonRoom dungeonRoom, LivingEntityDeathEvent event) {
 
     }
 

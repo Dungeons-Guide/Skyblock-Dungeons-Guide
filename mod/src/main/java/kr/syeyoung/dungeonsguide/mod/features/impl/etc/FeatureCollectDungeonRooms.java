@@ -62,6 +62,7 @@ import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.event.events.EntityExitWorldEvent;
+import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -84,7 +85,6 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -369,11 +369,11 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onEntityDespawn(LivingDeathEvent event) {
+    public void onEntityDespawn(LivingEntityDeathEvent event) {
 //        System.out.println("Entity died!!:" +event.entity);
-        EntityData entityData = entityDataMap.get(event.entity.getEntityId());
+        EntityData entityData = entityDataMap.get(event.getEntityLiving().getEntityId());
         if (entityData != null) {
-            entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.DEATH, ModAPI.getAPI().TEMPWRAP(event.entity).getPositionVector(), System.currentTimeMillis()));
+            entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.DEATH, event.getEntityLiving().getPositionVector(), System.currentTimeMillis()));
         }
     }
 

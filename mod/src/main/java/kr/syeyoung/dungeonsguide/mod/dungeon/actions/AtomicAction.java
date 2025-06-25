@@ -22,9 +22,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
+import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import lombok.Getter;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ public class AtomicAction extends AbstractAction {
     }
 
     @Override
-    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event) {
+    public void onLivingDeath(DungeonRoom dungeonRoom, LivingEntityDeathEvent event) {
         getCurrentAction().onLivingDeath(dungeonRoom, event);
     }
 

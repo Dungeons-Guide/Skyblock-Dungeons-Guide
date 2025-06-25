@@ -31,9 +31,9 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import lombok.Getter;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
@@ -200,7 +200,7 @@ public class ActionRoute {
         if (calculating) return;
         getCurrentAction().onPlayerInteract(dungeonRoom, event );
     }
-    public void onLivingDeath(LivingDeathEvent event) {
+    public void onLivingDeath(LivingEntityDeathEvent event) {
         if (calculating) return;
         getCurrentAction().onLivingDeath(dungeonRoom, event );
     }

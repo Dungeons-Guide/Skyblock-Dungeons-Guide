@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.BossfightRenderSe
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityLiving;
+import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import lombok.Builder;
@@ -37,7 +38,6 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.io.IOException;
@@ -210,7 +210,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
 
     }
     @Override
-    public void onEntityDeath(LivingDeathEvent deathEvent) {
+    public void onEntityDeath(LivingEntityDeathEvent deathEvent) {
 
     }
     @Override

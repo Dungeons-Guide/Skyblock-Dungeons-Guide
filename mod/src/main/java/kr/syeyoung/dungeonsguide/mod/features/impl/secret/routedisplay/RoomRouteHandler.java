@@ -6,10 +6,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import lombok.Getter;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.*;
@@ -58,7 +58,7 @@ public class RoomRouteHandler {
         });
     }
 
-    public void onEntityDeath(LivingDeathEvent event) {
+    public void onEntityDeath(LivingEntityDeathEvent event) {
         path.values().forEach(a -> {
             a.getActionRoute().onLivingDeath(event);
         });

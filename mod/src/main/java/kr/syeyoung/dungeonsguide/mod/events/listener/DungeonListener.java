@@ -61,7 +61,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.network.play.server.S21PacketChunkData;
 import net.minecraft.network.play.server.S26PacketMapChunkBulk;
 import net.minecraft.profiler.Profiler;
@@ -73,7 +72,6 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -708,10 +706,10 @@ public class DungeonListener {
             }
         }
     }
-    @SubscribeEvent
-    public void onEntityDeSpawn(LivingDeathEvent deathEvent) {
-        if (deathEvent.entityLiving instanceof EntityBat)
-            DungeonActionContext.getKilleds().add(deathEvent.entity.getEntityId());
+    @kr.syeyoung.modapi.event.SubscribeEvent
+    public void onEntityDeSpawn(LivingEntityDeathEvent deathEvent) {
+        if (deathEvent.getEntityLiving().getEntityType() == EntityType.BAT)
+            DungeonActionContext.getKilleds().add(deathEvent.getEntityLiving().getEntityId());
 
         if (!SkyblockStatus.isOnDungeon()) return;
 
@@ -734,8 +732,8 @@ public class DungeonListener {
             }
         }
 
-        if (!(deathEvent.entityLiving instanceof EntityBat))
-            DungeonActionContext.getSpawnLocation().remove(deathEvent.entity.getEntityId());
+        if (!(deathEvent.getEntityLiving().getEntityType() == EntityType.BAT))
+            DungeonActionContext.getSpawnLocation().remove(deathEvent.getEntityLiving().getEntityId());
     }
 
 }

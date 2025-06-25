@@ -44,6 +44,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.world.CoordinateMapBackedPathfi
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import lombok.Getter;
@@ -55,7 +56,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.util.ChatComponentText;
@@ -63,7 +63,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -321,14 +320,14 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
     @Override
-    public void onEntityDeath(LivingDeathEvent deathEvent) {
+    public void onEntityDeath(LivingEntityDeathEvent deathEvent) {
         if (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getRoom() == getDungeonRoom()) {
-            if (deathEvent.entity instanceof EntityBat) {
+            if (deathEvent.getEntityLiving().getEntityType() == EntityType.BAT) {
                 for (GuiScreen screen : EditingContext.getEditingContext().getGuiStack()) {
                     if (screen instanceof GuiDungeonRoomEdit) {
                         DungeonSecretBatState.DungeonSecretBatData secret = new DungeonSecretBatState.DungeonSecretBatData();
                         secret.setSecretPoint(new OffsetPoint(dungeonRoom,
-                                DungeonActionContext.getSpawnLocation().get(deathEvent.entity.getEntityId())
+                                DungeonActionContext.getSpawnLocation().get(deathEvent.getEntityLiving().getEntityId())
                         ));
                         ((GuiDungeonRoomEdit) screen).getSep().createNewMechanic("BAT-"+ UUID.randomUUID(), secret);
                         return;
@@ -337,7 +336,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 if (EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit) {
                     DungeonSecretBatState.DungeonSecretBatData secret = new DungeonSecretBatState.DungeonSecretBatData();
                     secret.setSecretPoint(new OffsetPoint(dungeonRoom,
-                            DungeonActionContext.getSpawnLocation().get(deathEvent.entity.getEntityId())
+                            DungeonActionContext.getSpawnLocation().get(deathEvent.getEntityLiving().getEntityId())
                     ));
                     ((GuiDungeonRoomEdit) EditingContext.getEditingContext().getCurrent()).getSep().createNewMechanic("BAT-"+ UUID.randomUUID(),
                             secret);
