@@ -41,8 +41,6 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 
-import javax.vecmath.Vector3f;
-
 public class RoomProcessorRedRoom extends GeneralRoomProcessor {
     public RoomProcessorRedRoom(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
@@ -118,13 +116,11 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
         {
             RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
 
-            Vector3f renderPos = RenderUtils.getRenderPos((float)basePt.x,(float) basePt.y, (float)basePt.z, partialTicks);
-
+            RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
+            GlStateManager.translate(basePt.x, basePt.y, basePt.z);
 
 
             GlStateManager.color(1f, 1f, 1f, 0.5f);
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(renderPos.x, renderPos.y, renderPos.z);
             if (dir == Integer.MIN_VALUE)
                 GlStateManager.rotate(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
             else

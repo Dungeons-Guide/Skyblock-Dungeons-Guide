@@ -27,7 +27,6 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntity;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
@@ -38,7 +37,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.tileentity.TileEntity;
@@ -49,7 +47,6 @@ import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
-import javax.vecmath.Vector3f;
 import java.awt.*;
 import java.util.List;
 
@@ -59,16 +56,7 @@ public class RenderUtils {
 
 
     public static void renderBeaconBeam(double x, double y, double z, AColor aColor, float partialTicks) {
-
-        Entity player = Minecraft.getMinecraft().thePlayer;
-        double playerX = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
-        double playerY = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
-        double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
-//because of the way 3D rendering is done, all coordinates are relative to the camera.  This "resets" the "0,0,0" position to the location that is (0,0,0) in the world.
-
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-playerX, -playerY, -playerZ);
+        pushAndTranslateAccordingToRenderViewEntity(partialTicks);
 
         _renderBeaconBeam(x,y,z, aColor, partialTicks);
         GlStateManager.popMatrix();
@@ -476,13 +464,7 @@ public class RenderUtils {
     }
 
     public static void renderDoor(DungeonDoor dungeonDoor, float partialTicks) {
-        Entity player = Minecraft.getMinecraft().thePlayer;
-        double playerX = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
-        double playerY = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
-        double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-playerX, -playerY, -playerZ);
+        pushAndTranslateAccordingToRenderViewEntity(partialTicks);
         GlStateManager.disableTexture2D();
         GlStateManager.enableAlpha();
 
@@ -1449,17 +1431,16 @@ public class RenderUtils {
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
 
-        Vector3f renderPos = getRenderPos(x, y, z, partialTicks);
-
         if (increase) {
-            double distance = Math.sqrt(renderPos.x * renderPos.x + renderPos.y * renderPos.y + renderPos.z * renderPos.z);
+            double distSq = ModAPI.getAPI().getPlayer().getPositionEyes(partialTicks).distanceSq(x,y,z);
+            double distance = Math.sqrt(distSq);
             double multiplier = distance / 120f; //mobs only render ~120 blocks away
             lScale *= 0.45f * multiplier;
         }
 
         GlStateManager.color(1f, 1f, 1f, 0.5f);
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(renderPos.x, renderPos.y, renderPos.z);
+        pushAndTranslateAccordingToRenderViewEntity(partialTicks);
+        GlStateManager.translate(x,y,z);
         GlStateManager.rotate(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
         GlStateManager.rotate(renderManager.playerViewX, 1.0f, 0.0f, 0.0f);
         GlStateManager.scale(-lScale, -lScale, lScale);
@@ -1502,17 +1483,16 @@ public class RenderUtils {
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
 
-        Vector3f renderPos = getRenderPos(x, y, z, partialTicks);
-
         if (increase) {
-            double distance = Math.sqrt(renderPos.x * renderPos.x + renderPos.y * renderPos.y + renderPos.z * renderPos.z);
+            double distSq = ModAPI.getAPI().getPlayer().getPositionEyes(partialTicks).distanceSq(x,y,z);
+            double distance = Math.sqrt(distSq);
             double multiplier = distance / 120f; //mobs only render ~120 blocks away
             lScale *= 0.45f * multiplier;
         }
 
         GlStateManager.color(1f, 1f, 1f, 0.5f);
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(renderPos.x, renderPos.y, renderPos.z);
+        pushAndTranslateAccordingToRenderViewEntity(partialTicks);
+        GlStateManager.translate(x,y,z);
         GlStateManager.rotate(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
         GlStateManager.rotate(renderManager.playerViewX, 1.0f, 0.0f, 0.0f);
         GlStateManager.scale(-lScale, -lScale, lScale);
@@ -1543,15 +1523,6 @@ public class RenderUtils {
 
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
         GlStateManager.popMatrix();
-    }
-
-    public static Vector3f getRenderPos(float x, float y, float z, float partialTicks) {
-        EntityPlayerSP sp = Minecraft.getMinecraft().thePlayer;
-        return new Vector3f(
-                x - (float) (sp.lastTickPosX + (sp.posX - sp.lastTickPosX) * partialTicks),
-                y - (float) (sp.lastTickPosY + (sp.posY - sp.lastTickPosY) * partialTicks),
-                z - (float) (sp.lastTickPosZ + (sp.posZ - sp.lastTickPosZ) * partialTicks)
-        );
     }
 
     public static void pushAndTranslateAccordingToRenderViewEntity(float partialTicks) {

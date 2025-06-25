@@ -155,9 +155,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
             if (FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue().getAlpha() > 0x10) {
                 GL11.glStencilFunc(GL11.GL_NOTEQUAL, 3, 0x01);
                 GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
-                GlStateManager.pushMatrix();
-
-                GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+                RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
                 GlStateManager.translate(x, y + 0.7, z);
                 GlStateManager.scale(1.1f, 1.1f, 1.1f);
 
