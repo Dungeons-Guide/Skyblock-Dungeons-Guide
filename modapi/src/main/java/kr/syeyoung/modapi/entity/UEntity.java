@@ -8,4 +8,5 @@ public interface UEntity {
     public Vector3D getPositionEyes(float partialTicks);
     VectorI3D getPosition();
     Vector3D getLook(float partialTicks);
+    String getName();
 }
