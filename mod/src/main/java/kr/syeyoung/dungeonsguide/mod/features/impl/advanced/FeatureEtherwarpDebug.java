@@ -23,10 +23,10 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.ShadowCast;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.AABB;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Items;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -69,7 +69,7 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
         for (BlockPos spot : toHighlight) {
              RenderUtils.highlightBox(
 //                     spot
-                     AxisAlignedBB.fromBounds(spot.getX() / 2.0 - 0.25, spot.getY() / 2.0 - 0.25, spot.getZ() / 2.0 - 0.25,
+                     new AABB(spot.getX() / 2.0 - 0.25, spot.getY() / 2.0 - 0.25, spot.getZ() / 2.0 - 0.25,
                              spot.getX() / 2.0 + 0.25, spot.getY() / 2.0 + 0.25, spot.getZ() / 2.0 + 0.25)
                      , c, event.partialTicks, true);
         }

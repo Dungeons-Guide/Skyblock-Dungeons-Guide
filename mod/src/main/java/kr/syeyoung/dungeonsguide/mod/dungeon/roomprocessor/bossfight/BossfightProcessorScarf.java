@@ -18,15 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
-import com.mojang.authlib.properties.Property;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class BossfightProcessorScarf extends GeneralBossfightProcessor {
@@ -141,13 +139,12 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
     }
 
     @Override
-    public MarkerData convertToMarker(Entity entity) {
-        if (entity instanceof EntityOtherPlayerMP) {
+    public MarkerData convertToMarker(UEntity entity) {
+        if (entity instanceof UEntityPlayer) {
             if ("Scarf ".equals(entity.getName())) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, 8);
             }
-            Collection<Property> obj = ((EntityOtherPlayerMP) entity).getGameProfile().getProperties().get("textures");
-            String texture = obj.stream().findFirst().map(Property::getValue).orElse(null);
+            String texture = ((UEntityPlayer) entity).getSkinTexture();
             if (texture.equals("ewogICJ0aW1lc3RhbXAiIDogMTU4OTk5NDg1NjMyMCwKICAicHJvZmlsZUlkIiA6ICJkYTQ5OGFjNGU5Mzc0ZTVjYjYxMjdiMzgwODU1Nzk4MyIsCiAgInByb2ZpbGVOYW1lIiA6ICJOaXRyb2hvbGljXzIiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWFlZjU2Y2QwNGQwMzlhMzRjZDZmMTZlMDIzYjZlNjNmY2M3MmYzN2Y3NTk1YTJjOWU0YTE5Zjk0ZTI3M2I0MiIKICAgIH0KICB9Cn0=")) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, 9); // priest
             } else if (texture.equals("eyJ0aW1lc3RhbXAiOjE1NzkxMDg2MTYxMjYsInByb2ZpbGVJZCI6IjJjMTA2NGZjZDkxNzQyODI4NGUzYmY3ZmFhN2UzZTFhIiwicHJvZmlsZU5hbWUiOiJOYWVtZSIsInNpZ25hdHVyZVJlcXVpcmVkIjp0cnVlLCJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODBiYzI5ODg5M2FhMGZhYmQ1MjUwY2RjNTMxYmE4MmVhN2M3MmQwYzE5N2E4NzA4NTIzNGE5NDYzNTEwZmY1MCJ9fX0=")) {

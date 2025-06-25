@@ -51,10 +51,10 @@ import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.world.WorldSettings;
 
@@ -275,10 +275,10 @@ public class FeatureDungeonMap2 extends AbstractHUDFeature {
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
             if (name == null) continue;
 
-            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
+            UEntityPlayer entityplayer = ModAPI.getAPI().getWorld().getUPlayerEntityByName(name);
 
             overlays.add(new MapOverlayPlayer(playerInfo,
-                    entityplayer == Minecraft.getMinecraft().thePlayer ? mapConfiguration.getSelfSettings() : mapConfiguration.getTeammateSettings()));
+                    entityplayer !=null && entityplayer.equals(ModAPI.getAPI().getPlayer()) ? mapConfiguration.getSelfSettings() : mapConfiguration.getTeammateSettings()));
         }
 
         return overlays;

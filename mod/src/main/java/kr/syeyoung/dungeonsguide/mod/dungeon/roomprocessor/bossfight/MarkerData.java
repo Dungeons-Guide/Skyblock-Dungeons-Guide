@@ -18,9 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
+import kr.syeyoung.modapi.entity.UEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.entity.Entity;
 
 @Data @AllArgsConstructor
 public class MarkerData {
@@ -41,8 +41,8 @@ public class MarkerData {
     private float prevYaw;
     private float currYaw;
 
-    public static MarkerData fromEntity(Entity entity, MobType type, int index) {
+    public static MarkerData fromEntity(UEntity entity, MobType type, int index) {
         return new MarkerData(entity.getName(), type, index, 16, 16,
-                entity.prevPosX, entity.prevPosZ, entity.posX, entity.posZ, entity.prevRotationYaw, entity.rotationYaw);
+                entity.getPrevPosX(), entity.getPrevPosZ(), entity.getPosX(), entity.getPosZ(), entity.getPrevRotationYaw(), entity.getRotationYaw());
     }
 }

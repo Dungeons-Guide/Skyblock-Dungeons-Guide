@@ -7,13 +7,13 @@ import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec4b;
 
 import javax.vecmath.Vector2d;
@@ -32,17 +32,17 @@ public class MapOverlayPlayer implements MapOverlay{
     }
 
     public Vector3d getLocation(float partialTicks) {
-        EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
+        UEntityPlayer entityplayer = ModAPI.getAPI().getWorld().getUPlayerEntityByName(name);
 
         Vector2d pt2 = null;
         double yaw2 = 0;
 
-        if (entityplayer != null && (!entityplayer.isInvisible() || entityplayer == Minecraft.getMinecraft().thePlayer)) {
+        if (entityplayer != null && (!entityplayer.isInvisible() || entityplayer.equals(ModAPI.getAPI().getPlayer()))) {
             // getting location from player entity
-            Vec3 playerPos = entityplayer.getPositionEyes(partialTicks);
-            yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYawHead - entityplayer.prevRotationYawHead) * partialTicks;
+            Vector3D playerPos = entityplayer.getPositionEyes(partialTicks);
+            yaw2 = entityplayer.getPrevRotationYawHead() + (entityplayer.getRotationYawHead() - entityplayer.getPrevRotationYawHead()) * partialTicks;
             if(DungeonsGuide.getDungeonsGuide().verbose) System.out.println("Got player location from entity");
-            return new Vector3d(playerPos.xCoord, playerPos.zCoord, yaw2);
+            return new Vector3d(playerPos.x, playerPos.z, yaw2);
         } else {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (context == null) return new Vector3d(0,0,0);

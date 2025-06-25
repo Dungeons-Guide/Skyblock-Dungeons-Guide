@@ -23,12 +23,11 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import net.minecraft.block.Block;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.BossStatus;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.passive.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -113,23 +112,23 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
     }
 
     @Override
-    public MarkerData convertToMarker(Entity entity) {
+    public MarkerData convertToMarker(UEntity entity) {
         if (entity.isInvisible()) return null;
-        if (entity instanceof EntityBat) {
+        if (entity.getEntityType() == EntityType.BAT) {
             return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 28);
-        } else if (entity instanceof EntitySheep) {
+        } else if (entity.getEntityType() == EntityType.SHEEP) {
             return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 30);
-        } else if (entity instanceof EntityCow) {
+        } else if (entity.getEntityType() == EntityType.COW) {
             return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 26);
-        } else if (entity instanceof EntityChicken) {
+        } else if (entity.getEntityType() == EntityType.CHICKEN) {
             return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 31);
-        } else if (entity instanceof EntityWolf) {
+        } else if (entity.getEntityType() == EntityType.WOLF) {
             return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 29);
-        } else if (entity instanceof EntityRabbit) {
+        } else if (entity.getEntityType() == EntityType.RABBIT) {
             return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 27);
-        } else if (entity instanceof EntityGhast) {
+        } else if (entity.getEntityType() == EntityType.GHAST) {
             return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, 25);
-        } else if (entity instanceof EntityOtherPlayerMP) {
+        } else if (entity instanceof UEntityPlayer) {
             if (entity.getName().equals("Spirit Bear"))
                 return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, 24);
         }

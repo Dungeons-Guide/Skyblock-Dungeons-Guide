@@ -20,10 +20,13 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityArmorStand;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -39,8 +42,8 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     private String prefix = "§c";
 
 
-    private EntityOtherPlayerMP realLivid;
-    private EntityArmorStand lividStand;
+    private UEntityPlayer realLivid;
+    private UEntityArmorStand lividStand;
 
     private final boolean isMasterMode;
 
@@ -80,10 +83,11 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
         correctLivid = Minecraft.getMinecraft().theWorld.getChunkFromBlockCoords(new BlockPos(5, 108, 42)).getBlockMetadata(new BlockPos(5, 108, 42));
         realLividName = lividMetadata.get(correctLivid);
         prefix = lividColorPrefix.get(realLividName);
+        // TODO FIX!!!
         if (updateEvent.entityLiving.getName().startsWith(realLividName) && updateEvent.entityLiving instanceof EntityOtherPlayerMP) {
-            realLivid = (EntityOtherPlayerMP) updateEvent.entityLiving;
+            realLivid = (UEntityPlayer) ModAPI.getAPI().TEMPWRAP((EntityOtherPlayerMP) updateEvent.entityLiving);
         } else if (updateEvent.entityLiving.getName().startsWith(prefix+"﴾ ") && updateEvent.entityLiving instanceof EntityArmorStand) {
-            lividStand = (EntityArmorStand) updateEvent.entityLiving;
+            lividStand = (UEntityArmorStand) ModAPI.getAPI().TEMPWRAP((EntityArmorStand) updateEvent.entityLiving);
         }
     }
 
@@ -115,8 +119,8 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     }
 
     @Override
-    public MarkerData convertToMarker(Entity entity) {
-        if (entity instanceof EntityOtherPlayerMP) {
+    public MarkerData convertToMarker(UEntity entity) {
+        if (entity instanceof UEntityPlayer) {
             String name = entity.getName();
             int idx = 0;
             if (name.equals("Livid ")) {

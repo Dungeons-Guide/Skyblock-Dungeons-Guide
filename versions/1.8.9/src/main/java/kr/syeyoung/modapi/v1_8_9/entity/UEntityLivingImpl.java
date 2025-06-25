@@ -1,9 +1,11 @@
 package kr.syeyoung.modapi.v1_8_9.entity;
 
 import kr.syeyoung.modapi.entity.UEntityLiving;
+import lombok.Getter;
 import net.minecraft.entity.EntityLivingBase;
 
 public class UEntityLivingImpl extends UEntityImpl implements UEntityLiving {
+    @Getter
     protected EntityLivingBase delegate;
 
     public UEntityLivingImpl(EntityLivingBase delegate) {
@@ -18,5 +20,9 @@ public class UEntityLivingImpl extends UEntityImpl implements UEntityLiving {
 
     public float getRotationYawHead() {
         return delegate.rotationYawHead;
+    }
+
+    public float getHealth() {
+        return delegate.getHealth();
     }
 }

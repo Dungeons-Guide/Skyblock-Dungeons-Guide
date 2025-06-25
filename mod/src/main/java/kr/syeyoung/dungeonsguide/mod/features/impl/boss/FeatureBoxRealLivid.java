@@ -28,8 +28,8 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.util.AxisAlignedBB;
+import kr.syeyoung.modapi.data.AABB;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 
@@ -48,9 +48,9 @@ public class FeatureBoxRealLivid extends SimpleFeature {
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() == null) return;
         if (!(DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorLivid)) return;
-        EntityOtherPlayerMP playerMP = ((BossfightProcessorLivid) DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor()).getRealLivid();
+        UEntityPlayer playerMP = ((BossfightProcessorLivid) DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor()).getRealLivid();
 
         if (playerMP != null)
-            RenderUtils.highlightBox(playerMP, AxisAlignedBB.fromBounds(-0.4,0,-0.4,0.4,1.8,0.4), color, partialTicks, true);
+            RenderUtils.highlightBox(playerMP, new AABB(-0.4,0,-0.4,0.4,1.8,0.4), color, partialTicks, true);
     }
 }

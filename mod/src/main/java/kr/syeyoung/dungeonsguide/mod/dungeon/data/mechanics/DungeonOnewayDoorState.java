@@ -31,12 +31,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Worl
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
 import lombok.Data;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.AxisAlignedBB;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -100,7 +99,7 @@ public class DungeonOnewayDoorState implements DungeonMechanicState, WorldMutati
         for (OffsetPoint offsetPoint : data.secretPoint.getOffsetPointList()) {
             if (offsetPoint.getBlock(dungeonRoom) != Blocks.air) {
                 VectorI3D blockPos = offsetPoint.getBlockPos(dungeonRoom);
-                if (Minecraft.getMinecraft().theWorld != null && !Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityFallingBlock.class, new AxisAlignedBB(
+                if (dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.FALLING_BLOCK, new AABB(
                             blockPos.getX(), blockPos.getY() - 4, blockPos.getZ(),
                             blockPos.getX() + 1, blockPos.getY() + 1, blockPos.getZ() + 1
                 )).isEmpty()) return false;

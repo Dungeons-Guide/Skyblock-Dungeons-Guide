@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Dung
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.AABB;
 import net.minecraft.init.Items;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -90,7 +91,7 @@ public class FeatureStonkDebug extends SimpleFeature {
 
             for (OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
                 RenderUtils.highlightBox(
-                        new AxisAlignedBB(
+                        new AABB(
                                 offsetVec3.xCoord - 0.025f, offsetVec3.yCoord - 0.025f + 70, offsetVec3.zCoord - 0.025f,
                                 offsetVec3.xCoord + 0.025f, offsetVec3.yCoord + 0.025f + 70, offsetVec3.zCoord + 0.025f
                         ),

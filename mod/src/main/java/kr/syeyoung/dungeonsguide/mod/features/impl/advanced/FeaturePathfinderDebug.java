@@ -38,9 +38,9 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PrecalculatedPat
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
@@ -77,7 +77,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
                 Vector3D pos = offsetVec3.getPos(drm);
 
                 RenderUtils.highlightBox(
-                        new AxisAlignedBB(
+                        new AABB(
                                 offsetVec3.xCoord - 0.025f, offsetVec3.yCoord + 0.025f + 70, offsetVec3.zCoord - 0.025f,
                                 offsetVec3.xCoord + 0.025f, offsetVec3.yCoord + 0.075f + 70, offsetVec3.zCoord + 0.025f
                         ),
@@ -113,7 +113,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
 //                Vector3D pos = offsetVec3.getPos(drm);
 
                 RenderUtils.highlightBox(
-                        new AxisAlignedBB(
+                        new AABB(
                                 offsetVec3.xCoord - 0.025f, offsetVec3.yCoord + 0.075f + 70, offsetVec3.zCoord - 0.025f,
                                 offsetVec3.xCoord + 0.025f, offsetVec3.yCoord + 0.125f + 70, offsetVec3.zCoord + 0.025f
                         ),

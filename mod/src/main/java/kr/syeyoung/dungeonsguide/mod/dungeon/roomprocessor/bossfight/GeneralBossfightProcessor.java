@@ -23,14 +23,15 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.BossfightRenderSettings;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityLiving;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Singular;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -105,14 +106,14 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     }
 
 
-    public abstract MarkerData convertToMarker(Entity entity);
+    public abstract MarkerData convertToMarker(UEntity entity);
 
     @Override
     public List<MarkerData> getMarkers() {
         List<MarkerData> markerData = new ArrayList<>();
-        for (Entity entity : Minecraft.getMinecraft().theWorld.getLoadedEntityList()) {
-            if (!(entity instanceof EntityLivingBase)) continue;
-            if (((EntityLivingBase) entity).getHealth() <= 0) continue;
+        for (UEntity entity : ModAPI.getAPI().getWorld().getLoadedUEntityList()) {
+            if (!(entity instanceof UEntityLiving)) continue;
+            if (((UEntityLiving) entity).getHealth() <= 0) continue;
             MarkerData markerData1 = convertToMarker(entity);
             if (markerData1 != null) markerData.add(markerData1);
         }

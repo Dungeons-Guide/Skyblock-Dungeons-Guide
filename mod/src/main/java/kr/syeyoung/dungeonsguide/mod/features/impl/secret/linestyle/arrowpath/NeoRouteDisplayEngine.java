@@ -17,6 +17,7 @@ import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
@@ -492,7 +493,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
         double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
 
-        AxisAlignedBB bb = RenderUtils.highlightBlocksStencil(blockPos, partialTicks, color, true);
+        AABB bb = RenderUtils.highlightBlocksStencil(blockPos, partialTicks, color, true);
 
         GlStateManager.enableDepth();
 

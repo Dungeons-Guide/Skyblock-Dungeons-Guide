@@ -26,9 +26,9 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextS
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityBat;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,8 +73,7 @@ public class FeatureDebugTrap extends TextHUDFeature {
     @Override
     public TextSpan getText() {
 
-        List<Entity> bats = Minecraft.getMinecraft().theWorld.getEntities(EntityBat.class, e -> true);
-
+        List<UEntity> bats = ModAPI.getAPI().getWorld().getEntities(EntityType.BAT);
 
         TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
         actualBit.addChild(new TextSpan(getStyle("base"), "Bats: "));

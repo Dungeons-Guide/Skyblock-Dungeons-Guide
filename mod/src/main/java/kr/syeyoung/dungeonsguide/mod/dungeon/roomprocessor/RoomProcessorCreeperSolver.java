@@ -22,6 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.Block;
@@ -133,7 +134,7 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
                     new Vector3D(poset[1].getX() +0.5, poset[1].getY() +0.5, poset[1].getZ()+0.5), oneIsConnected ? new Color(0,0,0,50) : color, partialTicks, true);
         }
         final VectorI3D low = getDungeonRoom().getRoomBounds().getMin();
-        final AxisAlignedBB axis = AxisAlignedBB.fromBounds(
+        final AABB axis = new AABB(
                 low.getX() + 17, low.getY() + 5, low.getZ() + 17,
                 low.getX() + 16, low.getY() + 8.5, low.getZ() + 16
         );

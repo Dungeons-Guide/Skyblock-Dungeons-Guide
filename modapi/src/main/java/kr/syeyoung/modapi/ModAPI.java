@@ -1,9 +1,12 @@
 package kr.syeyoung.modapi;
 
 import kr.syeyoung.modapi.audio.USoundHandler;
+import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
+import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.util.USession;
+import kr.syeyoung.modapi.world.UWorld;
 
 public interface ModAPI {
     Platform getPlatform();
@@ -23,4 +26,15 @@ public interface ModAPI {
     int getDisplayHeight();
 
     UPlayerSelf getPlayer();
+
+    UWorld getWorld();
+
+
+    void init();
+
+    void unload();
+
+    URenderManager getRenderManager();
+
+    UEntity TEMPWRAP(Object object);
 }

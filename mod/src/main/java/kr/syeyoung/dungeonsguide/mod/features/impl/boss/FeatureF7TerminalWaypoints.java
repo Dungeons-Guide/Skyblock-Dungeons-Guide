@@ -40,13 +40,14 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
@@ -170,12 +171,12 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
             if (name == null) continue;
-            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
+            UEntityPlayer entityplayer = ModAPI.getAPI().getWorld().getUPlayerEntityByName(name);
             if (entityplayer == null) continue;
 
             for (List<WaypointData> value : waypoints.values()) {
                 for (WaypointData waypointData : value) {
-                    if (entityplayer.getDistanceSq(waypointData.x, waypointData.y, waypointData.z) < 25) {
+                    if (entityplayer.getPositionVector().distanceSq(waypointData.x, waypointData.y, waypointData.z) < 25) {
                         nearPlayer.put(waypointData.id, entityplayer.getName());
                     }
                 }
@@ -188,18 +189,19 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
         String txt = event.message.getFormattedText();
         String player = TextUtils.stripColor(txt.split(" ")[0]);
         if (txt.contains("§r§a completed a device! (§r§c")) {
-            EntityPlayer player1 = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(player);
+            UEntityPlayer player1 = ModAPI.getAPI().getWorld().getUPlayerEntityByName(player);
             if (player1 == null) {
                 System.out.println("umm no player found named "+player);
                 return;
             }
             int minDist = 99999999;
             String minDistId = null;
+            Vector3D positionVector = player1.getPositionVector();
             for (List<WaypointData> value : waypoints.values()) {
                 for (WaypointData waypointData : value) {
                     if (waypointData.type == WaypointData.WaypointType.LAMP || waypointData.type == WaypointData.WaypointType.ARROW
                     || waypointData.type == WaypointData.WaypointType.PATH || waypointData.type == WaypointData.WaypointType.SIMON) {
-                        int dist = (int) player1.getDistanceSq(waypointData.x, waypointData.y, waypointData.z);
+                        int dist = (int) positionVector.distanceSq(waypointData.x, waypointData.y, waypointData.z);
                         if (dist < minDist) {
                             minDistId = waypointData.id;
                             minDist = dist;
@@ -210,17 +212,18 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
             completedTerminals.put(minDistId, player);
         } else if (txt.contains("§r§a activated a lever! (§r§c")) {
-            EntityPlayer player1 = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(player);
+            UEntityPlayer player1 = ModAPI.getAPI().getWorld().getUPlayerEntityByName(player);
             if (player1 == null) {
                 System.out.println("umm no player found named "+player);
                 return;
             }
             int minDist = 99999999;
             String minDistId = null;
+            Vector3D positionVector = player1.getPositionVector();
             for (List<WaypointData> value : waypoints.values()) {
                 for (WaypointData waypointData : value) {
                     if (waypointData.type == WaypointData.WaypointType.LEVER) {
-                        int dist = (int) player1.getDistanceSq(waypointData.x, waypointData.y, waypointData.z);
+                        int dist = (int) positionVector.distanceSq(waypointData.x, waypointData.y, waypointData.z);
                         if (dist < minDist) {
                             minDistId = waypointData.id;
                             minDist = dist;
@@ -231,17 +234,18 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
             completedTerminals.put(minDistId, player);
         } else if (txt.contains("§r§a activated a terminal! (§r§c")) {
-            EntityPlayer player1 = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(player);
+            UEntityPlayer player1 = ModAPI.getAPI().getWorld().getUPlayerEntityByName(player);
             if (player1 == null) {
                 System.out.println("umm no player found named "+player);
                 return;
             }
             int minDist = 99999999;
             String minDistId = null;
+            Vector3D positionVector = player1.getPositionVector();
             for (List<WaypointData> value : waypoints.values()) {
                 for (WaypointData waypointData : value) {
                     if (waypointData.type == WaypointData.WaypointType.TERMINAL) {
-                        int dist = (int) player1.getDistanceSq(waypointData.x, waypointData.y, waypointData.z);
+                        int dist = (int) positionVector.distanceSq(waypointData.x, waypointData.y, waypointData.z);
                         if (dist < minDist) {
                             minDistId = waypointData.id;
                             minDist = dist;

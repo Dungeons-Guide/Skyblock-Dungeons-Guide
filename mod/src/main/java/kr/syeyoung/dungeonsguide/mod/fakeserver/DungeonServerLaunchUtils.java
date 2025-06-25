@@ -71,7 +71,7 @@ public class DungeonServerLaunchUtils {
         if (lastLoadedRoom == null) return;
         DungeonRoomInfo dungeonRoomInfo = lastLoadedRoom;
         short shape = dungeonRoomInfo.getShape();
-        DungeonContext fakeContext = new DungeonContext("TEST DG", Minecraft.getMinecraft().theWorld, lastLoadedPreset);
+        DungeonContext fakeContext = new DungeonContext("TEST DG", Minecraft.getMinecraft().theWorld, ModAPI.getAPI().getWorld(), lastLoadedPreset);
         DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(fakeContext);
         DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(true);
         DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(

@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 
 import com.google.common.collect.Sets;
-import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionUtils;
@@ -35,21 +34,20 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityArmorStand;
+import kr.syeyoung.modapi.item.Item;
+import kr.syeyoung.modapi.item.UItemStack;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySkull;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
@@ -74,7 +72,7 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
         IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
         if (blockState.getBlock() == Blocks.skull) {
             essenceWasThere = true;
-            List<EntityArmorStand> entities = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityArmorStand.class, AxisAlignedBB.fromBounds(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
+            List<UEntity> entities = dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.ARMOR_STAND, new AABB(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
             TileEntity tileEntity = dungeonRoom.getCachedWorld().getTileEntity(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
 
             if (ModAPI.getAPI().getPlayer().getPosition().distanceSq(pos) < 25) {
@@ -86,22 +84,14 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
                             .map(a -> a.getValue()).orElse(null);
 
                     if (texture == null) return;
-                    for (EntityArmorStand entity : entities) {
-                        ItemStack itemStackIn = entity.getEquipmentInSlot(4);
+                    for (UEntity entity : entities) {
+                        UItemStack itemStackIn = ((UEntityArmorStand)entity).getEquipmentInSlot(4);
                         System.out.println(itemStackIn);
                         if (itemStackIn == null) continue;
-                        if (itemStackIn.getItem() != Items.skull) continue;
-
-                        if (itemStackIn.hasTagCompound()) {
-                            NBTTagCompound nbttagcompound = itemStackIn.getTagCompound();
-                            if (nbttagcompound.hasKey("SkullOwner", 10)) {
-                                GameProfile gameprofile = NBTUtil.readGameProfileFromNBT(nbttagcompound.getCompoundTag("SkullOwner"));
-
-                                if (texture.equals(gameprofile.getProperties().get("textures").stream().findFirst().map(a -> a.getValue()).orElse(null))) {
-                                    found = true;
-                                    return;
-                                }
-                            }
+                        if (itemStackIn.getItem() != Item.SKULL) continue;
+                        if (texture.equals(itemStackIn.getSkullTexture())) {
+                            found = true;
+                            return;
                         }
                     }
                 }

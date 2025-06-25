@@ -254,7 +254,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onInteractBlock(PlayerInteractEvent event) {
-        VectorI3D ePos = new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ());
+        VectorI3D ePos = event.pos == null ? null : new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ());
         kr.syeyoung.modapi.data.EnumFacing eFacing = kr.syeyoung.modapi.data.EnumFacing.VALUES[event.face.getIndex()];
 
         if (ePos != null) {

@@ -20,8 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -88,8 +88,8 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     private static final ResourceLocation BONZO = new ResourceLocation("dungeonsguide:map/bossfight/f1/bonzo.png");
 
     @Override
-    public MarkerData convertToMarker(Entity entity) {
-        if (entity instanceof EntityOtherPlayerMP) {
+    public MarkerData convertToMarker(UEntity entity) {
+        if (entity instanceof UEntityPlayer) {
             if ("Undead ".equals(entity.getName())) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.ENEMIES, 4);
             } else if ("Bonzo ".equals(entity.getName())){

@@ -36,15 +36,16 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityItem;
+import kr.syeyoung.modapi.item.Item;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Items;
-import net.minecraft.util.AxisAlignedBB;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -75,18 +76,18 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
 
         VectorI3D pos = data.secretPoint.getBlockPos(dungeonRoom);
         boolean itemFound = false;
-        for (EntityItem entityItem : Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()))) {
-            if (entityItem.getEntityItem().getItem() == Items.dye) continue;
+        for (UEntity entityItem : dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.ITEM, new AABB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()))) {
+            if (((UEntityItem)entityItem).getItem().getItem() == Item.DYE) continue;
             itemFound = true;
         }
 
         if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(pos) < 40) {
             nearbyTicks++;
-            List<EntityItem> items = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()));
             if (itemFound) {
                 status = SecretStatus.DEFINITELY_NOT;
             } else if (status != SecretStatus.FOUND && nearbyTicks > 40) {
                 status = SecretStatus.FOUND;
+                List<UEntity> items = dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.ITEM, new AABB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()));
                 ChatTransmitter.sendDebugChat("Assume at " + ISecret.toString(pos) + "found? " + items.size());
             }
         }

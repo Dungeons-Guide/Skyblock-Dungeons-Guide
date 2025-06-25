@@ -19,8 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityGuardian;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -179,12 +180,12 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
     private Map<Integer, Integer> mapping = new HashMap<>();
 
     @Override
-    public MarkerData convertToMarker(Entity entity) {
-        if (entity instanceof EntityOtherPlayerMP) {
+    public MarkerData convertToMarker(UEntity entity) {
+        if (entity instanceof UEntityPlayer) {
             if ("The Professor".equals(entity.getName())) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, 16);
             }
-        } else if (entity instanceof EntityGuardian) {
+        } else if (entity.getEntityType() == EntityType.GUARDIAN) {
             if (entity.isInvisible()) return null;
             Integer val = mapping.get(entity.getEntityId());
             if (val == null) return null;

@@ -30,11 +30,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
@@ -137,7 +137,7 @@ public class PrecalculatedStonk {
             for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
                 Vector3D offsetVec3 = _vec3.getPos(dungeonRoom);
                 RenderUtils.highlightBox(
-                        new AxisAlignedBB(
+                        new AABB(
                                 offsetVec3.x - 0.25f, offsetVec3.y + 0.025f, offsetVec3.z - 0.25f,
                                 offsetVec3.x + 0.25f, offsetVec3.y + 0.026f, offsetVec3.z + 0.25f
                         ).expand(0.0020000000949949026, 0.0020000000949949026, 0.0020000000949949026),
@@ -159,7 +159,7 @@ public class PrecalculatedStonk {
             for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
                 Vector3D offsetVec3 = _vec3.getPos(dungeonRoom);
                 RenderUtils.highlightBox(
-                        new AxisAlignedBB(
+                        new AABB(
                                 offsetVec3.x - 0.25f, offsetVec3.y - 0.025f, offsetVec3.z - 0.25f,
                                 offsetVec3.x + 0.25f, offsetVec3.y + 0.475f, offsetVec3.z + 0.25f
                         ).expand(0.0020000000949949026, 0.0020000000949949026, 0.0020000000949949026),

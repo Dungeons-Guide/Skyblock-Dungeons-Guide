@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2024  cyoung06 (syeyoung)
+ * Copyright (C) 2021  cyoung06
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,15 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.events.impl;
+package kr.syeyoung.modapi.event.events;
 
 import kr.syeyoung.modapi.event.UEvent;
 import lombok.*;
 
 @Data @AllArgsConstructor @NoArgsConstructor
-public class ItemPickupEvent extends UEvent {
+public class EntityExitWorldEvent extends UEvent {
     @Getter @Setter
-    private int itemId;
-    @Getter @Setter
-    private int playerId;
+    private int[] entityIds;
 }

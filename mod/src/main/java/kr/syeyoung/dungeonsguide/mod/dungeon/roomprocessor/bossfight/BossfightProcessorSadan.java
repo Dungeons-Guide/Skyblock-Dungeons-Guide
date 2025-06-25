@@ -19,11 +19,11 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityGiantZombie;
-import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.ArrayList;
@@ -182,14 +182,14 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
 
 
     @Override
-    public MarkerData convertToMarker(Entity entity) {
-        if (entity instanceof EntityIronGolem) {
-            return MarkerData.fromEntity(entity, MarkerData.MobType.GOLEM, Math.abs(entity.rotationPitch - 59.0625) < 0.01 ? 42 : 49);
-        } else if (entity instanceof EntityGiantZombie) {
+    public MarkerData convertToMarker(UEntity entity) {
+        if (entity.getEntityType() == EntityType.IRON_GOLEM) {
+            return MarkerData.fromEntity(entity, MarkerData.MobType.GOLEM, Math.abs(entity.getRotationPitch() - 59.0625) < 0.01 ? 42 : 49);
+        } else if (entity.getEntityType() == EntityType.GIANT) {
             Integer map = mapping.get(entity.getEntityId());
             if (map == null) return null;
             return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, map);
-        } else if (entity instanceof EntityOtherPlayerMP) {
+        } else if (entity instanceof UEntityPlayer) {
             String name = entity.getName();
             if ("Terracotta ".equals(name)) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.TERRACOTA, 41);

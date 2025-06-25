@@ -35,12 +35,11 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityBat;
 
 import java.awt.*;
 import java.util.*;
@@ -88,10 +87,10 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
         Vector3D pos = new Vector3D(bpos);
         for (Map.Entry<Integer, Vector3D> integerVec3Entry : DungeonActionContext.getSpawnLocation().entrySet()) {
             if (integerVec3Entry.getValue().distanceSq(pos) < 100) {
-                Entity e = Minecraft.getMinecraft().theWorld.getEntityByID(integerVec3Entry.getKey());
+                UEntity e = dungeonRoom.getContext().getUworld().getEntityById(integerVec3Entry.getKey());
                 if (e == null) continue;
-                if (!(e instanceof EntityBat)) continue;
-                if (e.isDead) continue;
+                if (e.getEntityType() != EntityType.BAT) continue;
+                if (e.isDead()) continue;
                 return; // bat is not dead.
             }
         }

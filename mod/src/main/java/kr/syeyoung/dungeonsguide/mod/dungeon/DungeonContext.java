@@ -42,9 +42,9 @@ import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.world.UWorld;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
@@ -62,6 +62,9 @@ public class DungeonContext {
     private String dungeonName;
     @Getter
     private final World world;
+    @Getter
+    private final UWorld uworld;
+
     @Getter
     private final MapPlayerProcessor mapPlayerMarkerProcessor;
     @Getter @Setter
@@ -122,11 +125,12 @@ public class DungeonContext {
     private final Vector2d doorOffset;
     private final VectorI3D door;
 
-    public DungeonContext(String dungeonName, World world) {
-        this(dungeonName, world, FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset());
+    public DungeonContext(String dungeonName, World world, UWorld uworld) {
+        this(dungeonName, world, uworld, FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset());
     }
-    public DungeonContext(String dungeonName, World world, PathfindPreset preset) {
+    public DungeonContext(String dungeonName, World world, UWorld uworld, PathfindPreset preset) {
         this.dungeonName = dungeonName;
+        this.uworld = uworld;
         this.preset = preset;
         this.world = world;
         recorder.createEvent(new DungeonNodataEvent("DUNGEON_CONTEXT_CREATION"));

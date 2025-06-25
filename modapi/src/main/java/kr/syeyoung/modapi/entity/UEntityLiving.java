@@ -6,4 +6,5 @@ public interface UEntityLiving extends UEntity {
 
     float getRotationYawHead();
 
+    float getHealth();
 }

@@ -29,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -363,7 +364,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
                 VectorI3D highlight = pos2.add(dir);
                 AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(MathHelper.clamp_double(ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(highlight), 100, 255) / 255);
-                RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, partialTicks, false);
+                RenderUtils.highlightBoxAColor(new AABB(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, partialTicks, false);
             }
 
             if (pathFound != null) {
@@ -376,7 +377,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             if (totalPushedBlocks != null) {
                 for (int i = 0; i < totalPushedBlocks.size(); i++) {
                     VectorI3D pos = totalPushedBlocks.get(i);
-                    RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1),  FeatureRegistry.SOLVER_BOX.getTargetColor(), partialTicks, false);
+                    RenderUtils.highlightBoxAColor(new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1),  FeatureRegistry.SOLVER_BOX.getTargetColor(), partialTicks, false);
                     RenderUtils.drawTextAtWorld("#"+i, pos.getX()+0.5f, pos.getY() +0.5f, pos.getZ() + 0.5f, i != step ?
                             RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor2()) : RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor()), 0.1f, false, false, partialTicks);
                 }

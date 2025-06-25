@@ -24,12 +24,11 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec4b;
 import net.minecraft.world.storage.MapData;
@@ -113,10 +112,10 @@ public class MapPlayerProcessor {
     }
 
     private boolean isPlayerNear(String player, VectorI3D mapPos) {
-        EntityPlayer entityPlayer = mc.theWorld.getPlayerEntityByName(player);
+        UEntityPlayer entityPlayer = context.getUworld().getUPlayerEntityByName(player);
 
         if (entityPlayer != null && !entityPlayer.isInvisible()) {
-            BlockPos pos = entityPlayer.getPosition();
+            VectorI3D pos = entityPlayer.getPosition();
             int dx = mapPos.getX() - pos.getX();
             int dz = mapPos.getZ() - pos.getZ();
             return dx * dx + dz * dz < 256; // deviation is within 16 blocks

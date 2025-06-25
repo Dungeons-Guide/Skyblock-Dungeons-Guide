@@ -47,30 +47,25 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
+import kr.syeyoung.modapi.event.events.EntityExitWorldEvent;
+import kr.syeyoung.modapi.event.events.ItemPickupEvent;
 import lombok.Getter;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.network.play.server.S21PacketChunkData;
 import net.minecraft.network.play.server.S26PacketMapChunkBulk;
 import net.minecraft.profiler.Profiler;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
@@ -197,7 +192,8 @@ public class DungeonListener {
                     } else if (SkyblockStatus.isOnDungeon()) {
                         DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(new DungeonContext(
                                 SkyblockStatus.getLocationName(),
-                                Minecraft.getMinecraft().theWorld));
+                                Minecraft.getMinecraft().theWorld,
+                                ModAPI.getAPI().getWorld()));
                         ModAPI.getAPI().getEventBus().fireEvent(new DungeonStartedEvent());
                     }
                 } catch (IllegalStateException e) {
@@ -440,7 +436,7 @@ public class DungeonListener {
                         for (BlockPos allInBox : BlockPos.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
                             CollisionStateCalculatingCoordinateMap.CollisionState blocked = roomProcessor.getPathfinderWorld().getBlock(allInBox.getX(), allInBox.getY(), allInBox.getZ());
                             RenderUtils.highlightBox(
-                                    AxisAlignedBB.fromBounds(
+                                    new AABB(
                                             allInBox.getX() / 2.0 - 0.1, allInBox.getY() / 2.0 - 0.1, allInBox.getZ() / 2.0 - 0.1,
                                             allInBox.getX() / 2.0 + 0.1, allInBox.getY() / 2.0 + 0.1, allInBox.getZ() / 2.0 + 0.1
                                     ), blocked.getColor(), renderWorldLastEvent.partialTicks, false);
@@ -668,16 +664,14 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onItemPickup(ItemPickupEvent event) {
-        if (Minecraft.getMinecraft().theWorld.getEntityByID(event.getItemId()) instanceof EntityItem)
-            DungeonActionContext.getPickedups().add(event.getItemId());
+        DungeonActionContext.getPickedups().add(event.getItem().getEntityId());
     }
 
     @SubscribeEvent
     public void onEntityDespawn2(EntityExitWorldEvent worldEvent) {
         for (int entityId : worldEvent.getEntityIds()) {
-            Entity en = Minecraft.getMinecraft().theWorld.getEntityByID(entityId);
-            if (en instanceof EntityBat && new VectorI3D(en.getPositionVector().xCoord, en.getPositionVector().yCoord, en.getPositionVector().zCoord)
-                    .distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) < 3025)
+            UEntity en = ModAPI.getAPI().getWorld().getEntityById(entityId);
+            if (en.getEntityType() == EntityType.BAT && en.getPositionVector().distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) < 3025)
                 DungeonActionContext.getKilleds().add(entityId);
         }
     }

@@ -127,7 +127,7 @@ public class SkyblockStatus {
 
     public void updateStatus() {
         forceIsOnDungeon = DungeonServerLaunchUtils.isDungeonIntegratedServerRunning()
-                && ModAPI.getAPI().getPlayer() != null && Minecraft.getMinecraft().theWorld != null || forceIsOnDungeon2;
+                && ModAPI.getAPI().getPlayer() != null && ModAPI.getAPI().getWorld() != null || forceIsOnDungeon2;
         if (forceIsOnDungeon) {
             locationName = "TEST DG";
         }

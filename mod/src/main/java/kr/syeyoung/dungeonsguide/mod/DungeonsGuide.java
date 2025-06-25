@@ -56,6 +56,7 @@ import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.SubscribeEvent;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -300,6 +301,8 @@ public class DungeonsGuide implements DGInterface {
 
         Minecraft.getMinecraft().refreshResources();
 
+        ModAPI.getAPI().init();
+
         // Fix Parallel universe not working when player joins hypickle before dg loads
         if (Minecraft.getMinecraft().getNetHandler() != null)
             Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler", packetInjector);
@@ -335,6 +338,9 @@ public class DungeonsGuide implements DGInterface {
 
     @Override
     public void unload() {
+
+        ModAPI.getAPI().unload();
+
         StompManager.getInstance().cleanup();
         // have FUN!
 

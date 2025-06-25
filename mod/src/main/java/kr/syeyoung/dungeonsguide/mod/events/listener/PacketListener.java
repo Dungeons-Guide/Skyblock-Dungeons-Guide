@@ -271,10 +271,6 @@ public class PacketListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (packet instanceof S13PacketDestroyEntities) {
-            ModAPI.getAPI().getEventBus().fireEvent(new EntityExitWorldEvent(((S13PacketDestroyEntities) packet).getEntityIDs()));
-        } else if (packet instanceof S0DPacketCollectItem) {
-            ModAPI.getAPI().getEventBus().fireEvent(new ItemPickupEvent(((S0DPacketCollectItem) packet).getCollectedItemEntityID(), ((S0DPacketCollectItem) packet).getEntityID()));
         }
     }
 

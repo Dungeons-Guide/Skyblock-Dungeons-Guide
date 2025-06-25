@@ -13,6 +13,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -290,7 +291,9 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
 
                     if (warp == 1) {
                         BlockPos pos = new BlockPos(Math.floor(pose.getX()), Math.floor(pose.getY()) -1 , Math.floor(pose.getZ()));
-                        RenderUtils.highlightBox(Blocks.stone.getSelectedBoundingBox(null, pos).expand(0.003, 0.003, 0.003), Color.green, partialTicks, true);
+                        RenderUtils.highlightBox(
+                                new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1)
+                                        .expand(0.003, 0.003, 0.003), Color.green, partialTicks, true);
                         warp = flag2 ? 0 : 2;
                     }
                     if (pose.getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP &&

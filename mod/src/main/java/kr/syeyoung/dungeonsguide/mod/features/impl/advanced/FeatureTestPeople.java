@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -36,6 +35,7 @@ import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -44,11 +44,6 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.tileentity.TileEntitySkullRenderer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -60,8 +55,6 @@ import org.json.JSONObject;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 import static kr.syeyoung.dungeonsguide.mod.utils.TabListUtil.getString;
@@ -179,46 +172,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
     }
 
 
-    HashMap<String, ItemStack> SkullCashe = new HashMap<>();
 
-
-
-    ExecutorService executor = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newFixedThreadPool(5, new ThreadFactoryBuilder()
-            .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
-            .setNameFormat("DG-FeatureTestPeople-%d").build()));
-
-
-    public ItemStack getSkullByUserName(String username) {
-        if (SkullCashe.containsKey(username)) return SkullCashe.get(username);
-        ItemStack stack = new ItemStack(Items.skull, 1, 3);
-
-        executor.submit(() -> {
-            EntityPlayer playerEntityByName = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(username);
-            if(playerEntityByName == null || playerEntityByName.getGameProfile() == null) {
-                stack.setTagCompound(new NBTTagCompound());
-                stack.getTagCompound().setTag("SkullOwner", new NBTTagString(username));
-                return;
-            }
-
-            // this line should trick mineshaft to caching the player skin
-            // im doing this bc just setting SkullOwner downloads the skin on the main thread
-            // thus causing a lag spike
-            Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = Minecraft.getMinecraft().getSkinManager().loadSkinFromCache(playerEntityByName.getGameProfile());
-
-            if (map.containsKey(MinecraftProfileTexture.Type.SKIN)) {
-                Minecraft.getMinecraft().getSkinManager().loadSkin((MinecraftProfileTexture)map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
-            }
-
-
-
-            stack.setTagCompound(new NBTTagCompound());
-            stack.getTagCompound().setTag("SkullOwner", new NBTTagString(username));
-
-        });
-
-        SkullCashe.put(username, stack);
-        return stack;
-    }
 
     private Set<String> ready = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 
@@ -310,11 +264,11 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
             String name = getPlayerNameWithChecks(tabListEntry);
             if (name == null) continue;
 
-            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
+            UEntityPlayer entityplayer = ModAPI.getAPI().getWorld().getUPlayerEntityByName(name);
 
 
             if (entityplayer != null && (!entityplayer.isInvisible())) {
-                if (name == username) return true;
+                if (name .equals(username )) return true;
             }
 
 

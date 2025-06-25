@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon;
 
-import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCAColor;
@@ -28,11 +27,11 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
-import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.passive.EntityBat;
+import kr.syeyoung.modapi.data.AABB;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -51,19 +50,18 @@ public class FeatureBoxBats extends SimpleFeature  {
         
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        final VectorI3D player = ModAPI.getAPI().getPlayer().getPosition();
+        final Vector3D player = ModAPI.getAPI().getPlayer().getPositionVector();
         int val = this.<Integer>getParameter("radius").getValue();
         final int sq = val * val;
 
-        List<EntityBat> skeletonList = Minecraft.getMinecraft().theWorld.getEntities(EntityBat.class, new Predicate<EntityBat>() {
-            @Override
-            public boolean apply(@Nullable EntityBat input) {
-                if (input != null && input.isInvisible()) return false;
-                return input != null && player.distanceSq(new VectorI3D(input.getPositionVector().xCoord, input.getPositionVector().yCoord, input.getPositionVector().zCoord)) < sq;
-            }
-        });
+        int r = val + 2;
+
+        List<UEntity> skeletonList = ModAPI.getAPI().getWorld().getEntitiesWithinAabb(EntityType.BAT,
+                new AABB(player.x - r, player.y - r, player.z - r, player.x + r, player.y + r, player.z + r));
+
         AColor c = this.<AColor>getParameter("color").getValue();
-        for (EntityBat entitySkeleton : skeletonList) {
+        for (UEntity entitySkeleton : skeletonList) {
+            if (entitySkeleton.getPositionVector().distanceSq(player) >= sq) continue;
             if (!entitySkeleton.isInvisible())
                 RenderUtils.highlightBox(entitySkeleton, c, partialTicks, true);
         }

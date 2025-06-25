@@ -16,9 +16,9 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -61,9 +61,9 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
             if (name == null) continue;
 
-            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
+            UEntityPlayer entityplayer = ModAPI.getAPI().getWorld().getUPlayerEntityByName(name);
 
-            overlays.add(new MapOverlayPlayerClickable(playerInfo, entityplayer == Minecraft.getMinecraft().thePlayer ? mapConfiguration.getSelfSettings() : mapConfiguration.getTeammateSettings(), nameMap.get(name)));
+            overlays.add(new MapOverlayPlayerClickable(playerInfo, entityplayer != null && entityplayer.equals(ModAPI.getAPI().getPlayer()) ? mapConfiguration.getSelfSettings() : mapConfiguration.getTeammateSettings(), nameMap.get(name)));
         }
 
         return overlays;

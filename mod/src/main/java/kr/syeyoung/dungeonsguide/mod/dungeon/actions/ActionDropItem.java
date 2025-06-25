@@ -25,11 +25,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.util.AxisAlignedBB;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class ActionDropItem extends AbstractAction {
     private OffsetPoint target;
-    private Predicate<EntityItem> predicate = Predicates.alwaysTrue();
+    private Predicate<UEntity> predicate = Predicates.alwaysTrue();
 
     public ActionDropItem(OffsetPoint target) {
         this.target = target;
@@ -46,8 +47,8 @@ public class ActionDropItem extends AbstractAction {
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
         VectorI3D secretLocation = target.getBlockPos(dungeonRoom);
-        List<EntityItem> item = dungeonRoom.getContext().getWorld().getEntitiesWithinAABB(EntityItem.class,
-                AxisAlignedBB.fromBounds(
+        List<UEntity> item = dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.ITEM,
+                new AABB(
                         secretLocation.getX(),
                         secretLocation.getY(),
                         secretLocation.getZ(),

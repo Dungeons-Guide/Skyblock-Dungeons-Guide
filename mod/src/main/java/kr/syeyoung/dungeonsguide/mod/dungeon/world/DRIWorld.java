@@ -29,7 +29,14 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.CoordinateMapBackedPathfindWorld;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
+import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.world.UMapData;
+import kr.syeyoung.modapi.world.UWorld;
 import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -44,9 +51,10 @@ import net.minecraft.world.chunk.IChunkProvider;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 // TODO: maybe touch some time later
-public class DRIWorld extends World implements ICoordinateMap<IBlockState> {
+public class DRIWorld extends World implements ICoordinateMap<IBlockState>, UWorld {
 
     @Getter
     private DungeonRoomInfo dungeonRoomInfo;
@@ -213,5 +221,42 @@ public class DRIWorld extends World implements ICoordinateMap<IBlockState> {
     @Override
     public int getLenZ() {
         return ICoordinateMap.super.getLenZ();
+    }
+
+
+
+    @Override
+    public UEntity getEntityById(int id) {
+        return null;
+    }
+
+    @Override
+    public List<UEntity> getLoadedUEntityList() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public UEntityPlayer getPlayerEntityByUuid(UUID uuid) {
+        return null;
+    }
+
+    @Override
+    public List<UEntity> getEntitiesWithinAabb(EntityType type, AABB bb) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public UMapData getMapData(UItemStack itemMap) {
+        return null;
+    }
+
+    @Override
+    public UEntityPlayer getUPlayerEntityByName(String name) {
+        return null;
+    }
+
+    @Override
+    public List<UEntity> getEntities(EntityType type) {
+        return Collections.emptyList();
     }
 }

@@ -54,6 +54,7 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.event.events.EntityExitWorldEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -213,7 +214,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         entityData.id = event.entity.getEntityId();
         entityData.trajectory.add(new EntityData.EntityTrajectory(
                 EntityData.EntityTrajectory.Type.ENTER,
-                event.entity.getPositionVector(),
+                ModAPI.getAPI().TEMPWRAP(event.entity).getPositionVector(),
                 System.currentTimeMillis()
         ));
         entityData.type = event.entity.getClass().getSimpleName();
@@ -354,8 +355,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             entityData.armoritems[2] = event.entityLiving.getCurrentArmor(2);
         if (event.entityLiving.getCurrentArmor(3) != null)
             entityData.armoritems[3] = event.entityLiving.getCurrentArmor(3);
-        if (entityData.trajectory.getLast() == null || entityData.trajectory.getLast().getPos() == null || entityData.trajectory.getLast().getPos().squareDistanceTo(event.entity.getPositionVector()) > 0.1f) {
-            entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, event.entity.getPositionVector(), System.currentTimeMillis()));
+        if (entityData.trajectory.getLast() == null || entityData.trajectory.getLast().getPos() == null || entityData.trajectory.getLast().getPos().distanceSq(ModAPI.getAPI().TEMPWRAP(event.entity).getPositionVector()) > 0.1f) {
+            entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, ModAPI.getAPI().TEMPWRAP(event.entity).getPositionVector(), System.currentTimeMillis()));
         }
     }
 
@@ -364,7 +365,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 //        System.out.println("Entity died!!:" +event.entity);
         EntityData entityData = entityDataMap.get(event.entity.getEntityId());
         if (entityData != null) {
-            entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.DEATH, event.entity.getPositionVector(), System.currentTimeMillis()));
+            entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.DEATH, ModAPI.getAPI().TEMPWRAP(event.entity).getPositionVector(), System.currentTimeMillis()));
         }
     }
 
@@ -468,8 +469,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
         RoomInfo roomInfo = new RoomInfo();
         for (EntityData value : entityDataMap.values()) {
-            Vec3 vec3 = value.trajectory.getFirst().pos;
-            if (dungeonRoom.getUnitPoints().contains(dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(new Vector3D(vec3.xCoord, vec3.yCoord, vec3.zCoord)))) {
+            Vector3D vec3 = value.trajectory.getFirst().pos;
+            if (dungeonRoom.getUnitPoints().contains(dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(new Vector3D(vec3.x, vec3.y, vec3.z)))) {
                 roomInfo.entityData.put(value.id, value);
             }
         }
@@ -737,11 +738,11 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             if (entityData.getArmorstand() != null)
                 RenderUtils.drawTextAtWorld(entityData.getArmorstand().getFormattedText(), (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
             RenderUtils.drawTextAtWorld(entityData.getType(), (float) hovered.posX, (float) hovered.posY+3.2f, (float) hovered.posZ, 0xFF00FF00, 0.02f, false, true, event.partialTicks);
-            Vec3 pos = entityData.getTrajectory().getFirst().getPos();
+            Vector3D pos = entityData.getTrajectory().getFirst().getPos();
             RenderUtils.renderBeaconBeam(
-                    pos.xCoord,
-                    pos.yCoord,
-                    pos.zCoord,
+                    pos.x,
+                    pos.y,
+                    pos.z,
                     new AColor(0, 255, 0, 255),
                     event.partialTicks
             );
