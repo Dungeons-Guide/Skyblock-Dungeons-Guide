@@ -22,7 +22,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserInvitedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserJoinRequestEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractGuiFeature;
@@ -30,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import kr.syeyoung.dungeonsguide.mod.overlay.WholeScreenPositioner;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 
 public class PartyInviteViewer extends AbstractGuiFeature {
     private WidgetPartyInviteViewer partyInviteViewer;

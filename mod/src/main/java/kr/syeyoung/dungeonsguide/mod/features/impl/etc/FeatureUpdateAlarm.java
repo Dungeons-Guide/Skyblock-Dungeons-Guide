@@ -21,11 +21,11 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import net.minecraft.util.ChatComponentText;
 
 public class FeatureUpdateAlarm extends SimpleFeature  {

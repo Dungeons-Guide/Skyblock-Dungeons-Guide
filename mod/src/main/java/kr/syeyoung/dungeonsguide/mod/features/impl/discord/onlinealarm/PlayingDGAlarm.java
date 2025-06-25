@@ -21,12 +21,12 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.onlinealarm;
 
 import kr.syeyoung.dungeonsguide.mod.discord.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import kr.syeyoung.dungeonsguide.mod.overlay.WholeScreenPositioner;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 
 public class PlayingDGAlarm extends AbstractGuiFeature {
     private WidgetOnlinePeopleViewer onlinePeopleViewer;

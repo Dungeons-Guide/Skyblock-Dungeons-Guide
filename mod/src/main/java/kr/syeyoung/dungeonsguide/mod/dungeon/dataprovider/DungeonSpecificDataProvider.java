@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import javax.vecmath.Vector2d;

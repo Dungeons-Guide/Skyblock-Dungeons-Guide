@@ -1,12 +1,12 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip;
 
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import kr.syeyoung.dungeonsguide.mod.overlay.WholeScreenPositioner;
+import kr.syeyoung.modapi.event.events.ClientTickEvent;
 
 import java.util.List;
 
