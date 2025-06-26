@@ -5,6 +5,7 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
+import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.world.UWorld;
 
@@ -39,4 +40,6 @@ public interface ModAPI {
     UEntity TEMPWRAP(Object object);
 
     UEntity getRenderViewEntity();
+
+    RaycastResult getObjectMouseOver();
 }

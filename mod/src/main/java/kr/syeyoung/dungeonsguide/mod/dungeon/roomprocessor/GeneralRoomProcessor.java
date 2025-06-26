@@ -44,9 +44,11 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.world.CoordinateMapBackedPathfi
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.util.RaycastResult;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.state.IBlockState;
@@ -55,7 +57,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.util.ChatComponentText;
@@ -119,8 +120,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
         if (FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && FeatureRegistry.DEBUG.isEnabled()) {
             FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
-            if (Minecraft.getMinecraft().objectMouseOver == null) return;
-            Entity en = Minecraft.getMinecraft().objectMouseOver.entityHit;
+            RaycastResult result = ModAPI.getAPI().getObjectMouseOver();
+            UEntity en = result.getEntityHit();
             if (en == null) return;
 
             ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());

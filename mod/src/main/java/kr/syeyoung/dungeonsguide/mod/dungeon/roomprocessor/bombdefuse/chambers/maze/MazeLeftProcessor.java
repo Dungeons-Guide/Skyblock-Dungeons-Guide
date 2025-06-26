@@ -23,6 +23,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.util.RaycastResult;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -31,7 +34,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -48,11 +50,11 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
 
     @Override
     public void drawScreen(float partialTicks) {
-        if (Minecraft.getMinecraft().objectMouseOver == null ) return;
-        MovingObjectPosition pos = Minecraft.getMinecraft().objectMouseOver;
-        if (pos.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) return;
+        RaycastResult result = ModAPI.getAPI().getObjectMouseOver();
+        if (result.getType() != RaycastResult.HitType.BLOCK) return;
 
-        Block b = getSolver().getDungeonRoom().getCachedWorld().getBlockState(pos.getBlockPos()).getBlock();
+        Block b = getSolver().getDungeonRoom().getCachedWorld().getBlockState(
+                new BlockPos(result.getBlockHit().getX(), result.getBlockHit().getY(), result.getBlockHit().getZ())).getBlock();
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
@@ -65,12 +67,10 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
 
     @Override
     public void onSendData() {
-        if (Minecraft.getMinecraft().objectMouseOver == null ) return;
-        MovingObjectPosition pos = Minecraft.getMinecraft().objectMouseOver;
-        if (pos.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) return;
-
-        BlockPos block = pos.getBlockPos();
-        Block b = getChamber().getRoom().getContext().getWorld().getBlockState(block).getBlock();
+        RaycastResult result = ModAPI.getAPI().getObjectMouseOver();
+        if (result.getType() != RaycastResult.HitType.BLOCK) return;
+        VectorI3D block = result.getBlockHit();
+        Block b = getChamber().getRoom().getContext().getWorld().getBlockState(new BlockPos(block.getX(), block.getY(), block.getZ())).getBlock();
 
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setByte("a", (byte) 5);

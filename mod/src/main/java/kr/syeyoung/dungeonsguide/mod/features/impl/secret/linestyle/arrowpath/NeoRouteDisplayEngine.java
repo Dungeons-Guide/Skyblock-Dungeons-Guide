@@ -20,6 +20,7 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.util.RaycastResult;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -35,7 +36,6 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -225,9 +225,9 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         if (ModAPI.getAPI().getPlayer().getLook(partialTicks).dotProduct(lookVec) < 0.7) return;
 
-        MovingObjectPosition objectPosition = Minecraft.getMinecraft().objectMouseOver;
-        if (objectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-            VectorI3D blockPos = new VectorI3D(objectPosition.getBlockPos().getX(), objectPosition.getBlockPos().getY(), objectPosition.getBlockPos().getZ());
+        RaycastResult result = ModAPI.getAPI().getObjectMouseOver();
+        if (result.getType() == RaycastResult.HitType.BLOCK) {
+            VectorI3D blockPos = result.getBlockHit();
 
             for (Map.Entry<String, DungeonMechanicState> stringDungeonMechanicStateEntry : dungeonRoom.getMechanics().entrySet()) {
                 if (stringDungeonMechanicStateEntry.getValue() instanceof WorldMutatingMechanicState && ((WorldMutatingMechanicState) stringDungeonMechanicStateEntry.getValue()).isBlocking(dungeonRoom)) {
