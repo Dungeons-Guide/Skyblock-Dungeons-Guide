@@ -488,8 +488,6 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
 
     private static void highlightSuperboom(List<VectorI3D> blockPos, float partialTicks, AColor color) {
-        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
-
         AABB bb = RenderUtils.highlightBlocksStencil(blockPos, partialTicks, color, true);
 
         GlStateManager.enableDepth();

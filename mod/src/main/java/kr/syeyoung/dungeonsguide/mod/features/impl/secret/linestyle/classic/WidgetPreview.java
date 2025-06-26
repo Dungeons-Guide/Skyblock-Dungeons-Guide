@@ -70,7 +70,6 @@ public class WidgetPreview extends Widget implements Renderer {
     public static void drawTextAtWorld(String text, float x, float y, float z, int color, float scale, boolean increase, boolean renderBlackBox, float partialTicks) {
         float lScale = scale;
 
-        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
 
         Vector3f renderPos = new Vector3f(x,y,z);

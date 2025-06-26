@@ -1,0 +1,149 @@
+plugins {
+    id "signing"
+    id "idea"
+    id "java"
+    id "com.gradleup.shadow" version "8.3.6"
+    id "gg.essential.loom"
+}
+
+version =  "4.0.0-beta13.0"
+group = "kr.syeyoung.dungeonsguide"
+archivesBaseName = "dungeonsguide"
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://jitpack.io/"
+        content {
+            includeGroupByRegex("(com|io)\\.github\\..+")
+        }
+    }
+    maven { url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1" }
+}
+
+//configurations {
+//    implementation.extendsFrom shadowImpl
+//
+//    remappedMod {
+//        canBeConsumed = true
+//        canBeResolved = false
+//    }
+//    unmappedMod {
+//        canBeConsumed = true
+//        canBeResolved = false
+//    }
+//}
+//
+//configurations {
+//    devenvMod {
+//        transitive = false
+//        visible = false
+//    }
+//}
+
+
+dependencies {
+    minecraft("com.mojang:minecraft:1.21.5")
+    mappings("net.fabricmc:yarn:1.21.5+build.1:v2")
+
+    modImplementation("net.fabricmc:fabric-loader:0.16.13")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.126.0+1.21.5")
+
+//    fabric
+//    forge("net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9")
+
+    implementation "org.jetbrains:annotations-java5:19.0.0"
+
+    compileOnly "org.projectlombok:lombok:1.18.20"
+    annotationProcessor "org.projectlombok:lombok:1.18.16"
+
+    testCompileOnly "org.projectlombok:lombok:1.18.20"
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+
+//    shadowImpl project(path: ":modapi")
+//    shadowImpl project(path: ":mod")
+
+//    devenvMod(project(path: ":1.8.9-loader", configuration: "unmappedMod"))
+//    modLocalRuntime("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
+}
+
+
+loom {
+    runs {
+        client {
+            ideConfigGenerated = true
+            name = "Launch Dungeons Guide 1.8.9"
+            runDir = '../../runtime'
+            property('devauth.enabled', 'true')
+            property('dg.loader', 'devenv')
+            client()
+//            vmArgs.remove("-XstartOnFirstThread")
+        }
+    }
+}
+
+//afterEvaluate {
+//    loom.runs.named("client") {
+//        programArgs("--mods", configurations.devenvMod.files
+//                .collect { file("../../runtime").relativePath(it) }.join(","))
+//    }
+//}
+//
+//
+//ext.genOutputDir = file("$buildDir/generated-resources")
+//task generateVersionInfo {
+//    ext.outputFile = file("$genOutputDir/versionMeta.properties")
+//    outputs.file(outputFile)
+//    doLast {
+//        outputFile.text = "VERSION=${project.version}\nMANDATORY_VERSION=0"
+//    }
+//}
+//sourceSets.main.output.dir genOutputDir, builtBy: generateVersionInfo
+//
+//tasks.withType(JavaCompile) {
+//    options.encoding = "UTF-8"
+//}
+//
+//tasks.withType(Jar) {
+//    archivesBaseName = "dungeonsguide"
+//    manifest {}
+//}
+//
+//
+//tasks.shadowJar {
+//    archiveFileName = jar.archiveFileName
+//
+//    configurations = [project.configurations.shadowImpl]
+//
+//    enableRelocation = true
+//    relocationPrefix = "kr.syeyoung.dungeonsguide.libs"
+//
+//    dependencies {
+//        exclude(dependency("org.json:json")) // provided via loader
+//    }
+//}
+//
+//tasks.named("remapJar") {
+//    archiveClassifier = "mapped"
+//    dependsOn tasks.shadowJar
+//    inputFile = tasks.shadowJar.archiveFile
+//}
+//
+//
+//
+//signing {
+//    required(project.findProperty("dg.dosign") == "true")
+//    useGpgCmd()
+//    sign tasks.remapJar, tasks.shadowJar
+//}
+//
+//artifacts {
+//    remappedMod(tasks.remapJar)
+//    unmappedMod(tasks.shadowJar)
+//}
+
+
