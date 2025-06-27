@@ -23,9 +23,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
+import kr.syeyoung.modapi.world.BlockType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.init.Blocks;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -34,7 +34,7 @@ public class ActionBreakWithSuperBoom extends AbstractAction {
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
-        return target.getOffsetPointList().get(0).getBlock(dungeonRoom) == Blocks.air;
+        return target.getOffsetPointList().get(0).getBlock(dungeonRoom).isOf(BlockType.AIR);
     }
 
     public ActionBreakWithSuperBoom(OffsetPointSet target) {

@@ -17,7 +17,9 @@ import kr.syeyoung.modapi.v1_8_9.client.renderer.entity.URenderManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerSP;
 import kr.syeyoung.modapi.v1_8_9.util.USessionImpl;
+import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
+import kr.syeyoung.modapi.world.IBlockRegistry;
 import kr.syeyoung.modapi.world.UWorld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -124,6 +126,7 @@ public class ModAPIImpl implements ModAPI {
     public void init() {
         MinecraftForge.EVENT_BUS.register(packetInjector);
         MinecraftForge.EVENT_BUS.register(eventListener);
+        registry.init();
 
         if (Minecraft.getMinecraft().getNetHandler() != null)
             Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler", packetInjector);
@@ -135,6 +138,13 @@ public class ModAPIImpl implements ModAPI {
         MinecraftForge.EVENT_BUS.unregister(eventListener);
 
         packetInjector.cleanup();
+    }
+
+    private BlockStateRegistryImpl registry = new BlockStateRegistryImpl();
+
+    @Override
+    public IBlockRegistry getBlockRegistry() {
+        return registry;
     }
 
 

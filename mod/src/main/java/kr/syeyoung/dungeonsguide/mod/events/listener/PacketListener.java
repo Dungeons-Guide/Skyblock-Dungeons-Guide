@@ -32,14 +32,11 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.NameTagVisibility;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.Team;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
 import kr.syeyoung.modapi.ModAPI;
-import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.SubscribeEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.*;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.chunk.Chunk;
@@ -78,24 +75,6 @@ public class PacketListener {
             ModAPI.getAPI().getEventBus().fireEvent(new WindowUpdateEvent((S30PacketWindowItems) packet, null));
         } else if (packet instanceof S2FPacketSetSlot) {
             ModAPI.getAPI().getEventBus().fireEvent(new WindowUpdateEvent(null, (S2FPacketSetSlot) packet));
-        } else if (packet instanceof S23PacketBlockChange) {
-            BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Post();
-            BlockPos blockPosition = ((S23PacketBlockChange) packet).getBlockPosition();
-            blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(
-                    new VectorI3D(
-                            blockPosition.getX(),
-                            blockPosition.getY(),
-                            blockPosition.getZ()
-                    ), ((S23PacketBlockChange) packet).getBlockState()));
-            ModAPI.getAPI().getEventBus().fireEvent(blockUpdateEvent);
-        } else if (packet instanceof S22PacketMultiBlockChange) {
-            BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Post();
-            for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : ((S22PacketMultiBlockChange) packet).getChangedBlocks()) {
-                blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(
-                        new VectorI3D(changedBlock.getPos().getX(), changedBlock.getPos().getY(), changedBlock.getPos().getZ())
-                        , changedBlock.getBlockState()));
-            }
-            ModAPI.getAPI().getEventBus().fireEvent(blockUpdateEvent);
         } else if (packet instanceof S45PacketTitle) {
             ModAPI.getAPI().getEventBus().fireEvent(new TitleEvent((S45PacketTitle) packet));
         } else if (packet instanceof S38PacketPlayerListItem) {
@@ -112,27 +91,7 @@ public class PacketListener {
     @SubscribeEvent
     public void onPrePacketProcess(PacketProcessedEvent.Pre event) {
         Packet packet =event.packet;
-        if (event.packet instanceof S23PacketBlockChange) {
-            BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Pre();
-            BlockPos blockPosition = ((S23PacketBlockChange) event.packet).getBlockPosition();
-            blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(
-                    new VectorI3D(
-                            blockPosition.getX(),
-                            blockPosition.getY(),
-                            blockPosition.getZ()
-                    ), ((S23PacketBlockChange) packet).getBlockState()));
-            ModAPI.getAPI().getEventBus().fireEvent(blockUpdateEvent);
-        } else if (event.packet instanceof S22PacketMultiBlockChange) {
-            BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Pre();
-            for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : ((S22PacketMultiBlockChange) event.packet).getChangedBlocks()) {
-                blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(new VectorI3D(
-                        changedBlock.getPos().getX(),
-                        changedBlock.getPos().getY(),
-                        changedBlock.getPos().getZ()
-                ), changedBlock.getBlockState()));
-            }
-            ModAPI.getAPI().getEventBus().fireEvent(blockUpdateEvent);
-        } else if (packet instanceof S3BPacketScoreboardObjective) {
+        if (packet instanceof S3BPacketScoreboardObjective) {
             S3BPacketScoreboardObjective objectivePkt = (S3BPacketScoreboardObjective) packet;
             if (objectivePkt.func_149338_e() == 2) {
                 Objective objective = ScoreboardManager.INSTANCE.getObjective(objectivePkt.func_149339_c());

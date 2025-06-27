@@ -23,6 +23,10 @@ public class UItemStackImpl implements UItemStack {
         if (delegate.getItem() == Items.map ) return Item.MAP;
         if (delegate.getItem() == Items.filled_map) return Item.FILLED_MAP;
         if (delegate.getItem() == Items.arrow) return Item.ARROW;
+        if (delegate.getItem() == Items.stick) return Item.STICK;
+        if (delegate.getItem() == Items.golden_axe) return Item.GOLDEN_AXE;
+        if (delegate.getItem() == Items.spawn_egg) return Item.SPAWN_EGG;
+        if (delegate.getItem() == Items.golden_shovel) return Item.GOLDEN_SHOVEL;
         return Item.UNKNOWN;
     }
 

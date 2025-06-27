@@ -25,10 +25,9 @@ import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.world.UBlockState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
 
 import java.util.List;
 
@@ -53,9 +52,8 @@ public class BDChamber {
         return getOffsetPoint(x,z).getBlockPos(room).add(0,y,0);
     }
 
-    public IBlockState getBlock(int x, int y, int z) {
-        VectorI3D pos = getBlockPos(x,y,z);
-        return room.getCachedWorld().getBlockState(new BlockPos(pos.x, pos.y, pos.z));
+    public UBlockState getBlock(int x, int y, int z) {
+        return room.getRoomWorld().getBlockStateAt(x, y, z);
     }
 
     public boolean isWithinAbsolute(int x, int y, int z) {

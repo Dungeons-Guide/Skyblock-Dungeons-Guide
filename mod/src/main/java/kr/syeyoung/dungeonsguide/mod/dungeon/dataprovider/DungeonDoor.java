@@ -20,29 +20,30 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UWorld;
 import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
 
 import java.util.Set;
 
 @Getter
 public class DungeonDoor {
-    private final World w;
+    private final UWorld w;
     private final VectorI3D position;
     private final EDungeonDoorType type;
     private boolean isZDir;
 
     private static final Set<Block> legalBlocks = Sets.newHashSet(Blocks.coal_block, Blocks.barrier, Blocks.monster_egg, Blocks.air, Blocks.stained_hardened_clay);
 
-    public DungeonDoor(World world, VectorI3D pos, EDungeonDoorType type) {
+    public DungeonDoor(UWorld world, VectorI3D pos, EDungeonDoorType type) {
         this.w = world;
         this.position = pos;
-        Block itShouldBeAll = world.getBlockState(new BlockPos(pos.x, pos.y, pos.z)).getBlock();
+        UBlockState itShouldBeAll = world.getBlockStateAt(pos);
 
-        if (type == EDungeonDoorType.WITHER && itShouldBeAll == Blocks.air) type = EDungeonDoorType.WITHER_FAIRY;
+        if (type == EDungeonDoorType.WITHER && itShouldBeAll.isOf(BlockType.AIR)) type = EDungeonDoorType.WITHER_FAIRY;
         this.type = type;
         boolean exist = type.isExist();
 
@@ -50,22 +51,22 @@ public class DungeonDoor {
             for (int y = -1; y<=1; y++) {
                 for (int z = -1; z<=1; z++) {
                     VectorI3D pos2 = pos.add(x,y,z);
-                    Block block = world.getChunkFromBlockCoords(new BlockPos(pos2.x, pos2.y, pos2.z)).getBlock(new BlockPos(pos2.x, pos2.y, pos2.z));
+                    UBlockState block = world.getBlockStateAt(pos2);
                     if (itShouldBeAll != block) exist = false;
                 }
             }
         }
         if (exist) {
             VectorI3D ZCheck = pos.add(0,0,2);
-            isZDir = world.getChunkFromBlockCoords(new BlockPos(ZCheck.x, ZCheck.y, ZCheck.z)).getBlock(new BlockPos(ZCheck.x, ZCheck.y, ZCheck.z)) == Blocks.air;
+            isZDir = world.getBlockStateAt(ZCheck).isOf(BlockType.AIR);
 
             if (isZDir) {
                 for (int x = -1; x<=1; x++) {
                     for (int y = -1; y<=1; y++) {
                         for (int z = -2; z<=2; z+=4) {
                             VectorI3D pos2 = pos.add(x,y,z);
-                            Block block = world.getChunkFromBlockCoords(new BlockPos(pos2.x, pos2.y, pos2.z)).getBlock(new BlockPos(pos2.x, pos2.y, pos2.z));
-                            if (block != Blocks.air) exist = false;
+                            UBlockState block = world.getBlockStateAt(pos2);
+                            if (!block.isOf(BlockType.AIR)) exist = false;
                         }
                     }
                 }
@@ -74,8 +75,8 @@ public class DungeonDoor {
                     for (int y = -1; y<=1; y++) {
                         for (int z = -1; z<=1; z++) {
                             VectorI3D pos2 = pos.add(x,y,z);
-                            Block block = world.getChunkFromBlockCoords(new BlockPos(pos2.x, pos2.y, pos2.z)).getBlock(new BlockPos(pos2.x, pos2.y, pos2.z));
-                            if (block != Blocks.air) exist = false;
+                            UBlockState block = world.getBlockStateAt(pos2);
+                            if (!block.isOf(BlockType.AIR)) exist = false;
                         }
                     }
                 }

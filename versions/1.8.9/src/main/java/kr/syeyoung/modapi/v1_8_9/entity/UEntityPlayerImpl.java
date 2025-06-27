@@ -3,6 +3,8 @@ package kr.syeyoung.modapi.v1_8_9.entity;
 import com.mojang.authlib.properties.Property;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
+import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
 import lombok.Getter;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -26,5 +28,9 @@ public class UEntityPlayerImpl extends UEntityLivingImpl implements UEntityPlaye
     public String getSkinTexture() {
         Collection<Property> obj = delegate.getGameProfile().getProperties().get("textures");
         return obj.stream().findFirst().map(Property::getValue).orElse(null);
+    }
+
+    public UItemStack getHeldItem() {
+        return delegate.getHeldItem() == null ? null : new UItemStackImpl(delegate.getHeldItem());
     }
 }

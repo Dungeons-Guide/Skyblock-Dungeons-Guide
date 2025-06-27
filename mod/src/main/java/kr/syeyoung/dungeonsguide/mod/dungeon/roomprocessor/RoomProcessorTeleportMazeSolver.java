@@ -27,10 +27,10 @@ import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UWorld;
 import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -60,11 +60,10 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
         super.tick();
 
 
-
-        World w = getDungeonRoom().getContext().getWorld();
+        UWorld w = getDungeonRoom().getContext().getUworld();
         UPlayerSelf entityPlayerSP = ModAPI.getAPI().getPlayer();
         VectorI3D pos2 = entityPlayerSP.getPosition();
-        Block b = w.getBlockState(new BlockPos(pos2.getX(), pos2.getY(), pos2.getZ())).getBlock();
+        UBlockState b = w.getBlockStateAt(pos2);
         Vector3D lookVec = entityPlayerSP.getLook(0);
         Vector3D pos = entityPlayerSP.getPositionVector();
         
@@ -87,7 +86,7 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
             times++;
         }
 
-        if (b == Blocks.stone_slab || b == Blocks.stone_slab2) {
+        if (b.isOf(BlockType.STONE_SLAB)) {
             boolean teleport = false;
             if (lastPlayerLocation == null) {
                 return;
@@ -96,7 +95,7 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
                 return;
             }
             for (VectorI3D allInBox : VectorI3D.getAllInBox(lastPlayerLocation, pos2)) {
-                if (w.getBlockState(new BlockPos(allInBox.getX(), allInBox.getY(), allInBox.getZ())).getBlock() == Blocks.iron_bars) {
+                if (w.getBlockStateAt(allInBox).isOf(BlockType.IRON_BARS)) {
                     teleport = true;
                     break;
                 }
@@ -110,14 +109,14 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
                 }
 
                 for (VectorI3D allInBox : VectorI3D.getAllInBox(pos2.add(-1, 0, -1), pos2.add(1, 0, 1))) {
-                    if (w.getBlockState(new BlockPos(allInBox.getX(), allInBox.getY(), allInBox.getZ())).getBlock() == Blocks.end_portal_frame) {
+                    if (w.getBlockStateAt(allInBox).isOf(BlockType.END_PORTAL_FRAME)) {
                         if (!visitedPortals.contains(allInBox))
                         visitedPortals.add(allInBox);
                         break;
                     }
                 }
                 for (VectorI3D allInBox : VectorI3D.getAllInBox(lastPlayerLocation.add(-1, -1, -1), lastPlayerLocation.add(1, 1, 1))) {
-                    if (w.getBlockState(new BlockPos(allInBox.getX(), allInBox.getY(), allInBox.getZ())).getBlock() == Blocks.end_portal_frame) {
+                    if (w.getBlockStateAt(allInBox).isOf(BlockType.END_PORTAL_FRAME)) {
                         if (!visitedPortals.contains(allInBox))
                         visitedPortals.add(allInBox);
                         break;

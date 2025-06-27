@@ -20,13 +20,14 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers;
 
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
-import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
+import kr.syeyoung.modapi.event.events.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -36,7 +37,6 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 

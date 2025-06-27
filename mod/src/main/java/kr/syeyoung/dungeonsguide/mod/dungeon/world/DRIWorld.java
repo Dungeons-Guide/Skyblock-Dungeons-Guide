@@ -35,6 +35,7 @@ import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UMapData;
 import kr.syeyoung.modapi.world.UWorld;
 import lombok.Getter;
@@ -258,5 +259,15 @@ public class DRIWorld extends World implements ICoordinateMap<IBlockState>, UWor
     @Override
     public List<UEntity> getEntities(EntityType type) {
         return Collections.emptyList();
+    }
+
+    @Override
+    public UBlockState getBlockStateAt(int x, int y, int z) {
+        return null; // TODO: TODOTODO
+    }
+
+    @Override
+    public UBlockState getBlockStateAt(VectorI3D blockPos) {
+        return null;// TODO: TODOTODO
     }
 }

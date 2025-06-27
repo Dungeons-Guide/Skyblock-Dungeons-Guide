@@ -31,16 +31,14 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.block.Block;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UWorld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
-import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -77,7 +75,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     }
 
     private byte[][] buildCurrentState() {
-        World w = getDungeonRoom().getContext().getWorld();
+        UWorld w = getDungeonRoom().getContext().getUworld();
         byte[][] board = new byte[poses.length][poses[0].length];
         for (int y = 0; y < poses.length; y++) {
             for (int x = 0; x < poses[0].length; x++) {
@@ -86,8 +84,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                     continue;
                 }
                 VectorI3D pos = poses[y][x];
-                Block b = w.getBlockState(new BlockPos(pos.x, pos.y, pos.z)).getBlock();
-                if (b == Blocks.air)
+                if (w.getBlockStateAt(pos).isOf(BlockType.AIR))
                     board[y][x] = 0;
                 else
                     board[y][x] = 1;

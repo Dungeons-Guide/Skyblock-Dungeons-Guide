@@ -29,8 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.world.BlockType;
 import lombok.Data;
-import net.minecraft.init.Blocks;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -92,7 +92,7 @@ public class DungeonRedstoneKeySlotState implements DungeonMechanicState {
     @Override
     public String getCurrentState() {
         for (OffsetPoint offsetPoint : data.headPoint.getOffsetPointList()) {
-            if (offsetPoint.getBlock(room) == Blocks.skull) {
+            if (offsetPoint.getBlock(room).isOf(BlockType.SKULL)) {
                 return "triggered";
             }
         }

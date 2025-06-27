@@ -34,8 +34,8 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.world.BlockType;
 import lombok.Data;
-import net.minecraft.init.Blocks;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class DungeonOnewayDoorState implements DungeonMechanicState, WorldMutati
     public boolean isBlocking(DungeonRoom dungeonRoom) {
 
         for (OffsetPoint offsetPoint : data.secretPoint.getOffsetPointList()) {
-            if (offsetPoint.getBlock(dungeonRoom) != Blocks.air) {
+            if (!offsetPoint.getBlock(dungeonRoom).isOf(BlockType.AIR)) {
                 VectorI3D blockPos = offsetPoint.getBlockPos(dungeonRoom);
                 if (dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.FALLING_BLOCK, new AABB(
                             blockPos.getX(), blockPos.getY() - 4, blockPos.getZ(),

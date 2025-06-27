@@ -16,21 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.events.impl;
+package kr.syeyoung.modapi.event.events;
 
+import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.UEvent;
+import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.Tuple;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public abstract class BlockUpdateEvent extends UEvent {
     @Getter @Setter
-    private Set<Tuple<VectorI3D, IBlockState>> updatedBlocks = new HashSet<>();
+    private Set<Pair<VectorI3D, UBlockState>> updatedBlocks = new HashSet<>();
 
     public static class Pre extends BlockUpdateEvent {}
     public static class Post extends BlockUpdateEvent {}

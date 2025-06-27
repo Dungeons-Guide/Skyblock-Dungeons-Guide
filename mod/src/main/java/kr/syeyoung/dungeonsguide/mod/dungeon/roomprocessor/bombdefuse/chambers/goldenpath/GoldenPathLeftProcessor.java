@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.G
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.init.Blocks;
+import kr.syeyoung.modapi.world.BlockType;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
@@ -76,8 +76,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
                 if (target2.getX() < 0 || target2.getZ() < 0 || target2.getX() > 8 || target2.getZ() > 5) continue;
 
                 visited.add(target2);
-                if (getChamber().getBlock(target2.getX(), 0, target2.getZ()).getBlock() == Blocks.hardened_clay
-                || getChamber().getBlock(target2.getX(), 0, target2.getZ()).getBlock() == Blocks.stained_hardened_clay) {
+                if (getChamber().getBlock(target2.getX(), 0, target2.getZ()).isOf(BlockType.HARDENED_CLAY, BlockType.STAINED_HARDENED_CLAY)) {
                     lastLoc = target2;
 
                     blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()));

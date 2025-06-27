@@ -25,7 +25,9 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.block.Block;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.IBlockAccessible;
+import kr.syeyoung.modapi.world.UBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
@@ -54,7 +56,7 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
     }
 
     private void findCreeperAndDoPoses() {
-        World w = getDungeonRoom().getContext().getWorld();
+        IBlockAccessible w = getDungeonRoom().getRoomWorld();
         List<BlockPos> prismarines = new ArrayList<BlockPos>();
         final VectorI3D low = getDungeonRoom().getRoomBounds().getMin().add(0,-2,0);
         final VectorI3D high = getDungeonRoom().getRoomBounds().getMax().add(0,20,0);
@@ -64,11 +66,11 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
         );
 
         for (VectorI3D pos : VectorI3D.getAllInBox(low, high)) {
-            Block b = getDungeonRoom().getCachedWorld().getBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ())).getBlock();
-            if (b == Blocks.prismarine || b == Blocks.sea_lantern) {
+            UBlockState b = getDungeonRoom().getRoomWorld().getBlockStateAt(pos);
+            if (b.isOf(BlockType.PRISMARINE, BlockType.SEA_LANTERN)) {
                 for (kr.syeyoung.modapi.data.EnumFacing face: kr.syeyoung.modapi.data.EnumFacing.VALUES) {
                     VectorI3D newPos = pos.add(face.getDirectionVec());
-                    if (w.getBlockState(new BlockPos(newPos.getX(), newPos.getY(), newPos.getZ())).getBlock() == Blocks.air) {
+                    if (w.getBlockStateAt(pos).isOf(BlockType.AIR)) {
                         prismarines.add(new BlockPos(newPos.getX(), newPos.getY(), newPos.getZ()));
                         break;
                     }

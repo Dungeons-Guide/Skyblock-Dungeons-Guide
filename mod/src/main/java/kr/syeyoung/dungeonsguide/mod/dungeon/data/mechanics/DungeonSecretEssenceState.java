@@ -41,10 +41,11 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySkull;
@@ -69,8 +70,8 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
     private int nearbyTicks = 0;
     public void tick(DungeonRoom dungeonRoom) {
         VectorI3D pos = data.secretPoint.getBlockPos(dungeonRoom);
-        IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
-        if (blockState.getBlock() == Blocks.skull) {
+        UBlockState blockState = dungeonRoom.getContext().getUworld().getBlockStateAt(pos);
+        if (blockState.isOf(BlockType.SKULL)) {
             essenceWasThere = true;
             List<UEntity> entities = dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.ARMOR_STAND, new AABB(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
             TileEntity tileEntity = dungeonRoom.getCachedWorld().getTileEntity(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));

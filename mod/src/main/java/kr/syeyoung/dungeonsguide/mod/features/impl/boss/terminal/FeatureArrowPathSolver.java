@@ -120,7 +120,7 @@ public class FeatureArrowPathSolver extends SimpleFeature {
             if (frame.getItem().getItem() == Item.ARROW) {
                 mapping[y][x] = frame.getRotation()+1;
                 bfsAble[y][x] = 9999;
-            } else if (frame.getItem().getMetadata() == 5) { // LIME WOOL.
+            } else if (frame.getItem().getMetadata() == 5) { // LIME WOOL. TODO: CHECK IF REALLY WOOL
                 mapping[y][x] = 10; // starting
                 bfsAble[y][x] = 99999;
             } else {

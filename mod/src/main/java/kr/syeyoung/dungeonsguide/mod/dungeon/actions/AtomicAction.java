@@ -24,8 +24,8 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
 import lombok.Getter;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.List;

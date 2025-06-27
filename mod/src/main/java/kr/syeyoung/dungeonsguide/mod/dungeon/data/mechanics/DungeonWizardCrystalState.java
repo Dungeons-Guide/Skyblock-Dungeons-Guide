@@ -33,9 +33,9 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.world.BlockType;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -101,7 +101,7 @@ public class DungeonWizardCrystalState implements DungeonMechanicState {
             if (stack.getItem() != Items.skull) continue;
             if (stack.getDisplayName().equals("§9Wizard's Crystal")) return "obtained-self";
         }
-        if (data.secretPoint.getBlock(room) == Blocks.skull) {
+        if (data.secretPoint.getBlock(room).isOf(BlockType.SKULL)) {
             return "unobtained";
         }
         return "obtained-other";
@@ -109,7 +109,7 @@ public class DungeonWizardCrystalState implements DungeonMechanicState {
 
     @Override
     public Set<String> getAvailableActions() {
-        if (data.secretPoint.getBlock(room) == Blocks.skull) {
+        if (data.secretPoint.getBlock(room).isOf(BlockType.SKULL)) {
             return Sets.newHashSet("obtained-self", "navigate");
         }
         return Sets.newHashSet("navigate");

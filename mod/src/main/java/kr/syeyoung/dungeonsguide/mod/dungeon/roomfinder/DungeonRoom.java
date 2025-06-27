@@ -40,6 +40,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.ArrayBackedCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.CachedWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.WorldBackedCoordinateMap;
@@ -47,12 +48,12 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.EditableChunkCache;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.world.UBlockState;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
@@ -90,6 +91,9 @@ public class DungeonRoom  {
 
     @Setter
     private World cachedWorld;
+    @Setter
+    private ArrayBackedCoordinateMap roomWorld;
+
     private WorldBackedCoordinateMap coordinateMap;
     private EditableChunkCache chunkCache;
 
@@ -161,6 +165,9 @@ public class DungeonRoom  {
             }
         }
         coordinateMap = new WorldBackedCoordinateMap(driWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+        roomWorld = new ArrayBackedCoordinateMap(roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+        roomWorld.migrateFromWorld(context.getUworld());
+
     }
 
 
@@ -200,6 +207,9 @@ public class DungeonRoom  {
         CachedWorld cachedWorld =  new CachedWorld(chunkCache, context.getWorld().provider);
 
         coordinateMap = new WorldBackedCoordinateMap(cachedWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+
+        roomWorld = new ArrayBackedCoordinateMap(roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+        roomWorld.migrateFromWorld(context.getUworld());
 
 
         return this.cachedWorld = cachedWorld;
@@ -295,7 +305,7 @@ public class DungeonRoom  {
             }
 
             for (Tuple<VectorI3D, EDungeonDoorType> door : positions) {
-                doors.add(new DungeonDoor(context.getWorld(), door.getFirst(), door.getSecond()));
+                doors.add(new DungeonDoor(context.getUworld(), door.getFirst(), door.getSecond()));
             }
         }
     }
@@ -344,6 +354,13 @@ public class DungeonRoom  {
         }
         return null;
     }
+    public UBlockState getRelativeUBlockStateAt(int x, int y, int z) {
+        // validate x y z's
+        if (getRoomBounds().canAccessRelative(x,z)) {
+            return getRoomWorld().getBlockStateAt(x+roomBounds.getMinX(),y+roomBounds.getMin().getY(),z + roomBounds.getMin().getZ());
+        }
+        return null;
+    }
 
     public VectorI3D getRelativeBlockPosAt(int x, int y, int z) {
         return new VectorI3D(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
@@ -353,20 +370,16 @@ public class DungeonRoom  {
         return new Vector3D(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
     }
 
-    public int getRelativeBlockDataAt(int x, int y, int z) {
-        // validate x y z's
-        if (getRoomBounds().canAccessRelative(x,z)) {
-            BlockPos pos = new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
-            IBlockState iBlockState = getCachedWorld().getBlockState(pos);
-            return iBlockState.getBlock().getMetaFromState(iBlockState);
-        }
-        return -1;
-    }
-
     public void chunkUpdate(int cx, int cz) {
         if (!chunkCache.isManaged(cx, cz)) {
             return;
         }
         chunkCache.updateChunk(new BlockPos(cx*16+8, 0, cz*16+8));
+    }
+
+    // TODO block update!
+
+    public void blockUpdate(int x, int y, int z) {
+
     }
 }

@@ -24,12 +24,12 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.ShadowCast;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
+import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.item.Item;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Items;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.List;
@@ -43,8 +43,8 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
     private List<BlockPos> toHighlight;
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onInteract(PlayerInteractEvent event) {
-        if (event.entityPlayer.getHeldItem() == null ||
-                event.entityPlayer.getHeldItem().getItem() != Items.spawn_egg) {
+        if (event.player.getHeldItem() == null ||
+                event.player.getHeldItem().getItem() != Item.SPAWN_EGG) {
             return;
         }
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && event.action != PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {

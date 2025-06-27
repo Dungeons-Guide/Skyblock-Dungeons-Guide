@@ -29,11 +29,10 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
+import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UWorld;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -75,12 +74,12 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
 
-        World w = dc.getWorld();
-        if (wasButton && w.getBlockState(new BlockPos(110, 121, 92)).getBlock() == Blocks.air) { // check here instead :D
+        UWorld w = dc.getUworld();
+        if (wasButton && w.getBlockStateAt(110,121,92).isOf(BlockType.AIR)) { // check here instead :D
             orderClick.clear();
             orderBuild.clear();
             wasButton = false;
-        } else if (!wasButton && w.getBlockState(new BlockPos(110, 121, 92)).getBlock() == Blocks.stone_button){
+        } else if (!wasButton && w.getBlockStateAt(110,121,92).isOf(BlockType.STONE_BUTTON)){
             orderClick.addAll(orderBuild);
             wasButton = true;
         }
@@ -88,7 +87,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
 
         if (!wasButton) {
             for (VectorI3D allInBox : VectorI3D.getAllInBox(new VectorI3D(111, 120, 92), new VectorI3D(111, 123, 95))) {
-                if (w.getBlockState(new BlockPos(allInBox.getX(), allInBox.getY(), allInBox.getZ())).getBlock() == Blocks.sea_lantern && !orderBuild.contains(allInBox)) {
+                if (w.getBlockStateAt(allInBox).isOf(BlockType.SEA_LANTERN) && !orderBuild.contains(allInBox)) {
                     orderBuild.add(allInBox);
                 }
             }
@@ -103,13 +102,12 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         if (dc == null) return;
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
-        World w = dc.getWorld();
+        UWorld w = dc.getUworld();
 
-        VectorI3D ePos = new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ());
+        VectorI3D pos = event.pos.add(1,0,0);
 
-        VectorI3D pos = ePos.add(1,0,0);
         if (120 <= pos.getY() && pos.getY() <= 123 && pos.getX() == 111 && 92 <= pos.getZ() && pos.getZ() <= 95) {
-            if (w.getBlockState(new BlockPos(ePos.getX(), ePos.getY(), ePos.getZ())).getBlock() != Blocks.stone_button) return;
+            if (!w.getBlockStateAt(event.pos).isOf(BlockType.STONE_BUTTON)) return;
             if (pos.equals(orderClick.peek())) {
                 orderClick.poll();
             }

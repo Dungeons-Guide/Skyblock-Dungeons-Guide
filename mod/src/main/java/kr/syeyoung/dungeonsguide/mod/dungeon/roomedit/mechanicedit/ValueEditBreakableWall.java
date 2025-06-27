@@ -30,6 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditCreator
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.world.BlockType;
 import net.minecraft.init.Blocks;
 
 import java.awt.*;
@@ -66,7 +67,7 @@ public class ValueEditBreakableWall extends MPanel implements ValueEdit<DungeonB
                 OffsetPointSet ofs = dungeonBreakableWall.getSecretPoint();
                 List<OffsetPoint> filtered = new ArrayList<OffsetPoint>();
                 for (OffsetPoint offsetPoint : ofs.getOffsetPointList()) {
-                    if (offsetPoint.getBlock(EditingContext.getEditingContext().getRoom()) != Blocks.air) continue;
+                    if (!offsetPoint.getBlock(EditingContext.getEditingContext().getRoom()).isOf(BlockType.AIR)) continue;
                     filtered.add(offsetPoint);
                 }
                 dungeonBreakableWall.getSecretPoint().setOffsetPointList(filtered);

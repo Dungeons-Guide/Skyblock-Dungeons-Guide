@@ -22,15 +22,15 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BombDefuseChamberGenerator;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.ChamberProcessor;
-import net.minecraft.init.Blocks;
+import kr.syeyoung.modapi.world.BlockType;
 
 public class ColorProcessorMatcher implements BombDefuseChamberGenerator {
     @Override
     public boolean match(BDChamber left, BDChamber right) {
         return
-                right.getBlock(0,1,1).getBlock() == Blocks.stonebrick &&
-                right.getBlock(0,1,2).getBlock() == Blocks.stonebrick &&
-                right.getBlock(0,1,3).getBlock() == Blocks.stonebrick;
+                right.getBlock(0,1,1).isOf(BlockType.STONE_BRICK) &&
+                right.getBlock(0,1,2).isOf(BlockType.STONE_BRICK) &&
+                right.getBlock(0,1,3).isOf(BlockType.STONE_BRICK);
     }
 
     @Override

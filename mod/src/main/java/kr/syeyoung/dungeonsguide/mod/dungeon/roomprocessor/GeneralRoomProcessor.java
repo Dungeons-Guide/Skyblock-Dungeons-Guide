@@ -35,36 +35,32 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonValueEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditOffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.CoordinateMapBackedPathfindWorld;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.EnumFacing;
+import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
-import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
-import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
-import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.util.RaycastResult;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -258,16 +254,16 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void onInteractBlock(PlayerInteractEvent event) {
         VectorI3D ePos = event.pos == null ? null : new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ());
-        kr.syeyoung.modapi.data.EnumFacing eFacing = kr.syeyoung.modapi.data.EnumFacing.VALUES[event.face.getIndex()];
+        EnumFacing eFacing = EnumFacing.VALUES[event.face.getIndex()];
 
         if (ePos != null) {
-            IBlockState iBlockState = event.world.getBlockState(event.pos);
-            if (iBlockState.getBlock() == Blocks.chest || iBlockState.getBlock() == Blocks.trapped_chest)
+            UBlockState iBlockState = event.world.getBlockStateAt(event.pos);
+            if (iBlockState.isOf(BlockType.CHEST, BlockType.TRAP_CHEST))
                 lastChest = ePos;
         }
 
-        if (event.entityPlayer.getHeldItem() != null &&
-            event.entityPlayer.getHeldItem().getItem() == Items.stick &&
+        if (event.player.getHeldItem() != null &&
+            event.player.getHeldItem().getItem() == Item.STICK &&
                 FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() &&
                 FeatureRegistry.DEBUG.isEnabled()) {
             EditingContext ec = EditingContext.getEditingContext();
@@ -294,7 +290,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 }
             }
             try {
-                if (ec != null && ePos != null && Minecraft.getMinecraft().theWorld.getBlockState(event.pos).getBlock() == Blocks.sponge) {
+                if (ec != null && ePos != null && event.world.getBlockStateAt(event.pos).isOf(BlockType.SPONGE)) {
                     int nextId = 1;
                     while (ec.getRoom().getDungeonRoomInfo().getMechanics().containsKey("ent-" + nextId)) nextId++;
                     DungeonRoomDoor2State.DungeonRoomDoor2Data door2 = new DungeonRoomDoor2State.DungeonRoomDoor2Data();
@@ -356,11 +352,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     }
 
-    public static final IBlockState STONE = Blocks.stone.getStateFromMeta(2);
+//    public static final IBlockState STONE = Blocks.stone.getStateFromMeta(2);
     @Override
     public void onBlockUpdate(BlockUpdateEvent blockUpdateEvent) {
-        for (Tuple<VectorI3D, IBlockState> updatedBlock : blockUpdateEvent.getUpdatedBlocks()) {
-            if (updatedBlock.getSecond().equals(STONE)) continue;
+        for (Pair<VectorI3D, UBlockState> updatedBlock : blockUpdateEvent.getUpdatedBlocks()) {
+//            if (updatedBlock.getSecond().equals(STONE)) continue;
             pathfinderWorld.resetBlock(updatedBlock.getFirst());
         }
     }

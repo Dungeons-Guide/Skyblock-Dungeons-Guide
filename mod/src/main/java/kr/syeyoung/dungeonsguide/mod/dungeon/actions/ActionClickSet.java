@@ -21,11 +21,10 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.item.UItemStack;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.function.Predicate;
 
@@ -33,7 +32,7 @@ import java.util.function.Predicate;
 @EqualsAndHashCode(callSuper=false)
 public class ActionClickSet extends AbstractAction {
     private OffsetPointSet target;
-    private Predicate<ItemStack> predicate = stack -> true;
+    private Predicate<UItemStack> predicate = stack -> true;
 
     public ActionClickSet(OffsetPointSet target) {
         this.target = target;
@@ -49,7 +48,7 @@ public class ActionClickSet extends AbstractAction {
     public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event) {
         if (clicked) return;
         for (OffsetPoint pt2: target.getOffsetPointList()) {
-            if (pt2.getBlockPos(dungeonRoom).equals(new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ())) && predicate.test(event.entityLiving.getHeldItem())) {
+            if (pt2.getBlockPos(dungeonRoom).equals(event.pos) && predicate.test(event.player.getHeldItem())) {
                 clicked = true;
             }
         }

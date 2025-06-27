@@ -27,12 +27,11 @@ import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UWorld;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.world.World;
 
 import java.util.Arrays;
 import java.util.List;
@@ -74,8 +73,8 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
             final String name = TextUtils.stripColor(ch2.split(":")[0]).replace("[NPC] ","").trim();
             final VectorI3D low = getDungeonRoom().getRoomBounds().getMin();
             final VectorI3D high = getDungeonRoom().getRoomBounds().getMax();
-            World w = getDungeonRoom().getContext().getWorld();
-            List<UEntity> armor = getDungeonRoom().getContext().getUworld().getEntitiesWithinAabb(EntityType.ARMOR_STAND,
+            UWorld w = getDungeonRoom().getContext().getUworld();
+            List<UEntity> armor = w.getEntitiesWithinAabb(EntityType.ARMOR_STAND,
                     new AABB(low.getX(), 0, low.getZ(), high.getX(), 255, high.getZ()));
             UEntity target = null;
             for (UEntity uEntity : armor) {
@@ -88,9 +87,9 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
                 this.chest = null;
                 VectorI3D pos = target.getPosition();
                 for (VectorI3D allInBox : VectorI3D.getAllInBox(pos.add(-1, 0, -1), pos.add(1, 0, 1))) {
-                    Block b = w.getBlockState(new BlockPos(allInBox.getX(), allInBox.getY(), allInBox.getZ())).getBlock();
+                    UBlockState b = w.getBlockStateAt(allInBox);
 
-                    if ((b == Blocks.chest || b == Blocks.trapped_chest)&& allInBox.distanceSq(pos) == 1 ) {
+                    if ((b.isOf(BlockType.CHEST, BlockType.TRAP_CHEST)) && allInBox.distanceSq(pos) == 1 ) {
                         this.chest = allInBox;
                         return;
                     }

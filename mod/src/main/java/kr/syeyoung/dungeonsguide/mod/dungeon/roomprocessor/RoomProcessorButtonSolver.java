@@ -23,8 +23,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -63,9 +63,8 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
         if (bugged) return;
 
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
-        VectorI3D ePos = new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ());
         for (int i = 0; i < buttons.length; i++) {
-            if (ePos.equals(buttons[i])) {
+            if (event.pos.equals(buttons[i])) {
                 clicked = System.currentTimeMillis();
                 clickedButton = i;
                 return;

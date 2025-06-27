@@ -27,9 +27,10 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
+import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.item.Item;
 import net.minecraft.init.Items;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -46,8 +47,8 @@ public class FeatureStonkDebug extends SimpleFeature {
     public List<PossibleClickingSpot> spots;
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onInteract(PlayerInteractEvent event) {
-        if (event.entityPlayer.getHeldItem() == null ||
-                event.entityPlayer.getHeldItem().getItem() != Items.golden_shovel) {
+        if (event.player.getHeldItem() == null ||
+                event.player.getHeldItem().getItem() != Item.GOLDEN_SHOVEL) {
             return;
         }
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && event.action != PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {

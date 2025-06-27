@@ -22,17 +22,17 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BombDefuseChamberGenerator;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.ChamberProcessor;
-import net.minecraft.init.Blocks;
+import kr.syeyoung.modapi.world.BlockType;
 
 public class ArrowProcessorMatcher implements BombDefuseChamberGenerator {
     @Override
     public boolean match(BDChamber left, BDChamber right) {
-        return left.getBlock(8,1,1).getBlock() == Blocks.planks &&
-                left.getBlock(8,1,2).getBlock() == Blocks.planks &&
-                left.getBlock(8,1,3).getBlock() == Blocks.planks &&
-                right.getBlock(0,1,1).getBlock() == Blocks.planks &&
-                right.getBlock(0,1,2).getBlock() == Blocks.planks &&
-                right.getBlock(0,1,3).getBlock() == Blocks.planks;
+        return left.getBlock(8,1,1).isOf(BlockType.WOOD_PLANKS) &&
+                left.getBlock(8,1,2).isOf(BlockType.WOOD_PLANKS) &&
+                left.getBlock(8,1,3).isOf(BlockType.WOOD_PLANKS) &&
+                right.getBlock(0,1,1).isOf(BlockType.WOOD_PLANKS) &&
+                right.getBlock(0,1,2).isOf(BlockType.WOOD_PLANKS) &&
+                right.getBlock(0,1,3).isOf(BlockType.WOOD_PLANKS);
     }
 
     @Override

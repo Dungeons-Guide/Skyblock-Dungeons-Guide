@@ -27,6 +27,7 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
+import kr.syeyoung.modapi.world.UBlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -819,17 +820,17 @@ public class RenderUtils {
             maxY = Math.max(maxY, pos.getY() + 1);
             minZ = Math.min(minZ, pos.getZ());
             maxZ = Math.max(maxZ, pos.getZ() + 1);
-            IBlockState iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.x, pos.y, pos.z));
-            if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
+            UBlockState iBlockState = ModAPI.getAPI().getWorld().getBlockStateAt(pos);
+            if (iBlockState.hasTileEntity()) {
                 TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(pos.x, pos.y, pos.z));
                 TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                 if (specialRenderer != null) {
                     specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
                     for (kr.syeyoung.modapi.data.EnumFacing value : kr.syeyoung.modapi.data.EnumFacing.HORIZONTALS) {
                         VectorI3D newPos = pos.add(value.getDirectionVec());
-                        iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(newPos.x, newPos.y, newPos.z));
+                        iBlockState = ModAPI.getAPI().getWorld().getBlockStateAt(newPos);
 
-                        if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
+                        if (iBlockState.hasTileEntity()) {
                             tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(newPos.x, newPos.y, newPos.z));
                             specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                             if (specialRenderer != null)
@@ -914,17 +915,17 @@ public class RenderUtils {
             maxY = Math.max(maxY, pos.getY() + 1);
             minZ = Math.min(minZ, pos.getZ());
             maxZ = Math.max(maxZ, pos.getZ() + 1);
-            IBlockState iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.x, pos.y, pos.z));
-            if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
+            UBlockState iBlockState = ModAPI.getAPI().getWorld().getBlockStateAt(pos);
+            if (iBlockState.hasTileEntity()) {
                 TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(pos.x, pos.y, pos.z));
                 TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                 if (specialRenderer != null) {
                     specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
                     for (kr.syeyoung.modapi.data.EnumFacing value : kr.syeyoung.modapi.data.EnumFacing.HORIZONTALS) {
                         VectorI3D newPos = pos.add(value.getDirectionVec());
-                        iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(newPos.x, newPos.y, newPos.z));
+                        iBlockState = ModAPI.getAPI().getWorld().getBlockStateAt(newPos);
 
-                        if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
+                        if (iBlockState.hasTileEntity()) {
                             tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(newPos.x, newPos.y, newPos.z));
                             specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                             if (specialRenderer != null)

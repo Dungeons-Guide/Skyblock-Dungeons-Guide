@@ -7,6 +7,7 @@ import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
+import kr.syeyoung.modapi.world.IBlockRegistry;
 import kr.syeyoung.modapi.world.UWorld;
 
 public interface ModAPI {
@@ -42,4 +43,6 @@ public interface ModAPI {
     UEntity getRenderViewEntity();
 
     RaycastResult getObjectMouseOver();
+
+    IBlockRegistry getBlockRegistry();
 }

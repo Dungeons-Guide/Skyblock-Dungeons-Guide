@@ -29,9 +29,9 @@ import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.world.BlockType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.init.Blocks;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -91,7 +91,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
             for (int x =0; x < width; x++) {
                 OffsetPoint op = ops.getOffsetPointList().get(y * width + x);
                 map2[y][x] = op;
-                map[y][x] = op.getBlock(getDungeonRoom()) == Blocks.air ? 0 : 1;
+                map[y][x] = op.getBlock(getDungeonRoom()).isOf(BlockType.AIR) ? 0 : 1;
             }
         }
         endNode.addAll(endNodes.getOffsetPointList());

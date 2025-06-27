@@ -31,17 +31,14 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockLever;
-import net.minecraft.block.state.IBlockState;
+import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UWorld;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.*;
@@ -106,19 +103,16 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
 
     private void buildLeverStates(){
         for (OffsetPoint offsetPoint : levers.getOffsetPointList()) {
-            if (offsetPoint.getBlock(getDungeonRoom()) == Blocks.lever){
+            if (offsetPoint.getBlock(getDungeonRoom()).isOf(BlockType.LEVER)){
                 VectorI3D pos = offsetPoint.getBlockPos(getDungeonRoom());
-                World w=  getDungeonRoom().getContext().getWorld();
-                BlockLever.EnumOrientation enumOrientation = w.getBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ())).getValue(BlockLever.FACING);
-                EnumFacing enumFacing = enumOrientation.getFacing();
+                UWorld w=  getDungeonRoom().getContext().getUworld();
+                EnumFacing enumFacing = w.getBlockStateAt(pos).getLeverFacing();
                 VectorI3D newPos = pos.add(-enumFacing.getDirectionVec().getX(),0,-enumFacing.getDirectionVec().getZ());
 
-                IBlockState blockState = w.getBlockState(new BlockPos(newPos.getX(), newPos.getY(), newPos.getZ()));
-                int id =Block.getIdFromBlock(blockState.getBlock());
-                int data = blockState.getBlock().getMetaFromState(blockState);
+                UBlockState blockState = w.getBlockStateAt(newPos);
 
-                switchFlips.put(id+":"+data, new ArrayList<>());
-                switchLoc.put(id+":"+data, pos);
+                switchFlips.put(blockState.serialize(), new ArrayList<>());
+                switchLoc.put(blockState.serialize(), pos);
             }
         }
         switchLoc.put("mainStream", ((OffsetPoint) getDungeonRoom().getDungeonRoomInfo().getProperties().get("water-lever")).getBlockPos(getDungeonRoom()));
@@ -138,20 +132,18 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                 OffsetPoint back = backPoints.get(x * 25 +y);
 
                 ptMapping.put(new Simulator.Pt(x,y), front.getBlockPos(getDungeonRoom()));
-                int frontId = Block.getIdFromBlock(front.getBlock(getDungeonRoom()));
-                int backId = Block.getIdFromBlock(back.getBlock(getDungeonRoom()));
-                int frontData = front.getData(getDungeonRoom());
-                int backData = back.getData(getDungeonRoom());
+                UBlockState frontB = front.getBlock(getDungeonRoom());
+                UBlockState backB = back.getBlock(getDungeonRoom());
 
                 if (switchfips) {
                     String switchD;
 
-                    if (switchFlips.containsKey(switchD = (backId + ":" + backData)) || switchFlips.containsKey(switchD = (frontId + ":" + frontData))) {
+                    if (switchFlips.containsKey(switchD = backB.serialize()) || switchFlips.containsKey(switchD = frontB.serialize())) {
                         switchFlips.get(switchD).add(new Simulator.Pt(x, y));
                     }
                 }
 
-                if (frontId == 0 || frontId == 8  /*flowing*/|| frontId == 9) {
+                if (frontB.isOf(BlockType.AIR, BlockType.FLOWING_WATER, BlockType.STATIONARY_WATER)) {
                     if (y == 24) {
                         OffsetPoint pos;
                         if (x != 0) {
@@ -160,13 +152,13 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                             pos = frontPoints.get((x+1) * 25 +y);
                         }
 
-                        int id = Block.getIdFromBlock(pos.getBlock(getDungeonRoom()));
-                        int data= pos.getData(getDungeonRoom());
-                        waterNodeEnds.put(id+":"+data, new Simulator.Pt(x,y));
+                        UBlockState blockState = pos.getBlock(getDungeonRoom());
+                        waterNodeEnds.put(blockState.serialize(), new Simulator.Pt(x,y));
                     }
 
-                    nodes[y][x] = new Simulator.Node(frontId != 0 ? frontData >= 8 ? 8 : 8-frontData : 0,
-                            frontId == 0 ? Simulator.NodeType.AIR :
+                    nodes[y][x] = new Simulator.Node(!frontB.isOf(BlockType.AIR) ?
+                            frontB.getWaterLevel() >= 8 ? 8 : 8-frontB.getWaterLevel() : 0,
+                            frontB.isOf(BlockType.AIR) ? Simulator.NodeType.AIR :
                             y == 0 ? Simulator.NodeType.SOURCE :
                                     Simulator.NodeType.WATER, false);
                 } else {
@@ -181,8 +173,8 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     private void targetDoors() {
         targetDoors.clear();
         for (OffsetPoint offsetPoint : doorsClosed.getOffsetPointList()) {
-            if (offsetPoint.getBlock(getDungeonRoom()) != Blocks.air) {
-                targetDoors.add(Block.getIdFromBlock(offsetPoint.getBlock(getDungeonRoom()))+":"+offsetPoint.getData(getDungeonRoom()));
+            if (!offsetPoint.getBlock(getDungeonRoom()).isOf(BlockType.AIR)) {
+                targetDoors.add(offsetPoint.getBlock(getDungeonRoom()).serialize());
             }
         }
     }
@@ -297,8 +289,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
 
         if (solutionList == null || idx >= solutionList.size()) return;
         if (event.pos == null)return;
-        VectorI3D ePos = new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ());
-
+        VectorI3D ePos = event.pos;
         Waterboard.Action currentAction = solutionList.get(idx);
         VectorI3D pos = switchLoc.get(currentAction.getName());
         if (pos == null) return;

@@ -29,7 +29,6 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.item.UItemStack;
-import net.minecraft.block.Block;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -84,9 +83,9 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
         super.onSendData();
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setByte("a", (byte) 6);
-        nbt.setByte("f", (byte) Block.getIdFromBlock(getChamber().getBlock(0,3,3).getBlock()));
-        nbt.setByte("s", (byte) Block.getIdFromBlock(getChamber().getBlock(0,3,2).getBlock()));
-        nbt.setByte("t", (byte) Block.getIdFromBlock(getChamber().getBlock(0,3,1).getBlock()));
+        nbt.setString("f", getChamber().getBlock(0,3,3).serialize());
+        nbt.setString("s", getChamber().getBlock(0,3,2).serialize());
+        nbt.setString("t", getChamber().getBlock(0,3,1).serialize());
         getSolver().communicate(nbt);
     }
 

@@ -23,13 +23,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BombDefuseChamberGenerator;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.ChamberProcessor;
-import net.minecraft.init.Blocks;
+import kr.syeyoung.modapi.world.BlockType;
 
 public class GoldenPathProcessorMatcher implements BombDefuseChamberGenerator {
     @Override
     public boolean match(BDChamber left, BDChamber right) {
-        return left.getBlock(4,0,0).getBlock() == Blocks.hardened_clay
-                || left.getBlock(4,0,0).getBlock() == Blocks.stained_hardened_clay;
+        return left.getBlock(4,0,0).isOf(BlockType.HARDENED_CLAY, BlockType.STAINED_HARDENED_CLAY);
     }
 
     @Override

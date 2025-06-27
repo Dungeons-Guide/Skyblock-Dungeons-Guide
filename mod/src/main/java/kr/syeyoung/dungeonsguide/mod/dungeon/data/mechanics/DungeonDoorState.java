@@ -31,8 +31,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.world.BlockType;
 import lombok.Data;
-import net.minecraft.init.Blocks;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -109,7 +109,7 @@ public class DungeonDoorState implements WorldMutatingMechanicState {
     @Override
     public boolean isBlocking(DungeonRoom dungeonRoom) {
         for (OffsetPoint offsetPoint : data.secretPoint.getOffsetPointList()) {
-            if (offsetPoint.getBlock(dungeonRoom) != Blocks.air) return true;
+            if (!offsetPoint.getBlock(dungeonRoom).isOf(BlockType.AIR)) return true;
         }
         return false;
     }

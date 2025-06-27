@@ -26,11 +26,10 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
-import net.minecraft.block.Block;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UWorld;
 import net.minecraft.entity.boss.BossStatus;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -46,11 +45,11 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight").build()
         );
-        w= DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getWorld();
+        w= DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getUworld();
         this.isMasterMode = isMasterMode;
     }
     private final Set<VectorI3D> progressBar = new HashSet<>();
-    private final World w;
+    private final UWorld w;
 
     private int ticksPassed = 0;
 
@@ -62,9 +61,9 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
             for (int x = -30; x <= 30; x++) {
                 for (int y = -30; y <= 30; y++) {
                     VectorI3D newPos = new VectorI3D(5 + x, 77, 5 + y);
-                    Block b = w.getBlockState(new BlockPos(newPos.getX(), newPos.getY(), newPos.getZ())).getBlock();
+                    UBlockState b = w.getBlockStateAt(newPos);
                     VectorI3D up = newPos.add(0,1,0);
-                    if ((b == Blocks.coal_block || b == Blocks.sea_lantern) && w.getBlockState(new BlockPos(up.getX(), up.getY(), up.getZ())).getBlock() != Blocks.carpet)
+                    if ((b.isOf(BlockType.COAL_BLOCK, BlockType.SEA_LANTERN)) && !w.getBlockStateAt(up).isOf(BlockType.CARPET))
                         progressBar.add(newPos);
                 }
             }
@@ -88,7 +87,7 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
         int total = progressBar.size(), lit = 0;
         if (total == 0) return 0;
         for (VectorI3D pos : progressBar) {
-            if (w.getBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ())).getBlock() == Blocks.sea_lantern ) lit++;
+            if (w.getBlockStateAt(pos).isOf(BlockType.SEA_LANTERN)) lit++;
         }
 
         return lit / (double)total;
@@ -102,7 +101,7 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
             VectorI3D pos = new VectorI3D(205,77, 205);
             RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, false);
             for (VectorI3D pos2 : progressBar) {
-                RenderUtils.highlightBlock(pos2, w.getBlockState(new BlockPos(pos2.getX(), pos2.getY(), pos2.getZ())).getBlock() == Blocks.sea_lantern ?
+                RenderUtils.highlightBlock(pos2, w.getBlockStateAt(pos2).isOf(BlockType.SEA_LANTERN) ?
                             new Color(0, 255, 0, 50) : new Color(255,0,0, 50), partialTicks, false);
             }
         } catch (Exception e) {

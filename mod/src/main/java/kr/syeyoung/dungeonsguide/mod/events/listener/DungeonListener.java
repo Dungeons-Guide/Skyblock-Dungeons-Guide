@@ -77,7 +77,6 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -610,9 +609,8 @@ public class DungeonListener {
         }
     }
 
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onInteract(PlayerInteractEvent keyInputEvent) {
-        if (!keyInputEvent.world.isRemote) return;
         if (!SkyblockStatus.isOnDungeon()) return;
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

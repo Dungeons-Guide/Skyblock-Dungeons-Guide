@@ -9,7 +9,7 @@ import kr.syeyoung.modapi.item.UItemStack;
 import java.util.List;
 import java.util.UUID;
 
-public interface UWorld {
+public interface UWorld extends IBlockAccessible {
     UEntity getEntityById(int id);
 
     List<UEntity> getLoadedUEntityList();

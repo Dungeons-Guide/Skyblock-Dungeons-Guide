@@ -33,9 +33,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Data;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 
 import java.awt.*;
@@ -110,14 +112,14 @@ public class DungeonFakeChestTrapState implements DungeonMechanicState {
 
     public boolean isBlocking(DungeonRoom dungeonRoom) {
         for (OffsetPoint offsetPoint : data.tnts.getOffsetPointList()) {
-            if (offsetPoint.getBlock(dungeonRoom) != Blocks.air) return true;
+            if (!offsetPoint.getBlock(dungeonRoom).isOf(BlockType.AIR)) return true;
         }
         return false;
     }
 
     @Override
     public String getCurrentState() {
-        Block b = Blocks.air;
+        UBlockState b = ModAPI.getAPI().getBlockRegistry().oneFromWellknown(BlockType.AIR);
         if (!data.tnts.getOffsetPointList().isEmpty())
             b = data.tnts.getOffsetPointList().get(0).getBlock(room);
         return b == Blocks.air ? "triggered" : "untriggered";

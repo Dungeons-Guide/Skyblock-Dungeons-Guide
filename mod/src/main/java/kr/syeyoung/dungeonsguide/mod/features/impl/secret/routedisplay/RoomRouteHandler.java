@@ -8,9 +8,9 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplay
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
 import lombok.Getter;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.*;
 import java.util.function.Function;

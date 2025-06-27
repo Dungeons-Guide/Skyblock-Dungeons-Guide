@@ -22,19 +22,19 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BombDefuseChamberGenerator;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.ChamberProcessor;
-import net.minecraft.init.Blocks;
+import kr.syeyoung.modapi.world.BlockType;
 
 public class NumberProcessorMatcher implements BombDefuseChamberGenerator {
     @Override
     public boolean match(BDChamber left, BDChamber right) {
-        return left.getBlock(1,1,4).getBlock() == Blocks.stone &&
-                left.getBlock(2,1,4).getBlock() == Blocks.stone &&
-                left.getBlock(6,1,4).getBlock() == Blocks.stone &&
-                left.getBlock(7,1,4).getBlock() == Blocks.stone &&
-                right.getBlock(1,1,4).getBlock() == Blocks.stone &&
-                right.getBlock(2,1,4).getBlock() == Blocks.stone &&
-                right.getBlock(6,1,4).getBlock() == Blocks.stone &&
-                right.getBlock(7,1,4).getBlock() == Blocks.stone;
+        return left.getBlock(1,1,4).isOf(BlockType.STONE) &&
+                left.getBlock(2,1,4).isOf(BlockType.STONE) &&
+                left.getBlock(6,1,4).isOf(BlockType.STONE) &&
+                left.getBlock(7,1,4).isOf(BlockType.STONE) &&
+                right.getBlock(1,1,4).isOf(BlockType.STONE) &&
+                right.getBlock(2,1,4).isOf(BlockType.STONE) &&
+                right.getBlock(6,1,4).isOf(BlockType.STONE) &&
+                right.getBlock(7,1,4).isOf(BlockType.STONE);
     }
 
     @Override

@@ -24,9 +24,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.B
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.init.Blocks;
+import kr.syeyoung.modapi.world.BlockType;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 
@@ -55,7 +54,7 @@ public class CreeperLeftProcessor extends GeneralDefuseChamberProcessor {
         answer = 0;
         for (int i = 0; i < poses.length; i++) {
             VectorI3D pos = poses[i];
-            if (getChamber().getRoom().getContext().getWorld().getBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ())).getBlock() == Blocks.air) {
+            if (getChamber().getRoom().getContext().getUworld().getBlockStateAt(pos).isOf(BlockType.AIR)) {
                 answer |= (1 << i);
             }
         }
