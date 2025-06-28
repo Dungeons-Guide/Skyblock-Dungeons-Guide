@@ -9,8 +9,8 @@ import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.SubscribeEvent;
 import lombok.Getter;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

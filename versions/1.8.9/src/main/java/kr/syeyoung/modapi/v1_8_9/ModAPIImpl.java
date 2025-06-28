@@ -1,5 +1,6 @@
 package kr.syeyoung.modapi.v1_8_9;
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.Platform;
 import kr.syeyoung.modapi.audio.USoundHandler;
@@ -128,8 +129,10 @@ public class ModAPIImpl implements ModAPI {
         MinecraftForge.EVENT_BUS.register(eventListener);
         registry.init();
 
+        DungeonsGuide.getDungeonsGuide();
+
         if (Minecraft.getMinecraft().getNetHandler() != null)
-            Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler", packetInjector);
+            Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler_2", packetInjector);
     }
 
     @Override
