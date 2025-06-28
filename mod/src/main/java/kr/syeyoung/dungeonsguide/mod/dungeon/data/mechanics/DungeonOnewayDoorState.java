@@ -99,7 +99,7 @@ public class DungeonOnewayDoorState implements DungeonMechanicState, WorldMutati
         for (OffsetPoint offsetPoint : data.secretPoint.getOffsetPointList()) {
             if (!offsetPoint.getBlock(dungeonRoom).isOf(BlockType.AIR)) {
                 VectorI3D blockPos = offsetPoint.getBlockPos(dungeonRoom);
-                if (dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.FALLING_BLOCK, new AABB(
+                if (!dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.FALLING_BLOCK, new AABB(
                             blockPos.getX(), blockPos.getY() - 4, blockPos.getZ(),
                             blockPos.getX() + 1, blockPos.getY() + 1, blockPos.getZ() + 1
                 )).isEmpty()) return false;
