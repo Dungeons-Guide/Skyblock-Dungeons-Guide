@@ -35,11 +35,11 @@ public class ModAPIImpl implements ModAPI {
     }
 
     public URenderManager getRenderManager() {
-        return new URenderManagerImpl(delegate.getRenderManager());
+        return new URenderManagerImpl(Minecraft.getMinecraft().getRenderManager());
     }
 
     public UEntity getRenderViewEntity() {
-        return delegate.getRenderViewEntity() == null ? null : UEntityDelegateFactory.createEntityFor(delegate.getRenderViewEntity());
+        return Minecraft.getMinecraft().getRenderViewEntity() == null ? null : UEntityDelegateFactory.createEntityFor(Minecraft.getMinecraft().getRenderViewEntity());
     }
 
     public RaycastResult getObjectMouseOver() {
@@ -107,12 +107,12 @@ public class ModAPIImpl implements ModAPI {
     }
 
     public UPlayerSelf getPlayer() {
-        return delegate.thePlayer == null ? null : new UEntityPlayerSP(delegate.thePlayer);
+        return Minecraft.getMinecraft().thePlayer == null ? null : new UEntityPlayerSP(Minecraft.getMinecraft().thePlayer);
     }
 
     @Override
     public UWorld getWorld() {
-        return delegate.theWorld == null ? null : new UWorldImpl(delegate.theWorld);
+        return Minecraft.getMinecraft().theWorld == null ? null : new UWorldImpl(Minecraft.getMinecraft().theWorld);
     }
 
     @Override

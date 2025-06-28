@@ -33,7 +33,7 @@ public class AnnotatedListenerHelper {
         }
     }
 
-    public static List<ListenerRegistration> registerListeners(EventBus eventBus, Object o) throws IllegalAccessException {
+    public static List<ListenerRegistration> registerListeners(EventBus eventBus, Object o) {
         List<ListenerRegistration> registrations = new ArrayList<>();
         for (Method declaredMethod : o.getClass().getDeclaredMethods()) {
             SubscribeEvent event = declaredMethod.getAnnotation(SubscribeEvent.class);
@@ -44,7 +44,12 @@ public class AnnotatedListenerHelper {
             Class type = parameter.getType();
             if (!UEvent.class.isAssignableFrom(type)) throw new IllegalArgumentException("Method "+declaredMethod.getName()+" should only take in 1 parameter, that extends event");
             if ((declaredMethod.getModifiers() & Modifier.PUBLIC)  == 0 ) throw new IllegalArgumentException("Method is not public");
-            MethodHandle handle = MethodHandles.publicLookup().unreflect(declaredMethod).bindTo(o);
+            MethodHandle handle = null;
+            try {
+                handle = MethodHandles.publicLookup().unreflect(declaredMethod).bindTo(o);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
 
             registrations.add(eventBus.registerListener(type, event.priority(), new AnnotatedListener(handle, o.getClass().getName()+"."+declaredMethod.getName()+"("+type.getName()+")")));
         }

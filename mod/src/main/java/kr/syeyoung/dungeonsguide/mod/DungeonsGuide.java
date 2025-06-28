@@ -56,6 +56,8 @@ import kr.syeyoung.dungeonsguide.mod.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.AnnotatedListenerHelper;
+import kr.syeyoung.modapi.event.ListenerRegistration;
 import kr.syeyoung.modapi.event.SubscribeEvent;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import lombok.Getter;
@@ -161,9 +163,12 @@ public class DungeonsGuide implements DGInterface {
 
 
     private List<Object> registeredListeners = new ArrayList<>();
+    private List<ListenerRegistration> registeredMODAPIListeners = new ArrayList<>();
     public void registerEventsForge(Object object) {
         registeredListeners.add(object);
         MinecraftForge.EVENT_BUS.register(object);
+        registeredMODAPIListeners.addAll(AnnotatedListenerHelper.registerListeners(ModAPI.getAPI().getEventBus(), object));
+
     }
     private List<ICommand> registeredCommands = new ArrayList<>();
     private List<ExecutorService> executorServices = new ArrayList<>();
@@ -349,6 +354,9 @@ public class DungeonsGuide implements DGInterface {
             MinecraftForge.EVENT_BUS.unregister(registeredListener);
         }
 
+        for (ListenerRegistration registeredMODAPIListener : registeredMODAPIListeners) {
+            ModAPI.getAPI().getEventBus().unregisterListener(registeredMODAPIListener);
+        }
         EventHandlerRegistry.unregisterListeners();
 
         List<ListenerList> all = ReflectionHelper.getPrivateValue(ListenerList.class, null, "allLists");
