@@ -11,6 +11,7 @@ import kr.syeyoung.modapi.event.events.EntityEnterWorldEvent;
 import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
+import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -56,7 +57,7 @@ public class EventListener {
                 event.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR ? kr.syeyoung.modapi.event.events.PlayerInteractEvent.Action.RIGHT_CLICK_AIR
                         : event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK ? kr.syeyoung.modapi.event.events.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK :
                         kr.syeyoung.modapi.event.events.PlayerInteractEvent.Action.LEFT_CLICK_BLOCK,
-                new UWorldImpl(event.world),
+                new UWorldImpl(event.world, (BlockStateRegistryImpl) ModAPI.getAPI().getBlockRegistry()),
                 event.pos == null ? null : new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ()),
                 event.face == null ? null : EnumFacing.VALUES[event.face.getIndex()],
                 event.localPos == null ? null : new Vector3D(event.localPos.xCoord, event.localPos.yCoord, event.localPos.zCoord)

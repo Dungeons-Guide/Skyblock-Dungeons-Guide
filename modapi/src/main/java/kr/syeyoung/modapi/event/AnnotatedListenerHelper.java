@@ -22,6 +22,7 @@ public class AnnotatedListenerHelper {
             try {
                 methodHandle.invoke(event);
             } catch (Throwable e) {
+                e.printStackTrace();
                 throw new RuntimeException(e);
             }
             return EventProcessResult.COMPLETE;
@@ -51,6 +52,7 @@ public class AnnotatedListenerHelper {
                 throw new RuntimeException(e);
             }
 
+            if (handle == null) throw new NullPointerException("What? "+o);
             registrations.add(eventBus.registerListener(type, event.priority(), new AnnotatedListener(handle, o.getClass().getName()+"."+declaredMethod.getName()+"("+type.getName()+")")));
         }
         return registrations;

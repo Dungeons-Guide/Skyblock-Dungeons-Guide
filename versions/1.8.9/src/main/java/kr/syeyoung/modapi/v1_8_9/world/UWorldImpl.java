@@ -34,8 +34,9 @@ public class UWorldImpl implements UWorld {
     private final World delegate;
     private BlockStateRegistryImpl stateRegistry;
 
-    public UWorldImpl(World delegate) {
+    public UWorldImpl(World delegate, BlockStateRegistryImpl stateRegistry) {
         this.delegate = delegate;
+        this.stateRegistry =stateRegistry;
     }
 
     public UEntity getEntityById(int id) {

@@ -653,7 +653,7 @@ public class DungeonListener {
     public void onEntityDespawn2(EntityExitWorldEvent worldEvent) {
         for (int entityId : worldEvent.getEntityIds()) {
             UEntity en = ModAPI.getAPI().getWorld().getEntityById(entityId);
-            if (en.getEntityType() == EntityType.BAT && en.getPositionVector().distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) < 3025)
+            if (en != null && en.getEntityType() == EntityType.BAT && en.getPositionVector().distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) < 3025)
                 DungeonActionContext.getKilleds().add(entityId);
         }
     }

@@ -48,6 +48,7 @@ public class TabList {
         registered.clear();
         playerMap.clear();
         tabListEntries.clear();
+        System.out.println("Cleared: "+tabListEntries.size());
     }
 
     public UUID getPlayer(String name) {
@@ -61,6 +62,7 @@ public class TabList {
     public void updateEntry(TabListEntry tabListEntry) {
         removeEntry(tabListEntry.getGameProfile().getId());
         addEntry(tabListEntry);
+        System.out.println(tabListEntries.size());
     }
 
     public TabListEntry getEntry(UUID uuid) {

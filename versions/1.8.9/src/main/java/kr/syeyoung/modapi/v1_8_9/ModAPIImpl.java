@@ -112,7 +112,7 @@ public class ModAPIImpl implements ModAPI {
 
     @Override
     public UWorld getWorld() {
-        return Minecraft.getMinecraft().theWorld == null ? null : new UWorldImpl(Minecraft.getMinecraft().theWorld);
+        return Minecraft.getMinecraft().theWorld == null ? null : new UWorldImpl(Minecraft.getMinecraft().theWorld,  (BlockStateRegistryImpl) ModAPI.getAPI().getBlockRegistry());
     }
 
     @Override
