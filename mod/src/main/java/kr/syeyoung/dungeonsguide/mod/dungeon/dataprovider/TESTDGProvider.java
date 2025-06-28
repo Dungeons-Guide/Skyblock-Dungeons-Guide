@@ -20,23 +20,23 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.world.World;
+import kr.syeyoung.modapi.world.UWorld;
 
 import javax.vecmath.Vector2d;
 
 public class TESTDGProvider implements DungeonSpecificDataProvider {
         @Override
-        public VectorI3D findDoor(World w, String dungeonName) {
+        public VectorI3D findDoor(UWorld w, String dungeonName) {
             return new VectorI3D(0, 0, 0);
         }
 
         @Override
-        public Vector2d findDoorOffset(World w, String dungeonName) {
+        public Vector2d findDoorOffset(UWorld w, String dungeonName) {
             return new Vector2d(0,0);
         }
 
         @Override
-        public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
+        public BossfightProcessor createBossfightProcessor(UWorld w, String dungeonName) {
             return null;
         }
 

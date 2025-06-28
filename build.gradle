@@ -45,7 +45,7 @@ task standaloneJar(type: Zip) {
     group = "build"
 
     archiveClassifier = "standalone"
-    dependsOn ":mod:build", ":loader:build"
+    dependsOn ":mod:build", ":1.8.9-loader:build"
     from(zipTree(configurations.loaderOnly.files[0]))
     archiveFileName = configurations.modOnly.files.name.get(0).replace("-mapped.jar", "")+"-standalone.jar"
 

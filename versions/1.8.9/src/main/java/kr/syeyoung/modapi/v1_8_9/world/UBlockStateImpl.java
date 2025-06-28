@@ -5,6 +5,7 @@ import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlock;
 import kr.syeyoung.modapi.world.UBlockState;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLever;
@@ -35,7 +36,9 @@ public class UBlockStateImpl implements UBlockState {
 
     @Override
     public String serialize() {
-        return "wow";
+        // universal.... id.... :/
+//        return delegat;
+        return Block.getIdFromBlock(delegate.getBlock())+":"+delegate.getBlock().getMetaFromState(delegate);
     }
 
 

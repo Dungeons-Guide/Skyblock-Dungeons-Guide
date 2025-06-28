@@ -29,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.CoordinateMapBackedPathfindWorld;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
@@ -40,6 +41,7 @@ import kr.syeyoung.modapi.world.UChunk;
 import kr.syeyoung.modapi.world.UMapData;
 import kr.syeyoung.modapi.world.UWorld;
 import lombok.Getter;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
@@ -274,11 +276,13 @@ public class DRIWorld extends World implements ICoordinateMap<IBlockState>, UWor
 
     @Override
     public UBlockState getBlockStateAt(int x, int y, int z) {
-        throw new UnsupportedOperationException();
+        return ModAPI.getAPI().getBlockRegistry().fromOldId(
+                Block.getStateId(getBlock(x,y,z))
+        );
     }
 
     @Override
     public UBlockState getBlockStateAt(VectorI3D blockPos) {
-        throw new UnsupportedOperationException();
+        return getBlockStateAt(blockPos.x, blockPos.y, blockPos.z);
     }
 }

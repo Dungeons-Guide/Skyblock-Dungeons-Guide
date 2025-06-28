@@ -144,8 +144,8 @@ public class DungeonContext {
             throw new IllegalStateException("No door finder found");
         }
 
-        doorOffset = doorFinder.findDoorOffset(world, getDungeonName());
-        door = doorFinder.findDoor(world, getDungeonName());
+        doorOffset = doorFinder.findDoorOffset(uworld, getDungeonName());
+        door = doorFinder.findDoor(uworld, getDungeonName());
 
         if (doorOffset == null || door == null) throw new IllegalStateException("?");
 
@@ -167,7 +167,7 @@ public class DungeonContext {
             recorder.createEvent(new DungeonNodataEvent("BOSSROOM_ENTER"));
             DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(getDungeonName());
             if (doorFinder != null) {
-                bossfightProcessor = doorFinder.createBossfightProcessor(world, getDungeonName());
+                bossfightProcessor = doorFinder.createBossfightProcessor(uworld, getDungeonName());
             } else {
                 ChatTransmitter.sendDebugChat(new ChatComponentText("Error:: Null Data Providier"));
             }

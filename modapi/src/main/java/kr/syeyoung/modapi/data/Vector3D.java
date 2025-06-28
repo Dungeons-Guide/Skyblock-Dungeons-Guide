@@ -49,9 +49,14 @@ public class Vector3D {
     public Vector3D normalize() {
         Vector3D clone = clone();
         double len = length();
+        if (len  < 1.0E-4) {
+            clone.x = clone.y = clone.z = 0;
+            return clone;
+        }
         clone.x /= len;
         clone.y /= len;
         clone.z /= len;
+
         return clone;
     }
 
@@ -92,5 +97,42 @@ public class Vector3D {
     @Override
     public String toString() {
         return "Vec3{x="+x+",y="+y+",z="+z+"}";
+    }
+
+
+    public Vector3D getIntermediateWithXValue(Vector3D vec, double x) {
+        double d0 = vec.x - this.x;
+        double d1 = vec.y - this.y;
+        double d2 = vec.z - this.z;
+        if (d0 * d0 < 1.0000000116860974E-7) {
+            return null;
+        } else {
+            double d3 = (x - this.x) / d0;
+            return d3 >= 0.0 && d3 <= 1.0 ? new Vector3D(this.x + d0 * d3, this.y + d1 * d3, this.z + d2 * d3) : null;
+        }
+    }
+
+    public Vector3D getIntermediateWithYValue(Vector3D vec, double y) {
+        double d0 = vec.x - this.x;
+        double d1 = vec.y - this.y;
+        double d2 = vec.z - this.z;
+        if (d1 * d1 < 1.0000000116860974E-7) {
+            return null;
+        } else {
+            double d3 = (y - this.y) / d1;
+            return d3 >= 0.0 && d3 <= 1.0 ? new Vector3D(this.x + d0 * d3, this.y + d1 * d3, this.z + d2 * d3) : null;
+        }
+    }
+
+    public Vector3D getIntermediateWithZValue(Vector3D vec, double z) {
+        double d0 = vec.x - this.x;
+        double d1 = vec.y - this.y;
+        double d2 = vec.z - this.z;
+        if (d2 * d2 < 1.0000000116860974E-7) {
+            return null;
+        } else {
+            double d3 = (z - this.z) / d2;
+            return d3 >= 0.0 && d3 <= 1.0 ? new Vector3D(this.x + d0 * d3, this.y + d1 * d3, this.z + d2 * d3) : null;
+        }
     }
 }
