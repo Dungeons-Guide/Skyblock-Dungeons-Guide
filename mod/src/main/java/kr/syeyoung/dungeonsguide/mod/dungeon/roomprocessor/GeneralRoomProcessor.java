@@ -254,7 +254,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void onInteractBlock(PlayerInteractEvent event) {
         VectorI3D ePos = event.pos == null ? null : new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ());
-        EnumFacing eFacing = EnumFacing.VALUES[event.face.getIndex()];
+        EnumFacing eFacing = event.face;
 
         if (ePos != null) {
             UBlockState iBlockState = event.world.getBlockStateAt(event.pos);

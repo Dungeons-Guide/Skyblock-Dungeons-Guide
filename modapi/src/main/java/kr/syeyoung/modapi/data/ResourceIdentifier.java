@@ -12,7 +12,7 @@ public class ResourceIdentifier {
             this.location = identifier.split(":")[1];
         } else {
             this.mod = "minecraft";
-            this.location = identifier.split(":")[1];
+            this.location = identifier.split(":")[0];
         }
     }
 

@@ -59,7 +59,7 @@ public class ArrayBackedCoordinateMap implements ICoordinateMap<UBlockState>, IB
 
     @Override
     public UBlockState getBlockStateAt(int x, int y, int z) {
-        return getBlockStateAt(x, y, z);
+        return getBlock(x, y, z);
     }
 
     @Override

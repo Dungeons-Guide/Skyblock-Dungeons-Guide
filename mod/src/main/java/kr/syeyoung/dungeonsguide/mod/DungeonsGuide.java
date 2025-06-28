@@ -524,14 +524,18 @@ public class DungeonsGuide implements DGInterface {
     private LinkedBlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
 
     public void runNextTick(Runnable r) {
-        tasks.offer(r);
+        try {
+            tasks.offer(r);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @SubscribeEvent
     public void onTick(ClientTickEvent tickEvent) {
-        for (Runnable task : tasks) {
+        while (!tasks.isEmpty()) {
             try {
-                task.run();
+                tasks.poll().run();
             } catch (Exception e) {
                 FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
