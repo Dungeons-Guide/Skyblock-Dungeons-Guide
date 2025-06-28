@@ -18,4 +18,6 @@ public interface UBlockState {
     int getWaterLevel();
 
     int getColor();
+
+    Object getIBlockState();
 }

@@ -59,4 +59,9 @@ public class UBlockStateImpl implements UBlockState {
     public int getColor() {
         return delegate.getValue(BlockColored.COLOR).getMetadata();
     }
+
+    @Override
+    public Object getIBlockState() {
+        return delegate;
+    }
 }

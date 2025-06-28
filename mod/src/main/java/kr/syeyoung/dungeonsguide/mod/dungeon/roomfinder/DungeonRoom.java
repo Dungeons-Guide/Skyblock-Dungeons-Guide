@@ -375,11 +375,7 @@ public class DungeonRoom  {
             return;
         }
         chunkCache.updateChunk(new BlockPos(cx*16+8, 0, cz*16+8));
-    }
 
-    // TODO block update!
-
-    public void blockUpdate(int x, int y, int z) {
-
+        roomWorld.updateChunk(context.getUworld().getChunkAt(cx, cz));
     }
 }

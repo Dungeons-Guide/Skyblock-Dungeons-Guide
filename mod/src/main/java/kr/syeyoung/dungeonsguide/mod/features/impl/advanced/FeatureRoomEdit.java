@@ -51,6 +51,9 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.IBlockRegistry;
+import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
@@ -227,6 +230,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
         color = dungeonRoomInfo.getColor();
 
         schematic = null;
+        IBlockRegistry blockRegistry = ModAPI.getAPI().getBlockRegistry();
         List<FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData> datas = new ArrayList<>();
         for (int x = 1; x < dungeonRoomInfo.getWidth(); x++) {
             for (int y = 0; y < 256; y++) {
@@ -251,7 +255,8 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     }
                     extendedblockstorage.set(x & 0xF, y & 15, z & 0xF, block);
                     if ((block.getBlock() == Blocks.dispenser)) {
-                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new VectorI3D(x, y, z),  block));
+                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new VectorI3D(x, y, z),
+                                blockRegistry.fromOldId(Block.getStateId(block))));
                     }
                 }
             }
@@ -318,6 +323,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
             Minecraft.getMinecraft().launchIntegratedServer("dungeonsguide", "dungeonsguide", worldsettings);
         }
         blockUpdates = new ArrayList<>();
+        IBlockRegistry registry = ModAPI.getAPI().getBlockRegistry();
         int minX = jsonObject.get("minX").getAsInt(), minZ = jsonObject.get("minZ").getAsInt();
         for (JsonElement updates : jsonObject.get("blockupdates").getAsJsonArray()) {
             List<FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData> list = new ArrayList<>();
@@ -325,9 +331,9 @@ public class FeatureRoomEdit  extends SimpleFeature {
                 JsonArray pos = updatedBlocks.getAsJsonArray();
                 VectorI3D bPos = new VectorI3D(pos.get(0).getAsInt()-minX, pos.get(1).getAsInt(), pos.get(2).getAsInt()-minZ);
                 String[] block = pos.get(3).getAsString().split(":");
-                Block b = Block.getBlockById(Integer.parseInt(block[0]));
-                IBlockState blockState = b.getStateFromMeta(Integer.parseInt(block[1]));
-                FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData data = new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(bPos, blockState);
+
+                FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData data = new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(bPos,
+                        registry.fromOldId((Integer.parseInt(block[0]) << 4) | Integer.parseInt(block[1])));
                 list.add(data);
             }
             long time = updates.getAsJsonObject().get("time").getAsLong();
@@ -382,8 +388,10 @@ public class FeatureRoomEdit  extends SimpleFeature {
                         extendedblockstorage = storage[y >> 4] = new ExtendedBlockStorage(y >> 4 << 4, true);
                     }
                     extendedblockstorage.set(x & 0xF, y & 15, z & 0xF, Block.getBlockById(blocks[index] & 0xFF).getStateFromMeta(meta[index] & 0xFF));
+
                     if ((blocks[index] & 0xFF) == 23) {
-                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new VectorI3D(x, y, z),  Blocks.dropper.getStateFromMeta(meta[index] & 0xFF)));
+                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new VectorI3D(x, y, z),
+                                ModAPI.getAPI().getBlockRegistry().fromOldId((23 << 4) | ((meta[index] & 0xFF)))));
                     }
                 }
             }
@@ -488,7 +496,8 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     }
                     extendedblockstorage.set(x & 0xF, y & 15, z & 0xF, Block.getBlockById(blocks[index] & 0xFF).getStateFromMeta(meta[index] & 0xFF));
                     if ((blocks[index] & 0xFF) == 23) {
-                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new VectorI3D(x, y, z),  Blocks.dropper.getStateFromMeta(meta[index] & 0xFF)));
+                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new VectorI3D(x, y, z),
+                                ModAPI.getAPI().getBlockRegistry().fromOldId((23 << 4) | ((meta[index] & 0xFF)))));
                     }
                 }
             }
@@ -637,17 +646,14 @@ public class FeatureRoomEdit  extends SimpleFeature {
                 for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
                     if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(updatedBlock.getPos()) > 100)
                         RenderUtils.highlightBlock(updatedBlock.getPos(), new Color(0x33FFFF00, true), event.partialTicks, false);
-                    int meta1 = updatedBlock.getBlock().getBlock().getMetaFromState(updatedBlock.getBlock());
-                    Block block1 = updatedBlock.getBlock().getBlock();
-                    IBlockState blockstate2 = Minecraft.getMinecraft().theWorld.getBlockState(
-                            new BlockPos(updatedBlock.getPos().x, updatedBlock.getPos().y, updatedBlock.getPos().z));
-                    int meta2 = blockstate2.getBlock().getMetaFromState(blockstate2);
-                    Block block2 = blockstate2.getBlock();
-                    if (block1 == block2 && meta2 == meta1)
+                    UBlockState blockstate1 = updatedBlock.getBlock();
+                    UBlockState blockstate2 = ModAPI.getAPI().getWorld().getBlockStateAt(updatedBlock.getPos());
+
+                    if (blockstate1 == blockstate2)
                         continue;
 
 //                    GlStateManager.enableCull();
-                    if (updatedBlock.getBlock().getBlock() != Blocks.air && updatedBlock.getBlock().getBlock() != Blocks.barrier) {
+                    if (!updatedBlock.getBlock().isOf(BlockType.AIR, BlockType.BARRIER)) {
                         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
                         float partialTicks = event.partialTicks;
 
@@ -665,15 +671,15 @@ public class FeatureRoomEdit  extends SimpleFeature {
                         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 //                        GlStateManager.color(1.0f,1.0f,1.0f,0.1f);
                         blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld,
-                                blockrendererdispatcher.getBlockModelShapes().getModelForState(updatedBlock.getBlock()),
-                                updatedBlock.getBlock(), new BlockPos(updatedBlock.getPos().x, updatedBlock.getPos().y, updatedBlock.getPos().z), vertexBuffer, false);
+                                blockrendererdispatcher.getBlockModelShapes().getModelForState((IBlockState) updatedBlock.getBlock().getIBlockState()),
+                                ((IBlockState)updatedBlock.getBlock().getIBlockState()), new BlockPos(updatedBlock.getPos().x, updatedBlock.getPos().y, updatedBlock.getPos().z), vertexBuffer, false);
                         tessellator.draw();
 
                         GlStateManager.enableLighting();
                         GlStateManager.popMatrix();
                     } else {
                         RenderUtils.highlightBlock(updatedBlock.getPos(),
-                                updatedBlock.getBlock().getBlock() == Blocks.air ? new Color(0x50FF00FF, true)
+                                updatedBlock.getBlock().isOf(BlockType.AIR) ? new Color(0x50FF00FF, true)
                                 :  new Color(0x500000FF, true), event.partialTicks, true);
                     }
                 }

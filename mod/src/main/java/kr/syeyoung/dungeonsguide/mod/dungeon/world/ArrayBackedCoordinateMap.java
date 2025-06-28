@@ -2,10 +2,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
-import kr.syeyoung.modapi.world.BlockType;
-import kr.syeyoung.modapi.world.IBlockAccessible;
-import kr.syeyoung.modapi.world.UBlockState;
-import kr.syeyoung.modapi.world.UWorld;
+import kr.syeyoung.modapi.world.*;
 import lombok.Getter;
 
 public class ArrayBackedCoordinateMap implements ICoordinateMap<UBlockState>, IBlockAccessible {
@@ -68,5 +65,17 @@ public class ArrayBackedCoordinateMap implements ICoordinateMap<UBlockState>, IB
     @Override
     public UBlockState getBlockStateAt(VectorI3D blockPos) {
         return getBlockStateAt(blockPos.x, blockPos.y, blockPos.z);
+    }
+
+    public void updateChunk(UChunk uChunk) {
+        int idx = 0;
+        for (int dy = 0, y = uChunk.getMinY(); dy < uChunk.getLenY(); dy++, y++) {
+            for (int dx = 0, x = uChunk.getMinX(); dx < uChunk.getLenX(); dx ++, x++) {
+                for (int dz = 0, z = uChunk.getMinZ(); dz < uChunk.getLenZ(); dz++, z++) {
+                    if (!isInScope(x,y,z)) continue;
+                    setBlock(x,y,z, uChunk.getRelativeBlockAt(dx, dy, dz));
+                }
+            }
+        }
     }
 }

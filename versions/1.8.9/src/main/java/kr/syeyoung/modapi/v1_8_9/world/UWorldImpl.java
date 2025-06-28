@@ -11,6 +11,7 @@ import kr.syeyoung.modapi.v1_8_9.entity.UEntityImpl;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerImpl;
 import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
 import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UChunk;
 import kr.syeyoung.modapi.world.UMapData;
 import kr.syeyoung.modapi.world.UWorld;
 import net.minecraft.block.Block;
@@ -22,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.storage.MapData;
 
 import java.util.ArrayList;
@@ -109,5 +111,16 @@ public class UWorldImpl implements UWorld {
         IBlockState blockState = delegate.getBlockState(pos);
         int stateId = Block.getStateId(blockState);
         return stateRegistry.getByStateId(stateId);
+    }
+
+    @Override
+    public UChunk getChunkAt(int x, int z) {
+        Chunk c = delegate.getChunkFromChunkCoords(x, z);
+        return new UChunkImpl(c, stateRegistry);
+    }
+
+    @Override
+    public Object getWorld() {
+        return delegate;
     }
 }

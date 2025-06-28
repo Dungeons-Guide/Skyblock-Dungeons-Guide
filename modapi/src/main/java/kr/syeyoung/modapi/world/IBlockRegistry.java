@@ -4,4 +4,6 @@ public interface IBlockRegistry {
     UBlockState fromSerializedSeting(String id);
 
     UBlockState oneFromWellknown(BlockType blockType);
+
+    UBlockState fromOldId(int stateId);
 }

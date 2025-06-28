@@ -29,7 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
 import kr.syeyoung.modapi.item.Item;
-import net.minecraft.init.Items;
+import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
@@ -57,7 +58,7 @@ public class FeatureStonkDebug extends SimpleFeature {
         if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             event.setCanceled(true);
             // reset
-            this.spots =RaytraceHelper.raycast(event.world, event.pos);
+            this.spots =RaytraceHelper.raycast((World) event.world.getWorld(), new BlockPos(event.pos.getX(), event.pos.getY(), event.pos.getZ()));
             System.out.println(spots);
         } else {
 //            this.spots = null;

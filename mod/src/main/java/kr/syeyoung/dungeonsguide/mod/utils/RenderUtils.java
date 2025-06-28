@@ -839,13 +839,13 @@ public class RenderUtils {
                     }
                 } else {
                     blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
-                            blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
-                            iBlockState.getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
+                            blockrendererdispatcher.getModelFromBlockState((IBlockState) iBlockState.getIBlockState(), Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
+                            ((IBlockState)iBlockState.getIBlockState()).getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
                 }
             } else {
                 blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
-                        blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
-                        iBlockState.getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
+                        blockrendererdispatcher.getModelFromBlockState((IBlockState) iBlockState.getIBlockState(), Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
+                        ((IBlockState)iBlockState.getIBlockState()).getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
             }
         }
 
@@ -934,13 +934,13 @@ public class RenderUtils {
                     }
                 } else {
                     blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
-                            blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
-                            iBlockState.getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
+                            blockrendererdispatcher.getModelFromBlockState((IBlockState) iBlockState.getIBlockState(), Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
+                            ((IBlockState)iBlockState.getIBlockState()).getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
                 }
             } else {
                 blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
-                        blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
-                        iBlockState.getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
+                        blockrendererdispatcher.getModelFromBlockState((IBlockState) iBlockState.getIBlockState(), Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
+                        ((IBlockState)iBlockState.getIBlockState()).getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
             }
         }
 

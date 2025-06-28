@@ -47,4 +47,11 @@ public class BlockStateRegistryImpl implements IBlockRegistry {
         }
         throw new IllegalArgumentException("Unsupported blocktype: "+blockType);
     }
+
+    @Override
+    public UBlockState fromOldId(int stateId) {
+        return map.getByValue(stateId);
+    }
+
+
 }

@@ -23,4 +23,8 @@ public interface UWorld extends IBlockAccessible {
     UEntityPlayer getUPlayerEntityByName(String name);
 
     List<UEntity> getEntities(EntityType type);
+
+    UChunk getChunkAt(int x, int z);
+
+    Object getWorld();
 }

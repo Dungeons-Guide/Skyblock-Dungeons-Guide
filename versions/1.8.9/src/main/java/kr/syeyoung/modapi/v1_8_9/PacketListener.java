@@ -18,22 +18,31 @@
 
 package kr.syeyoung.modapi.v1_8_9;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.CachedWorld;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityItem;
 import kr.syeyoung.modapi.event.events.BlockUpdateEvent;
+import kr.syeyoung.modapi.event.events.ChunkUpdateEvent;
 import kr.syeyoung.modapi.event.events.EntityExitWorldEvent;
 import kr.syeyoung.modapi.event.events.ItemPickupEvent;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
+import kr.syeyoung.modapi.v1_8_9.world.UChunkImpl;
+import kr.syeyoung.modapi.world.UChunk;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S0DPacketCollectItem;
-import net.minecraft.network.play.server.S13PacketDestroyEntities;
-import net.minecraft.network.play.server.S22PacketMultiBlockChange;
-import net.minecraft.network.play.server.S23PacketBlockChange;
+import net.minecraft.network.play.server.*;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldProviderSurface;
+import net.minecraft.world.chunk.Chunk;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class PacketListener {
 
@@ -62,6 +71,37 @@ public class PacketListener {
                         , impl.getByStateId(Block.getStateId(changedBlock.getBlockState()))));
             }
             ModAPI.getAPI().getEventBus().fireEvent(blockUpdateEvent);
+        }else if (packet instanceof S21PacketChunkData) {
+            try {
+                if (((S21PacketChunkData) packet).getExtractedSize() == 0) return;
+                WorldProvider provider = new WorldProviderSurface();
+                if (Minecraft.getMinecraft().theWorld != null) provider = Minecraft.getMinecraft().theWorld.provider;
+                BlockStateRegistryImpl impl = (BlockStateRegistryImpl) ModAPI.getAPI().getBlockRegistry();
+
+                Chunk c = new Chunk(new CachedWorld(null, provider), ((S21PacketChunkData) packet).getChunkX(), ((S21PacketChunkData) packet).getChunkZ());
+                c.fillChunk(((S21PacketChunkData) packet).getExtractedDataBytes(), ((S21PacketChunkData) packet).getExtractedSize(), ((S21PacketChunkData) packet).func_149274_i());
+                ChunkUpdateEvent.Post chunkUpdateEvent = new ChunkUpdateEvent.Post(Collections.singletonList(new UChunkImpl(c, impl)));
+                ModAPI.getAPI().getEventBus().fireEvent(chunkUpdateEvent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (packet instanceof S26PacketMapChunkBulk) {
+            try {
+                WorldProvider provider = new WorldProviderSurface();
+                if (Minecraft.getMinecraft().theWorld != null) provider = Minecraft.getMinecraft().theWorld.provider;
+                BlockStateRegistryImpl impl = (BlockStateRegistryImpl) ModAPI.getAPI().getBlockRegistry();
+
+                List<UChunk> set = new ArrayList<>();
+                for (int i = 0; i < ((S26PacketMapChunkBulk) packet).getChunkCount(); i++) {
+                    Chunk c = new Chunk(new CachedWorld(null, provider), ((S26PacketMapChunkBulk) packet).getChunkX(i), ((S26PacketMapChunkBulk) packet).getChunkZ(i));
+                    c.fillChunk(((S26PacketMapChunkBulk) packet).getChunkBytes(i), ((S26PacketMapChunkBulk) packet).getChunkSize(i), true);
+                    set.add(new UChunkImpl(c, impl));
+                }
+                ChunkUpdateEvent.Post chunkUpdateEvent = new ChunkUpdateEvent.Post(set);
+                ModAPI.getAPI().getEventBus().fireEvent(chunkUpdateEvent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -101,6 +141,37 @@ public class PacketListener {
             ModAPI.getAPI().getEventBus().fireEvent(new EntityExitWorldEvent(
                     ((S13PacketDestroyEntities) packet).getEntityIDs())
             );
+        } else if (packet instanceof S21PacketChunkData) {
+            try {
+                if (((S21PacketChunkData) packet).getExtractedSize() == 0) return;
+                WorldProvider provider = new WorldProviderSurface();
+                if (Minecraft.getMinecraft().theWorld != null) provider = Minecraft.getMinecraft().theWorld.provider;
+                BlockStateRegistryImpl impl = (BlockStateRegistryImpl) ModAPI.getAPI().getBlockRegistry();
+
+                Chunk c = new Chunk(new CachedWorld(null, provider), ((S21PacketChunkData) packet).getChunkX(), ((S21PacketChunkData) packet).getChunkZ());
+                c.fillChunk(((S21PacketChunkData) packet).getExtractedDataBytes(), ((S21PacketChunkData) packet).getExtractedSize(), ((S21PacketChunkData) packet).func_149274_i());
+                ChunkUpdateEvent.Pre chunkUpdateEvent = new ChunkUpdateEvent.Pre(Collections.singletonList(new UChunkImpl(c, impl)));
+                ModAPI.getAPI().getEventBus().fireEvent(chunkUpdateEvent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (packet instanceof S26PacketMapChunkBulk) {
+            try {
+                WorldProvider provider = new WorldProviderSurface();
+                if (Minecraft.getMinecraft().theWorld != null) provider = Minecraft.getMinecraft().theWorld.provider;
+                BlockStateRegistryImpl impl = (BlockStateRegistryImpl) ModAPI.getAPI().getBlockRegistry();
+
+                List<UChunk> set = new ArrayList<>();
+                for (int i = 0; i < ((S26PacketMapChunkBulk) packet).getChunkCount(); i++) {
+                    Chunk c = new Chunk(new CachedWorld(null, provider), ((S26PacketMapChunkBulk) packet).getChunkX(i), ((S26PacketMapChunkBulk) packet).getChunkZ(i));
+                    c.fillChunk(((S26PacketMapChunkBulk) packet).getChunkBytes(i), ((S26PacketMapChunkBulk) packet).getChunkSize(i), true);
+                    set.add(new UChunkImpl(c, impl));
+                }
+                ChunkUpdateEvent.Pre chunkUpdateEvent = new ChunkUpdateEvent.Pre(set);
+                ModAPI.getAPI().getEventBus().fireEvent(chunkUpdateEvent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

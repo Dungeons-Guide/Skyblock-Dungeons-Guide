@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.events.listener;
 
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.CachedWorld;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
@@ -37,14 +36,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.*;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldProviderSurface;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.storage.MapData;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class PacketListener {
 
@@ -200,35 +192,6 @@ public class PacketListener {
 
                     TabList.INSTANCE.updateEntry(neu);
                 }
-            }
-        } else if (packet instanceof S21PacketChunkData) {
-            try {
-                if (((S21PacketChunkData) packet).getExtractedSize() == 0) return;
-                WorldProvider provider = new WorldProviderSurface();
-                if (Minecraft.getMinecraft().theWorld != null) provider = Minecraft.getMinecraft().theWorld.provider;
-
-                Chunk c = new Chunk(new CachedWorld(null, provider), ((S21PacketChunkData) packet).getChunkX(), ((S21PacketChunkData) packet).getChunkZ());
-                c.fillChunk(((S21PacketChunkData) packet).getExtractedDataBytes(), ((S21PacketChunkData) packet).getExtractedSize(), ((S21PacketChunkData) packet).func_149274_i());
-                ChunkUpdateEvent chunkUpdateEvent = new ChunkUpdateEvent(Collections.singletonList(c));
-                ModAPI.getAPI().getEventBus().fireEvent(chunkUpdateEvent);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (packet instanceof S26PacketMapChunkBulk) {
-            try {
-                WorldProvider provider = new WorldProviderSurface();
-                if (Minecraft.getMinecraft().theWorld != null) provider = Minecraft.getMinecraft().theWorld.provider;
-
-                List<Chunk> set = new ArrayList<>();
-                for (int i = 0; i < ((S26PacketMapChunkBulk) packet).getChunkCount(); i++) {
-                    Chunk c = new Chunk(new CachedWorld(null, provider), ((S26PacketMapChunkBulk) packet).getChunkX(i), ((S26PacketMapChunkBulk) packet).getChunkZ(i));
-                    c.fillChunk(((S26PacketMapChunkBulk) packet).getChunkBytes(i), ((S26PacketMapChunkBulk) packet).getChunkSize(i), true);
-                    set.add(c);
-                }
-                ChunkUpdateEvent chunkUpdateEvent = new ChunkUpdateEvent(set);
-                ModAPI.getAPI().getEventBus().fireEvent(chunkUpdateEvent);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }

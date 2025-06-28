@@ -27,9 +27,10 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
 import kr.syeyoung.modapi.item.Item;
-import net.minecraft.init.Items;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
@@ -60,7 +61,8 @@ public class FeatureAirchkDebug extends SimpleFeature {
                     vec.xCoord + 3.1, vec.yCoord - 3.6, vec.zCoord + 3.1
             );
 
-            this.spots = RaytraceHelper.findMovespots(event.world, event.pos, a -> check.isVecInside(a), 3);
+            this.spots = RaytraceHelper.findMovespots((World)event.world.getWorld(),
+                    new BlockPos(event.pos.getX(), event.pos.getY(), event.pos.getZ()), a -> check.isVecInside(a), 3);
             System.out.println(spots);
         } else {
 //            this.spots = null;

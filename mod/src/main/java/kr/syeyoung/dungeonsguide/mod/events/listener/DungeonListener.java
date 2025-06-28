@@ -54,6 +54,7 @@ import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.world.UChunk;
 import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -67,8 +68,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.network.play.server.S21PacketChunkData;
-import net.minecraft.network.play.server.S26PacketMapChunkBulk;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -660,46 +659,25 @@ public class DungeonListener {
     }
 
     @kr.syeyoung.modapi.event.SubscribeEvent
-    public void onChunkUpdate(PacketProcessedEvent.Post post) {
+    public void onChunkUpdate(ChunkUpdateEvent.Post post) {
         if (!SkyblockStatus.isOnDungeon()) return;
-        if (post.packet instanceof S21PacketChunkData) {
-            S21PacketChunkData p = (S21PacketChunkData) post.packet;
-            if (p.func_149274_i() && p.getExtractedSize() == 0) return; // IGNORE unloading chunks. :D
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
-            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-
-            if (context != null) {
-                if (context.getScaffoldParser() != null) {
-                    for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
-                        dungeonRoom.chunkUpdate(p.getChunkX(), p.getChunkZ());
+        if (context != null) {
+            if (context.getScaffoldParser() != null) {
+                for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
+                    for (UChunk chunk : post.getUpdatedChunks()) {
+                        dungeonRoom.chunkUpdate(chunk.getChunkX(), chunk.getChunkZ());
 
                         RoomProcessor roomProcessor = dungeonRoom.getRoomProcessor();
                         if (roomProcessor != null) {
-                            roomProcessor.chunkUpdate(p.getChunkX(), p.getChunkZ());
-                        }
-                    }
-                }
-            }
-        } else if (post.packet instanceof S26PacketMapChunkBulk) {
-            S26PacketMapChunkBulk p = (S26PacketMapChunkBulk) post.packet;
-
-            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-
-            if (context != null) {
-                if (context.getScaffoldParser() != null) {
-                    for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
-                        for (int i = 0; i < p.getChunkCount(); i++) {
-                            dungeonRoom.chunkUpdate(p.getChunkX(i), p.getChunkZ(i));
-
-                            RoomProcessor roomProcessor = dungeonRoom.getRoomProcessor();
-                            if (roomProcessor != null) {
-                                roomProcessor.chunkUpdate(p.getChunkX(i), p.getChunkZ(i));
-                            }
+                            roomProcessor.chunkUpdate(chunk.getChunkX(), chunk.getChunkZ());
                         }
                     }
                 }
             }
         }
+
     }
     @kr.syeyoung.modapi.event.SubscribeEvent
     public void onEntityDeSpawn(LivingEntityDeathEvent deathEvent) {

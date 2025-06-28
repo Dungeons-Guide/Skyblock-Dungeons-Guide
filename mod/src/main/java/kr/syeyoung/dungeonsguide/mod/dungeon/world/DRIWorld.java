@@ -36,6 +36,7 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.item.UItemStack;
 import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UChunk;
 import kr.syeyoung.modapi.world.UMapData;
 import kr.syeyoung.modapi.world.UWorld;
 import lombok.Getter;
@@ -262,12 +263,22 @@ public class DRIWorld extends World implements ICoordinateMap<IBlockState>, UWor
     }
 
     @Override
+    public UChunk getChunkAt(int x, int z) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object getWorld() {
+        return this;
+    }
+
+    @Override
     public UBlockState getBlockStateAt(int x, int y, int z) {
-        return null; // TODO: TODOTODO
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public UBlockState getBlockStateAt(VectorI3D blockPos) {
-        return null;// TODO: TODOTODO
+        throw new UnsupportedOperationException();
     }
 }

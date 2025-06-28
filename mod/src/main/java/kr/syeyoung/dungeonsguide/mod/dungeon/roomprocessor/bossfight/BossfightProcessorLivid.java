@@ -23,7 +23,6 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
-import kr.syeyoung.modapi.event.events.BlockUpdateEvent;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import lombok.Getter;
 import net.minecraft.util.BlockPos;
@@ -105,10 +104,6 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     }
 
     private static final BlockPos lividPos = new BlockPos(6, 108, 43);
-
-    @Override
-    public void onBlockUpdate(BlockUpdateEvent blockUpdateEvent) {
-    }
 
     @Override
     public String getBossName() {

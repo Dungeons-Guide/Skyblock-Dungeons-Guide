@@ -38,7 +38,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.ChunkUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonRoomDiscoveredEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -59,23 +58,23 @@ import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UChunk;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.*;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -163,7 +162,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     @Data
     public static class ChunkData {
         private int x, z;
-        ExtendedBlockStorage[] initialBlockStorages;
+        private UChunk initialBlockStorages;
     }
 
     public static class RoomInfo {
@@ -370,62 +369,33 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onChunkLoad(ChunkUpdateEvent chunkUpdateEvent) {
+    public void onChunkLoad(ChunkUpdateEvent.Pre chunkUpdateEvent) {
         Set<Pair<VectorI3D, UBlockState>> updates = new HashSet<>();
-        for (Chunk updatedChunk : chunkUpdateEvent.getUpdatedChunks()) {
+        for (UChunk updatedChunk : chunkUpdateEvent.getUpdatedChunks()) {
             if (updatedChunk.isEmpty()) continue;
-            if (initialChunkDataMap.containsKey(updatedChunk.getChunkCoordIntPair())) {
+            Pair<Integer, Integer> coordinate = new Pair<>(updatedChunk.getChunkZ(), updatedChunk.getChunkX());
+            if (initialChunkDataMap.containsKey(coordinate)) {
                 // that's block update!
 
-                ChunkData prevChunk = initialChunkDataMap.get(updatedChunk.getChunkCoordIntPair());
-                ExtendedBlockStorage[] prev = prevChunk.getInitialBlockStorages();
-                ExtendedBlockStorage[] neu = updatedChunk.getBlockStorageArray();
-                for (int i = 0; i < prev.length; i++) {
-                    ExtendedBlockStorage prevSt = prev[i];
-                    ExtendedBlockStorage neuSt = neu[i];
-                    if (prevSt == null && neuSt != null) {
-                        for (int x = 0; x < 16; x++) {
-                            for (int y = 0; y < 16; y++) {
-                                for (int z = 0; z < 16; z++) {
-                                    IBlockState blockState = neuSt.get(x,y,z);
-                                    VectorI3D pos = new VectorI3D(prevChunk.x * 16 + x,  i * 16 + y, prevChunk.z * 16 + z);
-                                    updates.add(new Pair<>(pos, blockState));
-                                }
-                            }
-                        }
-                    } else if (prevSt != null && neuSt == null) {
-                        IBlockState air = Blocks.air.getDefaultState();
-                        for (int x = 0; x < 16; x++) {
-                            for (int y = 0; y < 16; y++) {
-                                for (int z = 0; z < 16; z++) {
-                                    VectorI3D pos = new VectorI3D(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
-                                    updates.add(new Pair<>(pos, air));
-                                }
-                            }
-                        }
-                    } else if (prevSt == null && neuSt == null) {
-                    } else {
-                        for (int x = 0; x < 16; x++) {
-                            for (int y = 0; y < 16; y++) {
-                                for (int z = 0; z < 16; z++) {
-                                    VectorI3D pos = new VectorI3D(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
-                                    IBlockState prevState = prevSt.get(x,y,z);
-                                    IBlockState neuState = neuSt.get(x,y,z);
-                                    if (!neuState.equals(prevState)) {
-                                        updates.add(new Pair<>(pos, neuState));
-                                    }
-                                }
+                ChunkData prevChunk = initialChunkDataMap.get(coordinate);
+                UChunk prev = prevChunk.getInitialBlockStorages();
+                UChunk neu = updatedChunk;
+                for (int y = 0; y < neu.getLenY(); y++) {
+                    for (int x = 0; x < neu.getLenX(); x++) {
+                        for (int z = 0; z < neu.getLenZ(); z++) {
+                            UBlockState prevB = prev.getRelativeBlockAt(x,y,z);
+                            UBlockState neuB = neu.getRelativeBlockAt(x,y,z);
+                            if (neu != prev) {
+                                updates.add(new Pair<>(new VectorI3D(x+neu.getMinX(),y+neu.getMinY(),z+neu.getMinZ()), neuB));
                             }
                         }
                     }
                 }
-
-                continue;
             }
             ChunkData chunkData = new ChunkData();
-            chunkData.x = updatedChunk.xPosition;
-            chunkData.z = updatedChunk.zPosition;
-            chunkData.initialBlockStorages = updatedChunk.getBlockStorageArray();
+            chunkData.x = updatedChunk.getChunkX();
+            chunkData.z = updatedChunk.getChunkZ();
+            chunkData.initialBlockStorages = updatedChunk;
             initialChunkDataMap.put(new ChunkCoordIntPair(chunkData.x, chunkData.z), chunkData);
         }
         if (!updates.isEmpty()) {
@@ -649,6 +619,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     private NBTTagCompound createNBT(RoomInfo roomInfo, DungeonRoom dungeonRoom) {
+        if (1==1) throw new UnsupportedOperationException("NOOO"); // TODO:
+
         NBTTagCompound compound = new NBTTagCompound();
         compound.setShort("Width", (short) (dungeonRoom.getRoomBounds().getMax().getX() - dungeonRoom.getRoomBounds().getMin().getX() + 1));
         compound.setShort("Height", (short) 255);
@@ -669,35 +641,35 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                     VectorI3D pos = dungeonRoom.getRelativeBlockPosAt(x,y - 70,z);
                     ChunkData chunkData = initialChunkDataMap.get(new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4));
 
-                    IBlockState blockState;
-                    if (chunkData != null) {
+//                    IBlockState blockState;
+//                    if (chunkData != null) {
+//
+//                        ExtendedBlockStorage[] blockStorage = chunkData.initialBlockStorages;
+//
+//                            if (pos.getY() >= 0 && pos.getY() >> 4 < blockStorage.length) {
+//                                ExtendedBlockStorage extendedblockstorage = blockStorage[pos.getY() >> 4];
+//                                if (extendedblockstorage != null) {
+//                                    int j = pos.getX() & 15;
+//                                    int k = pos.getY() & 15;
+//                                    int i = pos.getZ() & 15;
+//                                    blockState = extendedblockstorage.get(j, k, i);
+//                                } else {
+//                                    blockState = Blocks.air.getDefaultState();
+//                                }
+//                            } else {
+//                                blockState = Blocks.air.getDefaultState();
+//                            }
+//
+//                    } else {
+//                        blockState = Blocks.air.getDefaultState();
+//                    }
 
-                        ExtendedBlockStorage[] blockStorage = chunkData.initialBlockStorages;
-
-                            if (pos.getY() >= 0 && pos.getY() >> 4 < blockStorage.length) {
-                                ExtendedBlockStorage extendedblockstorage = blockStorage[pos.getY() >> 4];
-                                if (extendedblockstorage != null) {
-                                    int j = pos.getX() & 15;
-                                    int k = pos.getY() & 15;
-                                    int i = pos.getZ() & 15;
-                                    blockState = extendedblockstorage.get(j, k, i);
-                                } else {
-                                    blockState = Blocks.air.getDefaultState();
-                                }
-                            } else {
-                                blockState = Blocks.air.getDefaultState();
-                            }
-
-                    } else {
-                        blockState = Blocks.air.getDefaultState();
-                    }
-
-                    int id = Block.getIdFromBlock(blockState.getBlock());
-                    blocks[index] = (byte) id;
-                    meta[index] =  (byte) blockState.getBlock().getMetaFromState(blockState);
-                    if ((extra[index] = (byte) ((id) >> 8)) > 0) {
-                        extraEx = true;
-                    }
+//                    int id = Block.getIdFromBlock(blockState.getBlock());
+//                    blocks[index] = (byte) id;
+//                    meta[index] =  (byte) blockState.getBlock().getMetaFromState(blockState);
+//                    if ((extra[index] = (byte) ((id) >> 8)) > 0) {
+//                        extraEx = true;
+//                    }
                 }
             }
         }
