@@ -24,3 +24,5 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 /.mixin.out/*
 /libdiscord-rpc.so
+
+out/*
