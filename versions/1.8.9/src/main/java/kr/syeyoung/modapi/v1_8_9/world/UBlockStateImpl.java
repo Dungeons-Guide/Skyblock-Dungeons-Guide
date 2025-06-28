@@ -1,5 +1,6 @@
 package kr.syeyoung.modapi.v1_8_9.world;
 
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlock;
@@ -8,6 +9,8 @@ import net.minecraft.block.BlockColored;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.state.IBlockState;
+
+import java.util.Set;
 
 public class UBlockStateImpl implements UBlockState {
     private IBlockState delegate;
@@ -35,8 +38,13 @@ public class UBlockStateImpl implements UBlockState {
         return "wow";
     }
 
+
     @Override
     public boolean isOf(BlockType... blocks) {
+        for (BlockType blockType : blocks) {
+            Set<UBlockState> blockstates = ModAPI.getAPI().getBlockRegistry().getStatesByType(blockType);
+            if (blockstates.contains(this)) return true;
+        }
         return false;
     }
 
