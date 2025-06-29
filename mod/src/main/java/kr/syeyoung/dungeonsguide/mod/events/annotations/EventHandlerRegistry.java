@@ -120,6 +120,7 @@ public class EventHandlerRegistry {
     public static synchronized void registerActualListeners() {
         for (Class aClass : targets.keySet()) {
             if (registeredHandlers.containsKey(aClass)) continue;
+            if (registrations.containsKey(aClass)) continue;
 
             try {
                 if (Event.class.isAssignableFrom(aClass)) {
