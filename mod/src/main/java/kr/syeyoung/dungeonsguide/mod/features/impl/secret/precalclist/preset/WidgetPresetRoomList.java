@@ -13,7 +13,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.AllArgsConstructor;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -44,7 +43,7 @@ public class WidgetPresetRoomList extends AnnotatedImportOnlyWidget {
     private List<AdditionalInfoCaculatedDungeonRoomInfo> calculatedDRI;
     private List<WidgetPresetRoom> roomWidgets = new ArrayList<>();
     public WidgetPresetRoomList(PathfindPreset preset, WidgetViewPreset widgetViewPreset, List<AdditionalInfoCaculatedDungeonRoomInfo> roomInfoList) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/presetview/roomlist.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/presetview/roomlist.gui"));
         this.preset = preset;
         this.parent = widgetViewPreset;
 

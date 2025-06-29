@@ -27,7 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPresetRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -66,7 +65,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
     private BindableAttribute<AlgorithmSetting> algorithmSettingBindableAttribute = new BindableAttribute<>(AlgorithmSetting.class);
 
     public WidgetPresetMetadata(PathfindPreset preset, WidgetViewPreset widgetViewPreset) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/presetview/metadata.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/presetview/metadata.gui"));
         this.preset = preset;
         this.parent = widgetViewPreset;
 

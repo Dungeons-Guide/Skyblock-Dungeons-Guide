@@ -27,7 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class WidgetProfileViewer extends AnnotatedWidget {
 
@@ -42,7 +42,7 @@ public class WidgetProfileViewer extends AnnotatedWidget {
     private GameProfile gameProfile;
     private Runnable close;
     public WidgetProfileViewer(GameProfile gameProfile, Runnable close) {
-        super(new ResourceLocation("dungeonsguide:gui/features/profileViewer/pv.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/profileViewer/pv.gui"));
         this.gameProfile = gameProfile;
         this.close = close;
         refresh();

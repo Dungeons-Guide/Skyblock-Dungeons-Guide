@@ -17,12 +17,12 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ import java.util.Map;
 public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
     private MapConfiguration mapConfiguration = new MapConfiguration();
     public WidgetSpiritLeap() {
-        super(new ResourceLocation("dungeonsguide:gui/features/spiritleap/spiritleap.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/spiritleap/spiritleap.gui"));
         MapConfiguration defaultConfig = FeatureRegistry.DUNGEON_MAP2.getMapConfiguration();
         mapConfiguration.setMapScale(1.0);
         mapConfiguration.setBorder(defaultConfig.getBorder());

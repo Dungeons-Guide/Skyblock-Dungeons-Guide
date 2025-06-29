@@ -53,14 +53,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.*;
 import java.util.stream.Stream;
 
 public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     public WidgetPartyFinder() {
-        super(new ResourceLocation("dungeonsguide:gui/features/partyFinder/custom_party_finder.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/partyFinder/custom_party_finder.gui"));
         filterUnjoinable.addOnUpdate(this::updateUnjoinable);
         filterUnjoinable.addOnUpdate((old,neu) -> {
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);

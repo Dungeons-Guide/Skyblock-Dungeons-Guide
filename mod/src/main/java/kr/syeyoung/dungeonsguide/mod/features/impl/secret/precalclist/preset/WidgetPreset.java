@@ -10,7 +10,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.Getter;
-import net.minecraft.util.ResourceLocation;
 
 public class WidgetPreset extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "backgroundColor")
@@ -28,7 +27,7 @@ public class WidgetPreset extends AnnotatedImportOnlyWidget {
     private PathfindPreset preset;
 
     public WidgetPreset(PathfindPreset preset, WidgetPrecalcList presetList) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/preset.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/preset.gui"));
         this.name.setValue(preset.getPresetName());
         this.backgroundColor.setValue(preset.getPresetId().equals(FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPresetId()) ? 0xFF005756 : 0xFF505050);
         this.buttonTxt.setValue(preset.isEditable() ? "Edit/View" : "View");

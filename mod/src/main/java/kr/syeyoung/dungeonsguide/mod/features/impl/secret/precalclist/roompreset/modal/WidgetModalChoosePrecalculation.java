@@ -10,7 +10,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ public class WidgetModalChoosePrecalculation extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "list")
     public final BindableAttribute<List<Widget>> list = new BindableAttribute(WidgetList.class);
     public WidgetModalChoosePrecalculation(List<PathfindPrecalculation> options) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/modal_choose_precalculation.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/modal_choose_precalculation.gui"));
 
         List<Widget> optionsList = new ArrayList<>();
         for (PathfindPrecalculation option : options) {

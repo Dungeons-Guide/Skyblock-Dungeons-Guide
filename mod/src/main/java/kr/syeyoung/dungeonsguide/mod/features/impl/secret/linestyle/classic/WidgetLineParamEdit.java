@@ -27,7 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.function.Function;
 
@@ -61,7 +61,7 @@ public class WidgetLineParamEdit extends AnnotatedImportOnlyWidget {
     }
 
     public WidgetLineParamEdit(ClassicPathDisplayEngineRegistration.ClassicPathDisplayEngineSetting lineProperties) {
-        super(new ResourceLocation("dungeonsguide:gui/features/lineProperties/styles/classic.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/lineProperties/styles/classic.gui"));
 
         pathfindToggle.setValue(lineProperties.isPathfind() ? "true" : "false");
         beaconToggle.setValue(lineProperties.isBeacon() ? "true": "false");

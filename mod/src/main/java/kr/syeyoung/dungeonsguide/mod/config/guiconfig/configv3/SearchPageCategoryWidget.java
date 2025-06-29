@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +34,7 @@ public class SearchPageCategoryWidget extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "category")
     public final BindableAttribute<String> category = new BindableAttribute<>(String.class);
     public SearchPageCategoryWidget(String category, List<AbstractFeature> featureList) {
-        super(new ResourceLocation("dungeonsguide:gui/config/search/fromcategory.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/search/fromcategory.gui"));
         items.setValue(featureList.stream().map(FeatureItem::new).collect(Collectors.toList()));
         this.category.setValue(category.replace(".", " > "));
     }

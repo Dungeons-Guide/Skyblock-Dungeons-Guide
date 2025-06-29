@@ -23,7 +23,7 @@ public class WidgetAbilitySettingOption extends AnnotatedImportOnlyWidget {
 
     private WidgetModalChooseAbilitySettings parent;
     public WidgetAbilitySettingOption(AlgorithmSetting algorithmSetting, WidgetModalChooseAbilitySettings parent) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/abilityedit/choose_ability_dummy.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/abilityedit/choose_ability_dummy.gui"));
 
         this.algorithmSetting = algorithmSetting;
         this.widgetBindableAttribute.setValue(new WidgetAbilitySettings(

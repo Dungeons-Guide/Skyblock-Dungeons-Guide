@@ -37,7 +37,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 
 import java.util.*;
@@ -232,7 +231,7 @@ public class FineGridStonkingBFS implements IPathfinder {
 
                 neighbor.blocked = neighborState.isBlocked();
                 if (!neighborState.isBlocked() && down < 10) {
-                    float gScore = n.g + 20 + MathHelper.sqrt_float(down*down + 16);
+                    float gScore = (float) (n.g + 20 + Math.sqrt(down*down + 16));
                     if (gScore < neighbor.g) {
                         neighbor.parent = n;
                         neighbor.stonkLength = 0;
@@ -271,7 +270,7 @@ public class FineGridStonkingBFS implements IPathfinder {
 
                 neighbor.blocked = neighborState.isBlocked();
                 if (!neighborState.isBlocked() && 5 < down && down < 30) {
-                    float gScore = n.g + 20 + MathHelper.sqrt_float(down*down + 16);
+                    float gScore = (float) (n.g + 20 + Math.sqrt(down*down + 16));
                     if (gScore < neighbor.g) {
                         neighbor.parent = n;
                         neighbor.stonkLength = 0;
@@ -453,7 +452,7 @@ public class FineGridStonkingBFS implements IPathfinder {
 
     private int manhatten(int x, int y, int z) {return Math.abs(x)+ Math.abs(y)+ Math.abs(z);}
     private float distSq(float x, float y, float z) {
-        return MathHelper.sqrt_float(x * x + y * y + z * z);
+        return (float) Math.sqrt(x * x + y * y + z * z);
     }
 
     @Override

@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.styles.ITextStyle;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.*;
 
@@ -53,7 +53,7 @@ public class WidgetTextStyleConfig extends AnnotatedImportOnlyWidget {
     private final Map<String, DefaultingDelegatingTextStyle> styleMap;
     private final Map<String, WidgetGroupButton> buttons = new HashMap<>();
     public WidgetTextStyleConfig(TextSpan span, Map<String, DefaultingDelegatingTextStyle> styles) {
-        super(new ResourceLocation("dungeonsguide:gui/config/text/textconfig.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/text/textconfig.gui"));
         this.span = span;
         this.styleMap = styles;
 

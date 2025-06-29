@@ -27,7 +27,7 @@ public class WidgetLeapPlayer extends AnnotatedImportOnlyWidget {
     private String clazz;
 
     public WidgetLeapPlayer(WarpTarget target, TabListEntry entry) {
-        super(new ResourceLocation("dungeonsguide:gui/features/spiritleap/leapplayer.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/spiritleap/leapplayer.gui"));
         this.backgroundColor.setValue(0xFF555555);
         this.borderColor.setValue(0xFFFFFFFF);
 

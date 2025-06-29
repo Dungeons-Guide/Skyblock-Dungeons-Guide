@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +45,7 @@ public class WidgetConstStyleGroupStyleLine extends AnnotatedImportOnlyWidget {
     private List<String> hover;
     private Supplier<Boolean> eraseEvaluator;
     public WidgetConstStyleGroupStyleLine(String name, Supplier<Boolean> erase, Object value, String eraseReason) {
-        super(new ResourceLocation("dungeonsguide:gui/config/text/styleline.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/text/styleline.gui"));
         this.name.setValue(name);
         this.eraseEvaluator = erase;
         refresh();

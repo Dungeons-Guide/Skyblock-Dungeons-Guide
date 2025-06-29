@@ -43,7 +43,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.util.glu.Project;
@@ -149,7 +148,7 @@ public class WidgetPreview extends Widget implements Renderer {
         GlStateManager.loadIdentity();
         Project.gluPerspective(70F,
                 (float) (buildContext.getSize().getWidth() / buildContext.getSize().getHeight())
-                , 0.05F, 4 * 16 * MathHelper.SQRT_2);
+                , 0.05F, (float) (4 * 16 * Math.sqrt(2)));
 
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.pushMatrix();

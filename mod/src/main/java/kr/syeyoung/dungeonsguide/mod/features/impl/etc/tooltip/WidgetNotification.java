@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.UUID;
 
@@ -38,7 +38,7 @@ public class WidgetNotification extends AnnotatedImportOnlyWidget {
 
     private UUID uuid;
     public WidgetNotification(UUID uuid, Notification notification) {
-        super(new ResourceLocation("dungeonsguide:gui/features/notifications/tooltip.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/notifications/tooltip.gui"));
         this.notification =notification;
         title.setValue(notification.getTitle());
         color.setValue(notification.getTitleColor());

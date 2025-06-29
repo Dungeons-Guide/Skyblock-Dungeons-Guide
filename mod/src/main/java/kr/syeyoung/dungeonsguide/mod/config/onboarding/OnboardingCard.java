@@ -17,7 +17,6 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +56,7 @@ public class OnboardingCard extends AnnotatedWidget {
 
 
     public OnboardingCard() {
-        super(new ResourceLocation("dungeonsguide:gui/onboarding/card.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/onboarding/card.gui"));
 
         parserElementBindableAttribute.addOnUpdate((old, neu) -> {
             settings = new OnboardingCardSettings();

@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class WidgetLinePropertiesEditor extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "config")
@@ -33,7 +33,7 @@ public class WidgetLinePropertiesEditor extends AnnotatedImportOnlyWidget {
 
     private PathfindLineProperties parent;
     public WidgetLinePropertiesEditor(PathfindLineProperties parent) {
-        super(new ResourceLocation("dungeonsguide:gui/features/lineProperties/editor.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/lineProperties/editor.gui"));
         this.config.setValue(new WidgetLineParamEditParent(this, parent));
         this.preview.setValue(parent.getSetting().createPreviewWidget());
         this.parent = parent;

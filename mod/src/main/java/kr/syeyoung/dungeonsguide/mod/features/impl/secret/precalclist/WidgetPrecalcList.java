@@ -50,7 +50,7 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
 
 
     public WidgetPrecalcList() {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/precalclist.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/precalclist.gui"));
         loadPresets();
     }
 

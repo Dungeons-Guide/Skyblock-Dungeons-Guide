@@ -28,6 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.ResourcePackRepository;
@@ -51,7 +52,7 @@ public class WidgetPresetList extends AnnotatedImportOnlyWidget {
     private FeatureDungeonMap2 dungeonMap2;
     private WidgetMapConfiguration mapConfiguration;
     public WidgetPresetList(FeatureDungeonMap2 dungeonMap2, WidgetMapConfiguration configuration) {
-        super(new ResourceLocation("dungeonsguide:gui/features/map/presetlist.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/map/presetlist.gui"));
 
         this.dungeonMap2 = dungeonMap2;
         this.mapConfiguration = configuration;
@@ -106,7 +107,7 @@ public class WidgetPresetList extends AnnotatedImportOnlyWidget {
         private WidgetPresetList presetList;
         private Preset preset;
         public WidgetPreset(Preset preset, WidgetPresetList widgetPresetList) {
-            super(new ResourceLocation("dungeonsguide:gui/features/map/preset.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/features/map/preset.gui"));
 
             this.name.setValue(preset.getName());
             this.description.setValue(preset.getDescription());

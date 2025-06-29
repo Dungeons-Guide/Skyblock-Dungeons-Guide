@@ -22,7 +22,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import org.apache.commons.io.FileUtils;
 
@@ -46,7 +45,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
     private PathfindPreset preset;
     public WidgetModalExportSettings(PathfindPreset preset) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/presetview/modal_export_settings.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/presetview/modal_export_settings.gui"));
 
         this.preset = preset;
 

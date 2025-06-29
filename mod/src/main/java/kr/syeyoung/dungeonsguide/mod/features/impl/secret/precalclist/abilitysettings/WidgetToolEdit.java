@@ -70,7 +70,7 @@ public class WidgetToolEdit extends AnnotatedImportOnlyWidget {
 
     private ToolType type;
     public WidgetToolEdit(ToolType type, BindableAttribute<AlgorithmSetting.ToolSettings> toolSettingsBindableAttribute) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/abilityedit/tooledit.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/abilityedit/tooledit.gui"));
         currentToolSettings.exportTo(toolSettingsBindableAttribute);
         this.type = type;
 

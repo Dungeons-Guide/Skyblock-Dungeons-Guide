@@ -34,7 +34,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +59,7 @@ public class WidgetProfileViewerData extends AnnotatedWidget {
     private List<WidgetDataRendererWrapper> dataRendererWrapperList = new ArrayList<>();
 
     public WidgetProfileViewerData(GameProfile gameProfile, PlayerSkyblockData playerSkyblockData) {
-        super(new ResourceLocation("dungeonsguide:gui/features/profileViewer/data.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/profileViewer/data.gui"));
 
         this.playerSkyblockData = playerSkyblockData;
         this.gameProfile = gameProfile;

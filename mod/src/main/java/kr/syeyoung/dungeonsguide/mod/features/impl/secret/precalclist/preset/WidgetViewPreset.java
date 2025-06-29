@@ -11,8 +11,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.Getter;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class WidgetViewPreset extends AnnotatedImportOnlyWidget {
                     .setNameFormat("DG-ViewPresetCalc-%d").build()));
 
     public WidgetViewPreset(PathfindPreset preset, WidgetPrecalcList presetList) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/presetview.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/presetview.gui"));
         this.preset = preset;
         this.presetList = presetList;
 

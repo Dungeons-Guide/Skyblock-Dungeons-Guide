@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class WidgetCategory extends AnnotatedWidget {
     @Bind(variableName = "children")
     public final BindableAttribute children = new BindableAttribute<>(WidgetList.class);
     public WidgetCategory(String s, DungeonRoom dungeonRoom, Map<String, DungeonMechanicState> dungeonMechanics, Consumer<String> onSelect) {
-        super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/category.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/mechanicBrowser/category.gui"));
         categoryName.setValue(s);
 
         List<Widget> widgets = new ArrayList<>();

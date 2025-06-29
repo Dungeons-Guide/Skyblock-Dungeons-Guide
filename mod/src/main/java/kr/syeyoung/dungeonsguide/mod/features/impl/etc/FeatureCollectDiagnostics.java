@@ -39,7 +39,6 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.util.ResourceLocation;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -61,7 +60,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
 
     public class WidgetUserApproval extends AnnotatedImportOnlyWidget {
         public WidgetUserApproval() {
-            super(new ResourceLocation("dungeonsguide:gui/collect_diagnostic_approval.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/collect_diagnostic_approval.gui"));
         }
 
         @On(functionName = "approve")

@@ -19,10 +19,10 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
+import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.util.MathHelper;
 
 import java.awt.*;
 
@@ -179,7 +179,7 @@ public class MScrollablePanel extends MPanel {
     @Override
     public void mouseScrolled(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
         if (lastAbsClip.contains(absMouseX, absMouseY) && (axis == 1 || axis == 3)) {
-            scrollBarY.addToCurrent(MathHelper.clamp_int(scrollAmount, -1, 1) * -30);
+            scrollBarY.addToCurrent(MathUtils.clamp_int(scrollAmount, -1, 1) * -30);
         }
     }
 }

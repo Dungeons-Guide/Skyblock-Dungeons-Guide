@@ -60,7 +60,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
     private final BindableAttribute<AlgorithmSetting> algorithmSettingBindableAttribute = new BindableAttribute<>(AlgorithmSetting.class);
 
     public WidgetPresetRoomDetailsMetadata(AdditionalInfoCaculatedDungeonRoomInfo roomInfo, WidgetPresetRoomDetails parent) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/metadata.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/roompresetview/metadata.gui"));
         this.roomInfo = roomInfo;
         this.details = parent;
 

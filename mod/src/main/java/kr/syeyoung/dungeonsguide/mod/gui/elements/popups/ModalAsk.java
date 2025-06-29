@@ -24,7 +24,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 public class ModalAsk extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "text")
@@ -35,7 +34,7 @@ public class ModalAsk extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> input = new BindableAttribute<>(String.class, "");
 
     public ModalAsk(String text, String placeholder, String current) {
-        super(new ResourceLocation("dungeonsguide:gui/elements/modal_ask.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/elements/modal_ask.gui"));
         this.text.setValue(text);
         this.placeholder.setValue(placeholder);
         this.input.setValue(current);

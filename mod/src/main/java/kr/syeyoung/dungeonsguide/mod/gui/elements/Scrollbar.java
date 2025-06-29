@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Passthrough;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 @Passthrough(exportName = "_track", bindName = "track", type = Widget.class)
 @Passthrough(exportName = "_thumb", bindName = "thumb", type = Widget.class)
@@ -68,7 +68,7 @@ public class Scrollbar extends AnnotatedWidget {
     }
 
     public Scrollbar() {
-        super(new ResourceLocation("dungeonsguide:gui/elements/scrollBar.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/elements/scrollBar.gui"));
 
         thumbValue.addOnUpdate(this::updateStuff);
         min.addOnUpdate(this::updateStuff);

@@ -7,7 +7,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.lang.ref.WeakReference;
 
@@ -19,7 +19,7 @@ public class WidgetStep2Uploading extends AnnotatedImportOnlyWidget {
     private WidgetPendingRequestPage parent;
 
     public WidgetStep2Uploading(WidgetPendingRequestPage parent, PathfindPrecalculationRequestSet requestSet) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/step2/calculating.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/pendingreq/step2/calculating.gui"));
         this.requestSet = requestSet;
         this.parent = parent;
         progress.setValue(requestSet.getProgressForGui());

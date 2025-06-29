@@ -28,8 +28,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.block.material.MapColor;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,7 @@ public class WidgetAddRoomPopup extends AnnotatedImportOnlyWidget {
 
     private WidgetMapConfiguration widgetMapConfiguration;
     public WidgetAddRoomPopup(WidgetMapConfiguration mapConfiguration) {
-        super(new ResourceLocation("dungeonsguide:gui/features/map/add_room_popup.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/map/add_room_popup.gui"));
         this.widgetMapConfiguration =mapConfiguration;
         List<Widget> widgets = new ArrayList<>();
 
@@ -126,7 +126,7 @@ public class WidgetAddRoomPopup extends AnnotatedImportOnlyWidget {
         private UUID uuid;
         private Consumer<UUID> add;
         public WidgetRoom(DungeonRoomInfo dungeonRoomInfo, Consumer<UUID> add) {
-            super(new ResourceLocation("dungeonsguide:gui/features/map/room.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/features/map/room.gui"));
             this.uuid = dungeonRoomInfo.getUuid();
 
             short shapeShort = dungeonRoomInfo.getShape();

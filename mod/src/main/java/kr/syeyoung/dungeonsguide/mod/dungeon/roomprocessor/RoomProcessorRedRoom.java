@@ -31,6 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.styles.ParentDelegati
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.data.Vector3D;
@@ -38,7 +39,6 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 
 public class RoomProcessorRedRoom extends GeneralRoomProcessor {
@@ -72,7 +72,7 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
             offsetPoint = new OffsetPoint(33- offsetPoint.getX(), offsetPoint.getY(), 33 - offsetPoint.getZ());
             VectorI3D opposite =offsetPoint.getBlockPos(getDungeonRoom());
             VectorI3D dir = real.getPosition().subtract(opposite);
-            dir = new VectorI3D(MathHelper.clamp_int(dir.getX() / 10, -1, 1), 0, MathHelper.clamp_int(dir.getZ() / 10, -1, 1));
+            dir = new VectorI3D(MathUtils.clamp_int(dir.getX() / 10, -1, 1), 0, MathUtils.clamp_int(dir.getZ() / 10, -1, 1));
 
             this.basePt = new Vector3D(opposite.add(dir.getX() * 6 + dir.getZ(), 3, dir.getZ() * 6 - dir.getX()));
 

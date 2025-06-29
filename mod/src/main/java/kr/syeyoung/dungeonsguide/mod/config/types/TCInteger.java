@@ -29,7 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
 public class TCInteger implements FeatureTypeHandler<Integer> {
@@ -57,7 +56,7 @@ public class TCInteger implements FeatureTypeHandler<Integer> {
         public final BindableAttribute<String> value = new BindableAttribute<>(String.class);
         private int truth;
         public IntegerEditWidget(FeatureParameter<Integer> featureParameter) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/number.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/number.gui"));
             this.truth = featureParameter.getValue();
             value.setValue(String.valueOf(truth));
             value.addOnUpdate((old,neu) -> {

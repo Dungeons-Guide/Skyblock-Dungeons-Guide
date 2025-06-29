@@ -11,7 +11,6 @@ import lombok.Getter;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockSkull;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.MathHelper;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -63,12 +62,12 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
                 wX - 0.5, wY - 0.5, wZ - 0.5, wX + 0.5, wY + 0.5, wZ+0.5
         );
 
-        int minX = MathHelper.floor_double(bb.minX);
-        int maxX = MathHelper.floor_double(bb.maxX + 1.0D);
-        int minY = MathHelper.floor_double(bb.minY);
-        int maxY = MathHelper.floor_double(bb.maxY + 1.0D);
-        int minZ = MathHelper.floor_double(bb.minZ);
-        int maxZ = MathHelper.floor_double(bb.maxZ + 1.0D);
+        int minX = (int) Math.floor(bb.minX);
+        int maxX = (int) Math.floor(bb.maxX + 1.0D);
+        int minY = (int) Math.floor(bb.minY);
+        int maxY = (int) Math.floor(bb.maxY + 1.0D);
+        int minZ = (int) Math.floor(bb.minZ);
+        int maxZ = (int) Math.floor(bb.maxZ + 1.0D);
 
         AABB testBox = bb.addCoord(0, -0.5, 0);
         VectorI3D blockPos = new VectorI3D(0,0,0);

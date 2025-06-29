@@ -102,7 +102,7 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<Integer> hasteSettings = new BindableAttribute<>(Integer.class, 0);
 
     public WidgetCreateAbilitySettings(AlgorithmSetting defaultAlgorithm) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/abilityedit/abilitycreate.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/abilityedit/abilitycreate.gui"));
 
         pickaxeSettings.addOnUpdate((old ,neu) -> {
             pickaxeIndex.setValue(neu == null ? 3 : neu.getTool().getToolMaterial().ordinal() * 8);

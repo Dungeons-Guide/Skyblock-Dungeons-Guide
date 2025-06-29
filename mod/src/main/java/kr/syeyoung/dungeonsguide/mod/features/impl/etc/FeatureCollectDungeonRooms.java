@@ -70,7 +70,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -100,7 +99,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
     public class WidgetUserApproval extends AnnotatedImportOnlyWidget {
         public WidgetUserApproval() {
-            super(new ResourceLocation("dungeonsguide:gui/collect_rooms_approval.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/collect_rooms_approval.gui"));
         }
 
         @On(functionName = "approve")

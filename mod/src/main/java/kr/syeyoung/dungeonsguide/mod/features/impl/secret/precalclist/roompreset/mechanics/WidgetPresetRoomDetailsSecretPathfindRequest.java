@@ -24,7 +24,7 @@ public class WidgetPresetRoomDetailsSecretPathfindRequest extends AnnotatedImpor
     public WidgetPresetRoomDetailsSecretPathfindRequest(PathfindRequest request,
                                                         AdditionalInfoCaculatedDungeonRoomInfo dungeonRoomInfo,
                                                         WidgetPresetRoomDetailsSecretPFCategory widgetPresetRoomDetailsSecretPFCategory) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequest.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequest.gui"));
         this.pathfindRequest = request;
         this.roomInfo = dungeonRoomInfo;
         this.parent = widgetPresetRoomDetailsSecretPFCategory;

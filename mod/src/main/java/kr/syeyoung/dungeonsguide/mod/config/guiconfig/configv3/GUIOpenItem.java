@@ -42,7 +42,7 @@ public class GUIOpenItem extends AnnotatedImportOnlyWidget {
 
     private Supplier<Widget> pageCreator;
     public GUIOpenItem(String category, Supplier<Widget> creator) {
-        super(new ResourceLocation("dungeonsguide:gui/config/menuitem.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/menuitem.gui"));
         this.pageCreator = creator;
 
         bindableAttribute.setValue(category);

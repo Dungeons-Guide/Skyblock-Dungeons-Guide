@@ -12,7 +12,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,7 @@ public class WidgetReceipt extends AnnotatedImportOnlyWidget {
     private long reqCredits;
     private WidgetPrecalcStep2 step2;
     public WidgetReceipt(WidgetPrecalcStep2 step2, long requiredCredits) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/step2/receipt.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/pendingreq/step2/receipt.gui"));
         this.requiredCredits.setValue(requiredCredits+"");
         this.reqCredits = requiredCredits;
         this.purchaseCredits.setValue("Loading...");
@@ -92,7 +91,7 @@ public class WidgetReceipt extends AnnotatedImportOnlyWidget {
         public final BindableAttribute<String> credit = new BindableAttribute<>(String.class);
 
         public WidgetReceiptItem(String item, String credit) {
-            super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/step2/receiptitem.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/pendingreq/step2/receiptitem.gui"));
             this.item.setValue(item);
             this.credit.setValue(credit);
         }

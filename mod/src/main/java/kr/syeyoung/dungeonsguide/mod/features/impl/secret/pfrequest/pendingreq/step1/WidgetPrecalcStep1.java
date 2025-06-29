@@ -17,7 +17,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
@@ -32,7 +31,7 @@ public class WidgetPrecalcStep1 extends AnnotatedImportOnlyWidget {
     private WidgetPendingRequestPage parent;
 
     public WidgetPrecalcStep1(WidgetPendingRequestPage parent, PathfindPrecalculationRequestSet requestSet) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/step1/step1.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/pendingreq/step1/step1.gui"));
         this.requestSet = requestSet;
         this.parent = parent;
         step2calc.setValue(new WidgetStep2Calc(requestSet));
@@ -73,7 +72,7 @@ public class WidgetPrecalcStep1 extends AnnotatedImportOnlyWidget {
 
         private PathfindPrecalculationRequestSet requestSet;
         public WidgetStep2Calc(PathfindPrecalculationRequestSet requestSet) {
-            super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/step1/step2calc.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/pendingreq/step1/step2calc.gui"));
             this.requestSet = requestSet;
 
             remoteEstimate.setValue(new WidgetStep2CalcRemote(requestSet));
@@ -89,7 +88,7 @@ public class WidgetPrecalcStep1 extends AnnotatedImportOnlyWidget {
             private PathfindPrecalculationRequestSet requestSet;
 
             public WidgetStep2CalcLocal(PathfindPrecalculationRequestSet requestSet) {
-                super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/step1/local.gui"));
+                super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/pendingreq/step1/local.gui"));
                 this.requestSet = requestSet;
 
                 this.reqCalcUnit.setValue(requestSet.getCredits()+"");
@@ -113,7 +112,7 @@ public class WidgetPrecalcStep1 extends AnnotatedImportOnlyWidget {
             private PathfindPrecalculationRequestSet requestSet;
 
             public WidgetStep2CalcRemote(PathfindPrecalculationRequestSet requestSet) {
-                super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/step1/remote.gui"));
+                super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/pendingreq/step1/remote.gui"));
                 this.requestSet = requestSet;
 
                 this.reqCalcUnit.setValue(requestSet.getCredits()+"");

@@ -49,6 +49,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.world.BlockType;
@@ -75,7 +76,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
@@ -95,8 +95,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FeatureRoomEdit  extends SimpleFeature {
@@ -520,7 +520,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
         private List<FeatureRoomEdit.RoomSwitch> switches;
         public RoomConfiguration() {
-            super(new ResourceLocation("dungeonsguide:gui/features/roomedit/roomconfiguration.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/features/roomedit/roomconfiguration.gui"));
 
 
             rooms.setValue(switches = buildRooms());
@@ -754,7 +754,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
         private DungeonRoomInfo info;
         public RoomSwitch(DungeonRoomInfo dungeonRoomInfo) {
-            super(new ResourceLocation("dungeonsguide:gui/features/roomedit/room.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/features/roomedit/room.gui"));
             name.setValue(dungeonRoomInfo.getName());
             uuid.setValue(dungeonRoomInfo.getUuid().toString());
             StringBuilder builder = new StringBuilder();

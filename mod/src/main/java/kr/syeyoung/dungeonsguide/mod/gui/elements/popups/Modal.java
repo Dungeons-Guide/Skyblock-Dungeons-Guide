@@ -25,7 +25,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 public class Modal extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "title")
@@ -40,7 +39,7 @@ public class Modal extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "closeVisible")
     public final BindableAttribute<String> closevisible = new BindableAttribute<>(String.class, "false");
     public Modal(double width, double height, String title, Widget child, boolean close) {
-        super(new ResourceLocation("dungeonsguide:gui/elements/modal.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/elements/modal.gui"));
         this.width.setValue(width);
         this.height.setValue(height);
         this.title.setValue(title);

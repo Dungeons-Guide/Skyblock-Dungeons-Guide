@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
@@ -38,14 +39,13 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
 import java.util.Queue;
+import java.util.*;
 
 public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
@@ -231,7 +231,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 VectorI3D pos = poses[fromY][fromX];
                 VectorI3D pos2 = poses[boxMove.y][boxMove.x];
                 VectorI3D dir = pos.subtract(pos2);
-                dir = new VectorI3D(MathHelper.clamp_int(dir.getX(), -1,1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
+                dir = new VectorI3D(MathUtils.clamp_int(dir.getX(), -1,1), 0, MathUtils.clamp_double(dir.getZ(), -1, 1));
 
                 VectorI3D highlight = pos2.add(dir);
                 totalPushedBlocks.add(highlight);
@@ -360,10 +360,10 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 VectorI3D pos = poses[fromY][fromX];
                 VectorI3D pos2 = poses[boxMove.y][boxMove.x];
                 VectorI3D dir = pos.subtract(pos2);
-                dir = new VectorI3D(MathHelper.clamp_int(dir.getX(), -1, 1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
+                dir = new VectorI3D(MathUtils.clamp_int(dir.getX(), -1, 1), 0, MathUtils.clamp_double(dir.getZ(), -1, 1));
 
                 VectorI3D highlight = pos2.add(dir);
-                AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(MathHelper.clamp_double(ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(highlight), 100, 255) / 255);
+                AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(MathUtils.clamp_double(ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(highlight), 100, 255) / 255);
                 RenderUtils.highlightBoxAColor(new AABB(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, partialTicks, false);
             }
 

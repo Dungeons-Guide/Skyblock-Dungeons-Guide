@@ -6,7 +6,9 @@ import kr.syeyoung.modapi.world.UBlock;
 import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockStairs;
+import net.minecraft.block.BlockWall;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -21,7 +23,6 @@ public class BlockStateRegistryImpl implements IBlockRegistry {
 
     private ObjectIntIdentityMap<UBlockStateImpl> map = new ObjectIntIdentityMap<>();
     private UBlockImpl[] byId;
-
 
 
     @Getter
@@ -191,6 +192,27 @@ public class BlockStateRegistryImpl implements IBlockRegistry {
                         if (block instanceof BlockStairs)
                             addAllVariantsOf(block, b);
                     }
+                    break;
+                case TAG_WALL:
+                    for (Block block : Block.blockRegistry) {
+                        if (block instanceof BlockWall)
+                            addAllVariantsOf(block, b);
+                    }
+                    break;
+                case TAG_FENCE:
+                    for (Block block : Block.blockRegistry) {
+                        if (block instanceof BlockFence)
+                            addAllVariantsOf(block, b);
+                    }
+                    break;
+                case WALL_SIGN:
+                    addAllVariantsOf(Blocks.wall_sign, b);
+                    break;
+                case QUARTZ_ORE:
+                    addAllVariantsOf(Blocks.quartz_ore, b);
+                    break;
+                case STANDING_SIGN:
+                    addAllVariantsOf(Blocks.standing_sign, b);
                     break;
             }
         }

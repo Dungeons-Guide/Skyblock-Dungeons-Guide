@@ -21,11 +21,11 @@ package kr.syeyoung.dungeonsguide.mod.gui.view;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class TestPopup extends AnnotatedImportOnlyWidget {
     public TestPopup() {
-        super(new ResourceLocation("dungeonsguide:gui/testpopup.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/testpopup.gui"));
     }
 
     @On(functionName = "close")

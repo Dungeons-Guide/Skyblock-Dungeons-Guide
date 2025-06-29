@@ -24,7 +24,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPresetRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
@@ -37,8 +36,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
@@ -66,7 +65,7 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
     private String downloadUrl;
     private RemoteCache cache;
     public WidgetRequestDetails(String requestId) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/remotereq/requestdetails.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/remotereq/requestdetails.gui"));
         this.requestId = requestId;
 
         this.requestIdAtr.setValue(requestId);

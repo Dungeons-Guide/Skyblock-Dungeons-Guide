@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import org.apache.commons.lang3.StringUtils;
 
 public class ColorEditPopup extends AnnotatedImportOnlyWidget {
@@ -42,7 +42,7 @@ public class ColorEditPopup extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<AColor> aColorBindableAttribute = new BindableAttribute<>(AColor.class);
 
     public ColorEditPopup(BindableAttribute<AColor> colorBindableAttribute) {
-        super(new ResourceLocation("dungeonsguide:gui/config/parameter/colorSet.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/colorSet.gui"));
 
         aColorBindableAttribute.addOnUpdate((old, neu) ->{
             color.setValue("#" + StringUtils.leftPad(Integer.toHexString(neu.getRGB()).toUpperCase(), 8, '0'));

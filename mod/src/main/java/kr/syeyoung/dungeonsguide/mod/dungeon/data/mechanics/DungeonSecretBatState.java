@@ -42,8 +42,8 @@ import lombok.Data;
 import lombok.Getter;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 @Data
 public class DungeonSecretBatState implements DungeonMechanicState, ISecret {

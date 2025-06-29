@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class TCString implements FeatureTypeHandler<String> {
     public static final TCString INSTANCE = new TCString();
@@ -52,7 +52,7 @@ public class TCString implements FeatureTypeHandler<String> {
         @Bind(variableName = "value")
         public final BindableAttribute<String> value = new BindableAttribute<>(String.class);
         public StringEditWidget(FeatureParameter<String> featureParameter) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/string.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/string.gui"));
             value.setValue(featureParameter.getValue());
             value.addOnUpdate((old,neu) -> featureParameter.setValue(neu));
         }

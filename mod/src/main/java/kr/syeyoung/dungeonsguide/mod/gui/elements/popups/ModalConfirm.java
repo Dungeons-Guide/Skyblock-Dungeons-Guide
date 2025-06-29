@@ -24,14 +24,13 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 public class ModalConfirm extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "text")
     public final BindableAttribute<String> text = new BindableAttribute<>(String.class);
 
     public ModalConfirm(String text) {
-        super(new ResourceLocation("dungeonsguide:gui/elements/modal_confirm_message.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/elements/modal_confirm_message.gui"));
         this.text.setValue(text);
     }
 

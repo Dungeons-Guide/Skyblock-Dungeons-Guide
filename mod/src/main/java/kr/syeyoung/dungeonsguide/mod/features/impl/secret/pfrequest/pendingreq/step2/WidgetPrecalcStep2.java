@@ -9,7 +9,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.io.File;
@@ -34,7 +33,7 @@ public class WidgetPrecalcStep2 extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> err = new BindableAttribute<>(String.class, "");
 
     public WidgetPrecalcStep2(WidgetPendingRequestPage parent, PathfindPrecalculationRequestSet requestSet) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/step2/step2.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/pendingreq/step2/step2.gui"));
 
         this.parent = parent;
         this.requestSet = requestSet;

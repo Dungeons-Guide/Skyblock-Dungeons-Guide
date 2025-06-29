@@ -22,13 +22,13 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MinecraftTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MouseTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.Arrays;
 
 public class WidgetHelp extends AnnotatedImportOnlyWidget {
     public WidgetHelp() {
-        super(new ResourceLocation("dungeonsguide:gui/config/text/help.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/text/help.gui"));
     }
 
     private MinecraftTooltip actualTooltip = new MinecraftTooltip();

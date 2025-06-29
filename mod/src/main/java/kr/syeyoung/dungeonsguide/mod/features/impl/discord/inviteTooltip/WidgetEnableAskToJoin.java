@@ -28,7 +28,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class WidgetEnableAskToJoin extends AnnotatedImportOnlyWidget {
     public WidgetEnableAskToJoin() {
-        super(new ResourceLocation("dungeonsguide:gui/features/discordInvite/enable_ask_to_join.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/discordInvite/enable_ask_to_join.gui"));
     }
 
     @On(functionName = "enable")

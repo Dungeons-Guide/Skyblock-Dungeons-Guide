@@ -22,8 +22,8 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
-import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.java_websocket.client.WebSocketClient;
@@ -158,7 +158,7 @@ public class StompClient extends WebSocketClient {
         if (heartbeat != null) heartbeat.cancel(true);
 //        ex.shutdownNow(); // OHHHHH
         stompClientStatus = StompClientStatus.DISCONNECTED;
-        MinecraftForge.EVENT_BUS.post(new StompDiedEvent(code, reason, remote));
+        ModAPI.getAPI().getEventBus().fireEvent(new StompDiedEvent(code, reason, remote));
         StompManager.getInstance().onStompDied(new StompDiedEvent(code, reason, remote));
     }
 

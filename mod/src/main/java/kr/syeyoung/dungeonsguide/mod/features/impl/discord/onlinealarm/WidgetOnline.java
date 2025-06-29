@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.TTL;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class WidgetOnline extends AnnotatedWidget implements TTL {
 
@@ -37,7 +37,7 @@ public class WidgetOnline extends AnnotatedWidget implements TTL {
     private JDiscordRelation relation;
     private long start;
     public WidgetOnline(WidgetOnlinePeopleViewer parent, JDiscordRelation relation) {
-        super(new ResourceLocation("dungeonsguide:gui/features/discordOnline/discordOnline.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/discordOnline/discordOnline.gui"));
         this.viewer = parent;
         this.relation = relation;
         start = System.currentTimeMillis();

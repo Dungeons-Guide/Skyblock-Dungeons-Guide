@@ -27,7 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.SingleChildRenderer;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.UUID;
 
@@ -52,7 +52,7 @@ public class WidgetNotificationAutoClose extends AnnotatedImportOnlyWidget imple
     private long delay;
     private long now = -1;
     public WidgetNotificationAutoClose(UUID uuid, Notification notification, long delay) {
-        super(new ResourceLocation("dungeonsguide:gui/features/notifications/tooltipClosing.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/notifications/tooltipClosing.gui"));
         this.notification =notification;
         title.setValue(notification.getTitle());
         color.setValue(notification.getTitleColor());

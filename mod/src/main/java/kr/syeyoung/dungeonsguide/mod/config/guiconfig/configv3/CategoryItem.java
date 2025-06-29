@@ -44,7 +44,7 @@ public class CategoryItem extends AnnotatedImportOnlyWidget {
     private boolean triggerSidemenu = false;
 
     public CategoryItem(Supplier<Widget> pageCreator, String category, String description) {
-        super(new ResourceLocation("dungeonsguide:gui/config/categoryitem.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/categoryitem.gui"));
         this.pageCreator = pageCreator;
 
         this.name.setValue(category);

@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.SingleChildRenderer;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.Locale;
 
@@ -68,7 +68,7 @@ public class WidgetColorButton extends AnnotatedImportOnlyWidget implements Rend
 
     private boolean chroma = false;
     public WidgetColorButton(boolean enabled, String colorcode, Runnable onClick) {
-        super(new ResourceLocation("dungeonsguide:gui/config/cosmetics/button.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/cosmetics/button.gui"));
         text.setValue(enabled ? "Available" : "Locked");
         disabled.setValue(false);
         this.onClick.setValue(onClick);

@@ -58,7 +58,7 @@ public class WidgetNicknamePrefix extends AnnotatedImportOnlyWidget {
     private CosmeticData currentSelectedPrefix;
 
     public WidgetNicknamePrefix() {
-        super(new ResourceLocation("dungeonsguide:gui/config/cosmetics/nicknamePrefix.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/cosmetics/nicknamePrefix.gui"));
 
 
         ArrayList<Widget> list = new ArrayList<>();

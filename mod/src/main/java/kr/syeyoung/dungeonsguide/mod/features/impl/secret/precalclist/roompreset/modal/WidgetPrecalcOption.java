@@ -10,7 +10,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 public class WidgetPrecalcOption extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "precalculation")
@@ -18,7 +17,7 @@ public class WidgetPrecalcOption extends AnnotatedImportOnlyWidget {
 
     PathfindPrecalculation precalculation;
     public WidgetPrecalcOption(PathfindPrecalculation precalculation) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/choose_precalculation_dummy.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/choose_precalculation_dummy.gui"));
 
         this.precalculation = precalculation;
         this.widgetBindableAttribute.setValue(new WidgetPathfindResultDetails(

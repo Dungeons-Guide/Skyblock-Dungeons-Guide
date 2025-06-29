@@ -25,7 +25,7 @@ public class WidgetModalChooseAbilitySettings extends AnnotatedImportOnlyWidget 
     @Bind(variableName = "api")
     public final BindableAttribute<Column> api = new BindableAttribute<>(Column.class);
     public WidgetModalChooseAbilitySettings() {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/abilityedit/modal_choose_algorithm.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/abilityedit/modal_choose_algorithm.gui"));
 
         List<Widget> optionsList = new ArrayList<>();
         for (AlgorithmSetting option : AlgorithmSettingRegistry.getAlgorithmSettings()) {

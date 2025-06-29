@@ -42,7 +42,6 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
@@ -88,7 +87,7 @@ public class RenderUtils {
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
         double time = System.currentTimeMillis() / 50 + (double)partialTicks;
-        double d1 = MathHelper.func_181162_h(-time * 0.2D - (double)MathHelper.floor_double(-time * 0.1D));
+        double d1 = MathUtils.frac(-time * 0.2D - Math.floor(-time * 0.1D));
 
         int c = getColorAt(x,y,z, aColor);
         float alpha = ((c >> 24) & 0xFF) / 255.0f;
@@ -244,14 +243,14 @@ public class RenderUtils {
         WorldRenderer wr = t.getWorldRenderer();
         wr.begin(GL11.GL_POLYGON, DefaultVertexFormats.POSITION);
         for (double i = 0.1; i < Math.PI*2; i+= delta) {
-            double cos = MathHelper.cos((float) i);
-            double sin = MathHelper.sin((float) i);
-            if (cos * MathHelper.cos((float) (i + delta)) <= 0) {
+            double cos = Math.cos((float) i);
+            double sin = Math.sin((float) i);
+            if (cos * Math.cos((float) (i + delta)) <= 0) {
                 wr.pos(sin * radius + (sin > 0 ? 1 : -1) * (width/2.0 - radius),
                         cos * radius + (cos > 0 ? 1 : -1) * (height/2.0 - radius),0).endVertex();
                 wr.pos(sin * radius + (sin > 0 ? 1 : -1) * (width/2.0 - radius),
                         cos * radius + (cos > 0 ? -1 : 1) * (height/2.0 - radius),0).endVertex();
-            } else if (sin * MathHelper.sin((float) (i+delta)) <= 0) {
+            } else if (sin * Math.sin((float) (i+delta)) <= 0) {
                 wr.pos(sin * radius + (sin > 0 ? 1 : -1) * (width/2.0 - radius),
                         cos * radius + (cos > 0 ? 1 : -1) * (height/2.0 - radius), 0).endVertex();
                 wr.pos(sin * radius + (sin > 0 ? -1 : 1) * (width/2.0 - radius),

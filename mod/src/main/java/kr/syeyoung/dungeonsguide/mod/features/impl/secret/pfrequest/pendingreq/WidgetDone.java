@@ -6,14 +6,14 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.remotereq.Wi
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class WidgetDone extends AnnotatedImportOnlyWidget {
     private PathfindPrecalculationRequestSet requestSet;
     private WidgetPendingRequestPage parent;
 
     public WidgetDone(WidgetPendingRequestPage parent, PathfindPrecalculationRequestSet requestSet) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/done.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/pendingreq/done.gui"));
         this.requestSet = requestSet;
         this.parent = parent;
     }

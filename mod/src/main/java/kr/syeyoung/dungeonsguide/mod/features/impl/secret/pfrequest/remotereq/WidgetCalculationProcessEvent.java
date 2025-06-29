@@ -22,7 +22,7 @@ import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class WidgetCalculationProcessEvent extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "timestamp")
@@ -35,7 +35,7 @@ public class WidgetCalculationProcessEvent extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> status = new BindableAttribute<>(String.class);
 
     public WidgetCalculationProcessEvent(JsonObject jsonObject) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/remotereq/event.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/remotereq/event.gui"));
         timestamp.setValue(jsonObject.get("timestamp").getAsString());
         name.setValue(jsonObject.has("name") ? jsonObject.get("name").getAsString() : "");
         type.setValue(jsonObject.get("type").getAsString());

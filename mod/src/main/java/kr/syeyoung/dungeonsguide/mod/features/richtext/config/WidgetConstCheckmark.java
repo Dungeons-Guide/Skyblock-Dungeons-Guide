@@ -21,13 +21,13 @@ package kr.syeyoung.dungeonsguide.mod.features.richtext.config;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class WidgetConstCheckmark extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "enabled")
     public final BindableAttribute<String> enabled = new BindableAttribute<>(String.class);
     public WidgetConstCheckmark(boolean bool) {
-        super(new ResourceLocation("dungeonsguide:gui/config/text/constCheckmark.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/text/constCheckmark.gui"));
         this.enabled.setValue(bool ? "show" : "hide");
     }
 

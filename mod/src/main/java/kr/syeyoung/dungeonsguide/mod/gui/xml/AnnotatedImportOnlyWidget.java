@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.ParserElement;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.io.IOException;
@@ -46,9 +46,9 @@ public abstract class AnnotatedImportOnlyWidget extends Widget implements Import
     private Map<String, BindableAttribute> importedAttributes = null;
     private Map<String, MethodHandle> invocationTargets = null;
 
-    private final ResourceLocation target;
+    private final ResourceIdentifier target;
 
-    public AnnotatedImportOnlyWidget(ResourceLocation resourceLocation) {
+    public AnnotatedImportOnlyWidget(ResourceIdentifier resourceLocation) {
         target = resourceLocation;
     }
 

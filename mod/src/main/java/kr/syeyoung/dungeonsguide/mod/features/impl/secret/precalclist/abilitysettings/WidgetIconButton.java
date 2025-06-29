@@ -5,7 +5,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Passthrough;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 @Passthrough(exportName = "disabled", bindName = "disabled", type = Boolean.class)
 @Passthrough(exportName = "click", bindName = "click", type = Runnable.class)
@@ -35,7 +35,7 @@ public class WidgetIconButton extends AnnotatedWidget {
     public final BindableAttribute<Integer> iconOffset = new BindableAttribute<>(Integer.class, 0);
 
     public WidgetIconButton() {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/abilityedit/iconButton.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/abilityedit/iconButton.gui"));
         iconIdx.addOnUpdate((a,b) -> onUpdate());
         selected.addOnUpdate((a,b) -> onUpdate());
         iconOffset.addOnUpdate((a,b) -> onUpdate());

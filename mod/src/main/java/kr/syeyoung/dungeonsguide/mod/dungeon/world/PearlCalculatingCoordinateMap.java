@@ -5,7 +5,6 @@ import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
-import net.minecraft.util.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +43,12 @@ public class PearlCalculatingCoordinateMap implements ICoordinateMap<PearlCalcul
                 wX-0.3, wY-0.3, wZ-0.3, wX+ 0.3, wY+ 0.3, wZ + 0.3
         );
 
-        int minX = MathHelper.floor_double(pearlTest.minX);
-        int maxX = MathHelper.floor_double(pearlTest.maxX + 1.0D);
-        int minY = MathHelper.floor_double(pearlTest.minY);
-        int maxY = MathHelper.floor_double(pearlTest.maxY + 1.0D);
-        int minZ = MathHelper.floor_double(pearlTest.minZ);
-        int maxZ = MathHelper.floor_double(pearlTest.maxZ + 1.0D);
+        int minX = (int) Math.floor(pearlTest.minX);
+        int maxX = (int) Math.floor(pearlTest.maxX + 1.0D);
+        int minY = (int) Math.floor(pearlTest.minY);
+        int maxY = (int) Math.floor(pearlTest.maxY + 1.0D);
+        int minZ = (int) Math.floor(pearlTest.minZ);
+        int maxZ = (int) Math.floor(pearlTest.maxZ + 1.0D);
 
         VectorI3D blockPos = new VectorI3D(0,0,0);
         List<AABB> pearlList = new ArrayList<>();

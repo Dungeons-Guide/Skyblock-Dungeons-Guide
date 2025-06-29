@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class AbsLocationPopup extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "x")
@@ -44,7 +44,7 @@ public class AbsLocationPopup extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<Double> absY = new BindableAttribute<>(Double.class);
     public boolean autoclose = false;
     public AbsLocationPopup(double x, double y, Widget child, boolean autoclose) {
-        super(new ResourceLocation("dungeonsguide:gui/elements/locationedPopup.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/elements/locationedPopup.gui"));
         absX.setValue(x);
         absY.setValue(y);
         absX.addOnUpdate(this::updatePos);
@@ -54,7 +54,7 @@ public class AbsLocationPopup extends AnnotatedImportOnlyWidget {
         this.autoclose = autoclose;
     }
     public AbsLocationPopup(BindableAttribute<Double> x, BindableAttribute<Double> y, Widget child, boolean autoclose) {
-        super(new ResourceLocation("dungeonsguide:gui/elements/locationedPopup.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/elements/locationedPopup.gui"));
         x.exportTo(this.absX);
         y.exportTo(this.absY);
         absX.addOnUpdate(this::updatePos);

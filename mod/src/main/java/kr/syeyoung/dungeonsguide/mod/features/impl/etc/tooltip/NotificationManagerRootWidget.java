@@ -27,7 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.SingleChildRenderer;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class NotificationManagerRootWidget extends AnnotatedImportOnlyWidget imp
     public final BindableAttribute<Column> api = new BindableAttribute<>(Column.class);
 
     public NotificationManagerRootWidget() {
-        super(new ResourceLocation("dungeonsguide:gui/features/notifications/tooltipHolder.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/notifications/tooltipHolder.gui"));
     }
 
     private final Map<UUID, Widget> tooltipList = new HashMap<>();

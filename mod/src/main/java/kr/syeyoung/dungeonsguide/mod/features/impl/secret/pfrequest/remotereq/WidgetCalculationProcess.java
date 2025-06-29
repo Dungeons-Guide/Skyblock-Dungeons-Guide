@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class WidgetCalculationProcess extends AnnotatedImportOnlyWidget {
 
 
     public WidgetCalculationProcess(JsonObject jsonObject, JsonObject request) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/remotereq/calculationprogress.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/remotereq/calculationprogress.gui"));
         timestamp.setValue(jsonObject.get("execution").getAsJsonObject().get("startDate").getAsString());
         id.setValue(jsonObject.get("execution").getAsJsonObject().get("name").getAsString());
         status.setValue(jsonObject.get("execution").getAsJsonObject().get("status").getAsString());

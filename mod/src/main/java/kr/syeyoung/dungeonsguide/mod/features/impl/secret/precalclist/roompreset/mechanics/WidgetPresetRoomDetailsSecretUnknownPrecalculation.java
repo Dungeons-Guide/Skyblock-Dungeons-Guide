@@ -25,7 +25,7 @@ public class WidgetPresetRoomDetailsSecretUnknownPrecalculation extends Annotate
                                                               AdditionalInfoCaculatedDungeonRoomInfo dungeonRoomInfo,
                                                               WidgetPresetRoomDetailsUnknown widgetPresetRoomDetailsSecret) {
 
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequest.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequest.gui"));
         this.pathfindPrecalculation = calculation;
         this.parent = widgetPresetRoomDetailsSecret;
         this.info = dungeonRoomInfo;

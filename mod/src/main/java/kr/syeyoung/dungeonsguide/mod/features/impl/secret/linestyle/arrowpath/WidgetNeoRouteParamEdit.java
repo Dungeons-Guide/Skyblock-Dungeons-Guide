@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.function.Function;
 
@@ -76,7 +76,7 @@ public class WidgetNeoRouteParamEdit extends AnnotatedImportOnlyWidget {
     }
 
     public WidgetNeoRouteParamEdit(NeoRouteDisplayEngineRegistration.ArrowPathDisplayEngineSetting lineProperties) {
-        super(new ResourceLocation("dungeonsguide:gui/features/lineProperties/styles/neoroute.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/lineProperties/styles/neoroute.gui"));
 
 
         linecolor.setValue(this.generateConfigWidget(lineProperties, "lineColor", TCAColor.ColorEditWidget::new));

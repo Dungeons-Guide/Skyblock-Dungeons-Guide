@@ -29,7 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
 public class TCDouble implements FeatureTypeHandler<Double> {
@@ -64,7 +63,7 @@ public class TCDouble implements FeatureTypeHandler<Double> {
         }
 
         public DoubleEditWidget(FeatureParameter<Double> featureParameter, double min, double max) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/number.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/number.gui"));
             this.truth = featureParameter.getValue();
             this.min = min;
             this.max = max;

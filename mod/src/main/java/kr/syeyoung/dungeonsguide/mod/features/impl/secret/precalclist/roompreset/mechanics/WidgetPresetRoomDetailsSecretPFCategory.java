@@ -8,7 +8,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class WidgetPresetRoomDetailsSecretPFCategory extends AnnotatedImportOnly
     public WidgetPresetRoomDetailsSecretPFCategory(String mechanicName, String state,
                                                    List<PathfindRequest> requests,
                                                    AdditionalInfoCaculatedDungeonRoomInfo roomInfo, WidgetPresetRoomDetailsSecret parent) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/secretroomstate.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/roompresetview/secretroomstate.gui"));
 
         this.mechanicName = mechanicName;
         this.parent = parent;
