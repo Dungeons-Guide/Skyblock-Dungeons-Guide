@@ -48,7 +48,7 @@ public class MenuItem extends AnnotatedImportOnlyWidget {
         try {
             String target = "dungeonsguide:textures/config/categoryIcon/"+category.toLowerCase()
                     .replace("&","").replace(" ","_")+".png";
-            if (Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(target)) != null)
+            if (ModAPI.getAPI().getResourceManager().getResource(new ResourceIdentifier(target)) != null)
                 image.setValue(target);
         } catch (IOException e) {}
     }

@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.shader;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.GL20;
 
@@ -116,10 +116,10 @@ public class ShaderManager {
     }
 
     private static String getShaderSource(String name) {
-        ResourceLocation location = new ResourceLocation(
+        ResourceIdentifier location = new ResourceIdentifier(
                 "dungeonsguide:"+name
         );
-        try (InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(location).getInputStream()) {
+        try (InputStream is = ModAPI.getAPI().getResourceManager().getResource(location).getInputStream()) {
             return IOUtils.toString(is);
         } catch (Exception e) {
         }

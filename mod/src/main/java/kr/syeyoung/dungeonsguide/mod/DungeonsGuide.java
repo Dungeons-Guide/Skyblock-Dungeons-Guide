@@ -49,7 +49,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
-import kr.syeyoung.dungeonsguide.mod.resources.DGTexturePack;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TimeScoreUtil;
@@ -74,7 +73,6 @@ import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.entity.Entity;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
@@ -193,14 +191,6 @@ public class DungeonsGuide implements DGInterface {
         Config.f = configFile;
         Minecraft.getMinecraft().getFramebuffer().enableStencil();
 
-        try {
-            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
-            resourcePackList.add(new DGTexturePack());
-            Minecraft.getMinecraft().refreshResources();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         registerEventsForge(this);
 
         progressbar.step("Loading Native Libraries");
@@ -268,6 +258,8 @@ public class DungeonsGuide implements DGInterface {
             abstractFeature.init();
         }
 
+        ModAPI.getAPI().init();
+
 
         TimeScoreUtil.init();
 
@@ -277,8 +269,6 @@ public class DungeonsGuide implements DGInterface {
 
 
         Minecraft.getMinecraft().refreshResources();
-
-        ModAPI.getAPI().init();
 
         // Fix Parallel universe not working when player joins hypickle before dg loads
         if (Minecraft.getMinecraft().getNetHandler() != null)
@@ -419,14 +409,6 @@ public class DungeonsGuide implements DGInterface {
                     }
                 }
             }
-        }
-
-        try {
-            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
-            resourcePackList.removeIf(a -> a instanceof DGTexturePack);
-            Minecraft.getMinecraft().refreshResources();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         ShaderManager.unload();
         GLCursors.cleanup();

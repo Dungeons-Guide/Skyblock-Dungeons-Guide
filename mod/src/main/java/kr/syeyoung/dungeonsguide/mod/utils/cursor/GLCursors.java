@@ -25,8 +25,8 @@ import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.launcher.util.cursor.XCursor;
 import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.BufferUtils;
@@ -116,8 +116,8 @@ public class GLCursors {
                     BufferedImage bufferedImage = null;
                     int minC = Cursor.getMinCursorSize(), maxC = Cursor.getMaxCursorSize();
                     try {
-                        ResourceLocation cursorInfo = new ResourceLocation("dungeonsguide:cursors/"+value.getAltFileName());
-                        List<CursorReader.CursorData> cursorDataList = CursorReader.readFromInputStream(Minecraft.getMinecraft().getResourceManager().getResource(cursorInfo).getInputStream());
+                        ResourceIdentifier cursorInfo = new ResourceIdentifier("dungeonsguide:cursors/"+value.getAltFileName());
+                        List<CursorReader.CursorData> cursorDataList = CursorReader.readFromInputStream(ModAPI.getAPI().getResourceManager().getResource(cursorInfo).getInputStream());
                         List<CursorReader.CursorData> cursorDataList2 = cursorDataList.stream()
                                 .filter(cdata -> cdata.getBufferedImage()  != null)
                                 .filter(cdata -> minC <= cdata.getHeight() && cdata.getHeight() <= maxC && minC <= cdata.getWidth() && cdata.getWidth() <= maxC)

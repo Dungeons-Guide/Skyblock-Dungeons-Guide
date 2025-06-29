@@ -6,6 +6,7 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
+import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.world.IBlockRegistry;
@@ -48,4 +49,6 @@ public interface ModAPI {
     UCommandManager getCommandManager();
 
     boolean isSinglePlayer();
+
+    UResourceManager getResourceManager();
 }

@@ -52,6 +52,7 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.event.events.WorldUnloadEvent;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.IBlockRegistry;
 import kr.syeyoung.modapi.world.UBlockState;
@@ -82,7 +83,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.storage.ISaveFormat;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.input.Keyboard;
 
@@ -730,7 +730,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onWorldUnload(WorldEvent.Unload e) {
+    public void onWorldUnload(WorldUnloadEvent e) {
         if (flag) {
             EditingContext.endEditingSession();
             DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);

@@ -22,15 +22,15 @@ import com.google.gson.Gson;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.BossfightRenderSettings;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityLiving;
 import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.resources.UResource;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Singular;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -55,7 +55,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     @Override
     public BossfightRenderSettings getMapRenderSettings() {
         try {
-            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("dungeonsguide:map/bossfight/"+name+".json"));
+            UResource resource = ModAPI.getAPI().getResourceManager().getResource(new ResourceIdentifier("dungeonsguide:map/bossfight/"+name+".json"));
             if (resource != null) {
                 resource.getInputStream();
                 try (InputStreamReader inputStreamReader = new InputStreamReader(resource.getInputStream())) {
@@ -81,7 +81,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
         this.name = name;
 
         try {
-            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("dungeonsguide:map/bossfight/"+name+".json"));
+            UResource resource = ModAPI.getAPI().getResourceManager().getResource(new ResourceIdentifier("dungeonsguide:map/bossfight/"+name+".json"));
             if (resource != null) {
                 resource.getInputStream();
                 try (InputStreamReader inputStreamReader = new InputStreamReader(resource.getInputStream())) {

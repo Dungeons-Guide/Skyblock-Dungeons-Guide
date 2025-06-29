@@ -7,10 +7,7 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntityLiving;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.event.ListenerPriority;
-import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import kr.syeyoung.modapi.event.events.EntityEnterWorldEvent;
-import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
-import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
+import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
@@ -20,6 +17,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.*;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -67,6 +65,10 @@ public class EventListener {
                 event.localPos == null ? null : new Vector3D(event.localPos.xCoord, event.localPos.yCoord, event.localPos.zCoord)
         );
         ModAPI.getAPI().getEventBus().fireEvent(interactEvent, mapPriority(priority));
+    }
+
+    public void onWorldUnload(WorldEvent.Unload event, EventPriority priority) {
+        ModAPI.getAPI().getEventBus().fireEvent(new WorldUnloadEvent(), mapPriority(priority));
     }
 
     private ListenerPriority mapPriority(EventPriority priority) {

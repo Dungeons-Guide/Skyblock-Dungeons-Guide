@@ -20,6 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.fonts;
 
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.FlatTextSpan;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.styles.ITextStyle;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -45,7 +47,7 @@ public class DefaultFontRenderer implements FontRenderer {
     protected int[] charWidth = new int[256];
     public int FONT_HEIGHT = 9;
     protected byte[] glyphData = new byte[65536];
-    protected final ResourceLocation locationFontTexture = new ResourceLocation("textures/font/ascii.png");
+    protected final ResourceIdentifier locationFontTexture = new ResourceIdentifier("textures/font/ascii.png");
 
     public DefaultFontRenderer() {
         readGlyphSizes();
@@ -65,7 +67,7 @@ public class DefaultFontRenderer implements FontRenderer {
         BufferedImage bufferedimage;
         try {
             bufferedimage = TextureUtil.readBufferedImage(
-                    Minecraft.getMinecraft().getResourceManager().getResource(this.locationFontTexture).getInputStream());
+                    ModAPI.getAPI().getResourceManager().getResource(this.locationFontTexture).getInputStream());
         } catch (IOException var17) {
             throw new RuntimeException(var17);
         }
@@ -113,7 +115,7 @@ public class DefaultFontRenderer implements FontRenderer {
         InputStream inputstream = null;
 
         try {
-            inputstream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("font/glyph_sizes.bin")).getInputStream();
+            inputstream = ModAPI.getAPI().getResourceManager().getResource(new ResourceIdentifier("font/glyph_sizes.bin")).getInputStream();
             inputstream.read(this.glyphData);
         } catch (IOException var6) {
             throw new RuntimeException(var6);
@@ -277,7 +279,7 @@ public class DefaultFontRenderer implements FontRenderer {
         int texX = ch % 16 * 8;
         int texY = ch / 16 * 8;
         int italicsAddition = textStyle.isItalics() ? 1 : 0;
-        bindTexture(worldRenderer, this.locationFontTexture);
+        bindTexture(worldRenderer, new ResourceLocation(this.locationFontTexture.getMod(), this.locationFontTexture.getLocation()));
         double texWidth = (this.charWidth[ch]);
         double charWidth = (texWidth-1) * textStyle.getSize() / 8.0;
         double charHeight = textStyle.getSize();

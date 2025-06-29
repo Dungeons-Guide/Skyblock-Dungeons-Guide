@@ -1,6 +1,5 @@
 package kr.syeyoung.modapi.v1_8_9;
 
-import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.Platform;
 import kr.syeyoung.modapi.audio.USoundHandler;
@@ -12,6 +11,7 @@ import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.event.events.RegisterCommandEvent;
 import kr.syeyoung.modapi.event.listenerlist.BasicEventBus;
+import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.v1_8_9.audio.USoundHandlerImpl;
@@ -19,15 +19,21 @@ import kr.syeyoung.modapi.v1_8_9.client.renderer.entity.URenderManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.command.CommandManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerSP;
+import kr.syeyoung.modapi.v1_8_9.resources.DGTexturePack;
+import kr.syeyoung.modapi.v1_8_9.resources.UResourceManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.util.USessionImpl;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
 import kr.syeyoung.modapi.world.IBlockRegistry;
 import kr.syeyoung.modapi.world.UWorld;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+
+import java.util.List;
 
 public class ModAPIImpl implements ModAPI {
     Minecraft delegate; // dummy to trick. TODO
@@ -59,6 +65,10 @@ public class ModAPIImpl implements ModAPI {
 
     public boolean isSinglePlayer() {
         return Minecraft.getMinecraft().isSingleplayer();
+    }
+
+    public UResourceManager getResourceManager() {
+        return new UResourceManagerImpl(delegate.getResourceManager());
     }
 
 
@@ -134,12 +144,20 @@ public class ModAPIImpl implements ModAPI {
         eventListener.register();
         registry.init();
 
-        DungeonsGuide.getDungeonsGuide();
+        try {
+            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
+            resourcePackList.add(new DGTexturePack());
+            Minecraft.getMinecraft().refreshResources();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (Minecraft.getMinecraft().getNetHandler() != null)
             Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler_2", packetInjector);
 
         ModAPI.getAPI().getEventBus().fireEvent(new RegisterCommandEvent(commandManager));
+
+
     }
 
     @Override
@@ -149,6 +167,14 @@ public class ModAPIImpl implements ModAPI {
 
         commandManager.unregisterCommands();
         packetInjector.cleanup();
+
+        try {
+            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
+            resourcePackList.removeIf(a -> a instanceof DGTexturePack);
+            Minecraft.getMinecraft().refreshResources();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private BlockStateRegistryImpl registry = new BlockStateRegistryImpl();

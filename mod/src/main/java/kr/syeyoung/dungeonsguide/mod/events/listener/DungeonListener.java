@@ -77,7 +77,6 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
@@ -91,8 +90,8 @@ import java.util.Map;
 public class DungeonListener {
 
 
-    @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Unload event) {
+    @kr.syeyoung.modapi.event.SubscribeEvent
+    public void onWorldLoad(WorldUnloadEvent event) {
         TabList.INSTANCE.clear();
         TeamManager.INSTANCE.clear();
         ScoreboardManager.INSTANCE.clear();
