@@ -30,7 +30,6 @@ import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UWorld;
-import net.minecraft.util.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -53,7 +52,7 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
     private int times=0 ;
 
     private double intersectionX, intersectionZ;
-    private BlockPos intersection;
+    private VectorI3D intersection;
 
     @Override
     public void tick() {
@@ -82,7 +81,7 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
 
             intersectionX = (yInt2 - yInt1) / (slope1 - slope2);
             intersectionZ = (slope1 * intersectionX + yInt1);
-            intersection = new BlockPos((int) intersectionX, yLevel, (int) intersectionZ);
+            intersection = new VectorI3D((int) intersectionX, yLevel, (int) intersectionZ);
             times++;
         }
 

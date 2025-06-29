@@ -20,12 +20,12 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import lombok.Getter;
-import net.minecraft.util.BlockPos;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,7 +103,7 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
         return healths;
     }
 
-    private static final BlockPos lividPos = new BlockPos(6, 108, 43);
+    private static final VectorI3D lividPos = new VectorI3D(6, 108, 43);
 
     @Override
     public String getBossName() {

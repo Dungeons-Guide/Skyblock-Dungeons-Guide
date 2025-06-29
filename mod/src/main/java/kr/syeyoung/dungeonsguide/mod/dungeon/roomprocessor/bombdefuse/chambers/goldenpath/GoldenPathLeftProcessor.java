@@ -27,7 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.BlockType;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
@@ -129,7 +128,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
             String actual = TextUtils.stripColor(data).trim().split(" ")[1].trim();
 
             blocksolution.clear();
-            BlockPos lastLoc = new BlockPos(4,0,0);
+            VectorI3D lastLoc = new VectorI3D(4,0,0);
             blocksolution.addFirst(getChamber().getBlockPos(4,1,0));
             for (Character c:actual.toCharArray()) {
                 int dir = Integer.parseInt(c+"") % 4;

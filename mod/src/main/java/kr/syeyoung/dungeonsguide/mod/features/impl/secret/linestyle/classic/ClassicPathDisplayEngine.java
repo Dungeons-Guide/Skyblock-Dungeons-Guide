@@ -281,7 +281,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
                     }
 
                     if (warp == 1) {
-                        BlockPos pos = new BlockPos(Math.floor(pose.getX()), Math.floor(pose.getY()) -1 , Math.floor(pose.getZ()));
+                        VectorI3D pos = new VectorI3D(Math.floor(pose.getX()), Math.floor(pose.getY()) -1 , Math.floor(pose.getZ()));
                         RenderUtils.highlightBox(
                                 new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1)
                                         .expand(0.003, 0.003, 0.003), Color.green, partialTicks, true);

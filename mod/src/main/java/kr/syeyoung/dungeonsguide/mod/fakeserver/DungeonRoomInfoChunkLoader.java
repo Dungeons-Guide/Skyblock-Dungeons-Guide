@@ -2,8 +2,8 @@ package kr.syeyoung.dungeonsguide.mod.fakeserver;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
+import kr.syeyoung.modapi.data.VectorI3D;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.World;
@@ -39,7 +39,7 @@ public class DungeonRoomInfoChunkLoader implements IChunkLoader {
                     for (int z = cz*16; z < cz*16+16; z++) {
                         if (x == 0 || z == 0) continue;
                         OffsetPoint offsetPoint = new OffsetPoint(x,y,z);
-                        BlockPos pos = offsetPoint.toRotatedRelBlockPos(0, dungeonRoomInfo.getLength(), dungeonRoomInfo.getWidth());
+                        VectorI3D pos = offsetPoint.toRotatedRelBlockPos(0, dungeonRoomInfo.getLength(), dungeonRoomInfo.getWidth());
 
                         chunkPrimer.setBlockState(x & 0xF, y, z & 0xF,
                                 (IBlockState) dungeonRoomInfo.getBlock(pos.getX(), pos.getY()-70, pos.getZ(), 0).getIBlockState());

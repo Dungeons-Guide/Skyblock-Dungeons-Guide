@@ -33,8 +33,8 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 
@@ -87,7 +87,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
         if (facing < 0) facing += 360;
         if (dungeonRoom.getRoomMatcher() == null) {
             Vector3D vector3D = thePlayer.getPositionVector();
-            BlockPos offsetPoint = new BlockPos((int) vector3D.x - dungeonRoom.getRoomBounds().getMin().getX(),
+            VectorI3D offsetPoint = new VectorI3D((int) vector3D.x - dungeonRoom.getRoomBounds().getMin().getX(),
                     (int) vector3D.y-dungeonRoom.getRoomBounds().getMin().getY(),
                     (int) vector3D.z - dungeonRoom.getRoomBounds().getMin().getZ());
             return new TextSpan(getStyle("coord"), "X: "+offsetPoint.getX()+" Y: "+offsetPoint.getY()+" Z: "+offsetPoint.getZ()+" Room Not Matched");

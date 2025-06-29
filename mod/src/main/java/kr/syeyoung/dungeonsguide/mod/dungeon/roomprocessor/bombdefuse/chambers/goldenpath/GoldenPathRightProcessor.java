@@ -25,7 +25,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.G
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.IChatComponent;
 
 import java.awt.*;
@@ -72,7 +71,7 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
             String actual = TextUtils.stripColor(data).trim().split(" ")[1].trim();
 
             blocksolution.clear();
-            BlockPos lastLoc = new BlockPos(4,0,0);
+            VectorI3D lastLoc = new VectorI3D(4,0,0);
             blocksolution.addFirst(getChamber().getBlockPos(4,1,0));
             for (Character c:actual.toCharArray()) {
                 int dir = Integer.parseInt(c+"") % 4;

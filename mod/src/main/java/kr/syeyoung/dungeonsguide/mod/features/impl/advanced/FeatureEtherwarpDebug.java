@@ -23,13 +23,13 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.ShadowCast;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
 import kr.syeyoung.modapi.item.Item;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.modapi.world.BlockType;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
@@ -79,8 +79,7 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
 
     @Override
     public boolean checkIfBlocked(int x, int y, int z) {
-        return !Minecraft.getMinecraft().theWorld.isAirBlock(new BlockPos(x,y,z));
-//
+        return !ModAPI.getAPI().getWorld().getBlockStateAt(x,y,z).isOf(BlockType.AIR);
 //        int maxX = (int) Math.floor(x/2.0);
 //        int maxY = (int) Math.floor(y/2.0);
 //        int maxZ = (int) Math.floor(z/2.0);

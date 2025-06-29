@@ -422,10 +422,10 @@ public class DungeonListener {
 
                     GeneralRoomProcessor roomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
                     Vector3D player = ModAPI.getAPI().getPlayer().getPositionVector();
-                    BlockPos real = new BlockPos(player.x * 2, player.y * 2, player.z * 2);
+                    VectorI3D real = new VectorI3D(player.x * 2, player.y * 2, player.z * 2);
                     try {
 
-                        for (BlockPos allInBox : BlockPos.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
+                        for (VectorI3D allInBox : VectorI3D.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
                             CollisionStateCalculatingCoordinateMap.CollisionState blocked = roomProcessor.getPathfinderWorld().getBlock(allInBox.getX(), allInBox.getY(), allInBox.getZ());
                             RenderUtils.highlightBox(
                                     new AABB(
