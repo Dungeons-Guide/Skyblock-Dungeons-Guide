@@ -32,7 +32,6 @@ import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -59,7 +58,6 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
         super.tick();
 
         DungeonRoom dungeonRoom = getDungeonRoom();
-        World w = dungeonRoom.getContext().getWorld();
         final VectorI3D low = dungeonRoom.getRoomBounds().getMin();
         final VectorI3D high = dungeonRoom.getRoomBounds().getMax();
         entityList.clear();

@@ -58,7 +58,7 @@ public class DefaultingDelegatingTextStyle implements ITextStyle, Cloneable {
     public Optional<AColor> shadowShader;
 
 
-    @Getter @Setter
+    @Setter
     public Supplier<ITextStyle> parent;
     public FontRenderer fontRenderer;
 

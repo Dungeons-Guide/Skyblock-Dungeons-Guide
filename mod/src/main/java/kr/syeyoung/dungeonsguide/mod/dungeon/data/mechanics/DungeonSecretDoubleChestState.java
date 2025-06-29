@@ -32,11 +32,10 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.tileentities.UTileEntityChest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -61,9 +60,9 @@ public class DungeonSecretDoubleChestState implements DungeonMechanicState, ISec
         VectorI3D pos = data.secretPoint.getBlockPos(dungeonRoom);
         UBlockState blockState = dungeonRoom.getContext().getUworld().getBlockStateAt(pos);
         if (blockState.isOf(BlockType.CHEST, BlockType.TRAP_CHEST)) {
-            TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
+            UTileEntityChest chest = (UTileEntityChest) dungeonRoom.getContext().getUworld().getTileEntityAt(pos);
             if (chest != null) {
-                if (chest.numPlayersUsing > 0) {
+                if (chest.getViewers() > 0) {
                     lastMeasuredChestStatus = DungeonSecretChestState.LastMeasuredChestStatus.OPENED;
                 } else {
                     if (lastMeasuredChestStatus != DungeonSecretChestState.LastMeasuredChestStatus.OPENED)
@@ -91,8 +90,8 @@ public class DungeonSecretDoubleChestState implements DungeonMechanicState, ISec
         } else if (!blockState.isOf(BlockType.CHEST, BlockType.TRAP_CHEST)) {
             return SecretStatus.ERROR;
         } else {
-            TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
-            if (chest != null && chest.numPlayersUsing > 0) {
+            UTileEntityChest chest = (UTileEntityChest) dungeonRoom.getContext().getUworld().getTileEntityAt(pos);
+            if (chest != null && chest.getViewers() > 0) {
                 return SecretStatus.FOUND;
             } else {
                 return SecretStatus.CREATED;

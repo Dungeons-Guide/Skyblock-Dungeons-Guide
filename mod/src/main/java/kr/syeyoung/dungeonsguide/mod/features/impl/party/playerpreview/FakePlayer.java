@@ -24,7 +24,6 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.SkinF
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.resources.DefaultPlayerSkin;
@@ -38,7 +37,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class FakePlayer extends EntityOtherPlayerMP {
-    @Setter
     @Getter
     private PlayerProfile skyblockProfile;
 

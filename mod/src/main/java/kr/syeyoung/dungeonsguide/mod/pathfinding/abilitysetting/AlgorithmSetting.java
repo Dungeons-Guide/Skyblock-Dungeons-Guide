@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting;
 
+import kr.syeyoung.modapi.world.UBlock;
 import lombok.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemTool;
@@ -42,6 +43,10 @@ public class AlgorithmSetting implements Cloneable {
             efficiency2 += val2 * val2 + 1;
             efficiency2 *= haste * 0.2 + 1;
             return efficiency2;
+        }
+
+        public boolean canHarvest(UBlock b) {
+            return tool.canHarvestBlock(null);
         }
     }
 

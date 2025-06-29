@@ -54,6 +54,7 @@ import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UChunk;
 import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
@@ -441,8 +442,8 @@ public class DungeonListener {
                         OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new VectorI3D(0,0,0));
                         for (VectorI3D allInBox : VectorI3D.getAllInBox(dungeonRoom.getRoomBounds().getMin().add(0, -60, 0), dungeonRoom.getRoomBounds().getMax().add(0, 180, 0))) {
                             offsetPoint.setPosInWorld(dungeonRoom, allInBox);
-                            IBlockState blockState = dungeonRoom.getDungeonRoomInfo().getBlock(offsetPoint, dungeonRoom.getRoomMatcher().getRotation());
-                            if (!blockState.equals(dungeonRoom.getCachedWorld().getBlockState(new BlockPos(allInBox.getX(), allInBox.getY(), allInBox.getZ())))) {
+                            UBlockState blockState = dungeonRoom.getDungeonRoomInfo().getBlock(offsetPoint, dungeonRoom.getRoomMatcher().getRotation());
+                            if (blockState != dungeonRoom.getRoomWorld().getBlockStateAt(allInBox)) {
                                 RenderUtils.highlightBlock(allInBox, new Color(0x70FF0000,true), renderWorldLastEvent.partialTicks, false);
                                 Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
                                 float partialTicks = renderWorldLastEvent.partialTicks;
@@ -464,8 +465,8 @@ public class DungeonListener {
                                 BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 //                        GlStateManager.color(1.0f,1.0f,1.0f,0.1f);
                                 blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld,
-                                        blockrendererdispatcher.getBlockModelShapes().getModelForState(blockState),
-                                        blockState, new BlockPos(0,0,0), vertexBuffer, false);
+                                        blockrendererdispatcher.getBlockModelShapes().getModelForState((IBlockState) blockState.getIBlockState()),
+                                        (IBlockState) blockState.getIBlockState(), new BlockPos(0,0,0), vertexBuffer, false);
                                 tessellator.draw();
 
                                 GlStateManager.enableLighting();

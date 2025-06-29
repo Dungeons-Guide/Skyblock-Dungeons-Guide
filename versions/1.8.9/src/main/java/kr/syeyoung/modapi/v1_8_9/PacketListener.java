@@ -18,7 +18,6 @@
 
 package kr.syeyoung.modapi.v1_8_9;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.CachedWorld;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.VectorI3D;
@@ -29,6 +28,7 @@ import kr.syeyoung.modapi.event.events.ChunkUpdateEvent;
 import kr.syeyoung.modapi.event.events.EntityExitWorldEvent;
 import kr.syeyoung.modapi.event.events.ItemPickupEvent;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
+import kr.syeyoung.modapi.v1_8_9.world.FakeWorld;
 import kr.syeyoung.modapi.v1_8_9.world.UChunkImpl;
 import kr.syeyoung.modapi.world.UChunk;
 import net.minecraft.block.Block;
@@ -78,7 +78,7 @@ public class PacketListener {
                 if (Minecraft.getMinecraft().theWorld != null) provider = Minecraft.getMinecraft().theWorld.provider;
                 BlockStateRegistryImpl impl = (BlockStateRegistryImpl) ModAPI.getAPI().getBlockRegistry();
 
-                Chunk c = new Chunk(new CachedWorld(null, provider), ((S21PacketChunkData) packet).getChunkX(), ((S21PacketChunkData) packet).getChunkZ());
+                Chunk c = new Chunk(new FakeWorld(provider), ((S21PacketChunkData) packet).getChunkX(), ((S21PacketChunkData) packet).getChunkZ());
                 c.fillChunk(((S21PacketChunkData) packet).getExtractedDataBytes(), ((S21PacketChunkData) packet).getExtractedSize(), ((S21PacketChunkData) packet).func_149274_i());
                 ChunkUpdateEvent.Post chunkUpdateEvent = new ChunkUpdateEvent.Post(Collections.singletonList(new UChunkImpl(c, impl)));
                 ModAPI.getAPI().getEventBus().fireEvent(chunkUpdateEvent);
@@ -93,7 +93,7 @@ public class PacketListener {
 
                 List<UChunk> set = new ArrayList<>();
                 for (int i = 0; i < ((S26PacketMapChunkBulk) packet).getChunkCount(); i++) {
-                    Chunk c = new Chunk(new CachedWorld(null, provider), ((S26PacketMapChunkBulk) packet).getChunkX(i), ((S26PacketMapChunkBulk) packet).getChunkZ(i));
+                    Chunk c = new Chunk(new FakeWorld(provider), ((S26PacketMapChunkBulk) packet).getChunkX(i), ((S26PacketMapChunkBulk) packet).getChunkZ(i));
                     c.fillChunk(((S26PacketMapChunkBulk) packet).getChunkBytes(i), ((S26PacketMapChunkBulk) packet).getChunkSize(i), true);
                     set.add(new UChunkImpl(c, impl));
                 }
@@ -148,7 +148,7 @@ public class PacketListener {
                 if (Minecraft.getMinecraft().theWorld != null) provider = Minecraft.getMinecraft().theWorld.provider;
                 BlockStateRegistryImpl impl = (BlockStateRegistryImpl) ModAPI.getAPI().getBlockRegistry();
 
-                Chunk c = new Chunk(new CachedWorld(null, provider), ((S21PacketChunkData) packet).getChunkX(), ((S21PacketChunkData) packet).getChunkZ());
+                Chunk c = new Chunk(new FakeWorld(provider), ((S21PacketChunkData) packet).getChunkX(), ((S21PacketChunkData) packet).getChunkZ());
                 c.fillChunk(((S21PacketChunkData) packet).getExtractedDataBytes(), ((S21PacketChunkData) packet).getExtractedSize(), ((S21PacketChunkData) packet).func_149274_i());
                 ChunkUpdateEvent.Pre chunkUpdateEvent = new ChunkUpdateEvent.Pre(Collections.singletonList(new UChunkImpl(c, impl)));
                 ModAPI.getAPI().getEventBus().fireEvent(chunkUpdateEvent);
@@ -163,7 +163,7 @@ public class PacketListener {
 
                 List<UChunk> set = new ArrayList<>();
                 for (int i = 0; i < ((S26PacketMapChunkBulk) packet).getChunkCount(); i++) {
-                    Chunk c = new Chunk(new CachedWorld(null, provider), ((S26PacketMapChunkBulk) packet).getChunkX(i), ((S26PacketMapChunkBulk) packet).getChunkZ(i));
+                    Chunk c = new Chunk(new FakeWorld(provider), ((S26PacketMapChunkBulk) packet).getChunkX(i), ((S26PacketMapChunkBulk) packet).getChunkZ(i));
                     c.fillChunk(((S26PacketMapChunkBulk) packet).getChunkBytes(i), ((S26PacketMapChunkBulk) packet).getChunkSize(i), true);
                     set.add(new UChunkImpl(c, impl));
                 }

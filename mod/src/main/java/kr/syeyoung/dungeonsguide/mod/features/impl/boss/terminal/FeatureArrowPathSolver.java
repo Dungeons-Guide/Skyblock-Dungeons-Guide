@@ -37,7 +37,6 @@ import kr.syeyoung.modapi.entity.UEntityItemFrame;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import kr.syeyoung.modapi.item.Item;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
@@ -95,7 +94,6 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(-2,120,75) > 400) return;
 
         if (System.currentTimeMillis() < nextUpdate) return;
-        World w = dc.getWorld();
         List<UEntity> frames = dc.getUworld().getEntitiesWithinAabb(EntityType.ITEM_FRAME, new AABB(-2, 121, 75, -1, 125, 79));
 //        filter -> {
 //            BlockPos pos = filter.getPosition();

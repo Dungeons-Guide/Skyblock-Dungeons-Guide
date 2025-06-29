@@ -28,8 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import kr.syeyoung.modapi.world.UBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -281,16 +280,16 @@ public class GeneralEditPane extends MPanel {
                 for (int z = 0; z < compound.getShort("Length"); z++) {
                     int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
                     VectorI3D pos = dungeonRoom.getRelativeBlockPosAt(x,y - 70,z);
-                    IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(new BlockPos(pos.x, pos.y, pos.z));
+                    UBlockState blockState = dungeonRoom.getRoomWorld().getBlockStateAt(pos);
                     boolean acc = dungeonRoom.getRoomBounds().canAccessRelative(x,z);
-                    int id = Block.getIdFromBlock(blockState.getBlock());
+                    int id = blockState.getLegacyId();
                     blocks[index] = acc ? (byte) id : 0;
-                    meta[index] = acc ? (byte) blockState.getBlock().getMetaFromState(blockState) : 0;
+                    meta[index] = acc ? (byte) blockState.getLegacyMeta() : 0;
                     if ((extra[index] = (byte) ((acc ? id : 0) >> 8)) > 0) {
                         extraEx = true;
                     }
 
-                    if (blockState.getBlock().hasTileEntity(blockState)) {
+                    if (blockState.hasTileEntity()) {
                         TileEntity tileEntity = dungeonRoom.getContext().getWorld().getTileEntity(new BlockPos(pos.x, pos.y, pos.z));
                         try {
                             final NBTTagCompound tileEntityCompound = new NBTTagCompound();

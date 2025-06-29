@@ -35,7 +35,7 @@ public class WidgetButton extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<Integer> press = new BindableAttribute<>(Integer.class);
 
     @Bind(variableName = "disabled")
-    public final BindableAttribute<Boolean> _ = new BindableAttribute<>(Boolean.class, false);
+    public final BindableAttribute<Boolean> disabled = new BindableAttribute<>(Boolean.class, false);
 
     @Bind(variableName = "click")
     public final BindableAttribute<Runnable> onClick = new BindableAttribute<>(Runnable.class);

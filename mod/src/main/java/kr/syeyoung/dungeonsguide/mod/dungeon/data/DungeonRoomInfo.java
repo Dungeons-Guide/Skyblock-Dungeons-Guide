@@ -29,18 +29,16 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.serialization.DungeonRoomInfoB
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.serialization.DungeonRoomInfoBlocksSerializer;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.serialization.DungeonRoomInfoWorldDeserializer;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.serialization.DungeonRoomInfoWorldSerializer;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.EnumFacing;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.Block;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter
@@ -130,41 +128,30 @@ public class DungeonRoomInfo {
         this.length = length;
         this.world = new char[width * length * 256];
     }
-    public void setBlock(OffsetPoint offsetPoint, IBlockState iBlockState) {
+    public void setBlock(OffsetPoint offsetPoint, UBlockState iBlockState) {
         int index = offsetPoint.getX() + ((offsetPoint.getY()+70) * length + offsetPoint.getZ()) * width;
-        world[index] = (char) Block.BLOCK_STATE_IDS.get(iBlockState);
+        world[index] = (char) iBlockState.getLegacyStateId();
     }
 
-    public IBlockState getBlock(OffsetPoint offsetPoint, int rot) {
+    public UBlockState getBlock(OffsetPoint offsetPoint, int rot) {
         return getBlock(offsetPoint.getX(), offsetPoint.getY(), offsetPoint.getZ(), rot);
     }
 
-    private static final PropertyDirection[] directionMap = new PropertyDirection[4096];
-    static {
-        for (Block block : Block.blockRegistry) {
-            Optional<PropertyDirection> propertyDirection = block.getDefaultState().getPropertyNames().stream()
-                    .filter(a -> a instanceof PropertyDirection)
-                    .map(PropertyDirection.class::cast).findFirst();
-            directionMap[Block.getIdFromBlock(block)] = propertyDirection.orElse(null);
-        }
-    }
 
-    public IBlockState getBlock(int x, int y, int z, int rot) {
-        if (y < -70 || y >= 186) return Blocks.bedrock.getDefaultState();
-        if (x <= 0 || x >= width) return Blocks.bedrock.getDefaultState();
-        if (z <= 0 || z >= length) return Blocks.bedrock.getDefaultState();
+    public UBlockState getBlock(int x, int y, int z, int rot) {
+        if (y < -70 || y >= 186) return ModAPI.getAPI().getBlockRegistry().oneFromWellknown(BlockType.BEDROCK);
+        if (x <= 0 || x >= width) return ModAPI.getAPI().getBlockRegistry().oneFromWellknown(BlockType.BEDROCK);
+        if (z <= 0 || z >= length)return ModAPI.getAPI().getBlockRegistry().oneFromWellknown(BlockType.BEDROCK);
 
         int index = x + ((y + 70) * length + z) * width;
-        IBlockState blockState = Block.BLOCK_STATE_IDS.getByValue(world[index]);
+        UBlockState blockState = ModAPI.getAPI().getBlockRegistry().fromOldId(world[index]);
         if (rot != 0) {
-            PropertyDirection directions = directionMap[world[index] >> 4];
-
-            if (directions != null) {
-                EnumFacing enumFacing = blockState.getValue(directions);
-                if (!(enumFacing == EnumFacing.UP || enumFacing == EnumFacing.DOWN)) {
+            EnumFacing facing = blockState.getAnyBlockFacingIfItExists();
+            if (facing != null) {
+                if (!(facing == EnumFacing.UP || facing == EnumFacing.DOWN)) {
                     for (int i = 0; i < 4 - rot; i++)
-                        enumFacing = enumFacing.rotateY();
-                    blockState = blockState.withProperty(directions, enumFacing);
+                        facing = facing.rotateY();
+                    blockState = blockState.withFacing(facing);
                 }
             }
         }
@@ -172,7 +159,7 @@ public class DungeonRoomInfo {
 
 
 
-        return blockState == null ? Blocks.air.getDefaultState() : blockState;
+        return blockState == null ? ModAPI.getAPI().getBlockRegistry().oneFromWellknown(BlockType.AIR) : blockState;
     }
     public boolean hasSchematic() {
         return world != null;

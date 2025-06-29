@@ -164,7 +164,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     }
 
                     if ((blocks[index] & 0xFF) != 0 || !ignoreAir)
-                        info.setBlock(offsetPoint, blockState);
+                        info.setBlock(offsetPoint, ModAPI.getAPI().getBlockRegistry().fromOldId(Block.getStateId(blockState)));
                 }
             }
         }
@@ -246,7 +246,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     ExtendedBlockStorage[] storage= c.getBlockStorageArray();
                     ExtendedBlockStorage extendedblockstorage = storage[y >> 4];
 
-                    IBlockState block = dungeonRoomInfo.getBlock(x, y-70, z, 0);
+                    IBlockState block = (IBlockState) dungeonRoomInfo.getBlock(x, y-70, z, 0).getIBlockState();
                     if (extendedblockstorage == null) {
                         if (block.getBlock() == Blocks.air) {
                             continue;

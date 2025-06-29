@@ -41,30 +41,24 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.ArrayBackedCoordinateMap;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.CachedWorld;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorldBackedCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.WorldBackedCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
-import kr.syeyoung.dungeonsguide.mod.pathfinding.world.EditableChunkCache;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UChunk;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.Block;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -90,12 +84,9 @@ public class DungeonRoom  {
     private Map<String, DungeonMechanicState> _mechanics = null;
 
     @Setter
-    private World cachedWorld;
-    @Setter
     private ArrayBackedCoordinateMap roomWorld;
 
     private WorldBackedCoordinateMap coordinateMap;
-    private EditableChunkCache chunkCache;
 
     public DungeonRoom(Set<Point> points, short shape, byte color, VectorI3D min, VectorI3D max, DungeonContext context, Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
         this.unitPoints = points;
@@ -115,10 +106,10 @@ public class DungeonRoom  {
     }
 
     public DungeonRoom(DungeonContext context) {
-        if (!(context.getWorld() instanceof DRIWorld)) {
+        if (!(context.getUworld() instanceof DRIWorldBackedCoordinateMap)) {
             throw new IllegalArgumentException("This constructor only applicable for DRIWorld based DungeonContext");
         }
-        DRIWorld driWorld = (DRIWorld) context.getWorld();
+        DRIWorldBackedCoordinateMap driWorld = (DRIWorldBackedCoordinateMap) context.getUworld();
 
         this.dungeonRoomInfo = driWorld.getDungeonRoomInfo();
         this.unitPoints = new HashSet<>();
@@ -145,7 +136,6 @@ public class DungeonRoom  {
 
 
         this.doorsAndStates = new HashSet<>();
-        this.cachedWorld = driWorld;
         this.roomMatcher = new RoomMatcher(this);
         this.roomMatcher.setMatch(dungeonRoomInfo);
         this.roomMatcher.setRotation(0);
@@ -171,8 +161,8 @@ public class DungeonRoom  {
     }
 
 
-    public World getCachedWorld() {
-        if (this.cachedWorld != null) return cachedWorld;
+    public ArrayBackedCoordinateMap getRoomWorld() {
+        if (this.roomWorld != null) return roomWorld;
 
 
         int minZChunk = roomBounds.getMin().getZ() >> 4;
@@ -186,33 +176,21 @@ public class DungeonRoom  {
                 && !getRoomBounds().canAccessAbsolute(new VectorI3D(x * 16+15,0, z*16)) && !getRoomBounds().canAccessAbsolute(new VectorI3D(x * 16,0, z*16+15))) {
                     continue;
                 }
-                Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
+                UChunk c = getContext().getUworld().getChunkAt(x,z);
                 if (c.isEmpty()) {
-                    throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
-                }
-                boolean nonNull = false;
-                for (ExtendedBlockStorage extendedBlockStorage : c.getBlockStorageArray()) {
-                    if (extendedBlockStorage != null) {
-                        nonNull = true;
-                        break;
-                    }
-                }
-                if (!nonNull) {
                     throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
                 }
             }
         }
 
-        this.chunkCache = new EditableChunkCache(getContext().getWorld(), roomBounds.getMin().add(-3, 0, -3), roomBounds.getMax().add(3,0,3), 0);
-        CachedWorld cachedWorld =  new CachedWorld(chunkCache, context.getWorld().provider);
-
-        coordinateMap = new WorldBackedCoordinateMap(cachedWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
-
         roomWorld = new ArrayBackedCoordinateMap(roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
         roomWorld.migrateFromWorld(context.getUworld());
 
+        coordinateMap = new WorldBackedCoordinateMap(roomWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
 
-        return this.cachedWorld = cachedWorld;
+
+
+        return this.roomWorld = roomWorld;
     }
 
     public Map<String, DungeonMechanicState> getMechanics() {
@@ -276,7 +254,7 @@ public class DungeonRoom  {
     }
 
     private void matchRoomAndSetupRoomProcessor() {
-        getCachedWorld();
+        getRoomWorld();
         buildRoom();
         buildDoors(doorsAndStates);
 
@@ -346,14 +324,6 @@ public class DungeonRoom  {
         }
     }
 
-    public Block getRelativeBlockAt(int x, int y, int z) {
-        // validate x y z's
-        if (getRoomBounds().canAccessRelative(x,z)) {
-            BlockPos pos = new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
-            return getCachedWorld().getBlockState(pos).getBlock();
-        }
-        return null;
-    }
     public UBlockState getRelativeUBlockStateAt(int x, int y, int z) {
         // validate x y z's
         if (getRoomBounds().canAccessRelative(x,z)) {
@@ -371,11 +341,8 @@ public class DungeonRoom  {
     }
 
     public void chunkUpdate(int cx, int cz) {
-        if (!chunkCache.isManaged(cx, cz)) {
-            return;
-        }
-        chunkCache.updateChunk(new BlockPos(cx*16+8, 0, cz*16+8));
-
-        roomWorld.updateChunk(context.getUworld().getChunkAt(cx, cz));
+        UChunk uChunk = context.getUworld().getChunkAt(cx, cz);
+        if (uChunk == null) return;
+        roomWorld.updateChunk(uChunk);
     }
 }

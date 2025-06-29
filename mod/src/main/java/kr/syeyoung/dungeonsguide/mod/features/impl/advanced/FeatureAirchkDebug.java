@@ -66,7 +66,7 @@ public class FeatureAirchkDebug extends SimpleFeature {
                     vec.x + 3.1, vec.y - 3.6, vec.z + 3.1
             );
 
-            WorldBackedCoordinateMap coordinateMap = new WorldBackedCoordinateMap((World) event.world.getWorld(), Integer.MIN_VALUE, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 255, Integer.MAX_VALUE);
+            WorldBackedCoordinateMap coordinateMap = new WorldBackedCoordinateMap(event.world, Integer.MIN_VALUE, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 255, Integer.MAX_VALUE);
             InstaBreakFactorCalculatingCoordinateMap coordinateMap1 = new InstaBreakFactorCalculatingCoordinateMap(coordinateMap, AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING);
             CollisionStateCalculatingCoordinateMap collisionStateCalculatingCoordinateMap = new CollisionStateCalculatingCoordinateMap(
                     coordinateMap, Collections.emptySet(), coordinateMap1, new RoomBounds(

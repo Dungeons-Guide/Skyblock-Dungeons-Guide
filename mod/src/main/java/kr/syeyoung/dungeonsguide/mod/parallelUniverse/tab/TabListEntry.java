@@ -38,7 +38,7 @@ public class TabListEntry {
     @Getter
     private final GameProfile gameProfile;
     // properties?
-    @Getter @Setter
+    @Getter
     private final GameType gameMode;
     @Getter @Setter
     private int ping;

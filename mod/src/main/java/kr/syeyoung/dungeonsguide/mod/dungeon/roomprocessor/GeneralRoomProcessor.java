@@ -73,7 +73,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Getter
     private CoordinateMapBackedPathfindWorld pathfinderWorld;
-
     @Getter
     @Setter
     private DungeonRoom dungeonRoom;

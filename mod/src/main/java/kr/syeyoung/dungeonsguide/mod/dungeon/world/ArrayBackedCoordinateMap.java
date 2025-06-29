@@ -67,6 +67,16 @@ public class ArrayBackedCoordinateMap implements ICoordinateMap<UBlockState>, IB
         return getBlockStateAt(blockPos.x, blockPos.y, blockPos.z);
     }
 
+    @Override
+    public UTileEntity getTileEntityAt(int x, int y, int z) {
+        return null;
+    }
+
+    @Override
+    public UTileEntity getTileEntityAt(VectorI3D blockPos) {
+        return null;
+    }
+
     public void updateChunk(UChunk uChunk) {
         int idx = 0;
         for (int dy = 0, y = uChunk.getMinY(); dy < uChunk.getLenY(); dy++, y++) {

@@ -4,18 +4,28 @@ import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.IBlockRegistry;
 import kr.syeyoung.modapi.world.UBlock;
 import kr.syeyoung.modapi.world.UBlockState;
+import lombok.Getter;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockStairs;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ObjectIntIdentityMap;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 public class BlockStateRegistryImpl implements IBlockRegistry {
 
     private ObjectIntIdentityMap<UBlockStateImpl> map = new ObjectIntIdentityMap<>();
     private UBlockImpl[] byId;
 
+
+
+    @Getter
+    private PropertyDirection[] directionMap = new PropertyDirection[4096];
 
     private Set<UBlockState>[] blockTypeStateMapping;
     public void init() {
@@ -27,7 +37,15 @@ public class BlockStateRegistryImpl implements IBlockRegistry {
         map = new ObjectIntIdentityMap<>();
         for (IBlockState blockStateId : Block.BLOCK_STATE_IDS) {
             int stateId = Block.getStateId(blockStateId);
-            map.put(new UBlockStateImpl(blockStateId, byId[Block.getIdFromBlock(blockStateId.getBlock())]), stateId);
+            map.put(new UBlockStateImpl(blockStateId, byId[Block.getIdFromBlock(blockStateId.getBlock())], this), stateId);
+        }
+
+        directionMap = new PropertyDirection[4096];
+        for (Block block : Block.blockRegistry) {
+            Optional<PropertyDirection> propertyDirection = block.getDefaultState().getPropertyNames().stream()
+                    .filter(a -> a instanceof PropertyDirection)
+                    .map(PropertyDirection.class::cast).findFirst();
+            directionMap[Block.getIdFromBlock(block)] = propertyDirection.orElse(null);
         }
 
         setupBlockTypes();
@@ -50,6 +68,14 @@ public class BlockStateRegistryImpl implements IBlockRegistry {
     public UBlockState oneFromWellknown(BlockType blockType) {
         if (blockType == BlockType.AIR) {
             return map.getByValue(0);
+        } else if (blockType == BlockType.BEDROCK) {
+            return map.getByValue(7 << 4); // bedrock state id.
+        } else if (blockType == BlockType.CHEST) {
+            return map.getByValue(Block.getStateId(Blocks.chest.getDefaultState()));
+        } else if (blockType == BlockType.SKULL){
+            return map.getByValue(Block.getStateId(Blocks.skull.getDefaultState()));
+        } else if (blockType == BlockType.LEVER) {
+            return map.getByValue(Block.getStateId(Blocks.lever.getDefaultState()));
         }
         throw new IllegalArgumentException("Unsupported blocktype: "+blockType);
     }
@@ -148,6 +174,23 @@ public class BlockStateRegistryImpl implements IBlockRegistry {
                     break;
                 case STAINED_HARDENED_CLAY:
                     addAllVariantsOf(Blocks.stained_hardened_clay, b);
+                    break;
+                case BEDROCK:
+                    addAllVariantsOf(Blocks.bedrock, b);
+                    break;
+                case TAG_SLAB:
+                    addAllVariantsOf(Blocks.stone_slab, b);
+                    addAllVariantsOf(Blocks.double_stone_slab, b);
+                    addAllVariantsOf(Blocks.wooden_slab, b);
+                    addAllVariantsOf(Blocks.double_wooden_slab, b);
+                    addAllVariantsOf(Blocks.stone_slab2, b);
+                    addAllVariantsOf(Blocks.double_stone_slab2, b);
+                    break;
+                case TAG_STAIR:
+                    for (Block block : Block.blockRegistry) {
+                        if (block instanceof BlockStairs)
+                            addAllVariantsOf(block, b);
+                    }
                     break;
             }
         }

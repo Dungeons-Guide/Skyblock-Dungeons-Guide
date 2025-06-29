@@ -25,10 +25,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.G
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.world.World;
 
 import java.awt.*;
 import java.util.LinkedList;
@@ -82,17 +80,19 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
                 blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()));
             }
 
-            World w = getChamber().getRoom().getContext().getWorld();
-            for (int x = 0; x <9; x++) {
-                for (int z =0; z < 6; z++) {
-                    VectorI3D pos = getChamber().getBlockPos(x,1,z);
-                    if (blocksolution.contains(pos)) {
-                        w.setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Blocks.light_weighted_pressure_plate.getDefaultState());
-                    } else {
-                        w.setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Blocks.wooden_pressure_plate.getDefaultState());
-                    }
-                }
-            }
+            // TODO: find better way to show solution
+
+//            World w = getChamber().getRoom().getContext().getWorld();
+//            for (int x = 0; x <9; x++) {
+//                for (int z =0; z < 6; z++) {
+//                    VectorI3D pos = getChamber().getBlockPos(x,1,z);
+//                    if (blocksolution.contains(pos)) {
+//                        w.setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Blocks.light_weighted_pressure_plate.getDefaultState());
+//                    } else {
+//                        w.setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Blocks.wooden_pressure_plate.getDefaultState());
+//                    }
+//                }
+//            }
         }
     }
 }

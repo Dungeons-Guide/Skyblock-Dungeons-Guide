@@ -80,7 +80,7 @@ public class Scrollbar extends AnnotatedWidget {
 
     private double per1, per2;
 
-    private void updateStuff(double _, double __) {
+    private void updateStuff(double unused, double unused2) {
         if (size.getValue() != null)
             updatePers(size.getValue());
         updateThumbLocation(0, 0);

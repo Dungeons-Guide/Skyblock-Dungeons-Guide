@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorldBackedCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.InstaBreakFactorCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
@@ -112,7 +112,7 @@ public class PrecalculatedMoveNearest {
             for (int i1 = 0; i1 < calculateFor.size(); i1++) {
                 if (((i >> i1) & 0x1) > 0) included.add(calculateFor.get(i1));
             }
-            DRIWorld driWorld = new DRIWorld(dri, included);
+            DRIWorldBackedCoordinateMap driWorld = new DRIWorldBackedCoordinateMap(dri, included);
             InstaBreakFactorCalculatingCoordinateMap breakFactorCalculatingCoordinateMap = new InstaBreakFactorCalculatingCoordinateMap(driWorld, AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING);
             CollisionStateCalculatingCoordinateMap collisionStateCalculatingCoordinateMap = new CollisionStateCalculatingCoordinateMap(driWorld,
                     poses,
@@ -181,7 +181,7 @@ public class PrecalculatedMoveNearest {
                 if (((i >> i1) & 0x1) > 0) included.add(calculateFor.get(i1));
             }
 
-            DRIWorld driWorld = new DRIWorld(dri, included);
+            DRIWorldBackedCoordinateMap driWorld = new DRIWorldBackedCoordinateMap(dri, included);
             InstaBreakFactorCalculatingCoordinateMap breakFactorCalculatingCoordinateMap = new InstaBreakFactorCalculatingCoordinateMap(driWorld, AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING);
             CollisionStateCalculatingCoordinateMap collisionStateCalculatingCoordinateMap = new CollisionStateCalculatingCoordinateMap(driWorld,
                     poses,
@@ -194,7 +194,7 @@ public class PrecalculatedMoveNearest {
             );
 
 
-            spots[i] = RaytraceHelper.findMovespots(new DRIWorld(dri, included), new VectorI3D(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()),
+            spots[i] = RaytraceHelper.findMovespots(new DRIWorldBackedCoordinateMap(dri, included), new VectorI3D(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()),
                     a -> check.isVecInside(a), 8, (x,y,z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked());
         }
         return new PrecalculatedMoveNearest(calculateFor, spots, offsetPoint);

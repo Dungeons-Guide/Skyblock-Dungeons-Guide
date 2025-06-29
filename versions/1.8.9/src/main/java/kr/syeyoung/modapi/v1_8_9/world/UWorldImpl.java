@@ -10,16 +10,18 @@ import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityImpl;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerImpl;
 import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
-import kr.syeyoung.modapi.world.UBlockState;
-import kr.syeyoung.modapi.world.UChunk;
-import kr.syeyoung.modapi.world.UMapData;
-import kr.syeyoung.modapi.world.UWorld;
+import kr.syeyoung.modapi.v1_8_9.world.entities.UTileEntityChestImpl;
+import kr.syeyoung.modapi.v1_8_9.world.entities.UTileEntitySkullImpl;
+import kr.syeyoung.modapi.world.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -112,6 +114,23 @@ public class UWorldImpl implements UWorld {
         IBlockState blockState = delegate.getBlockState(pos);
         int stateId = Block.getStateId(blockState);
         return stateRegistry.getByStateId(stateId);
+    }
+
+    @Override
+    public UTileEntity getTileEntityAt(int x, int y, int z) {
+        BlockPos.MutableBlockPos pos = posThreadLocal.get();
+        pos.set(x, y, z);
+        TileEntity tileEntity = delegate.getTileEntity(pos);
+        if (tileEntity instanceof TileEntityChest)
+            return new UTileEntityChestImpl((TileEntityChest) tileEntity);
+        else if (tileEntity instanceof TileEntitySkull)
+            return new UTileEntitySkullImpl((TileEntitySkull) tileEntity);
+        return null;
+    }
+
+    @Override
+    public UTileEntity getTileEntityAt(VectorI3D blockPos) {
+        return getTileEntityAt(blockPos.x, blockPos.y, blockPos.z);
     }
 
     @Override

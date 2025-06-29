@@ -43,17 +43,18 @@ import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.item.UItemStack;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UTileEntity;
+import kr.syeyoung.modapi.world.tileentities.UTileEntitySkull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntitySkull;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret {
@@ -74,16 +75,11 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
         if (blockState.isOf(BlockType.SKULL)) {
             essenceWasThere = true;
             List<UEntity> entities = dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.ARMOR_STAND, new AABB(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
-            TileEntity tileEntity = dungeonRoom.getCachedWorld().getTileEntity(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
+            UTileEntity tileEntity = dungeonRoom.getContext().getUworld().getTileEntityAt(pos);
 
             if (ModAPI.getAPI().getPlayer().getPosition().distanceSq(pos) < 25) {
-                if (tileEntity instanceof TileEntitySkull) {
-                    String texture = Optional.ofNullable(((TileEntitySkull) tileEntity).getPlayerProfile())
-                            .map(a -> a.getProperties())
-                            .map(a -> a.get("textures"))
-                            .flatMap(a -> a.stream().findFirst())
-                            .map(a -> a.getValue()).orElse(null);
-
+                if (tileEntity instanceof UTileEntitySkull) {
+                    String texture = ((UTileEntitySkull) tileEntity).getTexture();
                     if (texture == null) return;
                     for (UEntity entity : entities) {
                         UItemStack itemStackIn = ((UEntityArmorStand)entity).getEquipmentInSlot(4);

@@ -1,17 +1,16 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
+import kr.syeyoung.modapi.data.AABB;
+import kr.syeyoung.modapi.data.EnumHalf;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockSkull;
-import net.minecraft.block.BlockStairs;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 
 import java.awt.*;
@@ -20,19 +19,19 @@ import java.util.List;
 import java.util.Set;
 
 public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<CollisionStateCalculatingCoordinateMap.CollisionState> {
-    private ICoordinateMap<IBlockState> map;
+    private ICoordinateMap<UBlockState> map;
     private InstaBreakFactorCalculatingCoordinateMap instaBreakCalc;
 
     @Getter
     private int minX, minY, minZ, maxX, maxY, maxZ, lenX, lenY, lenZ;
 
-    private CoordinateMapWorld world;
+    private CoordinateMapBlockAccessible world;
 
     private Set<VectorI3D> poses;
     private RoomBounds roomBounds;
-    public CollisionStateCalculatingCoordinateMap(ICoordinateMap<IBlockState> map, Set<VectorI3D> poses, InstaBreakFactorCalculatingCoordinateMap instaBreakCalc, RoomBounds roomBounds) {
+    public CollisionStateCalculatingCoordinateMap(ICoordinateMap<UBlockState> map, Set<VectorI3D> poses, InstaBreakFactorCalculatingCoordinateMap instaBreakCalc, RoomBounds roomBounds) {
         this.map = map;
-        this.world = new CoordinateMapWorld(map);
+        this.world = new CoordinateMapBlockAccessible(map);
 
         this.minX = roomBounds.getMinX() * 2 + 2;
         this.minY = 0;
@@ -58,10 +57,9 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
 
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
 
-        AxisAlignedBB bb = AxisAlignedBB
-                .fromBounds(wX - playerWidth, wY+0.06251, wZ - playerWidth,
+        AABB bb = new AABB(wX - playerWidth, wY+0.06251, wZ - playerWidth,
                         wX + playerWidth, wY +0.06251 + 1.8, wZ + playerWidth);
-        AxisAlignedBB pearlTest = AxisAlignedBB.fromBounds(
+        AABB pearlTest = new AABB(
                 wX - 0.5, wY - 0.5, wZ - 0.5, wX + 0.5, wY + 0.5, wZ+0.5
         );
 
@@ -72,10 +70,10 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
         int minZ = MathHelper.floor_double(bb.minZ);
         int maxZ = MathHelper.floor_double(bb.maxZ + 1.0D);
 
-        AxisAlignedBB testBox = bb.offset(0, -0.5, 0);
+        AABB testBox = bb.addCoord(0, -0.5, 0);
         VectorI3D blockPos = new VectorI3D(0,0,0);
-        java.util.List<AxisAlignedBB> list = new ArrayList<>();
-        List<AxisAlignedBB> list2 = new ArrayList<>();
+        List<AABB> list = new ArrayList<>();
+        List<AABB> list2 = new ArrayList<>();
         int size = 0;
 
 //        boolean
@@ -91,14 +89,10 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
                     blockPos.y = i2;
                     blockPos.z = l1;
 
-                    IBlockState state = map.getBlock(k1, i2, l1);
-                    Block block = state.getBlock();
-                    block.addCollisionBoxesToList(
-                            world, new BlockPos(blockPos.x, blockPos.y, blockPos.z), state, testBox, list, null
-                    );
-                    block.addCollisionBoxesToList(
-                            world, new BlockPos(blockPos.x, blockPos.getY(), blockPos.getZ()), state, bb, list2, null
-                    );
+                    UBlockState state = map.getBlock(k1, i2, l1);
+//                    Block block = state.getBlock();
+                    state.addCollisionBoxesToList(world, blockPos, testBox, list);
+                    state.addCollisionBoxesToList(world, blockPos, bb, list2);
 
 
                     if (list2.size() != size) {
@@ -126,18 +120,18 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
 
                     }
                     size = list2.size();
-                    if (block instanceof BlockStairs && i2 != minY - 1) {
+                    if (state.isOf(BlockType.TAG_STAIR) && i2 != minY - 1) {
                         stairs = true;
                     }
-                    if (block instanceof BlockStairs && i2 == minY) {
+                    if (state.isOf(BlockType.TAG_STAIR) && i2 == minY) {
                         foundstairat = true;
-                        slabTop = state.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.TOP;
+                        slabTop = state.getStairHalf() == EnumHalf.TOP;
                     }
                 }
             }
         }
         boolean isOnGround = false;
-        for (AxisAlignedBB axisAlignedBB : list) {
+        for (AABB axisAlignedBB : list) {
             if (axisAlignedBB.maxY <= bb.minY) {
                 isOnGround = true;
                 break;
@@ -146,7 +140,7 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
         boolean blocked = !list2.isEmpty();
 
         int headcut = 0, bodycut = 0;
-        for (AxisAlignedBB axisAlignedBB : list2) {
+        for (AABB axisAlignedBB : list2) {
             if (axisAlignedBB.minY >= wY + 0.9f && axisAlignedBB.minY <= wY + 1.4f) headcut++;
             if (axisAlignedBB.minY >= wY) bodycut++;
         }
@@ -163,15 +157,14 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
                     blockPos.x = k1;
                     blockPos.y = minY - 1;
                     blockPos.z = l1;
-                    IBlockState state = map.getBlock(k1, minY - 1, l1);
-                    Block block = state.getBlock();
+                    UBlockState state = map.getBlock(k1, minY - 1, l1);
 
-                    block.addCollisionBoxesToList(
-                            world, new BlockPos(blockPos.x, blockPos.y, blockPos.z), state, testBox, list2, null
+                    state.addCollisionBoxesToList(
+                            world, blockPos, testBox, list2
                     );
                     if (size != list2.size()) {
                         elligible = true;
-                    } else if (block instanceof BlockStairs) {
+                    } else if (state.isOf(BlockType.TAG_STAIR)) {
                         stairFloor = true;
                     }
                     size = list2.size();
@@ -182,9 +175,8 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
                     blockPos.z = l1;
 
                     state = map.getBlock(k1, minY, l1);
-                    block = state.getBlock();
 
-                    if (block.canCollideCheck(state, true)) {
+                    if (state.canCollideCheck(true)) {
                         elligible = false;
                         break label;
                     }

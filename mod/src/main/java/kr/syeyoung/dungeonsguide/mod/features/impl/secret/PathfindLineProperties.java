@@ -47,7 +47,6 @@ public class PathfindLineProperties extends SimpleFeature {
 
     }
 
-    @Setter
     private PathDisplayEngineSetting<?> setting;
 
     public void setSetting(PathDisplayEngineSetting<?> setting) {

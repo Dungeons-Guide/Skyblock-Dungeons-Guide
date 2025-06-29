@@ -15,7 +15,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorldBackedCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationProgress;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
@@ -179,8 +179,8 @@ public class TSPCacheRegistry {
 
                 DungeonRoomInfo dungeonRoomInfo = DungeonRoomInfoRegistry.getByUUID(roomPreset.getRoomId());
 
-                DRIWorld driWorld = new DRIWorld(dungeonRoomInfo);
-                DungeonContext fakeContext = new DungeonContext("TEST DG", driWorld, driWorld, roomPreset.getParent());
+                DRIWorldBackedCoordinateMap driWorld = new DRIWorldBackedCoordinateMap(dungeonRoomInfo);
+                DungeonContext fakeContext = new DungeonContext("TEST DG", null, driWorld, roomPreset.getParent());
                 try {
                     DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(
                             new Dimension(16, 16),
