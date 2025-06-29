@@ -32,7 +32,7 @@ import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.item.UItemStack;
 import kr.syeyoung.modapi.world.IBlockAccessible;
 import kr.syeyoung.modapi.world.UBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -140,15 +140,14 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
     public void onSendData() {
         super.onSendData();
         if (!solutionBuilt) return;
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setByte("a", (byte) 7);
-        int answer = s1 * 10000 + s2 * 100 + s3;
-        nbt.setInteger("b", answer);
+        CompoundBinaryTag nbt = CompoundBinaryTag.builder()
+                .putByte("a", (byte) 7)
+                .putInt("b", s1*10000+s2*100+s3).build();
         getSolver().communicate(nbt);
     }
 
     @Override
-    public void onDataReceive(NBTTagCompound compound) {
+    public void onDataReceive(CompoundBinaryTag compound) {
         if (6 == compound.getByte("a")) {
             w1 = ModAPI.getAPI().getBlockRegistry().fromSerializedSeting(compound.getString("f"));
             w2 = ModAPI.getAPI().getBlockRegistry().fromSerializedSeting(compound.getString("s"));

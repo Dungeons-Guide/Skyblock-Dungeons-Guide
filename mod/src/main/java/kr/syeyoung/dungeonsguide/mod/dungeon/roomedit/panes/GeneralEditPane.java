@@ -29,19 +29,16 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.UBlockState;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import kr.syeyoung.modapi.world.UTileEntity;
+import net.kyori.adventure.nbt.*;
 import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.awt.*;
-import java.io.*;
-import java.lang.reflect.Method;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.zip.GZIPOutputStream;
 
 public class GeneralEditPane extends MPanel {
     private final DungeonRoom dungeonRoom;
@@ -150,26 +147,20 @@ public class GeneralEditPane extends MPanel {
                 @Override
                 public void run() {
                     try {
-                        NBTTagCompound nbtTagCompound2 = createNBT();
+                        CompoundBinaryTag nbtTagCompound2 = createNBT();
 
                         File f=new File(Main.getConfigDir(), "schematics/"+
                                 dungeonRoom.getDungeonRoomInfo().getName()+"-"+dungeonRoom.getDungeonRoomInfo().getUuid().toString()+"-"+ UUID.randomUUID()+".schematic");
 
-                        Method method = ReflectionHelper.findMethod(NBTTagCompound.class, nbtTagCompound2, new String[] {"write", "method_5062", "a"}, DataOutput.class);
-
                         FileOutputStream fos = new FileOutputStream(f);
-                        DataOutputStream dataoutputstream = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(fos)));
 
                         try
                         {
-                            dataoutputstream.writeByte(nbtTagCompound2.getId());
-
-                            dataoutputstream.writeUTF("Schematic");
-                            method.invoke(nbtTagCompound2, dataoutputstream);
+                            BinaryTagIO.writer().writeNamed(new AbstractMap.SimpleEntry<>("Schematic", nbtTagCompound2), fos, BinaryTagIO.Compression.GZIP);
                         }
                         finally
                         {
-                            dataoutputstream.close();
+                            fos.close();
                         }
 
 //                        NBTTagCompound compound = nbtTagCompound2;
@@ -261,12 +252,16 @@ public class GeneralEditPane extends MPanel {
         schematic.setBounds(new Rectangle(0,180,getBounds().width, 20));
     }
 
-    private NBTTagCompound createNBT() {
-        NBTTagCompound compound = new NBTTagCompound();
-        compound.setShort("Width", (short) (dungeonRoom.getRoomBounds().getMax().getX() - dungeonRoom.getRoomBounds().getMin().getX() + 1));
-        compound.setShort("Height", (short) 255);
-        compound.setShort("Length", (short) (dungeonRoom.getRoomBounds().getMax().getZ() - dungeonRoom.getRoomBounds().getMin().getZ() + 1));
-        int size =compound.getShort("Width") * compound.getShort("Height") * compound.getShort("Length");
+    private CompoundBinaryTag createNBT() {
+        CompoundBinaryTag.Builder compound =CompoundBinaryTag.builder();
+        short width =  (short) (dungeonRoom.getRoomBounds().getMax().getX() - dungeonRoom.getRoomBounds().getMin().getX() + 1);
+        compound.putShort("Width", width);
+        short height  = 255;
+        compound.putShort("Height", height);
+        short length = (short) (dungeonRoom.getRoomBounds().getMax().getZ() - dungeonRoom.getRoomBounds().getMin().getZ() + 1);
+        compound.putShort("Length", length);
+        int size = width * height * length;
+
 
         byte[] blocks = new byte[size];
         byte[] meta = new byte[size];
@@ -274,11 +269,11 @@ public class GeneralEditPane extends MPanel {
         byte[] extraNibble = new byte[(int) Math.ceil(size / 2.0)];
 
         boolean extraEx = false;
-        NBTTagList tileEntitiesList = new NBTTagList();
-        for (int x = 0; x < compound.getShort("Width"); x++) {
-            for (int y = 0; y <  compound.getShort("Height"); y++) {
-                for (int z = 0; z < compound.getShort("Length"); z++) {
-                    int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
+        ListBinaryTag.Builder<CompoundBinaryTag> tileEntitiesList = ListBinaryTag.builder(BinaryTagTypes.COMPOUND);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                for (int z = 0; z < length; z++) {
+                    int index = x + (y * length + z) * width;
                     VectorI3D pos = dungeonRoom.getRelativeBlockPosAt(x,y - 70,z);
                     UBlockState blockState = dungeonRoom.getRoomWorld().getBlockStateAt(pos);
                     boolean acc = dungeonRoom.getRoomBounds().canAccessRelative(x,z);
@@ -290,14 +285,10 @@ public class GeneralEditPane extends MPanel {
                     }
 
                     if (blockState.hasTileEntity()) {
-                        TileEntity tileEntity = dungeonRoom.getContext().getWorld().getTileEntity(new BlockPos(pos.x, pos.y, pos.z));
+                        UTileEntity tileEntity = dungeonRoom.getContext().getUworld().getTileEntityAt(pos);
                         try {
-                            final NBTTagCompound tileEntityCompound = new NBTTagCompound();
-                            tileEntity.writeToNBT(tileEntityCompound);
-                            tileEntitiesList.appendTag(tileEntityCompound);
+                            tileEntitiesList.add(tileEntity.serialize());
                         } catch (final Exception e) {
-                            final BlockPos tePos = tileEntity.getPos();
-
                             blocks[index] = (byte) 7;
                             meta[index] = 0;
                             extra[index] = 0;
@@ -315,15 +306,15 @@ public class GeneralEditPane extends MPanel {
         }
 
 
-        compound.setByteArray("Blocks", blocks);
-        compound.setByteArray("Data", meta);
-        compound.setString("Materials", "Alpha");
+        compound.putByteArray("Blocks", blocks);
+        compound.putByteArray("Data", meta);
+        compound.putString("Materials", "Alpha");
         if (extraEx) {
-            compound.setByteArray("AddBlocks", extraNibble);
+            compound.putByteArray("AddBlocks", extraNibble);
         }
-        compound.setTag("Entities", new NBTTagList());
-        compound.setTag("TileEntities", tileEntitiesList);
+        compound.put("Entities", ListBinaryTag.empty());
+        compound.put("TileEntities", tileEntitiesList.build());
 
-        return compound;
+        return compound.build();
     }
 }

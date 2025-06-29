@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.chat;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import net.kyori.adventure.audience.Audiences;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.ChatComponentText;
@@ -80,7 +81,6 @@ public class ChatProcessor {
                     minimumNext = System.currentTimeMillis() + 700;
                     ChatTransmitter.sendDebugChat(new ChatComponentText("Sending " + tuple.getFirst() + " Secretly"));
                 }
-
             }
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);

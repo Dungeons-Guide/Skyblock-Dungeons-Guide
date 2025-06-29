@@ -19,6 +19,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarend
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.IDataRenderer;
+import kr.syeyoung.modapi.item.UItemStack;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.item.ItemStack;
@@ -37,12 +38,12 @@ public abstract class DataRendererTalismanBase implements IDataRenderer {
             return Optional.of((int[]) playerProfile.getAdditionalProperties().get(TALISMAN_TALLY_CACHE_KEY));
         }
         int[] cnts = new int[DataRendererTalismans.Rarity.values().length];
-        for (ItemStack talisman : playerProfile.getTalismans()) {
+        for (UItemStack talisman : playerProfile.getTalismans()) {
             if (talisman == null) continue;
             DataRendererTalismans.Rarity r = getRarity(talisman);
             if (r != null) cnts[r.ordinal()]++;
         }
-        for (ItemStack itemStack : playerProfile.getInventory()) {
+        for (UItemStack itemStack : playerProfile.getInventory()) {
             if (itemStack == null) continue;
             DataRendererTalismans.Rarity r = getRarity(itemStack);
             if (r != null) cnts[r.ordinal()]++;
@@ -51,7 +52,7 @@ public abstract class DataRendererTalismanBase implements IDataRenderer {
         return Optional.of(cnts);
     }
 
-    private static DataRendererTalismans.Rarity getRarity(ItemStack itemStack) {
+    private static DataRendererTalismans.Rarity getRarity(UItemStack itemStack) {
         NBTTagCompound display = itemStack.getTagCompound().getCompoundTag("display");
         if (display == null) return null;
         NBTTagList lore = display.getTagList("Lore", 8);

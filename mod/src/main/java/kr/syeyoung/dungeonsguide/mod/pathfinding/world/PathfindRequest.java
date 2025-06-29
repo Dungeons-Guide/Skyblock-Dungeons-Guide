@@ -25,10 +25,10 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
+import net.kyori.adventure.nbt.BinaryTagIO;
 import org.apache.commons.codec.binary.Hex;
 
+import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -151,8 +151,7 @@ public class PathfindRequest { // TODO: fix data flow.
 
         // export algorithm settings
         dataOutputStream.writeBytes("ALGO");
-        NBTTagCompound tagCompound = algorithmSetting.serializeToNBT();
-        CompressedStreamTools.write(tagCompound, dataOutputStream);
+        BinaryTagIO.writer().write(algorithmSetting.serializeToNBT(), (DataOutput) dataOutputStream);
 
         // export targets
         dataOutputStream.writeBytes("TRGT");

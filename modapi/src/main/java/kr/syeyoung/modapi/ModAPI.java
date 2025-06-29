@@ -7,6 +7,7 @@ import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.fakeserver.FakeServerUtils;
+import kr.syeyoung.modapi.item.IItemStackRegistry;
 import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
@@ -54,4 +55,6 @@ public interface ModAPI {
     UResourceManager getResourceManager();
 
     FakeServerUtils getFakeServerUtils();
+
+    IItemStackRegistry getItemStackRegistry();
 }

@@ -49,10 +49,10 @@ import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import net.kyori.adventure.nbt.BinaryTagIO;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -60,7 +60,6 @@ import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,13 +160,11 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     VectorI3D warning;
 
 
-    public void communicate(NBTTagCompound compound) {
+    public void communicate(CompoundBinaryTag compound) {
         if (bugged) return;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            DataOutputStream w = new DataOutputStream(baos);
-            CompressedStreamTools.writeCompressed(compound, w);
-            w.flush();
+            BinaryTagIO.writer().write(compound, baos, BinaryTagIO.Compression.GZIP);
             byte[] bytes = baos.toByteArray();
             String str = Base64.encodeBase64String(bytes);
             ChatProcessor.INSTANCE.addToChatQueue("/pc $DG-BD " +str, null, false);
@@ -200,7 +197,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                 String data = component.getFormattedText().substring(component.getFormattedText().indexOf("$DG-BD"));
                 String actual = TextUtils.stripColor(data).trim().split(" ")[1];
                 byte[] data2 = Base64.decodeBase64(actual);
-                NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(data2));
+                CompoundBinaryTag compound = BinaryTagIO.reader().read(new ByteArrayInputStream(data2), BinaryTagIO.Compression.GZIP);
 
                 for (ChamberSet ch:chambers) {
                     if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)

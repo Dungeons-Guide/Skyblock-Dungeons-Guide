@@ -28,11 +28,12 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.dataclasses.*;
 import kr.syeyoung.dungeonsguide.mod.utils.XPUtils;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.item.UItemStack;
+import net.kyori.adventure.nbt.BinaryTagIO;
+import net.kyori.adventure.nbt.BinaryTagTypes;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.nbt.ListBinaryTag;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -116,28 +117,26 @@ public class PlayerProfileParser {
         return current;
     }
 
-    public static NBTTagCompound parseBase64NBT(String nbt) throws IOException {
-        return CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(nbt)));
+    public static CompoundBinaryTag parseBase64NBT(String nbt) throws IOException {
+        return BinaryTagIO.reader().read(new ByteArrayInputStream(Base64.getDecoder().decode(nbt)), BinaryTagIO.Compression.GZIP);
     }
 
-    public static ItemStack deserializeNBT(NBTTagCompound nbtTagCompound) {
-        if (nbtTagCompound.hasNoTags()) return null;
-        ItemStack itemStack = new ItemStack(Blocks.stone);
-        itemStack.deserializeNBT(nbtTagCompound);
-        return itemStack;
+    public static UItemStack deserializeNBT(CompoundBinaryTag nbtTagCompound) {
+        if (nbtTagCompound.isEmpty()) return null;
+        return ModAPI.getAPI().getItemStackRegistry().fromNBT(nbtTagCompound);
     }
 
-    public static ItemStack[] parseInventory(JsonObject object, String path, ItemStack[] itemStacks) throws IOException {
+    public static UItemStack[] parseInventory(JsonObject object, String path, UItemStack[] itemStacks) throws IOException {
         String nbt = getOrDefault(object, path, null);
         if (nbt == null) return null;
 
-        NBTTagCompound armor = parseBase64NBT(nbt);
-        NBTTagList array = armor.getTagList("i", 10);
-        if (itemStacks == null || array.tagCount() > itemStacks.length)
-            itemStacks = new ItemStack[array.tagCount()];
+        CompoundBinaryTag armor = parseBase64NBT(nbt);
+        ListBinaryTag array = armor.getList("i", BinaryTagTypes.COMPOUND);
+        if (itemStacks == null || array.size() > itemStacks.length)
+            itemStacks = new UItemStack[array.size()];
 
-        for (int i = 0; i < array.tagCount(); i++) {
-            NBTTagCompound item = array.getCompoundTagAt(i);
+        for (int i = 0; i < array.size(); i++) {
+            CompoundBinaryTag item = array.getCompound(i);
             itemStacks[i] = deserializeNBT(item);
         }
         return itemStacks;
@@ -168,11 +167,11 @@ public class PlayerProfileParser {
             // migrated til here.
 
             if (inventory.has("wardrobe_contents")) {
-                NBTTagCompound armor = parseBase64NBT(getOrDefault(inventory, "wardrobe_contents.data", null));
-                NBTTagList array = armor.getTagList("i", 10);
-                for (int i = 0; i < array.tagCount(); i++) {
+                CompoundBinaryTag armor = parseBase64NBT(getOrDefault(inventory, "wardrobe_contents.data", null));
+                ListBinaryTag array = armor.getList("i", BinaryTagTypes.COMPOUND);
+                for (int i = 0; i < array.size(); i++) {
                     if (i % 4 == 0) playerProfile.getWardrobe().add(new PlayerProfile.Armor());
-                    NBTTagCompound item = array.getCompoundTagAt(i);
+                    CompoundBinaryTag item = array.getCompound(i);
                     playerProfile.getWardrobe().get(i / 4).getArmorSlots()[i % 4] = deserializeNBT(item);
                 }
             }

@@ -56,30 +56,30 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.item.UItemStack;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UChunk;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import net.kyori.adventure.nbt.BinaryTagIO;
+import net.kyori.adventure.nbt.BinaryTagTypes;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.nbt.ListBinaryTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
 import java.io.*;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -87,7 +87,6 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
-import java.util.zip.GZIPOutputStream;
 
 public class FeatureCollectDungeonRooms extends SimpleFeature {
     public FeatureCollectDungeonRooms() {
@@ -138,7 +137,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         public String name;
         private String playerSkin;
         private String armorstand;
-        private transient ItemStack[] armoritems = new ItemStack[5];
+        private transient UItemStack[] armoritems = new UItemStack[5];
         private Map<String, Double> attributes = new HashMap<>();
 
         private String type;
@@ -340,16 +339,16 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         entityData.name = event.getEntityLiving().getName();
 
         // TODO later...
-//        if (event.entityLiving.getHeldItem() != null)
-//            entityData.armoritems[4] = event.entityLiving.getHeldItem();
-//        if (event.entityLiving.getCurrentArmor(0) != null)
-//            entityData.armoritems[0] = event.entityLiving.getCurrentArmor(0);
-//        if (event.entityLiving.getCurrentArmor(1) != null)
-//            entityData.armoritems[1] = event.entityLiving.getCurrentArmor(1);
-//        if (event.entityLiving.getCurrentArmor(2) != null)
-//            entityData.armoritems[2] = event.entityLiving.getCurrentArmor(2);
-//        if (event.entityLiving.getCurrentArmor(3) != null)
-//            entityData.armoritems[3] = event.entityLiving.getCurrentArmor(3);
+        if (event.getEntityLiving().getHeldItem() != null)
+            entityData.armoritems[4] = event.getEntityLiving().getHeldItem();
+        if (event.getEntityLiving().getCurrentArmor(0) != null)
+            entityData.armoritems[0] = event.getEntityLiving().getCurrentArmor(0);
+        if (event.getEntityLiving().getCurrentArmor(1) != null)
+            entityData.armoritems[1] = event.getEntityLiving().getCurrentArmor(1);
+        if (event.getEntityLiving().getCurrentArmor(2) != null)
+            entityData.armoritems[2] = event.getEntityLiving().getCurrentArmor(2);
+        if (event.getEntityLiving().getCurrentArmor(3) != null)
+            entityData.armoritems[3] = event.getEntityLiving().getCurrentArmor(3);
         if (entityData.trajectory.getLast() == null || entityData.trajectory.getLast().getPos() == null || entityData.trajectory.getLast().getPos().distanceSq(event.getEntityLiving().getPositionVector()) > 0.1f) {
             entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, event.getEntityLiving().getPositionVector(), System.currentTimeMillis()));
         }
@@ -448,18 +447,18 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         try {
             Gson gson = new GsonBuilder()
                     .disableHtmlEscaping()
-                    .registerTypeAdapter(ItemStack.class, new TypeAdapter<ItemStack>() {
+                    .registerTypeAdapter(UItemStack.class, new TypeAdapter<UItemStack>() {
                         @Override
-                        public void write(JsonWriter out, ItemStack value) throws IOException {
+                        public void write(JsonWriter out, UItemStack value) throws IOException {
                             if (value == null) {
                                 out.nullValue();
                             } else {
-                                out.value(nbttostring("item", value.getTagCompound()));
+                                out.value(nbttostring("item", value.serialize()));
                             }
                         }
 
                         @Override
-                        public ItemStack read(JsonReader in) throws IOException {
+                        public UItemStack read(JsonReader in) throws IOException {
                             return null;
                         }
                     })
@@ -531,7 +530,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
 
 
-                NBTTagCompound nbtTagCompound2 = createNBT(roomInfo, dungeonRoomRoomInfoEntry.getKey());
+                CompoundBinaryTag nbtTagCompound2 = createNBT(roomInfo, dungeonRoomRoomInfoEntry.getKey());
                 jsonObject.addProperty("schematic", nbttostring("Schematic", nbtTagCompound2));
 
                 try {
@@ -590,20 +589,10 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
 
-    public static String nbttostring(String name, NBTTagCompound compound) {
-
+    public static String nbttostring(String name, CompoundBinaryTag compound) {
         try {
-            Method method = ReflectionHelper.findMethod(NBTTagCompound.class, compound, new String[] {"write", "method_5062","func_74734_a", "a"}, DataOutput.class);
-
-
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            DataOutputStream dataoutputstream = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(byteArrayOutputStream)));
-
-            dataoutputstream.writeByte(compound.getId());
-
-            dataoutputstream.writeUTF(name);
-            method.invoke(compound, dataoutputstream);
-            dataoutputstream.close();
+            BinaryTagIO.writer().writeNamed(new AbstractMap.SimpleEntry<>(name, compound), byteArrayOutputStream, BinaryTagIO.Compression.GZIP);
             byte[] arr = byteArrayOutputStream.toByteArray();
             return Base64.getEncoder().encodeToString(arr);
         } catch (Exception e) {
@@ -612,14 +601,17 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         }
     }
 
-    private NBTTagCompound createNBT(RoomInfo roomInfo, DungeonRoom dungeonRoom) {
+    private CompoundBinaryTag createNBT(RoomInfo roomInfo, DungeonRoom dungeonRoom) {
         if (1==1) throw new UnsupportedOperationException("NOOO"); // TODO:
 
-        NBTTagCompound compound = new NBTTagCompound();
-        compound.setShort("Width", (short) (dungeonRoom.getRoomBounds().getMax().getX() - dungeonRoom.getRoomBounds().getMin().getX() + 1));
-        compound.setShort("Height", (short) 255);
-        compound.setShort("Length", (short) (dungeonRoom.getRoomBounds().getMax().getZ() - dungeonRoom.getRoomBounds().getMin().getZ() + 1));
-        int size =compound.getShort("Width") * compound.getShort("Height") * compound.getShort("Length");
+        CompoundBinaryTag.Builder compound = CompoundBinaryTag.builder();
+        short width =  (short) (dungeonRoom.getRoomBounds().getMax().getX() - dungeonRoom.getRoomBounds().getMin().getX() + 1);
+        compound.putShort("Width", width);
+        short height  = 255;
+        compound.putShort("Height", height);
+        short length = (short) (dungeonRoom.getRoomBounds().getMax().getZ() - dungeonRoom.getRoomBounds().getMin().getZ() + 1);
+        compound.putShort("Length", length);
+        int size = width * height * length;
 
         byte[] blocks = new byte[size];
         byte[] meta = new byte[size];
@@ -627,43 +619,21 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         byte[] extraNibble = new byte[(int) Math.ceil(size / 2.0)];
 
         boolean extraEx = false;
-        NBTTagList tileEntitiesList = new NBTTagList();
-        for (int x = 0; x < compound.getShort("Width"); x++) {
-            for (int y = 0; y <  compound.getShort("Height"); y++) {
-                for (int z = 0; z < compound.getShort("Length"); z++) {
-                    int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
+        ListBinaryTag.Builder<CompoundBinaryTag> tileEntitiesList = ListBinaryTag.builder(BinaryTagTypes.COMPOUND);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                for (int z = 0; z < length; z++) {
+                    int index = x + (y * length + z) * width;
                     VectorI3D pos = dungeonRoom.getRelativeBlockPosAt(x,y - 70,z);
                     ChunkData chunkData = initialChunkDataMap.get(new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4));
 
-//                    IBlockState blockState;
-//                    if (chunkData != null) {
-//
-//                        ExtendedBlockStorage[] blockStorage = chunkData.initialBlockStorages;
-//
-//                            if (pos.getY() >= 0 && pos.getY() >> 4 < blockStorage.length) {
-//                                ExtendedBlockStorage extendedblockstorage = blockStorage[pos.getY() >> 4];
-//                                if (extendedblockstorage != null) {
-//                                    int j = pos.getX() & 15;
-//                                    int k = pos.getY() & 15;
-//                                    int i = pos.getZ() & 15;
-//                                    blockState = extendedblockstorage.get(j, k, i);
-//                                } else {
-//                                    blockState = Blocks.air.getDefaultState();
-//                                }
-//                            } else {
-//                                blockState = Blocks.air.getDefaultState();
-//                            }
-//
-//                    } else {
-//                        blockState = Blocks.air.getDefaultState();
-//                    }
+                    UBlockState blockState = chunkData.initialBlockStorages.getRelativeBlockAt(x&0xF, y, z&0xF);
 
-//                    int id = Block.getIdFromBlock(blockState.getBlock());
-//                    blocks[index] = (byte) id;
-//                    meta[index] =  (byte) blockState.getBlock().getMetaFromState(blockState);
-//                    if ((extra[index] = (byte) ((id) >> 8)) > 0) {
-//                        extraEx = true;
-//                    }
+                    blocks[index] = (byte) blockState.getLegacyId();
+                    meta[index] =  (byte) blockState.getLegacyMeta();
+                    if ((extra[index] = (byte) ((blockState.getLegacyId()) >> 8)) > 0) {
+                        extraEx = true;
+                    }
                 }
             }
         }
@@ -676,16 +646,16 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         }
 
 
-        compound.setByteArray("Blocks", blocks);
-        compound.setByteArray("Data", meta);
-        compound.setString("Materials", "Alpha");
+        compound.putByteArray("Blocks", blocks);
+        compound.putByteArray("Data", meta);
+        compound.putString("Materials", "Alpha");
         if (extraEx) {
-            compound.setByteArray("AddBlocks", extraNibble);
+            compound.putByteArray("AddBlocks", extraNibble);
         }
-        compound.setTag("Entities", new NBTTagList());
-        compound.setTag("TileEntities", tileEntitiesList);
+        compound.put("Entities", ListBinaryTag.empty());
+        compound.put("TileEntities", tileEntitiesList.build());
 
-        return compound;
+        return compound.build();
     }
 
 

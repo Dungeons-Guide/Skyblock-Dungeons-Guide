@@ -11,6 +11,7 @@ import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.event.listenerlist.BasicEventBus;
 import kr.syeyoung.modapi.fakeserver.FakeServerUtils;
+import kr.syeyoung.modapi.item.IItemStackRegistry;
 import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
@@ -20,6 +21,7 @@ import kr.syeyoung.modapi.v1_8_9.command.CommandManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerSP;
 import kr.syeyoung.modapi.v1_8_9.fakeserver.BlockAccessibleServerLaunchUtils;
+import kr.syeyoung.modapi.v1_8_9.item.IItemStackRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.resources.DGTexturePack;
 import kr.syeyoung.modapi.v1_8_9.resources.UResourceManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.util.USessionImpl;
@@ -197,5 +199,10 @@ public class ModAPIImpl implements ModAPI {
                 return BlockAccessibleServerLaunchUtils.isDungeonIntegratedServerRunning();
             }
         };
+    }
+
+    @Override
+    public IItemStackRegistry getItemStackRegistry() {
+        return new IItemStackRegistryImpl();
     }
 }

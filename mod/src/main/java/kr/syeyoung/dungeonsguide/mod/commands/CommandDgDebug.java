@@ -64,10 +64,10 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.command.UCommandContext;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.world.BlockType;
+import net.kyori.adventure.nbt.BinaryTagIO;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -374,9 +374,9 @@ public class CommandDgDebug {
                 JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
 
 
-                NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                CompoundBinaryTag compound = BinaryTagIO.reader().readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
-                )));
+                )), BinaryTagIO.Compression.GZIP).getValue();
                 byte[] blocks = compound.getByteArray("Blocks");
                 byte[] meta = compound.getByteArray("Data");
                 int shape = jsonObject.get("shape").getAsShort();
@@ -478,8 +478,10 @@ public class CommandDgDebug {
                         }
                     }
                 }
-                compound.setByteArray("Blocks", blocks);
-                compound.setByteArray("Data", meta);
+                compound = CompoundBinaryTag.builder()
+                                .put(compound)
+                                .putByteArray("Blocks", blocks)
+                                .putByteArray("Data", meta).build();
 
                 String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound);
                 jsonObject.remove("schematic");
@@ -509,7 +511,7 @@ public class CommandDgDebug {
 
         File f = new File(dir, file);
             try (FileInputStream fis = new FileInputStream(f)){
-                NBTTagCompound compound = CompressedStreamTools.readCompressed(fis);
+                CompoundBinaryTag compound = BinaryTagIO.reader().readNamed(fis, BinaryTagIO.Compression.GZIP).getValue();
                 byte[] blocks = compound.getByteArray("Blocks");
                 byte[] meta = compound.getByteArray("Data");
                 int shape = 1;
@@ -611,13 +613,15 @@ public class CommandDgDebug {
                         }
                     }
                 }
-                compound.setByteArray("Blocks", blocks);
-                compound.setByteArray("Data", meta);
+                compound = CompoundBinaryTag.builder()
+                        .put(compound)
+                        .putByteArray("Blocks", blocks)
+                        .putByteArray("Data", meta).build();
 
 
                 OutputStream outputStream = Files.newOutputStream(new File(outdir, "fixed-"+f.getName()).toPath());
 
-                CompressedStreamTools.writeCompressed(compound, outputStream);
+                BinaryTagIO.writer().writeNamed(new AbstractMap.SimpleEntry<>("Schematic", compound), outputStream, BinaryTagIO.Compression.GZIP);
 
                 outputStream.flush();
                 outputStream.close();
@@ -645,9 +649,9 @@ public class CommandDgDebug {
                 JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
 
 
-                NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                CompoundBinaryTag compound = BinaryTagIO.reader().readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
-                )));
+                )), BinaryTagIO.Compression.GZIP).getValue();
                 byte[] blocks = compound.getByteArray("Blocks");
                 byte[] meta = compound.getByteArray("Data");
 
@@ -730,9 +734,9 @@ public class CommandDgDebug {
                     // smth i haven't visited yeet
                     // check
 
-                    NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                    CompoundBinaryTag compound = BinaryTagIO.reader().readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
                             jsonObject.get("schematic").getAsString()
-                    )));
+                    )), BinaryTagIO.Compression.GZIP).getValue();
                     byte[] blocks = compound.getByteArray("Blocks");
                     byte[] meta = compound.getByteArray("Data");
 
@@ -802,9 +806,9 @@ public class CommandDgDebug {
                 }
 
 
-                NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                CompoundBinaryTag compound = BinaryTagIO.reader().readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
-                )));
+                )), BinaryTagIO.Compression.GZIP).getValue();
                 byte[] blocks = compound.getByteArray("Blocks");
                 byte[] meta = compound.getByteArray("Data");
                 // to get
@@ -855,8 +859,10 @@ public class CommandDgDebug {
 
 
                 if (chestpopulated) {
-                    compound.setByteArray("Blocks", blocks);
-                    compound.setByteArray("Data", meta);
+                    compound = CompoundBinaryTag.builder()
+                            .put(compound)
+                            .putByteArray("Blocks", blocks)
+                            .putByteArray("Data", meta).build();
 
                     String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound);
                     jsonObject.remove("schematic");
@@ -875,9 +881,9 @@ public class CommandDgDebug {
                     int thisRot = jsonObject.get("rot").getAsInt();
 
 
-                    NBTTagCompound compound2 = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                    CompoundBinaryTag compound2 = BinaryTagIO.reader().readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
                             originalRoomMapping.get("schematic").getAsString()
-                    )));
+                    )), BinaryTagIO.Compression.GZIP).getValue();
                     byte[] blocks2 = compound2.getByteArray("Blocks");
                     byte[] meta2 = compound2.getByteArray("Data");
                     int len = compound.getShort("Length");
@@ -993,9 +999,10 @@ public class CommandDgDebug {
                         }
                     }
                     if (changed) {
-                        compound2.setByteArray("Blocks", blocks2);
-                        compound2.setByteArray("Data", meta2);
-
+                        compound2 = CompoundBinaryTag.builder()
+                                .put(compound2)
+                                .putByteArray("Blocks", blocks2)
+                                .putByteArray("Data",meta2).build();
                         String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound2);
                         originalRoomMapping.remove("schematic");
                         originalRoomMapping.addProperty("schematic", schm);

@@ -61,6 +61,8 @@ import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.IBlockRegistry;
 import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
+import net.kyori.adventure.nbt.BinaryTagIO;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -72,8 +74,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.apache.commons.io.IOUtils;
@@ -114,7 +114,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
         OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new VectorI3D(0,0,0));
 
-        NBTTagCompound compound = schematic;
+        CompoundBinaryTag compound = schematic;
         int w = compound.getShort("Width");
         int l = compound.getShort("Length");
         if (dungeonRoom.getRoomMatcher().getRotation() % 2 == 1) {
@@ -210,11 +210,11 @@ public class FeatureRoomEdit  extends SimpleFeature {
         shape = jsonObject.get("shape").getAsShort();
         color = jsonObject.get("color").getAsByte();
 
-        NBTTagCompound compound;
+        CompoundBinaryTag compound;
         try {
-            compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+            compound = BinaryTagIO.reader().readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
                     jsonObject.get("schematic").getAsString()
-            )));
+            )), BinaryTagIO.Compression.GZIP).getValue();
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -239,9 +239,9 @@ public class FeatureRoomEdit  extends SimpleFeature {
         blockUpdates = new ArrayList<>();
 
 
-        NBTTagCompound compound;
+        CompoundBinaryTag compound;
         try (FileInputStream fis = new FileInputStream(f)){
-            compound =  CompressedStreamTools.readCompressed(fis);
+            compound = BinaryTagIO.reader().readNamed(fis, BinaryTagIO.Compression.GZIP).getValue();
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -377,7 +377,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
     private byte color;
     private int xWid, zWid;
     private boolean setup = false;
-    private NBTTagCompound schematic;
+    private CompoundBinaryTag schematic;
 
     @Getter
     private List<FeatureCollectDungeonRooms.RoomInfo.BlockUpdate> blockUpdates;

@@ -23,6 +23,7 @@ import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.SkinFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.item.UItemStack;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
@@ -52,8 +53,8 @@ public class FakePlayer extends EntityOtherPlayerMP {
         int highestDungeonScore = Integer.MIN_VALUE;
         this.inventory.mainInventory[0] = null;
         if (skyblockProfile.getInventory() != null) {
-            ItemStack highestItem = null;
-            for (ItemStack itemStack : skyblockProfile.getInventory()) {
+            UItemStack highestItem = null;
+            for (UItemStack itemStack : skyblockProfile.getInventory()) {
                 if (itemStack == null) continue;
                 NBTTagCompound display = itemStack.getTagCompound().getCompoundTag("display");
                 if (display == null) continue;
@@ -94,7 +95,7 @@ public class FakePlayer extends EntityOtherPlayerMP {
         int highestDungeonScore = Integer.MIN_VALUE;
         if (skyblockProfile.getInventory() != null) {
             ItemStack highestItem = null;
-            for (ItemStack itemStack : skyblockProfile.getInventory()) {
+            for (UItemStack itemStack : skyblockProfile.getInventory()) {
                 if (itemStack == null) continue;
                 NBTTagCompound display = itemStack.getTagCompound().getCompoundTag("display");
                 if (display == null) continue;

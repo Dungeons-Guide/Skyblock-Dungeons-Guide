@@ -8,7 +8,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.TSPCacheRegistry;
 import lombok.Getter;
-import net.minecraft.nbt.CompressedStreamTools;
+import net.kyori.adventure.nbt.BinaryTagIO;
 import org.apache.commons.codec.binary.Hex;
 
 import java.io.*;
@@ -134,7 +134,7 @@ public class RoomPreset implements Cloneable {
             if (algorithmSetting != null) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 DataOutputStream dataOutputStream = new DataOutputStream(baos);
-                CompressedStreamTools.write(algorithmSetting.serializeToNBT(), dataOutputStream);
+                BinaryTagIO.writer().write(algorithmSetting.serializeToNBT(), (DataOutput) dataOutputStream);
                 dataOutputStream.flush();
                 String algoSettings = Base64.getEncoder().encodeToString(baos.toByteArray());
                 res.addProperty("algorithmSetting", algoSettings);

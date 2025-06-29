@@ -23,6 +23,9 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.20")
     annotationProcessor("org.projectlombok:lombok:1.18.16")
     api("com.mojang:brigadier:1.0.18")
+    // we use adventure api for platform agnostic text components / nbt.
+    api("net.kyori:adventure-api:4.23.0")
+    api("net.kyori:adventure-nbt:4.23.0")
 
     testCompileOnly("org.projectlombok:lombok:1.18.20")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.20")

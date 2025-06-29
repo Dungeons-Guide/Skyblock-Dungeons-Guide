@@ -25,12 +25,12 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.*;
 import lombok.Getter;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.opengl.GL11;
@@ -48,7 +48,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
 
 
     @Override
-    public void onDataReceive(NBTTagCompound compound) {
+    public void onDataReceive(CompoundBinaryTag compound) {
 
     }
 

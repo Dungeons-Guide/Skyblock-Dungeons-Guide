@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.UBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -66,7 +66,7 @@ public class MazeRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void onDataReceive(NBTTagCompound compound) {
+    public void onDataReceive(CompoundBinaryTag compound) {
         if (5 == compound.getByte("a")) {
             String latestRequestid = compound.getString("b");
             latestRequest = ModAPI.getAPI().getBlockRegistry().fromSerializedSeting(latestRequestid);

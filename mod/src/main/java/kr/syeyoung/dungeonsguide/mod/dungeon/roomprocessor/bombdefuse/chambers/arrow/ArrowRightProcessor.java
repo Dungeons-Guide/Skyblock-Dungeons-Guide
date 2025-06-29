@@ -28,7 +28,7 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.item.UItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,14 +81,14 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void onDataReceive(NBTTagCompound compound) {
+    public void onDataReceive(CompoundBinaryTag compound) {
         if (3 == compound.getByte("a")) {
-            answer = compound.getInteger("b");
+            answer = compound.getInt("b");
             for (int i = 8; i >= 0; i--) {
                 correctAnswers[i] = answer % 10;
                 answer = answer / 10;
             }
-            answer = compound.getInteger("b");
+            answer = compound.getInt("b");
         }
     }
 

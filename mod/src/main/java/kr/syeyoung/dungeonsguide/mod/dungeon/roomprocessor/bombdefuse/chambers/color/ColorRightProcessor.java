@@ -29,8 +29,8 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.item.UItemStack;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,18 +81,19 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void onSendData() {
         super.onSendData();
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setByte("a", (byte) 6);
-        nbt.setString("f", getChamber().getBlock(0,3,3).serialize());
-        nbt.setString("s", getChamber().getBlock(0,3,2).serialize());
-        nbt.setString("t", getChamber().getBlock(0,3,1).serialize());
+        CompoundBinaryTag nbt = CompoundBinaryTag.builder()
+                .putByte("a", (byte)6)
+                .putString("f",getChamber().getBlock(0,3,3).serialize())
+                .putString("s",getChamber().getBlock(0,3,2).serialize())
+                .putString("t",getChamber().getBlock(0,3,1).serialize())
+                .build();
         getSolver().communicate(nbt);
     }
 
     @Override
-    public void onDataReceive(NBTTagCompound compound) {
+    public void onDataReceive(CompoundBinaryTag compound) {
         if (7 == compound.getByte("a")) {
-            answer = compound.getInteger("b");
+            answer = compound.getInt("b");
             b3b = (byte) (answer / 10000);
             b2b = (byte) ((answer % 10000) / 100);
             b1b = (byte) (answer % 100);

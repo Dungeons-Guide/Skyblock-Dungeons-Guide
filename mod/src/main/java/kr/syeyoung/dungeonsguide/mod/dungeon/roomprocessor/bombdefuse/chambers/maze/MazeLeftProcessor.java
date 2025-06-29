@@ -27,6 +27,7 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.world.UBlockState;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
@@ -70,9 +71,9 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
         VectorI3D block = result.getBlockHit();
         UBlockState b = getChamber().getRoom().getContext().getUworld().getBlockStateAt(block);
 
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setByte("a", (byte) 5);
-        nbt.setString("b", b.serialize());
+        CompoundBinaryTag nbt = CompoundBinaryTag.builder()
+                .putByte("a", (byte)5)
+                .putString("b", b.serialize()).build();
         getSolver().communicate(nbt);
     }
 }
