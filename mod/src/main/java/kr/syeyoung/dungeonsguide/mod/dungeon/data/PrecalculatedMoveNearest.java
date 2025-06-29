@@ -29,10 +29,15 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Worl
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.InstaBreakFactorCalculatingCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
@@ -89,6 +94,20 @@ public class PrecalculatedMoveNearest {
                 }
             }
         }
+
+        HashSet<VectorI3D> poses = new HashSet<>();
+        for (DungeonMechanicData value : dri.getMechanics().values()) {
+            if (value instanceof DungeonTombState.DungeonTombData) {
+                for (OffsetPoint offsetPoint2 : ((DungeonTombState.DungeonTombData) value).blockedPoints()) {
+                    poses.add(new VectorI3D(offsetPoint2.getX(), offsetPoint2.getY(), offsetPoint2.getZ()));
+                }
+            } else if (value instanceof DungeonBreakableWallState.DungeonBreakableWallData) {
+                for (OffsetPoint offsetPoint2 : ((DungeonBreakableWallState.DungeonBreakableWallData) value).blockedPoints()) {
+                    poses.add(new VectorI3D(offsetPoint2.getX(), offsetPoint2.getY(), offsetPoint2.getZ()));
+                }
+            }
+        }
+
         Vec3 vec = new Vec3(offsetPoint.getX() + 0.5, offsetPoint.getY() + 70.5, offsetPoint.getZ() + 0.5);
         List<PossibleMoveSpot>[] spots = new List[1 << calculateFor.size()];
         for (int i = 0; i < (1 << calculateFor.size()); i++) {
@@ -96,9 +115,20 @@ public class PrecalculatedMoveNearest {
             for (int i1 = 0; i1 < calculateFor.size(); i1++) {
                 if (((i >> i1) & 0x1) > 0) included.add(calculateFor.get(i1));
             }
+            DRIWorld driWorld = new DRIWorld(dri, included);
+            InstaBreakFactorCalculatingCoordinateMap breakFactorCalculatingCoordinateMap = new InstaBreakFactorCalculatingCoordinateMap(driWorld, AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING);
+            CollisionStateCalculatingCoordinateMap collisionStateCalculatingCoordinateMap = new CollisionStateCalculatingCoordinateMap(driWorld,
+                    poses,
+                    breakFactorCalculatingCoordinateMap,
+                    new RoomBounds(
+                            dri.getShape(),
+                            new VectorI3D(0,0,0),
+                            new VectorI3D(dri.getWidth(), 256, dri.getLength())
+                    )
+            );
 
-            spots[i] = RaytraceHelper.findMovespots(new DRIWorld(dri, included), new BlockPos(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()),
-                    a -> a.squareDistanceTo(vec) <= 25, 6);
+            spots[i] = RaytraceHelper.findMovespots(driWorld, new BlockPos(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()),
+                    a -> a.squareDistanceTo(vec) <= 25, 6, (x,y,z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked());
         }
         return new PrecalculatedMoveNearest(calculateFor, spots, offsetPoint);
     }
@@ -132,6 +162,21 @@ public class PrecalculatedMoveNearest {
                 vec.xCoord - 3, vec.yCoord + 1.1, vec.zCoord -3,
                 vec.xCoord + 3, vec.yCoord - 3.6, vec.zCoord + 3
         );
+
+        HashSet<VectorI3D> poses = new HashSet<>();
+        for (DungeonMechanicData value : dri.getMechanics().values()) {
+            if (value instanceof DungeonTombState.DungeonTombData) {
+                for (OffsetPoint offsetPoint2 : ((DungeonTombState.DungeonTombData) value).blockedPoints()) {
+                    poses.add(new VectorI3D(offsetPoint2.getX(), offsetPoint2.getY(), offsetPoint2.getZ()));
+                }
+            } else if (value instanceof DungeonBreakableWallState.DungeonBreakableWallData) {
+                for (OffsetPoint offsetPoint2 : ((DungeonBreakableWallState.DungeonBreakableWallData) value).blockedPoints()) {
+                    poses.add(new VectorI3D(offsetPoint2.getX(), offsetPoint2.getY(), offsetPoint2.getZ()));
+                }
+            }
+        }
+
+
         for (int i = 0; i < (1 << calculateFor.size()); i++) {
             List<String> included = new ArrayList<>();
             included.addAll(defaultEnable);
@@ -139,8 +184,21 @@ public class PrecalculatedMoveNearest {
                 if (((i >> i1) & 0x1) > 0) included.add(calculateFor.get(i1));
             }
 
+            DRIWorld driWorld = new DRIWorld(dri, included);
+            InstaBreakFactorCalculatingCoordinateMap breakFactorCalculatingCoordinateMap = new InstaBreakFactorCalculatingCoordinateMap(driWorld, AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING);
+            CollisionStateCalculatingCoordinateMap collisionStateCalculatingCoordinateMap = new CollisionStateCalculatingCoordinateMap(driWorld,
+                    poses,
+                    breakFactorCalculatingCoordinateMap,
+                    new RoomBounds(
+                            dri.getShape(),
+                            new VectorI3D(0,0,0),
+                            new VectorI3D(dri.getWidth(), 256, dri.getLength())
+                    )
+            );
+
+
             spots[i] = RaytraceHelper.findMovespots(new DRIWorld(dri, included), new BlockPos(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()),
-                    a -> check.isVecInside(a), 8);
+                    a -> check.isVecInside(a), 8, (x,y,z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked());
         }
         return new PrecalculatedMoveNearest(calculateFor, spots, offsetPoint);
     }

@@ -23,8 +23,13 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleClickingSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.InstaBreakFactorCalculatingCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.WorldBackedCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
@@ -58,7 +63,14 @@ public class FeatureStonkDebug extends SimpleFeature {
         if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             event.setCanceled(true);
             // reset
-            this.spots =RaytraceHelper.raycast((World) event.world.getWorld(), new BlockPos(event.pos.getX(), event.pos.getY(), event.pos.getZ()));
+            WorldBackedCoordinateMap coordinateMap = new WorldBackedCoordinateMap((World) event.world.getWorld(), Integer.MIN_VALUE, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 255, Integer.MAX_VALUE);
+            InstaBreakFactorCalculatingCoordinateMap coordinateMap1 = new InstaBreakFactorCalculatingCoordinateMap(coordinateMap, AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING);
+            CollisionStateCalculatingCoordinateMap collisionStateCalculatingCoordinateMap = new CollisionStateCalculatingCoordinateMap(
+                    coordinateMap, Collections.emptySet(), coordinateMap1, new RoomBounds(
+                    (short) 51, event.pos.add(-32, -100, -32), event.pos.add(32, 100, 32))
+            );
+            this.spots =RaytraceHelper.raycast((World) event.world.getWorld(), new BlockPos(event.pos.getX(), event.pos.getY(), event.pos.getZ()),
+                    (x,y,z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked());
             System.out.println(spots);
         } else {
 //            this.spots = null;

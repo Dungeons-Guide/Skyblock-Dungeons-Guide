@@ -28,18 +28,23 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Worl
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.InstaBreakFactorCalculatingCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @EqualsAndHashCode
@@ -103,6 +108,20 @@ public class PrecalculatedStonk {
             }
 
         }
+
+        HashSet<VectorI3D> poses = new HashSet<>();
+        for (DungeonMechanicData value : dri.getMechanics().values()) {
+            if (value instanceof DungeonTombState.DungeonTombData) {
+                for (OffsetPoint offsetPoint2 : ((DungeonTombState.DungeonTombData) value).blockedPoints()) {
+                    poses.add(new VectorI3D(offsetPoint2.getX(), offsetPoint2.getY(), offsetPoint2.getZ()));
+                }
+            } else if (value instanceof DungeonBreakableWallState.DungeonBreakableWallData) {
+                for (OffsetPoint offsetPoint2 : ((DungeonBreakableWallState.DungeonBreakableWallData) value).blockedPoints()) {
+                    poses.add(new VectorI3D(offsetPoint2.getX(), offsetPoint2.getY(), offsetPoint2.getZ()));
+                }
+            }
+        }
+
         List<PossibleClickingSpot>[] spots = new List[1 << calculateFor.size()];
         for (int i = 0; i < (1 << calculateFor.size()); i++) {
             List<String> included = new ArrayList<>();
@@ -112,7 +131,18 @@ public class PrecalculatedStonk {
             }
             List<List<PossibleClickingSpot>> list = new ArrayList<>();
             for (OffsetPoint point : offsetPoint) {
-                list.add(RaytraceHelper.raycast(new DRIWorld(dri, included), new BlockPos(point.getX(), point.getY()+70, point.getZ())));
+                DRIWorld driWorld = new DRIWorld(dri, included);
+                InstaBreakFactorCalculatingCoordinateMap breakFactorCalculatingCoordinateMap = new InstaBreakFactorCalculatingCoordinateMap(driWorld, AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING);
+                CollisionStateCalculatingCoordinateMap collisionStateCalculatingCoordinateMap = new CollisionStateCalculatingCoordinateMap(driWorld,
+                        poses,
+                        breakFactorCalculatingCoordinateMap,
+                        new RoomBounds(
+                            dri.getShape(),
+                            new VectorI3D(0,0,0),
+                            new VectorI3D(dri.getWidth(), 256, dri.getLength())
+                        )
+                );
+                list.add(RaytraceHelper.raycast(driWorld, new BlockPos(point.getX(), point.getY()+70, point.getZ()), (x,y,z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked()));
             }
             List<PossibleClickingSpot> res = list.size() == 1 ? list.get(0) : RaytraceHelper.combine(list);
 

@@ -21,8 +21,13 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleMoveSpot;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.InstaBreakFactorCalculatingCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.WorldBackedCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
@@ -34,6 +39,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
+import java.util.Collections;
 import java.util.List;
 
 public class FeatureAirchkDebug extends SimpleFeature {
@@ -61,8 +67,15 @@ public class FeatureAirchkDebug extends SimpleFeature {
                     vec.xCoord + 3.1, vec.yCoord - 3.6, vec.zCoord + 3.1
             );
 
+            WorldBackedCoordinateMap coordinateMap = new WorldBackedCoordinateMap((World) event.world.getWorld(), Integer.MIN_VALUE, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 255, Integer.MAX_VALUE);
+            InstaBreakFactorCalculatingCoordinateMap coordinateMap1 = new InstaBreakFactorCalculatingCoordinateMap(coordinateMap, AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING);
+            CollisionStateCalculatingCoordinateMap collisionStateCalculatingCoordinateMap = new CollisionStateCalculatingCoordinateMap(
+                    coordinateMap, Collections.emptySet(), coordinateMap1, new RoomBounds(
+                    (short) 51, event.pos.add(-32, -100, -32), event.pos.add(32, 100, 32))
+            );
+
             this.spots = RaytraceHelper.findMovespots((World)event.world.getWorld(),
-                    new BlockPos(event.pos.getX(), event.pos.getY(), event.pos.getZ()), a -> check.isVecInside(a), 3);
+                    new BlockPos(event.pos.getX(), event.pos.getY(), event.pos.getZ()), a -> check.isVecInside(a), 3, (x,y,z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked());
             System.out.println(spots);
         } else {
 //            this.spots = null;

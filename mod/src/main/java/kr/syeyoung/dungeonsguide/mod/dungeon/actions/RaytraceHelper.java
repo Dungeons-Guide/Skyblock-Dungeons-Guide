@@ -52,9 +52,6 @@ public class RaytraceHelper {
     public static interface CalculateIsBlocked {
         boolean canStand(int x, int y, int z);
     }
-    public static List<PossibleClickingSpot> raycast(World w, BlockPos target) {
-        return raycast(w, target, (a,b,c) -> RaytraceHelper.canStand(w,a,b,c));
-    }
 
     public static List<PossibleClickingSpot> combine(List<List<PossibleClickingSpot>> possibleClickingSpotList) {
         Map<OffsetVec3, List<PossibleClickingSpot>> clickingSpot = new HashMap<>();
@@ -471,10 +468,6 @@ public class RaytraceHelper {
                         )
                 ).collect(Collectors.toList());
     }
-    public static List<PossibleMoveSpot> findMovespots(World w, BlockPos target, Predicate<Vec3> included, double manhattenDist) {
-        return findMovespots(w, target, included, manhattenDist, (x,y,z) -> RaytraceHelper.canStand(w, x,y,z));
-    }
-
     public static List<PossibleMoveSpot> findMovespots(World w, BlockPos target, Predicate<Vec3> included, double manhattenDist, CalculateIsBlocked calculateIsBlocked) {
 
         Map<OffsetVec3, Boolean> lol = new HashMap<>();
@@ -818,43 +811,4 @@ public class RaytraceHelper {
         return blocks;
 
     }
-
-
-    private static  boolean canStand(World w, int x, int y, int z) {
-       
-        float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
-
-        float playerWidth = 0.3f;
-        AxisAlignedBB bb = AxisAlignedBB
-                .fromBounds(wX - playerWidth, wY+0.06251, wZ - playerWidth,
-                        wX + playerWidth, wY +0.06251 + 1.8, wZ + playerWidth);
-
-        int minX = MathHelper.floor_double(bb.minX);
-        int maxX = MathHelper.floor_double(bb.maxX + 1.0D);
-        int minY = MathHelper.floor_double(bb.minY);
-        int maxY = MathHelper.floor_double(bb.maxY + 1.0D);
-        int minZ = MathHelper.floor_double(bb.minZ);
-        int maxZ = MathHelper.floor_double(bb.maxZ + 1.0D);
-
-        BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
-        List<AxisAlignedBB> list2 = new ArrayList<>();
-        int size = 0;
-
-        int notstonkable = 0;
-        for (int k1 = minX; k1 < maxX; ++k1) {
-            for (int l1 = minZ; l1 < maxZ; ++l1) {
-                for (int i2 = minY-1; i2 < maxY; ++i2) {
-                    blockPos.set(k1, i2, l1);
-                    IBlockState state = w.getBlockState(blockPos);
-                    Block block = state.getBlock();
-                    block.addCollisionBoxesToList(
-                            w, blockPos, state, bb, list2, null
-                    );
-                }
-            }
-        }
-        boolean blocked = !list2.isEmpty();
-        return !blocked;
-    }
-
 }
