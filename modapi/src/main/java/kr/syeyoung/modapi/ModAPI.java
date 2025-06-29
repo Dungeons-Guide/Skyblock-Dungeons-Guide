@@ -46,4 +46,6 @@ public interface ModAPI {
     IBlockRegistry getBlockRegistry();
 
     UCommandManager getCommandManager();
+
+    boolean isSinglePlayer();
 }

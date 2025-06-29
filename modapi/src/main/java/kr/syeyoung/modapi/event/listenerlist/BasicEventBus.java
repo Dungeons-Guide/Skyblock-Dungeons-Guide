@@ -50,6 +50,15 @@ public class BasicEventBus implements EventBus {
     }
 
     @Override
+    public <T extends UEvent> boolean fireEvent(T t, ListenerPriority priority) {
+        List<BasicEventListeners<? super T>> eventListeners = this.getFireTarget((Class<T>) t.getClass());
+        for (BasicEventListeners<? super T> eventListener : eventListeners) {
+            eventListener.invoke(t, priority.getPriority());
+        }
+        return t instanceof Cancelable && ((Cancelable) t).isCanceled();
+    }
+
+    @Override
     public <T extends UEvent> ListenerRegistration<T> registerListener(Class<T> clazz, ListenerPriority priority, EventListener<T> invoke) {
         return getDirectEventListener(clazz).registerEventListener(priority, invoke);
     }

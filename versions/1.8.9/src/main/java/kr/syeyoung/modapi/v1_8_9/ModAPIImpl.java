@@ -50,11 +50,15 @@ public class ModAPIImpl implements ModAPI {
         return new RaycastResult(
                 position.getBlockPos() == null ? null : new VectorI3D(position.getBlockPos().getX(), position.getBlockPos().getY(), position.getBlockPos().getZ()),
                 position.typeOfHit == MovingObjectPosition.MovingObjectType.MISS ? RaycastResult.HitType.MISS :
-                        position.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY ? RaycastResult.HitType.ENTITY:
+                        position.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY ? RaycastResult.HitType.ENTITY :
                                 RaycastResult.HitType.BLOCK,
                 position.hitVec == null ? null : new Vector3D(position.hitVec.xCoord, position.hitVec.yCoord, position.hitVec.zCoord),
                 position.entityHit == null ? null : UEntityDelegateFactory.createEntityFor(position.entityHit)
         );
+    }
+
+    public boolean isSinglePlayer() {
+        return Minecraft.getMinecraft().isSingleplayer();
     }
 
 
@@ -113,7 +117,7 @@ public class ModAPIImpl implements ModAPI {
 
     @Override
     public UWorld getWorld() {
-        return Minecraft.getMinecraft().theWorld == null ? null : new UWorldImpl(Minecraft.getMinecraft().theWorld,  (BlockStateRegistryImpl) ModAPI.getAPI().getBlockRegistry());
+        return Minecraft.getMinecraft().theWorld == null ? null : new UWorldImpl(Minecraft.getMinecraft().theWorld, (BlockStateRegistryImpl) ModAPI.getAPI().getBlockRegistry());
     }
 
     @Override
@@ -127,7 +131,7 @@ public class ModAPIImpl implements ModAPI {
     @Override
     public void init() {
         MinecraftForge.EVENT_BUS.register(packetInjector);
-        MinecraftForge.EVENT_BUS.register(eventListener);
+        eventListener.register();
         registry.init();
 
         DungeonsGuide.getDungeonsGuide();
@@ -141,7 +145,7 @@ public class ModAPIImpl implements ModAPI {
     @Override
     public void unload() {
         MinecraftForge.EVENT_BUS.unregister(packetInjector);
-        MinecraftForge.EVENT_BUS.unregister(eventListener);
+        eventListener.unregister();
 
         commandManager.unregisterCommands();
         packetInjector.cleanup();

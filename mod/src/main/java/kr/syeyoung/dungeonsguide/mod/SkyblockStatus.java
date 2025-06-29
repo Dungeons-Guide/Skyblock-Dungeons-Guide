@@ -35,7 +35,6 @@ import kr.syeyoung.modapi.event.SubscribeEvent;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
 
 import java.util.Collection;
 import java.util.Set;
@@ -109,12 +108,11 @@ public class SkyblockStatus {
     private boolean forceIsOnDungeon2;
 
     public static boolean isOnHypixel() {
-        Minecraft mc = Minecraft.getMinecraft();
         UPlayerSelf playerSelf = ModAPI.getAPI().getPlayer();
-        if (mc == null || playerSelf == null) return false;
+        if (playerSelf == null) return false;
         String clientBrand = playerSelf.getClientBrand();
         if (clientBrand == null) return false;
-        if (!mc.isSingleplayer() && mc.loadingScreen != null) {
+        if (!ModAPI.getAPI().isSinglePlayer()) {
             return clientBrand.startsWith("Hypixel BungeeCord");
         }
         return false;
