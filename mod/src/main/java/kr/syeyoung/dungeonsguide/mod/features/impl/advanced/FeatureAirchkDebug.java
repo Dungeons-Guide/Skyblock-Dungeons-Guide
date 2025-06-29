@@ -30,11 +30,10 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
 import kr.syeyoung.modapi.item.Item;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
@@ -61,10 +60,10 @@ public class FeatureAirchkDebug extends SimpleFeature {
         if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             event.setCanceled(true);
             // reset
-            Vec3 vec = new Vec3(event.pos.getX() + 0.5, event.pos.getY() + 0.5, event.pos.getZ() + 0.5);
-            AxisAlignedBB check = AxisAlignedBB.fromBounds(
-                    vec.xCoord - 3.1, vec.yCoord + 1.1, vec.zCoord -3.1,
-                    vec.xCoord + 3.1, vec.yCoord - 3.6, vec.zCoord + 3.1
+            Vector3D vec = new Vector3D(event.pos.getX() + 0.5, event.pos.getY() + 0.5, event.pos.getZ() + 0.5);
+            AABB check = new AABB(
+                    vec.x - 3.1, vec.y + 1.1, vec.z -3.1,
+                    vec.x + 3.1, vec.y - 3.6, vec.z + 3.1
             );
 
             WorldBackedCoordinateMap coordinateMap = new WorldBackedCoordinateMap((World) event.world.getWorld(), Integer.MIN_VALUE, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 255, Integer.MAX_VALUE);
@@ -74,8 +73,8 @@ public class FeatureAirchkDebug extends SimpleFeature {
                     (short) 51, event.pos.add(-32, -100, -32), event.pos.add(32, 100, 32))
             );
 
-            this.spots = RaytraceHelper.findMovespots((World)event.world.getWorld(),
-                    new BlockPos(event.pos.getX(), event.pos.getY(), event.pos.getZ()), a -> check.isVecInside(a), 3, (x,y,z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked());
+            this.spots = RaytraceHelper.findMovespots(event.world,
+                    new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ()), a -> check.isVecInside(a), 3, (x, y, z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked());
             System.out.println(spots);
         } else {
 //            this.spots = null;

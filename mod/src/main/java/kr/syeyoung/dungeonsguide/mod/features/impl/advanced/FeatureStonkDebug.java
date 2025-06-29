@@ -34,7 +34,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
 import kr.syeyoung.modapi.item.Item;
-import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
@@ -69,7 +68,7 @@ public class FeatureStonkDebug extends SimpleFeature {
                     coordinateMap, Collections.emptySet(), coordinateMap1, new RoomBounds(
                     (short) 51, event.pos.add(-32, -100, -32), event.pos.add(32, 100, 32))
             );
-            this.spots =RaytraceHelper.raycast((World) event.world.getWorld(), new BlockPos(event.pos.getX(), event.pos.getY(), event.pos.getZ()),
+            this.spots =RaytraceHelper.raycast(event.world, event.pos,
                     (x,y,z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked());
             System.out.println(spots);
         } else {

@@ -1,6 +1,8 @@
 package kr.syeyoung.modapi.world;
 
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.EnumFacing;
+import kr.syeyoung.modapi.data.VectorI3D;
 
 public interface UBlockState {
     String getId();
@@ -20,4 +22,11 @@ public interface UBlockState {
     int getColor();
 
     Object getIBlockState();
+
+    AABB getSelectedBoundingBox(IBlockAccessible blockAccessible, VectorI3D pos);
+
+    boolean canCollideCheck(boolean hitIfLiquid);
+
+    int getHarvestLevel();
+    String getHarvestTool();
 }

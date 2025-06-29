@@ -142,7 +142,6 @@ public class DungeonRoomInfo {
     private static final PropertyDirection[] directionMap = new PropertyDirection[4096];
     static {
         for (Block block : Block.blockRegistry) {
-
             Optional<PropertyDirection> propertyDirection = block.getDefaultState().getPropertyNames().stream()
                     .filter(a -> a instanceof PropertyDirection)
                     .map(PropertyDirection.class::cast).findFirst();

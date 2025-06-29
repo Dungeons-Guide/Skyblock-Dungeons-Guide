@@ -4,6 +4,7 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.debugger.memory.utils.NamesUtils
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.util.PackageUtil
 import com.intellij.openapi.application.ApplicationManager
@@ -17,10 +18,10 @@ import com.intellij.openapi.ui.InputValidator
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.Ref
-import com.intellij.polySymbols.utils.NameCaseUtils
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
+import com.intellij.psi.codeStyle.NameUtil
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.MethodReferencesSearch
@@ -34,6 +35,7 @@ import com.intellij.usageView.UsageViewDescriptor
 import liveplugin.PluginUtil.showInConsole
 import liveplugin.registerInspection
 import liveplugin.show
+import org.apache.commons.text.CaseUtils
 import kotlin.math.exp
 
 // depends-on-plugin com.intellij.java
@@ -171,7 +173,7 @@ fun createDelegateAndApi(expr: PsiReferenceExpression, clazz: PsiClass, impl: Ps
         addImportIfNeeded(clazz.containingFile, klass)
     }
 
-    newName = NameCaseUtils.toCamelCase(newName)
+    newName = CaseUtils.toCamelCase(newName, false)
 
     val factory = JavaPsiFacade.getElementFactory(expr.project)
     val newMethod = factory.createMethod(newName, returnType)

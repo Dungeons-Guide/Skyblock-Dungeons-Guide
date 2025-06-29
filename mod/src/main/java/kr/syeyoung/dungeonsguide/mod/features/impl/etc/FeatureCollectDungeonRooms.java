@@ -62,8 +62,6 @@ import kr.syeyoung.modapi.world.UChunk;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
@@ -86,8 +84,8 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -467,16 +465,14 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                             return null;
                         }
                     })
-                    .registerTypeAdapter(IBlockState.class, new TypeAdapter<IBlockState>() {
+                    .registerTypeAdapter(UBlockState.class, new TypeAdapter<UBlockState>() {
                         @Override
-                        public void write(JsonWriter out, IBlockState value) throws IOException {
-                            int id = Block.getIdFromBlock(value.getBlock());
-                            int meta = value.getBlock().getMetaFromState(value);
-                            out.value(id+":"+meta);
+                        public void write(JsonWriter out, UBlockState value) throws IOException {
+                            out.value(value.serialize());
                         }
 
                         @Override
-                        public IBlockState read(JsonReader in) throws IOException {
+                        public UBlockState read(JsonReader in) throws IOException {
                             return null;
                         }
                     })

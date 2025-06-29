@@ -40,7 +40,6 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 import java.util.List;
@@ -142,7 +141,7 @@ public class PrecalculatedStonk {
                             new VectorI3D(dri.getWidth(), 256, dri.getLength())
                         )
                 );
-                list.add(RaytraceHelper.raycast(driWorld, new BlockPos(point.getX(), point.getY()+70, point.getZ()), (x,y,z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked()));
+                list.add(RaytraceHelper.raycast(driWorld, new VectorI3D(point.getX(), point.getY()+70, point.getZ()), (x,y,z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked()));
             }
             List<PossibleClickingSpot> res = list.size() == 1 ? list.get(0) : RaytraceHelper.combine(list);
 

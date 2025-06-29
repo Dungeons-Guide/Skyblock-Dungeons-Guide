@@ -41,13 +41,10 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 @EqualsAndHashCode
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
@@ -108,7 +105,7 @@ public class PrecalculatedMoveNearest {
             }
         }
 
-        Vec3 vec = new Vec3(offsetPoint.getX() + 0.5, offsetPoint.getY() + 70.5, offsetPoint.getZ() + 0.5);
+        Vector3D vec = new Vector3D(offsetPoint.getX() + 0.5, offsetPoint.getY() + 70.5, offsetPoint.getZ() + 0.5);
         List<PossibleMoveSpot>[] spots = new List[1 << calculateFor.size()];
         for (int i = 0; i < (1 << calculateFor.size()); i++) {
             List<String> included = new ArrayList<>();
@@ -127,8 +124,8 @@ public class PrecalculatedMoveNearest {
                     )
             );
 
-            spots[i] = RaytraceHelper.findMovespots(driWorld, new BlockPos(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()),
-                    a -> a.squareDistanceTo(vec) <= 25, 6, (x,y,z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked());
+            spots[i] = RaytraceHelper.findMovespots(driWorld, new VectorI3D(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()),
+                    a -> a.distanceSq(vec) <= 25, 6, (x,y,z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked());
         }
         return new PrecalculatedMoveNearest(calculateFor, spots, offsetPoint);
     }
@@ -156,11 +153,11 @@ public class PrecalculatedMoveNearest {
                 }
             }
         }
-        Vec3 vec = new Vec3(offsetPoint.getX() + 0.5, offsetPoint.getY() + 70.5, offsetPoint.getZ() + 0.5);
+        Vector3D vec = new Vector3D(offsetPoint.getX() + 0.5, offsetPoint.getY() + 70.5, offsetPoint.getZ() + 0.5);
         List<PossibleMoveSpot>[] spots = new List[1 << calculateFor.size()];
-        AxisAlignedBB check = AxisAlignedBB.fromBounds(
-                vec.xCoord - 3, vec.yCoord + 1.1, vec.zCoord -3,
-                vec.xCoord + 3, vec.yCoord - 3.6, vec.zCoord + 3
+        AABB check = new AABB(
+                vec.x - 3, vec.y + 1.1, vec.z -3,
+                vec.x + 3, vec.y - 3.6, vec.z + 3
         );
 
         HashSet<VectorI3D> poses = new HashSet<>();
@@ -197,7 +194,7 @@ public class PrecalculatedMoveNearest {
             );
 
 
-            spots[i] = RaytraceHelper.findMovespots(new DRIWorld(dri, included), new BlockPos(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()),
+            spots[i] = RaytraceHelper.findMovespots(new DRIWorld(dri, included), new VectorI3D(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()),
                     a -> check.isVecInside(a), 8, (x,y,z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked());
         }
         return new PrecalculatedMoveNearest(calculateFor, spots, offsetPoint);
