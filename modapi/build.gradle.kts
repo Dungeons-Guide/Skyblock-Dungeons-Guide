@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("java-library")
 }
 
 group = "kr.syeoyung.dungeonsguide"
@@ -21,7 +22,7 @@ dependencies {
 
     compileOnly("org.projectlombok:lombok:1.18.20")
     annotationProcessor("org.projectlombok:lombok:1.18.16")
-    compileOnly("com.mojang:brigadier:1.0.18")
+    api("com.mojang:brigadier:1.0.18")
 
     testCompileOnly("org.projectlombok:lombok:1.18.20")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.20")

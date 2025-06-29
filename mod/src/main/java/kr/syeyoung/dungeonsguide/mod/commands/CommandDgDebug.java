@@ -21,6 +21,10 @@ package kr.syeyoung.dungeonsguide.mod.commands;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
@@ -28,7 +32,6 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatRoutine;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
 import kr.syeyoung.dungeonsguide.mod.config.onboarding.OnboardingPage;
-import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
@@ -36,6 +39,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedMoveNearest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventHolder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
@@ -57,16 +61,13 @@ import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.command.UCommandContext;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.world.BlockType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -82,227 +83,39 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class CommandDgDebug extends CommandBase {
-    @Override
-    public String getCommandName() {
-        return "dgdebug";
+public class CommandDgDebug {
+    @DGCommand("dgdebug")
+    public void showHelp() {
+        ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand."));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
     }
 
-    @Override
-    public String getCommandUsage(ICommandSender sender) {
-
-        return "dgdebug";
+    @DGCommand("dgdebug reloadshader")
+    public void reloadshader() {
+        ShaderManager.onResourceReload();
     }
 
-    //List of subcommands for tab support
-    private static final String[] SUBCOMMANDS = {
-            "scoreboard",
-            "scoreboardclean",
-            "tablist",
-            "mockdungeonstart",
-            "saverooms",
-            "loadrooms",
-            "brand",
-            "pathfind",
-            "process",
-            "check",
-            "reloaddungeon",
-            "partyid",
-            "loc",
-            "saverun",
-            "requeststaticresource",
-            "createfakeroom",
-            "closecontext",
-            "dumpsettings",
-            "readmap",
-            "testgui",
-            "clearprofile",
-            "fullbright",
-            "gimmebright",
-            "pfall",
-            "partycollection"
-    };
+    @DGCommand("dgdebug re")
+    public void openRoomedit() {
+        MainConfigWidget mainConfigWidget = new MainConfigWidget();
+        GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(
+                FeatureRegistry.ADVANCED_ROOMEDIT.getConfigureWidget()
+        ));
 
-    @Override
-    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
-        if (args.length == 1) {
-            return CommandBase.getListOfStringsMatchingLastWord(args, SUBCOMMANDS);
-        }
-        return Collections.emptyList();
+        DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
+            Minecraft.getMinecraft().displayGuiScreen(adapter);
+        });
     }
 
-    @Override
-    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
-        if (args.length == 0) {
-            return;
-        }
-
-        switch (args[0].toLowerCase()) { //Case Insensitive
-            case "freeze":
-                while(true);
-            case "scoreboard":
-                scoreboardCommand();
-                break;
-            case "pfresdebug":
-                FeatureRegistry.DEBUG_PFRES.onCommand(args);
-                break;
-            case "scoreboardclean":
-                scoreboardCleanCommand();
-                break;
-            case "tablist":
-                tabListCommand();
-                break;
-            case "mockdungeonstart":
-                mockDungeonStartCommand(args);
-                break;
-            case "saverooms":
-                saveRoomsCommand();
-                break;
-            case "loadrooms":
-                loadRoomsCommand();
-                break;
-            case "brand":
-                brandCommand();
-                break;
-            case "pathfind":
-                pathfindCommand(args);
-                break;
-            case "process":
-                processCommand1();
-                break;
-            case "process2":
-                try {
-                    process2();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            case "calculatestonks":
-                calculateStonks();
-                break;
-            case "calculatenearests":
-                calculateNearests();
-                break;
-            case "groupunknowns":
-                try {
-                    groupunknowns();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-            case "groupprocess":
-                try {
-                    groupprocess();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-            case "nodupeprocess":
-                try {
-                    removedupe();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-            case "removedoors":
-                try {
-                    removedoors();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-            case "removedoorschematic":
-                try {
-                    removedoorsSchematic(args);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-            case "check":
-                checkCommand();
-                break;
-            case "check2":
-                check2command();
-                break;
-            case "reloaddungeon":
-                reloadDungeonCommand();
-                break;
-            case "partyid":
-                partyIdCommand();
-                break;
-            case "loc":
-                locCommand();
-                break;
-            case "saverun":
-                saveRunCommand();
-                break;
-            case "requeststaticresource":
-                requestStaticResource(args);
-                break;
-            case "transferschematic": // load schematic
-                transferSchematic(Boolean.parseBoolean(args.length == 1 ? "true" : args[1]));
-                break;
-            case "closecontext":
-                closeContextCommand();
-                break;
-            case "re":
-                MainConfigWidget mainConfigWidget = new MainConfigWidget();
-                GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(
-                        FeatureRegistry.ADVANCED_ROOMEDIT.getConfigureWidget()
-                ));
-
-                DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
-                    Minecraft.getMinecraft().displayGuiScreen(adapter);
-                });
-                break;
-            case "dumpsettings":
-                dumpSettingsCommand();
-                break;
-            case "readmap":
-                readMapCommand(args);
-                break;
-            case "testgui":
-                testGuiCommand();
-                break;
-            case "clearprofile":
-                clearProfileCommand();
-                break;
-            case "fullbright":
-            case "gimmebright":
-                fullBrightCommand(args);
-                break;
-            case "pfall":
-                pFallCommand();
-                break;
-            case "reloadshader":
-                ShaderManager.onResourceReload();
-                break;
-            case "partycollection":
-                partyCollectionCommand(args[1], args[2], args[3]);
-                break;
-            case "randomroutine":
-                DiscordIntegrationManager.INSTANCE.requestAuth();
-//                int val1 = this.<Integer>getParameter("haste").getValue();
-//                int val2 = this.<Integer>getParameter("pickaxe_efficiency").getValue();
-//                Item.ToolMaterial toolMaterial = this.<FeaturePathfindSettings.Material>getParameter("pickaxe_type").getValue().getToolMaterial();
-//                double efficiency2 = toolMaterial.getEfficiencyOnProperMaterial();
-//                efficiency2 += val2 * val2 + 1;
-//                efficiency2 *= val1 * 0.2 + 1;
-                break;
-            default:
-                ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand."));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
-                break;
-        }
-    }
-
-    private void calculateStonks() {
+    @DGCommand("dgdebug calculatestonks")
+    public void calculateStonks() {
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
             for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicEntry : dungeonRoomInfo.getMechanics().entrySet()) {
                 DungeonMechanicData mechanic = stringDungeonMechanicEntry.getValue();
@@ -369,7 +182,8 @@ public class CommandDgDebug extends CommandBase {
 
     }
 
-    private void calculateNearests() {
+    @DGCommand("dgdebug calculatenearests")
+    public void calculateNearests() {
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
             for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicEntry : dungeonRoomInfo.getMechanics().entrySet()) {
                 DungeonMechanicData mechanic = stringDungeonMechanicEntry.getValue();
@@ -394,40 +208,45 @@ public class CommandDgDebug extends CommandBase {
         }
     }
 
-    @Override
-    public int getRequiredPermissionLevel() {
-        return 0;
+
+
+    @DGCommand("dgdebug freeze")
+    public void freeze() {
+        while(true);
     }
 
-    //BEGIN COMMANDS FROM ARGS[0]
-
-    private void scoreboardCommand() {
+    @DGCommand("dgdebug scoreboard")
+    public void scoreboardCommand() {
         for (Score score : ScoreboardManager.INSTANCE.getSidebarObjective().getScores()) {
             ChatTransmitter.addToQueue("LINE: " + score.getVisibleName() + ": " + score.getScore());
         }
     }
 
-    private void scoreboardCleanCommand() {
+
+    @DGCommand("dgdebug scoreboardclean")
+    public void scoreboardCleanCommand() {
         for (Score score : ScoreboardManager.INSTANCE.getSidebarObjective().getScores()) {
             ChatTransmitter.addToQueue("LINE: " + score.getJustTeam() + ": " + score.getScore());
         }
     }
 
-    private void tabListCommand() {
+    @DGCommand("dgdebug tablist")
+    public void tabListCommand() {
         for (TabListEntry entry : TabList.INSTANCE.getTabListEntries()) {
             ChatTransmitter.addToQueue(entry.getFormatted() + " " + entry.getEffectiveName() + "(" + entry.getPing() + ")" + entry.getGameMode());
         }
         ChatTransmitter.addToQueue("VS");
     }
 
-    private void mockDungeonStartCommand(String[] args) {
+
+    @DGCommand("dgdebug mockdungeonstart {time}")
+    public void mockDungeonStartCommand(int time) {
         if (!Minecraft.getMinecraft().isSingleplayer()) {
             ChatTransmitter.addToQueue("This only works in singlepauer", false);
             return;
         }
 
-        if (args.length == 2) {
-            int time = Integer.parseInt(args[1]);
+        if (time != 0) {
             ChatTransmitter.addToQueue("§r§aDungeon starts in " + time + " seconds.§r", false);
             return;
         }
@@ -453,12 +272,14 @@ public class CommandDgDebug extends CommandBase {
         })).start();
     }
 
-    private void saveRoomsCommand() {
+    @DGCommand("dgdebug saverooms")
+    public void saveRoomsCommand() {
         DungeonRoomInfoRegistry.saveAll(new File(Main.getConfigDir(), "roomdatas"));
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata"));
     }
 
-    private void process2() throws IOException {
+    @DGCommand("dgdebug process2")
+    public void process2() throws IOException {
 
         GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")), null, false);
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
@@ -517,7 +338,8 @@ public class CommandDgDebug extends CommandBase {
 //        }
     }
 
-    private void loadRoomsCommand() {
+    @DGCommand("dgdebug loadrooms")
+    public void loadRoomsCommand() {
         try {
             DungeonRoomInfoRegistry.loadAll(new File(Main.getConfigDir(), "roomdatas"));
             ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully loaded roomdatas"));
@@ -529,13 +351,14 @@ public class CommandDgDebug extends CommandBase {
         }
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cAn error has occurred while loading roomdata"));
     }
-
-    private void brandCommand() {
+    @DGCommand("dgdebug brand")
+    public void brandCommand() {
         String serverBrand = ModAPI.getAPI().getPlayer().getClientBrand();
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
     }
 
-    private void removedoors() throws Exception {
+    @DGCommand("dgdebug removedoors")
+    public void removedoors() throws Exception {
         File fileRoot = Main.getConfigDir();
         File dir = new File(fileRoot, "grouped2");
         File outdir = new File(fileRoot, "grouped3");
@@ -674,7 +497,8 @@ public class CommandDgDebug extends CommandBase {
     }
 
 
-    private void removedoorsSchematic(String[] args) throws Exception {
+    @DGCommand("dgdebug removedoorschematic {file}")
+    public void removedoorsSchematic(@CommandParam(value = "file", stringType = CommandParam.EnumStringType.GREEDY) String file) throws Exception {
         File fileRoot = Main.getConfigDir();
         File dir = new File(fileRoot, "schematics");
 
@@ -683,7 +507,7 @@ public class CommandDgDebug extends CommandBase {
 
 //        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
 
-        File f = new File(dir, args[1]);
+        File f = new File(dir, file);
             try (FileInputStream fis = new FileInputStream(f)){
                 NBTTagCompound compound = CompressedStreamTools.readCompressed(fis);
                 byte[] blocks = compound.getByteArray("Blocks");
@@ -805,7 +629,8 @@ public class CommandDgDebug extends CommandBase {
     }
 
 
-    private void removedupe() throws Exception  {
+    @DGCommand("dgdebug nodupeprocess")
+    public void removedupe() throws Exception  {
 
         File fileRoot = Main.getConfigDir();
         File dir = new File(fileRoot, "grouped");
@@ -864,7 +689,8 @@ public class CommandDgDebug extends CommandBase {
 
     }
 
-    private void groupunknowns() throws Exception {
+    @DGCommand("dgdebug groupunknowns")
+    public void groupunknowns() throws Exception {
 
         File fileRoot = Main.getConfigDir();
         File dir = new File(fileRoot, "compressed");
@@ -953,7 +779,9 @@ public class CommandDgDebug extends CommandBase {
             }
         }
     }
-    private void groupprocess() throws Exception {
+
+    @DGCommand("dgdebug groupprocess")
+    public void groupprocess() throws Exception {
         // This take about 7m to complete.  :30:35 to 39:19 -> Around 9min.
         File fileRoot = Main.getConfigDir();
         File dir = new File(fileRoot, "compressed");
@@ -1189,7 +1017,49 @@ public class CommandDgDebug extends CommandBase {
         }
     }
 
-    private void pathfindCommand(String[] args) {
+
+    public static class MechanicNameSuggestor implements SuggestionProvider<UCommandContext> {
+        public CompletableFuture<Suggestions> getSuggestions(CommandContext<UCommandContext> commandContext, SuggestionsBuilder suggestionsBuilder) {
+            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
+            if (thePlayer == null) {
+                return suggestionsBuilder.buildFuture();
+            }
+            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+
+            DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
+            for (String s : dungeonRoom.getMechanics().keySet()) {
+                suggestionsBuilder.suggest(s);
+            }
+            return suggestionsBuilder.buildFuture();
+        }
+    }
+
+    public static class StateSuggestor implements SuggestionProvider<UCommandContext> {
+        public CompletableFuture<Suggestions> getSuggestions(CommandContext<UCommandContext> commandContext, SuggestionsBuilder suggestionsBuilder) {
+            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
+            if (thePlayer == null) {
+                return suggestionsBuilder.buildFuture();
+            }
+            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+
+            DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
+
+            String mechanic = commandContext.getArgument("mechanic", String.class);
+            DungeonMechanicState state = dungeonRoom.getMechanics().get(mechanic);
+            if (state == null) return suggestionsBuilder.buildFuture();
+
+            for (String availableAction : state.getAvailableActions()) {
+                suggestionsBuilder.suggest(availableAction);
+            }
+            return suggestionsBuilder.buildFuture();
+        }
+    }
+
+    @DGCommand("dgdebug pathfind {mechanic} {state}")
+    public void pathfindCommand(@CommandParam(value = "mechanic", suggestionProvider = MechanicNameSuggestor.class) String mechanic,
+                                @CommandParam(value = "state", suggestionProvider = StateSuggestor.class) String state) {
         try {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
@@ -1205,13 +1075,14 @@ public class CommandDgDebug extends CommandBase {
             RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
             if (roomRouteHandler == null) return;
 
-            roomRouteHandler.pathfind("COMMAND", args[1], args[2], FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND::createPathDisplayEngine);
+            roomRouteHandler.pathfind("COMMAND", mechanic, state, FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND::createPathDisplayEngine);
         } catch (Exception t) {
             t.printStackTrace();
         }
     }
 
-    private void processCommand1() {
+    @DGCommand("dgdebug process")
+    public void processCommand1() {
         File fileRoot = Main.getConfigDir();
         File dir = new File(fileRoot, "processorinput");
         File outsecret = new File(fileRoot, "processoroutsecret");
@@ -1231,7 +1102,8 @@ public class CommandDgDebug extends CommandBase {
         }
     }
 
-    private void check2command() {
+    @DGCommand("dgdebug check2")
+    public void check2command() {
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
             if (dungeonRoomInfo.getWorld() == null) {
                 System.out.println("world null for " + dungeonRoomInfo.getName());
@@ -1283,7 +1155,9 @@ public class CommandDgDebug extends CommandBase {
             }
         }
     }
-    private void checkCommand() {
+
+    @DGCommand("dgdebug check")
+    public void checkCommand() {
         File fileroot = new File(Main.getConfigDir(), "processorinput");
         CBORMapper cborMapper = new CBORMapper();
         for (File f : fileroot.listFiles()) {
@@ -1344,7 +1218,8 @@ public class CommandDgDebug extends CommandBase {
         }
     }
 
-    private void reloadDungeonCommand() {
+    @DGCommand("dgdebug reloaddungeon")
+    public void reloadDungeonCommand() {
         try {
             ModAPI.getAPI().getEventBus().fireEvent(new DungeonLeftEvent());
 
@@ -1355,15 +1230,18 @@ public class CommandDgDebug extends CommandBase {
         }
     }
 
-    private void partyIdCommand() {
+    @DGCommand("dgdebug partyid")
+    public void partyIdCommand() {
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: " + Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(null)));
     }
 
-    private void locCommand() {
+    @DGCommand("dgdebug loc")
+    public void locCommand() {
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fYou're in " + SkyblockStatus.getLocationName()));
     }
 
-    private void saveRunCommand() {
+    @DGCommand("dgdebug saverun")
+    public void saveRunCommand() {
         try {
             File f = Main.getConfigDir();
             File runDir = new File(f, "dungeonruns");
@@ -1393,25 +1271,29 @@ public class CommandDgDebug extends CommandBase {
         }
     }
 
-    private void requestStaticResource(String[] args) {
-        UUID uid = UUID.fromString(args[1]);
+    @DGCommand("dgdebug requeststaticresource {uuid}")
+    public void requestStaticResource(String uuid) {
+        UUID uid = UUID.fromString(uuid);
         StaticResourceCache.INSTANCE.getResource(uid).thenAccept(a -> {
             ChatTransmitter.addToQueue(new ChatComponentText(a.getResourceID() + ": " + a.getValue() + ": " + a.isExists()));
         });
     }
 
-    private void transferSchematic(boolean ignoreAir) {
+    @DGCommand("dgdebug transferschematic {ignoreAir}")
+    public void transferSchematic(boolean ignoreAir) {
         FeatureRegistry.ADVANCED_ROOMEDIT.overwrite(ignoreAir);
         ChatTransmitter.sendDebugChat("TRANSFERRED SCHEMATIC");
     }
 
-    private void closeContextCommand() {
+    @DGCommand("dgdebug closecontext")
+    public void closeContextCommand() {
         DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(false);
 
         DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
     }
 
-    private void dumpSettingsCommand() {
+    @DGCommand("dgdebug dumpsettings")
+    public void dumpSettingsCommand() {
         for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
             System.out.println(abstractFeature.getCategory()+"\t"+abstractFeature.getName());
         }
@@ -1465,12 +1347,10 @@ public class CommandDgDebug extends CommandBase {
 //        System.out.println(stringBuilder.toString());
 //        System.out.println(stringBuilder2.toString());
     }
-
-    private void readMapCommand(String[] args) {
+    @DGCommand("dgdebug readmap {x} {y}")
+    public void readMapCommand(int x, int y) {
         try {
-            int fromX = Integer.parseInt(args[1]);
-            int fromY = Integer.parseInt(args[2]);
-            ChatTransmitter.addToQueue(new ChatComponentText(MapUtils.readDigit(MapUtils.getColors(), fromX, fromY) + "-"));
+            ChatTransmitter.addToQueue(new ChatComponentText(MapUtils.readDigit(MapUtils.getColors(), x, y) + "-"));
 /*                int cntY = Integer.parseInt(args[3]);
                 int target = Integer.parseInt(args[4]);
                 StringBuilder sb = new StringBuilder("{");
@@ -1491,7 +1371,8 @@ public class CommandDgDebug extends CommandBase {
         }
     }
 
-    private void testGuiCommand() {
+    @DGCommand("dgdebug testgui")
+    public void testGuiCommand() {
         GuiScreenAdapter adapter = new GuiScreenAdapter(new TestView());
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
             DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
@@ -1500,24 +1381,22 @@ public class CommandDgDebug extends CommandBase {
         }).start();
     }
 
-    private void clearProfileCommand() {
+    @DGCommand("dgdebug clearprofile")
+    public void clearProfileCommand() {
         Minecraft.getMinecraft().mcProfiler.clearProfiling();
     }
 
-    private void fullBrightCommand(String[] args) {
-        int gammaVal = 1000;
-        if (args.length == 2) {
-            try {
-                gammaVal = Integer.parseInt(args[1]);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                ChatTransmitter.addToQueue(new ChatComponentText("Invalid number, defaulting to 1000"));
-            }
-        }
-        Minecraft.getMinecraft().gameSettings.setOptionFloatValue(GameSettings.Options.GAMMA, gammaVal);
+    @DGCommand("dgdebug fullbright {gamma}")
+    public void fullBrightCommand(int gamma) {
+        Minecraft.getMinecraft().gameSettings.setOptionFloatValue(GameSettings.Options.GAMMA, gamma);
+    }
+    @DGCommand("dgdebug fullbright")
+    public void fullBright() {
+        Minecraft.getMinecraft().gameSettings.setOptionFloatValue(GameSettings.Options.GAMMA, 1000);
     }
 
-    private void pFallCommand() {
+    @DGCommand("dgdebug pfall")
+    public void pFallCommand() {
         try {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
@@ -1542,7 +1421,8 @@ public class CommandDgDebug extends CommandBase {
         }
     }
 
-    private void partyCollectionCommand(String otherPlayerName, String fragbot, String offline) {
+    @DGCommand("dgdebug partycollection {otherPlayerName} {fragbot} {offline}")
+    public void partyCollectionCommand(String otherPlayerName, String fragbot, String offline) {
 
         String sourcePlayer = ModAPI.getAPI().getPlayer().getName();
         String targetPlayer = otherPlayerName;

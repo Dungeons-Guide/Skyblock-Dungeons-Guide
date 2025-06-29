@@ -19,9 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss;
 
 
-import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 
 
@@ -32,6 +32,6 @@ public class FeatureAutoReparty extends SimpleFeature {
 
     @DGEventHandler
     public void onDungeonQuit(DungeonLeftEvent event) {
-        if (isEnabled()) DungeonsGuide.getDungeonsGuide().getCommandReparty().requestReparty(true);
+        if (isEnabled()) FeatureRegistry.ETC_REPARTY.requestReparty(true);
     }
 }

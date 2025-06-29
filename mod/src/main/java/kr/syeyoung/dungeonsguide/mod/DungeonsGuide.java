@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandDgDebug;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandDungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.commands.CommandReparty;
+import kr.syeyoung.dungeonsguide.mod.commands.CommandRegistrationHelper;
 import kr.syeyoung.dungeonsguide.mod.config.Config;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ConfigGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.config.onboarding.OnboardingPage;
@@ -60,6 +60,7 @@ import kr.syeyoung.modapi.event.AnnotatedListenerHelper;
 import kr.syeyoung.modapi.event.ListenerRegistration;
 import kr.syeyoung.modapi.event.SubscribeEvent;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.event.events.RegisterCommandEvent;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -74,14 +75,11 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.command.CommandHandler;
-import net.minecraft.command.ICommand;
 import net.minecraft.entity.Entity;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
@@ -156,11 +154,6 @@ public class DungeonsGuide implements DGInterface {
         return instance;
     }
 
-    @Getter
-    CommandReparty commandReparty;
-    @Getter
-    CommandDungeonsGuide commandDungeonsGuide;
-
 
     private List<Object> registeredListeners = new ArrayList<>();
     private List<ListenerRegistration> registeredMODAPIListeners = new ArrayList<>();
@@ -170,13 +163,7 @@ public class DungeonsGuide implements DGInterface {
         registeredMODAPIListeners.addAll(AnnotatedListenerHelper.registerListeners(ModAPI.getAPI().getEventBus(), object));
 
     }
-    private List<ICommand> registeredCommands = new ArrayList<>();
     private List<ExecutorService> executorServices = new ArrayList<>();
-
-    public void registerCommands(ICommand command) {
-        registeredCommands.add(command);
-        ClientCommandHandler.instance.registerCommand(command);
-    }
 
     public ExecutorService registerExecutorService(ExecutorService executorService) {
         this.executorServices.add(executorService);
@@ -252,18 +239,6 @@ public class DungeonsGuide implements DGInterface {
 
         dungeonFacade.init();
 
-
-        commandDungeonsGuide = new CommandDungeonsGuide();
-        CommandDgDebug command = new CommandDgDebug();
-
-        registerCommands(commandDungeonsGuide);
-        registerCommands(command);
-
-        registerEventsForge(command);
-        registerEventsForge(commandDungeonsGuide);
-
-        registerEventsForge(commandReparty = new CommandReparty());
-
         registerEventsForge(packetInjector = new PacketInjector());
         registerEventsForge(new PacketListener());
         registerEventsForge(new Keybinds());
@@ -287,9 +262,6 @@ public class DungeonsGuide implements DGInterface {
             e.printStackTrace();
         }
 
-        if (FeatureRegistry.ETC_REPARTY.isEnabled()) {
-            registerCommands(commandReparty);
-        }
         DiscordIntegrationManager.INSTANCE.isLoaded();
 
         for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
@@ -371,17 +343,6 @@ public class DungeonsGuide implements DGInterface {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }
-
-
-        Set<ICommand> commands = ReflectionHelper.getPrivateValue(CommandHandler.class, ClientCommandHandler.instance, "commandSet","field_71561_b","field_6467","c");
-
-        for (ICommand registeredCommand : registeredCommands) {
-            ClientCommandHandler.instance.getCommands().remove(registeredCommand.getCommandName());
-            for (String commandAlias : registeredCommand.getCommandAliases()) {
-                ClientCommandHandler.instance.getCommands().remove(commandAlias);
-            }
-            commands.remove(registeredCommand);
         }
 
         if (packetInjector != null) packetInjector.cleanup();
@@ -541,5 +502,12 @@ public class DungeonsGuide implements DGInterface {
                 e.printStackTrace();
             }
         }
+    }
+
+    @SubscribeEvent
+    public void onRegisterCommands(RegisterCommandEvent commandEvent) {
+        CommandRegistrationHelper.registerCommands(commandEvent.getCommandManager(), new CommandDungeonsGuide());
+        CommandRegistrationHelper.registerCommands(commandEvent.getCommandManager(), new CommandDgDebug());
+        commandEvent.getCommandManager().addAlias("dg", "dungeonsguide", "dungeonguide", "deegee", "던전가이드", "던전안내");
     }
 }

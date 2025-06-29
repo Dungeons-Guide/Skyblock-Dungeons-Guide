@@ -41,16 +41,16 @@ public class ChatTransmitter {
     public static ChatTransmitter INSTANCE = new ChatTransmitter();
 
     @Getter
-    static Queue<ChatComponentText> receiveQueue = new ConcurrentLinkedQueue<>();
+    static Queue<IChatComponent> receiveQueue = new ConcurrentLinkedQueue<>();
 
     public static void addToQueue(String chat, boolean noDupe) {
         addToQueue(new ChatComponentText(chat), noDupe);
     }
 
-    public static void addToQueue(ChatComponentText chat) {
+    public static void addToQueue(IChatComponent chat) {
         addToQueue(chat, false);
     }
-    public static void addToQueue(ChatComponentText chat, boolean noDupe) {
+    public static void addToQueue(IChatComponent chat, boolean noDupe) {
         if(noDupe && receiveQueue.stream().anyMatch(a -> a.equals(chat))) return;
         receiveQueue.add(chat);
     }

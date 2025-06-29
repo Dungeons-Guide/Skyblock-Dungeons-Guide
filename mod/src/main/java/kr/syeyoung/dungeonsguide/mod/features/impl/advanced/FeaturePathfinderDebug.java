@@ -18,12 +18,20 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.commands.CommandDgDebug;
+import kr.syeyoung.dungeonsguide.mod.commands.CommandParam;
+import kr.syeyoung.dungeonsguide.mod.commands.DGCommand;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonOnewayLeverState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
@@ -38,8 +46,10 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PrecalculatedPat
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.command.UCommandContext;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.entity.UPlayerSelf;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
@@ -48,6 +58,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class FeaturePathfinderDebug extends SimpleFeature {
 
@@ -200,56 +212,87 @@ public class FeaturePathfinderDebug extends SimpleFeature {
         instance.clear();
     }
 
-    public void onCommand(String[] args) {
-        if (args[1].equals("reset")) {
-            precalcs.clear();
-            requests.clear();
-            pfDebugPts.clear();
-            for (IPathfinder precalculatedPathfinder : instance) {
-                precalculatedPathfinder.close();
-            }
-            instance.clear();
-        } else if (args[1].equals("load")) {
-            try {
-                PathfindPrecalculation pfc = new PathfindPrecalculation(new File(args[2]));
-                DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-                DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
-                        dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(ModAPI.getAPI().getPlayer().getPositionVector())
-                );
-
-                PrecalculatedPathfinder precalculatedPathfinder = (PrecalculatedPathfinder) pfc.createPathfinder(drm.getRoomMatcher().getRotation());
-                precalculatedPathfinder.init(((GeneralRoomProcessor)drm.getRoomProcessor()).getPathfinderWorld(), null);
-                instance.add(precalculatedPathfinder);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else if (args[1].equals("check")) {
-            pfDebugPts.add(ModAPI.getAPI().getPlayer().getPositionVector());
-        } else if (args[1].equals("clearpt")) {
-            pfDebugPts.clear();
-        } else if (args[1].equals("stonkmech")) {
-
+    @DGCommand("dgdebug pfresdebug clear")
+    public void clear() {
+        precalcs.clear();
+        requests.clear();
+        pfDebugPts.clear();
+        for (IPathfinder precalculatedPathfinder : instance) {
+            precalculatedPathfinder.close();
+        }
+        instance.clear();
+    }
+    @DGCommand("dgdebug pfresdebug load {file}")
+    public void load(String file) {
+        try {
+            PathfindPrecalculation pfc = new PathfindPrecalculation(new File(file));
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            if (dungeonContext == null) return;
             DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
                     dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(ModAPI.getAPI().getPlayer().getPositionVector())
             );
-            if (drm == null) return;
-            FeatureRegistry.DEBUG_ST.change(
-                    drm.getMechanics().get(args[2])
-            );
-        } else if (args[1].equals("stonkmech2")) {
-            DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            if (dungeonContext == null) return;
-            DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
-                    dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(ModAPI.getAPI().getPlayer().getPositionVector())
-            );
-            if (drm == null) return;
-            DungeonOnewayLeverState.DungeonOnewayLeverData mechanic1 = (DungeonOnewayLeverState.DungeonOnewayLeverData) drm.getDungeonRoomInfo().getMechanics().get(args[2]);
 
-                mechanic1.setLeverCache(PrecalculatedStonk.createOne(
-                        drm.getDungeonRoomInfo(), mechanic1.getLeverPoint()
-                ));
+            PrecalculatedPathfinder precalculatedPathfinder = (PrecalculatedPathfinder) pfc.createPathfinder(drm.getRoomMatcher().getRotation());
+            precalculatedPathfinder.init(((GeneralRoomProcessor)drm.getRoomProcessor()).getPathfinderWorld(), null);
+            instance.add(precalculatedPathfinder);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
+    @DGCommand("dgdebug pfresdebug check")
+    public void check() {
+        pfDebugPts.add(ModAPI.getAPI().getPlayer().getPositionVector());
+    }
+    @DGCommand("dgdebug pfresdebug clearpt")
+    public void clearpt() {
+        pfDebugPts.clear();
+    }
+
+
+
+    public static class LeverNameSuggestor implements SuggestionProvider<UCommandContext> {
+        public CompletableFuture<Suggestions> getSuggestions(CommandContext<UCommandContext> commandContext, SuggestionsBuilder suggestionsBuilder) {
+            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
+            if (thePlayer == null) {
+                return suggestionsBuilder.buildFuture();
+            }
+            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+
+            DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
+            for (Map.Entry<String, DungeonMechanicState> s : dungeonRoom.getMechanics().entrySet()) {
+                if (s.getValue() instanceof DungeonOnewayLeverState)
+                    suggestionsBuilder.suggest(s.getKey());
+            }
+            return suggestionsBuilder.buildFuture();
+        }
+    }
+
+    @DGCommand("dgdebug pfresdebug stonkmech {mechanic}")
+    public void stonkmech(@CommandParam(value = "mechanic", suggestionProvider = CommandDgDebug.MechanicNameSuggestor.class) String mechanic) {
+        DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+        if (dungeonContext == null) return;
+        DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
+                dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(ModAPI.getAPI().getPlayer().getPositionVector())
+        );
+        if (drm == null) return;
+        FeatureRegistry.DEBUG_ST.change(
+                drm.getMechanics().get(mechanic)
+        );
+    }
+    @DGCommand("dgdebug pfresdebug stonkmech2 {lever}")
+    public void stonkmech2(@CommandParam(value = "lever", suggestionProvider = LeverNameSuggestor.class) String mechanic) {
+        DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+        if (dungeonContext == null) return;
+        DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
+                dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(ModAPI.getAPI().getPlayer().getPositionVector())
+        );
+        if (drm == null) return;
+        DungeonOnewayLeverState.DungeonOnewayLeverData mechanic1 = (DungeonOnewayLeverState.DungeonOnewayLeverData) drm.getDungeonRoomInfo().getMechanics().get(mechanic);
+
+        mechanic1.setLeverCache(PrecalculatedStonk.createOne(
+                drm.getDungeonRoomInfo(), mechanic1.getLeverPoint()
+        ));
+    }
+
 }

@@ -6,13 +6,16 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.command.UCommandContext;
 import kr.syeyoung.modapi.command.UCommandManager;
+import kr.syeyoung.modapi.event.events.RegisterCommandEvent;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +30,7 @@ public class CommandManagerImpl implements UCommandManager {
     public static class BrigadierCommand implements ICommand {
         private final String name;
         private CommandDispatcher<UCommandContext> dispatcher;
+        private List<String> alias = new ArrayList<>();
 
         public BrigadierCommand(String name) {
             dispatcher = new CommandDispatcher<>();
@@ -46,22 +50,22 @@ public class CommandManagerImpl implements UCommandManager {
 
         @Override
         public List<String> getCommandAliases() {
-            return Collections.emptyList();
+            return alias;
         }
 
         @Override
         public void processCommand(ICommandSender sender, String[] args) throws CommandException {
-            String command = name+" "+String.join(" ", args);
+            String command = args.length == 0 ? name : name+" "+String.join(" ", args);
             try {
                 dispatcher.execute(command, new UCommandContextImpl(sender));
             } catch (CommandSyntaxException e) {
-                e.printStackTrace();
+                sender.addChatMessage(new ChatComponentText("§c"+e.getMessage()));
             }
         }
 
         @Override
         public boolean canCommandSenderUseCommand(ICommandSender sender) {
-            return false;
+            return true;
         }
 
         @Override
@@ -104,6 +108,24 @@ public class CommandManagerImpl implements UCommandManager {
         mapping.get(command.getLiteral()).dispatcher.register(command);
     }
 
+    @Override
+    public void addAlias(String root, String... alias) {
+        BrigadierCommand command = mapping.get(root);
+        if (command == null) registerCommand(LiteralArgumentBuilder.literal(root));
+        command = mapping.get(root);
+
+        boolean modified = false;
+        for (String s : alias) {
+            if (!command.alias.contains(s)) {
+                command.alias.add(s);
+                modified = true;
+            }
+        }
+
+        if (modified)
+            ClientCommandHandler.instance.registerCommand(command);
+    }
+
     public void unregisterCommands() {
         Set<ICommand> commands = ReflectionHelper.getPrivateValue(CommandHandler.class, ClientCommandHandler.instance, "commandSet","field_71561_b","field_6467","c");
 
@@ -115,6 +137,10 @@ public class CommandManagerImpl implements UCommandManager {
             commands.remove(registeredCommand);
         }
         mapping.clear();
+    }
 
+    public void requestCommandReload() {
+        unregisterCommands();
+        ModAPI.getAPI().getEventBus().fireEvent(new RegisterCommandEvent(this));
     }
 }
