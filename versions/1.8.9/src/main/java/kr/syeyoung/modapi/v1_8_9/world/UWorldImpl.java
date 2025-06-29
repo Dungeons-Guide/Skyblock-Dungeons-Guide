@@ -11,6 +11,7 @@ import kr.syeyoung.modapi.v1_8_9.entity.UEntityImpl;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerImpl;
 import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
 import kr.syeyoung.modapi.v1_8_9.world.entities.UTileEntityChestImpl;
+import kr.syeyoung.modapi.v1_8_9.world.entities.UTileEntityImpl;
 import kr.syeyoung.modapi.v1_8_9.world.entities.UTileEntitySkullImpl;
 import kr.syeyoung.modapi.world.*;
 import net.minecraft.block.Block;
@@ -125,6 +126,9 @@ public class UWorldImpl implements UWorld {
             return new UTileEntityChestImpl((TileEntityChest) tileEntity);
         else if (tileEntity instanceof TileEntitySkull)
             return new UTileEntitySkullImpl((TileEntitySkull) tileEntity);
+        else if (tileEntity != null)
+            return new UTileEntityImpl(tileEntity);
+
         return null;
     }
 

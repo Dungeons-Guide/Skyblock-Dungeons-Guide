@@ -92,6 +92,7 @@ dependencies {
 
     shadowImpl project(path: ":modapi")
     shadowImpl project(path: ":mod")
+    shadowImpl "com.mojang:brigadier:1.0.18"
     compileOnly project(path: ":1.8.9-loader")
 
     devenvMod(project(path: ":1.8.9-loader", configuration: "unmappedMod"))

@@ -1,6 +1,7 @@
 package kr.syeyoung.modapi;
 
 import kr.syeyoung.modapi.audio.USoundHandler;
+import kr.syeyoung.modapi.command.UCommandManager;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.entity.URenderManager;
@@ -38,11 +39,11 @@ public interface ModAPI {
 
     URenderManager getRenderManager();
 
-    UEntity TEMPWRAP(Object object);
-
     UEntity getRenderViewEntity();
 
     RaycastResult getObjectMouseOver();
 
     IBlockRegistry getBlockRegistry();
+
+    UCommandManager getCommandManager();
 }

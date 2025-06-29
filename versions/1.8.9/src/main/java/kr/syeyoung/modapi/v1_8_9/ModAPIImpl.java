@@ -15,6 +15,7 @@ import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.v1_8_9.audio.USoundHandlerImpl;
 import kr.syeyoung.modapi.v1_8_9.client.renderer.entity.URenderManagerImpl;
+import kr.syeyoung.modapi.v1_8_9.command.CommandManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerSP;
 import kr.syeyoung.modapi.v1_8_9.util.USessionImpl;
@@ -23,7 +24,6 @@ import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
 import kr.syeyoung.modapi.world.IBlockRegistry;
 import kr.syeyoung.modapi.world.UWorld;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
@@ -116,8 +116,8 @@ public class ModAPIImpl implements ModAPI {
     }
 
     @Override
-    public UEntity TEMPWRAP(Object object) {
-        return UEntityDelegateFactory.createEntityFor((Entity) object);
+    public CommandManagerImpl getCommandManager() {
+        return commandManager;
     }
 
     private PacketInjector packetInjector = new PacketInjector();
@@ -140,10 +140,13 @@ public class ModAPIImpl implements ModAPI {
         MinecraftForge.EVENT_BUS.unregister(packetInjector);
         MinecraftForge.EVENT_BUS.unregister(eventListener);
 
+        commandManager.unregisterCommands();
         packetInjector.cleanup();
     }
 
     private BlockStateRegistryImpl registry = new BlockStateRegistryImpl();
+    private CommandManagerImpl commandManager = new CommandManagerImpl();
+
 
     @Override
     public IBlockRegistry getBlockRegistry() {

@@ -2,6 +2,7 @@ package kr.syeyoung.modapi.v1_8_9.world;
 
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.v1_8_9.world.entities.UTileEntityChestImpl;
+import kr.syeyoung.modapi.v1_8_9.world.entities.UTileEntityImpl;
 import kr.syeyoung.modapi.v1_8_9.world.entities.UTileEntitySkullImpl;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UChunk;
@@ -107,6 +108,8 @@ public class UChunkImpl implements UChunk {
             return new UTileEntityChestImpl((TileEntityChest) tileEntity);
         else if (tileEntity instanceof TileEntitySkull)
             return new UTileEntitySkullImpl((TileEntitySkull) tileEntity);
+        else if (tileEntity != null)
+            return new UTileEntityImpl(tileEntity);
         return null;
     }
 }
