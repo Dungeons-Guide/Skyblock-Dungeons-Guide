@@ -83,7 +83,7 @@ public class DRIBackedBlockMap implements ICoordinateMap<UBlockState>, UWorld, I
 
 
     private UBlockState air = ModAPI.getAPI().getBlockRegistry().oneFromWellknown(BlockType.AIR);
-    private VectorI3D vectorI3D;
+    private VectorI3D vectorI3D = new VectorI3D(0,0,0);
     @Override
     public UBlockState getBlock(int x, int y, int z) {
         if (!roomBounds.canAccessAbsolute(x,y,z)) {
@@ -150,7 +150,7 @@ public class DRIBackedBlockMap implements ICoordinateMap<UBlockState>, UWorld, I
 
     @Override
     public UBlockState getBlockStateAt(int x, int y, int z) {
-        return getBlockStateAt(x,y,z);
+        return getBlock(x,y,z);
     }
 
     @Override
