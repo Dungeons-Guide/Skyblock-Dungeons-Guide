@@ -48,7 +48,6 @@ import kr.syeyoung.modapi.world.tileentities.UTileEntitySkull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.init.Blocks;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -93,9 +92,9 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
                     }
                 }
             }
-        } else if (blockState.getBlock() == Blocks.air && essenceWasThere) {
+        } else if (blockState.isOf(BlockType.AIR) && essenceWasThere) {
             found = true;
-        } else if (blockState.getBlock() == Blocks.air && !essenceWasThere) {
+        } else if (blockState.isOf(BlockType.AIR) && !essenceWasThere) {
             if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(pos) < 25) {
                 nearbyTicks++;
             }

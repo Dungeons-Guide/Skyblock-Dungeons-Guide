@@ -96,7 +96,7 @@ public class UBlockStateImpl implements UBlockState {
     }
 
     @Override
-    public Object getIBlockState() {
+    public IBlockState getIBlockState() {
         return delegate;
     }
 

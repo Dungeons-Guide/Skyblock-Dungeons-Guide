@@ -87,7 +87,7 @@ public class ValueEditBreakableWall extends MPanel implements ValueEdit<DungeonB
                     boolean found = false;
                     for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
                         if (updatedBlock.getPos().equals(dungeonBreakableWall.getSecretPoint().getOffsetPointList().get(0).getBlockPos(EditingContext.getEditingContext().getRoom()))
-                                && updatedBlock.getBlock().getBlock() == Blocks.air) {
+                                && updatedBlock.getBlock().isOf(BlockType.AIR)) {
                             found = true;
                             break;
                         }

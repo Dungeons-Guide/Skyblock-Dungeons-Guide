@@ -32,7 +32,6 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.world.BlockType;
-import net.minecraft.init.Blocks;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -86,7 +85,7 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoorData> 
                     boolean found = false;
                     for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
                         if (updatedBlock.getPos().equals(dungeonDoor.getSecretPoint().getOffsetPointList().get(0).getBlockPos(EditingContext.getEditingContext().getRoom()))
-                                && updatedBlock.getBlock().getBlock() == Blocks.air) {
+                                && updatedBlock.getBlock().isOf(BlockType.AIR)) {
                             found = true;
                             break;
                         }

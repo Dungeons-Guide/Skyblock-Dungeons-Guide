@@ -38,7 +38,6 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Data;
-import net.minecraft.init.Blocks;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -122,7 +121,7 @@ public class DungeonFakeChestTrapState implements DungeonMechanicState {
         UBlockState b = ModAPI.getAPI().getBlockRegistry().oneFromWellknown(BlockType.AIR);
         if (!data.tnts.getOffsetPointList().isEmpty())
             b = data.tnts.getOffsetPointList().get(0).getBlock(room);
-        return b == Blocks.air ? "triggered" : "untriggered";
+        return b.isOf(BlockType.AIR) ? "triggered" : "untriggered";
     }
 
     @Override

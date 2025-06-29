@@ -11,7 +11,7 @@ import lombok.Getter;
 
 public class InstaBreakFactorCalculatingCoordinateMap implements ICoordinateMap<InstaBreakFactorCalculatingCoordinateMap.BreakFactor> {
     private ICoordinateMap<UBlockState> map;
-    private CoordinateMapBlockAccessible world;
+    private IBlockAccessible world;
     private AlgorithmSetting algorithmSetting;
 
     @Getter
@@ -19,7 +19,7 @@ public class InstaBreakFactorCalculatingCoordinateMap implements ICoordinateMap<
 
     public InstaBreakFactorCalculatingCoordinateMap(ICoordinateMap<UBlockState> map, AlgorithmSetting algorithmSetting) {
         this.map = map;
-        this.world = map instanceof IBlockAccessible ? (CoordinateMapBlockAccessible) map : new CoordinateMapBlockAccessible(map);
+        this.world = map instanceof IBlockAccessible ? (IBlockAccessible) map : new CoordinateMapBlockAccessible(map);
         this.minX = map.getMinX(); this.minY = map.getMinY(); this.minZ = map.getMinZ();
         this.maxX = map.getMaxX(); this.maxY = map.getMaxY(); this.maxZ = map.getMaxZ();
         this.lenX = maxX - minX;

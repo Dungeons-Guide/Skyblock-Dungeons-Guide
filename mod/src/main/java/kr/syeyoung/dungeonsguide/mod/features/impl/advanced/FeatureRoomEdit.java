@@ -68,7 +68,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -246,17 +245,16 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     ExtendedBlockStorage[] storage= c.getBlockStorageArray();
                     ExtendedBlockStorage extendedblockstorage = storage[y >> 4];
 
-                    IBlockState block = (IBlockState) dungeonRoomInfo.getBlock(x, y-70, z, 0).getIBlockState();
+                    UBlockState block = dungeonRoomInfo.getBlock(x, y-70, z, 0);
                     if (extendedblockstorage == null) {
-                        if (block.getBlock() == Blocks.air) {
+                        if (block.isOf(BlockType.AIR)) {
                             continue;
                         }
                         extendedblockstorage = storage[y >> 4] = new ExtendedBlockStorage(y >> 4 << 4, true);
                     }
-                    extendedblockstorage.set(x & 0xF, y & 15, z & 0xF, block);
-                    if ((block.getBlock() == Blocks.dispenser)) {
-                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new VectorI3D(x, y, z),
-                                blockRegistry.fromOldId(Block.getStateId(block))));
+                    extendedblockstorage.set(x & 0xF, y & 15, z & 0xF, (IBlockState) block.getIBlockState());
+                    if ((block.isOf(BlockType.DISPENSER))) {
+                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new VectorI3D(x, y, z), block));
                     }
                 }
             }

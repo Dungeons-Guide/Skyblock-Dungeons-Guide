@@ -18,16 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider;
 
-import com.google.common.collect.Sets;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UWorld;
 import lombok.Getter;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-
-import java.util.Set;
 
 @Getter
 public class DungeonDoor {
@@ -35,8 +30,6 @@ public class DungeonDoor {
     private final VectorI3D position;
     private final EDungeonDoorType type;
     private boolean isZDir;
-
-    private static final Set<Block> legalBlocks = Sets.newHashSet(Blocks.coal_block, Blocks.barrier, Blocks.monster_egg, Blocks.air, Blocks.stained_hardened_clay);
 
     public DungeonDoor(UWorld world, VectorI3D pos, EDungeonDoorType type) {
         this.w = world;

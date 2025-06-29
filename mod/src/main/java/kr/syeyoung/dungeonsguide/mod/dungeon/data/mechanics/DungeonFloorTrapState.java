@@ -114,7 +114,7 @@ public class DungeonFloorTrapState implements DungeonMechanicState, WorldMutatin
         UBlockState b = ModAPI.getAPI().getBlockRegistry().oneFromWellknown(BlockType.AIR);
         if (!data.secretPoint.getOffsetPointList().isEmpty())
             b = data.secretPoint.getOffsetPointList().get(0).getBlock(room);
-        return b == Blocks.air ? "triggered" : "untriggered";
+        return b.isOf(BlockType.AIR) ? "triggered" : "untriggered";
     }
 
     @Override

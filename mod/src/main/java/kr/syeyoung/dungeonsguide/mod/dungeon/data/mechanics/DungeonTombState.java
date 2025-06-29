@@ -114,7 +114,7 @@ public class DungeonTombState implements DungeonMechanicState, WorldMutatingMech
         UBlockState b = ModAPI.getAPI().getBlockRegistry().oneFromWellknown(BlockType.AIR);
         if (!data.secretPoint.getOffsetPointList().isEmpty())
             b = data.secretPoint.getOffsetPointList().get(0).getBlock(room);
-        return b == Blocks.air ? "open" : "closed";
+        return b.isOf(BlockType.AIR) ? "open" : "closed";
     }
 
     @Override

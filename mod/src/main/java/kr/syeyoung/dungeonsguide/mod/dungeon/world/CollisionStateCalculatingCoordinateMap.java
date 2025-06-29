@@ -9,9 +9,6 @@ import kr.syeyoung.modapi.world.IBlockAccessible;
 import kr.syeyoung.modapi.world.UBlockState;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.block.BlockFence;
-import net.minecraft.block.BlockSkull;
-import net.minecraft.init.Blocks;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -25,13 +22,13 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
     @Getter
     private int minX, minY, minZ, maxX, maxY, maxZ, lenX, lenY, lenZ;
 
-    private CoordinateMapBlockAccessible world;
+    private IBlockAccessible world;
 
     private Set<VectorI3D> poses;
     private RoomBounds roomBounds;
     public CollisionStateCalculatingCoordinateMap(ICoordinateMap<UBlockState> map, Set<VectorI3D> poses, InstaBreakFactorCalculatingCoordinateMap instaBreakCalc, RoomBounds roomBounds) {
         this.map = map;
-        this.world = map instanceof IBlockAccessible ? (CoordinateMapBlockAccessible) map : new CoordinateMapBlockAccessible(map);
+        this.world = map instanceof IBlockAccessible ? (IBlockAccessible) map : new CoordinateMapBlockAccessible(map);
 
         this.minX = roomBounds.getMinX() * 2 + 2;
         this.minY = 0;
@@ -107,13 +104,14 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
 
                         int breakFactor = instaBreakCalc.getBlock(k1, i2, l1).getFactor();
                         if (breakFactor > 0) {
-                            if (i2 == maxY - 1 && (state.getBlock() != Blocks.iron_bars && !(state.getBlock() instanceof BlockFence)) && !(state.getBlock() instanceof BlockSkull)) {
+                            if (i2 == maxY - 1 && (!state.isOf(BlockType.IRON_BARS) &&
+                                    !(state.isOf(BlockType.TAG_FENCE))) && !(state.isOf(BlockType.SKULL))) {
                                 // head level no break
                                 notstonkable = 99;
                             } else {
                                 notstonkable+= breakFactor;
                             }
-                            if (state.getBlock() == Blocks.bedrock) {
+                            if (state.isOf(BlockType.BEDROCK)) {
                                 notstonkable = 99;
                             }
                         }

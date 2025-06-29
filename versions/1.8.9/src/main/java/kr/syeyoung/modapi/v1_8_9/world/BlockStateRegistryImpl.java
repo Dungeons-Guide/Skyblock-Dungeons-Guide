@@ -214,6 +214,9 @@ public class BlockStateRegistryImpl implements IBlockRegistry {
                 case STANDING_SIGN:
                     addAllVariantsOf(Blocks.standing_sign, b);
                     break;
+                case DISPENSER:
+                    addAllVariantsOf(Blocks.dispenser, b);
+                    break;
             }
         }
         for (int i = 0; i < blockTypeStateMapping.length; i++) {

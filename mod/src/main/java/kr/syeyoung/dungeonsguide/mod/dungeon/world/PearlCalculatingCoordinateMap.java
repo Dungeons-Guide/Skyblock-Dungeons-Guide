@@ -15,12 +15,12 @@ public class PearlCalculatingCoordinateMap implements ICoordinateMap<PearlCalcul
     @Getter
     private int minX, minY, minZ, maxX, maxY, maxZ, lenX, lenY, lenZ;
 
-    private CoordinateMapBlockAccessible world;
+    private IBlockAccessible world;
     private RoomBounds roomBounds;
 
     public PearlCalculatingCoordinateMap(ICoordinateMap<UBlockState> map, RoomBounds roomBounds) {
         this.map = map;
-        this.world = map instanceof IBlockAccessible ? (CoordinateMapBlockAccessible) map : new CoordinateMapBlockAccessible(map);
+        this.world = map instanceof IBlockAccessible ? (IBlockAccessible) map : new CoordinateMapBlockAccessible(map);
 
         this.minX = roomBounds.getMinX() * 2 + 2;
         this.minY = 0;
