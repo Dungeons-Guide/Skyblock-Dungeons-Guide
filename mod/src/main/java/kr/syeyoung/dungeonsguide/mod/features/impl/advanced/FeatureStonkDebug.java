@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Dung
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.InstaBreakFactorCalculatingCoordinateMap;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.WorldBackedCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.WorldBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
@@ -34,7 +34,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
 import kr.syeyoung.modapi.item.Item;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
@@ -62,7 +61,7 @@ public class FeatureStonkDebug extends SimpleFeature {
         if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             event.setCanceled(true);
             // reset
-            WorldBackedCoordinateMap coordinateMap = new WorldBackedCoordinateMap(event.world, Integer.MIN_VALUE, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 255, Integer.MAX_VALUE);
+            WorldBackedBlockMap coordinateMap = new WorldBackedBlockMap(event.world, Integer.MIN_VALUE, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 255, Integer.MAX_VALUE);
             InstaBreakFactorCalculatingCoordinateMap coordinateMap1 = new InstaBreakFactorCalculatingCoordinateMap(coordinateMap, AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING);
             CollisionStateCalculatingCoordinateMap collisionStateCalculatingCoordinateMap = new CollisionStateCalculatingCoordinateMap(
                     coordinateMap, Collections.emptySet(), coordinateMap1, new RoomBounds(

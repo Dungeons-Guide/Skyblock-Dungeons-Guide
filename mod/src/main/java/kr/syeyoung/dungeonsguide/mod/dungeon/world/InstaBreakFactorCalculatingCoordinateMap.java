@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.IBlockAccessible;
 import kr.syeyoung.modapi.world.UBlock;
 import kr.syeyoung.modapi.world.UBlockState;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ public class InstaBreakFactorCalculatingCoordinateMap implements ICoordinateMap<
 
     public InstaBreakFactorCalculatingCoordinateMap(ICoordinateMap<UBlockState> map, AlgorithmSetting algorithmSetting) {
         this.map = map;
-        this.world = new CoordinateMapBlockAccessible(map);
+        this.world = map instanceof IBlockAccessible ? (CoordinateMapBlockAccessible) map : new CoordinateMapBlockAccessible(map);
         this.minX = map.getMinX(); this.minY = map.getMinY(); this.minZ = map.getMinZ();
         this.maxX = map.getMaxX(); this.maxY = map.getMaxY(); this.maxZ = map.getMaxZ();
         this.lenX = maxX - minX;

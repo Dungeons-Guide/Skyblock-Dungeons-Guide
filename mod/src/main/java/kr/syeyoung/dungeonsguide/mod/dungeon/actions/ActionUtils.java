@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTombState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorldBackedCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.modapi.data.VectorI3D;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -230,7 +230,7 @@ public class ActionUtils {
 
         List<PossibleClickingSpot> spots = RaytraceHelper.chooseMinimalY(RaytraceHelper.raycast(
                 dungeonRoom.getDungeonRoomInfo().getWorld() != null ?
-                        new DRIWorldBackedCoordinateMap(dungeonRoom.getDungeonRoomInfo(), openBlockers) : dungeonRoom.getRoomWorld(),
+                        new DRIBackedBlockMap(dungeonRoom.getDungeonRoomInfo(), openBlockers) : dungeonRoom.getRoomWorld(),
                         new VectorI3D(target.getX(), target.getY(), target.getZ()),
                 (x,y,z) -> ((GeneralRoomProcessor)dungeonRoom.getRoomProcessor()).getPathfinderWorld().getBlock(x,y,z).isBlocked()
         ));

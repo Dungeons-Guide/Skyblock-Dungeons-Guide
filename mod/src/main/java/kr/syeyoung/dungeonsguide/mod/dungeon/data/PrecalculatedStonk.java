@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorldBackedCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.InstaBreakFactorCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
@@ -130,7 +130,7 @@ public class PrecalculatedStonk {
             }
             List<List<PossibleClickingSpot>> list = new ArrayList<>();
             for (OffsetPoint point : offsetPoint) {
-                DRIWorldBackedCoordinateMap driWorld = new DRIWorldBackedCoordinateMap(dri, included);
+                DRIBackedBlockMap driWorld = new DRIBackedBlockMap(dri, included);
                 InstaBreakFactorCalculatingCoordinateMap breakFactorCalculatingCoordinateMap = new InstaBreakFactorCalculatingCoordinateMap(driWorld, AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING);
                 CollisionStateCalculatingCoordinateMap collisionStateCalculatingCoordinateMap = new CollisionStateCalculatingCoordinateMap(driWorld,
                         poses,

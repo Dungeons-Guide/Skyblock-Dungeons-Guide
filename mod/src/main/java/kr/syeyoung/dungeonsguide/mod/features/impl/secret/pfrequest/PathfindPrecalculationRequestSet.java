@@ -8,7 +8,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorldBackedCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationProgress;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step1.WidgetPrecalcStep1Calculating;
@@ -262,7 +262,7 @@ public class PathfindPrecalculationRequestSet {
                         PathfindRequest begin = stuff.getValue().get(0);
 
 
-                        DRIWorldBackedCoordinateMap driWorldBackedCoordinateMap = new DRIWorldBackedCoordinateMap(begin.getDungeonRoomInfo(), new ArrayList<>(begin.getOpenMech()));
+                        DRIBackedBlockMap driBackedBlockMap = new DRIBackedBlockMap(begin.getDungeonRoomInfo(), new ArrayList<>(begin.getOpenMech()));
 
 
                         List<File> intermediate = new ArrayList<>();
@@ -275,7 +275,7 @@ public class PathfindPrecalculationRequestSet {
                                 File f = new File(outdir, id.toString() + ".pfreq");
                                 f.deleteOnExit();
                                 DataOutputStream dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(f)));
-                                request.write(driWorldBackedCoordinateMap, dataOutputStream);
+                                request.write(driBackedBlockMap, dataOutputStream);
                                 dataOutputStream.flush();
                                 dataOutputStream.close();
                                 System.out.println("It took " + (System.currentTimeMillis() - start) + "ms : " + request.getId());

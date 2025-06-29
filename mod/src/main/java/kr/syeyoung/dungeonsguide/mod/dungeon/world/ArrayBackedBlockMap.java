@@ -5,13 +5,13 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.*;
 import lombok.Getter;
 
-public class ArrayBackedCoordinateMap implements ICoordinateMap<UBlockState>, IBlockAccessible {
+public class ArrayBackedBlockMap implements ICoordinateMap<UBlockState>, IBlockAccessible {
     private UBlockState[] arr;
 
     @Getter
     private int minX, minY, minZ, maxX, maxY, maxZ, lenX, lenY, lenZ;
 
-    public ArrayBackedCoordinateMap(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+    public ArrayBackedBlockMap(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
         this.minX = minX; this.minY = minY; this.minZ = minZ;
         this.maxX = maxX; this.maxY = maxY; this.maxZ = maxZ;
         this.lenX = maxX - minX;

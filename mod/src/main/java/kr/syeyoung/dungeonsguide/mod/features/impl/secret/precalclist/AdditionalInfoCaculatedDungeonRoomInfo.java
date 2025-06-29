@@ -15,7 +15,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISec
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorldBackedCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculationRegistry;
@@ -199,7 +199,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
     }
 
     private void recalculateAdditionalInfo() {
-        DRIWorldBackedCoordinateMap driWorld = new DRIWorldBackedCoordinateMap(dungeonRoomInfo);
+        DRIBackedBlockMap driWorld = new DRIBackedBlockMap(dungeonRoomInfo);
         DungeonContext fakeContext = new DungeonContext("TEST DG", null, driWorld, roomPreset.getParent());
         DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(
                 new Dimension(16, 16),

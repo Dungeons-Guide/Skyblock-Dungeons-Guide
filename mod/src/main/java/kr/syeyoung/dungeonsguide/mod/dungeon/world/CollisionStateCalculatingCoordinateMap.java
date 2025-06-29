@@ -5,6 +5,7 @@ import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.EnumHalf;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.IBlockAccessible;
 import kr.syeyoung.modapi.world.UBlockState;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +31,7 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
     private RoomBounds roomBounds;
     public CollisionStateCalculatingCoordinateMap(ICoordinateMap<UBlockState> map, Set<VectorI3D> poses, InstaBreakFactorCalculatingCoordinateMap instaBreakCalc, RoomBounds roomBounds) {
         this.map = map;
-        this.world = new CoordinateMapBlockAccessible(map);
+        this.world = map instanceof IBlockAccessible ? (CoordinateMapBlockAccessible) map : new CoordinateMapBlockAccessible(map);
 
         this.minX = roomBounds.getMinX() * 2 + 2;
         this.minY = 0;

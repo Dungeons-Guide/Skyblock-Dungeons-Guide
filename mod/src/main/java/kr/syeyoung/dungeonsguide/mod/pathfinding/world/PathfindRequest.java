@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.pathfinding.world;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorldBackedCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
@@ -134,7 +134,7 @@ public class PathfindRequest { // TODO: fix data flow.
     *    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
     * */
 
-    public void write(DRIWorldBackedCoordinateMap driWorld, DataOutputStream dataOutputStream) throws IOException {
+    public void write(DRIBackedBlockMap driWorld, DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeBytes("DGPFREQ2");
         dataOutputStream.writeInt(1); // versioning
 

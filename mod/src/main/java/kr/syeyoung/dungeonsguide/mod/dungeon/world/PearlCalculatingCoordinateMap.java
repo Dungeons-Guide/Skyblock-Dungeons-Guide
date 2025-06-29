@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.world.IBlockAccessible;
 import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
 
@@ -19,7 +20,7 @@ public class PearlCalculatingCoordinateMap implements ICoordinateMap<PearlCalcul
 
     public PearlCalculatingCoordinateMap(ICoordinateMap<UBlockState> map, RoomBounds roomBounds) {
         this.map = map;
-        this.world = new CoordinateMapBlockAccessible(map);
+        this.world = map instanceof IBlockAccessible ? (CoordinateMapBlockAccessible) map : new CoordinateMapBlockAccessible(map);
 
         this.minX = roomBounds.getMinX() * 2 + 2;
         this.minY = 0;

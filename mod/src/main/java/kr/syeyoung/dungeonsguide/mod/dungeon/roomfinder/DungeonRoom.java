@@ -40,9 +40,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.ArrayBackedCoordinateMap;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorldBackedCoordinateMap;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.WorldBackedCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.ArrayBackedBlockMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIBackedBlockMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.WorldBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
@@ -84,9 +84,9 @@ public class DungeonRoom  {
     private Map<String, DungeonMechanicState> _mechanics = null;
 
     @Setter
-    private ArrayBackedCoordinateMap roomWorld;
+    private ArrayBackedBlockMap roomWorld;
 
-    private WorldBackedCoordinateMap coordinateMap;
+    private WorldBackedBlockMap coordinateMap;
 
     public DungeonRoom(Set<Point> points, short shape, byte color, VectorI3D min, VectorI3D max, DungeonContext context, Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
         this.unitPoints = points;
@@ -106,10 +106,10 @@ public class DungeonRoom  {
     }
 
     public DungeonRoom(DungeonContext context) {
-        if (!(context.getUworld() instanceof DRIWorldBackedCoordinateMap)) {
+        if (!(context.getUworld() instanceof DRIBackedBlockMap)) {
             throw new IllegalArgumentException("This constructor only applicable for DRIWorld based DungeonContext");
         }
-        DRIWorldBackedCoordinateMap driWorld = (DRIWorldBackedCoordinateMap) context.getUworld();
+        DRIBackedBlockMap driWorld = (DRIBackedBlockMap) context.getUworld();
 
         this.dungeonRoomInfo = driWorld.getDungeonRoomInfo();
         this.unitPoints = new HashSet<>();
@@ -154,14 +154,14 @@ public class DungeonRoom  {
                 }
             }
         }
-        coordinateMap = new WorldBackedCoordinateMap(driWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
-        roomWorld = new ArrayBackedCoordinateMap(roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+        coordinateMap = new WorldBackedBlockMap(driWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+        roomWorld = new ArrayBackedBlockMap(roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
         roomWorld.migrateFromWorld(context.getUworld());
 
     }
 
 
-    public ArrayBackedCoordinateMap getRoomWorld() {
+    public ArrayBackedBlockMap getRoomWorld() {
         if (this.roomWorld != null) return roomWorld;
 
 
@@ -183,10 +183,10 @@ public class DungeonRoom  {
             }
         }
 
-        roomWorld = new ArrayBackedCoordinateMap(roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+        roomWorld = new ArrayBackedBlockMap(roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
         roomWorld.migrateFromWorld(context.getUworld());
 
-        coordinateMap = new WorldBackedCoordinateMap(roomWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+        coordinateMap = new WorldBackedBlockMap(roomWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
 
 
 

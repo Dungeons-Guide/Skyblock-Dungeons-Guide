@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-public class DRIWorldBackedCoordinateMap implements ICoordinateMap<UBlockState>, UWorld {
+public class DRIBackedBlockMap implements ICoordinateMap<UBlockState>, UWorld, IBlockAccessible {
     @Getter
     private DungeonRoomInfo dungeonRoomInfo;
     private List<String> openMechanics;
@@ -39,11 +39,11 @@ public class DRIWorldBackedCoordinateMap implements ICoordinateMap<UBlockState>,
     @Getter
     private CoordinateMapBackedPathfindWorld pathfindWorld;
 
-    public DRIWorldBackedCoordinateMap(DungeonRoomInfo dungeonRoomInfo) {
+    public DRIBackedBlockMap(DungeonRoomInfo dungeonRoomInfo) {
         this(dungeonRoomInfo, Collections.emptyList());
     }
 
-    public DRIWorldBackedCoordinateMap(DungeonRoomInfo dungeonRoomInfo, List<String> openMechanics) {
+    public DRIBackedBlockMap(DungeonRoomInfo dungeonRoomInfo, List<String> openMechanics) {
         this.dungeonRoomInfo = dungeonRoomInfo;
         this.openMechanics = openMechanics;
         this.shape = dungeonRoomInfo.getShape();
