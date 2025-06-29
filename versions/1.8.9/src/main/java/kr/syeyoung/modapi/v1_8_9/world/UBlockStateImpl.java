@@ -71,7 +71,7 @@ public class UBlockStateImpl implements UBlockState {
         PropertyDirection dir = registry.getDirectionMap()[Block.getIdFromBlock(delegate.getBlock())];
         if (dir == null) return  this;
         IBlockState newState = delegate.withProperty(dir, net.minecraft.util.EnumFacing.VALUES[facing.getIndex()]);
-        return registry.getByStateId(Block.getStateId(newState));
+        return registry.getByStateId(Block.BLOCK_STATE_IDS.get(newState));
     }
 
     @Override
@@ -189,7 +189,7 @@ public class UBlockStateImpl implements UBlockState {
 
     @Override
     public int getLegacyStateId() {
-        return Block.getStateId(delegate);
+        return Block.BLOCK_STATE_IDS.get(delegate);
     }
 
     public IBlockState getDelegate() {

@@ -60,7 +60,7 @@ public class PacketListener {
                             blockPosition.getX(),
                             blockPosition.getY(),
                             blockPosition.getZ()
-                    ), impl.getByStateId(Block.getStateId(((S23PacketBlockChange) packet).getBlockState()))));
+                    ), impl.getByStateId(Block.BLOCK_STATE_IDS.get(((S23PacketBlockChange) packet).getBlockState()))));
             ModAPI.getAPI().getEventBus().fireEvent(blockUpdateEvent);
         } else if (packet instanceof S22PacketMultiBlockChange) {
             BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Post();
@@ -68,7 +68,7 @@ public class PacketListener {
             for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : ((S22PacketMultiBlockChange) packet).getChangedBlocks()) {
                 blockUpdateEvent.getUpdatedBlocks().add(new Pair<>(
                         new VectorI3D(changedBlock.getPos().getX(), changedBlock.getPos().getY(), changedBlock.getPos().getZ())
-                        , impl.getByStateId(Block.getStateId(changedBlock.getBlockState()))));
+                        , impl.getByStateId(Block.BLOCK_STATE_IDS.get(changedBlock.getBlockState()))));
             }
             ModAPI.getAPI().getEventBus().fireEvent(blockUpdateEvent);
         }else if (packet instanceof S21PacketChunkData) {
@@ -115,7 +115,7 @@ public class PacketListener {
                             blockPosition.getX(),
                             blockPosition.getY(),
                             blockPosition.getZ()
-                    ), impl.getByStateId(Block.getStateId(((S23PacketBlockChange) packet).getBlockState()))));
+                    ), impl.getByStateId(Block.BLOCK_STATE_IDS.get(((S23PacketBlockChange) packet).getBlockState()))));
             ModAPI.getAPI().getEventBus().fireEvent(blockUpdateEvent);
         } else if (packet instanceof S22PacketMultiBlockChange) {
             BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Pre();
@@ -125,7 +125,7 @@ public class PacketListener {
                         changedBlock.getPos().getX(),
                         changedBlock.getPos().getY(),
                         changedBlock.getPos().getZ()
-                ), impl.getByStateId(Block.getStateId(changedBlock.getBlockState()))));
+                ), impl.getByStateId(Block.BLOCK_STATE_IDS.get(changedBlock.getBlockState()))));
             }
             ModAPI.getAPI().getEventBus().fireEvent(blockUpdateEvent);
         } else if (packet instanceof S0DPacketCollectItem) {

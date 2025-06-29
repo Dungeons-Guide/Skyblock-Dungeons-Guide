@@ -104,7 +104,7 @@ public class UWorldImpl implements UWorld {
         BlockPos.MutableBlockPos pos = posThreadLocal.get();
         pos.set(x,y,z);
         IBlockState blockState = delegate.getBlockState(pos);
-        int stateId = Block.getStateId(blockState);
+        int stateId = Block.BLOCK_STATE_IDS.get(blockState);
         return stateRegistry.getByStateId(stateId);
     }
 
@@ -113,7 +113,7 @@ public class UWorldImpl implements UWorld {
         BlockPos.MutableBlockPos pos = posThreadLocal.get();
         pos.set(blockPos.x, blockPos.y, blockPos.z);
         IBlockState blockState = delegate.getBlockState(pos);
-        int stateId = Block.getStateId(blockState);
+        int stateId = Block.BLOCK_STATE_IDS.get(blockState);
         return stateRegistry.getByStateId(stateId);
     }
 

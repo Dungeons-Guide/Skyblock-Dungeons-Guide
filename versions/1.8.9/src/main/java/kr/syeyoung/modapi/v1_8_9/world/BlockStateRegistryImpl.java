@@ -37,7 +37,7 @@ public class BlockStateRegistryImpl implements IBlockRegistry {
 
         map = new ObjectIntIdentityMap<>();
         for (IBlockState blockStateId : Block.BLOCK_STATE_IDS) {
-            int stateId = Block.getStateId(blockStateId);
+            int stateId = Block.BLOCK_STATE_IDS.get(blockStateId);
             map.put(new UBlockStateImpl(blockStateId, byId[Block.getIdFromBlock(blockStateId.getBlock())], this), stateId);
         }
 
@@ -72,11 +72,11 @@ public class BlockStateRegistryImpl implements IBlockRegistry {
         } else if (blockType == BlockType.BEDROCK) {
             return map.getByValue(7 << 4); // bedrock state id.
         } else if (blockType == BlockType.CHEST) {
-            return map.getByValue(Block.getStateId(Blocks.chest.getDefaultState()));
+            return map.getByValue(Block.BLOCK_STATE_IDS.get(Blocks.chest.getDefaultState()));
         } else if (blockType == BlockType.SKULL){
-            return map.getByValue(Block.getStateId(Blocks.skull.getDefaultState()));
+            return map.getByValue(Block.BLOCK_STATE_IDS.get(Blocks.skull.getDefaultState()));
         } else if (blockType == BlockType.LEVER) {
-            return map.getByValue(Block.getStateId(Blocks.lever.getDefaultState()));
+            return map.getByValue(Block.BLOCK_STATE_IDS.get(Blocks.lever.getDefaultState()));
         }
         throw new IllegalArgumentException("Unsupported blocktype: "+blockType);
     }
@@ -96,7 +96,7 @@ public class BlockStateRegistryImpl implements IBlockRegistry {
     private void addAllVariantsOf(Block b, Set<UBlockState> blockStates) {
         for (int i = 0; i < 16; i++) {
             IBlockState blockState = b.getStateFromMeta(i);
-            UBlockState blockState1 = getByStateId(Block.getStateId(blockState));
+            UBlockState blockState1 = getByStateId(Block.BLOCK_STATE_IDS.get(blockState));
             if (!blockStates.contains(blockState1))
                 blockStates.add(blockState1);
         }

@@ -42,7 +42,7 @@ public class UChunkImpl implements UChunk {
         BlockPos.MutableBlockPos pos = posThreadLocal.get();
         pos.set(x, y, z);
         IBlockState blockState = delegate.getBlockState(pos);
-        return registry.getByStateId(Block.getStateId(blockState));
+        return registry.getByStateId(Block.BLOCK_STATE_IDS.get(blockState));
     }
 
     @Override
