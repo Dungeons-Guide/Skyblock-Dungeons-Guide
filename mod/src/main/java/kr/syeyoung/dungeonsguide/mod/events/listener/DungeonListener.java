@@ -38,7 +38,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.PearlCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
-import kr.syeyoung.dungeonsguide.mod.fakeserver.DungeonServerLaunchUtils;
+import kr.syeyoung.dungeonsguide.mod.utils.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
@@ -186,7 +186,6 @@ public class DungeonListener {
                     } else if (SkyblockStatus.isOnDungeon()) {
                         DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(new DungeonContext(
                                 SkyblockStatus.getLocationName(),
-                                Minecraft.getMinecraft().theWorld,
                                 ModAPI.getAPI().getWorld()));
                         ModAPI.getAPI().getEventBus().fireEvent(new DungeonStartedEvent());
                     }

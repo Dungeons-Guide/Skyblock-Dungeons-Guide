@@ -6,6 +6,7 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
+import kr.syeyoung.modapi.fakeserver.FakeServerUtils;
 import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
@@ -51,4 +52,6 @@ public interface ModAPI {
     boolean isSinglePlayer();
 
     UResourceManager getResourceManager();
+
+    FakeServerUtils getFakeServerUtils();
 }

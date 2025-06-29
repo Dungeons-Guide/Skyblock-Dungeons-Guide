@@ -11,6 +11,7 @@ import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.event.events.RegisterCommandEvent;
 import kr.syeyoung.modapi.event.listenerlist.BasicEventBus;
+import kr.syeyoung.modapi.fakeserver.FakeServerUtils;
 import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
@@ -19,11 +20,13 @@ import kr.syeyoung.modapi.v1_8_9.client.renderer.entity.URenderManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.command.CommandManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerSP;
+import kr.syeyoung.modapi.v1_8_9.fakeserver.BlockAccessibleServerLaunchUtils;
 import kr.syeyoung.modapi.v1_8_9.resources.DGTexturePack;
 import kr.syeyoung.modapi.v1_8_9.resources.UResourceManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.util.USessionImpl;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
+import kr.syeyoung.modapi.world.IBlockAccessible;
 import kr.syeyoung.modapi.world.IBlockRegistry;
 import kr.syeyoung.modapi.world.UWorld;
 import net.minecraft.client.Minecraft;
@@ -68,7 +71,7 @@ public class ModAPIImpl implements ModAPI {
     }
 
     public UResourceManager getResourceManager() {
-        return new UResourceManagerImpl(delegate.getResourceManager());
+        return new UResourceManagerImpl(Minecraft.getMinecraft().getResourceManager());
     }
 
 
@@ -186,5 +189,18 @@ public class ModAPIImpl implements ModAPI {
         return registry;
     }
 
+    @Override
+    public FakeServerUtils getFakeServerUtils() {
+        return new FakeServerUtils() {
+            @Override
+            public void launchFakeServerAndJoin(IBlockAccessible accessible) {
+                BlockAccessibleServerLaunchUtils.launchDungeonServerAndJoin(accessible);
+            }
 
+            @Override
+            public boolean isRunning() {
+                return BlockAccessibleServerLaunchUtils.isDungeonIntegratedServerRunning();
+            }
+        };
+    }
 }

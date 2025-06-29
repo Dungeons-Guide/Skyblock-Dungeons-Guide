@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.mod.fakeserver;
+package kr.syeyoung.modapi.v1_8_9.fakeserver;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,8 +9,8 @@ import net.minecraft.stats.StatisticsFile;
 
 import java.net.SocketAddress;
 
-public class DungeonServerConfigManager extends ServerConfigurationManager {
-    public DungeonServerConfigManager(DungeonIntegratedServer server) {
+public class BlockAccessibleServerConfigManager extends ServerConfigurationManager {
+    public BlockAccessibleServerConfigManager(BlockAccessibleIntegratedServer server) {
         super(server);
         this.setViewDistance(10);
         this.setCommandsAllowedForAll(true);
@@ -31,8 +31,8 @@ public class DungeonServerConfigManager extends ServerConfigurationManager {
         return null;
     }
 
-    public DungeonIntegratedServer getServerInstance() {
-        return (DungeonIntegratedServer)super.getServerInstance();
+    public BlockAccessibleIntegratedServer getServerInstance() {
+        return (BlockAccessibleIntegratedServer)super.getServerInstance();
     }
 
     @Override

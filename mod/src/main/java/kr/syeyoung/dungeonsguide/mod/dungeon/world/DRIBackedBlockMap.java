@@ -39,6 +39,8 @@ public class DRIBackedBlockMap implements ICoordinateMap<UBlockState>, UWorld, I
     @Getter
     private CoordinateMapBackedPathfindWorld pathfindWorld;
 
+    private RoomBounds roomBounds;
+
     public DRIBackedBlockMap(DungeonRoomInfo dungeonRoomInfo) {
         this(dungeonRoomInfo, Collections.emptyList());
     }
@@ -72,7 +74,7 @@ public class DRIBackedBlockMap implements ICoordinateMap<UBlockState>, UWorld, I
         AlgorithmSetting algorithmSetting1 = preset.getRoomPreset(dungeonRoomInfo.getUuid()).getEffectiveAlgorithmSetting(dungeonRoomInfo);
         this.algorithmSetting = algorithmSetting1;
 
-        pathfindWorld = new CoordinateMapBackedPathfindWorld(this, algorithmSetting, new RoomBounds(
+        pathfindWorld = new CoordinateMapBackedPathfindWorld(this, algorithmSetting, roomBounds = new RoomBounds(
                 dungeonRoomInfo.getShape(),
                 new VectorI3D(0, 70, 0),
                 new VectorI3D(dungeonRoomInfo.getWidth() -1, 70, dungeonRoomInfo.getLength() - 1)
@@ -84,6 +86,9 @@ public class DRIBackedBlockMap implements ICoordinateMap<UBlockState>, UWorld, I
     private VectorI3D vectorI3D;
     @Override
     public UBlockState getBlock(int x, int y, int z) {
+        if (!roomBounds.canAccessAbsolute(x,y,z)) {
+            return air;
+        }
         vectorI3D.x = x; vectorI3D.y=  y; vectorI3D.z = z;
         if (open.contains(vectorI3D)) {
             return air;
@@ -93,7 +98,7 @@ public class DRIBackedBlockMap implements ICoordinateMap<UBlockState>, UWorld, I
 
     @Override
     public boolean isInScope(int x, int y, int z) {
-        return true;
+        return roomBounds.canAccessAbsolute(x,y,z);
     }
 
     @Override

@@ -200,7 +200,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
 
     private void recalculateAdditionalInfo() {
         DRIBackedBlockMap driWorld = new DRIBackedBlockMap(dungeonRoomInfo);
-        DungeonContext fakeContext = new DungeonContext("TEST DG", null, driWorld, roomPreset.getParent());
+        DungeonContext fakeContext = new DungeonContext("TEST DG", driWorld, roomPreset.getParent());
         DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(
                 new Dimension(16, 16),
                 5,

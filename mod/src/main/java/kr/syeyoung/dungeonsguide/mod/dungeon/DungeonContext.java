@@ -125,14 +125,15 @@ public class DungeonContext {
     private final Vector2d doorOffset;
     private final VectorI3D door;
 
-    public DungeonContext(String dungeonName, World world, UWorld uworld) {
-        this(dungeonName, world, uworld, FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset());
+    public DungeonContext(String dungeonName,  UWorld uworld) {
+        this(dungeonName, uworld, FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset());
     }
-    public DungeonContext(String dungeonName, World world, UWorld uworld, PathfindPreset preset) {
+    public DungeonContext(String dungeonName,UWorld uworld, PathfindPreset preset) {
         this.dungeonName = dungeonName;
         this.uworld = uworld;
         this.preset = preset;
-        this.world = world;
+        this.world = null;
+
         recorder.createEvent(new DungeonNodataEvent("DUNGEON_CONTEXT_CREATION"));
         mapPlayerMarkerProcessor = new MapPlayerProcessor(this);
         DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(getDungeonName());

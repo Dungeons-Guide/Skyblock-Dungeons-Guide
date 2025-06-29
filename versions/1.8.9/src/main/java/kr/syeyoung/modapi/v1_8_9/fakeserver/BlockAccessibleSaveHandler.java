@@ -1,6 +1,6 @@
-package kr.syeyoung.dungeonsguide.mod.fakeserver;
+package kr.syeyoung.modapi.v1_8_9.fakeserver;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.modapi.world.IBlockAccessible;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -12,7 +12,7 @@ import net.minecraft.world.storage.WorldInfo;
 
 import java.io.File;
 
-public class DungeonRoomSaveHandler implements ISaveHandler, IPlayerFileData {
+public class BlockAccessibleSaveHandler implements ISaveHandler, IPlayerFileData {
     public static final WorldSettings WORLD_SETTINGS = new WorldSettings(0, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT);
     public static final WorldInfo WORLD_INFO = new WorldInfo(WORLD_SETTINGS, "");
     {
@@ -25,8 +25,8 @@ public class DungeonRoomSaveHandler implements ISaveHandler, IPlayerFileData {
         WORLD_INFO.setSpawn(new BlockPos(-10, 70, -10));
     }
 
-    private DungeonRoomInfo dungeonRoomInfo;
-    public DungeonRoomSaveHandler(DungeonRoomInfo dungeonRoomInfo) {
+    private IBlockAccessible dungeonRoomInfo;
+    public BlockAccessibleSaveHandler(IBlockAccessible dungeonRoomInfo) {
         this.dungeonRoomInfo = dungeonRoomInfo;
     }
 
@@ -41,7 +41,7 @@ public class DungeonRoomSaveHandler implements ISaveHandler, IPlayerFileData {
 
     @Override
     public IChunkLoader getChunkLoader(WorldProvider provider) {
-        return new DungeonRoomInfoChunkLoader(dungeonRoomInfo);
+        return new BlockAccessibleChunkLoader(dungeonRoomInfo);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.mod.fakeserver;
+package kr.syeyoung.modapi.v1_8_9.fakeserver;
 
 import net.minecraft.block.Block;
 import net.minecraft.profiler.Profiler;
@@ -11,8 +11,8 @@ import net.minecraft.world.storage.WorldInfo;
 
 import java.io.File;
 
-public class DungeonWorldServer extends WorldServer {
-    public DungeonWorldServer(MinecraftServer server, ISaveHandler saveHandlerIn, WorldInfo info, int dimensionId, Profiler profilerIn) {
+public class BlockAccessibleWorldServer extends WorldServer {
+    public BlockAccessibleWorldServer(MinecraftServer server, ISaveHandler saveHandlerIn, WorldInfo info, int dimensionId, Profiler profilerIn) {
         super(server, saveHandlerIn, info, dimensionId, profilerIn);
     }
 

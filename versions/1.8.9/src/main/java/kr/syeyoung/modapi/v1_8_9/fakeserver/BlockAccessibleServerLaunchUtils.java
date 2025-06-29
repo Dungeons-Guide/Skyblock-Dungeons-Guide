@@ -1,18 +1,7 @@
-package kr.syeyoung.dungeonsguide.mod.fakeserver;
+package kr.syeyoung.modapi.v1_8_9.fakeserver;
 
-import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
-import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
-import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
-import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
-import kr.syeyoung.modapi.ModAPI;
-import kr.syeyoung.modapi.data.VectorI3D;
-import lombok.Getter;
+import kr.syeyoung.modapi.world.IBlockAccessible;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -34,22 +23,10 @@ import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
-import java.awt.*;
 import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-public class DungeonServerLaunchUtils {
-    public static void launchDungeonServerAndJoin(DungeonRoomInfo dungeonRoomInfo, PathfindPreset preset) {
-        if (dungeonRoomInfo.getWorld() == null) throw new IllegalArgumentException("Invalid DRI");
-        lastLoadedRoom = dungeonRoomInfo;
-        lastLoadedPreset = preset;
-
-        ModAPI.getAPI().getEventBus().fireEvent(new DungeonLeftEvent());
-        DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
-
-
+public class BlockAccessibleServerLaunchUtils {
+    public static void launchDungeonServerAndJoin(IBlockAccessible dungeonRoomInfo) {
         Minecraft minecraft = Minecraft.getMinecraft();
         if (minecraft.theWorld != null) {
             boolean flag = minecraft.isIntegratedServerRunning();
@@ -67,49 +44,7 @@ public class DungeonServerLaunchUtils {
         doLaunch(dungeonRoomInfo);
     }
 
-    public static void createContext() {
-        if (lastLoadedRoom == null) return;
-        DungeonRoomInfo dungeonRoomInfo = lastLoadedRoom;
-        short shape = dungeonRoomInfo.getShape();
-        DungeonContext fakeContext = new DungeonContext("TEST DG", Minecraft.getMinecraft().theWorld, ModAPI.getAPI().getWorld(), lastLoadedPreset);
-        DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(fakeContext);
-        DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(true);
-        DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(
-                new Dimension(16, 16),
-                5,
-                new Point(0,0),
-                new VectorI3D(0,70,0)
-        );
-        DungeonRoomScaffoldParser scaffoldParser1 = new DungeonRoomScaffoldParser(dungeonMapLayout, fakeContext);
-        fakeContext.setScaffoldParser(scaffoldParser1);
-
-        List<Point> points = new ArrayList<>();
-
-        for (int dy = 0; dy < 4; dy++) {
-            for (int dx = 0; dx < 4; dx++) {
-                boolean isSet = ((shape>> (dy * 4 + dx)) & 0x1) != 0;
-                if (isSet) {
-                    points.add(new Point(dx, dy));
-                }
-            }
-        }
-
-        DungeonRoom dungeonRoom = new DungeonRoom(
-                Sets.newHashSet(points),
-                shape,
-                dungeonRoomInfo.getColor(),
-                new VectorI3D(0, 70, 0),
-                new VectorI3D(32 * (dungeonRoomInfo.getWidth()/32) - 1, 70, 32 * (dungeonRoomInfo.getLength()/32) - 1),
-                fakeContext,
-                Collections.emptySet());
-
-        fakeContext.getScaffoldParser().insertRoom(dungeonRoom);
-    }
-    public static DungeonIntegratedServer theIntegratedServer;
-
-    @Getter
-    private static DungeonRoomInfo lastLoadedRoom;
-    private static PathfindPreset lastLoadedPreset;
+    public static BlockAccessibleIntegratedServer theIntegratedServer;
 
     public static boolean isDungeonIntegratedServerRunning() {
         return theIntegratedServer != null && theIntegratedServer.isServerRunning();
@@ -164,7 +99,7 @@ public class DungeonServerLaunchUtils {
         System.gc();
     }
     
-    private static void doLaunch(DungeonRoomInfo dungeonRoomInfo) {
+    private static void doLaunch(IBlockAccessible dungeonRoomInfo) {
 
         Minecraft mc = Minecraft.getMinecraft();
 
@@ -172,7 +107,7 @@ public class DungeonServerLaunchUtils {
         System.gc();
 
         try {
-            theIntegratedServer = new DungeonIntegratedServer(mc, dungeonRoomInfo);
+            theIntegratedServer = new BlockAccessibleIntegratedServer(mc, dungeonRoomInfo);
             theIntegratedServer.startServerThread();
             ReflectionHelper.setPrivateValue(Minecraft.class, mc, true, "integratedServerIsRunning", "field_2575", "field_71455_al", "aw");
         }

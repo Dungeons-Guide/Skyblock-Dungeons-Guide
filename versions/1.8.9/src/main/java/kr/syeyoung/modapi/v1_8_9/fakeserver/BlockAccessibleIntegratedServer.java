@@ -1,8 +1,8 @@
-package kr.syeyoung.dungeonsguide.mod.fakeserver;
+package kr.syeyoung.modapi.v1_8_9.fakeserver;
 
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Futures;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.modapi.world.IBlockAccessible;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.ServerCommandManager;
@@ -25,23 +25,23 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
-public class DungeonIntegratedServer extends MinecraftServer {
+public class BlockAccessibleIntegratedServer extends MinecraftServer {
     private static final Logger logger = LogManager.getLogger();
     /**
      * The Minecraft instance.
      */
     private final Minecraft mc;
 
-    private DungeonRoomInfo dungeonRoomInfo;
+    private IBlockAccessible dungeonRoomInfo;
 
-    public DungeonIntegratedServer(Minecraft mcIn, DungeonRoomInfo dungeonRoomInfo) {
+    public BlockAccessibleIntegratedServer(Minecraft mcIn, IBlockAccessible dungeonRoomInfo) {
         super(new File(mcIn.mcDataDir, "saves"), mcIn.getProxy(), new File(mcIn.mcDataDir, USER_CACHE_FILE.getName()));
         this.setServerOwner(mcIn.getSession().getUsername());
-        this.setWorldName(dungeonRoomInfo.getName());
+        this.setWorldName("fakeserver");
         this.setDemo(mcIn.isDemo());
         this.canCreateBonusChest(false);
         this.setBuildLimit(256);
-        this.setConfigManager(new DungeonServerConfigManager(this));
+        this.setConfigManager(new BlockAccessibleServerConfigManager(this));
         this.mc = mcIn;
         this.dungeonRoomInfo = dungeonRoomInfo;
     }
@@ -62,8 +62,8 @@ public class DungeonIntegratedServer extends MinecraftServer {
     }
 
     protected void loadWorlds() {
-        WorldServer overWorld =(WorldServer) new DungeonWorldServer(this, new DungeonRoomSaveHandler(dungeonRoomInfo), DungeonRoomSaveHandler.WORLD_INFO, 0, this.theProfiler).init();
-        overWorld.initialize(DungeonRoomSaveHandler.WORLD_SETTINGS);
+        WorldServer overWorld =(WorldServer) new BlockAccessibleWorldServer(this, new BlockAccessibleSaveHandler(dungeonRoomInfo), BlockAccessibleSaveHandler.WORLD_INFO, 0, this.theProfiler).init();
+        overWorld.initialize(BlockAccessibleSaveHandler.WORLD_SETTINGS);
         overWorld.setSpawnPoint(new BlockPos(0, 120, 0));
         overWorld.addWorldAccess(new WorldManager(this, overWorld));
         if (!this.isSinglePlayer()) {
@@ -201,7 +201,7 @@ public class DungeonIntegratedServer extends MinecraftServer {
                 if (!s.equals("vanilla")) {
                     return "Definitely; Client brand changed to '" + s + "'";
                 }
-                s = DungeonIntegratedServer.this.getServerModName();
+                s = BlockAccessibleIntegratedServer.this.getServerModName();
                 return !s.equals("vanilla") ? "Definitely; Server brand changed to '" + s + "'" : (Minecraft.class.getSigners() == null ? "Very likely; Jar signature invalidated" : "Probably not. Jar signature remains and both client + server brands are untouched.");
             }
         });
@@ -227,7 +227,7 @@ public class DungeonIntegratedServer extends MinecraftServer {
 
     @Override
     protected void systemExitNow() {
-        DungeonServerLaunchUtils.theIntegratedServer = null;
+        BlockAccessibleServerLaunchUtils.theIntegratedServer = null;
     }
 
     @Override
@@ -235,8 +235,8 @@ public class DungeonIntegratedServer extends MinecraftServer {
         Futures.getUnchecked(this.addScheduledTask(new Runnable(){
             @Override
             public void run() {
-                for (EntityPlayerMP entityplayermp : Lists.newArrayList(DungeonIntegratedServer.this.getConfigurationManager().getPlayerList())) {
-                    DungeonIntegratedServer.this.getConfigurationManager().playerLoggedOut(entityplayermp);
+                for (EntityPlayerMP entityplayermp : Lists.newArrayList(BlockAccessibleIntegratedServer.this.getConfigurationManager().getPlayerList())) {
+                    BlockAccessibleIntegratedServer.this.getConfigurationManager().playerLoggedOut(entityplayermp);
                 }
             }
         }));

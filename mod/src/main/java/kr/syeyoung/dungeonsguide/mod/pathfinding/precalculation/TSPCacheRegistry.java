@@ -180,7 +180,7 @@ public class TSPCacheRegistry {
                 DungeonRoomInfo dungeonRoomInfo = DungeonRoomInfoRegistry.getByUUID(roomPreset.getRoomId());
 
                 DRIBackedBlockMap driWorld = new DRIBackedBlockMap(dungeonRoomInfo);
-                DungeonContext fakeContext = new DungeonContext("TEST DG", null, driWorld, roomPreset.getParent());
+                DungeonContext fakeContext = new DungeonContext("TEST DG", driWorld, roomPreset.getParent());
                 try {
                     DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(
                             new Dimension(16, 16),
