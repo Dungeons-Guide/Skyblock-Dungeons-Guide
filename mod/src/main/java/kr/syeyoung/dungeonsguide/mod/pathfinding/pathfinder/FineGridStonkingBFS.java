@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.IPathfindWorld;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
+import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.BlockType;
@@ -35,9 +36,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
 
 import java.util.*;
 
@@ -66,10 +64,10 @@ public class FineGridStonkingBFS implements IPathfinder {
 
         destinationBB = destination.multiply(2);
 
-        Vec3 centerOfGravity = destinationBB.center();
-        this.dx = (int) (centerOfGravity.xCoord);
-        this.dy = (int) (centerOfGravity.yCoord);
-        this.dz = (int) (centerOfGravity.zCoord);
+        Vector3D centerOfGravity = destinationBB.center();
+        this.dx = (int) (centerOfGravity.x);
+        this.dy = (int) (centerOfGravity.y);
+        this.dz = (int) (centerOfGravity.z);
 
 
         for (AABB boundingBox : destinationBB.getBoundingBoxes()) {
@@ -170,11 +168,11 @@ public class FineGridStonkingBFS implements IPathfinder {
             if (!emptyFor(b) && emptyFor(b2) && emptyFor(b3)) {
                 // elligible for etherwarp.
 
-                BlockPos start = new BlockPos((n.coordinate.x-1) / 2,
+                VectorI3D start = new VectorI3D((n.coordinate.x-1) / 2,
                         n.coordinate.y / 2 - 1,
                         (n.coordinate.z-1) / 2);
 
-                for (BlockPos target : ShadowCast.realShadowcast((x,y,z) -> !dungeonRoom.getActualBlock(x,y,z).isOf(BlockType.AIR), start.getX(), start.getY(), start.getZ(),
+                for (VectorI3D target : ShadowCast.realShadowcast((x,y,z) -> !dungeonRoom.getActualBlock(x,y,z).isOf(BlockType.AIR), start.getX(), start.getY(), start.getZ(),
                         algorithmSetting.getEtherwarpRadius(), algorithmSetting.getEtherwarpLeeway(), algorithmSetting.getEtherwarpOffset())) {
                     if (start.distanceSq(target.getX()/2.0, target.getY()/2.0 - 1.5 , target.getZ()/2.0) >57 * 57) continue;
                     if (target.getX()  < dungeonRoom.getMinX()) continue;

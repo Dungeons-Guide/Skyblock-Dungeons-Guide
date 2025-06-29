@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.ShadowCast;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
+import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
 import kr.syeyoung.modapi.item.Item;
 import net.minecraft.client.Minecraft;
@@ -40,7 +41,7 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
         super("Debug", "Etherwarp Debug", "Toggles etherwarp 3d shadow casting debug", "etdebug", false);
     }
 
-    private List<BlockPos> toHighlight;
+    private List<VectorI3D> toHighlight;
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onInteract(PlayerInteractEvent event) {
         if (event.player.getHeldItem() == null ||
@@ -66,7 +67,7 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
         if (toHighlight == null) return;
         GlStateManager.disableAlpha();
         Color c =  new Color(0x3300FF00, true);
-        for (BlockPos spot : toHighlight) {
+        for (VectorI3D spot : toHighlight) {
              RenderUtils.highlightBox(
 //                     spot
                      new AABB(spot.getX() / 2.0 - 0.25, spot.getY() / 2.0 - 0.25, spot.getZ() / 2.0 - 0.25,
