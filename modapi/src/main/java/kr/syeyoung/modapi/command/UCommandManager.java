@@ -6,4 +6,6 @@ public interface UCommandManager {
 
     void registerCommand(LiteralArgumentBuilder<UCommandContext> command);
     void addAlias(String root, String... alias);
+
+    void requestCommandReload();
 }

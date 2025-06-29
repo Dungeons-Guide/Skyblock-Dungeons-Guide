@@ -178,6 +178,9 @@ public class DungeonsGuide implements DGInterface {
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 5);
 
 
+        ModAPI.getAPI().init();
+
+
         progressbar.step("Creating Configuration");
 
         tempDir.mkdirs();
@@ -258,8 +261,6 @@ public class DungeonsGuide implements DGInterface {
             abstractFeature.init();
         }
 
-        ModAPI.getAPI().init();
-
 
         TimeScoreUtil.init();
 
@@ -267,8 +268,9 @@ public class DungeonsGuide implements DGInterface {
 
         VersionInfo.checkAndOpen();
 
-
         Minecraft.getMinecraft().refreshResources();
+
+        ModAPI.getAPI().getCommandManager().requestCommandReload();
 
         // Fix Parallel universe not working when player joins hypickle before dg loads
         if (Minecraft.getMinecraft().getNetHandler() != null)

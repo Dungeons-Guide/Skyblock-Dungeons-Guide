@@ -139,6 +139,7 @@ public class CommandManagerImpl implements UCommandManager {
         mapping.clear();
     }
 
+    @Override
     public void requestCommandReload() {
         unregisterCommands();
         ModAPI.getAPI().getEventBus().fireEvent(new RegisterCommandEvent(this));

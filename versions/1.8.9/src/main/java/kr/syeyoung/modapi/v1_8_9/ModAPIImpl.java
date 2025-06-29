@@ -9,7 +9,6 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
-import kr.syeyoung.modapi.event.events.RegisterCommandEvent;
 import kr.syeyoung.modapi.event.listenerlist.BasicEventBus;
 import kr.syeyoung.modapi.fakeserver.FakeServerUtils;
 import kr.syeyoung.modapi.resources.UResourceManager;
@@ -157,10 +156,6 @@ public class ModAPIImpl implements ModAPI {
 
         if (Minecraft.getMinecraft().getNetHandler() != null)
             Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler_2", packetInjector);
-
-        ModAPI.getAPI().getEventBus().fireEvent(new RegisterCommandEvent(commandManager));
-
-
     }
 
     @Override
