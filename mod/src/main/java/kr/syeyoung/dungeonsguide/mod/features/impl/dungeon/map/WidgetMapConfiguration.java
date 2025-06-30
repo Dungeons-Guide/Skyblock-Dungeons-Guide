@@ -41,8 +41,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -331,7 +329,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
                 if (j / 4 == 0) {
                     color = 0x00000000;
                 } else {
-                    color = MapColor.mapColorArray[j / 4].getMapColor(j & 3);
+                    color = ModAPI.getAPI().getMapUtils().getRGBColor(j);
                 }
 
                 this.roomColor.setValue(color);

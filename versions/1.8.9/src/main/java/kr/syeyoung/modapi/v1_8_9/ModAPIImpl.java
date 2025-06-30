@@ -24,6 +24,7 @@ import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerSP;
 import kr.syeyoung.modapi.v1_8_9.fakeserver.BlockAccessibleServerLaunchUtils;
 import kr.syeyoung.modapi.v1_8_9.gui.UContainerChestImpl;
 import kr.syeyoung.modapi.v1_8_9.item.IItemStackRegistryImpl;
+import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
 import kr.syeyoung.modapi.v1_8_9.resources.DGTexturePack;
 import kr.syeyoung.modapi.v1_8_9.resources.UResourceManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.util.USessionImpl;
@@ -31,6 +32,7 @@ import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
 import kr.syeyoung.modapi.world.IBlockAccessible;
 import kr.syeyoung.modapi.world.IBlockRegistry;
+import kr.syeyoung.modapi.world.IMapUtils;
 import kr.syeyoung.modapi.world.UWorld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -222,5 +224,10 @@ public class ModAPIImpl implements ModAPI {
     @Override
     public boolean isDevEnv() {
         return (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
+    }
+
+    @Override
+    public IMapUtils getMapUtils() {
+        return MapDataManager.INSTANCE;
     }
 }

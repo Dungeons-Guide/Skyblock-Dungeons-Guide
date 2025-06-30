@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.utils;
 
 import kr.syeyoung.modapi.world.UMapData;
 import lombok.Getter;
-import net.minecraft.block.material.MapColor;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -64,21 +63,7 @@ public class MapUtils {
     }
 
     public static int getRGBColorAt(UMapData colors, int x, int y) {
-        if (y <0 || y>= 128 || x < 0 || x >= 128) return 0;
-        int i = y * 128 +x;
-        int j = colors.get(x,y) & 255;
-
-        int theColor;
-        if (j / 4 == 0)
-        {
-            theColor = (i + i / 128 & 1) * 8 + 16 << 24;
-        }
-        else
-        {
-            theColor = MapColor.mapColorArray[j / 4].getMapColor(j & 3);
-        }
-
-        return theColor;
+        return colors.getRGB(x,y);
     }
 
     public static Point findFirstColorWithIn(UMapData colors, byte color, Rectangle dimension) {

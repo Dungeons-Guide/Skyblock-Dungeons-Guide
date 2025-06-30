@@ -18,13 +18,15 @@
 
 package kr.syeyoung.modapi.v1_8_9.map;
 
+import kr.syeyoung.modapi.world.IMapUtils;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.world.storage.MapData;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MapDataManager {
+public class MapDataManager implements IMapUtils {
     public static final MapDataManager INSTANCE = new MapDataManager();
     private Map<Integer, MapData> mapDataMap = new HashMap<>();
 
@@ -45,5 +47,10 @@ public class MapDataManager {
 
     public Map<Integer, MapData> getMapDataMap() {
         return Collections.unmodifiableMap(mapDataMap);
+    }
+
+    @Override
+    public int getRGBColor(int mapColor) {
+        return MapColor.mapColorArray[mapColor / 4].getMapColor(mapColor & 3);
     }
 }

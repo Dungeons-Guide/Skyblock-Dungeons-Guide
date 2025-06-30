@@ -13,6 +13,7 @@ import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.world.IBlockRegistry;
+import kr.syeyoung.modapi.world.IMapUtils;
 import kr.syeyoung.modapi.world.UWorld;
 
 public interface ModAPI {
@@ -62,4 +63,6 @@ public interface ModAPI {
     boolean isDevEnv();
 
     UContainerChest extractContainerChest(Object object);
+
+    IMapUtils getMapUtils();
 }

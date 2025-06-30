@@ -22,13 +22,13 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalcu
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Data;
-import net.minecraft.block.material.MapColor;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
@@ -96,7 +96,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
         if (j / 4 == 0) {
             color = 0x00000000;
         } else {
-            color = MapColor.mapColorArray[j / 4].getMapColor(j & 3);
+            color = ModAPI.getAPI().getMapUtils().getRGBColor(j);
         }
         this.roomColor = color;
         this.roomType = color+"";

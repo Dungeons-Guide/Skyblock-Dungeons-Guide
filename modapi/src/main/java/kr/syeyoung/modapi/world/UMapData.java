@@ -7,6 +7,7 @@ import java.util.Map;
 
 public interface UMapData {
     public byte get(int x, int y);
+    public int getRGB(int x, int y);
 
     public Map<String, MapMarker> getMarkers();
 

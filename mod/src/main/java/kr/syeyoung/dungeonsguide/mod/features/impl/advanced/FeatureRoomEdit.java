@@ -63,7 +63,6 @@ import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -525,7 +524,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
             if (j / 4 == 0) {
                 color = 0x00000000;
             } else {
-                color = MapColor.mapColorArray[j / 4].getMapColor(j & 3);
+                color = ModAPI.getAPI().getMapUtils().getRGBColor(j);
             }
 
             this.color.setValue(color);

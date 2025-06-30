@@ -28,8 +28,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.block.material.MapColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -169,7 +169,7 @@ public class WidgetAddRoomPopup extends AnnotatedImportOnlyWidget {
             if (j / 4 == 0) {
                 color = 0x00000000;
             } else {
-                color = MapColor.mapColorArray[j / 4].getMapColor(j & 3);
+                color = ModAPI.getAPI().getMapUtils().getRGBColor(j);
             }
 
             this.color.setValue(color);
