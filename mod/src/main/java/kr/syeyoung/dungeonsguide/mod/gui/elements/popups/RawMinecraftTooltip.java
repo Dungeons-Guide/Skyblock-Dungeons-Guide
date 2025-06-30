@@ -22,12 +22,15 @@ import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,16 +61,29 @@ public class RawMinecraftTooltip extends Widget implements Renderer, Layouter {
         GlStateManager.disableTexture2D();
         GlStateManager.enableCull();
 //        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GuiUtils.drawHoveringText(tooltip, (int) mouseX, (int) mouseY,
+        Rect abs = buildContext.getAbsBounds();
+        Rect rel = buildContext.getRelativeBound();
+        double relX = mouseX * rel.getWidth() / abs.getWidth();
+        double relY = mouseY * rel.getHeight() / abs.getHeight();
+
+
+        GuiUtils.drawHoveringText(tooltip, (int) relX, (int) relY,
                 (int) buildContext.getRelativeBound().getWidth(),
                 (int) buildContext.getRelativeBound().getHeight(), -1, Minecraft.getMinecraft().fontRendererObj);
     }
 
-    private double mouseX, mouseY;
+    private int mouseX = Mouse.getX();
+    private int mouseY = ModAPI.getAPI().getDisplayHeight() - Mouse.getY();
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
-        mouseX = relMouseX0;
-        mouseY = relMouseY0;
+        mouseX = absMouseX;
+        mouseY = absMouseY;
         return false;
+    }
+
+    @Override
+    public void mouseEntered(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
+        mouseX = absMouseX;
+        mouseY = absMouseY;
     }
 }

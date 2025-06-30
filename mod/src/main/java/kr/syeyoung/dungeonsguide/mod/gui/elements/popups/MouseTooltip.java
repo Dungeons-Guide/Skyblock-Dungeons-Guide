@@ -55,4 +55,10 @@ public class MouseTooltip extends Widget {
         y.setValue((double) absMouseY);
         return false;
     }
+
+    @Override
+    public void mouseEntered(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
+        x.setValue((double)absMouseX);
+        y.setValue((double)absMouseY);
+    }
 }
