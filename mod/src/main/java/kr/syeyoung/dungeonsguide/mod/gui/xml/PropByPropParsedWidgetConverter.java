@@ -23,20 +23,51 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.ParserElement;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.ParserElementList;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
-import java.lang.invoke.LambdaMetafactory;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
+import java.lang.invoke.*;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extends Widget & ImportingWidget> implements ParsedWidgetConverter<W, R> {
 
     public abstract W instantiateWidget(ParserElement parserElement);
 
     public abstract BindableAttribute getExportedAttribute(W widget, String attributeName);
+
+    private static Map<SamCacheKey, CallSite> samCache = new HashMap<SamCacheKey, CallSite>();
+    @EqualsAndHashCode @AllArgsConstructor
+    private static class SamCacheKey {
+        Class functionalInterface;
+        MethodHandle invokeTarget;
+    }
+    private static CallSite createLambda(Class functionalInterface, MethodHandle invokeTarget, Class targetOwner) {
+        SamCacheKey key = new SamCacheKey(functionalInterface, invokeTarget);
+        CallSite res = samCache.get(key);
+        if (res != null) return res;
+
+
+        if (!functionalInterface.isInterface()) throw new IllegalArgumentException("Should be interface");
+        if (functionalInterface.getDeclaredMethods().length != 1)
+            throw new IllegalArgumentException("Should be functional interface");
+        Method m = functionalInterface.getDeclaredMethods()[0];
+
+        MethodType mt = MethodType.methodType(m.getReturnType(), m.getParameterTypes());
+
+        try {
+            res = LambdaMetafactory.metafactory(MethodHandles.lookup(), m.getName(),
+                    MethodType.methodType(functionalInterface, targetOwner),
+                    mt,
+                    invokeTarget,
+                    invokeTarget.type().dropParameterTypes(0, 1));
+            samCache.put(key, res);
+            return res;
+        } catch (LambdaConversionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     public W convert(R rootWidget, ParserElement element) {
@@ -65,27 +96,15 @@ public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extend
                 if (invocationTarget == null) throw new IllegalStateException("No invocationTarget target found for "+attribute+" for "+variable+"!");
 
                     // convert methodhandle to functional interface.
-                    Class functionalInterface = exported.getType();
-                    if (!functionalInterface.isInterface()) throw new IllegalArgumentException("Should be interface");
-                    if (functionalInterface.getDeclaredMethods().length != 1)
-                        throw new IllegalArgumentException("Should be functional interface");
-                    Method m = functionalInterface.getDeclaredMethods()[0];
+                Class functionalInterface = exported.getType();
 
-                    MethodType mt = MethodType.methodType(m.getReturnType(), m.getParameterTypes());
-                    try {
-                        Object obj = LambdaMetafactory.metafactory(MethodHandles.lookup(), m.getName(),
-                                        MethodType.methodType(functionalInterface, rootWidget.getClass()),
-                                        mt,
-                                        invocationTarget,
-                                        invocationTarget.type().dropParameterTypes(0, 1))
-                                .getTarget()
-                                .invoke(rootWidget);
-                        exported.setValue(obj);
-                    } catch (Error error) {
-                        throw error;
-                    } catch (Throwable e) {
-                        throw new RuntimeException(e);
-                    }
+                try {
+                    Object lambda = createLambda(functionalInterface, invocationTarget, rootWidget.getClass())
+                            .getTarget().invoke(rootWidget);
+                    exported.setValue(lambda);
+                } catch (Throwable e) {
+                    throw new RuntimeException(e);
+                }
                 // this should bind to methodhandle
             } else if (attribute.equals("slot") || attribute.equals("include")) {
             } else {
@@ -129,10 +148,12 @@ public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extend
                 } else if (attribute.getType() == ParserElementList.class) {
                     attribute.setValue(elements);
                 } else if (attribute.getType() == WidgetList.class) {
-                    attribute.setValue(
-                            elements.stream()
-                                    .map(a -> DomElementRegistry.obtainConverter(a.getNodeName()).convert(rootWidget, a))
-                                    .collect(Collectors.toList()));
+                    List<Widget> widgets = new ArrayList<>();
+                    for (ParserElement parserElement : elements) {
+                        Widget w = DomElementRegistry.obtainConverter(parserElement.getNodeName()).convert(rootWidget, parserElement);
+                        widgets.add(w);
+                    }
+                    attribute.setValue(widgets);
                 }
             }
         }

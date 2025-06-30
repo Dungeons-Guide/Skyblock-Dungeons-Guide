@@ -34,10 +34,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class is for widgets using xml to describe their layout
@@ -63,20 +60,33 @@ public abstract class AnnotatedImportOnlyWidget extends Widget implements Import
         }
     }
 
+
+    private static Map<Class, List<Field>> reflectionCache = new HashMap<>();
+
     protected static Map<String, BindableAttribute> getImportedAttributes(Class clazz, Object inst) {
-        Map<String, BindableAttribute> attributes = new HashMap<>();
-        for (Field declaredField : FieldUtils.getAllFieldsList(clazz)) {
-            if (declaredField.getAnnotation(Bind.class) != null) {
-                Bind bind = declaredField.getAnnotation(Bind.class);
+        Map<String, BindableAttribute> attributeMap = new HashMap<>();
+        if (!reflectionCache.containsKey(clazz)) {
+            List<Field> fields = new ArrayList<>();
+            reflectionCache.put(clazz, fields);
+            for (Field declaredField : FieldUtils.getAllFields(clazz)) {
+                if (declaredField.getAnnotation(Bind.class) != null) {
+                    Bind bind = declaredField.getAnnotation(Bind.class);
 
-                if (declaredField.getType() != BindableAttribute.class) throw new IllegalStateException("Bind Annotation must be applied on BindableAttribute field.");
-                if (!Modifier.isFinal(declaredField.getModifiers())) throw new IllegalStateException("Bound Bindable Attribute must be final ");
+                    if (declaredField.getType() != BindableAttribute.class) throw new IllegalStateException("Bind Annotation must be applied on BindableAttribute field.");
+                    if (!Modifier.isFinal(declaredField.getModifiers())) throw new IllegalStateException("Bound Bindable Attribute must be final ");
 
-                try {
-                    attributes.put(bind.variableName(), (BindableAttribute) declaredField.get(inst));
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
+                    fields.add(declaredField);
                 }
+            }
+        }
+
+        Map<String, BindableAttribute> attributes = new HashMap<>();
+        for (Field declaredField : reflectionCache.get(clazz)) {
+            Bind bind = declaredField.getAnnotation(Bind.class);
+            try {
+                attributes.put(bind.variableName(), (BindableAttribute) declaredField.get(inst));
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
             }
         }
 
