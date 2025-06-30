@@ -1,7 +1,9 @@
 package kr.syeyoung.modapi.data;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+@EqualsAndHashCode
 public class ResourceIdentifier {
     @Getter
     private final String mod, location;
