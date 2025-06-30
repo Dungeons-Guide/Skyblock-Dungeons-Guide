@@ -18,6 +18,7 @@
 
 package kr.syeyoung.modapi.v1_8_9;
 
+import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.VectorI3D;
@@ -28,6 +29,7 @@ import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.FakeWorld;
 import kr.syeyoung.modapi.v1_8_9.world.UChunkImpl;
+import kr.syeyoung.modapi.v1_8_9.world.UMapDataImpl;
 import kr.syeyoung.modapi.world.UChunk;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -38,6 +40,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.storage.MapData;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -112,6 +115,12 @@ public class PacketListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }else if (packet instanceof S34PacketMaps) {
+            MapData mapData = MapDataManager.INSTANCE.createMapData(((S34PacketMaps) packet).getMapId());
+            try {
+                ((S34PacketMaps) packet).setMapdataTo(mapData);
+            } catch (Exception ignored) {} // hypixel seem to be sending bad map datas.
+            ModAPI.getAPI().getEventBus().fireEvent(new MapUpdateEvent(((S34PacketMaps) packet).getMapId(), new UMapDataImpl(mapData)));
         }
     }
 

@@ -22,7 +22,6 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.map.MapDataManager;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
@@ -36,7 +35,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.*;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.world.storage.MapData;
 
 public class PacketListener {
 
@@ -67,12 +65,6 @@ public class PacketListener {
             ModAPI.getAPI().getEventBus().fireEvent(new TitleEvent((S45PacketTitle) packet));
         } else if (packet instanceof S38PacketPlayerListItem) {
             ModAPI.getAPI().getEventBus().fireEvent(new PlayerListItemPacketEvent((S38PacketPlayerListItem) packet));
-        }else if (packet instanceof S34PacketMaps) {
-            MapData mapData = MapDataManager.INSTANCE.createMapData(((S34PacketMaps) packet).getMapId());
-            try {
-                ((S34PacketMaps) packet).setMapdataTo(mapData);
-            } catch (Exception ignored) {} // hypixel seem to be sending bad map datas.
-            ModAPI.getAPI().getEventBus().fireEvent(new MapUpdateEvent(((S34PacketMaps) packet).getMapId(), mapData));
         }
     }
 

@@ -21,6 +21,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
+import kr.syeyoung.modapi.world.UMapData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
@@ -158,7 +159,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
         if (context == null || context.getScaffoldParser() == null) return;
         DungeonRoomScaffoldParser mapProcessor = context.getScaffoldParser();
 
-        MapData mapData = mapProcessor.getLatestMapData();
+        UMapData mapData = mapProcessor.getLatestMapData();
         Size featureSize = getDomElement().getSize();
         // TODO: redo chroma
         Gui.drawRect(0, 0, (int)featureSize.getWidth(), (int)featureSize.getHeight(), RenderUtils.getColorAt(0,0, mapConfiguration.getBackgroundColor()));

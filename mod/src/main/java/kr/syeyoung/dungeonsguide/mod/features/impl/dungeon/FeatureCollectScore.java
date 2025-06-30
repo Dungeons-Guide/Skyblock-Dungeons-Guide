@@ -28,6 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
+import kr.syeyoung.modapi.world.UMapData;
 import net.minecraft.util.ChatComponentText;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,7 +42,7 @@ public class FeatureCollectScore extends SimpleFeature {
         super("Communication", "Collect Speed Score", "Collect Speed score, run time, and floor and send that to developer's server for speed formula. This data is completely anonymous, opt out of the feature by disabling this feature\n\nThis feature is currently disabled serverside", "misc.gatherscoredata", true);
     }
 
-    public void collectDungeonRunData(byte[] mapData, DungeonContext context) {
+    public void collectDungeonRunData(UMapData mapData, DungeonContext context) {
         int skill = MapUtils.readNumber(mapData, 51, 35, 9);
         int exp = MapUtils.readNumber(mapData, 51, 54, 9);
         int time = MapUtils.readNumber(mapData, 51, 73, 9);

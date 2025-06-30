@@ -25,13 +25,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
+import kr.syeyoung.modapi.item.Item;
+import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.world.UMapData;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemMap;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.Vec4b;
-import net.minecraft.world.storage.MapData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -62,13 +61,12 @@ public class MapPlayerProcessor {
             waitDelay++;
             return;
         }
-        ItemStack stack = mc.thePlayer.inventory.getStackInSlot(8);
-
-        if (stack == null || !(stack.getItem() instanceof ItemMap)) {
+        UItemStack stack = ModAPI.getAPI().getPlayer().getInventory().getMainInventory()[8];
+        if (stack == null || !(stack.getItem() == Item.FILLED_MAP || stack.getItem() == Item.MAP)) {
             return;
         }
 
-        MapData mapData = ((ItemMap) stack.getItem()).getMapData(stack, mc.theWorld);
+        UMapData mapData = ModAPI.getAPI().getWorld().getMapData(stack);
 
         if (mapData != null && mapIconToPlayerMap.size() < context.getPlayers().size()) {
             getPlayersFromMap(mapData);
@@ -77,19 +75,19 @@ public class MapPlayerProcessor {
     }
 
 
-    private void getPlayersFromMap(MapData mapdata) {
+    private void getPlayersFromMap(UMapData mapdata) {
         int lim = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16;
         lim = lim * lim;
 
         if (context.getScaffoldParser() == null) return;
-        for (Map.Entry<String, Vec4b> stringVec4bEntry : mapdata.mapDecorations.entrySet()) {
-            String mapDecString = stringVec4bEntry.getKey();
-            Vec4b vec4 = stringVec4bEntry.getValue();
-            if (vec4.func_176110_a() == 1) continue;
+        for (Map.Entry<String, UMapData.MapMarker> stringMapMarkerEntry : mapdata.getMarkers().entrySet()) {
+            String mapDecString = stringMapMarkerEntry.getKey();
+            UMapData.MapMarker marker = stringMapMarkerEntry.getValue();
+            if (marker.getMarkerId() == 1) continue;
 
             if (!mapIconToPlayerMap.containsValue(mapDecString)) {
-                int x = vec4.func_176112_b() / 2 + 64;
-                int y = vec4.func_176113_c() / 2 + 64;
+                int x = marker.getX() / 2 + 64;
+                int y = marker.getY() / 2 + 64;
                 VectorI3D worldPos = context.getScaffoldParser().getDungeonMapLayout().mapPointToWorldPoint(new Point(x, y));
                 if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(worldPos) > lim) continue; // too far away
                 String potentialPlayer = null;
@@ -105,7 +103,7 @@ public class MapPlayerProcessor {
                 }
 
                 if (players == 1) {
-                    mapIconToPlayerMap.put(potentialPlayer, stringVec4bEntry.getKey());
+                    mapIconToPlayerMap.put(potentialPlayer, mapDecString);
                 }
             }
         }

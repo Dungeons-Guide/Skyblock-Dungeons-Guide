@@ -14,11 +14,11 @@ import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
+import kr.syeyoung.modapi.world.UMapData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec4b;
 
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
@@ -66,10 +66,10 @@ public class MapOverlayPlayerClickable implements MapOverlay {
             // getting player location from map
             String iconName = context.getMapPlayerMarkerProcessor().getMapIconToPlayerMap().get(name);
             if (iconName != null) {
-                Vec4b vec = context.getScaffoldParser().getLatestMapData().mapDecorations.get(iconName);
+                UMapData.MapMarker vec = context.getScaffoldParser().getLatestMapData().getMarkers().get(iconName);
                 if (vec != null) {
-                    VectorI3D worldPt = context.getScaffoldParser().getDungeonMapLayout().mapPointToWorldPoint(new Point(vec.func_176112_b() / 2 + 64, vec.func_176113_c()/2 + 64));
-                    return new Vector3d(worldPt.getX(), worldPt.getZ(), vec.func_176111_d() * 360 / 16.0f);
+                    VectorI3D worldPt = context.getScaffoldParser().getDungeonMapLayout().mapPointToWorldPoint(new Point(vec.getX() / 2 + 64, vec.getY()/2 + 64));
+                    return new Vector3d(worldPt.getX(), worldPt.getZ(), vec.getRotation() * 360 / 16.0f);
                 }
             }
         }

@@ -34,7 +34,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BossroomEnterEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.MapUpdateEvent;
+import kr.syeyoung.modapi.event.events.MapUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
@@ -42,6 +42,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.world.UMapData;
 import kr.syeyoung.modapi.world.UWorld;
 import lombok.Getter;
 import lombok.Setter;
@@ -190,7 +191,7 @@ public class DungeonContext {
 
 
     private boolean processed = false;
-    private void processFinishedMap(byte[] mapData) {
+    private void processFinishedMap(UMapData mapData) {
         if (MapUtils.getMapColorAt(mapData, 0, 0) == 0) {
             return;
         }
@@ -207,16 +208,16 @@ public class DungeonContext {
     }
     private int mapId = -1;
     public void onMapUpdate(MapUpdateEvent mapUpdateEvent) {
-        if (mapId == -1 && mapUpdateEvent.getMapData().colors[0] == 0) { // dungeon map top left is ALWAYS 0.
+        if (mapId == -1 && mapUpdateEvent.getMapData().get(0,0) == 0) { // dungeon map top left is ALWAYS 0.
             mapId = mapUpdateEvent.getMapId();
         }
         if (mapId != mapUpdateEvent.getMapId()) return;
 
         if (isEnded()) {
-            processFinishedMap(mapUpdateEvent.getMapData().colors);
+            processFinishedMap(mapUpdateEvent.getMapData());
         }
         if (getScaffoldParser() == null) {
-            DungeonMapLayout layout = DungeonMapConstantRetriever.beginParsingMap(mapUpdateEvent.getMapData().colors, door, doorOffset);
+            DungeonMapLayout layout = DungeonMapConstantRetriever.beginParsingMap(mapUpdateEvent.getMapData(), door, doorOffset);
             if (layout != null)
                 scaffoldParser = new DungeonRoomScaffoldParser(
                         layout,

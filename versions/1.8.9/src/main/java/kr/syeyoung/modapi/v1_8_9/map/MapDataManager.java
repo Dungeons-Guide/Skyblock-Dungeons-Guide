@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.parallelUniverse.map;
+package kr.syeyoung.modapi.v1_8_9.map;
 
 import net.minecraft.world.storage.MapData;
 

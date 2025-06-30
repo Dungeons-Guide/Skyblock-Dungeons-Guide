@@ -16,18 +16,18 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.events.impl;
+package kr.syeyoung.modapi.event.events;
 
 import kr.syeyoung.modapi.event.UEvent;
+import kr.syeyoung.modapi.world.UMapData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.world.storage.MapData;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 public class MapUpdateEvent extends UEvent {
     private int mapId;
-    private MapData mapData;
+    private UMapData mapData;
 }
