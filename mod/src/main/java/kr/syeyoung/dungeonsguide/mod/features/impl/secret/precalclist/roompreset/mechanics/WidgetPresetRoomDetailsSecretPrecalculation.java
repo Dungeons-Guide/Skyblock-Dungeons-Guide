@@ -10,7 +10,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 public class WidgetPresetRoomDetailsSecretPrecalculation extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "whatever")

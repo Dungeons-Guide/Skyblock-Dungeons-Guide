@@ -53,7 +53,6 @@ import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import org.apache.commons.codec.binary.Base64;
@@ -177,7 +176,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             }
         } catch (IOException e2) {
             e2.printStackTrace();
-            ChatTransmitter.sendDebugChat(new ChatComponentText("Failed to send Bomb Defuse Chat"));
+            ChatTransmitter.sendDebugChat("Failed to send Bomb Defuse Chat");
         }
     }
 
@@ -208,7 +207,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             } catch (Exception t) {
                 FeatureCollectDiagnostics.queueSendLogAsync(t);
                 t.printStackTrace();
-                ChatTransmitter.sendDebugChat(new ChatComponentText("Failed to analyze Bomb Defuse Chat"));
+                ChatTransmitter.sendDebugChat("Failed to analyze Bomb Defuse Chat");
             }
         }
     }

@@ -35,7 +35,6 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.SubscribeEvent;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.ChatComponentText;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -567,7 +566,7 @@ public class PartyManager {
                 FeatureTestPeople.handlePartyBroadCast(broadCastPlayload);
             }else {
                 try {
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload).getString("payload")));
+                    ChatTransmitter.addToQueue("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload).getString("payload"));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

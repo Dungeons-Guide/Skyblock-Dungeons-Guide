@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemTool;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;

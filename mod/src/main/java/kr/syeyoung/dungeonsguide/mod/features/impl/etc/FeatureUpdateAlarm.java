@@ -26,7 +26,6 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import net.minecraft.util.ChatComponentText;
 
 public class FeatureUpdateAlarm extends SimpleFeature  {
     public FeatureUpdateAlarm() {
@@ -38,7 +37,7 @@ public class FeatureUpdateAlarm extends SimpleFeature  {
     @DGEventHandler
     public void onTick(ClientTickEvent event) {
         if (stompPayload != null) {
-            ChatTransmitter.addToQueue(new ChatComponentText(stompPayload));
+            ChatTransmitter.addToQueue(stompPayload);
             stompPayload = null;
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("random.successful_hit"), 1);
         }

@@ -260,6 +260,7 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
                 }
             }
         } else {
+            if (windowUpdateEvent.getWindowId() !=  GuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest().getWindowId()) return;
             for (WindowUpdateEvent.SlotUpdate slotUpdate : windowUpdateEvent.getSlotUpdateList()) {
                 int i = slotUpdate.getSlotId();
                 UItemStack stack = slotUpdate.getItemStack();
@@ -389,14 +390,16 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
 
     public void addItems() {
         isEmpty.setValue(partyElementMap.size() == 0 ? "true" : "false");
-        column.getValue().removeAllWidget();
-        Stream<WidgetPartyElement> widgets = partyElementMap.values().stream().sorted(
-                Comparator
-                        .<WidgetPartyElement>comparingInt(a -> a.isHighlighted() ? 1 : 0)
-                        .<WidgetPartyElement>thenComparingInt(a -> Math.max(a.getParty().requiredDungeonLevel, a.getParty().requiredClassLevel))
-                        .reversed()
-        );
-        widgets.forEach(column.getValue()::addWidget);
+        if (column.getValue() != null) {
+            column.getValue().removeAllWidget();
+            Stream<WidgetPartyElement> widgets = partyElementMap.values().stream().sorted(
+                    Comparator
+                            .<WidgetPartyElement>comparingInt(a -> a.isHighlighted() ? 1 : 0)
+                            .<WidgetPartyElement>thenComparingInt(a -> Math.max(a.getParty().requiredDungeonLevel, a.getParty().requiredClassLevel))
+                            .reversed()
+            );
+            widgets.forEach(column.getValue()::addWidget);
+        }
     }
 
     public void updateUnjoinable(Object prev, Object neu) {

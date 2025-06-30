@@ -23,7 +23,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 public class WidgetButton extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "text")

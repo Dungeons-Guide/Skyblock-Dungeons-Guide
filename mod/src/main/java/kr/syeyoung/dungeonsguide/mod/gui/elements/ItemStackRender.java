@@ -21,9 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.gui.elements;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MinecraftTooltip;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MouseTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.RawMinecraftTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
@@ -93,8 +92,8 @@ public class ItemStackRender extends AnnotatedExportOnlyWidget implements Render
     }
 
 
-    private MinecraftTooltip actualTooltip = new MinecraftTooltip();
-    private MouseTooltip tooltip = null;
+    private RawMinecraftTooltip actualTooltip = new RawMinecraftTooltip();
+    private boolean tooltipShown = false;
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY, boolean childHandled) {
         if (hover.getValue() == null || !hover.getValue()) return true;
@@ -111,33 +110,35 @@ public class ItemStackRender extends AnnotatedExportOnlyWidget implements Render
         if (toHover != null)
             actualTooltip.setTooltip(toHover);
 
-        if (toHover == null && this.tooltip != null) {
+        if (toHover == null && this.tooltipShown) {
             PopupMgr.getPopupMgr(getDomElement())
-                    .closePopup(this.tooltip, null);
-            this.tooltip = null;
-        } else if (toHover != null && this.tooltip == null)
+                    .closePopup(actualTooltip, null);
+            tooltipShown = false;
+        } else if (toHover != null && !tooltipShown) {
+            tooltipShown = true;
             PopupMgr.getPopupMgr(getDomElement())
-                    .openPopup(this.tooltip = new MouseTooltip(actualTooltip), (a) -> {
-                        this.tooltip = null;
+                    .openPopup(actualTooltip, (a) -> {
+                        tooltipShown = false;
                     });
+        }
         return true;
     }
 
     @Override
     public void mouseExited(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
-        if (this.tooltip != null) {
+        if (this.tooltipShown) {
             PopupMgr.getPopupMgr(getDomElement())
-                    .closePopup(this.tooltip, null);
-            this.tooltip = null;
+                    .closePopup(actualTooltip, null);
+            tooltipShown = false;
         }
     }
 
     @Override
     public void onUnmount() {
-        if (this.tooltip != null) {
+        if (this.tooltipShown) {
             PopupMgr.getPopupMgr(getDomElement())
-                    .closePopup(this.tooltip, null);
-            this.tooltip = null;
+                    .closePopup(actualTooltip, null);
+            tooltipShown = false;
         }
         super.onUnmount();
     }

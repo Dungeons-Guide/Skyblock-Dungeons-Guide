@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MouseTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
 
 import java.util.Collections;
@@ -38,13 +37,13 @@ public class WidgetHoverTooltip extends Widget {
         return Collections.emptyList();
     }
 
-    private MouseTooltip tooltip = null;
+    private Widget tooltip = null;
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY, boolean childHandled) {
         if (childHandled) return false;
         if (this.tooltip == null)
             PopupMgr.getPopupMgr(getDomElement())
-                    .openPopup(this.tooltip = new MouseTooltip(popupSupplier.get()), (a) -> {
+                    .openPopup(this.tooltip = popupSupplier.get(), (a) -> {
                         this.tooltip = null;
                     });
         return false;

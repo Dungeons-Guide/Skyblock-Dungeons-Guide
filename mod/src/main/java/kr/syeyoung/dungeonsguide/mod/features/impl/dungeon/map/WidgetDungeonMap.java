@@ -31,7 +31,6 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.storage.MapData;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector2d;

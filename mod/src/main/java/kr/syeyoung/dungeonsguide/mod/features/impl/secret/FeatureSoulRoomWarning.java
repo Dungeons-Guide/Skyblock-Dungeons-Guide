@@ -45,11 +45,10 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class FeatureSoulRoomWarning extends TextHUDFeature {
 

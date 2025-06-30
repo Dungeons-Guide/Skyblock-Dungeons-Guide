@@ -29,7 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import kr.syeyoung.modapi.world.UMapData;
-import net.minecraft.util.ChatComponentText;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -47,7 +46,7 @@ public class FeatureCollectScore extends SimpleFeature {
         int exp = MapUtils.readNumber(mapData, 51, 54, 9);
         int time = MapUtils.readNumber(mapData, 51, 73, 9);
         int bonus = MapUtils.readNumber(mapData, 51, 92, 9);
-        ChatTransmitter.sendDebugChat(new ChatComponentText(("skill: " + skill + " / exp: " + exp + " / time: " + time + " / bonus : " + bonus)));
+        ChatTransmitter.sendDebugChat(("skill: " + skill + " / exp: " + exp + " / time: " + time + " / bonus : " + bonus));
         JSONObject payload = new JSONObject().put("timeSB", FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
                 .put("timeR", FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed())
                 .put("timeScore", time)
@@ -55,7 +54,7 @@ public class FeatureCollectScore extends SimpleFeature {
                         context.isDefeated() ? 2 : 1)
                 .put("percentage", DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage() / 100.0)
                 .put("floor", SkyblockStatus.getLocationName());
-        ChatTransmitter.sendDebugChat(new ChatComponentText(payload.toString()));
+        ChatTransmitter.sendDebugChat(payload.toString());
 
         if(!StompManager.getInstance().isStompConnected()){
             logger.warn("Error stomp is not connected while trying to send dungeons scored");

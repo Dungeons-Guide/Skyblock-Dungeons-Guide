@@ -30,7 +30,6 @@ import kr.syeyoung.modapi.item.UItemStack;
 import kr.syeyoung.modapi.world.UMapData;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,7 +50,7 @@ public class MapPlayerProcessor {
     }
 
     private static void error(String prefix) {
-        ChatTransmitter.addToQueue(new ChatComponentText(ChatTransmitter.prefix + prefix));
+        ChatTransmitter.addToQueue(ChatTransmitter.prefix + prefix);
     }
 
 

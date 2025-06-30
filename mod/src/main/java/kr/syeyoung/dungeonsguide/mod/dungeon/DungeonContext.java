@@ -34,7 +34,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BossroomEnterEvent;
-import kr.syeyoung.modapi.event.events.MapUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
@@ -42,11 +41,11 @@ import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.event.events.MapUpdateEvent;
 import kr.syeyoung.modapi.world.UMapData;
 import kr.syeyoung.modapi.world.UWorld;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -171,7 +170,7 @@ public class DungeonContext {
             if (doorFinder != null) {
                 bossfightProcessor = doorFinder.createBossfightProcessor(uworld, getDungeonName());
             } else {
-                ChatTransmitter.sendDebugChat(new ChatComponentText("Error:: Null Data Providier"));
+                ChatTransmitter.sendDebugChat("Error:: Null Data Providier");
             }
         }
 
@@ -250,7 +249,7 @@ public class DungeonContext {
             int z = Integer.parseInt(coords.split("/")[1]);
             int secrets2 = Integer.parseInt(secrets);
             Point roomPt = scaffoldParser.getDungeonMapLayout().worldPointToRoomPoint(new VectorI3D(x, 70, z));
-            ChatTransmitter.sendDebugChat(new ChatComponentText("Message from Other dungeons guide :: " + roomPt.x + " / " + roomPt.y + " total secrets " + secrets2));
+            ChatTransmitter.sendDebugChat("Message from Other dungeons guide :: " + roomPt.x + " / " + roomPt.y + " total secrets " + secrets2);
             DungeonRoom dr = scaffoldParser.getRoomMap().get(roomPt);
             if (dr != null) {
                 dr.setTotalSecrets(secrets2);

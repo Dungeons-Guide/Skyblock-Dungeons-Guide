@@ -29,7 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.command.UCommandContext;
 import kr.syeyoung.modapi.event.events.RegisterCommandEvent;
-import net.minecraft.util.ChatComponentText;
 
 import java.util.stream.Collectors;
 
@@ -56,7 +55,7 @@ public class FeatureRepartyCommand extends SimpleFeature {
 
     public void processCommand() {
         if (!requestReparty(false)) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cRepartying..."));
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cRepartying...");
         }
     }
 
@@ -71,30 +70,30 @@ public class FeatureRepartyCommand extends SimpleFeature {
         PartyManager.INSTANCE.requestPartyList(pc -> {
             if (pc == null) {
                 if (!noerror)
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou are not in a Party!"));
+                    ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cYou are not in a Party!");
                 reparting = false;
                 return;
             }
             if (!pc.hasLeader(ModAPI.getAPI().getSession().getUsername())) {
                 if (!noerror)
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou're not the leader"));
+                    ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cYou're not the leader");
                 reparting = false;
                 return;
             }
             if (pc.isSelfSolo()) {
                 if (!noerror)
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou can not reparty yourself"));
+                    ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cYou can not reparty yourself");
                 reparting = false;
                 return;
             }
             String members = pc.getPartyRawMembers().stream().filter(a -> !a.equalsIgnoreCase(ModAPI.getAPI().getSession().getUsername())).collect(Collectors.joining(" "));
             String command = "/p invite "+members;
 
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eDisbanding Party..."));
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eDisbanding Party...");
             ChatProcessor.INSTANCE.addToChatQueue("/p disband", () -> {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eRunning invite command §f"+command));
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eRunning invite command §f"+command);
                 ChatProcessor.INSTANCE.addToChatQueue(command, () -> {
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eSuccessfully repartied!§f"));
+                    ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eSuccessfully repartied!§f");
 
                     reparting = false;
                 }, false);

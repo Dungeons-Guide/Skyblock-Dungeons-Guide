@@ -52,7 +52,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
 
 import javax.vecmath.Vector2d;
@@ -304,9 +303,9 @@ public class DungeonRoom  {
                     dungeonRoomInfo.getName(),
                     dungeonRoomInfo.getProcessorId()));
         }
-        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! shape: " + getRoomBounds().getShape() + " color: " +getColor() + " unitPos: " + unitPoints.iterator().next().x + "," + unitPoints.iterator().next().y));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! mapMin: " + roomBounds.getMin() + " mapMx: " + roomBounds.getMax()));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! id: " + dungeonRoomInfo.getUuid() + " name: " + dungeonRoomInfo.getName() +" proc: "+dungeonRoomInfo.getProcessorId()));
+        ChatTransmitter.sendDebugChat("New Map matched! shape: " + getRoomBounds().getShape() + " color: " +getColor() + " unitPos: " + unitPoints.iterator().next().x + "," + unitPoints.iterator().next().y);
+        ChatTransmitter.sendDebugChat("New Map matched! mapMin: " + roomBounds.getMin() + " mapMx: " + roomBounds.getMax());
+        ChatTransmitter.sendDebugChat("New Map matched! id: " + dungeonRoomInfo.getUuid() + " name: " + dungeonRoomInfo.getName() +" proc: "+dungeonRoomInfo.getProcessorId());
 
 
         this.dungeonRoomInfo = dungeonRoomInfo;

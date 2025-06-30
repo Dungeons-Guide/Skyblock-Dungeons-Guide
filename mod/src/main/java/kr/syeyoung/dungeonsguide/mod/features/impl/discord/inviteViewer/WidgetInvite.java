@@ -26,7 +26,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 public class WidgetInvite extends AnnotatedWidget implements TTL {
 

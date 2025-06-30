@@ -23,7 +23,6 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.UMapData;
-import net.minecraft.util.ChatComponentText;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -52,14 +51,14 @@ public class DungeonMapConstantRetriever {
         VectorI3D worldMin = obtainWorldMin(mapData, firstRoom, mapOriginPoint, mapDoorDimension,
                 mapDoorDirection, worldDoorDirection, worldDoorLocation);
 
-        ChatTransmitter.sendDebugChat(new ChatComponentText("door Pos:" + worldDoorDirection));
+        ChatTransmitter.sendDebugChat("door Pos:" + worldDoorDirection);
 
 
-        ChatTransmitter.sendDebugChat(new ChatComponentText("Found Green room:" + firstRoom));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("World Min:" + worldMin));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("Dimension:" + unitRoomSize));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("top Left:" + mapOriginPoint));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("door dimension:" + mapDoorDimension));
+        ChatTransmitter.sendDebugChat("Found Green room:" + firstRoom);
+        ChatTransmitter.sendDebugChat("World Min:" + worldMin);
+        ChatTransmitter.sendDebugChat("Dimension:" + unitRoomSize);
+        ChatTransmitter.sendDebugChat("top Left:" + mapOriginPoint);
+        ChatTransmitter.sendDebugChat("door dimension:" + mapDoorDimension);
         return new DungeonMapLayout(unitRoomSize, mapRoomGap, mapOriginPoint, worldMin);
     }
 

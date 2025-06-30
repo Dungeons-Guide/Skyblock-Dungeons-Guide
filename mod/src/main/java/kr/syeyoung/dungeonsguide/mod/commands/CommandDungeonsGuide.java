@@ -73,26 +73,26 @@ public class CommandDungeonsGuide  {
 
     @DGCommand("dg aliases")
     public void showAlias() {
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide aliases§7::"));
-        ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/dungeonsguide"));
-        ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/dungeonguide"));
-        ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/deegee"));
+        ChatTransmitter.addToQueue("§eDungeons Guide aliases§7::");
+        ChatTransmitter.addToQueue(" §7- §e/dungeonsguide");
+        ChatTransmitter.addToQueue(" §7- §e/dungeonguide");
+        ChatTransmitter.addToQueue(" §7- §e/deegee");
     }
 
 
     @DGCommand("dg {text}")
     public void showHelp(@CommandParam(value = "text", stringType = CommandParam.EnumStringType.GREEDY) String text) {
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg scale [scale] §7-§fSets the Global HUD scale (Also disables Minecraft default HUD scale for you as well if you haven't already.)"));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg help §7-§fShows command help"));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg reparty §7-§f Reparty."));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg asktojoin or /dg atj §7-§f Toggle ask to join §cRequires Discord Rich Presence enabled. (/dg -> Advanced)"));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg partymax [number] or /dg pm [number] §7-§f Sets the party max §7(maximum amount people in party, for discord rpc)"));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg pv [ign] §7-§f Profile Viewer"));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg pvall §7-§f Profile Viewer For all people on party"));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg purge §7-§f Purge api cache."));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg unload §7-§f Unload Current Version of Dungeons Guide, to load the new version"));
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg scale [scale] §7-§fSets the Global HUD scale (Also disables Minecraft default HUD scale for you as well if you haven't already.)");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg help §7-§fShows command help");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg reparty §7-§f Reparty.");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg asktojoin or /dg atj §7-§f Toggle ask to join §cRequires Discord Rich Presence enabled. (/dg -> Advanced)");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg partymax [number] or /dg pm [number] §7-§f Sets the party max §7(maximum amount people in party, for discord rpc)");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg pv [ign] §7-§f Profile Viewer");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg pvall §7-§f Profile Viewer For all people on party");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg purge §7-§f Purge api cache.");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg unload §7-§f Unload Current Version of Dungeons Guide, to load the new version");
     }
 
     @DGCommand("dg scale reset")
@@ -101,7 +101,7 @@ public class CommandDungeonsGuide  {
     @DGCommand("dg setuiscale reset")
     public void resetUIScale() {
         FeatureRegistry.GLOBAL_HUD_SCALE.<Double>getParameter("scale").setValue(1d);
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eGlobal HUD scale successfully reset to 1."));
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eGlobal HUD scale successfully reset to 1.");
         
     }
     
@@ -113,10 +113,10 @@ public class CommandDungeonsGuide  {
         String alias = context.getNodes().get(1).getNode().getName();
         
         if (theScale < 0.01 || theScale > (Math.PI + Math.E)) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cSorry, but while " + theScale + " is a valid number, it is not a suitable GUI scale. Try again, §eor reset your Global HUD scale with §6/dg "+alias+" reset§e."));
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cSorry, but while " + theScale + " is a valid number, it is not a suitable GUI scale. Try again, §eor reset your Global HUD scale with §6/dg "+alias+" reset§e.");
             return;
         }
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §aSuccessfully set your Global HUD scale to " + theScale + ". §eTo reset your Global HUD scale, run §6/dg "+alias+" reset§e."));
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §aSuccessfully set your Global HUD scale to " + theScale + ". §eTo reset your Global HUD scale, run §6/dg "+alias+" reset§e.");
         FeatureRegistry.GLOBAL_HUD_SCALE.<Boolean>getParameter("mc").setValue(false);
         FeatureRegistry.GLOBAL_HUD_SCALE.<Double>getParameter("scale").setValue(theScale);
     }
@@ -129,7 +129,7 @@ public class CommandDungeonsGuide  {
     public void pvAllCommand() {
         PartyManager.INSTANCE.requestPartyList(context -> {
             if (context == null) {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou are not in a party!"));
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cYou are not in a party!");
                 return;
             }
             FeatureViewPlayerStatsOnJoin.processPartyMembers(context);
@@ -140,21 +140,21 @@ public class CommandDungeonsGuide  {
     @DGCommand("dg asktojoin")
     public void askToJoinCommand() {
         if (!DiscordIntegrationManager.INSTANCE.isLoaded()) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cDiscord GameSDK has been disabled, or it failed to load!"));
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cDiscord GameSDK has been disabled, or it failed to load!");
             return;
         }
         if (!PartyManager.INSTANCE.canInvite()) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou don't have permission to invite people to the party!"));
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cYou don't have permission to invite people to the party!");
         } else {
             PartyManager.INSTANCE.toggleAllowAskToJoin();
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Ask to join to " + (PartyManager.INSTANCE.getAskToJoinSecret() != null ? "§eon" : "§coff")));
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fToggled Ask to join to " + (PartyManager.INSTANCE.getAskToJoinSecret() != null ? "§eon" : "§coff"));
         }
 
         if (!FeatureRegistry.DISCORD_RICHPRESENCE.isEnabled()) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cDiscord Rich Presence is disabled! Enable at /dg -> Discord "));
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cDiscord Rich Presence is disabled! Enable at /dg -> Discord ");
         }
         if (!FeatureRegistry.DISCORD_ASKTOJOIN.isEnabled()) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cDiscord Invite Viewer is disabled! Enable at /dg -> Discord ")); // how
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cDiscord Invite Viewer is disabled! Enable at /dg -> Discord "); // how
         }
     }
 
@@ -187,7 +187,7 @@ public class CommandDungeonsGuide  {
         SkinFetcher.purgeCache();
         DomElementRegistry.onResourceManagerReload();
 
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fSuccessfully purged API Cache!");
     }
 
     @DGCommand("dg pbroadcast {payload}")
@@ -209,18 +209,18 @@ public class CommandDungeonsGuide  {
     @DGCommand("dg pm")
     @DGCommand("dg partymax")
     public void showPartyMax() {
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fCurrent party max is §e" + PartyManager.INSTANCE.getMaxParty()));
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fCurrent party max is §e" + PartyManager.INSTANCE.getMaxParty());
     }
 
     @DGCommand("dg pm {max}")
     @DGCommand("dg partymax {max}")
     public void setPartyMax(@CommandParam(value = "max", min = 2, max = 10000) int max) {
         if (max < 2) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cparty max can't be smaller than 2"));
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cparty max can't be smaller than 2");
             return;
         }
         PartyManager.INSTANCE.setMaxParty(max);
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully set the party max to §e" + PartyManager.INSTANCE.getMaxParty()));
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fSuccessfully set the party max to §e" + PartyManager.INSTANCE.getMaxParty());
     }
 
     @DGCommand("dg unload")

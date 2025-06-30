@@ -6,6 +6,8 @@ public interface UContainer {
     public int getContainerSize();
     public UContainerSlot getSlotAt(int slot);
 
+    public int getWindowId();
+
     public enum EnumClickType {
         CHOOSE
     }

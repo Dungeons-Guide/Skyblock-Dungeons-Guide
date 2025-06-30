@@ -78,7 +78,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
                 if (username.equalsIgnoreCase(mc.getSession().getUsername())) {
                     PartyManager.INSTANCE.requestPartyList(context -> {
                         if (context == null) {
-                            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cBugged Dungeon Party "));
+                            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cBugged Dungeon Party ");
                         } else {
                             processPartyMembers(context);
                         }
@@ -101,7 +101,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         ApiFetcher.fetchUUIDAsync(username)
                 .thenAccept(a -> {
                     if (a == null) {
-                        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + username + "§f's Profile §cCouldn't fetch uuid"));
+                        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e" + username + "§f's Profile §cCouldn't fetch uuid");
                         return;
                     }
 

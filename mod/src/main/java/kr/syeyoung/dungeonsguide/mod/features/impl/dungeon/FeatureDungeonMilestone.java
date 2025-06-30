@@ -35,7 +35,6 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
-import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.ArrayList;
@@ -104,7 +103,7 @@ public class FeatureDungeonMilestone extends TextHUDFeature {
                     TextUtils.formatTime(FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed()),
                     TextUtils.formatTime(FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
             });
-            ChatTransmitter.sendDebugChat(new ChatComponentText("Reached Milestone At " +  TextUtils.formatTime(FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed()) + " / "+TextUtils.formatTime(FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())));
+            ChatTransmitter.sendDebugChat("Reached Milestone At " +  TextUtils.formatTime(FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed()) + " / "+TextUtils.formatTime(FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed()));
         }
     }
 }

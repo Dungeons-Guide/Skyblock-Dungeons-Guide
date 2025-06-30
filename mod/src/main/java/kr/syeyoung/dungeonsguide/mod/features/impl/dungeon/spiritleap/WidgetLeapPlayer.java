@@ -9,7 +9,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 public class WidgetLeapPlayer extends AnnotatedImportOnlyWidget {
 

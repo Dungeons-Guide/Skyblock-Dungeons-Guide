@@ -58,7 +58,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.opengl.GL11;
@@ -181,7 +180,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void actionbarReceived(IChatComponent chat) {
         if (!SkyblockStatus.isOnDungeon()) return;
         if (dungeonRoom.getTotalSecrets() == -1) {
-            ChatTransmitter.sendDebugChat(new ChatComponentText(chat.getFormattedText().replace('§', '&') + " - received"));
+            ChatTransmitter.sendDebugChat(chat.getFormattedText().replace('§', '&') + " - received");
         }
         if (!chat.getFormattedText().contains("/")) return;
         VectorI3D pos = ModAPI.getAPI().getPlayer().getPosition();

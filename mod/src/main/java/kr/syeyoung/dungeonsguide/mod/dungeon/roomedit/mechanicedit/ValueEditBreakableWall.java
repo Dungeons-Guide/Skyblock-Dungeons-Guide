@@ -31,7 +31,6 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.world.BlockType;
-import net.minecraft.init.Blocks;
 
 import java.awt.*;
 import java.util.ArrayList;

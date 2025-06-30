@@ -22,7 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MinecraftTooltip;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.RawMinecraftTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
@@ -144,10 +144,10 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
         this.party = party;
     }
 
-    public MinecraftTooltip createTooltip() {
-        if (party == null) return new MinecraftTooltip();
+    public RawMinecraftTooltip createTooltip() {
+        if (party == null) return new RawMinecraftTooltip();
         List<String> toHover = party.itemStack.getNormalTooltip();
-        MinecraftTooltip minecraftTooltip =  new MinecraftTooltip();
+        RawMinecraftTooltip minecraftTooltip =  new RawMinecraftTooltip();
         minecraftTooltip.setTooltip(toHover);
         return minecraftTooltip;
     }

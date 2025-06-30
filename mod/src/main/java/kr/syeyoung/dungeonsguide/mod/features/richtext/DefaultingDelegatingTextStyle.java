@@ -23,7 +23,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.fonts.DefaultFontRend
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.fonts.FontRenderer;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.shaders.Shader;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.styles.ITextStyle;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;

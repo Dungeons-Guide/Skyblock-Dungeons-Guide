@@ -35,7 +35,6 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 

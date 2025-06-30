@@ -163,11 +163,15 @@ public class GuiScreenAdapter extends GuiScreen {
         }
 
         if (keyCode == 1 && allowEsc) {
-            this.mc.displayGuiScreen((GuiScreen)parent);
-            if (this.mc.currentScreen == null) {
-                this.mc.setIngameFocus();
-            }
+            closeScreenRequested();
             return;
+        }
+    }
+
+    public void closeScreenRequested() {
+        this.mc.displayGuiScreen((GuiScreen)parent);
+        if (this.mc.currentScreen == null) {
+            this.mc.setIngameFocus();
         }
     }
 

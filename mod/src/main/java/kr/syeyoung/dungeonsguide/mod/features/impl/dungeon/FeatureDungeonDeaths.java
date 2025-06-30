@@ -37,7 +37,6 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
-import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.HashMap;
@@ -151,7 +150,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
             int deaths = getDeaths().getOrDefault(nickname, 0);
             getDeaths().put(nickname, deaths + 1);
             context.getRecorder().createEvent(new DungeonDeathEvent(nickname, txt, deaths));
-            ChatTransmitter.sendDebugChat(new ChatComponentText("Death verified :: "+nickname+" / "+(deaths + 1)));
+            ChatTransmitter.sendDebugChat("Death verified :: "+nickname+" / "+(deaths + 1));
         }
         Matcher m2 = meDeathPattern.matcher(txt);
         if (m2.matches()) {
@@ -159,7 +158,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
             int deaths = getDeaths().getOrDefault(nickname, 0);
             getDeaths().put(nickname, deaths + 1);
             context.getRecorder().createEvent(new DungeonDeathEvent(ModAPI.getAPI().getPlayer().getName(), txt, deaths));
-            ChatTransmitter.sendDebugChat(new ChatComponentText("Death verified :: me / "+(deaths + 1)));
+            ChatTransmitter.sendDebugChat("Death verified :: me / "+(deaths + 1));
         }
     }
 }

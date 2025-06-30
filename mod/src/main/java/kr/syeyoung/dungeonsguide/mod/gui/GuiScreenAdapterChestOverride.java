@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.gui;
 
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.gui.UContainer;
 import kr.syeyoung.modapi.gui.UContainerChest;
 import lombok.Getter;
@@ -69,16 +70,22 @@ public class GuiScreenAdapterChestOverride extends GuiScreenAdapter {
 
     @Override
     public void initGui() {
+        ModAPI.getAPI().getPlayer().setOpenContainer(guiChest);
         super.initGui();
     }
 
     public void setCanExitWithoutClosing(boolean flag) {
         this.flag =flag;
     }
+
     @Override
-    public void onGuiClosed() {
+    public void closeScreenRequested() {
         if (guiChest != null)
             guiChest.closeContainer();
+    }
+
+    @Override
+    public void onGuiClosed() {
         guiChest = null;
         super.onGuiClosed();
     }

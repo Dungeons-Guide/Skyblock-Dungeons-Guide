@@ -44,4 +44,13 @@ public class UContainerImpl implements UContainer {
         Slot s = delegate.inventorySlots.get(slot);
         return s == null ? null : new UContainerSlotImpl(s);
     }
+
+    @Override
+    public int getWindowId() {
+        return delegate.windowId;
+    }
+
+    public Container getDelegate() {
+        return delegate;
+    }
 }

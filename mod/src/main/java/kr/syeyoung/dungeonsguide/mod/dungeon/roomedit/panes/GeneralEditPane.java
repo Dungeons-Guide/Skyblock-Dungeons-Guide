@@ -30,8 +30,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UTileEntity;
-import net.kyori.adventure.nbt.*;
-import net.minecraft.util.ChatComponentText;
+import net.kyori.adventure.nbt.BinaryTagIO;
+import net.kyori.adventure.nbt.BinaryTagTypes;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.nbt.ListBinaryTag;
 
 import java.awt.*;
 import java.io.File;
@@ -210,7 +212,7 @@ public class GeneralEditPane extends MPanel {
 //                            }
 //                        }
 
-                        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSaved to "+f.getName()));
+                        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fSaved to "+f.getName());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

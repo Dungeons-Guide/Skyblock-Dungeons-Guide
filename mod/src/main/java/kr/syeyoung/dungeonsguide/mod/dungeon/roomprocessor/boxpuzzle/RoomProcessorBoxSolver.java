@@ -37,7 +37,6 @@ import kr.syeyoung.modapi.world.UWorld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -147,7 +146,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (calcDone2) {
             BoxPuzzleSolvingThread.Route semi_solution = puzzleSolvingThread.solution;
             if (semi_solution == null) {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: §cCouldn't find solution involving less than 20 box moves within 3m concurrent possibility"));
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eBox Solver §7:: §cCouldn't find solution involving less than 20 box moves within 3m concurrent possibility");
                 step = 0;
                 calcDone2 = false;
                 pathFindReq = true;
@@ -157,7 +156,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 return;
             } else{
                 solution = semi_solution.boxMoves;
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: Solution Found!"));
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eBox Solver §7:: Solution Found!");
             }
             step = 0;
             lastState = currBoard;

@@ -14,7 +14,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;

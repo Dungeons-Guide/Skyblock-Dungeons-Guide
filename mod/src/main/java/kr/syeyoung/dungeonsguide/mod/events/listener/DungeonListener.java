@@ -38,12 +38,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.PearlCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
-import kr.syeyoung.dungeonsguide.mod.utils.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
+import kr.syeyoung.dungeonsguide.mod.utils.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
@@ -71,7 +71,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -582,7 +581,7 @@ public class DungeonListener {
             if (ec == null) {
                 DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
                 if (context == null) {
-                    ChatTransmitter.addToQueue(new ChatComponentText("Not in dungeons"));
+                    ChatTransmitter.addToQueue("Not in dungeons");
                     return;
                 }
                 UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
@@ -591,12 +590,12 @@ public class DungeonListener {
                     DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
 
                     if (dungeonRoom == null) {
-                        ChatTransmitter.addToQueue(new ChatComponentText("Can't determine the dungeon room you're in"));
+                        ChatTransmitter.addToQueue("Can't determine the dungeon room you're in");
                         return;
                     }
 
                     if (EditingContext.getEditingContext() != null) {
-                        ChatTransmitter.addToQueue(new ChatComponentText("There is an editing session currently open."));
+                        ChatTransmitter.addToQueue("There is an editing session currently open.");
                         return;
                     }
 

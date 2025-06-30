@@ -35,4 +35,9 @@ public class UEntityPlayerSP extends UEntityPlayerImpl implements UPlayerSelf {
         if (c instanceof ContainerChest) return new UContainerChestImpl((ContainerChest) c);
         return new UContainerImpl(delegate.openContainer);
     }
+
+    @Override
+    public void setOpenContainer(UContainer guiChest) {
+        delegate.openContainer = ((UContainerImpl)guiChest).getDelegate();
+    }
 }

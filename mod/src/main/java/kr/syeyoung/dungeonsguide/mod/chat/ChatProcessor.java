@@ -21,10 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.chat;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import net.kyori.adventure.audience.Audiences;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -79,7 +77,7 @@ public class ChatProcessor {
                     if (tuple.getSecond() != null)
                         tuple.getSecond().run();
                     minimumNext = System.currentTimeMillis() + 700;
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("Sending " + tuple.getFirst() + " Secretly"));
+                    ChatTransmitter.sendDebugChat("Sending " + tuple.getFirst() + " Secretly");
                 }
             }
         } catch (Exception e) {

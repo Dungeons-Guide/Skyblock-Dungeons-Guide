@@ -25,7 +25,6 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import net.minecraft.util.ChatComponentText;
 import org.lwjgl.input.Keyboard;
 
 public class FeatureFreezePathfind extends SimpleFeature  {
@@ -39,7 +38,7 @@ public class FeatureFreezePathfind extends SimpleFeature  {
         if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue()) {
             setEnabled(!isEnabled());
             try {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Pathfind Freeze to §e"+(FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() ? "on":"off")));
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fToggled Pathfind Freeze to §e"+(FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() ? "on":"off"));
             } catch (Exception ignored) {}
         }
     }

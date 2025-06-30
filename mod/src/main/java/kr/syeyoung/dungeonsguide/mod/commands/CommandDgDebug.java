@@ -68,7 +68,6 @@ import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.util.ChatComponentText;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -89,12 +88,12 @@ import java.util.function.Consumer;
 public class CommandDgDebug {
     @DGCommand("dgdebug")
     public void showHelp() {
-        ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand."));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
+        ChatTransmitter.addToQueue("ain't gonna find much anything here");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata.");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand.");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info.");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer.");
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata.");
     }
 
     @DGCommand("dgdebug reloadshader")
@@ -275,7 +274,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug saverooms")
     public void saveRoomsCommand() {
         DungeonRoomInfoRegistry.saveAll(new File(Main.getConfigDir(), "roomdatas"));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata"));
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata");
     }
 
     @DGCommand("dgdebug process2")
@@ -342,19 +341,19 @@ public class CommandDgDebug {
     public void loadRoomsCommand() {
         try {
             DungeonRoomInfoRegistry.loadAll(new File(Main.getConfigDir(), "roomdatas"));
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully loaded roomdatas"));
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fSuccessfully loaded roomdatas");
             return;
         } catch (BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException |
                  NoSuchAlgorithmException | IOException | IllegalBlockSizeException |
                  NoSuchPaddingException e) {
             e.printStackTrace();
         }
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cAn error has occurred while loading roomdata"));
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cAn error has occurred while loading roomdata");
     }
     @DGCommand("dgdebug brand")
     public void brandCommand() {
         String serverBrand = ModAPI.getAPI().getPlayer().getClientBrand();
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e" + serverBrand);
     }
 
     @DGCommand("dgdebug removedoors")
@@ -1239,12 +1238,12 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug partyid")
     public void partyIdCommand() {
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: " + Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(null)));
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fInternal Party id: " + Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(null));
     }
 
     @DGCommand("dgdebug loc")
     public void locCommand() {
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fYou're in " + SkyblockStatus.getLocationName()));
+        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fYou're in " + SkyblockStatus.getLocationName());
     }
 
     @DGCommand("dgdebug saverun")
@@ -1258,7 +1257,7 @@ public class CommandDgDebug {
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null) {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't find dungeon to save!"));
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cCouldn't find dungeon to save!");
                 return;
             }
             DungeonEventHolder dungeonEventHolder = new DungeonEventHolder();
@@ -1271,9 +1270,9 @@ public class CommandDgDebug {
             oos.writeObject(dungeonEventHolder);
             oos.flush();
             oos.close();
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved dungeon run to " + runFile.getAbsolutePath()));
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fSuccessfully saved dungeon run to " + runFile.getAbsolutePath());
         } catch (Exception e) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cAn error occured while writing rundata " + e.getMessage()));
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cAn error occured while writing rundata " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1282,7 +1281,7 @@ public class CommandDgDebug {
     public void requestStaticResource(String uuid) {
         UUID uid = UUID.fromString(uuid);
         StaticResourceCache.INSTANCE.getResource(uid).thenAccept(a -> {
-            ChatTransmitter.addToQueue(new ChatComponentText(a.getResourceID() + ": " + a.getValue() + ": " + a.isExists()));
+            ChatTransmitter.addToQueue(a.getResourceID() + ": " + a.getValue() + ": " + a.isExists());
         });
     }
 
@@ -1357,7 +1356,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug readmap {x} {y}")
     public void readMapCommand(int x, int y) {
         try {
-            ChatTransmitter.addToQueue(new ChatComponentText(MapUtils.readDigit(MapUtils.getColors(), x, y) + "-"));
+            ChatTransmitter.addToQueue(MapUtils.readDigit(MapUtils.getColors(), x, y) + "-");
 /*                int cntY = Integer.parseInt(args[3]);
                 int target = Integer.parseInt(args[4]);
                 StringBuilder sb = new StringBuilder("{");

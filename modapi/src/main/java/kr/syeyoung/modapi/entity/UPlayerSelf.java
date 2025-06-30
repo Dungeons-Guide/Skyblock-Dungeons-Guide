@@ -7,4 +7,6 @@ public interface UPlayerSelf extends UEntityPlayer {
     String getClientBrand();
     UInventoryPlayer getInventory();
     UContainer getOpenContainer();
+
+    void setOpenContainer(UContainer guiChest);
 }

@@ -29,7 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONObject;
@@ -106,11 +105,11 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
                 else theRealAnswer = semi_answers;
             }
             if (theRealAnswer == null)
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! (no question found)"));
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! (no question found)");
             else if (theRealAnswer.length() >1)
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! ("+theRealAnswer+")"));
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! ("+theRealAnswer+")");
             else
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: "+theRealAnswer+"§f is the correct answer!"));
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eTrivia §7:: "+theRealAnswer+"§f is the correct answer!");
             correctAnswer = theRealAnswer;
         });
     }
@@ -118,7 +117,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     private String takeCareOfPlaceHolders(String input) {
         String str = input;
         if (str.contains("$year")) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §fuses §eInventiveTalent§7(https://github.com/InventivetalentDev)§e's Skyblock Api §fto fetch current skyblock year!"));
+            ChatTransmitter.addToQueue("§eDungeons Guide §fuses §eInventiveTalent§7(https://github.com/InventivetalentDev)§e's Skyblock Api §fto fetch current skyblock year!");
             try {
                 str = str.replace("$year", SkyblockUtils.getSkyblockYear()+"");
             } catch (IOException e) {

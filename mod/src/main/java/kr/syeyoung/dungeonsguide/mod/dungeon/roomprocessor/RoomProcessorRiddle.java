@@ -30,7 +30,6 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UWorld;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
 import java.util.Arrays;
@@ -69,7 +68,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
             }
         }
         if (foundMatch) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eRiddle §7:: "+ch2.split(":")[0].trim()+" §fhas the reward!"));
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eRiddle §7:: "+ch2.split(":")[0].trim()+" §fhas the reward!");
             final String name = TextUtils.stripColor(ch2.split(":")[0]).replace("[NPC] ","").trim();
             final VectorI3D low = getDungeonRoom().getRoomBounds().getMin();
             final VectorI3D high = getDungeonRoom().getRoomBounds().getMax();
