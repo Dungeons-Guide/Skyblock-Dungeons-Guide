@@ -211,7 +211,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
         CompoundBinaryTag compound;
         try {
-            compound = BinaryTagIO.reader().readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
+            compound = BinaryTagIO.reader(10_000_000).readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
                     jsonObject.get("schematic").getAsString()
             )), BinaryTagIO.Compression.GZIP).getValue();
         } catch (IOException e) {
@@ -240,7 +240,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
         CompoundBinaryTag compound;
         try (FileInputStream fis = new FileInputStream(f)){
-            compound = BinaryTagIO.reader().readNamed(fis, BinaryTagIO.Compression.GZIP).getValue();
+            compound = BinaryTagIO.reader(10_000_000).readNamed(fis, BinaryTagIO.Compression.GZIP).getValue();
         } catch (IOException e) {
             e.printStackTrace();
             return;

@@ -196,7 +196,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                 String data = component.getFormattedText().substring(component.getFormattedText().indexOf("$DG-BD"));
                 String actual = TextUtils.stripColor(data).trim().split(" ")[1];
                 byte[] data2 = Base64.decodeBase64(actual);
-                CompoundBinaryTag compound = BinaryTagIO.reader().read(new ByteArrayInputStream(data2), BinaryTagIO.Compression.GZIP);
+                CompoundBinaryTag compound = BinaryTagIO.reader(10_000_000).read(new ByteArrayInputStream(data2), BinaryTagIO.Compression.GZIP);
 
                 for (ChamberSet ch:chambers) {
                     if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)

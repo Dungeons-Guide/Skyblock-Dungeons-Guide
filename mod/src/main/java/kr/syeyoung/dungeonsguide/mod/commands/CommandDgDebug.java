@@ -373,7 +373,7 @@ public class CommandDgDebug {
                 JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
 
 
-                CompoundBinaryTag compound = BinaryTagIO.reader().readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                CompoundBinaryTag compound = BinaryTagIO.reader(10_000_000).readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
                 )), BinaryTagIO.Compression.GZIP).getValue();
                 byte[] blocks = compound.getByteArray("Blocks");
@@ -510,7 +510,7 @@ public class CommandDgDebug {
 
         File f = new File(dir, file);
             try (FileInputStream fis = new FileInputStream(f)){
-                CompoundBinaryTag compound = BinaryTagIO.reader().readNamed(fis, BinaryTagIO.Compression.GZIP).getValue();
+                CompoundBinaryTag compound = BinaryTagIO.reader(10_000_000).readNamed(fis, BinaryTagIO.Compression.GZIP).getValue();
                 byte[] blocks = compound.getByteArray("Blocks");
                 byte[] meta = compound.getByteArray("Data");
                 int shape = 1;
@@ -648,7 +648,7 @@ public class CommandDgDebug {
                 JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
 
 
-                CompoundBinaryTag compound = BinaryTagIO.reader().readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                CompoundBinaryTag compound = BinaryTagIO.reader(10_000_000).readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
                 )), BinaryTagIO.Compression.GZIP).getValue();
                 byte[] blocks = compound.getByteArray("Blocks");
@@ -733,7 +733,7 @@ public class CommandDgDebug {
                     // smth i haven't visited yeet
                     // check
 
-                    CompoundBinaryTag compound = BinaryTagIO.reader().readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                    CompoundBinaryTag compound = BinaryTagIO.reader(10_000_000).readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
                             jsonObject.get("schematic").getAsString()
                     )), BinaryTagIO.Compression.GZIP).getValue();
                     byte[] blocks = compound.getByteArray("Blocks");
@@ -805,7 +805,7 @@ public class CommandDgDebug {
                 }
 
 
-                CompoundBinaryTag compound = BinaryTagIO.reader().readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                CompoundBinaryTag compound = BinaryTagIO.reader(10_000_000).readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
                 )), BinaryTagIO.Compression.GZIP).getValue();
                 byte[] blocks = compound.getByteArray("Blocks");
@@ -880,7 +880,7 @@ public class CommandDgDebug {
                     int thisRot = jsonObject.get("rot").getAsInt();
 
 
-                    CompoundBinaryTag compound2 = BinaryTagIO.reader().readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                    CompoundBinaryTag compound2 = BinaryTagIO.reader(10_000_000).readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
                             originalRoomMapping.get("schematic").getAsString()
                     )), BinaryTagIO.Compression.GZIP).getValue();
                     byte[] blocks2 = compound2.getByteArray("Blocks");

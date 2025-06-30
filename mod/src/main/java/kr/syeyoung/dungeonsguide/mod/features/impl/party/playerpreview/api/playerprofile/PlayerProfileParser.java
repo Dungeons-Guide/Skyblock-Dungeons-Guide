@@ -118,7 +118,7 @@ public class PlayerProfileParser {
     }
 
     public static CompoundBinaryTag parseBase64NBT(String nbt) throws IOException {
-        return BinaryTagIO.reader().read(new ByteArrayInputStream(Base64.getDecoder().decode(nbt)), BinaryTagIO.Compression.GZIP);
+        return BinaryTagIO.reader(10_000_000).read(new ByteArrayInputStream(Base64.getDecoder().decode(nbt)), BinaryTagIO.Compression.GZIP);
     }
 
     public static UItemStack deserializeNBT(CompoundBinaryTag nbtTagCompound) {
