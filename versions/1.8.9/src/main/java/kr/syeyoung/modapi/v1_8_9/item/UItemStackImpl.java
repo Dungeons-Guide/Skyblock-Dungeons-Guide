@@ -7,6 +7,7 @@ import lombok.Getter;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.client.Minecraft;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -30,6 +31,7 @@ public class UItemStackImpl implements UItemStack {
         this.delegate = delegate;
     }
 
+
     public Item getItem() {
         if (delegate.getItem() == Items.skull) return Item.SKULL;
         if (delegate.getItem() == Items.dye) return Item.DYE;
@@ -40,6 +42,8 @@ public class UItemStackImpl implements UItemStack {
         if (delegate.getItem() == Items.golden_axe) return Item.GOLDEN_AXE;
         if (delegate.getItem() == Items.spawn_egg) return Item.SPAWN_EGG;
         if (delegate.getItem() == Items.golden_shovel) return Item.GOLDEN_SHOVEL;
+        if (delegate.getItem() == net.minecraft.item.Item.getItemFromBlock(Blocks.bedrock)) return Item.BEDROCK;
+        if (delegate.getItem() == net.minecraft.item.Item.getItemFromBlock(Blocks.bookshelf)) return Item.BOOKSHELF;
         return Item.UNKNOWN;
     }
 
