@@ -29,12 +29,12 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import kr.syeyoung.modapi.item.UItemStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
 
 import java.util.Collections;
 import java.util.List;
@@ -75,7 +75,7 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
                 Gui.drawRect(x + 1, y + 1, x + 17, y + 17, 0xFF666666);
                 GlStateManager.color(1, 1, 1, 1.0F);
 
-                Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(playerProfile.getInventory()[(i + 9) % 36], (i % 9) * 18 + 2, (i / 9) * 18 + 2);
+                Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI((ItemStack) playerProfile.getInventory()[(i + 9) % 36].getItemStack(), (i % 9) * 18 + 2, (i / 9) * 18 + 2);
             }
         } else {
             Gui.drawRect(1, 1, 162, 72, 0xFF666666);
@@ -91,7 +91,7 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY, boolean childHandled) {
         List<String> toHover = null;
         if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY) && playerProfile.getInventory() != null) {
-            ItemStack toHoverStack = null;
+            UItemStack toHoverStack = null;
             for (int i = 0; i < playerProfile.getInventory().length; i++) {
                 int x = (i % 9) * 18 + 1;
                 int y = (i / 9) * 18 + 1;
@@ -102,16 +102,7 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
 
 
             if (toHoverStack != null) {
-                List<String> list = toHoverStack.getTooltip(Minecraft.getMinecraft().thePlayer,
-                        Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
-                for (int i = 0; i < list.size(); ++i) {
-                    if (i == 0) {
-                        list.set(i, toHoverStack.getRarity().rarityColor + list.get(i));
-                    } else {
-                        list.set(i, EnumChatFormatting.GRAY + list.get(i));
-                    }
-                }
-                toHover= list;
+                toHover= toHoverStack.getNormalTooltip();
             }
         }
 

@@ -22,10 +22,8 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarende
 import kr.syeyoung.modapi.item.UItemStack;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
+import java.util.List;
 import java.util.Optional;
 
 public abstract class DataRendererTalismanBase implements IDataRenderer {
@@ -53,12 +51,8 @@ public abstract class DataRendererTalismanBase implements IDataRenderer {
     }
 
     private static DataRendererTalismans.Rarity getRarity(UItemStack itemStack) {
-        NBTTagCompound display = itemStack.getTagCompound().getCompoundTag("display");
-        if (display == null) return null;
-        NBTTagList lore = display.getTagList("Lore", 8);
-        if (lore == null) return null;
-        for (int i = 0; i < lore.tagCount(); i++) {
-            String line = lore.getStringTagAt(i);
+        List<String> lore = itemStack.getLore();
+        for (String line: lore) {
             for (DataRendererTalismans.Rarity value : DataRendererTalismans.Rarity.values()) {
                 if (line.startsWith(value.getColor()) && line.contains("CCESSORY")) return value;
             }

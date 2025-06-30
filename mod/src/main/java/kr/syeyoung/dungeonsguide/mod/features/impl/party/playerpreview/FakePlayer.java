@@ -30,8 +30,6 @@ import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.ResourceLocation;
@@ -45,9 +43,11 @@ public class FakePlayer extends EntityOtherPlayerMP {
         this.skyblockProfile = skyblockProfile;
 
         armor = skyblockProfile.getCurrentArmor();
-        if (skyblockProfile.getCurrentArmor() != null)
-            this.inventory.armorInventory = skyblockProfile.getCurrentArmor().getArmorSlots();
-        else
+        if (skyblockProfile.getCurrentArmor() != null) {
+            this.inventory.armorInventory = new ItemStack[4];
+            for (int i = 0; i < 4; i++)
+                this.inventory.armorInventory[i] = (ItemStack) skyblockProfile.getCurrentArmor().getArmorSlots()[i].getItemStack();
+        } else
             this.inventory.armorInventory = new ItemStack[4];
 
         int highestDungeonScore = Integer.MIN_VALUE;
@@ -56,12 +56,7 @@ public class FakePlayer extends EntityOtherPlayerMP {
             UItemStack highestItem = null;
             for (UItemStack itemStack : skyblockProfile.getInventory()) {
                 if (itemStack == null) continue;
-                NBTTagCompound display = itemStack.getTagCompound().getCompoundTag("display");
-                if (display == null) continue;
-                NBTTagList nbtTagList = display.getTagList("Lore", 8);
-                if (nbtTagList == null) continue;
-                for (int i = 0; i < nbtTagList.tagCount(); i++) {
-                    String str = nbtTagList.getStringTagAt(i);
+                for (String str : itemStack.getLore()) {
                     if (TextUtils.stripColor(str).startsWith("Gear")) {
                         int dungeonScore = Integer.parseInt(TextUtils.keepIntegerCharactersOnly(TextUtils.stripColor(str).split(" ")[2]));
                         if (dungeonScore > highestDungeonScore) {
@@ -72,7 +67,7 @@ public class FakePlayer extends EntityOtherPlayerMP {
                 }
             }
 
-            this.inventory.mainInventory[0] = highestItem;
+            this.inventory.mainInventory[0] = (ItemStack) highestItem.getItemStack();
             this.inventory.currentItem = 0;
         }
     }
@@ -90,19 +85,16 @@ public class FakePlayer extends EntityOtherPlayerMP {
         this.skyblockProfile = skyblockProfile;
         this.skinSet = skinSet;
         armor = skyblockProfile.getCurrentArmor();
-        this.inventory.armorInventory = skyblockProfile.getCurrentArmor().getArmorSlots();
+        this.inventory.armorInventory = new ItemStack[4];
+        for (int i = 0; i < 4; i++)
+            this.inventory.armorInventory[i] = (ItemStack) skyblockProfile.getCurrentArmor().getArmorSlots()[i].getItemStack();
 
         int highestDungeonScore = Integer.MIN_VALUE;
         if (skyblockProfile.getInventory() != null) {
-            ItemStack highestItem = null;
+            UItemStack highestItem = null;
             for (UItemStack itemStack : skyblockProfile.getInventory()) {
                 if (itemStack == null) continue;
-                NBTTagCompound display = itemStack.getTagCompound().getCompoundTag("display");
-                if (display == null) continue;
-                NBTTagList nbtTagList = display.getTagList("Lore", 8);
-                if (nbtTagList == null) continue;
-                for (int i = 0; i < nbtTagList.tagCount(); i++) {
-                    String str = nbtTagList.getStringTagAt(i);
+                for (String str : itemStack.getLore()) {
                     if (TextUtils.stripColor(str).startsWith("Gear")) {
                         int dungeonScore = Integer.parseInt(TextUtils.keepIntegerCharactersOnly(TextUtils.stripColor(str).split(" ")[2]));
                         if (dungeonScore > highestDungeonScore) {
@@ -113,7 +105,7 @@ public class FakePlayer extends EntityOtherPlayerMP {
                 }
             }
 
-            this.inventory.mainInventory[0] = highestItem;
+            this.inventory.mainInventory[0] = (ItemStack) highestItem.getItemStack();
             this.inventory.currentItem = 0;
         }
     }

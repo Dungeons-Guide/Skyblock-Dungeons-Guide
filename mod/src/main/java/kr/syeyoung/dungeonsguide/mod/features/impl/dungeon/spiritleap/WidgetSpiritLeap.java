@@ -1,6 +1,5 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.spiritleap;
 
-import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.MapConfiguration;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.WidgetDungeonMap;
@@ -19,10 +18,11 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
+import kr.syeyoung.modapi.event.events.WindowUpdateEvent;
+import kr.syeyoung.modapi.gui.UContainerChest;
+import kr.syeyoung.modapi.gui.UContainerSlot;
+import kr.syeyoung.modapi.item.Item;
+import kr.syeyoung.modapi.item.UItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,46 +81,32 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
 
     public void onChestUpdate(WindowUpdateEvent windowUpdateEvent) {
         if (windowUpdateEvent == null) {
-            GuiChest guiChest = GuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest();
+            UContainerChest guiChest = GuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest();
             if (guiChest == null) {
                 slotMap.clear();
             } else {
                 for (int x = 1; x<=7; x++) {
                     int y = 1;
                     int i = y * 9 + x;
-                    Slot s = guiChest.inventorySlots.getSlot(i);
+                    UContainerSlot s = guiChest.getChestSlotAt(i);
                     WarpTarget prev = slotMap.remove(i);
-                    if (s == null || !s.getHasStack() || s.getStack().getItem() != Items.skull) { continue; }
+                    if (s == null || s.getItemStack() == null || s.getItemStack().getItem() != Item.SKULL) { continue; }
 
-                    slotMap.put(i, new WarpTarget(s.getStack(), i));
+                    slotMap.put(i, new WarpTarget(s.getItemStack(), i));
                 }
 
             }
         } else {
-            if (windowUpdateEvent.getPacketSetSlot() != null) {
-                int i = windowUpdateEvent.getPacketSetSlot().func_149173_d();
+            for (WindowUpdateEvent.SlotUpdate slotUpdate : windowUpdateEvent.getSlotUpdateList()) {
 
-                ItemStack stack = windowUpdateEvent.getPacketSetSlot().func_149174_e();
+                int i = slotUpdate.getSlotId();
+                UItemStack stack = slotUpdate.getItemStack();
 
                 if (i / 9 < 3) {
                     WarpTarget prev = slotMap.remove(i);
-                    if (stack != null && stack.getItem() == Items.skull) {
-//                    if (prev == null) prev = new WidgetPartyElement(this, i);
-//                    prev.update(PartyFinderParty.fromItemStack(stack));
-//                        System.out.println(stack.getTagCompound());
+                    if (stack != null && stack.getItem() == Item.SKULL) {
                         slotMap.put(i, new WarpTarget(stack, i));
                     }
-                }
-            } else if (windowUpdateEvent.getWindowItems() != null) {
-                for (int x = 1; x<=7; x++) {
-                    int y = 1;
-                    int i = y * 9 + x;
-
-                    ItemStack item = windowUpdateEvent.getWindowItems().getItemStacks()[i];
-                    WarpTarget prev = slotMap.remove(i);
-                    if (item == null || item.getItem() != Items.skull) { continue; }
-
-                    slotMap.put(i, new WarpTarget(item, i));
                 }
             }
         }

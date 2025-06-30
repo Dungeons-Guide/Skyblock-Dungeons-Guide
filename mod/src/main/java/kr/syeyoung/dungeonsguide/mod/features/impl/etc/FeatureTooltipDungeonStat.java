@@ -33,9 +33,7 @@ public class FeatureTooltipDungeonStat extends SimpleFeature {
 
     @DGEventHandler
     public void onTooltip(ItemTooltipEvent event) {
-
         ItemStack hoveredItem = event.itemStack;
-        hoveredItem.gettool
         NBTTagCompound compound = hoveredItem.getTagCompound();
         if (compound == null)
             return;

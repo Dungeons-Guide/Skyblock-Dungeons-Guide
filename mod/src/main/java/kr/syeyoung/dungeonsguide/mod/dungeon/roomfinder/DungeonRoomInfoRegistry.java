@@ -25,7 +25,6 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
-import net.minecraft.launchwrapper.Launch;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -103,7 +102,7 @@ public class DungeonRoomInfoRegistry {
     public static void saveAll(File dir) {
         dir.mkdirs();
         //User is dev if they are in a dev environment or they are on the allowlist DEV_USERS
-        boolean isDev = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment") || DEV_USERS.contains(ModAPI.getAPI().getSession().getUUID().toString().replace("-",""));
+        boolean isDev =  ModAPI.getAPI().isDevEnv() || DEV_USERS.contains(ModAPI.getAPI().getSession().getUUID().toString().replace("-",""));
         StringBuilder nameIDString = new StringBuilder("name,uuid,processsor,secrets");
         StringBuilder ids = new StringBuilder();
         CBORMapper objectMapper = new CBORMapper();

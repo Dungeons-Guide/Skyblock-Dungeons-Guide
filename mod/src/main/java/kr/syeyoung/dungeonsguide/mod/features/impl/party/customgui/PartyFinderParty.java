@@ -19,17 +19,15 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.item.UItemStack;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PartyFinderParty {
-    public ItemStack itemStack;
+    public UItemStack itemStack;
     public String leader = "";
     public List<MemberData> members = new ArrayList<>();
 
@@ -45,33 +43,22 @@ public class PartyFinderParty {
         private int classLv;
     }
 
-    public static PartyFinderParty fromItemStack(ItemStack itemStack) {
-        PartyFinderParty party = fromItemNbt(itemStack.getTagCompound());
+    public static PartyFinderParty fromItemStack(UItemStack itemStack) {
+        if (itemStack.getLore().isEmpty()) return new PartyFinderParty();
+
+
+        PartyFinderParty party =fromLore(itemStack.getDisplayName(), itemStack.getLore());
         party.itemStack = itemStack;
         return party;
     }
-
-    private static PartyFinderParty fromItemNbt(NBTTagCompound stackTagCompound) {
-        if (stackTagCompound != null && stackTagCompound.hasKey("display", 10)) {
-            NBTTagCompound nbttagcompound = stackTagCompound.getCompoundTag("display");
-            String name = nbttagcompound.getString("Name");
-
-            if (nbttagcompound.getTagId("Lore") == 9) {
-                NBTTagList nbttaglist1 = nbttagcompound.getTagList("Lore", 8);
-                return fromLore(name, nbttaglist1);
-            }
-        }
-        return new PartyFinderParty();
-    }
-
-    private static PartyFinderParty fromLore(String name, NBTTagList tagList) {
+    private static PartyFinderParty fromLore(String name, List<String> lore) {
         PartyFinderParty party = new PartyFinderParty();
-        for (int i = 0; i < tagList.tagCount(); i++) {
-            String line = tagList.getStringTagAt(i);
+        for (int i = 0; i < lore.size(); i++) {
+            String line = lore.get(i);
             if (line.startsWith("§7§7Note: ")) {
                 party.note = line.substring(10).trim();
-                if (i + 1 < tagList.tagCount()) {
-                    String nextLine = tagList.getStringTagAt(i + 1);
+                if (i + 1 < lore.size()) {
+                    String nextLine = lore.get(i + 1);
                     if (!nextLine.contains("§7") && !nextLine.replaceAll("§.| ", "").isEmpty()) {
                         i++;
                         party.note += " " + nextLine;

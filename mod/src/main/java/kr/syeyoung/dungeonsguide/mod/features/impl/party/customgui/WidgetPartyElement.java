@@ -29,12 +29,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
+import kr.syeyoung.modapi.item.Item;
+import kr.syeyoung.modapi.item.UItemStack;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
 
 import java.util.List;
 
@@ -43,7 +40,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
     private WidgetPartyFinder widgetPartyFinder;
 
     @Bind(variableName = "item")
-    public final BindableAttribute<ItemStack> itemstack = new BindableAttribute<>(ItemStack.class);
+    public final BindableAttribute<UItemStack> itemstack = new BindableAttribute<>(UItemStack.class);
 
     @Bind(variableName = "name")
     public final BindableAttribute<String> name = new BindableAttribute<>(String.class, "");
@@ -84,7 +81,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
             String note = party.note;
             boolean notFound = false;
             boolean cantJoin = !party.canJoin;
-            if (itemstack.getValue().getItem() == Item.getItemFromBlock(Blocks.bedrock)) {
+            if (itemstack.getValue().getItem() == Item.BEDROCK) {
                 cantJoin = true;
                 notFound = true;
             }
@@ -149,15 +146,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
 
     public MinecraftTooltip createTooltip() {
         if (party == null) return new MinecraftTooltip();
-        List<String> toHover = party.itemStack.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
-        for (int i = 0; i < toHover.size(); ++i) {
-            if (i == 0) {
-                toHover.set(i, party.itemStack.getRarity().rarityColor + toHover.get(i));
-            } else {
-                toHover.set(i, EnumChatFormatting.GRAY + toHover.get(i));
-            }
-        }
-
+        List<String> toHover = party.itemStack.getNormalTooltip();
         MinecraftTooltip minecraftTooltip =  new MinecraftTooltip();
         minecraftTooltip.setTooltip(toHover);
         return minecraftTooltip;

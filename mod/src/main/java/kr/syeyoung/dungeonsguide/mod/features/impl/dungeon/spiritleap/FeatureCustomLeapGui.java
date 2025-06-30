@@ -20,19 +20,16 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.spiritleap;
 
 
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.events.WindowUpdateEvent;
+import kr.syeyoung.modapi.gui.UContainerChest;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.IInventory;
 import net.minecraftforge.client.event.GuiOpenEvent;
 
 public class FeatureCustomLeapGui extends SimpleFeature {
@@ -46,27 +43,11 @@ public class FeatureCustomLeapGui extends SimpleFeature {
     private WidgetSpiritLeap widgetSpiritLeap;
     private GuiScreenAdapterChestOverride guiScreenAdapter;
 
-    private String conditionCheck(GuiScreen guiScreen) {
-        if (!(guiScreen instanceof GuiChest)) return null;
-        GuiChest chest = (GuiChest) guiScreen;
-        if (!(chest.inventorySlots instanceof ContainerChest)) return null;
-        ContainerChest containerChest = (ContainerChest) chest.inventorySlots;
-        IInventory lower = containerChest.getLowerChestInventory();
-        if (lower == null) return null;
-        return lower.getName();
-    }
-
     @DGEventHandler
     public void onGuiOpen(GuiOpenEvent event) {
-        String name = conditionCheck(event.gui);
-        if (name == null) {
-            widgetSpiritLeap = null;
-            guiScreenAdapter = null;
-            return;
-        }
-        if (!name.equals("Spirit Leap")) {
+        UContainerChest container = ModAPI.getAPI().extractContainerChest(event.gui);
+        if (container == null || !"Spirit Leap".equals((container).getName())) {
             if (guiScreenAdapter != null) {
-                guiScreenAdapter.setCanExitWithoutClosing(true);
                 widgetSpiritLeap = null;
                 guiScreenAdapter = null;
             }
@@ -83,7 +64,7 @@ public class FeatureCustomLeapGui extends SimpleFeature {
             int y = (int) (Math.max(0, ModAPI.getAPI().getDisplayHeight() / 2 - 200 * scaler.scale.getValue()) + 100);
             guiScreenAdapter = new GuiScreenAdapterChestOverride(scaler, x, y);
         }
-        guiScreenAdapter.setGuiChest((GuiChest) event.gui);
+        guiScreenAdapter.setGuiChest(container);
 
         event.gui = guiScreenAdapter;
     }

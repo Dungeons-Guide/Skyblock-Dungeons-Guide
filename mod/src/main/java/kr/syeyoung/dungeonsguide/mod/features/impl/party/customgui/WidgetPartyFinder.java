@@ -24,7 +24,6 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatSubscriber;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.CategoryPageWidget;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
-import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteTooltip.WidgetEnableAskToJoin;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteTooltip.WidgetInvite;
@@ -43,16 +42,12 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
+import kr.syeyoung.modapi.event.events.WindowUpdateEvent;
+import kr.syeyoung.modapi.gui.UContainerChest;
+import kr.syeyoung.modapi.gui.UContainerSlot;
+import kr.syeyoung.modapi.item.Item;
+import kr.syeyoung.modapi.item.UItemStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumChatFormatting;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -218,73 +213,72 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     private final Map<Integer, WidgetPartyElement> partyElementMap = new HashMap<>();
     public void onChestUpdate(WindowUpdateEvent windowUpdateEvent) {
         if (windowUpdateEvent == null) {
-            GuiChest guiChest = GuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest();
+            UContainerChest guiChest = GuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest();
             if (guiChest == null) {
                 partyElementMap.clear();
             } else {
                 for (int x = 1; x<=7; x++) {
                     for (int y = 1; y <= 3; y++) {
                         int i = y * 9 + x;
-                        Slot s = guiChest.inventorySlots.getSlot(i);
+                        UContainerSlot s = guiChest.getChestSlotAt(i);
                         WidgetPartyElement prev = partyElementMap.remove(i);
-                        if (s == null || !s.getHasStack()) { continue; }
-                        if (!filter(s.getStack())) continue;
+                        if (s == null || s.getItemStack() == null) { continue; }
+                        if (!filter(s.getItemStack())) continue;
 
                         if (prev == null) prev = new WidgetPartyElement(this, i);
-                        prev.update(PartyFinderParty.fromItemStack(s.getStack()));
+                        prev.update(PartyFinderParty.fromItemStack(s.getItemStack()));
                         partyElementMap.put(i, prev);
                     }
                 }
 
                 {
-                    Slot next = guiChest.inventorySlots.getSlot(9 * 2 + 8);
-                    if (next.getStack() != null && next.getStack().getItem() == Items.arrow) {
+                    UContainerSlot next = guiChest.getChestSlotAt(9*2+8);
+                    if (next != null && next.getItemStack() != null && next.getItemStack().getItem() == Item.ARROW) {
                         nextVisible.setValue("true");
-                        extractPage(next.getStack());
+                        extractPage(next.getItemStack());
                     } else {
                         nextVisible.setValue("false");
                     }
 
-                    Slot prev = guiChest.inventorySlots.getSlot(9 * 2 + 0);
-                    if (prev.getStack() != null && prev.getStack().getItem() == Items.arrow) {
+                    UContainerSlot prev = guiChest.getChestSlotAt(9*2+0);
+                    if (prev != null && prev.getItemStack() != null && prev.getItemStack().getItem() == Item.ARROW) {
                         prevVisible.setValue("true");
-                        extractPage(prev.getStack());
+                        extractPage(prev.getItemStack());
                     } else {
                         prevVisible.setValue("false");
                     }
 
-                    Slot delist = guiChest.inventorySlots.getSlot(9 * 5 + 7);
-                    setDelistable(delist.getStack() != null && delist.getStack().getItem() == Item.getItemFromBlock(Blocks.bookshelf));
+                    UContainerSlot delist = guiChest.getChestSlotAt(9 * 5 + 7);
+                    setDelistable(delist != null && delist.getItemStack() != null && delist.getItemStack().getItem() == Item.BOOKSHELF);
 
-                    Slot search = guiChest.inventorySlots.getSlot(9*5+5);
-                    if (search != null && search.getStack() != null)
-                        extractSearch(search.getStack());
+                    UContainerSlot search = guiChest.getChestSlotAt(9*5+5);
+                    if (search != null && search.getItemStack() != null)
+                        extractSearch(search.getItemStack());
 
-                    Slot myParty = guiChest.inventorySlots.getSlot(9*5+8);
-                    if (myParty != null && myParty.getStack() != null) extractMyParty(myParty.getStack());
+                    UContainerSlot myParty = guiChest.getChestSlotAt(9*5+8);
+                    if (myParty != null && myParty.getItemStack() != null) extractMyParty(myParty.getItemStack());
                 }
             }
         } else {
-            if (windowUpdateEvent.getPacketSetSlot() != null) {
-                int i = windowUpdateEvent.getPacketSetSlot().func_149173_d();
-
-                ItemStack stack = windowUpdateEvent.getPacketSetSlot().func_149174_e();
+            for (WindowUpdateEvent.SlotUpdate slotUpdate : windowUpdateEvent.getSlotUpdateList()) {
+                int i = slotUpdate.getSlotId();
+                UItemStack stack = slotUpdate.getItemStack();
                 if (i == 9*2+8) {
-                    if (stack != null && stack.getItem() == Items.arrow) {
+                    if (stack != null && stack.getItem() == Item.ARROW) {
                         nextVisible.setValue("true");
                         extractPage(stack);
                     } else {
                         nextVisible.setValue("false");
                     }
                 } else if (i == 9*2) {
-                    if (stack != null && stack.getItem() == Items.arrow) {
+                    if (stack != null && stack.getItem() == Item.ARROW) {
                         prevVisible.setValue("true");
                         extractPage(stack);
                     } else {
                         prevVisible.setValue("false");
                     }
                 } else if (i == 9*5+7) {
-                    setDelistable(stack != null && stack.getItem() == Item.getItemFromBlock(Blocks.bookshelf));
+                    setDelistable(stack != null && stack.getItem() == Item.BOOKSHELF);
                 } else if (i == 9*5 + 5) {
                     if (stack != null) {
                         extractSearch(stack);
@@ -294,7 +288,7 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
                 }
 
                 if (i%9 == 0 || i%9 == 8 || i/9 == 0 || i/9 >= 4) {
-                    return;
+                    continue;
                 }
 
                 WidgetPartyElement prev = partyElementMap.remove(i);
@@ -303,116 +297,52 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
                     prev.update(PartyFinderParty.fromItemStack(stack));
                     partyElementMap.put(i, prev);
                 }
-            } else if (windowUpdateEvent.getWindowItems() != null) {
-                for (int x = 1; x<=7; x++) {
-                    for (int y = 1; y <= 3; y++) {
-                        int i = y * 9 + x;
-                        ItemStack item = windowUpdateEvent.getWindowItems().getItemStacks()[i];
-                        WidgetPartyElement prev = partyElementMap.remove(i);
-                        if (!filter(item)) continue;
-
-                        if (prev == null) prev = new WidgetPartyElement(this, i);
-                        prev.update(PartyFinderParty.fromItemStack(item));
-                        partyElementMap.put(i, prev);
-                    }
-                }
-
-                {
-                    ItemStack next = windowUpdateEvent.getWindowItems().getItemStacks()[9 * 2 + 8];
-                    if (next != null && next.getItem() == Items.arrow) {
-                        nextVisible.setValue("true");
-                        extractPage(next);
-                    } else {
-                        nextVisible.setValue("false");
-                    }
-
-                    ItemStack prev = windowUpdateEvent.getWindowItems().getItemStacks()[9 * 2];
-                    if (prev != null && prev.getItem() == Items.arrow) {
-                        prevVisible.setValue("true");
-                        extractPage(prev);
-                    } else {
-                        prevVisible.setValue("false");
-                    }
-
-                    ItemStack delist = windowUpdateEvent.getWindowItems().getItemStacks()[9*5+7];
-                    setDelistable(delist != null && delist.getItem() == Item.getItemFromBlock(Blocks.bookshelf));
-
-                    ItemStack search = windowUpdateEvent.getWindowItems().getItemStacks()[9*5+5];
-                    if (search != null) extractSearch(search);
-
-                    ItemStack myParty = windowUpdateEvent.getWindowItems().getItemStacks()[9*5+8];
-                    if (myParty != null) extractMyParty(myParty);
-                }
             }
         }
 
         addItems();
     }
-    public void extractPage(ItemStack itemStack) {
-        NBTTagCompound stackTagCompound = itemStack.getTagCompound();
+    public void extractPage(UItemStack itemStack) {
+        List<String> lore = itemStack.getLore();
+
         int page = -1;
-        if (stackTagCompound.hasKey("display", 10)) {
-            NBTTagCompound nbtTagCompound = stackTagCompound.getCompoundTag("display");
-
-            if (nbtTagCompound.getTagId("Lore") == 9) {
-                NBTTagList nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
-
-                for (int i = 0; i < nbtTagList1.tagCount(); i++) {
-                    String str = nbtTagList1.getStringTagAt(i);
-                    if (str.startsWith("§ePage ")) {
-                        int pg = Integer.parseInt(str.substring(7));
-                        if (itemStack.getDisplayName().equals("§aPrevious Page")) page = pg+1;
-                        else page = pg-1;
-                    }
-                }
+        for (String str : lore) {
+            if (str.startsWith("§ePage ")) {
+                int pg = Integer.parseInt(str.substring(7));
+                if (itemStack.getDisplayName().equals("§aPrevious Page")) page = pg+1;
+                else page = pg-1;
             }
         }
         pageNumber.setValue("Page "+page);
     }
 
-    public void extractMyParty(ItemStack itemStack) {
-        if (itemStack == null || itemStack.getItem() != Items.skull) {
+    public void extractMyParty(UItemStack itemStack) {
+        if (itemStack == null || itemStack.getItem() != Item.SKULL) {
             party.setValue("");
             return;
         }
 
-        List<String> list = itemStack.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
-        for (int i = 0; i < list.size(); ++i) {
-            if (i == 0) {
-                list.set(i, itemStack.getRarity().rarityColor + list.get(i));
-            } else {
-                list.set(i, EnumChatFormatting.GRAY + list.get(i));
-            }
-        }
+        List<String> list = itemStack.getLore();
         party.setValue(String.join("\n", list));
     }
 
-    public void extractSearch(ItemStack itemStack) {
+    public void extractSearch(UItemStack itemStack) {
         String dungeon="", floor="", text="", classLv="", dungeonLv="", sort="";
         {
-            NBTTagCompound stackTagCompound = itemStack.getTagCompound();
-            if (stackTagCompound.hasKey("display", 10)) {
-                NBTTagCompound nbtTagCompound = stackTagCompound.getCompoundTag("display");
-
-                if (nbtTagCompound.getTagId("Lore") == 9) {
-                    NBTTagList nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
-
-                    for (int i = 0; i < nbtTagList1.tagCount(); i++) {
-                        String str = nbtTagList1.getStringTagAt(i);
-                        if (str.startsWith("§aDungeon: ")) {
-                            dungeon = str.substring(11);
-                        } else if (str.startsWith("§aFloor: ")) {
-                            floor = str.substring(9);
-                        } else if (str.startsWith("§aSearch text: ")) {
-                            text = str.substring(15);
-                        } else if (str.startsWith("§aClass Level: ")) {
-                            classLv = str.substring(15);
-                        } else if (str.startsWith("§aDungeon Level: ")) {
-                            dungeonLv = str.substring(17);
-                        } else if (str.startsWith("§aSort: ")) {
-                            sort =  str.substring(8);
-                        }
-                    }
+            List<String> lore = itemStack.getLore();
+            for (String str : lore) {
+                if (str.startsWith("§aDungeon: ")) {
+                    dungeon = str.substring(11);
+                } else if (str.startsWith("§aFloor: ")) {
+                    floor = str.substring(9);
+                } else if (str.startsWith("§aSearch text: ")) {
+                    text = str.substring(15);
+                } else if (str.startsWith("§aClass Level: ")) {
+                    classLv = str.substring(15);
+                } else if (str.startsWith("§aDungeon Level: ")) {
+                    dungeonLv = str.substring(17);
+                } else if (str.startsWith("§aSort: ")) {
+                    sort = str.substring(8);
                 }
             }
         }
@@ -424,10 +354,10 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
         this.sort.setValue("§aSort: "+sort);
     }
 
-    public boolean filter(ItemStack itemStack) {
+    public boolean filter(UItemStack itemStack) {
         if (itemStack == null) return false;
         if (itemStack.getItem() == null) return false;
-        if (itemStack.getItem() != Items.skull) return false;
+        if (itemStack.getItem() != Item.SKULL) return false;
 
         PartyFinderParty party = PartyFinderParty.fromItemStack(itemStack);
 

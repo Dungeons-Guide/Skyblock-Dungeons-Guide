@@ -23,16 +23,15 @@ import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityItem;
-import kr.syeyoung.modapi.event.events.BlockUpdateEvent;
-import kr.syeyoung.modapi.event.events.ChunkUpdateEvent;
-import kr.syeyoung.modapi.event.events.EntityExitWorldEvent;
-import kr.syeyoung.modapi.event.events.ItemPickupEvent;
+import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.FakeWorld;
 import kr.syeyoung.modapi.v1_8_9.world.UChunkImpl;
 import kr.syeyoung.modapi.world.UChunk;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.*;
 import net.minecraft.util.BlockPos;
@@ -51,7 +50,18 @@ public class PacketListener {
     }
 
     public void packetProcessPost(Packet packet) {  // this runs in sync.
-        if (packet instanceof S23PacketBlockChange) {
+        if (packet instanceof S30PacketWindowItems) {
+            ItemStack[] stacks = ((S30PacketWindowItems) packet).getItemStacks();
+            List<WindowUpdateEvent.SlotUpdate> updates = new ArrayList<>();
+            for (int i = 0; i < stacks.length; i++) {
+                updates.add(new WindowUpdateEvent.SlotUpdate(i, stacks[i] == null ? null : new UItemStackImpl(stacks[i])));
+            }
+            ModAPI.getAPI().getEventBus().fireEvent(new WindowUpdateEvent(((S30PacketWindowItems) packet).func_148911_c(), updates, false));
+        } else if (packet instanceof S2FPacketSetSlot) {
+            ItemStack stack = ((S2FPacketSetSlot) packet).func_149174_e();
+            ModAPI.getAPI().getEventBus().fireEvent(new WindowUpdateEvent(((S2FPacketSetSlot) packet).func_149175_c(),
+                    Collections.singletonList(new WindowUpdateEvent.SlotUpdate(((S2FPacketSetSlot) packet).func_149173_d(), stack == null ? null : new UItemStackImpl(stack))), true));
+        } else if (packet instanceof S23PacketBlockChange) {
             BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Post();
             BlockPos blockPosition = ((S23PacketBlockChange) packet).getBlockPosition();
             BlockStateRegistryImpl impl = (BlockStateRegistryImpl) ModAPI.getAPI().getBlockRegistry();

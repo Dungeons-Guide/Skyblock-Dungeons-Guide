@@ -131,6 +131,7 @@ sourceSets.main.output.dir genOutputDir, builtBy: generateVersionInfo
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
+    options.compilerArgs += ["-Xdiags:verbose"]
 }
 
 tasks.withType(Jar) {

@@ -7,6 +7,7 @@ import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.fakeserver.FakeServerUtils;
+import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.item.IItemStackRegistry;
 import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.util.RaycastResult;
@@ -57,4 +58,8 @@ public interface ModAPI {
     FakeServerUtils getFakeServerUtils();
 
     IItemStackRegistry getItemStackRegistry();
+
+    boolean isDevEnv();
+
+    UContainerChest extractContainerChest(Object object);
 }

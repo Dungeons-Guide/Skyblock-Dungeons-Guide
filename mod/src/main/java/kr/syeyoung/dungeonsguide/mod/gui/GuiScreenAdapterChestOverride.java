@@ -18,17 +18,16 @@
 
 package kr.syeyoung.dungeonsguide.mod.gui;
 
-import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.gui.UContainer;
+import kr.syeyoung.modapi.gui.UContainerChest;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.network.play.client.C0DPacketCloseWindow;
 import org.lwjgl.input.Mouse;
 
 public class GuiScreenAdapterChestOverride extends GuiScreenAdapter {
 
     @Getter
-    protected GuiChest guiChest;
+    protected UContainerChest guiChest;
 
     private boolean repositionCursor = false;
     private int cursorX;
@@ -52,12 +51,9 @@ public class GuiScreenAdapterChestOverride extends GuiScreenAdapter {
         }
     }
 
-    public void setGuiChest(GuiChest guiChest) {
+    public void setGuiChest(UContainerChest guiChest) {
         this.guiChest = guiChest;
         this.view.getContext().CONTEXT.put("chest", guiChest);
-
-        guiChest.setWorldAndResolution(Minecraft.getMinecraft(), ModAPI.getAPI().getDisplayWidth(), ModAPI.getAPI().getDisplayHeight());
-        guiChest.initGui();
     }
 
     public static GuiScreenAdapterChestOverride getAdapter(DomElement domElement) {
@@ -66,7 +62,7 @@ public class GuiScreenAdapterChestOverride extends GuiScreenAdapter {
 
 
     public void emulateClick(int slotId, int mouseButtonClicked, int mode) {
-        Minecraft.getMinecraft().playerController.windowClick(guiChest.inventorySlots.windowId, slotId, mouseButtonClicked, mode, Minecraft.getMinecraft().thePlayer);
+        guiChest.clickSlot(slotId, UContainer.EnumClickType.CHOOSE);
     }
 
     private boolean flag = false;
@@ -74,7 +70,6 @@ public class GuiScreenAdapterChestOverride extends GuiScreenAdapter {
     @Override
     public void initGui() {
         super.initGui();
-        setCanExitWithoutClosing(false);
     }
 
     public void setCanExitWithoutClosing(boolean flag) {
@@ -82,13 +77,8 @@ public class GuiScreenAdapterChestOverride extends GuiScreenAdapter {
     }
     @Override
     public void onGuiClosed() {
-        if (!flag && Minecraft.getMinecraft().thePlayer.openContainer.windowId != Minecraft.getMinecraft().thePlayer.inventoryContainer.windowId) {
-            Minecraft.getMinecraft().getNetHandler().addToSendQueue(new C0DPacketCloseWindow(this.guiChest.inventorySlots.windowId));
-            Minecraft.getMinecraft().thePlayer.inventory.setItemStack(null);
-            Minecraft.getMinecraft().thePlayer.openContainer = Minecraft.getMinecraft().thePlayer.inventoryContainer;
-        }
         if (guiChest != null)
-            guiChest.onGuiClosed();
+            guiChest.closeContainer();
         guiChest = null;
         super.onGuiClosed();
     }

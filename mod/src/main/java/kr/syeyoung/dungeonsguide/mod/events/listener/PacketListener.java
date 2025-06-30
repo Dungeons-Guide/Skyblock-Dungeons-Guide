@@ -63,11 +63,7 @@ public class PacketListener {
     @SubscribeEvent
     public void packetProcessPost(PacketProcessedEvent.Post post) {
         Packet packet = post.packet;
-        if (packet instanceof S30PacketWindowItems) {
-            ModAPI.getAPI().getEventBus().fireEvent(new WindowUpdateEvent((S30PacketWindowItems) packet, null));
-        } else if (packet instanceof S2FPacketSetSlot) {
-            ModAPI.getAPI().getEventBus().fireEvent(new WindowUpdateEvent(null, (S2FPacketSetSlot) packet));
-        } else if (packet instanceof S45PacketTitle) {
+        if (packet instanceof S45PacketTitle) {
             ModAPI.getAPI().getEventBus().fireEvent(new TitleEvent((S45PacketTitle) packet));
         } else if (packet instanceof S38PacketPlayerListItem) {
             ModAPI.getAPI().getEventBus().fireEvent(new PlayerListItemPacketEvent((S38PacketPlayerListItem) packet));

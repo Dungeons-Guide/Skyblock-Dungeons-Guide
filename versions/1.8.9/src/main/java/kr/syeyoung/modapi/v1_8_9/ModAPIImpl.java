@@ -11,6 +11,7 @@ import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.event.listenerlist.BasicEventBus;
 import kr.syeyoung.modapi.fakeserver.FakeServerUtils;
+import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.item.IItemStackRegistry;
 import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.util.RaycastResult;
@@ -21,6 +22,7 @@ import kr.syeyoung.modapi.v1_8_9.command.CommandManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerSP;
 import kr.syeyoung.modapi.v1_8_9.fakeserver.BlockAccessibleServerLaunchUtils;
+import kr.syeyoung.modapi.v1_8_9.gui.UContainerChestImpl;
 import kr.syeyoung.modapi.v1_8_9.item.IItemStackRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.resources.DGTexturePack;
 import kr.syeyoung.modapi.v1_8_9.resources.UResourceManagerImpl;
@@ -31,7 +33,10 @@ import kr.syeyoung.modapi.world.IBlockAccessible;
 import kr.syeyoung.modapi.world.IBlockRegistry;
 import kr.syeyoung.modapi.world.UWorld;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.inventory.ContainerChest;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
@@ -202,7 +207,20 @@ public class ModAPIImpl implements ModAPI {
     }
 
     @Override
+    public UContainerChest extractContainerChest(Object object) {
+        if (object instanceof GuiChest) {
+            return new UContainerChestImpl((ContainerChest) ((GuiChest) object).inventorySlots);
+        }
+        return null;
+    }
+
+    @Override
     public IItemStackRegistry getItemStackRegistry() {
         return new IItemStackRegistryImpl();
+    }
+
+    @Override
+    public boolean isDevEnv() {
+        return (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
     }
 }

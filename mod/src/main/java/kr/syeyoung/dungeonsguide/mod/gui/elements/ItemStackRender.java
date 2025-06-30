@@ -31,19 +31,19 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
+import kr.syeyoung.modapi.item.UItemStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
 
 import java.util.Collections;
 import java.util.List;
 
 public class ItemStackRender extends AnnotatedExportOnlyWidget implements Renderer, Layouter {
     @Export(attributeName="itemstack")
-    public final BindableAttribute<ItemStack> itemstack = new BindableAttribute<ItemStack>(ItemStack.class);
+    public final BindableAttribute<UItemStack> itemstack = new BindableAttribute<UItemStack>(UItemStack.class);
 
     @Export(attributeName = "hover")
     public final BindableAttribute<Boolean> hover = new BindableAttribute<Boolean>(Boolean.class, false);
@@ -67,7 +67,7 @@ public class ItemStackRender extends AnnotatedExportOnlyWidget implements Render
         RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.scale(min/18.0, min/18.0, 1.0);
         GlStateManager.enableDepth();
-        renderItem.renderItemAndEffectIntoGUI(itemstack.getValue(), 0,0);
+        renderItem.renderItemAndEffectIntoGUI((ItemStack) itemstack.getValue().getItemStack(), 0,0);
         GlStateManager.popMatrix();
         GlStateManager.disableDepth();
     }
@@ -101,19 +101,10 @@ public class ItemStackRender extends AnnotatedExportOnlyWidget implements Render
 
         List<String> toHover = null;
         if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY)) {
-            ItemStack toHoverStack = itemstack.getValue();
+            UItemStack toHoverStack = itemstack.getValue();
 
             if (toHoverStack != null) {
-                List<String> list = toHoverStack.getTooltip(Minecraft.getMinecraft().thePlayer,
-                        Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
-                for (int i = 0; i < list.size(); ++i) {
-                    if (i == 0) {
-                        list.set(i, toHoverStack.getRarity().rarityColor + list.get(i));
-                    } else {
-                        list.set(i, EnumChatFormatting.GRAY + list.get(i));
-                    }
-                }
-                toHover= list;
+                toHover= toHoverStack.getNormalTooltip();
             }
         }
 

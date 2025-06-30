@@ -31,12 +31,10 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import kr.syeyoung.modapi.item.UItemStack;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.*;
@@ -344,22 +342,15 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
         }
     }
 
-    public void checkForCooldown(ItemStack itemStack) {
+    public void checkForCooldown(UItemStack itemStack) {
         if (itemStack == null) return;
-        NBTTagCompound nbt = itemStack.getTagCompound();
-        if (nbt == null) return;
-        NBTTagCompound extra = nbt.getCompoundTag("ExtraAttributes");
-        if (extra == null) return;
-        String id = extra.getString("id");
+        String id = itemStack.getSkyblockId();
         List<SkyblockAbility> skyblockAbility = skyblockAbilitiesByItemID.get(id);
 
-        NBTTagCompound display = nbt.getCompoundTag("display");
-        if (display == null) return;
-        NBTTagList lore = display.getTagList("Lore", 8);
+        List<String> lore = itemStack.getLore();
         int thecd = -1;
         SkyblockAbility currentAbility = null;
-        for (int i = 0; i < lore.tagCount(); i++) {
-            String specific = lore.getStringTagAt(i);
+        for (String specific : lore) {
             if (specific.startsWith("§8Cooldown: §a") && currentAbility != null) {
                 String thecdstr = TextUtils.stripColor(specific).substring(10).trim();
                 thecdstr = thecdstr.substring(0, thecdstr.length() - 1);
@@ -391,13 +382,14 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
 
     @DGEventHandler
     public void onTick(ClientTickEvent event) {
-        EntityPlayerSP sp = Minecraft.getMinecraft().thePlayer;
+        UPlayerSelf sp = ModAPI.getAPI().getPlayer();
+
         if (sp == null) return;
-        if (sp.inventory == null || sp.inventory.armorInventory == null) return;
-        for (ItemStack itemStack : sp.inventory.armorInventory) {
+        if (sp.getInventory() == null || sp.getInventory().getArmorInventory() == null || sp.getInventory().getMainInventory() == null) return;
+        for (UItemStack itemStack : sp.getInventory().getArmorInventory()) {
             checkForCooldown(itemStack);
         }
-        for (ItemStack itemStack : sp.inventory.mainInventory) {
+        for (UItemStack itemStack : sp.getInventory().getMainInventory()) {
             checkForCooldown(itemStack);
         }
     }
