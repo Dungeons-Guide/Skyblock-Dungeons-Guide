@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.commands;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.context.CommandContext;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -30,7 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FeatureViewPlayerStatsOnJoin;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.HoverEventRenderPlayer;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.SkinFetcher;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
@@ -40,11 +38,20 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.command.UCommandContext;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.nbt.TagStringIO;
+import net.kyori.adventure.nbt.api.BinaryTagHolder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.Collections;
 
 public class CommandDungeonsGuide  {
 //        return new ArrayList<String>() {{
@@ -164,10 +171,24 @@ public class CommandDungeonsGuide  {
             ApiFetcher.fetchUUIDAsync(ign)
                     .thenAccept(a -> {
                         assert a.orElse(null) != null;
-                        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + ign + "§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(
-                                new HoverEventRenderPlayer(
-                                        new GameProfile(FeatureViewPlayerStatsOnJoin.fromString(a.orElse(null)), ign)
-                                )))));
+                        try {
+                            BinaryTagHolder holder = BinaryTagHolder.binaryTagHolder(TagStringIO.tagStringIO().asString(CompoundBinaryTag.builder()
+                                    .putString("uuid", a.orElse(null))
+                                    .putString("name", ign).build()));
+                            ChatTransmitter.addToQueue(
+                                    Component.text("Dungeons Guide").color(NamedTextColor.YELLOW)
+                                            .append(Component.text(" :: ").color(NamedTextColor.GRAY))
+                                            .append(Component.text(ign).color(NamedTextColor.YELLOW))
+                                            .append(Component.text("'s Profile ").color(NamedTextColor.WHITE))
+                                            .append(Component.text("view").color(NamedTextColor.GRAY).hoverEvent(
+                                                    ModAPI.getAPI().getPlatform().isOldChat() ?
+                                                            HoverEvent.showItem(Key.key("dungeonsguide", "profileviewer"), 1, holder) :
+                                                            HoverEvent.showItem(Key.key("dungeonsguide", "profileviewer"), 1, Collections.singletonMap(Key.key("dungeonsguide", "profileviewer"), holder))
+                                            )
+                                    ));
+                        } catch (IOException e) {
+                            FeatureCollectDiagnostics.queueSendLogAsync(e);
+                        }
                     });
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);

@@ -15,6 +15,7 @@ import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.world.IBlockRegistry;
 import kr.syeyoung.modapi.world.IMapUtils;
 import kr.syeyoung.modapi.world.UWorld;
+import net.kyori.adventure.text.Component;
 
 public interface ModAPI {
     Platform getPlatform();
@@ -65,4 +66,6 @@ public interface ModAPI {
     UContainerChest extractContainerChest(Object object);
 
     IMapUtils getMapUtils();
+
+    Component getHoveredComponent();
 }

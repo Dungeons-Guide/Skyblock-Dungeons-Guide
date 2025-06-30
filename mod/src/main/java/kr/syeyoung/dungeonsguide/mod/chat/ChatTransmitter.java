@@ -23,11 +23,7 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.SubscribeEvent;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.kyori.adventure.text.Component;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -41,16 +37,16 @@ public class ChatTransmitter {
     public static ChatTransmitter INSTANCE = new ChatTransmitter();
 
     @Getter
-    static Queue<IChatComponent> receiveQueue = new ConcurrentLinkedQueue<>();
+    static Queue<Component> receiveQueue = new ConcurrentLinkedQueue<>();
 
     public static void addToQueue(String chat, boolean noDupe) {
-        addToQueue(new ChatComponentText(chat), noDupe);
+        addToQueue(Component.text(chat), noDupe);
     }
 
-    public static void addToQueue(IChatComponent chat) {
+    public static void addToQueue(Component chat) {
         addToQueue(chat, false);
     }
-    public static void addToQueue(IChatComponent chat, boolean noDupe) {
+    public static void addToQueue(Component chat, boolean noDupe) {
         if(noDupe && receiveQueue.stream().anyMatch(a -> a.equals(chat))) return;
         receiveQueue.add(chat);
     }
@@ -59,14 +55,13 @@ public class ChatTransmitter {
         addToQueue(s, false);
     }
 
-    public static void sendDebugChat(IChatComponent iChatComponent) {
-        if(FeatureRegistry.DEBUG == null) return;
+    public static void sendDebugChat(Component iChatComponent) {
         if (FeatureRegistry.DEBUG.isEnabled())
-            addToQueue((ChatComponentText) iChatComponent);
+            addToQueue(iChatComponent);
     }
 
     public static void sendDebugChat(String text) {
-        sendDebugChat(new ChatComponentText(text));
+        sendDebugChat(Component.text(text));
     }
 
 
@@ -75,13 +70,7 @@ public class ChatTransmitter {
         if(ModAPI.getAPI().getPlayer() == null) return;
 
         while (!receiveQueue.isEmpty() && ModAPI.getAPI().getPlayer() != null) {
-            ClientChatReceivedEvent event = new ClientChatReceivedEvent((byte) 1, receiveQueue.poll());
-            MinecraftForge.EVENT_BUS.post(event);
-            if (!event.isCanceled()) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(event.message);
-            }
+            ModAPI.getAPI().getPlayer().sendMessage(receiveQueue.poll());
         }
     }
-
-
 }

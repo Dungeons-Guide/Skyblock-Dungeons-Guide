@@ -34,16 +34,22 @@ import kr.syeyoung.modapi.world.IBlockAccessible;
 import kr.syeyoung.modapi.world.IBlockRegistry;
 import kr.syeyoung.modapi.world.IMapUtils;
 import kr.syeyoung.modapi.world.UWorld;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.json.legacyimpl.NBTLegacyHoverEventSerializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.event.HoverEvent;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import org.lwjgl.input.Mouse;
 
+import java.io.IOException;
 import java.util.List;
 
 public class ModAPIImpl implements ModAPI {
@@ -98,6 +104,11 @@ public class ModAPIImpl implements ModAPI {
         @Override
         public String getPlatformVersion() {
             return ForgeVersion.getVersion();
+        }
+
+        @Override
+        public boolean isOldChat() {
+            return true;
         }
 
         public static final PlatformImpl INST = new PlatformImpl();
@@ -229,5 +240,27 @@ public class ModAPIImpl implements ModAPI {
     @Override
     public IMapUtils getMapUtils() {
         return MapDataManager.INSTANCE;
+    }
+
+    @Override
+    public Component getHoveredComponent() {
+        IChatComponent ichatcomponent = Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
+        if (ichatcomponent == null) return null;
+        if (ichatcomponent.getChatStyle() == null) return null;
+        if (ichatcomponent.getChatStyle().getChatHoverEvent() == null) return null;
+        HoverEvent hoverEvent = ichatcomponent.getChatStyle().getChatHoverEvent();
+        if (hoverEvent.getAction() != HoverEvent.Action.SHOW_ITEM) return null;
+        try {
+            net.kyori.adventure.text.event.HoverEvent.ShowItem showItem = NBTLegacyHoverEventSerializer.get().deserializeShowItem(
+                    Component.text(hoverEvent.getValue().getUnformattedText())
+            );
+            return Component.text(ichatcomponent.getUnformattedText()).hoverEvent(net.kyori.adventure.text.event.HoverEvent.showItem(showItem));
+        } catch (IOException e) {
+            return null;
+        }
+
+//        String json = IChatComponent.Serializer.componentToJson(ichatcomponent);
+//        return GsonComponentSerializer.colorDownsamplingGson().deserialize(json); apparently adventure has a bug where it is unable to deserialize legacy hover event. welp. #890. but I'm in a rush to impl 1.21 so let me just hack a solution.
+
     }
 }
