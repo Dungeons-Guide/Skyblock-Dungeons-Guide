@@ -23,6 +23,7 @@ import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import net.minecraft.scoreboard.IScoreObjectiveCriteria;
 
 import java.util.*;
@@ -31,12 +32,17 @@ import java.util.*;
 public class Objective implements UObjective {
     @Getter
     private final String objectiveName;
-    @Getter @Setter
+    @Setter
     private String displayName;
     @Getter @Setter
     private IScoreObjectiveCriteria.EnumRenderType displayType;
     private SortedSet<Score> scores = new TreeSet<>(Comparator.comparingInt(Score::getScore).reversed());
     private Map<String, Score> currentObjects = new HashMap<>();
+
+    @Override
+    public Component getDisplayName() {
+        return Component.text(displayName);
+    }
 
     public SortedSet<? extends UScore> getScores() {
         return Collections.unmodifiableSortedSet(scores);

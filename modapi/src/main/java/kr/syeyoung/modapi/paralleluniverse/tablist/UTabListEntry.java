@@ -11,7 +11,7 @@ public interface UTabListEntry {
 
     String getEffectiveName();
 
-    String getPing();
+    int getPing();
 
     GameMode getGameMode();
 
