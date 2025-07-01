@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors;
 
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.util.IChatComponent;
+import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
 
 public class ChatDetectorGuildPartyList implements IChatDetector {
     @Override
-    public List<ReplacementContext> getReplacementContext(IChatComponent chatComponent) {
-        String formatted = chatComponent.getFormattedText();
+    public List<ReplacementContext> getReplacementContext(Component chatComponent) {
+        String formatted = TextUtils.getNearestFormattedText(chatComponent);
         if (!(formatted.contains("§c ● ") || formatted.contains("§a ● ") ||
                 formatted.contains("§c●") || formatted.contains("§a●"))) {
             return null;
@@ -44,7 +44,6 @@ public class ChatDetectorGuildPartyList implements IChatDetector {
             if (s.startsWith("[")) continue;
             if (s.endsWith(":")) continue;
 
-            if (!(formatted.contains(s+"§r") || formatted.contains(s+" §r") )) continue;
             players.add(s);
         }
 

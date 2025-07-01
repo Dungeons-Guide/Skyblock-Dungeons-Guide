@@ -128,6 +128,8 @@ public class ChatProcessor {
     private ThreadLocal<Stack<Component>> origin = ThreadLocal.withInitial(() -> new Stack<>());
     @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FIRST)
     public void onChatReceived1(ChatReceivedEvent event) {
+        System.out.println(event.chat);
+
         origin.get().push(event.chat);
         DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
                 TextUtils.getNearestFormattedText(event.chat),

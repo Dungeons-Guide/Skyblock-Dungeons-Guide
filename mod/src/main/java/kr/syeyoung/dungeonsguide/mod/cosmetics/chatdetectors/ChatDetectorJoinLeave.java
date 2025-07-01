@@ -20,32 +20,32 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors;
 
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.util.IChatComponent;
+import net.kyori.adventure.text.Component;
 
 import java.util.Collections;
 import java.util.List;
 
 public class ChatDetectorJoinLeave implements IChatDetector {
     @Override
-    public List<ReplacementContext> getReplacementContext(IChatComponent chatComponent) {
-        String formatted = chatComponent.getFormattedText();
-        if (formatted.startsWith("§aFriend > §r")) {
-            if (formatted.endsWith("§r§eleft.§r") || formatted.endsWith("§r§ejoined.§r")) {
+    public List<ReplacementContext> getReplacementContext(Component chatComponent) {
+        String formatted = TextUtils.getNearestFormattedText(chatComponent);
+        if (formatted.startsWith("§aFriend > ")) {
+            if (formatted.endsWith("§eleft.") || formatted.endsWith("§ejoined.")) {
                 String strip = TextUtils.stripColor(formatted);
                 String username = strip.substring(9, strip.indexOf(' ', 9));
                 return Collections.singletonList(new ReplacementContext(
                         9, username, null
                 ));
             }
-        } else if (formatted.startsWith("§2Guild > §r§6")) {
-            if (formatted.endsWith("§r§eleft.§r") || formatted.endsWith("§r§ejoined.§r")) {
+        } else if (formatted.startsWith("§2Guild > §6")) {
+            if (formatted.endsWith("§eleft.") || formatted.endsWith("§ejoined.")) {
                 String strip = TextUtils.stripColor(formatted);
                 String username = strip.substring(8, strip.indexOf(' ', 8));
                 return Collections.singletonList(new ReplacementContext(
                         8, username, null
                 ));
             }
-        }  else if (formatted.endsWith("§6joined the lobby!§r")) {
+        }  else if (formatted.endsWith("§6joined the lobby!")) {
             String[] messageSplit = TextUtils.stripColor(formatted).split(" ");
             String oldLeader = null;
             for (String s : messageSplit) {
@@ -57,7 +57,7 @@ public class ChatDetectorJoinLeave implements IChatDetector {
                 return Collections.singletonList(new ReplacementContext(
                         TextUtils.stripColor(formatted).indexOf(oldLeader), oldLeader, null
                 ));
-        } else if (formatted.endsWith("§6joined the lobby!§r §a<§c<§b<§r")) {
+        } else if (formatted.endsWith("§6joined the lobby! §a<§c<§b<")) {
             String[] messageSplit = TextUtils.stripColor(formatted.substring(15)).split(" ");
             String oldLeader = null;
             for (String s : messageSplit) {
@@ -69,7 +69,7 @@ public class ChatDetectorJoinLeave implements IChatDetector {
                 return Collections.singletonList(new ReplacementContext(
                         TextUtils.stripColor(formatted).indexOf(oldLeader), oldLeader, null
                 ));
-        } else if (formatted.startsWith("§b✦ ") && formatted.contains("§r§7found a ") && formatted.endsWith("§r§bMystery Box§r§7!§r")) {
+        } else if (formatted.startsWith("§b✦ ") && formatted.contains("§7found a ") && formatted.endsWith("§bMystery Box§7!")) {
             String[] messageSplit = TextUtils.stripColor(formatted.substring(4)).split(" ");
             String oldLeader = null;
             for (String s : messageSplit) {

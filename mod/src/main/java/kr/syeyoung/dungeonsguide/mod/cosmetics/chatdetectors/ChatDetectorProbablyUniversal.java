@@ -21,26 +21,26 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
-import net.minecraft.event.ClickEvent;
-import net.minecraft.util.IChatComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentIteratorType;
+import net.kyori.adventure.text.event.ClickEvent;
 
 import java.util.Collections;
 import java.util.List;
 
 public class ChatDetectorProbablyUniversal implements IChatDetector {
     @Override
-    public List<ReplacementContext> getReplacementContext(IChatComponent chatComponent) {
-        String formatted = chatComponent.getFormattedText();
+    public List<ReplacementContext> getReplacementContext(Component chatComponent) {
+        String formatted = TextUtils.getNearestFormattedText(chatComponent);
         if (!formatted.contains(": ")) return null;
 
-
         boolean correspondingEvFound = false;
-        for (IChatComponent iChatComponent : chatComponent) {
-            ClickEvent ev = iChatComponent.getChatStyle().getChatClickEvent();
-            if (ev != null) {
-                if (ev.getValue().startsWith("/msg")) correspondingEvFound = true;
-                if (ev.getValue().startsWith("/socialoptions")) correspondingEvFound = true;
-                if (ev.getValue().startsWith("/viewprofile")) correspondingEvFound = true;
+        for (Component component : chatComponent.iterable(ComponentIteratorType.DEPTH_FIRST)) {
+            ClickEvent ev = component.clickEvent();
+            if (ev != null && ev.action() == ClickEvent.Action.RUN_COMMAND) {
+                if (ev.value().startsWith("/msg")) correspondingEvFound = true;
+                if (ev.value().startsWith("/socialoptions")) correspondingEvFound = true;
+                if (ev.value().startsWith("/viewprofile")) correspondingEvFound = true;
             }
         }
 

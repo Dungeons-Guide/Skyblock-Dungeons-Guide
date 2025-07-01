@@ -32,16 +32,19 @@ import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
+import kr.syeyoung.modapi.event.ListenerPriority;
+import kr.syeyoung.modapi.event.events.ChatReceivedEvent;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentIteratorType;
+import net.kyori.adventure.text.TextComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -243,13 +246,12 @@ public class CosmeticsManager {
     }
 
     private final ThreadLocal<Stack<List<ReplacementContext>>> contextThreadLocal = new ThreadLocal<>();
-    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
-    public void onChatDetect(ClientChatReceivedEvent clientChatReceivedEvent) {
+    @kr.syeyoung.modapi.event.SubscribeEvent(priority = ListenerPriority.FIRST, receiveCanceled = true)
+    public void onChatDetect(ChatReceivedEvent clientChatReceivedEvent) {
         try {
-            if (clientChatReceivedEvent.type == 2) return;
             List<ReplacementContext> total = new ArrayList<>();
             for (IChatDetector iChatReplacer : iChatDetectors) {
-                List<ReplacementContext> replacementContext = iChatReplacer.getReplacementContext(clientChatReceivedEvent.message);
+                List<ReplacementContext> replacementContext = iChatReplacer.getReplacementContext(clientChatReceivedEvent.chat);
                 if (replacementContext != null) {
                     total.addAll(replacementContext);
                 }
@@ -258,18 +260,17 @@ public class CosmeticsManager {
                 contextThreadLocal.set(new Stack<>());
             contextThreadLocal.get().push(total);
         } catch (Exception t) {
-            System.out.println(clientChatReceivedEvent.message);
+            System.out.println(clientChatReceivedEvent.chat);
             FeatureCollectDiagnostics.queueSendLogAsync(t);
             t.printStackTrace();
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+    @kr.syeyoung.modapi.event.SubscribeEvent(priority = ListenerPriority.LAST, receiveCanceled = true)
+    public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
         try {
             Stack<List<ReplacementContext>> threadCtx = contextThreadLocal.get();
             if (threadCtx == null) return;
-            if (clientChatReceivedEvent.type == 2) return;
             if (clientChatReceivedEvent.isCanceled()) {
                 threadCtx.pop();
                 return;
@@ -277,7 +278,9 @@ public class CosmeticsManager {
 
             List<ReplacementContext> replacementContexts = threadCtx.pop();
 
-            LinkedList<IChatComponent> chatComponents = SurgicalReplacer.linearifyMoveColorCharToStyle(clientChatReceivedEvent.message);
+            Component replaceTarget = clientChatReceivedEvent.chat;
+
+//            LinkedList<Component> chatComponents = SurgicalReplacer.linearifyMoveColorCharToStyle(clientChatReceivedEvent.chat);
             for (ReplacementContext replacementContext : replacementContexts) {
                 if (replacementContext.getUsername().isEmpty()) continue;
                 List<ActiveCosmetic> activeCosmetics = getActiveCosmeticByPlayerNameLowerCase()
@@ -308,11 +311,12 @@ public class CosmeticsManager {
                     }
                 }
 
-
+//                replaceTarget.ren
                 StringBuilder sb = new StringBuilder();
-                for (IChatComponent chatComponent : chatComponents) {
-                    String str = chatComponent.getUnformattedText();
-                    sb.append(str);
+                for (Component component : replaceTarget.iterable(ComponentIteratorType.DEPTH_FIRST)) {
+                    if (component instanceof TextComponent) {
+                        sb.append(((TextComponent) component).content());
+                    }
                 }
 
                 List<Integer> allIdxes = new ArrayList<>();
@@ -328,15 +332,10 @@ public class CosmeticsManager {
                         .min(Comparator.comparingInt(a -> Math.abs(a - replacementContext.getNearIdx()))).orElse(-1);
 
                 if (idx == -1) {
-                    List<IChatComponent> components = SurgicalReplacer.inject(chatComponents,
-                            SurgicalReplacer.linearifyMoveColorCharToStyle(
-                                    new ChatComponentText(prefix+" ")
-                                            .setChatStyle(SurgicalReplacer.getChatStyleAt(chatComponents, 0))
-                            ),
-                            0, 0);
-                    clientChatReceivedEvent.message = SurgicalReplacer.combine(components);
-                    // since we couldn't find username anywhere, just do this.
-                    return;
+                    replaceTarget = Component.text(
+                            prefix
+                    ).append(replaceTarget);
+                    continue; // since we can't find target, continue.
                 }
 
                 int stIdx = theThing.lastIndexOf('\n', idx) + 1;
@@ -358,25 +357,23 @@ public class CosmeticsManager {
                 startingSearch += stIdx;
 
                 if (color != null)
-                    chatComponents = SurgicalReplacer.inject(chatComponents,
-                            SurgicalReplacer.linearifyMoveColorCharToStyle(
-                                    new ChatComponentText(color+replacementContext.getUsername())
-                                            .setChatStyle(SurgicalReplacer.getChatStyleAt(chatComponents, idx))
-                            ),
-                            idx, replacementContext.getUsername().length());
+                    replaceTarget = SurgicalReplacer.inject(idx, replacementContext.getUsername().length(),
+                            replaceTarget,
+                            Component.text(
+                                    color+replacementContext.getUsername()
+                            ));
 
                 if (prefix != null)
-                    chatComponents = SurgicalReplacer.inject(chatComponents,
-                            SurgicalReplacer.linearifyMoveColorCharToStyle(
-                                    new ChatComponentText(prefix+" ")
-                                            .setChatStyle(SurgicalReplacer.getChatStyleAt(chatComponents, 0))
-                            ),
-                            startingSearch, 0);
+                    replaceTarget = SurgicalReplacer.inject(startingSearch, 0,
+                            replaceTarget,
+                            Component.text(
+                                    prefix+" "
+                            ));
             }
-            clientChatReceivedEvent.message = SurgicalReplacer.combine(chatComponents);
+            clientChatReceivedEvent.chat = replaceTarget;
         } catch (Exception t) {
             FeatureCollectDiagnostics.queueSendLogAsync(t);
-            System.out.println(clientChatReceivedEvent.message);
+            System.out.println(clientChatReceivedEvent.chat);
             t.printStackTrace();
         }
     }

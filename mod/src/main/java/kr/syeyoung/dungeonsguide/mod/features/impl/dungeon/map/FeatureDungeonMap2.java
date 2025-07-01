@@ -18,8 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map;
 
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Ordering;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -54,9 +52,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import lombok.Getter;
-import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.world.WorldSettings;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -174,12 +169,6 @@ public class FeatureDungeonMap2 extends AbstractHUDFeature {
 
     @Getter
     private final MapConfiguration mapConfiguration = new MapConfiguration();
-
-    public static final Ordering<NetworkPlayerInfo> sorter = Ordering.from((compare1, compare2) -> {
-        ScorePlayerTeam scorePlayerTeam = compare1.getPlayerTeam();
-        ScorePlayerTeam scorePlayerTeam1 = compare2.getPlayerTeam();
-        return ComparisonChain.start().compareTrueFirst(compare1.getGameType() != WorldSettings.GameType.SPECTATOR, compare2.getGameType() != WorldSettings.GameType.SPECTATOR).compare(scorePlayerTeam != null ? scorePlayerTeam.getRegisteredName() : "", scorePlayerTeam1 != null ? scorePlayerTeam1.getRegisteredName() : "").compare(compare1.getGameProfile().getName(), compare2.getGameProfile().getName()).result();
-    });
 
     @Override
     public JsonObject saveConfig() {
