@@ -362,7 +362,7 @@ public class PartyManager {
         cp.subscribe(new ChatSubscriber() {
             @Override
             public ChatProcessResult process(String str, Map<String, Object> a) {
-                if (str.contains("§r§ejoined the dungeon group! (§r§b")) {
+                if (str.contains("§ejoined the dungeon group! (§b")) {
                     String username = TextUtils.stripColor(str).split(" ")[3];
                     if (username.equalsIgnoreCase(ModAPI.getAPI().getSession().getUsername())) {
                         partyContext = new PartyContext();
@@ -590,7 +590,7 @@ public class PartyManager {
             ChatProcessor.INSTANCE.addToChatQueue("/p accept "+invFrom, () -> {}, true);
             long end = System.currentTimeMillis() + 3000;
             ChatProcessor.INSTANCE.subscribe((str, a) -> {
-                if (!str.contains("§r§ehas invited you to join their party!")) return System.currentTimeMillis() > end ? ChatProcessResult.REMOVE_LISTENER : ChatProcessResult.NONE;
+                if (!str.contains("§ehas invited you to join their party!")) return System.currentTimeMillis() > end ? ChatProcessResult.REMOVE_LISTENER : ChatProcessResult.NONE;
                 String[] messageSplit = TextUtils.stripColor(str).split(" ");
                 String inviter = null;
                 for (String s : messageSplit) {

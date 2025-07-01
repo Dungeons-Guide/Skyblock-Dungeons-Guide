@@ -77,7 +77,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
 
 
         ChatProcessor.INSTANCE.subscribe(((txt, messageContext) -> {
-            if (isEnabled() && txt.contains("§r§ejoined the dungeon group! (§r§b")) {
+            if (isEnabled() && txt.contains("§ejoined the dungeon group! (§b")) {
                 String username = TextUtils.stripColor(txt).split(" ")[3];
                 if (username.equalsIgnoreCase(mc.getSession().getUsername())) {
                     PartyManager.INSTANCE.requestPartyList(context -> {

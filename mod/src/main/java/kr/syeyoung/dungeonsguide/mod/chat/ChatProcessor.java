@@ -18,27 +18,22 @@
 
 package kr.syeyoung.dungeonsguide.mod.chat;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.ListenerPriority;
+import kr.syeyoung.modapi.event.SubscribeEvent;
 import kr.syeyoung.modapi.event.events.ChatReceivedEvent;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.simple.SimpleLogger;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ChatProcessor {
@@ -89,21 +84,18 @@ public class ChatProcessor {
     }
 
 
-    @kr.syeyoung.modapi.event.SubscribeEvent(priority = ListenerPriority.FIRST, receiveCanceled = true)
-    public void onEvent(ChatReceivedEvent event) {
-        logger.info("[CHAT] {}", TextUtils.getNearestFormattedText(event.chat));
-    }
+    private ThreadLocal<Stack<Boolean>> chatEventLocal = ThreadLocal.withInitial(Stack::new);
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
-    public void onMessage(ClientChatReceivedEvent chatReceivedEvent) {
-        if (chatReceivedEvent.type == 2) return;
-        String txt = chatReceivedEvent.message.getFormattedText();
-        logger.info("[CHAT] {}", chatReceivedEvent.message.getFormattedText());
+    @SubscribeEvent(priority = ListenerPriority.FIRST, receiveCanceled = true)
+    public void onEvent(ChatReceivedEvent event) {
+        String txt = TextUtils.getNearestFormattedText(event.chat);
+        logger.info("[CHAT] {}", txt);
 
         int processed = 0;
         int listened = 0;
         Map<String, Object> context = new HashMap<>();
         Iterator<ChatSubscriber> it = chatSubscriberQueue.iterator();
+        boolean result = event.isCanceled();
         while (it.hasNext()) {
             ChatSubscriber chatSubscribed = it.next();
             context.put("removed", processed);
@@ -113,19 +105,20 @@ public class ChatProcessor {
                 if (chatProcessResult.isRemoveChat()) processed++;
                 if (chatProcessResult.isRemoveListener()) listened++;
 
-                if (chatProcessResult.isRemoveChat()) chatReceivedEvent.setResult(Event.Result.DENY);
+                if (chatProcessResult.isRemoveChat()) result = true;
                 if (chatProcessResult.isRemoveListener()) it.remove();
             } catch (Exception e) {
                 FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
             }
         }
+        chatEventLocal.get().push(result);
     }
 
-
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void cancelMessage(ClientChatReceivedEvent chatReceivedEvent) {
-        if (chatReceivedEvent.getResult() == Event.Result.DENY)
+    @SubscribeEvent(priority = ListenerPriority.LAST, receiveCanceled = true)
+    public void cancelMessage(DGChatReceivedEvent chatReceivedEvent) {
+        if (chatEventLocal.get().pop()) {
             chatReceivedEvent.setCanceled(true);
+        }
     }
 }
