@@ -34,6 +34,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BossroomEnterEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
@@ -46,9 +47,7 @@ import kr.syeyoung.modapi.world.UMapData;
 import kr.syeyoung.modapi.world.UWorld;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -236,12 +235,11 @@ public class DungeonContext {
     @Getter
     private boolean defeated = false;
 
-    public void onChat(ClientChatReceivedEvent event) {
-        IChatComponent component = event.message;
-        String formatted = component.getFormattedText();
+    public void onChat(DGChatReceivedEvent event) {
+        String formatted = event.getFormattedText();
         if (formatted.contains("$DG-Comm")) {
             event.setCanceled(true);
-            String data = component.getFormattedText().substring(component.getFormattedText().indexOf("$DG-Comm"));
+            String data = formatted.substring(formatted.indexOf("$DG-Comm"));
             String actual = TextUtils.stripColor(data);
             String coords = actual.split(" ")[1];
             String secrets = actual.split(" ")[2];
@@ -256,12 +254,12 @@ public class DungeonContext {
             }
         } else if (formatted.contains("$DG-Mimic")) {
             setGotMimic(true);
-        } else if (formatted.startsWith("§r§c§lPUZZLE FAIL! ") && formatted.endsWith(" §r§4Y§r§ci§r§6k§r§ee§r§as§r§2!§r")) {
+        } else if (TextUtils.startsWith(formatted, "§c§lPUZZLE FAIL! ") && TextUtils.startsWith(formatted, " §4Y§ci§6k§ee§as§2!")) {
             recorder.createEvent(new DungeonPuzzleFailureEvent(TextUtils.stripColor(formatted.split(" ")[2]), formatted));
-        } else if (formatted.contains("§6> §e§lEXTRA STATS §6<")) {
+        } else if (TextUtils.contains(formatted, "§6> §e§lEXTRA STATS §6<")) {
             recorder.createEvent(new DungeonNodataEvent("DUNGEON_END"));
             ended = true;
-        } else if (formatted.contains("§r§c☠ §r§eDefeated ")) {
+        } else if (TextUtils.contains(formatted, "§c☠ §eDefeated ")) {
             defeated = true;
         }
     }

@@ -36,6 +36,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.c
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.goldenpath.GoldenPathProcessorMatcher;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.maze.MazeProcessorMatcher;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.number.NumberProcessorMatcher;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
@@ -181,7 +182,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent component) {
+    public void chatReceived(DGChatReceivedEvent component) {
         super.chatReceived(component);
         if (bugged) return;
         for (ChamberSet ch:chambers) {

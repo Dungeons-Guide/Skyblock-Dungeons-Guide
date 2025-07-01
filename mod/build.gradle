@@ -105,6 +105,8 @@ dependencies {
 
     compileOnly project(path: ":modapi")
     compileOnly project(path: ":1.8.9-loader")
+
+    implementation("net.kyori:adventure-text-serializer-legacy:4.23.0")
 }
 
 

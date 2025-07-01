@@ -35,11 +35,13 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonValueEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditOffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.CoordinateMapBackedPathfindWorld;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.data.Pair;
@@ -139,8 +141,9 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
-        if (lastChest != null && chat.getFormattedText().equals("§r§cThis chest has already been searched!§r")) {
+    public void chatReceived(DGChatReceivedEvent chat) {
+        String format = chat.getFormattedText();
+        if (lastChest != null && format.equals("§cThis chest has already been searched!")) {
             for (DungeonMechanicState mechanic : getDungeonRoom().getMechanics().values()) {
                 if (mechanic instanceof DungeonSecretChestState) {
                     DungeonSecretChestState chest = (DungeonSecretChestState) mechanic;
@@ -158,14 +161,14 @@ public class GeneralRoomProcessor implements RoomProcessor {
             }
             lastChest = null;
         }
-        if (chat.getFormattedText().equals("§r§aYou found a Secret Redstone Key!§r")) {
+        if (TextUtils.compareString(format, "§aYou found a Secret Redstone Key!")) {
             for (DungeonMechanicState value : getDungeonRoom().getMechanics().values()) {
                 if (value instanceof DungeonRedstoneKeyState) {
                     ((DungeonRedstoneKeyState) value).setDidClickOnRedstoneKey(true);
                 }
             }
         }
-        if (chat.getFormattedText().equals("§e[NPC] Wizard§f: §rOh my lovely crystal ball, mi so happy§r")) {
+        if (TextUtils.compareString(format, "§e[NPC] Wizard§f: Oh my lovely crystal ball, mi so happy")) {
             for (DungeonMechanicState value : getDungeonRoom().getMechanics().values()) {
                 if (value instanceof DungeonWizardState) {
                     ((DungeonWizardState) value).setDidCompleteQuest(true);

@@ -20,11 +20,12 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
-import net.minecraft.util.IChatComponent;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -73,7 +74,7 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(DGChatReceivedEvent chat) {
         super.chatReceived(chat);
         if (bugged) return;
 
@@ -81,19 +82,19 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
         if (clicked + 500 < System.currentTimeMillis()) return;
 
         String msg = chat.getFormattedText();
-        if (msg.equals("§r§cThis button doesn't seem to do anything...§r")) {
+        if (TextUtils.compareString(msg, "§cThis button doesn't seem to do anything...")) {
             result[clickedButton] = -1;
             clickedButton = -1;
-        } else if (msg.equals("§r§aThis button seems connected to something§r")) {
+        } else if (TextUtils.compareString(msg, "§aThis button seems connected to something")) {
             Arrays.fill(result, -1);
             if (clickedButton % 4 != 0) result[clickedButton - 1] = 1;
             if (clickedButton % 4 != 3) result[clickedButton + 1] = 1;
             clickedButton = -1;
-        } else if (msg.equals("§r§aClick! you Hear the sound of a door opening§r")) {
+        } else if (TextUtils.compareString(msg, "§aClick! you Hear the sound of a door opening")) {
             Arrays.fill(result, -1);
             result[clickedButton] = 2;
             clickedButton = -1;
-        } else if (msg.equals("§r§aWrong button, looks like the system reset!§r")) {
+        } else if (TextUtils.compareString(msg, "§aWrong button, looks like the system reset!")) {
             Arrays.fill(result, 0);
             clickedButton = -1;
         }

@@ -12,6 +12,10 @@ import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
 import lombok.AllArgsConstructor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.minecraft.util.IChatComponent;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -64,11 +68,31 @@ public class EventListener {
                 event.face == null ? null : EnumFacing.VALUES[event.face.getIndex()],
                 event.localPos == null ? null : new Vector3D(event.localPos.xCoord, event.localPos.yCoord, event.localPos.zCoord)
         );
+        interactEvent.setCanceled(event.isCanceled());
         ModAPI.getAPI().getEventBus().fireEvent(interactEvent, mapPriority(priority));
+        event.setCanceled(interactEvent.isCanceled());
     }
 
     public void onWorldUnload(WorldEvent.Unload event, EventPriority priority) {
         ModAPI.getAPI().getEventBus().fireEvent(new WorldUnloadEvent(), mapPriority(priority));
+    }
+
+    public void onChat(ClientChatReceivedEvent receivedEvent, EventPriority priority) {
+        Component c = GsonComponentSerializer.colorDownsamplingGson().deserialize(IChatComponent.Serializer.componentToJson(receivedEvent.message));
+        if (receivedEvent.type == 2) {
+            ActionBarReceivedEvent event = new ActionBarReceivedEvent(c,c);
+            ModAPI.getAPI().getEventBus().fireEvent(event, mapPriority(priority));
+            if (event.chat != event.original) {
+                receivedEvent.message = IChatComponent.Serializer.jsonToComponent(GsonComponentSerializer.colorDownsamplingGson().serialize(event.chat));
+            }
+        } else {
+            ChatReceivedEvent event = new ChatReceivedEvent(c,c, receivedEvent.type == 1, receivedEvent.isCanceled());
+            ModAPI.getAPI().getEventBus().fireEvent(event, mapPriority(priority));
+            receivedEvent.setCanceled(event.isCanceled());
+            if (event.chat != event.original) {
+                receivedEvent.message = IChatComponent.Serializer.jsonToComponent(GsonComponentSerializer.colorDownsamplingGson().serialize(event.chat));
+            }
+        }
     }
 
     private ListenerPriority mapPriority(EventPriority priority) {
@@ -127,6 +151,8 @@ public class EventListener {
         registerEvents(EntityJoinWorldEvent.class, this::onEntityJoinWorld);
         registerEvents(TickEvent.ClientTickEvent.class, this::onClientTick);
         registerEvents(PlayerInteractEvent.class, this::onPlayerInteract);
+        registerEvents(WorldEvent.Unload.class, this::onWorldUnload);
+        registerEvents(ClientChatReceivedEvent.class, this::onChat);
     }
 
     public void unregister() {

@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers;
 
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.modapi.ModAPI;
@@ -68,7 +69,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(DGChatReceivedEvent chat) {
 
     }
 

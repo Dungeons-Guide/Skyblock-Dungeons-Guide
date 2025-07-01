@@ -18,6 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.utils;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -119,4 +122,40 @@ public class TextUtils {
         return sb.toString();
     }
 
+    public static String getNearestFormattedText(Component component) {
+        return LegacyComponentSerializer.legacySection().serialize(component);
+    }
+
+    public static boolean compareString(String a, String b) {
+        if (a.equals(b)) return true;
+
+        if (a.replace("§r", "").equals(b.replace("§r", ""))) {
+            System.out.println("MISMATCH!! equals: Origin: '"+a+"' Found: '"+b+"'");
+            Thread.dumpStack();
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean startsWith(String a, String b) {
+        if (a.startsWith(b)) return true;
+
+        if (a.replace("§r", "").startsWith(b.replace("§r", ""))) {
+            System.out.println("MISMATCH!! startsWith: Origin: '"+a+"' Found: '"+b+"'");
+            Thread.dumpStack();
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean contains(String a, String b) {
+        if (a.contains(b)) return true;
+
+        if (a.replace("§r", "").contains(b.replace("§r", ""))) {
+            System.out.println("MISMATCH!! startsWith: Origin: '"+a+"' Found: '"+b+"'");
+            Thread.dumpStack();
+            return true;
+        }
+        return false;
+    }
 }

@@ -35,37 +35,37 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
         super("CATACOMBS_FLOOR_SIX");
         addPhase(PhaseData.builder()
                 .phase("start")
-                .signatureMsg("So you made it all the way §r§fhere...and§r§f you wish to defy me? Sadan?!§r")
+                .signatureMsg("So you made it all the way §fhere...and§f you wish to defy me? Sadan?!")
                 .nextPhase("fight-1").build()
         );
         addPhase(PhaseData.builder()
                 .phase("fight-1")
-                .signatureMsg("§r§c[BOSS] Sadan §r§f: I am the bridge between this realm and the world below! You shall not pass!§r")
+                .signatureMsg("§c[BOSS] Sadan §f: I am the bridge between this realm and the world below! You shall not pass!")
                 .nextPhase("first-defeat").build()
         );
         addPhase(PhaseData.builder()
                 .phase("first-defeat")
-                .signatureMsg("§r§c[BOSS] Sadan §r§f: ENOUGH!§r")
+                .signatureMsg("§c[BOSS] Sadan §f: ENOUGH!")
                 .nextPhase("fight-2").build()
         );
         addPhase(PhaseData.builder()
                 .phase("fight-2")
-                .signatureMsg("§r§c[BOSS] Sadan §r§f: My giants! Unleashed!§r")
+                .signatureMsg("§c[BOSS] Sadan §f: My giants! Unleashed!")
                 .nextPhase("second-defeat").build()
         );
         addPhase(PhaseData.builder()
                 .phase("second-defeat")
-                .signatureMsg("§r§c[BOSS] Sadan §r§f: You did it. I understand now, you have earned my respect.§r")
+                .signatureMsg("§c[BOSS] Sadan §f: You did it. I understand now, you have earned my respect.")
                 .nextPhase("fight-3").build()
         );
         addPhase(PhaseData.builder()
                 .phase("fight-3")
-                .signatureMsg("§r§c[BOSS] Sadan §r§f: I'm sorry but I need to concentrate. I wish it didn't have to come to this.§r")
+                .signatureMsg("§c[BOSS] Sadan §f: I'm sorry but I need to concentrate. I wish it didn't have to come to this.")
                 .nextPhase("final-defeat").build()
         );
         addPhase(PhaseData.builder()
                 .phase("final-defeat")
-                .signatureMsg("§r§c[BOSS] Sadan §r§f: NOOOOOOOOO!!! THIS IS IMPOSSIBLE!!§r").build()
+                .signatureMsg("§c[BOSS] Sadan §f: NOOOOOOOOO!!! THIS IS IMPOSSIBLE!!").build()
         );
     }
 

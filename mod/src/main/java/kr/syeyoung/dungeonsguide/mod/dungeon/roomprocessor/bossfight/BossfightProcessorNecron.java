@@ -137,61 +137,61 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
         super("CATACOMBS_FLOOR_SEVEN");
         addPhase(PhaseData.builder()
                 .phase("maxor-fight")
-                .signatureMsg("§r§4[BOSS] Maxor§r§c: §r§cWELL! WELL! WELL! LOOK WHO'S HERE!§r")
+                .signatureMsg("§4[BOSS] Maxor§c: §cWELL! WELL! WELL! LOOK WHO'S HERE!")
                 .nextPhase("storm-fight").nextPhase("lost").build()
         );
         addPhase(PhaseData.builder()
                 .phase("storm-fight")
-                .signatureMsg("§r§4[BOSS] Storm§r§c: §r§cPathetic Maxor, just like expected.§r")
+                .signatureMsg("§4[BOSS] Storm§c: §cPathetic Maxor, just like expected.")
                 .nextPhase("goldor-terminals-1").nextPhase("lost").build()
         );
         addPhase(PhaseData.builder()
                 .phase("goldor-terminals-1")
-                .signatureMsg("§r§4[BOSS] Goldor§r§c: §r§cWho dares trespass into my domain?§r")
+                .signatureMsg("§4[BOSS] Goldor§c: §cWho dares trespass into my domain?")
                 .nextPhase("goldor-terminals-2").nextPhase("lost").build()
         );
         addPhase(PhaseData.builder()
                 .phase("goldor-terminals-2")
-                .signatureMsg("§r§aThe gate has been destroyed!§r")
+                .signatureMsg("§aThe gate has been destroyed!")
                 .nextPhase("goldor-terminals-3").nextPhase("lost").build()
         );
         addPhase(PhaseData.builder()
                 .phase("goldor-terminals-3")
-                .signatureMsg("§r§aThe gate has been destroyed!§r")
+                .signatureMsg("§aThe gate has been destroyed!")
                 .nextPhase("goldor-terminals-4").nextPhase("lost").build()
         );
 
         addPhase(PhaseData.builder()
                 .phase("goldor-terminals-4")
-                .signatureMsg("§r§aThe gate has been destroyed!§r")
+                .signatureMsg("§aThe gate has been destroyed!")
                 .nextPhase("goldor-fight").nextPhase("lost").build()
         );
         addPhase(PhaseData.builder()
                 .phase("goldor-fight")
-                .signatureMsg("§r§aThe Core entrance is opening!§r")
+                .signatureMsg("§aThe Core entrance is opening!")
                 .nextPhase("necron-intro").nextPhase("lost").build()
         );
         addPhase(PhaseData.builder()
                 .phase("necron-intro")
-                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cYou went further than any human before, congratulations.§r")
-                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cFinally, I heard so much about you. The Eye likes you very much.§r")
+                .signatureMsg("§4[BOSS] Necron§c: §cYou went further than any human before, congratulations.")
+                .signatureMsg("§4[BOSS] Necron§c: §cFinally, I heard so much about you. The Eye likes you very much.")
                 .nextPhase("necron-fight").nextPhase("lost").build()
         );
         addPhase(PhaseData.builder()
                 .phase("necron-fight")
-                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cThat's a very impressive trick. I guess I'll have to handle this myself.§r")
+                .signatureMsg("§4[BOSS] Necron§c: §cThat's a very impressive trick. I guess I'll have to handle this myself.")
                 .nextPhase("won").nextPhase("lost").build()
         );
         addPhase(PhaseData.builder()
                 .phase("won")
-                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cAll this, for nothing...§r").build()
+                .signatureMsg("§4[BOSS] Necron§c: §cAll this, for nothing...").build()
         );
         addPhase(PhaseData.builder()
                 .phase("lost")
-                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cFINALLY! This took way too long.§r")
-                .signatureMsg("§r§4[BOSS] Goldor§r§c: §r§cFINALLY! This took way too long.§r")
-                .signatureMsg("§r§4[BOSS] Storm§r§c: §r§cFINALLY! This took way too long.§r")
-                .signatureMsg("§r§4[BOSS] Maxor§r§c: §r§cFINALLY! This took way too long.§r")
+                .signatureMsg("§4[BOSS] Necron§c: §cFINALLY! This took way too long.")
+                .signatureMsg("§4[BOSS] Goldor§c: §cFINALLY! This took way too long.")
+                .signatureMsg("§4[BOSS] Storm§c: §cFINALLY! This took way too long.")
+                .signatureMsg("§4[BOSS] Maxor§c: §cFINALLY! This took way too long.")
                 .build()
         );
     }

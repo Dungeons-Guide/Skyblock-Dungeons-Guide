@@ -46,6 +46,7 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
 import kr.syeyoung.dungeonsguide.mod.utils.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
@@ -53,6 +54,7 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
+import kr.syeyoung.modapi.event.ListenerPriority;
 import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UChunk;
@@ -97,6 +99,17 @@ public class DungeonListener {
         Config.scheduleConfigSave();
         DungeonActionContext.getSpawnLocation().clear();
         DungeonActionContext.getKilleds().clear();
+    }
+
+    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true)
+    public void onChatReceived(ChatReceivedEvent event) {
+        DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
+                TextUtils.getNearestFormattedText(event.chat),
+                event.chat,
+                event.isCanceled()
+        );
+        ModAPI.getAPI().getEventBus().fireEvent(dgChatReceivedEvent);
+        event.setCanceled(dgChatReceivedEvent.isCanceled());
     }
 
     @SubscribeEvent
@@ -316,6 +329,46 @@ public class DungeonListener {
             context.onMapUpdate(mapUpdateEvent);
         }
     }
+
+    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FIRST)
+    public void onDGChatReceived(DGChatReceivedEvent receivedEvent) {
+        if (!SkyblockStatus.isOnDungeon()) return;
+
+        String format = receivedEvent.getFormattedText();
+        if (TextUtils.contains(format, "§6> §e§lEXTRA STATS §6<")) {
+            ModAPI.getAPI().getEventBus().fireEvent(new DungeonEndedEvent());
+        }
+
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+        if (context != null) {
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
+            context.onChat(receivedEvent);
+
+            if (context.getBossfightProcessor() != null) {
+                context.getBossfightProcessor().chatReceived(receivedEvent);
+            }
+            if (context.getScaffoldParser() != null) {
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+
+
+                RoomProcessor roomProcessor = null;
+                DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
+                if (dungeonRoom != null) {
+                    if (dungeonRoom.getRoomProcessor() != null) {
+                        dungeonRoom.getRoomProcessor().chatReceived(receivedEvent);
+                        roomProcessor = dungeonRoom.getRoomProcessor();
+                    }
+                }
+
+                for (RoomProcessor globalRoomProcessor : context.getGlobalRoomProcessors()) {
+                    if (globalRoomProcessor != roomProcessor) {
+                        globalRoomProcessor.chatReceived(receivedEvent);
+                    }
+                }
+            }
+        }
+    }
+
     @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGHEST)
     public void onChatReceived(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
@@ -329,13 +382,10 @@ public class DungeonListener {
         if (context != null) {
 
             UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
-            context.onChat(clientChatReceivedEvent);
 
             if (context.getBossfightProcessor() != null) {
                 if (clientChatReceivedEvent.type == 2) {
                     context.getBossfightProcessor().actionbarReceived(clientChatReceivedEvent.message);
-                } else {
-                    context.getBossfightProcessor().chatReceived(clientChatReceivedEvent.message);
                 }
             }
             if (context.getScaffoldParser() != null) {
@@ -349,19 +399,7 @@ public class DungeonListener {
                         if (clientChatReceivedEvent.type == 2) {
                             dungeonRoom.getRoomProcessor().actionbarReceived(clientChatReceivedEvent.message);
                             roomProcessor = dungeonRoom.getRoomProcessor();
-                        } else {
-                            dungeonRoom.getRoomProcessor().chatReceived(clientChatReceivedEvent.message);
-                            roomProcessor = dungeonRoom.getRoomProcessor();
                         }
-                    }
-                }
-                if (clientChatReceivedEvent.type == 2) {
-                    return;
-                }
-
-                for (RoomProcessor globalRoomProcessor : context.getGlobalRoomProcessors()) {
-                    if (globalRoomProcessor != roomProcessor) {
-                        globalRoomProcessor.chatReceived(clientChatReceivedEvent.message);
                     }
                 }
             }

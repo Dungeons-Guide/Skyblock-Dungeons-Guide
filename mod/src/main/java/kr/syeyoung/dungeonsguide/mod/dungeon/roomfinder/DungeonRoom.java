@@ -44,8 +44,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.world.ArrayBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.WorldBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UChunk;
 import lombok.AccessLevel;
@@ -328,7 +330,7 @@ public class DungeonRoom  {
         if (getRoomBounds().canAccessRelative(x,z)) {
             return getRoomWorld().getBlockStateAt(x+roomBounds.getMinX(),y+roomBounds.getMin().getY(),z + roomBounds.getMin().getZ());
         }
-        return null;
+        return ModAPI.getAPI().getBlockRegistry().oneFromWellknown(BlockType.BEDROCK);
     }
 
     public VectorI3D getRelativeBlockPosAt(int x, int y, int z) {

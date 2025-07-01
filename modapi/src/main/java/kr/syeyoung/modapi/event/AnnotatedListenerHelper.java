@@ -16,10 +16,13 @@ public class AnnotatedListenerHelper {
     @AllArgsConstructor
     private static class AnnotatedListener<T extends UEvent> implements EventListener<T> {
         private MethodHandle methodHandle;
+        private boolean receiveCancel;
         public String name;
         @Override
         public EventProcessResult onEvent(UEvent event) {
             try {
+                if (!receiveCancel && event instanceof Cancelable)
+                    if (((Cancelable) event).isCanceled()) return EventProcessResult.COMPLETE;
                 methodHandle.invoke(event);
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -53,7 +56,7 @@ public class AnnotatedListenerHelper {
             }
 
             if (handle == null) throw new NullPointerException("What? "+o);
-            registrations.add(eventBus.registerListener(type, event.priority(), new AnnotatedListener(handle, o.getClass().getName()+"."+declaredMethod.getName()+"("+type.getName()+")")));
+            registrations.add(eventBus.registerListener(type, event.priority(), new AnnotatedListener(handle, event.receiveCanceled(), o.getClass().getName()+"."+declaredMethod.getName()+"("+type.getName()+")")));
         }
         return registrations;
     }

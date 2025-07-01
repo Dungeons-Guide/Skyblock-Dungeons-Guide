@@ -22,10 +22,10 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.util.IChatComponent;
 
 import java.awt.*;
 import java.util.LinkedList;
@@ -64,7 +64,7 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(DGChatReceivedEvent chat) {
         super.chatReceived(chat);
         if (chat.getFormattedText().contains("$DG-BDGP ")) {
             String data = chat.getFormattedText().substring(chat.getFormattedText().indexOf("$DG-BDGP"));

@@ -22,6 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.SkyblockUtils;
@@ -29,7 +30,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONObject;
 
@@ -51,28 +51,28 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
 
     private boolean parseDialog = false;
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(DGChatReceivedEvent chat) {
         super.chatReceived(chat);
         if (!FeatureRegistry.SOLVER_KAHOOT.isEnabled()) return;
-        String ch2 = chat.getUnformattedText();
+        String ch2 = chat.getFormattedText();
         if (parseDialog) {
             parseDialog = false;
             parseDialog();
         }
-        if (chat.getFormattedText().contains("§r§6§lQuestion ")) {
+        if (TextUtils.contains(ch2, "§6§lQuestion ")) {
             questionDialogStart = true;
             questionDialog.clear();
         }
-        if (questionDialogStart && (chat.getFormattedText().startsWith("§r§f   ") || chat.getFormattedText().trim().startsWith("§r§6 "))) {
-            questionDialog.add(chat.getFormattedText());
+        if (questionDialogStart && (TextUtils.startsWith(ch2, "§f   ") || TextUtils.startsWith(ch2.trim(), "§6 "))) {
+            questionDialog.add(ch2);
         }
 
-        if (chat.getFormattedText().contains("§r§6 ⓒ")) {
+        if (TextUtils.contains(ch2, "§6 ⓒ")) {
             questionDialogStart = false;
             parseDialog = true;
         }
     }
-    public static final Pattern anwerPattern = Pattern.compile("§r§6 . §a(.+)§r");
+    public static final Pattern anwerPattern = Pattern.compile("§6 . §a(.+)");
     private void parseDialog() {
         String question = TextUtils.stripColor(questionDialog.get(1)).trim();
         String answerA = getAnswer(questionDialog.get(2));

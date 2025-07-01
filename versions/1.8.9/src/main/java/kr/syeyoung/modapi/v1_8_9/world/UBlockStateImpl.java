@@ -61,6 +61,7 @@ public class UBlockStateImpl implements UBlockState {
 
     @Override
     public EnumFacing getLeverFacing() {
+        if (!delegate.getPropertyNames().contains(BlockLever.FACING)) return null;
         net.minecraft.util.EnumFacing facing =  delegate.getValue(BlockLever.FACING).getFacing();
         return EnumFacing.VALUES[facing.getIndex()];
     }
@@ -87,12 +88,12 @@ public class UBlockStateImpl implements UBlockState {
 
     @Override
     public int getWaterLevel() {
-        return delegate.getValue(BlockDynamicLiquid.LEVEL);
+        return delegate.getPropertyNames().contains(BlockDynamicLiquid.LEVEL) ? delegate.getValue(BlockDynamicLiquid.LEVEL) : 0;
     }
 
     @Override
     public int getColor() {
-        return delegate.getValue(BlockColored.COLOR).getMetadata();
+        return delegate.getPropertyNames().contains(BlockColored.COLOR) ? delegate.getValue(BlockColored.COLOR).getMetadata() : 0;
     }
 
     @Override
@@ -173,7 +174,8 @@ public class UBlockStateImpl implements UBlockState {
 
     @Override
     public EnumHalf getStairHalf() {
-        return delegate.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.TOP ? EnumHalf.TOP : EnumHalf.BOTTOM;
+        return delegate.getPropertyNames().contains(BlockStairs.HALF) ?
+                delegate.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.TOP ? EnumHalf.TOP : EnumHalf.BOTTOM : null;
     }
 
     @Override

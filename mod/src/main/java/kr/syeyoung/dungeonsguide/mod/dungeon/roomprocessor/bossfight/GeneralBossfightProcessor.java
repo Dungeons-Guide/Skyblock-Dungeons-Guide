@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import com.google.gson.Gson;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.BossfightRenderSettings;
 import kr.syeyoung.modapi.ModAPI;
@@ -152,7 +153,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(DGChatReceivedEvent chat) {
         if (currentPhase == null) return;
 
         for (String nextPhase : currentPhase.getNextPhases()) {

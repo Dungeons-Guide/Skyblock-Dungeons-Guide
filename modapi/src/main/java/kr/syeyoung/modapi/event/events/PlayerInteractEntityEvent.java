@@ -40,7 +40,7 @@ public class PlayerInteractEntityEvent extends UEvent implements Cancelable {
     }
 
 
-    private boolean canceled;
+    private boolean canceled = false;
     @Override
     public boolean isCanceled() {
         return canceled;

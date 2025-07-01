@@ -1455,7 +1455,7 @@ public class CommandDgDebug {
                     String langs = "ENGLISH, GERMAN, FRENCH, DUTCH, SPANISH, ITALIAN, CHINESE_SIMPLIFIED, CHINESE_TRADITIONAL, PORTUGUESE_BR, RUSSIAN, KOREAN, POLISH, JAPANESE, PIRATE, NORWEGIAN, PORTUGUESE_PT, SWEDISH, TURKISH, DANISH, CZECH, FINNISH, GREEK, UKRAINIAN, ROMANIAN, HUNGARIAN";
                     for (String s : langs.split(",")) {
                         say("/lang "+s.trim());
-                        waitForSingleMessageMatching(a -> a.startsWith("§r§a"), (a) -> {});
+                        waitForSingleMessageMatching(a -> a.startsWith("§a"), (a) -> {});
                         justWait(500);
                         justRun(() -> writer.accept("\n\n$$LANGUAGE$$: "+s+"\n\n"));
                         rejoinHypickle();
@@ -1464,7 +1464,7 @@ public class CommandDgDebug {
                         say("/chat a");
 
                         otherSay("/p "+sourcePlayer);
-                        waitForSingleMessageMatching(a -> a.startsWith("§9§m-----------------------------------------------------§r§9"), (a) -> {});
+                        waitForSingleMessageMatching(a -> a.startsWith("§9§m-----------------------------------------------------"), (a) -> {});
                         say("/p accept "+targetPlayer);
                         waitForPartyMessage((a) -> {});
 
@@ -1555,7 +1555,7 @@ public class CommandDgDebug {
                         otherSay("/p "+sourcePlayer);
                         // §r§b[MVP§r§0+§r§b] Azael_Nya §r§ehas invited you to join their party!
                         // §r§eYou have §r§c60 §r§eseconds to accept. §r§6Click here to join!§r§9
-                        waitForSingleMessageMatching(a -> a.startsWith("§9§m-----------------------------------------------------§r§9"), writer);
+                        waitForSingleMessageMatching(a -> a.startsWith("§9§m-----------------------------------------------------"), writer);
 
                         justWait(1000);
 

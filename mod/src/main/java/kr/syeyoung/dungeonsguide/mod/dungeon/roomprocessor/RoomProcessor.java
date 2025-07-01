@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.modapi.event.events.*;
 import net.minecraft.util.IChatComponent;
@@ -27,7 +28,7 @@ public interface RoomProcessor {
     void tick();
     void drawScreen(float partialTicks);
     void drawWorld(float partialTicks);
-    void chatReceived(IChatComponent chat);
+    void chatReceived(DGChatReceivedEvent chat);
     void actionbarReceived(IChatComponent chat);
 
     boolean readGlobalChat();

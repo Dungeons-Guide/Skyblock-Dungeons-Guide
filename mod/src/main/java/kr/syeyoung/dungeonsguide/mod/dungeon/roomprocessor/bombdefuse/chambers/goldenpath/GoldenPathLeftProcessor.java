@@ -23,12 +23,12 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.BlockType;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.kyori.adventure.text.Component;
 
 import java.awt.*;
 import java.util.List;
@@ -111,7 +111,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
         if (goldenPathsolution == null) return;
         ChatProcessor.INSTANCE.addToChatQueue("/pc $DG-BDGP "+goldenPathsolution, null, false);
 
-        ChatComponentText text = new ChatComponentText("$DG-BDGP "+goldenPathsolution);
+        DGChatReceivedEvent text = new DGChatReceivedEvent("$DG-BDGP "+goldenPathsolution, Component.text("$DG-BDGP "+goldenPathsolution), false);
         for (RoomProcessorBombDefuseSolver.ChamberSet ch: getSolver().getChambers()) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
                 ch.getLeft().getProcessor().chatReceived(text);
@@ -121,7 +121,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(DGChatReceivedEvent chat) {
         super.chatReceived(chat);
         if (chat.getFormattedText().contains("$DG-BDGP ")) {
             String data = chat.getFormattedText().substring(chat.getFormattedText().indexOf("$DG-BDGP "));

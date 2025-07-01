@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -30,7 +31,6 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UWorld;
-import net.minecraft.util.IChatComponent;
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,11 +52,11 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
     );
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(DGChatReceivedEvent chat) {
         super.chatReceived(chat);
         if (!FeatureRegistry.SOLVER_RIDDLE.isEnabled()) return;
-        String ch2 = chat.getUnformattedText();
-        if (!ch2.startsWith("§e[NPC] ")) {
+        String ch2 = chat.getFormattedText();
+        if (!TextUtils.startsWith(ch2, "§e[NPC] ")) {
             return;
         }
         String riddleHint = TextUtils.stripColor(ch2.split(":")[1]).trim();

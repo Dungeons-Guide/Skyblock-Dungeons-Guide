@@ -19,7 +19,10 @@
 package kr.syeyoung.dungeonsguide.mod.chat;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.ListenerPriority;
+import kr.syeyoung.modapi.event.events.ChatReceivedEvent;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.Tuple;
@@ -86,11 +89,16 @@ public class ChatProcessor {
     }
 
 
+    @kr.syeyoung.modapi.event.SubscribeEvent(priority = ListenerPriority.FIRST, receiveCanceled = true)
+    public void onEvent(ChatReceivedEvent event) {
+        logger.info("[CHAT] {}", TextUtils.getNearestFormattedText(event.chat));
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
     public void onMessage(ClientChatReceivedEvent chatReceivedEvent) {
         if (chatReceivedEvent.type == 2) return;
         String txt = chatReceivedEvent.message.getFormattedText();
-        logger.info("[CHAT] {}", txt);
+        logger.info("[CHAT] {}", chatReceivedEvent.message.getFormattedText());
 
         int processed = 0;
         int listened = 0;
