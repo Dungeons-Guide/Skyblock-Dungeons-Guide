@@ -5,6 +5,7 @@ import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.Platform;
 import kr.syeyoung.modapi.audio.USoundHandler;
+import kr.syeyoung.modapi.resources.UResourcePackRepository;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntity;
@@ -22,6 +23,7 @@ import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.v1_8_9.audio.USoundHandlerImpl;
 import kr.syeyoung.modapi.v1_8_9.client.renderer.entity.URenderManagerImpl;
+import kr.syeyoung.modapi.v1_8_9.resources.UResourcePackRepositoryImpl;
 import kr.syeyoung.modapi.v1_8_9.command.CommandManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerSP;
@@ -116,6 +118,10 @@ public class ModAPIImpl implements ModAPI {
 
     public boolean isCallingFromMinecraftThread() {
         return Minecraft.getMinecraft().isCallingFromMinecraftThread();
+    }
+
+    public UResourcePackRepository getResourcePackRepository() {
+        return new UResourcePackRepositoryImpl(Minecraft.getMinecraft().getResourcePackRepository());
     }
 
 

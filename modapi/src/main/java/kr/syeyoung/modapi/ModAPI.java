@@ -1,6 +1,7 @@
 package kr.syeyoung.modapi;
 
 import kr.syeyoung.modapi.audio.USoundHandler;
+import kr.syeyoung.modapi.resources.UResourcePackRepository;
 import kr.syeyoung.modapi.command.UCommandManager;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
@@ -80,4 +81,6 @@ public interface ModAPI {
     void disableDefaultChatLogger();
 
     boolean isCallingFromMinecraftThread();
+
+    UResourcePackRepository getResourcePackRepository();
 }

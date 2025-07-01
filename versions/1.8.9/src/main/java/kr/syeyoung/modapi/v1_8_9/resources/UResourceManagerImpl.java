@@ -8,6 +8,9 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class UResourceManagerImpl implements UResourceManager {
     private IResourceManager delegate;
@@ -21,4 +24,16 @@ public class UResourceManagerImpl implements UResourceManager {
         if (iResource == null) return null;
         return new UResourceImpl(iResource);
     }
+
+    @Override
+    public List<UResource> getAllResources(ResourceIdentifier location) throws IOException {
+        List<IResource> iResource = delegate.getAllResources(new ResourceLocation(location.getMod(), location.getLocation()));
+        if (iResource == null) return Collections.emptyList();
+        List<UResource> resources = new ArrayList<>();
+        for (IResource resource : iResource) {
+            resources.add(new UResourceImpl(resource));
+        }
+        return resources;
+    }
 }
+

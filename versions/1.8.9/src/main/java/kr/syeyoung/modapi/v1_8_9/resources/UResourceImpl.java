@@ -15,4 +15,9 @@ public class UResourceImpl implements UResource {
     public InputStream getInputStream() {
         return delegate.getInputStream();
     }
+
+    @Override
+    public String getResourcePackName() {
+        return delegate.getResourcePackName();
+    }
 }

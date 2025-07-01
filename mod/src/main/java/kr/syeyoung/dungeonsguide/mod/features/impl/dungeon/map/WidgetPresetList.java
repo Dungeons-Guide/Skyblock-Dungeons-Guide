@@ -28,12 +28,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.ResourcePackRepository;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import kr.syeyoung.modapi.resources.UResource;
+import kr.syeyoung.modapi.resources.UResourcePackEntry;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,7 +57,7 @@ public class WidgetPresetList extends AnnotatedImportOnlyWidget {
 
         List<Preset> foundPresets = new ArrayList<>();
         try {
-            for (IResource allResource : Minecraft.getMinecraft().getResourceManager().getAllResources(new ResourceLocation("dungeonsguide:map/presets.json"))) {
+            for (UResource allResource : ModAPI.getAPI().getResourceManager().getAllResources(new ResourceIdentifier("dungeonsguide:map/presets.json"))) {
                 try (InputStream inputStream = allResource.getInputStream();
                      JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream))) {
 
@@ -112,13 +110,12 @@ public class WidgetPresetList extends AnnotatedImportOnlyWidget {
             this.name.setValue(preset.getName());
             this.description.setValue(preset.getDescription());
             this.icon.setValue("dungeonsguide:textures/dglogox128.png");
-            for (ResourcePackRepository.Entry repositoryEntry : Minecraft.getMinecraft().getResourcePackRepository()
+            for (UResourcePackEntry repositoryEntry : ModAPI.getAPI().getResourcePackRepository()
                     .getRepositoryEntries()) {
                 if (repositoryEntry.getResourcePackName().equals(preset.getTexturePack())) {
-                    repositoryEntry.bindTexturePackIcon(Minecraft.getMinecraft().getTextureManager());
-                    ResourceLocation resourceLocation = ReflectionHelper.getPrivateValue(ResourcePackRepository.Entry.class, repositoryEntry, "locationTexturePackIcon", "field_5260", "f");
-                    if (resourceLocation != null)
-                        this.icon.setValue(resourceLocation.toString());
+                    ResourceIdentifier identifier = repositoryEntry.bindAndGetIdentifier();
+                    if (identifier!= null)
+                        this.icon.setValue(identifier.toString());
                     break;
                 }
             }
