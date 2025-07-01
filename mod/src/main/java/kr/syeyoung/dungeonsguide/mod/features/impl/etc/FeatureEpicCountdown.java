@@ -24,13 +24,13 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UObjective;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScore;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
 import net.minecraft.client.Minecraft;
 
 import java.util.Objects;
@@ -104,9 +104,10 @@ public class FeatureEpicCountdown extends SimpleFeature {
         if(!isEnabled() || !SkyblockStatus.isOnDungeon()) return;
 
 
-        Objective objective = ScoreboardManager.INSTANCE.getSidebarObjective();
+        UScoreboardManager scoreboardManager = ModAPI.getAPI().getScoreboardManager();
+        UObjective objective = scoreboardManager.getSidebarObjective();
         if (objective != null) {
-            for (Score score : objective.getScores()) {
+            for (UScore score : objective.getScores()) {
                 String line = TextUtils.stripColor(score.getJustTeam());
                 if(line.contains("Starting in:")){
                     String time = line.replace("Starting in: ", "").replace("§r", "");

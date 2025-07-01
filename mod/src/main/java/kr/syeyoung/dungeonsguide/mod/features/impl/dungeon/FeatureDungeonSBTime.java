@@ -25,9 +25,10 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextS
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScore;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
 
 import java.util.Collection;
 
@@ -44,12 +45,12 @@ public class FeatureDungeonSBTime extends TextHUDFeature {
     }
 
     public int getTimeElapsed() {
-        ScoreboardManager scoreboardManager = ScoreboardManager.INSTANCE;
+        UScoreboardManager scoreboardManager = ModAPI.getAPI().getScoreboardManager();
         String time = "idkyet";
         if (scoreboardManager.getSidebarObjective() != null) {
-            Collection<Score> scores = scoreboardManager.getSidebarObjective().getScores();
+            Collection<? extends UScore> scores = scoreboardManager.getSidebarObjective().getScores();
 
-            for (Score sc : scores) {
+            for (UScore sc : scores) {
                 String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(sc.getVisibleName())).trim();
                 if (strippedLine.startsWith("Time Elapsed: ")) {
                     time = strippedLine.substring(14);
@@ -91,13 +92,13 @@ public class FeatureDungeonSBTime extends TextHUDFeature {
         actualBit.addChild(new TextSpan(getStyle("discriminator"), "(Ig)"));
         actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
 
-        ScoreboardManager scoreboardManager = ScoreboardManager.INSTANCE;
+        UScoreboardManager scoreboardManager = ModAPI.getAPI().getScoreboardManager();
         String time = "unknown";
         if (scoreboardManager.getSidebarObjective() != null) {
-            Collection<Score> scores = scoreboardManager.getSidebarObjective().getScores();
+            Collection<? extends UScore> scores = scoreboardManager.getSidebarObjective().getScores();
 
 
-            for (Score sc : scores) {
+            for (UScore sc : scores) {
                 String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(sc.getVisibleName())).trim();
                 if (strippedLine.startsWith("Time Elapsed: ")) {
                     time = strippedLine.substring(14);

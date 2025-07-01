@@ -5,6 +5,7 @@ import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.Platform;
 import kr.syeyoung.modapi.audio.USoundHandler;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
 import kr.syeyoung.modapi.resources.UResourcePackRepository;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
@@ -23,6 +24,7 @@ import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.v1_8_9.audio.USoundHandlerImpl;
 import kr.syeyoung.modapi.v1_8_9.client.renderer.entity.URenderManagerImpl;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.modapi.v1_8_9.resources.UResourcePackRepositoryImpl;
 import kr.syeyoung.modapi.v1_8_9.command.CommandManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
@@ -322,6 +324,10 @@ public class ModAPIImpl implements ModAPI {
         } else if (l instanceof org.apache.logging.log4j.core.Logger) {
             ((org.apache.logging.log4j.core.Logger) l).setLevel(Level.OFF);
         }
+    }
+
+    public UScoreboardManager getScoreboardManager() {
+        return ScoreboardManager.INSTANCE;
     }
 
     @Override

@@ -16,12 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard;
+package kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard;
+
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ScoreboardManager {
+public class ScoreboardManager implements UScoreboardManager {
 
     public static final ScoreboardManager INSTANCE = new ScoreboardManager();
     private ScoreboardManager() {}

@@ -26,6 +26,8 @@ import kr.syeyoung.modapi.entity.UEntityItem;
 import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
 import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.Objective;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.modapi.v1_8_9.util.CustomNetworkPlayerInfo;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.FakeWorld;
@@ -218,6 +220,35 @@ public class PacketListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else if (packet instanceof S3BPacketScoreboardObjective) {
+            S3BPacketScoreboardObjective objectivePkt = (S3BPacketScoreboardObjective) packet;
+            if (objectivePkt.func_149338_e() == 2) {
+                Objective objective = ScoreboardManager.INSTANCE.getObjective(objectivePkt.func_149339_c());
+                if (objective != null) {
+                    objective.setDisplayName(objectivePkt.func_149337_d());
+                    objective.setDisplayType(objectivePkt.func_179817_d());
+                }
+            } else if (objectivePkt.func_149338_e() == 1) {
+                ScoreboardManager.INSTANCE.removeObjective(objectivePkt.func_149339_c());
+            } else if (objectivePkt.func_149338_e() == 0) {
+                Objective objective = new Objective(objectivePkt.func_149339_c());
+                objective.setDisplayName(objectivePkt.func_149337_d());
+                objective.setDisplayType(objectivePkt.func_179817_d());
+                ScoreboardManager.INSTANCE.addObjective(objective);
+            }
+        } else if (packet instanceof S3CPacketUpdateScore) {
+            S3CPacketUpdateScore score = (S3CPacketUpdateScore) packet;
+            Objective objective = ScoreboardManager.INSTANCE.getObjective(score.getObjectiveName());
+            if (objective != null) {
+                if (score.getScoreAction() == S3CPacketUpdateScore.Action.CHANGE) {
+                    objective.updateScore(score.getPlayerName(), score.getScoreValue());
+                } else if (score.getScoreAction() == S3CPacketUpdateScore.Action.REMOVE) {
+                    objective.removeScore(score.getPlayerName());
+                }
+            }
+        } else if (packet instanceof S3DPacketDisplayScoreboard) {
+            S3DPacketDisplayScoreboard board = (S3DPacketDisplayScoreboard) packet;
+            ScoreboardManager.INSTANCE.displayScoreboard(board.func_149371_c(), board.func_149370_d());
         }
     }
 

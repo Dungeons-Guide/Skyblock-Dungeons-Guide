@@ -51,8 +51,6 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRoute
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.view.TestView;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
@@ -63,6 +61,7 @@ import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.command.UCommandContext;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScore;
 import kr.syeyoung.modapi.world.BlockType;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
@@ -215,7 +214,7 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug scoreboard")
     public void scoreboardCommand() {
-        for (Score score : ScoreboardManager.INSTANCE.getSidebarObjective().getScores()) {
+        for (UScore score : ModAPI.getAPI().getScoreboardManager().getSidebarObjective().getScores()) {
             ChatTransmitter.addToQueue("LINE: " + score.getVisibleName() + ": " + score.getScore());
         }
     }
@@ -223,7 +222,7 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug scoreboardclean")
     public void scoreboardCleanCommand() {
-        for (Score score : ScoreboardManager.INSTANCE.getSidebarObjective().getScores()) {
+        for (UScore score : ModAPI.getAPI().getScoreboardManager().getSidebarObjective().getScores()) {
             ChatTransmitter.addToQueue("LINE: " + score.getJustTeam() + ": " + score.getScore());
         }
     }

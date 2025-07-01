@@ -24,8 +24,6 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerListItemPacketEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RawPacketReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.NameTagVisibility;
@@ -35,7 +33,9 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.SubscribeEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.*;
+import net.minecraft.network.play.server.S04PacketEntityEquipment;
+import net.minecraft.network.play.server.S38PacketPlayerListItem;
+import net.minecraft.network.play.server.S3EPacketTeams;
 import net.minecraft.util.EnumChatFormatting;
 
 public class PacketListener {
@@ -71,36 +71,7 @@ public class PacketListener {
     @SubscribeEvent
     public void onPrePacketProcess(PacketProcessedEvent.Pre event) {
         Packet packet =event.packet;
-        if (packet instanceof S3BPacketScoreboardObjective) {
-            S3BPacketScoreboardObjective objectivePkt = (S3BPacketScoreboardObjective) packet;
-            if (objectivePkt.func_149338_e() == 2) {
-                Objective objective = ScoreboardManager.INSTANCE.getObjective(objectivePkt.func_149339_c());
-                if (objective != null) {
-                    objective.setDisplayName(objectivePkt.func_149337_d());
-                    objective.setDisplayType(objectivePkt.func_179817_d());
-                }
-            } else if (objectivePkt.func_149338_e() == 1) {
-                ScoreboardManager.INSTANCE.removeObjective(objectivePkt.func_149339_c());
-            } else if (objectivePkt.func_149338_e() == 0) {
-                Objective objective = new Objective(objectivePkt.func_149339_c());
-                objective.setDisplayName(objectivePkt.func_149337_d());
-                objective.setDisplayType(objectivePkt.func_179817_d());
-                ScoreboardManager.INSTANCE.addObjective(objective);
-            }
-        } else if (packet instanceof S3CPacketUpdateScore) {
-            S3CPacketUpdateScore score = (S3CPacketUpdateScore) packet;
-            Objective objective = ScoreboardManager.INSTANCE.getObjective(score.getObjectiveName());
-            if (objective != null) {
-                if (score.getScoreAction() == S3CPacketUpdateScore.Action.CHANGE) {
-                    objective.updateScore(score.getPlayerName(), score.getScoreValue());
-                } else if (score.getScoreAction() == S3CPacketUpdateScore.Action.REMOVE) {
-                    objective.removeScore(score.getPlayerName());
-                }
-            }
-        } else if (packet instanceof S3DPacketDisplayScoreboard) {
-            S3DPacketDisplayScoreboard board = (S3DPacketDisplayScoreboard) packet;
-            ScoreboardManager.INSTANCE.displayScoreboard(board.func_149371_c(), board.func_149370_d());
-        } else if (packet instanceof S3EPacketTeams) {
+        if (packet instanceof S3EPacketTeams) {
             S3EPacketTeams pkt = (S3EPacketTeams) packet;
             if (pkt.getAction() == 0) {
                 // CREATE

@@ -16,8 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard;
+package kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard;
 
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UObjective;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -26,7 +28,7 @@ import net.minecraft.scoreboard.IScoreObjectiveCriteria;
 import java.util.*;
 
 @RequiredArgsConstructor
-public class Objective {
+public class Objective implements UObjective {
     @Getter
     private final String objectiveName;
     @Getter @Setter
@@ -36,8 +38,13 @@ public class Objective {
     private SortedSet<Score> scores = new TreeSet<>(Comparator.comparingInt(Score::getScore).reversed());
     private Map<String, Score> currentObjects = new HashMap<>();
 
-    public SortedSet<Score> getScores() {
+    public SortedSet<? extends UScore> getScores() {
         return Collections.unmodifiableSortedSet(scores);
+    }
+
+    @Override
+    public String getRenderType() {
+        return displayType == IScoreObjectiveCriteria.EnumRenderType.HEARTS ? "hearts" : "integer";
     }
 
     public void updateScore(String playerName, int score) {

@@ -16,14 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard;
+package kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard;
 
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.Team;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScore;
 import lombok.Data;
 
 @Data
-public class Score {
+public class Score implements UScore {
     private final String playerName;
     private final int score;
 
