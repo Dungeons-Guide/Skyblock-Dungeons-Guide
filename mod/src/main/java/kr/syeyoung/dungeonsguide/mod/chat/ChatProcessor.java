@@ -121,4 +121,58 @@ public class ChatProcessor {
             chatReceivedEvent.setCanceled(true);
         }
     }
+
+
+
+
+    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FIRST)
+    public void onChatReceived1(ChatReceivedEvent event) {
+        DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
+                TextUtils.getNearestFormattedText(event.chat),
+                event.chat,
+                event.isCanceled()
+        );
+        ModAPI.getAPI().getEventBus().fireEvent(dgChatReceivedEvent, ListenerPriority.FIRST);
+        event.setCanceled(dgChatReceivedEvent.isCanceled());
+    }
+    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.SECOND)
+    public void onChatReceived2(ChatReceivedEvent event) {
+        DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
+                TextUtils.getNearestFormattedText(event.chat),
+                event.chat,
+                event.isCanceled()
+        );
+        ModAPI.getAPI().getEventBus().fireEvent(dgChatReceivedEvent, ListenerPriority.SECOND);
+        event.setCanceled(dgChatReceivedEvent.isCanceled());
+    }
+    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.THIRD)
+    public void onChatReceived3(ChatReceivedEvent event) {
+        DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
+                TextUtils.getNearestFormattedText(event.chat),
+                event.chat,
+                event.isCanceled()
+        );
+        ModAPI.getAPI().getEventBus().fireEvent(dgChatReceivedEvent, ListenerPriority.THIRD);
+        event.setCanceled(dgChatReceivedEvent.isCanceled());
+    }
+    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FOURTH)
+    public void onChatReceived4(ChatReceivedEvent event) {
+        DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
+                TextUtils.getNearestFormattedText(event.chat),
+                event.chat,
+                event.isCanceled()
+        );
+        ModAPI.getAPI().getEventBus().fireEvent(dgChatReceivedEvent, ListenerPriority.FOURTH);
+        event.setCanceled(dgChatReceivedEvent.isCanceled());
+    }
+    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.LAST)
+    public void onChatReceived5(ChatReceivedEvent event) {
+        DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
+                TextUtils.getNearestFormattedText(event.chat),
+                event.chat,
+                event.isCanceled()
+        );
+        ModAPI.getAPI().getEventBus().fireEvent(dgChatReceivedEvent, ListenerPriority.LAST);
+        event.setCanceled(dgChatReceivedEvent.isCanceled());
+    }
 }

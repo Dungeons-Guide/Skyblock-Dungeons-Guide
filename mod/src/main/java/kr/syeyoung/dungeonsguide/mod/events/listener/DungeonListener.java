@@ -99,16 +99,6 @@ public class DungeonListener {
         DungeonActionContext.getKilleds().clear();
     }
 
-    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true)
-    public void onChatReceived(ChatReceivedEvent event) {
-        DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
-                TextUtils.getNearestFormattedText(event.chat),
-                event.chat,
-                event.isCanceled()
-        );
-        ModAPI.getAPI().getEventBus().fireEvent(dgChatReceivedEvent);
-        event.setCanceled(dgChatReceivedEvent.isCanceled());
-    }
 
     @SubscribeEvent
     public void onPostDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
