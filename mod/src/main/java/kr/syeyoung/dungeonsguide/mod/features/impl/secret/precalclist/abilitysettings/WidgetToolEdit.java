@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemTool;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +69,7 @@ public class WidgetToolEdit extends AnnotatedImportOnlyWidget {
 
     private ToolType type;
     public WidgetToolEdit(ToolType type, BindableAttribute<AlgorithmSetting.ToolSettings> toolSettingsBindableAttribute) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/abilityedit/tooledit.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/abilityedit/tooledit.gui"));
         currentToolSettings.exportTo(toolSettingsBindableAttribute);
         this.type = type;
 

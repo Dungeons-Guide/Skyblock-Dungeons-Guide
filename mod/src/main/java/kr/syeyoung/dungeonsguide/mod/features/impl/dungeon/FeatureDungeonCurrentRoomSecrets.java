@@ -28,8 +28,9 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextS
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.event.events.ActionBarReceivedEvent;
 import lombok.Getter;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
     public FeatureDungeonCurrentRoomSecrets() {
@@ -79,9 +80,8 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
     }
 
     @DGEventHandler
-    public void onChat(ClientChatReceivedEvent chat) {
-        if (chat.type != 2) return;
-        String text = chat.message.getFormattedText();
+    public void onChat(ActionBarReceivedEvent event) {
+        String text = TextUtils.getNearestFormattedText(event.chat);
         if (!text.contains("/")) return;
 
         int secretsIndex = text.indexOf("Secrets");

@@ -7,7 +7,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ public class WidgetHasteEdit extends AnnotatedImportOnlyWidget {
 
     private final BindableAttribute<Integer> currentHaste = new BindableAttribute<>(Integer.class);
     public WidgetHasteEdit(BindableAttribute<Integer> hasteBindableAttribute) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/abilityedit/hasteedit.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/abilityedit/hasteedit.gui"));
         BindableAttribute<Boolean> disabled = new BindableAttribute<>(Boolean.class, false);
 
         currentHaste.exportTo(hasteBindableAttribute);

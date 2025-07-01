@@ -21,20 +21,19 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MinecraftTooltip;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MouseTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.RawMinecraftTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import kr.syeyoung.modapi.item.UItemStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
 
 import java.util.Collections;
 import java.util.List;
@@ -75,7 +74,7 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
                 Gui.drawRect(x + 1, y + 1, x + 17, y + 17, 0xFF666666);
                 GlStateManager.color(1, 1, 1, 1.0F);
 
-                Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(playerProfile.getInventory()[(i + 9) % 36], (i % 9) * 18 + 2, (i / 9) * 18 + 2);
+                Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI((ItemStack) playerProfile.getInventory()[(i + 9) % 36].getItemStack(), (i % 9) * 18 + 2, (i / 9) * 18 + 2);
             }
         } else {
             Gui.drawRect(1, 1, 162, 72, 0xFF666666);
@@ -85,13 +84,13 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
 
 
 
-    private MinecraftTooltip actualTooltip = new MinecraftTooltip();
-    private MouseTooltip tooltip = null;
+    private RawMinecraftTooltip actualTooltip = new RawMinecraftTooltip();
+    private boolean tooltipShown = false;
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY, boolean childHandled) {
         List<String> toHover = null;
         if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY) && playerProfile.getInventory() != null) {
-            ItemStack toHoverStack = null;
+            UItemStack toHoverStack = null;
             for (int i = 0; i < playerProfile.getInventory().length; i++) {
                 int x = (i % 9) * 18 + 1;
                 int y = (i / 9) * 18 + 1;
@@ -102,49 +101,42 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
 
 
             if (toHoverStack != null) {
-                List<String> list = toHoverStack.getTooltip(Minecraft.getMinecraft().thePlayer,
-                        Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
-                for (int i = 0; i < list.size(); ++i) {
-                    if (i == 0) {
-                        list.set(i, toHoverStack.getRarity().rarityColor + list.get(i));
-                    } else {
-                        list.set(i, EnumChatFormatting.GRAY + list.get(i));
-                    }
-                }
-                toHover= list;
+                toHover= toHoverStack.getNormalTooltip();
             }
         }
 
         if (toHover != null)
             actualTooltip.setTooltip(toHover);
 
-        if (toHover == null && this.tooltip != null) {
+        if (toHover == null && this.tooltipShown) {
             PopupMgr.getPopupMgr(getDomElement())
-                    .closePopup(this.tooltip, null);
-            this.tooltip = null;
-        } else if (toHover != null && this.tooltip == null)
+                    .closePopup(actualTooltip, null);
+            this.tooltipShown = false;
+        } else if (toHover != null && !tooltipShown) {
+            tooltipShown = true;
             PopupMgr.getPopupMgr(getDomElement())
-                    .openPopup(this.tooltip = new MouseTooltip(actualTooltip), (a) -> {
-                        this.tooltip = null;
+                    .openPopup(actualTooltip, (a) -> {
+                        this.tooltipShown = false;
                     });
+        }
         return true;
     }
 
     @Override
     public void mouseExited(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
-        if (this.tooltip != null) {
+        if (this.tooltipShown) {
             PopupMgr.getPopupMgr(getDomElement())
-                    .closePopup(this.tooltip, null);
-            this.tooltip = null;
+                    .closePopup(actualTooltip, null);
+            this.tooltipShown = false;
         }
     }
 
     @Override
     public void onUnmount() {
-        if (this.tooltip != null) {
+        if (this.tooltipShown) {
             PopupMgr.getPopupMgr(getDomElement())
-                    .closePopup(this.tooltip, null);
-            this.tooltip = null;
+                    .closePopup(actualTooltip, null);
+            this.tooltipShown = false;
         }
         super.onUnmount();
     }

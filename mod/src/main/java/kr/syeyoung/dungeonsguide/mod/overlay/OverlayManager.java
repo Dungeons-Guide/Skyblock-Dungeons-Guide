@@ -29,12 +29,12 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.profiler.UProfiler;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.profiler.Profiler;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -81,7 +81,7 @@ public class OverlayManager {
 
     @SubscribeEvent()
     public void guiResize(GuiScreenEvent.InitGuiEvent.Post post){
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        UProfiler profiler = ModAPI.getAPI().getProfiler();
         profiler.startSection("Dungeons Guide Overlay Lauout");
         try {
             view.setRelativeBound(new Rect(0,0, ModAPI.getAPI().getDisplayWidth(), ModAPI.getAPI().getDisplayHeight()));
@@ -105,7 +105,7 @@ public class OverlayManager {
         if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
             return;
 
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        UProfiler profiler = ModAPI.getAPI().getProfiler();
         profiler.startSection("Dungeons Guide - RenderGameOverlayEvent.Post :: Overlay");
         try {
             view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.UNDER_CHAT);
@@ -119,7 +119,7 @@ public class OverlayManager {
 
     @SubscribeEvent
     public void renderGui(GuiScreenEvent.DrawScreenEvent.Post postRender) {
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        UProfiler profiler = ModAPI.getAPI().getProfiler();
         profiler.startSection("Dungeons Guide - DrawScreenEvent.Post :: Overlay");
         try {
             if (postRender.gui instanceof GuiChat)
@@ -141,7 +141,7 @@ public class OverlayManager {
 
         if (view.isRelayoutRequested()) {
             view.setRelayoutRequested(false);
-            Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+            UProfiler profiler = ModAPI.getAPI().getProfiler();
             profiler.startSection("Dungeons Guide Overlay Lauout");
             view.getLayouter().layout(view, new ConstraintBox(
                     ModAPI.getAPI().getDisplayWidth(),

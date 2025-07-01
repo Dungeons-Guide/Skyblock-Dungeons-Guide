@@ -18,66 +18,64 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
+import kr.syeyoung.modapi.gui.UContainerChest;
+import kr.syeyoung.modapi.gui.UContainerSlot;
+import kr.syeyoung.modapi.item.Item;
+import kr.syeyoung.modapi.util.EnumDyeColor;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
     @Override
-    public TerminalSolution provideSolution(ContainerChest chest, List<Slot> clicked) {
+    public TerminalSolution provideSolution(UContainerChest chest) {
         TerminalSolution ts = new TerminalSolution();
-        ts.setCurrSlots(new ArrayList<Slot>());
-        Slot solution = null;
-        for (Slot inventorySlot : chest.inventorySlots) {
-            if (inventorySlot.inventory != chest.getLowerChestInventory()) continue;
-            if (inventorySlot.getHasStack() && inventorySlot.getStack() != null) {
-                if (inventorySlot.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        inventorySlot.getStack().getItemDamage() == EnumDyeColor.WHITE.getMetadata()) {
-                    int x = inventorySlot.slotNumber % 9;
-                    int y = inventorySlot.slotNumber / 9;
+        ts.setCurrSlots(new ArrayList<>());
+        int solution = -1;
+        for (int slot = 0; slot< chest.getChestContainerSize(); slot++) {
+            UContainerSlot slot1 = chest.getChestSlotAt(slot);
+            if (slot1.getItemStack() != null) {
+                if (slot1.getItemStack().getItem() == Item.STAINED_GLASS_PANE &&
+                        slot1.getItemStack().getItemColor() == EnumDyeColor.WHITE) { // WHITE
+                    int x = slot % 9;
+                    int y = slot / 9;
 
                     if (x > 0) {
-                        Slot toChk =  chest.inventorySlots.get(y * 9 + x - 1);
+                        UContainerSlot toChk =  chest.getSlotAt(y * 9 + x - 1);
 
-                        if (toChk.getHasStack() && toChk.getStack() != null &&
-                                toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                                toChk.getStack().getItemDamage() == EnumDyeColor.LIME.getMetadata()) {
-                            solution = inventorySlot;
+                        if (toChk.getItemStack() != null &&
+                                toChk.getItemStack().getItem() == Item.STAINED_GLASS_PANE &&
+                                toChk.getItemStack().getItemColor() == EnumDyeColor.LIME) { // LIME .. below
+                            solution = slot;
                             break;
                         }
                     }
                     if (x < 8) {
-                        Slot toChk =  chest.inventorySlots.get(y * 9 + x + 1);
+                        UContainerSlot toChk =  chest.getSlotAt(y * 9 + x + 1);
 
-                        if (toChk.getHasStack() && toChk.getStack() != null &&
-                                toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                                toChk.getStack().getItemDamage() == EnumDyeColor.LIME.getMetadata()) {
-                            solution = inventorySlot;
+                        if (toChk.getItemStack() != null &&
+                                toChk.getItemStack().getItem() == Item.STAINED_GLASS_PANE &&
+                                toChk.getItemStack().getItemColor() == EnumDyeColor.LIME) { // LIME .. below
+                            solution = slot;
                             break;
                         }
                     }
                     if (y > 0) {
-                        Slot toChk =  chest.inventorySlots.get((y-1) * 9 + x);
+                        UContainerSlot toChk =  chest.getSlotAt((y-1) * 9 + x);
 
-                        if (toChk.getHasStack() && toChk.getStack() != null &&
-                                toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                                toChk.getStack().getItemDamage() == EnumDyeColor.LIME.getMetadata()) {
-                            solution = inventorySlot;
+                        if (toChk.getItemStack() != null &&
+                                toChk.getItemStack().getItem() == Item.STAINED_GLASS_PANE &&
+                                toChk.getItemStack().getItemColor() == EnumDyeColor.LIME) { // LIME .. below
+                            solution = slot;
                             break;
                         }
                     }
-                    if (y < chest.getLowerChestInventory().getSizeInventory() / 9 - 1) {
-                        Slot toChk =  chest.inventorySlots.get((y+1) * 9 + x);
+                    if (y < chest.getChestContainerSize() / 9 - 1) {
+                        UContainerSlot toChk =  chest.getSlotAt((y+1) * 9 + x);
 
-                        if (toChk.getHasStack() && toChk.getStack() != null &&
-                                toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                                toChk.getStack().getItemDamage() == EnumDyeColor.LIME.getMetadata()) {
-                            solution = inventorySlot;
+                        if (toChk.getItemStack() != null &&
+                                toChk.getItemStack().getItem() == Item.STAINED_GLASS_PANE &&
+                                toChk.getItemStack().getItemColor() == EnumDyeColor.LIME) { // LIME .. below
+                            solution = slot;
                             break;
                         }
                     }
@@ -85,51 +83,47 @@ public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
             }
         }
 
-        if (solution == null) return null;
+        if (solution == -1) return null;
         ts.getCurrSlots().add(solution);
-        ts.setNextSlots(new ArrayList<Slot>());
+        ts.setNextSlots(new ArrayList<>());
         {
-            int x = solution.slotNumber % 9;
-            int y = solution.slotNumber / 9;
+            int x = solution % 9;
+            int y = solution / 9;
 
             if (x > 0) {
-                Slot toChk =  chest.inventorySlots.get(y * 9 + x - 1);
+                UContainerSlot toChk =  chest.getSlotAt(y * 9 + x - 1);
 
-                if (toChk.getHasStack() && toChk.getStack() != null &&
-                        toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        toChk.getStack().getItemDamage() == EnumDyeColor.WHITE.getMetadata()) {
-                    ts.getNextSlots().add(toChk);
-                    return ts;
+                if (toChk.getItemStack() != null &&
+                        toChk.getItemStack().getItem() == Item.STAINED_GLASS_PANE &&
+                        toChk.getItemStack().getItemColor() == EnumDyeColor.WHITE) { // LIME .. below
+                    ts.getNextSlots().add(y*9+x-1);
                 }
             }
             if (x < 8) {
-                Slot toChk =  chest.inventorySlots.get(y * 9 + x + 1);
+                UContainerSlot toChk =  chest.getSlotAt(y * 9 + x + 1);
 
-                if (toChk.getHasStack() && toChk.getStack() != null &&
-                        toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        toChk.getStack().getItemDamage() == EnumDyeColor.WHITE.getMetadata()) {
-                    ts.getNextSlots().add(toChk);
-                    return ts;
+                if (toChk.getItemStack() != null &&
+                        toChk.getItemStack().getItem() == Item.STAINED_GLASS_PANE &&
+                        toChk.getItemStack().getItemColor() == EnumDyeColor.WHITE) { // LIME .. below
+                    ts.getNextSlots().add(y*9+x+1);
                 }
             }
             if (y > 0) {
-                Slot toChk =  chest.inventorySlots.get((y-1) * 9 + x);
+                UContainerSlot toChk =  chest.getSlotAt((y-1) * 9 + x);
 
-                if (toChk.getHasStack() && toChk.getStack() != null &&
-                        toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        toChk.getStack().getItemDamage() == EnumDyeColor.WHITE.getMetadata()) {
-                    ts.getNextSlots().add(toChk);
-                    return ts;
+                if (toChk.getItemStack() != null &&
+                        toChk.getItemStack().getItem() == Item.STAINED_GLASS_PANE &&
+                        toChk.getItemStack().getItemColor() == EnumDyeColor.WHITE) { // LIME .. below
+                    ts.getNextSlots().add((y-1)*9+x);
                 }
             }
-            if (y < chest.getLowerChestInventory().getSizeInventory() / 9 - 1) {
-                Slot toChk =  chest.inventorySlots.get((y+1) * 9 + x);
+            if (y < chest.getChestContainerSize() / 9 - 1) {
+                UContainerSlot toChk =  chest.getSlotAt((y+1) * 9 + x);
 
-                if (toChk.getHasStack() && toChk.getStack() != null &&
-                        toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        toChk.getStack().getItemDamage() == EnumDyeColor.WHITE.getMetadata()) {
-                    ts.getNextSlots().add(toChk);
-                    return ts;
+                if (toChk.getItemStack() != null &&
+                        toChk.getItemStack().getItem() == Item.STAINED_GLASS_PANE &&
+                        toChk.getItemStack().getItemColor() == EnumDyeColor.WHITE) { // LIME .. below
+                    ts.getNextSlots().add((y+1)*9+x);
                 }
             }
         }
@@ -138,7 +132,7 @@ public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
     }
 
     @Override
-    public boolean isApplicable(ContainerChest chest) {
-        return chest.getLowerChestInventory().getName().equals("Navigate the maze!");
+    public boolean isApplicable(UContainerChest chest) {
+        return chest.getName().equals("Navigate the maze!");
     }
 }

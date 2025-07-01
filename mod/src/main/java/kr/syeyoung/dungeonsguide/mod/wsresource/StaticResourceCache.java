@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.wsresource;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import kr.syeyoung.modapi.event.SubscribeEvent;
 import org.json.JSONObject;
 
 import java.util.HashMap;

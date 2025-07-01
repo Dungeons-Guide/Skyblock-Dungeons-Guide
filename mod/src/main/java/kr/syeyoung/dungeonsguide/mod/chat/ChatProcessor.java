@@ -18,26 +18,20 @@
 
 package kr.syeyoung.dungeonsguide.mod.chat;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Pair;
+import kr.syeyoung.modapi.event.ListenerPriority;
+import kr.syeyoung.modapi.event.SubscribeEvent;
+import kr.syeyoung.modapi.event.events.ChatReceivedEvent;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiNewChat;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.Tuple;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.apache.logging.log4j.Level;
+import net.kyori.adventure.text.Component;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.simple.SimpleLogger;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ChatProcessor {
@@ -45,16 +39,11 @@ public class ChatProcessor {
 
     private static final Logger logger = LogManager.getLogger("DG-ChatProcessor");
     private ChatProcessor() {
-        Logger l = LogManager.getLogger(GuiNewChat.class);
-        if (l instanceof SimpleLogger) {
-            ((SimpleLogger) l).setLevel(Level.OFF);
-        } else if (l instanceof org.apache.logging.log4j.core.Logger) {
-            ((org.apache.logging.log4j.core.Logger) l).setLevel(Level.OFF);
-        }
+        ModAPI.getAPI().disableDefaultChatLogger();
     }
 
     private Queue<ChatSubscriber> chatSubscriberQueue = new ConcurrentLinkedQueue<>();
-    private Queue<Tuple<String, Runnable>> chatQueue = new ConcurrentLinkedQueue<>();
+    private Queue<Pair<String, Runnable>> chatQueue = new ConcurrentLinkedQueue<>();
 
 
     public void subscribe(ChatSubscriber chatSubscribed) {
@@ -62,25 +51,24 @@ public class ChatProcessor {
     }
     public void addToChatQueue(String chat, Runnable onSend, boolean noDupe) {
         if (noDupe && chatQueue.stream().anyMatch(a -> a.getFirst().trim().equalsIgnoreCase(chat.trim()))) return;
-        chatQueue.add(new Tuple<>(chat, onSend));
+        chatQueue.add(new Pair<>(chat, onSend));
     }
 
 
     private long minimumNext = 0;
 
-    @kr.syeyoung.modapi.event.SubscribeEvent
+    @SubscribeEvent
     public void onTick(ClientTickEvent clientTickEvent) {
         try {
             if (ModAPI.getAPI().getPlayer() != null && minimumNext < System.currentTimeMillis()) {
                 if (!chatQueue.isEmpty()) {
-                    Tuple<String, Runnable> tuple = chatQueue.poll();
-                    Minecraft.getMinecraft().thePlayer.sendChatMessage(tuple.getFirst());
+                    Pair<String, Runnable> tuple = chatQueue.poll();
+                    ModAPI.getAPI().getPlayer().sendMessageToServer(tuple.getFirst());
                     if (tuple.getSecond() != null)
                         tuple.getSecond().run();
                     minimumNext = System.currentTimeMillis() + 700;
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("Sending " + tuple.getFirst() + " Secretly"));
+                    ChatTransmitter.sendDebugChat("Sending " + tuple.getFirst() + " Secretly");
                 }
-
             }
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
@@ -89,16 +77,18 @@ public class ChatProcessor {
     }
 
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
-    public void onMessage(ClientChatReceivedEvent chatReceivedEvent) {
-        if (chatReceivedEvent.type == 2) return;
-        String txt = chatReceivedEvent.message.getFormattedText();
+    private ThreadLocal<Stack<Boolean>> chatEventLocal = ThreadLocal.withInitial(Stack::new);
+
+    @SubscribeEvent(priority = ListenerPriority.FIRST, receiveCanceled = true)
+    public void onEvent(ChatReceivedEvent event) {
+        String txt = TextUtils.getNearestFormattedText(event.chat);
         logger.info("[CHAT] {}", txt);
 
         int processed = 0;
         int listened = 0;
         Map<String, Object> context = new HashMap<>();
         Iterator<ChatSubscriber> it = chatSubscriberQueue.iterator();
+        boolean result = event.isCanceled();
         while (it.hasNext()) {
             ChatSubscriber chatSubscribed = it.next();
             context.put("removed", processed);
@@ -108,19 +98,86 @@ public class ChatProcessor {
                 if (chatProcessResult.isRemoveChat()) processed++;
                 if (chatProcessResult.isRemoveListener()) listened++;
 
-                if (chatProcessResult.isRemoveChat()) chatReceivedEvent.setResult(Event.Result.DENY);
+                if (chatProcessResult.isRemoveChat()) result = true;
                 if (chatProcessResult.isRemoveListener()) it.remove();
             } catch (Exception e) {
                 FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
             }
         }
+        chatEventLocal.get().push(result);
+    }
+
+    @SubscribeEvent(priority = ListenerPriority.LAST, receiveCanceled = true)
+    public void cancelMessage(DGChatReceivedEvent chatReceivedEvent) {
+        if (chatEventLocal.get().pop()) {
+            chatReceivedEvent.setCanceled(true);
+        }
     }
 
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void cancelMessage(ClientChatReceivedEvent chatReceivedEvent) {
-        if (chatReceivedEvent.getResult() == Event.Result.DENY)
-            chatReceivedEvent.setCanceled(true);
+
+    private ThreadLocal<Stack<Component>> origin = ThreadLocal.withInitial(() -> new Stack<>());
+    @SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FIRST)
+    public void onChatReceived1(ChatReceivedEvent event) {
+        origin.get().push(event.chat);
+        DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
+                TextUtils.getNearestFormattedText(event.chat),
+                origin.get().peek(),
+                event.chat,
+                event.isCanceled()
+        );
+        ModAPI.getAPI().getEventBus().fireEvent(dgChatReceivedEvent, ListenerPriority.FIRST);
+        event.chat = dgChatReceivedEvent.getChat();
+        event.setCanceled(dgChatReceivedEvent.isCanceled());
+    }
+    @SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.SECOND)
+    public void onChatReceived2(ChatReceivedEvent event) {
+        DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
+                TextUtils.getNearestFormattedText(event.chat),
+                origin.get().peek(),
+                event.chat,
+                event.isCanceled()
+        );
+        ModAPI.getAPI().getEventBus().fireEvent(dgChatReceivedEvent, ListenerPriority.SECOND);
+        event.chat = dgChatReceivedEvent.getChat();
+        event.setCanceled(dgChatReceivedEvent.isCanceled());
+    }
+    @SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.THIRD)
+    public void onChatReceived3(ChatReceivedEvent event) {
+        DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
+                TextUtils.getNearestFormattedText(event.chat),
+                origin.get().peek(),
+                event.chat,
+                event.isCanceled()
+        );
+        ModAPI.getAPI().getEventBus().fireEvent(dgChatReceivedEvent, ListenerPriority.THIRD);
+        event.chat = dgChatReceivedEvent.getChat();
+        event.setCanceled(dgChatReceivedEvent.isCanceled());
+    }
+    @SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FOURTH)
+    public void onChatReceived4(ChatReceivedEvent event) {
+        DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
+                TextUtils.getNearestFormattedText(event.chat),
+                origin.get().peek(),
+                event.chat,
+                event.isCanceled()
+        );
+        ModAPI.getAPI().getEventBus().fireEvent(dgChatReceivedEvent, ListenerPriority.FOURTH);
+        event.chat = dgChatReceivedEvent.getChat();
+        event.setCanceled(dgChatReceivedEvent.isCanceled());
+    }
+    @SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.LAST)
+    public void onChatReceived5(ChatReceivedEvent event) {
+        DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
+                TextUtils.getNearestFormattedText(event.chat),
+                origin.get().peek(),
+                event.chat,
+                event.isCanceled()
+        );
+        ModAPI.getAPI().getEventBus().fireEvent(dgChatReceivedEvent, ListenerPriority.LAST);
+        event.chat = dgChatReceivedEvent.getChat();
+        event.setCanceled(dgChatReceivedEvent.isCanceled());
+        origin.get().pop();
     }
 }

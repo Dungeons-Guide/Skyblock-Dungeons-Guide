@@ -18,15 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
-import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.BlockPos;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,7 +76,7 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     private int correctLivid = 14;
     @Override
     public void onEntityUpdate(LivingEntityTickEvent updateEvent) {
-        correctLivid = Minecraft.getMinecraft().theWorld.getChunkFromBlockCoords(new BlockPos(5, 108, 42)).getBlockMetadata(new BlockPos(5, 108, 42));
+        correctLivid = ModAPI.getAPI().getWorld().getBlockStateAt(5, 108, 42).getColor();
         realLividName = lividMetadata.get(correctLivid);
         prefix = lividColorPrefix.get(realLividName);
 
@@ -104,11 +103,7 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
         return healths;
     }
 
-    private static final BlockPos lividPos = new BlockPos(6, 108, 43);
-
-    @Override
-    public void onBlockUpdate(BlockUpdateEvent blockUpdateEvent) {
-    }
+    private static final VectorI3D lividPos = new VectorI3D(6, 108, 43);
 
     @Override
     public String getBossName() {

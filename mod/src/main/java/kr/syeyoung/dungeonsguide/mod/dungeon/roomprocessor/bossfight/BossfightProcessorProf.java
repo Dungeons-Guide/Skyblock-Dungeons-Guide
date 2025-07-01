@@ -32,37 +32,37 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
         super(isMasterMode ? "MASTERMODE_CATACOMBS_FLOOR_THREE" : "CATACOMBS_FLOOR_THREE");
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("start")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: I was burdened with terrible news recently...§r")
+                .signatureMsg("§c[BOSS] The Professor§f: I was burdened with terrible news recently...")
                 .nextPhase("fight-1").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight-1")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: I'll show you real power!§r")
+                .signatureMsg("§c[BOSS] The Professor§f: I'll show you real power!")
                 .nextPhase("first-defeat").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("first-defeat")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: Oh? You found my Guardians' one weakness?§r")
+                .signatureMsg("§c[BOSS] The Professor§f: Oh? You found my Guardians' one weakness?")
                 .nextPhase("fight-2").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight-2")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: This time I'll be your opponent!§r")
+                .signatureMsg("§c[BOSS] The Professor§f: This time I'll be your opponent!")
                 .nextPhase("second-defeat").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("second-defeat")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: I see. You have forced me to use my ultimate technique.§r")
+                .signatureMsg("§c[BOSS] The Professor§f: I see. You have forced me to use my ultimate technique.")
                 .nextPhase("fight-3").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight-3")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: The process is irreversible, but I'll be stronger than a Wither now!§r")
+                .signatureMsg("§c[BOSS] The Professor§f: The process is irreversible, but I'll be stronger than a Wither now!")
                 .nextPhase("final-defeat").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("final-defeat")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: What?! My Guardian power is unbeatable!§r").build()
+                .signatureMsg("§c[BOSS] The Professor§f: What?! My Guardian power is unbeatable!").build()
         );
         this.isMasterMode = isMasterMode;
     }

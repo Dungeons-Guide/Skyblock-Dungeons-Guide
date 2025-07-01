@@ -9,7 +9,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 public class WidgetPresetRoomDetailsSecretUnknownPrecalculation extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "whatever")
@@ -25,7 +24,7 @@ public class WidgetPresetRoomDetailsSecretUnknownPrecalculation extends Annotate
                                                               AdditionalInfoCaculatedDungeonRoomInfo dungeonRoomInfo,
                                                               WidgetPresetRoomDetailsUnknown widgetPresetRoomDetailsSecret) {
 
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequest.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequest.gui"));
         this.pathfindPrecalculation = calculation;
         this.parent = widgetPresetRoomDetailsSecret;
         this.info = dungeonRoomInfo;

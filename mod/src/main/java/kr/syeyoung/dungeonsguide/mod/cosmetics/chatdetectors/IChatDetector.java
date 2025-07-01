@@ -19,10 +19,10 @@
 package kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors;
 
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
-import net.minecraft.util.IChatComponent;
+import net.kyori.adventure.text.Component;
 
 import java.util.List;
 
 public interface IChatDetector {
-    List<ReplacementContext> getReplacementContext(IChatComponent chatComponent);
+    List<ReplacementContext> getReplacementContext(Component chatComponent);
 }

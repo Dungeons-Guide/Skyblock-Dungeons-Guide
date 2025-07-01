@@ -29,10 +29,11 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextS
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UObjective;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScore;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
 
 
 public class FeatureWarnLowHealth extends TextHUDFeature {
@@ -67,9 +68,10 @@ public class FeatureWarnLowHealth extends TextHUDFeature {
     public TextSpan getText() {
         String lowestHealthName = "";
         int lowestHealth = 999999999;
-        Objective objective = ScoreboardManager.INSTANCE.getSidebarObjective();
+        UScoreboardManager scoreboardManager = ModAPI.getAPI().getScoreboardManager();
+        UObjective objective = scoreboardManager.getSidebarObjective();
         if (objective == null) return new TextSpan(new NullTextStyle(), "");
-        for (Score sc : objective.getScores()) {
+        for (UScore sc : objective.getScores()) {
             String line = sc.getVisibleName();
             String stripped = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(line));
             if (line.contains("[") && line.endsWith("❤")) {

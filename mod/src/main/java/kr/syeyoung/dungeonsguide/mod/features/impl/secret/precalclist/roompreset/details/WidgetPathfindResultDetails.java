@@ -11,7 +11,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -44,7 +43,7 @@ public class WidgetPathfindResultDetails extends AnnotatedImportOnlyWidget {
     private final Runnable onDelete;
     private PathfindPrecalculation linked;
     public WidgetPathfindResultDetails(PathfindPrecalculation linkedResult, Runnable onDelete) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/pathfindprecalculationdetails.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/roompresetview/pathfindprecalculationdetails.gui"));
 
         this.modifiable.setValue(onDelete == null ? "false" : "true");
         this.onDelete = onDelete;

@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Passthrough;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Passthroughs;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.ParserElement;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
@@ -44,8 +44,8 @@ public abstract class AnnotatedWidget extends Widget implements ImportingWidget,
     public final BindableAttribute<DomElement> ref = new BindableAttribute<>(DomElement.class);
 
 
-    private final ResourceLocation target;
-    public AnnotatedWidget(ResourceLocation location) {
+    private final ResourceIdentifier target;
+    public AnnotatedWidget(ResourceIdentifier location) {
         target = location;
     }
 
@@ -129,7 +129,7 @@ public abstract class AnnotatedWidget extends Widget implements ImportingWidget,
     }
 
     @Override
-    public <T> BindableAttribute<T> getBindTarget(String variableName, BindableAttribute<T> _) {
+    public <T> BindableAttribute<T> getBindTarget(String variableName, BindableAttribute<T> unused) {
         return getImportedAttributes().get(variableName);
     }
     private Map<String, MethodHandle> getInvocationTargets() {

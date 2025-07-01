@@ -35,36 +35,32 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonValueEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditOffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.CoordinateMapBackedPathfindWorld;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.EnumFacing;
+import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
-import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
-import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
-import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.util.RaycastResult;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -77,7 +73,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Getter
     private CoordinateMapBackedPathfindWorld pathfinderWorld;
-
     @Getter
     @Setter
     private DungeonRoom dungeonRoom;
@@ -145,8 +140,9 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
-        if (lastChest != null && chat.getFormattedText().equals("§r§cThis chest has already been searched!§r")) {
+    public void chatReceived(DGChatReceivedEvent chat) {
+        String format = chat.getOriginalFormattedText();
+        if (lastChest != null && format.equals("§cThis chest has already been searched!")) {
             for (DungeonMechanicState mechanic : getDungeonRoom().getMechanics().values()) {
                 if (mechanic instanceof DungeonSecretChestState) {
                     DungeonSecretChestState chest = (DungeonSecretChestState) mechanic;
@@ -164,14 +160,14 @@ public class GeneralRoomProcessor implements RoomProcessor {
             }
             lastChest = null;
         }
-        if (chat.getFormattedText().equals("§r§aYou found a Secret Redstone Key!§r")) {
+        if (TextUtils.compareString(format, "§aYou found a Secret Redstone Key!")) {
             for (DungeonMechanicState value : getDungeonRoom().getMechanics().values()) {
                 if (value instanceof DungeonRedstoneKeyState) {
                     ((DungeonRedstoneKeyState) value).setDidClickOnRedstoneKey(true);
                 }
             }
         }
-        if (chat.getFormattedText().equals("§e[NPC] Wizard§f: §rOh my lovely crystal ball, mi so happy§r")) {
+        if (TextUtils.compareString(format, "§e[NPC] Wizard§f: Oh my lovely crystal ball, mi so happy")) {
             for (DungeonMechanicState value : getDungeonRoom().getMechanics().values()) {
                 if (value instanceof DungeonWizardState) {
                     ((DungeonWizardState) value).setDidCompleteQuest(true);
@@ -183,12 +179,13 @@ public class GeneralRoomProcessor implements RoomProcessor {
     private int stack = 0;
     private long secrets2 = 0;
     @Override
-    public void actionbarReceived(IChatComponent chat) {
+    public void actionbarReceived(ActionBarReceivedEvent chat) {
         if (!SkyblockStatus.isOnDungeon()) return;
+        String format = TextUtils.getNearestFormattedText(chat.chat);
         if (dungeonRoom.getTotalSecrets() == -1) {
-            ChatTransmitter.sendDebugChat(new ChatComponentText(chat.getFormattedText().replace('§', '&') + " - received"));
+            ChatTransmitter.sendDebugChat(format.replace('§', '&') + " - received");
         }
-        if (!chat.getFormattedText().contains("/")) return;
+        if (!format.contains("/")) return;
         VectorI3D pos = ModAPI.getAPI().getPlayer().getPosition();
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
@@ -201,17 +198,16 @@ public class GeneralRoomProcessor implements RoomProcessor {
         }
         VectorI3D pos2 = dungeonRoom.getRoomBounds().getMin().add(5, 0, 5);
 
-        String text = chat.getFormattedText();
-        int secretsIndex = text.indexOf("Secrets");
+        int secretsIndex = format.indexOf("Secrets");
         int secrets = 0;
         if (secretsIndex != -1) {
             int theIndex = 0;
             for (int i = secretsIndex; i >= 0; i--) {
-                if (text.startsWith("§7", i)) {
+                if (format.startsWith("§7", i)) {
                     theIndex = i;
                 }
             }
-            String it = text.substring(theIndex + 2, secretsIndex - 1);
+            String it = format.substring(theIndex + 2, secretsIndex - 1);
      
             secrets = Integer.parseInt(it.split("/")[1]);
         }
@@ -258,16 +254,16 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void onInteractBlock(PlayerInteractEvent event) {
         VectorI3D ePos = event.pos == null ? null : new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ());
-        kr.syeyoung.modapi.data.EnumFacing eFacing = kr.syeyoung.modapi.data.EnumFacing.VALUES[event.face.getIndex()];
+        EnumFacing eFacing = event.face;
 
         if (ePos != null) {
-            IBlockState iBlockState = event.world.getBlockState(event.pos);
-            if (iBlockState.getBlock() == Blocks.chest || iBlockState.getBlock() == Blocks.trapped_chest)
+            UBlockState iBlockState = event.world.getBlockStateAt(event.pos);
+            if (iBlockState.isOf(BlockType.CHEST, BlockType.TRAP_CHEST))
                 lastChest = ePos;
         }
 
-        if (event.entityPlayer.getHeldItem() != null &&
-            event.entityPlayer.getHeldItem().getItem() == Items.stick &&
+        if (event.player.getHeldItem() != null &&
+            event.player.getHeldItem().getItem() == Item.STICK &&
                 FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() &&
                 FeatureRegistry.DEBUG.isEnabled()) {
             EditingContext ec = EditingContext.getEditingContext();
@@ -294,7 +290,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 }
             }
             try {
-                if (ec != null && ePos != null && Minecraft.getMinecraft().theWorld.getBlockState(event.pos).getBlock() == Blocks.sponge) {
+                if (ec != null && ePos != null && event.world.getBlockStateAt(event.pos).isOf(BlockType.SPONGE)) {
                     int nextId = 1;
                     while (ec.getRoom().getDungeonRoomInfo().getMechanics().containsKey("ent-" + nextId)) nextId++;
                     DungeonRoomDoor2State.DungeonRoomDoor2Data door2 = new DungeonRoomDoor2State.DungeonRoomDoor2Data();
@@ -356,11 +352,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     }
 
-    public static final IBlockState STONE = Blocks.stone.getStateFromMeta(2);
+//    public static final IBlockState STONE = Blocks.stone.getStateFromMeta(2);
     @Override
     public void onBlockUpdate(BlockUpdateEvent blockUpdateEvent) {
-        for (Tuple<VectorI3D, IBlockState> updatedBlock : blockUpdateEvent.getUpdatedBlocks()) {
-            if (updatedBlock.getSecond().equals(STONE)) continue;
+        for (Pair<VectorI3D, UBlockState> updatedBlock : blockUpdateEvent.getUpdatedBlocks()) {
+//            if (updatedBlock.getSecond().equals(STONE)) continue;
             pathfinderWorld.resetBlock(updatedBlock.getFirst());
         }
     }

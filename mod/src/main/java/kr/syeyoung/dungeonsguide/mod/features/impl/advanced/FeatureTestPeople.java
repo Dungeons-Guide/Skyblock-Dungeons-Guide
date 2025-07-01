@@ -25,17 +25,17 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -46,7 +46,6 @@ import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -194,14 +193,14 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
     }
 
     @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        String txt = clientChatReceivedEvent.message.getFormattedText();
-        if (!txt.startsWith("§r§9Party §8>")) return;
+    public void onChat(DGChatReceivedEvent clientChatReceivedEvent) {
+        String txt = clientChatReceivedEvent.getOriginalFormattedText();
+        if (!txt.startsWith("§9Party §8>")) return;
 
         String chat = TextUtils.stripColor(txt.substring(txt.indexOf(":") + 1)).trim().toLowerCase();
 
 
-        String usernameArea = TextUtils.stripColor(txt.substring(13, txt.indexOf(":")));
+        String usernameArea = TextUtils.stripColor(txt.substring(11, txt.indexOf(":")));
         String username = null;
         for (String s : usernameArea.split(" ")) {
             if (s.isEmpty()) continue;
@@ -245,7 +244,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
      * @param networkPlayerInfo the network player info of player
      * @return the username of player
      */
-    private String getPlayerNameWithChecks(TabListEntry networkPlayerInfo) {
+    private String getPlayerNameWithChecks(UTabListEntry networkPlayerInfo) {
         String name = networkPlayerInfo.getEffectiveName();
 
         if (name.trim().equals("§r") || name.startsWith("§r ")) return null;
@@ -259,7 +258,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 
         // 19 iterations bc we only want to scan the player part of tab list
         int i = 0;
-        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+        for (UTabListEntry tabListEntry : ModAPI.getAPI().getTabList().getTabListEntries()) {
             if (++i >= 20) break;
             String name = getPlayerNameWithChecks(tabListEntry);
             if (name == null) continue;

@@ -19,26 +19,21 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import com.google.gson.Gson;
-import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.BossfightRenderSettings;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityLiving;
-import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
-import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
-import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.resources.UResource;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Singular;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -59,7 +54,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     @Override
     public BossfightRenderSettings getMapRenderSettings() {
         try {
-            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("dungeonsguide:map/bossfight/"+name+".json"));
+            UResource resource = ModAPI.getAPI().getResourceManager().getResource(new ResourceIdentifier("dungeonsguide:map/bossfight/"+name+".json"));
             if (resource != null) {
                 resource.getInputStream();
                 try (InputStreamReader inputStreamReader = new InputStreamReader(resource.getInputStream())) {
@@ -85,7 +80,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
         this.name = name;
 
         try {
-            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("dungeonsguide:map/bossfight/"+name+".json"));
+            UResource resource = ModAPI.getAPI().getResourceManager().getResource(new ResourceIdentifier("dungeonsguide:map/bossfight/"+name+".json"));
             if (resource != null) {
                 resource.getInputStream();
                 try (InputStreamReader inputStreamReader = new InputStreamReader(resource.getInputStream())) {
@@ -126,8 +121,6 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
         private Map<String, String> phaseMap = new HashMap<>();
     }
 
-    private World world;
-
     public void addPhase(PhaseData phaseData) {
         if (phaseData == null) return;
         if (currentPhase == null) currentPhase = phaseData;
@@ -156,13 +149,13 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(DGChatReceivedEvent chat) {
         if (currentPhase == null) return;
 
         for (String nextPhase : currentPhase.getNextPhases()) {
             PhaseData phaseData = phases.get(nextPhase);
             if (phaseData == null) continue;
-            if (phaseData.signatureMsgs.contains(chat.getFormattedText().replace(" ", ""))) {
+            if (phaseData.signatureMsgs.contains(chat.getOriginalFormattedText().replace(" ", ""))) {
                     currentPhase = phaseData;
                     onPhaseChange();
                     return;
@@ -171,7 +164,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     }
 
     @Override
-    public void actionbarReceived(IChatComponent chat) {}
+    public void actionbarReceived(ActionBarReceivedEvent chat) {}
 
     @Override
     public void tick() {}

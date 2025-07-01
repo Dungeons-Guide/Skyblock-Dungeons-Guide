@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonDeathEvent;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
@@ -32,13 +33,10 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextS
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import lombok.Getter;
-import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -113,7 +111,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
 
     public int getTotalDeaths() {
         if (!SkyblockStatus.isOnDungeon()) return 0;
-        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+        for (UTabListEntry tabListEntry : ModAPI.getAPI().getTabList().getTabListEntries()) {
             String name = tabListEntry.getEffectiveName();
             if (name.contains("Deaths")) {
                 String whatever = TextUtils.keepIntegerCharactersOnly(TextUtils.keepScoreboardCharacters(TextUtils.stripColor(name)));
@@ -130,28 +128,27 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
         return d;
     }
 
-    Pattern deathPattern = Pattern.compile("§r§c ☠ (.+?)§r§7 .+and became a ghost.+");
-    Pattern meDeathPattern = Pattern.compile("§r§c ☠ §r§7You .+and became a ghost.+");
+    Pattern deathPattern = Pattern.compile("§c ☠ (.+?)§7 .+and became a ghost.+");
+    Pattern meDeathPattern = Pattern.compile("§c ☠ §7You .+and became a ghost.+");
 
     @DGEventHandler(ignoreDisabled = true)
     public void onDungeonEnd(DungeonLeftEvent dungeonEndedEvent) {
         this.deaths.clear();
     }
     @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        if (clientChatReceivedEvent.type == 2) return;
+    public void onChat(DGChatReceivedEvent clientChatReceivedEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return;
 
-        String txt = clientChatReceivedEvent.message.getFormattedText();
+        String txt = clientChatReceivedEvent.getOriginalFormattedText();
         Matcher m = deathPattern.matcher(txt);
         if (m.matches()) {
             String nickname = TextUtils.stripColor(m.group(1));
             int deaths = getDeaths().getOrDefault(nickname, 0);
             getDeaths().put(nickname, deaths + 1);
             context.getRecorder().createEvent(new DungeonDeathEvent(nickname, txt, deaths));
-            ChatTransmitter.sendDebugChat(new ChatComponentText("Death verified :: "+nickname+" / "+(deaths + 1)));
+            ChatTransmitter.sendDebugChat("Death verified :: "+nickname+" / "+(deaths + 1));
         }
         Matcher m2 = meDeathPattern.matcher(txt);
         if (m2.matches()) {
@@ -159,7 +156,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
             int deaths = getDeaths().getOrDefault(nickname, 0);
             getDeaths().put(nickname, deaths + 1);
             context.getRecorder().createEvent(new DungeonDeathEvent(ModAPI.getAPI().getPlayer().getName(), txt, deaths));
-            ChatTransmitter.sendDebugChat(new ChatComponentText("Death verified :: me / "+(deaths + 1)));
+            ChatTransmitter.sendDebugChat("Death verified :: me / "+(deaths + 1));
         }
     }
 }

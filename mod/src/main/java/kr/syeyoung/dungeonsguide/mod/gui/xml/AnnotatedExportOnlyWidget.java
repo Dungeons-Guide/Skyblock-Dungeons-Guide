@@ -26,6 +26,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,20 +49,30 @@ public abstract class AnnotatedExportOnlyWidget extends Widget implements Export
 
     public abstract List<Widget> build(DomElement buildContext);
 
+    private static Map<Class, List<Field>> reflectionCache = new HashMap<>();
+
     protected static Map<String, BindableAttribute> getExportedAttributes(Class clazz, Object inst) {
         Map<String, BindableAttribute> attributeMap = new HashMap<>();
-        for (Field declaredField : FieldUtils.getAllFields(clazz)) {
-            if (declaredField.getAnnotation(Export.class) != null) {
-                Export export = declaredField.getAnnotation(Export.class);
+        if (!reflectionCache.containsKey(clazz)) {
+            List<Field> fields = new ArrayList<>();
+            reflectionCache.put(clazz, fields);
+            for (Field declaredField : FieldUtils.getAllFields(clazz)) {
+                if (declaredField.getAnnotation(Export.class) != null) {
+                    Export export = declaredField.getAnnotation(Export.class);
 
-                if (declaredField.getType() != BindableAttribute.class) throw new IllegalStateException("Export Annotation must be applied on BindableAttribute field. : "+declaredField.getName());
-                if (!Modifier.isFinal(declaredField.getModifiers())) throw new IllegalStateException("Exported Bindable Attribute must be final : "+declaredField.getName());
+                    if (declaredField.getType() != BindableAttribute.class) throw new IllegalStateException("Export Annotation must be applied on BindableAttribute field. : "+declaredField.getName());
+                    if (!Modifier.isFinal(declaredField.getModifiers())) throw new IllegalStateException("Exported Bindable Attribute must be final : "+declaredField.getName());
 
-                try {
-                    attributeMap.put(export.attributeName(), (BindableAttribute) declaredField.get(inst));
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
+                    fields.add(declaredField);
                 }
+            }
+        }
+        for (Field declaredField : reflectionCache.get(clazz)) {
+            Export export = declaredField.getAnnotation(Export.class);
+            try {
+                attributeMap.put(export.attributeName(), (BindableAttribute) declaredField.get(inst));
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
             }
         }
         return attributeMap;

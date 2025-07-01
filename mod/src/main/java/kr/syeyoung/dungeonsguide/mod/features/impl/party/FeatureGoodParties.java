@@ -19,20 +19,20 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 
 
-
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui.PartyFinderParty;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.gui.UContainer;
+import kr.syeyoung.modapi.gui.UContainerChest;
+import kr.syeyoung.modapi.gui.UContainerSlot;
+import kr.syeyoung.modapi.item.Item;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.Slot;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -44,17 +44,15 @@ public class FeatureGoodParties extends SimpleFeature {
 
     @DGEventHandler
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
-        
         if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) return;
-        GuiChest chest = (GuiChest) Minecraft.getMinecraft().currentScreen;
-        ContainerChest cont = (ContainerChest) chest.inventorySlots;
-        String name = cont.getLowerChestInventory().getName();
-        if (!"Party Finder".equals(name)) return;
-
+        UContainer container = ModAPI.getAPI().getPlayer().getOpenContainer();
+        if (!(container instanceof UContainerChest)) return;
+        UContainerChest containerChest = (UContainerChest) container;
+        if (!"Party Finder".equals(containerChest.getName())) return;
 
         int i = 222;
         int j = i - 108;
-        int ySize = j + (((ContainerChest)(((GuiChest) Minecraft.getMinecraft().currentScreen).inventorySlots)).getLowerChestInventory().getSizeInventory() / 9) * 18;
+        int ySize = j + (containerChest.getChestContainerSize() / 9) * 18;
         int left = (rendered.gui.width - 176) / 2;
         int top = (rendered.gui.height - ySize ) / 2;
         GlStateManager.pushMatrix();
@@ -64,20 +62,15 @@ public class FeatureGoodParties extends SimpleFeature {
         GlStateManager.translate(left, top, 0);
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         try {
+            for (int i1 = 0; i1 < Integer.min(54, containerChest.getChestContainerSize()); i1++) {
+                UContainerSlot s = containerChest.getChestSlotAt(i1);
+                if (s.getItemStack() == null) continue;
+                if (s.getItemStack().getItem() != Item.SKULL) continue;
 
-            for (int i1 = 0; i1 < Integer.min(54, cont.inventorySlots.size()); i1++) {
-                Slot s = cont.inventorySlots.get(i1);
-                if (s.getStack() == null) continue;
-                if (s.getStack().getItem() != Items.skull) continue;
-                NBTTagCompound nbt = s.getStack().getTagCompound();
-                if (nbt == null || nbt.hasNoTags()) continue;
-                NBTTagCompound display = nbt.getCompoundTag("display");
-                if (display.hasNoTags()) return;
+                PartyFinderParty party = PartyFinderParty.fromItemStack(s.getItemStack());
 
-                PartyFinderParty party = PartyFinderParty.fromItemStack(s.getStack());
-
-                int x = s.xDisplayPosition;
-                int y = s.yDisplayPosition;
+                int x = s.getX();
+                int y = s.getY();
                 if (!party.canJoin) {
                     Gui.drawRect(x, y, x + 16, y + 16, 0x77AA0000);
                 } else {

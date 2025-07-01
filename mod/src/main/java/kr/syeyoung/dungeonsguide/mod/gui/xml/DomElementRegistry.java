@@ -29,9 +29,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.view.TestView;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.ParserException;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.W3CBackedParser;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
+import kr.syeyoung.modapi.resources.UResource;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -109,15 +109,15 @@ public class DomElementRegistry {
         register("InvertStencil", new ExportedWidgetConverter(NegativeStencil::new));
         register("WrapGrid", new ExportedWidgetConverter(Wrap::new));
 
-        register("ColorButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleButton.gui")));
-        register("RoundButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/dgButton.gui")));
-        register("IconButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/iconButton.gui")));
-        register("SimpleToggleButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleToggleButton.gui")));
-        register("SimpleHorizontalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleHorizontalScrollBar.gui")));
-        register("SimpleVerticalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleVerticalScrollBar.gui")));
-        register("SlowList", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/slowlist.gui")));
-        register("size", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/size.gui")));
-        register("ResourceImage", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/ratioResourceImage.gui")));
+        register("ColorButton", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/simpleButton.gui")));
+        register("RoundButton", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/dgButton.gui")));
+        register("IconButton", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/iconButton.gui")));
+        register("SimpleToggleButton", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/simpleToggleButton.gui")));
+        register("SimpleHorizontalScrollBar", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/simpleHorizontalScrollBar.gui")));
+        register("SimpleVerticalScrollBar", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/simpleVerticalScrollBar.gui")));
+        register("SlowList", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/slowlist.gui")));
+        register("size", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/size.gui")));
+        register("ResourceImage", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/ratioResourceImage.gui")));
         register("UrlImage", new ExportedWidgetConverter(URLImage::new));
         register("SelectiveContainer", new ExportedWidgetConverter(SelectiveContainer::new));
         register("ItemStack", new ExportedWidgetConverter(ItemStackRender::new));
@@ -129,12 +129,13 @@ public class DomElementRegistry {
         register("HoverTooltip", new ExportedWidgetConverter(HoverTooltip::new));
     }
 
-    private static final Map<ResourceLocation, Parser> cache = new HashMap<>();
+    private static final Map<ResourceIdentifier, Parser> cache = new HashMap<>();
 
-    public static Parser obtainParser(ResourceLocation resourceLocation) {
+    public static Parser obtainParser(ResourceIdentifier resourceLocation) {
         if (cache.containsKey(resourceLocation)) return cache.get(resourceLocation);
         try {
-            IResource iResource = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation);
+            UResource iResource = ModAPI.getAPI().getResourceManager().getResource(
+                    new ResourceIdentifier(resourceLocation.getMod(), resourceLocation.getLocation()));
             W3CBackedParser parser = new W3CBackedParser(iResource.getInputStream());
             cache.put(resourceLocation, parser);
             return parser;

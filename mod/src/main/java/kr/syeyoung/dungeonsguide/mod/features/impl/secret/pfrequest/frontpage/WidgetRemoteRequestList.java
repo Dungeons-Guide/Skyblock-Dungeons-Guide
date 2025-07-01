@@ -16,7 +16,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
 
@@ -27,7 +26,7 @@ public class WidgetRemoteRequestList extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> err = new BindableAttribute<>(String.class);
 
     public WidgetRemoteRequestList() {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/frontpage/remoterequestlist.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/frontpage/remoterequestlist.gui"));
     }
 
     private void doReload() {
@@ -73,7 +72,7 @@ public class WidgetRemoteRequestList extends AnnotatedImportOnlyWidget {
         private RemoteCache cache;
 
         public WidgetRemoteRequest(WidgetRemoteRequestList parent, String requestId, RemoteCache cache) {
-            super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/frontpage/remoterequest.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/frontpage/remoterequest.gui"));
 
             this.parent = parent;
             this.requestId = requestId;

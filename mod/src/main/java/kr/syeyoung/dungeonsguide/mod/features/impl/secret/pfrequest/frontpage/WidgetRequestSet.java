@@ -9,7 +9,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 public class WidgetRequestSet extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "backgroundColor")
@@ -22,7 +21,7 @@ public class WidgetRequestSet extends AnnotatedImportOnlyWidget {
     private PathfindPrecalculationRequestSet requestSet;
 
     public WidgetRequestSet(WidgetRequestSetsList parent, PathfindPrecalculationRequestSet requestSet) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/frontpage/precalcrequestset.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/frontpage/precalcrequestset.gui"));
 
         backgroundColor.setValue(requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.PENDING ? 0xFF505050 :
                 requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.GENERATING_ZIP || requestSet.getStatus() == PathfindPrecalculationRequestSet.Status.CREATING_UPLOADING_REQUEST ? 0xFF575600 :

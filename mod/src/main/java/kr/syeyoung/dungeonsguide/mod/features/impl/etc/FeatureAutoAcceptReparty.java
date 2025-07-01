@@ -21,9 +21,9 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 public class FeatureAutoAcceptReparty extends SimpleFeature {
     public FeatureAutoAcceptReparty() {
@@ -32,10 +32,11 @@ public class FeatureAutoAcceptReparty extends SimpleFeature {
     private String lastDisband;
 
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        if (clientChatReceivedEvent.message.getFormattedText().endsWith("§ehas disbanded the party!§r")) {
+    public void onChat(DGChatReceivedEvent clientChatReceivedEvent) {
+        String msg = clientChatReceivedEvent.getOriginalFormattedText();
+        if (msg.endsWith("§ehas disbanded the party!")) {
             lastDisband = null;
-            String[] texts = TextUtils.stripColor(clientChatReceivedEvent.message.getFormattedText()).split(" ");
+            String[] texts = TextUtils.stripColor(msg).split(" ");
             for (String s : texts) {
                 if (s.isEmpty()) continue;
                 if (s.startsWith("[")) continue;
@@ -43,8 +44,8 @@ public class FeatureAutoAcceptReparty extends SimpleFeature {
                 lastDisband = s;
                 break;
             }
-        } else if (clientChatReceivedEvent.message.getFormattedText().contains("§ehas invited you to join their party!")) {
-            String[] texts = TextUtils.stripColor(clientChatReceivedEvent.message.getFormattedText()).split(" ");
+        } else if (msg.contains("§ehas invited you to join their party!")) {
+            String[] texts = TextUtils.stripColor(msg).split(" ");
             boolean equals = false;
             for (String s : texts) {
                 if (s.isEmpty()) continue;

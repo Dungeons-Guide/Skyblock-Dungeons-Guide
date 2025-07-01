@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditCreator
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.init.Blocks;
+import kr.syeyoung.modapi.world.BlockType;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class ValueEditOnewayDoor extends MPanel implements ValueEdit<DungeonOnew
                 OffsetPointSet ofs = dungeonDoor.getSecretPoint();
                 List<OffsetPoint> filtered = new ArrayList<OffsetPoint>();
                 for (OffsetPoint offsetPoint : ofs.getOffsetPointList()) {
-                    if (offsetPoint.getBlock(EditingContext.getEditingContext().getRoom()) != Blocks.air) continue;
+                    if (!offsetPoint.getBlock(EditingContext.getEditingContext().getRoom()).isOf(BlockType.AIR)) continue;
                     filtered.add(offsetPoint);
                 }
                 dungeonDoor.getSecretPoint().setOffsetPointList(filtered);
@@ -85,7 +85,7 @@ public class ValueEditOnewayDoor extends MPanel implements ValueEdit<DungeonOnew
                     boolean found = false;
                     for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
                         if (updatedBlock.getPos().equals(dungeonDoor.getSecretPoint().getOffsetPointList().get(0).getBlockPos(EditingContext.getEditingContext().getRoom()))
-                                && updatedBlock.getBlock().getBlock() == Blocks.air) {
+                                && updatedBlock.getBlock().isOf(BlockType.AIR)) {
                             found = true;
                             break;
                         }

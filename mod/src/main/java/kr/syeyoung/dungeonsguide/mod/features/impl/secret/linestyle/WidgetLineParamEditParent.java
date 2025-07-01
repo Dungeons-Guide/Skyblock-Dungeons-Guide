@@ -28,7 +28,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +58,7 @@ public class WidgetLineParamEditParent extends AnnotatedImportOnlyWidget {
 
     private WidgetLinePropertiesEditor editor;
     public WidgetLineParamEditParent(WidgetLinePropertiesEditor editor, PathfindLineProperties lineProperties) {
-        super(new ResourceLocation("dungeonsguide:gui/features/lineProperties/paramEditor.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/lineProperties/paramEditor.gui"));
         this.editor = editor;
 
         if (lineProperties.getParent() == null || !lineProperties.isGlobal()) {
@@ -109,7 +108,7 @@ public class WidgetLineParamEditParent extends AnnotatedImportOnlyWidget {
         private int idx;
         private Consumer<PathDisplayEngineSettingRegistration<?>> onUpdate;
         public CycleWidget(List<PathDisplayEngineSettingRegistration<?>> values, int defaultIndex, Consumer<PathDisplayEngineSettingRegistration<?>> onUpdate) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/stringChoice.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/stringChoice.gui"));
             this.idx = defaultIndex;
             this.values = values;
             this.onUpdate = onUpdate;

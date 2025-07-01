@@ -27,10 +27,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.profiler.UProfiler;
 import lombok.AllArgsConstructor;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.profiler.Profiler;
 
 import java.util.Collections;
 import java.util.List;
@@ -59,7 +59,7 @@ public class OverlayWidget extends Widget implements Renderer, Layouter {
         Rect original = value.getRelativeBound();
         if (original == null) return;
 
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        UProfiler profiler = ModAPI.getAPI().getProfiler();
         profiler.startSection("Dungeons Guide Overlay Render :: "+name);
         GlStateManager.translate(original.getX(), original.getY(), 0);
 
@@ -82,7 +82,7 @@ public class OverlayWidget extends Widget implements Renderer, Layouter {
 
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        UProfiler profiler = ModAPI.getAPI().getProfiler();
         profiler.startSection("Dungeons Guide Overlay Layout :: "+name);
         Size s = SingleChildPassingLayouter.INSTANCE.layout(buildContext, constraintBox);;
         profiler.endSection();

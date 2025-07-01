@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -27,12 +28,9 @@ import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.world.World;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UWorld;
 
 import java.util.Arrays;
 import java.util.List;
@@ -54,11 +52,11 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
     );
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(DGChatReceivedEvent chat) {
         super.chatReceived(chat);
         if (!FeatureRegistry.SOLVER_RIDDLE.isEnabled()) return;
-        String ch2 = chat.getUnformattedText();
-        if (!ch2.startsWith("§e[NPC] ")) {
+        String ch2 = chat.getOriginalFormattedText();
+        if (!TextUtils.startsWith(ch2, "§e[NPC] ")) {
             return;
         }
         String riddleHint = TextUtils.stripColor(ch2.split(":")[1]).trim();
@@ -70,12 +68,12 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
             }
         }
         if (foundMatch) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eRiddle §7:: "+ch2.split(":")[0].trim()+" §fhas the reward!"));
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eRiddle §7:: "+ch2.split(":")[0].trim()+" §fhas the reward!");
             final String name = TextUtils.stripColor(ch2.split(":")[0]).replace("[NPC] ","").trim();
             final VectorI3D low = getDungeonRoom().getRoomBounds().getMin();
             final VectorI3D high = getDungeonRoom().getRoomBounds().getMax();
-            World w = getDungeonRoom().getContext().getWorld();
-            List<UEntity> armor = getDungeonRoom().getContext().getUworld().getEntitiesWithinAabb(EntityType.ARMOR_STAND,
+            UWorld w = getDungeonRoom().getContext().getWorld();
+            List<UEntity> armor = w.getEntitiesWithinAabb(EntityType.ARMOR_STAND,
                     new AABB(low.getX(), 0, low.getZ(), high.getX(), 255, high.getZ()));
             UEntity target = null;
             for (UEntity uEntity : armor) {
@@ -88,9 +86,9 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
                 this.chest = null;
                 VectorI3D pos = target.getPosition();
                 for (VectorI3D allInBox : VectorI3D.getAllInBox(pos.add(-1, 0, -1), pos.add(1, 0, 1))) {
-                    Block b = w.getBlockState(new BlockPos(allInBox.getX(), allInBox.getY(), allInBox.getZ())).getBlock();
+                    UBlockState b = w.getBlockStateAt(allInBox);
 
-                    if ((b == Blocks.chest || b == Blocks.trapped_chest)&& allInBox.distanceSq(pos) == 1 ) {
+                    if ((b.isOf(BlockType.CHEST, BlockType.TRAP_CHEST)) && allInBox.distanceSq(pos) == 1 ) {
                         this.chest = allInBox;
                         return;
                     }

@@ -24,18 +24,16 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.HypixelJoinedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.SkyblockJoinedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.SkyblockLeftEvent;
-import kr.syeyoung.dungeonsguide.mod.fakeserver.DungeonServerLaunchUtils;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
+import kr.syeyoung.dungeonsguide.mod.utils.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.SubscribeEvent;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UObjective;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScore;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
 
 import java.util.Collection;
 import java.util.Set;
@@ -109,12 +107,11 @@ public class SkyblockStatus {
     private boolean forceIsOnDungeon2;
 
     public static boolean isOnHypixel() {
-        Minecraft mc = Minecraft.getMinecraft();
         UPlayerSelf playerSelf = ModAPI.getAPI().getPlayer();
-        if (mc == null || playerSelf == null) return false;
+        if (playerSelf == null) return false;
         String clientBrand = playerSelf.getClientBrand();
         if (clientBrand == null) return false;
-        if (!mc.isSingleplayer() && mc.loadingScreen != null) {
+        if (!ModAPI.getAPI().isSinglePlayer()) {
             return clientBrand.startsWith("Hypixel BungeeCord");
         }
         return false;
@@ -135,10 +132,10 @@ public class SkyblockStatus {
             return;
         }
 
-        Objective objective = ScoreboardManager.INSTANCE.getSidebarObjective();
+        UObjective objective = ModAPI.getAPI().getScoreboardManager().getSidebarObjective();
         if (objective == null) return;
 
-        String objectiveName = TextUtils.stripColor(objective.getDisplayName());
+        String objectiveName = TextUtils.stripColor(TextUtils.getNearestFormattedText(objective.getDisplayName()));
         boolean skyblockFound = false;
         for (String skyblock : SKYBLOCK_IN_ALL_LANGUAGES) {
             if (objectiveName.startsWith(skyblock)) {
@@ -156,8 +153,8 @@ public class SkyblockStatus {
 
         boolean foundDungeon = false;
 
-        Collection<Score> scores = objective.getScores();
-        for (Score sc : scores) {
+        Collection<? extends UScore> scores = objective.getScores();
+        for (UScore sc : scores) {
             String strippedLine = TextUtils.keepScoreboardCharacters(
                     TextUtils.stripColor(sc.getJustTeam())).trim();
             if (strippedLine.contains("Cleared: ")) {

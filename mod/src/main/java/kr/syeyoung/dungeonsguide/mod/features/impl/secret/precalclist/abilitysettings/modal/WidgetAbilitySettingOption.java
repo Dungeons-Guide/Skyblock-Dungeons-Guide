@@ -13,7 +13,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 public class WidgetAbilitySettingOption extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "ability")
@@ -23,7 +22,7 @@ public class WidgetAbilitySettingOption extends AnnotatedImportOnlyWidget {
 
     private WidgetModalChooseAbilitySettings parent;
     public WidgetAbilitySettingOption(AlgorithmSetting algorithmSetting, WidgetModalChooseAbilitySettings parent) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/abilityedit/choose_ability_dummy.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/abilityedit/choose_ability_dummy.gui"));
 
         this.algorithmSetting = algorithmSetting;
         this.widgetBindableAttribute.setValue(new WidgetAbilitySettings(

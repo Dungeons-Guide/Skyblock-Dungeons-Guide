@@ -38,8 +38,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.ChunkUpdateEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonRoomDiscoveredEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -52,49 +51,40 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
-import kr.syeyoung.modapi.data.AABB;
-import kr.syeyoung.modapi.data.ResourceIdentifier;
-import kr.syeyoung.modapi.data.Vector3D;
-import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.data.*;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.util.RaycastResult;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UChunk;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.kyori.adventure.nbt.BinaryTagIO;
+import net.kyori.adventure.nbt.BinaryTagTypes;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.nbt.ListBinaryTag;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.*;
-import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
 import java.io.*;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
-import java.util.zip.GZIPOutputStream;
 
 public class FeatureCollectDungeonRooms extends SimpleFeature {
     public FeatureCollectDungeonRooms() {
@@ -105,7 +95,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
     public class WidgetUserApproval extends AnnotatedImportOnlyWidget {
         public WidgetUserApproval() {
-            super(new ResourceLocation("dungeonsguide:gui/collect_rooms_approval.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/collect_rooms_approval.gui"));
         }
 
         @On(functionName = "approve")
@@ -136,7 +126,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     private Map<Integer, EntityData> entityDataMap = new HashMap<>();
-    private Map<ChunkCoordIntPair, ChunkData> initialChunkDataMap = new HashMap<>();
+    private Map<Pair<Integer, Integer>, ChunkData> initialChunkDataMap = new HashMap<>();
     private Map<DungeonRoom, RoomInfo> roomInfoMap = new HashMap<>();
 
     @Data @Getter
@@ -145,7 +135,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         public String name;
         private String playerSkin;
         private String armorstand;
-        private transient ItemStack[] armoritems = new ItemStack[5];
+        private transient UItemStack[] armoritems = new UItemStack[5];
         private Map<String, Double> attributes = new HashMap<>();
 
         private String type;
@@ -165,7 +155,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     @Data
     public static class ChunkData {
         private int x, z;
-        ExtendedBlockStorage[] initialBlockStorages;
+        private UChunk initialBlockStorages;
     }
 
     public static class RoomInfo {
@@ -174,7 +164,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             @AllArgsConstructor @Data
             public static class BlockUpdateData {
                 private VectorI3D pos;
-                private IBlockState block;
+                private UBlockState block;
             }
 
             private List<BlockUpdateData> updatedBlocks = new ArrayList<>();
@@ -192,7 +182,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         @Data @AllArgsConstructor
         public static class ChatMessage {
             private long time;
-            private IChatComponent chat;
+            private Component chat;
         }
 
 
@@ -249,26 +239,25 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     @DGEventHandler(ignoreDisabled = true)
     public void playerInteract(PlayerInteractEvent event) {
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
-        IBlockState blockState = Minecraft.getMinecraft().theWorld.getBlockState(event.pos);
+        UBlockState blockState = ModAPI.getAPI().getWorld().getBlockStateAt(event.pos);
         if (blockState == null) return;
-        if (!(blockState.getBlock() == Blocks.lever || blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest || blockState.getBlock() == Blocks.skull)) {
+        if (!(blockState.isOf(BlockType.LEVER, BlockType.CHEST, BlockType.TRAP_CHEST, BlockType.SKULL))) {
             return;
         }
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
-        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ()));
+        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(event.pos);
         DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
         if (dungeonRoom == null) return;
         RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
         if (roomInfo == null) return;
 
-        roomInfo.interactions.add(new RoomInfo.Interaction(System.currentTimeMillis(), new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ())));
+        roomInfo.interactions.add(new RoomInfo.Interaction(System.currentTimeMillis(), event.pos));
     }
 
     @DGEventHandler(ignoreDisabled = true)
-    public void onChat(ClientChatReceivedEvent event) {
-        if (event.type == 2) return;
-        if (!event.message.getFormattedText().contains(":")) {
+    public void onChat(DGChatReceivedEvent event) {
+        if (!event.getOriginalFormattedText().contains(":")) {
             // this is not user message.
             if (Minecraft.getMinecraft().thePlayer == null) return;
             Vector3D pos = ModAPI.getAPI().getPlayer().getPositionVector();
@@ -281,7 +270,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
             if (roomInfo == null) return;
 
-            roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), event.message));
+            roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), event.getOriginalComponent()));
         }
     }
     private int lastNo = 0;
@@ -303,7 +292,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
             if (roomInfo == null) return;
 
-            roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), new ChatComponentText("SECRET UPDATE: "+secret+"/"+total)));
+            roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), Component.text("SECRET UPDATE: "+secret+"/"+total)));
         }
 
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
@@ -347,16 +336,16 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         entityData.name = event.getEntityLiving().getName();
 
         // TODO later...
-//        if (event.entityLiving.getHeldItem() != null)
-//            entityData.armoritems[4] = event.entityLiving.getHeldItem();
-//        if (event.entityLiving.getCurrentArmor(0) != null)
-//            entityData.armoritems[0] = event.entityLiving.getCurrentArmor(0);
-//        if (event.entityLiving.getCurrentArmor(1) != null)
-//            entityData.armoritems[1] = event.entityLiving.getCurrentArmor(1);
-//        if (event.entityLiving.getCurrentArmor(2) != null)
-//            entityData.armoritems[2] = event.entityLiving.getCurrentArmor(2);
-//        if (event.entityLiving.getCurrentArmor(3) != null)
-//            entityData.armoritems[3] = event.entityLiving.getCurrentArmor(3);
+        if (event.getEntityLiving().getHeldItem() != null)
+            entityData.armoritems[4] = event.getEntityLiving().getHeldItem();
+        if (event.getEntityLiving().getCurrentArmor(0) != null)
+            entityData.armoritems[0] = event.getEntityLiving().getCurrentArmor(0);
+        if (event.getEntityLiving().getCurrentArmor(1) != null)
+            entityData.armoritems[1] = event.getEntityLiving().getCurrentArmor(1);
+        if (event.getEntityLiving().getCurrentArmor(2) != null)
+            entityData.armoritems[2] = event.getEntityLiving().getCurrentArmor(2);
+        if (event.getEntityLiving().getCurrentArmor(3) != null)
+            entityData.armoritems[3] = event.getEntityLiving().getCurrentArmor(3);
         if (entityData.trajectory.getLast() == null || entityData.trajectory.getLast().getPos() == null || entityData.trajectory.getLast().getPos().distanceSq(event.getEntityLiving().getPositionVector()) > 0.1f) {
             entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, event.getEntityLiving().getPositionVector(), System.currentTimeMillis()));
         }
@@ -372,63 +361,34 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onChunkLoad(ChunkUpdateEvent chunkUpdateEvent) {
-        Set<Tuple<VectorI3D, IBlockState>> updates = new HashSet<>();
-        for (Chunk updatedChunk : chunkUpdateEvent.getUpdatedChunks()) {
+    public void onChunkLoad(ChunkUpdateEvent.Pre chunkUpdateEvent) {
+        Set<Pair<VectorI3D, UBlockState>> updates = new HashSet<>();
+        for (UChunk updatedChunk : chunkUpdateEvent.getUpdatedChunks()) {
             if (updatedChunk.isEmpty()) continue;
-            if (initialChunkDataMap.containsKey(updatedChunk.getChunkCoordIntPair())) {
+            Pair<Integer, Integer> coordinate = new Pair<>(updatedChunk.getChunkZ(), updatedChunk.getChunkX());
+            if (initialChunkDataMap.containsKey(coordinate)) {
                 // that's block update!
 
-                ChunkData prevChunk = initialChunkDataMap.get(updatedChunk.getChunkCoordIntPair());
-                ExtendedBlockStorage[] prev = prevChunk.getInitialBlockStorages();
-                ExtendedBlockStorage[] neu = updatedChunk.getBlockStorageArray();
-                for (int i = 0; i < prev.length; i++) {
-                    ExtendedBlockStorage prevSt = prev[i];
-                    ExtendedBlockStorage neuSt = neu[i];
-                    if (prevSt == null && neuSt != null) {
-                        for (int x = 0; x < 16; x++) {
-                            for (int y = 0; y < 16; y++) {
-                                for (int z = 0; z < 16; z++) {
-                                    IBlockState blockState = neuSt.get(x,y,z);
-                                    VectorI3D pos = new VectorI3D(prevChunk.x * 16 + x,  i * 16 + y, prevChunk.z * 16 + z);
-                                    updates.add(new Tuple<>(pos, blockState));
-                                }
-                            }
-                        }
-                    } else if (prevSt != null && neuSt == null) {
-                        IBlockState air = Blocks.air.getDefaultState();
-                        for (int x = 0; x < 16; x++) {
-                            for (int y = 0; y < 16; y++) {
-                                for (int z = 0; z < 16; z++) {
-                                    VectorI3D pos = new VectorI3D(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
-                                    updates.add(new Tuple<>(pos, air));
-                                }
-                            }
-                        }
-                    } else if (prevSt == null && neuSt == null) {
-                    } else {
-                        for (int x = 0; x < 16; x++) {
-                            for (int y = 0; y < 16; y++) {
-                                for (int z = 0; z < 16; z++) {
-                                    VectorI3D pos = new VectorI3D(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
-                                    IBlockState prevState = prevSt.get(x,y,z);
-                                    IBlockState neuState = neuSt.get(x,y,z);
-                                    if (!neuState.equals(prevState)) {
-                                        updates.add(new Tuple<>(pos, neuState));
-                                    }
-                                }
+                ChunkData prevChunk = initialChunkDataMap.get(coordinate);
+                UChunk prev = prevChunk.getInitialBlockStorages();
+                UChunk neu = updatedChunk;
+                for (int y = 0; y < neu.getLenY(); y++) {
+                    for (int x = 0; x < neu.getLenX(); x++) {
+                        for (int z = 0; z < neu.getLenZ(); z++) {
+                            UBlockState prevB = prev.getRelativeBlockAt(x,y,z);
+                            UBlockState neuB = neu.getRelativeBlockAt(x,y,z);
+                            if (neu != prev) {
+                                updates.add(new Pair<>(new VectorI3D(x+neu.getMinX(),y+neu.getMinY(),z+neu.getMinZ()), neuB));
                             }
                         }
                     }
                 }
-
-                continue;
             }
             ChunkData chunkData = new ChunkData();
-            chunkData.x = updatedChunk.xPosition;
-            chunkData.z = updatedChunk.zPosition;
-            chunkData.initialBlockStorages = updatedChunk.getBlockStorageArray();
-            initialChunkDataMap.put(new ChunkCoordIntPair(chunkData.x, chunkData.z), chunkData);
+            chunkData.x = updatedChunk.getChunkX();
+            chunkData.z = updatedChunk.getChunkZ();
+            chunkData.initialBlockStorages = updatedChunk;
+            initialChunkDataMap.put(new Pair<>(chunkData.x, chunkData.z), chunkData);
         }
         if (!updates.isEmpty()) {
             BlockUpdateEvent.Pre pre = new BlockUpdateEvent.Pre();
@@ -441,7 +401,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     public void onBlockUpdate(BlockUpdateEvent.Pre blockUpdateEvent) {
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
-        Map<DungeonRoom, List<Tuple<VectorI3D, IBlockState>>> updatePerRoom = blockUpdateEvent.getUpdatedBlocks().stream()
+        Map<DungeonRoom, List<Pair<VectorI3D, UBlockState>>> updatePerRoom = blockUpdateEvent.getUpdatedBlocks().stream()
                 .filter(a -> {
                     Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(a.getFirst());
                     return dungeonContext.getScaffoldParser().getRoomMap().get(roompt) != null;
@@ -451,7 +411,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                             return dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
                         }));
 
-        for (Map.Entry<DungeonRoom, List<Tuple<VectorI3D, IBlockState>>> dungeonRoomListEntry : updatePerRoom.entrySet()) {
+        for (Map.Entry<DungeonRoom, List<Pair<VectorI3D, UBlockState>>> dungeonRoomListEntry : updatePerRoom.entrySet()) {
             if (dungeonRoomListEntry.getKey() == null) {
                 System.out.println("WTF!!!");
             }
@@ -460,7 +420,6 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             roomInfo.blockUpdates.add(new RoomInfo.BlockUpdate(dungeonRoomListEntry.getValue().stream().map(it -> new RoomInfo.BlockUpdate.BlockUpdateData(it.getFirst(), it.getSecond())).collect(Collectors.toList()), System.currentTimeMillis()));
             roomInfo.minX = dungeonRoomListEntry.getKey().getRoomBounds().getMin().getX();
             roomInfo.minZ = dungeonRoomListEntry.getKey().getRoomBounds().getMin().getZ();
-
         }
     }
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
@@ -481,67 +440,65 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onWorldLoad(WorldEvent.Unload event) {
+    public void onWorldLoad(WorldUnloadEvent event) {
         try {
-            Gson gson = new GsonBuilder()
+            GsonBuilder builder = new GsonBuilder()
                     .disableHtmlEscaping()
-                    .registerTypeAdapter(ItemStack.class, new TypeAdapter<ItemStack>() {
+                    .registerTypeAdapter(UItemStack.class, new TypeAdapter<UItemStack>() {
                         @Override
-                        public void write(JsonWriter out, ItemStack value) throws IOException {
+                        public void write(JsonWriter out, UItemStack value) throws IOException {
                             if (value == null) {
                                 out.nullValue();
                             } else {
-                                out.value(nbttostring("item", value.getTagCompound()));
+                                out.value(nbttostring("item", value.serialize()));
                             }
                         }
 
                         @Override
-                        public ItemStack read(JsonReader in) throws IOException {
+                        public UItemStack read(JsonReader in) throws IOException {
                             return null;
                         }
                     })
-                    .registerTypeAdapter(IBlockState.class, new TypeAdapter<IBlockState>() {
+                    .registerTypeAdapter(UBlockState.class, new TypeAdapter<UBlockState>() {
                         @Override
-                        public void write(JsonWriter out, IBlockState value) throws IOException {
-                            int id = Block.getIdFromBlock(value.getBlock());
-                            int meta = value.getBlock().getMetaFromState(value);
-                            out.value(id+":"+meta);
+                        public void write(JsonWriter out, UBlockState value) throws IOException {
+                            out.value(value.serialize());
                         }
 
                         @Override
-                        public IBlockState read(JsonReader in) throws IOException {
+                        public UBlockState read(JsonReader in) throws IOException {
                             return null;
                         }
                     })
-                    .registerTypeAdapter(Vec3.class, new TypeAdapter<Vec3>() {
+                    .registerTypeAdapter(Vector3D.class, new TypeAdapter<Vector3D>() {
                         @Override
-                        public void write(JsonWriter out, Vec3 value) throws IOException {
+                        public void write(JsonWriter out, Vector3D value) throws IOException {
                             if (value == null) {
                                 out.nullValue();
                                 return;
                             }
-                            out.beginArray().value(value.xCoord).value(value.yCoord).value(value.zCoord).endArray();
+                            out.beginArray().value(value.x).value(value.y).value(value.z).endArray();
                         }
 
                         @Override
-                        public Vec3 read(JsonReader in) throws IOException {
+                        public Vector3D read(JsonReader in) throws IOException {
                             return null;
                         }
                     }).registerTypeAdapter(RoomInfo.BlockUpdate.BlockUpdateData.class, new TypeAdapter<RoomInfo.BlockUpdate.BlockUpdateData>() {
                         @Override
                         public void write(JsonWriter out, RoomInfo.BlockUpdate.BlockUpdateData value) throws IOException {
-                            int id = Block.getIdFromBlock(value.getBlock().getBlock());
-                            int meta = value.getBlock().getBlock().getMetaFromState(value.getBlock());
-                            out.beginArray().value(value.getPos().getX()).value(value.getPos().getY()).value(value.getPos().getZ()).value(id+":"+meta).endArray();
+//                            int id = Block.getIdFromBlock(value.getBlock().getBlock());
+//                            int meta = value.getBlock().getBlock().getMetaFromState(value.getBlock());
+                            out.beginArray().value(value.getPos().getX()).value(value.getPos().getY()).value(value.getPos().getZ()).value(value.getBlock().serialize()).endArray();
                         }
 
                         @Override
                         public RoomInfo.BlockUpdate.BlockUpdateData read(JsonReader in) throws IOException {
                             return null;
                         }
-                    })
-                    .registerTypeAdapter(IChatComponent.class, new IChatComponent.Serializer())
-                    .create();
+                    });
+            Gson gson = GsonComponentSerializer.gson().populator().apply(builder).create();
+
             String correlationId = Optional.ofNullable(PartyManager.INSTANCE.getPartyContext())
                     .map(PartyContext::getPartyID)
                     .orElse(UUID.randomUUID().toString());
@@ -570,7 +527,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
 
 
-                NBTTagCompound nbtTagCompound2 = createNBT(roomInfo, dungeonRoomRoomInfoEntry.getKey());
+                CompoundBinaryTag nbtTagCompound2 = createNBT(roomInfo, dungeonRoomRoomInfoEntry.getKey());
                 jsonObject.addProperty("schematic", nbttostring("Schematic", nbtTagCompound2));
 
                 try {
@@ -629,20 +586,10 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
 
-    public static String nbttostring(String name, NBTTagCompound compound) {
-
+    public static String nbttostring(String name, CompoundBinaryTag compound) {
         try {
-            Method method = ReflectionHelper.findMethod(NBTTagCompound.class, compound, new String[] {"write", "method_5062","func_74734_a", "a"}, DataOutput.class);
-
-
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            DataOutputStream dataoutputstream = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(byteArrayOutputStream)));
-
-            dataoutputstream.writeByte(compound.getId());
-
-            dataoutputstream.writeUTF(name);
-            method.invoke(compound, dataoutputstream);
-            dataoutputstream.close();
+            BinaryTagIO.writer().writeNamed(new AbstractMap.SimpleEntry<>(name, compound), byteArrayOutputStream, BinaryTagIO.Compression.GZIP);
             byte[] arr = byteArrayOutputStream.toByteArray();
             return Base64.getEncoder().encodeToString(arr);
         } catch (Exception e) {
@@ -651,12 +598,17 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         }
     }
 
-    private NBTTagCompound createNBT(RoomInfo roomInfo, DungeonRoom dungeonRoom) {
-        NBTTagCompound compound = new NBTTagCompound();
-        compound.setShort("Width", (short) (dungeonRoom.getRoomBounds().getMax().getX() - dungeonRoom.getRoomBounds().getMin().getX() + 1));
-        compound.setShort("Height", (short) 255);
-        compound.setShort("Length", (short) (dungeonRoom.getRoomBounds().getMax().getZ() - dungeonRoom.getRoomBounds().getMin().getZ() + 1));
-        int size =compound.getShort("Width") * compound.getShort("Height") * compound.getShort("Length");
+    private CompoundBinaryTag createNBT(RoomInfo roomInfo, DungeonRoom dungeonRoom) {
+        if (1==1) throw new UnsupportedOperationException("NOOO"); // TODO:
+
+        CompoundBinaryTag.Builder compound = CompoundBinaryTag.builder();
+        short width =  (short) (dungeonRoom.getRoomBounds().getMax().getX() - dungeonRoom.getRoomBounds().getMin().getX() + 1);
+        compound.putShort("Width", width);
+        short height  = 255;
+        compound.putShort("Height", height);
+        short length = (short) (dungeonRoom.getRoomBounds().getMax().getZ() - dungeonRoom.getRoomBounds().getMin().getZ() + 1);
+        compound.putShort("Length", length);
+        int size = width * height * length;
 
         byte[] blocks = new byte[size];
         byte[] meta = new byte[size];
@@ -664,41 +616,19 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         byte[] extraNibble = new byte[(int) Math.ceil(size / 2.0)];
 
         boolean extraEx = false;
-        NBTTagList tileEntitiesList = new NBTTagList();
-        for (int x = 0; x < compound.getShort("Width"); x++) {
-            for (int y = 0; y <  compound.getShort("Height"); y++) {
-                for (int z = 0; z < compound.getShort("Length"); z++) {
-                    int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
+        ListBinaryTag.Builder<CompoundBinaryTag> tileEntitiesList = ListBinaryTag.builder(BinaryTagTypes.COMPOUND);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                for (int z = 0; z < length; z++) {
+                    int index = x + (y * length + z) * width;
                     VectorI3D pos = dungeonRoom.getRelativeBlockPosAt(x,y - 70,z);
-                    ChunkData chunkData = initialChunkDataMap.get(new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4));
+                    ChunkData chunkData = initialChunkDataMap.get(new Pair<>(pos.getX() >> 4, pos.getZ() >> 4));
 
-                    IBlockState blockState;
-                    if (chunkData != null) {
+                    UBlockState blockState = chunkData.initialBlockStorages.getRelativeBlockAt(x&0xF, y, z&0xF);
 
-                        ExtendedBlockStorage[] blockStorage = chunkData.initialBlockStorages;
-
-                            if (pos.getY() >= 0 && pos.getY() >> 4 < blockStorage.length) {
-                                ExtendedBlockStorage extendedblockstorage = blockStorage[pos.getY() >> 4];
-                                if (extendedblockstorage != null) {
-                                    int j = pos.getX() & 15;
-                                    int k = pos.getY() & 15;
-                                    int i = pos.getZ() & 15;
-                                    blockState = extendedblockstorage.get(j, k, i);
-                                } else {
-                                    blockState = Blocks.air.getDefaultState();
-                                }
-                            } else {
-                                blockState = Blocks.air.getDefaultState();
-                            }
-
-                    } else {
-                        blockState = Blocks.air.getDefaultState();
-                    }
-
-                    int id = Block.getIdFromBlock(blockState.getBlock());
-                    blocks[index] = (byte) id;
-                    meta[index] =  (byte) blockState.getBlock().getMetaFromState(blockState);
-                    if ((extra[index] = (byte) ((id) >> 8)) > 0) {
+                    blocks[index] = (byte) blockState.getLegacyId();
+                    meta[index] =  (byte) blockState.getLegacyMeta();
+                    if ((extra[index] = (byte) ((blockState.getLegacyId()) >> 8)) > 0) {
                         extraEx = true;
                     }
                 }
@@ -713,16 +643,16 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         }
 
 
-        compound.setByteArray("Blocks", blocks);
-        compound.setByteArray("Data", meta);
-        compound.setString("Materials", "Alpha");
+        compound.putByteArray("Blocks", blocks);
+        compound.putByteArray("Data", meta);
+        compound.putString("Materials", "Alpha");
         if (extraEx) {
-            compound.setByteArray("AddBlocks", extraNibble);
+            compound.putByteArray("AddBlocks", extraNibble);
         }
-        compound.setTag("Entities", new NBTTagList());
-        compound.setTag("TileEntities", tileEntitiesList);
+        compound.put("Entities", ListBinaryTag.empty());
+        compound.put("TileEntities", tileEntitiesList.build());
 
-        return compound;
+        return compound.build();
     }
 
 
@@ -731,15 +661,16 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (!FeatureRegistry.DEBUG.isEnabled()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
 
-        Entity hovered = Minecraft.getMinecraft().pointedEntity;
+        RaycastResult result = ModAPI.getAPI().getObjectMouseOver();
+        UEntity hovered = result.getEntityHit();
         if (hovered == null) return;
         EntityData entityData = entityDataMap.get(hovered.getEntityId());
         if (entityData == null) {
-            RenderUtils.drawTextAtWorld("??Unknown??", (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
+            RenderUtils.drawTextAtWorld("??Unknown??", (float) hovered.getPosX(), (float) hovered.getPosY()+3, (float) hovered.getPosZ(), 0xFF000000, 0.02f, false, true, event.partialTicks);
         } else {
             if (entityData.getArmorstand() != null)
-                RenderUtils.drawTextAtWorld(entityData.getArmorstand(), (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
-            RenderUtils.drawTextAtWorld(entityData.getType(), (float) hovered.posX, (float) hovered.posY+3.2f, (float) hovered.posZ, 0xFF00FF00, 0.02f, false, true, event.partialTicks);
+                RenderUtils.drawTextAtWorld(entityData.getArmorstand(), (float) hovered.getPosX(), (float) hovered.getPosY()+3, (float) hovered.getPosZ(), 0xFF000000, 0.02f, false, true, event.partialTicks);
+            RenderUtils.drawTextAtWorld(entityData.getType(), (float) hovered.getPosX(), (float) hovered.getPosY()+3.2f, (float) hovered.getPosZ(), 0xFF00FF00, 0.02f, false, true, event.partialTicks);
             Vector3D pos = entityData.getTrajectory().getFirst().getPos();
             RenderUtils.renderBeaconBeam(
                     pos.x,

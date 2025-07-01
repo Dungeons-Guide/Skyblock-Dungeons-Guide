@@ -45,11 +45,10 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class FeatureSoulRoomWarning extends TextHUDFeature {
 
@@ -112,7 +111,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
         FeatureParameter<List<String>> uids;
         private List<RoomSwitch> switches;
         public RoomConfiguration(FeatureParameter<List<String>> uids) {
-            super(new ResourceLocation("dungeonsguide:gui/features/fairysoul/roomconfiguration.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/features/fairysoul/roomconfiguration.gui"));
 
             for (String s : uids.getValue()) {
                 ifOrnot.put(s, new BindableAttribute<>(Boolean.class, true));
@@ -171,7 +170,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
         @Bind(variableName = "enabled")
         public final BindableAttribute<Boolean> enabled= new BindableAttribute<>(Boolean.class);
         public RoomSwitch(DungeonRoomInfo dungeonRoomInfo, BindableAttribute<Boolean> linkTo) {
-            super(new ResourceLocation("dungeonsguide:gui/features/fairysoul/roomswitch.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/features/fairysoul/roomswitch.gui"));
             name.setValue(dungeonRoomInfo.getName());
             enabled.exportTo(linkTo);
         }

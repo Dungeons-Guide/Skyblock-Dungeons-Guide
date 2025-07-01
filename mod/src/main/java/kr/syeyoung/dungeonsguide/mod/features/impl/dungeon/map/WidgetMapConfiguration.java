@@ -41,8 +41,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,7 +129,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
 
     private FeatureDungeonMap2 dungeonMap2;
     public WidgetMapConfiguration(FeatureDungeonMap2 featureDungeonMap2) {
-        super(new ResourceLocation("dungeonsguide:gui/features/map/editor.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/map/editor.gui"));
         this.dungeonMap2 = featureDungeonMap2;
 
         widgetBindableAttribute.setValue(new WidgetMapDemo(featureDungeonMap2));
@@ -270,7 +268,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         public final BindableAttribute<Widget> value = new BindableAttribute<>(Widget.class);
 
         public WidgetSimpleField(String name, Widget editor) {
-            super(new ResourceLocation("dungeonsguide:gui/features/map/field.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/features/map/field.gui"));
             this.name.setValue(name);
             this.value.setValue(editor);
         }
@@ -301,7 +299,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         private WidgetMapConfiguration widgetMapConfiguration;
         private UUID uuid;
         public WidgetRoomOverride(UUID uuid, MapConfiguration.RoomOverride roomOverride, WidgetMapConfiguration configuration) {
-            super(new ResourceLocation("dungeonsguide:gui/features/map/roomoverride.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/features/map/roomoverride.gui"));
 
             this.widgetMapConfiguration = configuration;
             this.uuid = uuid;
@@ -331,7 +329,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
                 if (j / 4 == 0) {
                     color = 0x00000000;
                 } else {
-                    color = MapColor.mapColorArray[j / 4].getMapColor(j & 3);
+                    color = ModAPI.getAPI().getMapUtils().getRGBColor(j);
                 }
 
                 this.roomColor.setValue(color);
@@ -406,7 +404,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         @Bind(variableName = "enabled")
         public final BindableAttribute<Boolean> isEnabled = new BindableAttribute<>(Boolean.class);
         public BooleanEditWidget(Boolean defaultValue, Consumer<Boolean> onUpdate) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/boolean.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/boolean.gui"));
             isEnabled.setValue(defaultValue);
             isEnabled.addOnUpdate((old, neu) -> {
                 ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
@@ -422,7 +420,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         private int idx;
         private Consumer<T> onUpdate;
         public EnumEditWidget(T[] values, T defaultValue, Consumer<T> onUpdate) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/stringChoice.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/stringChoice.gui"));
             this.idx = defaultValue.ordinal();
             this.values = values;
             this.onUpdate = onUpdate;

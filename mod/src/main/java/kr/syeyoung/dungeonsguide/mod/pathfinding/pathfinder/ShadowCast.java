@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder;
 
-import net.minecraft.util.BlockPos;
+import kr.syeyoung.modapi.data.VectorI3D;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -75,8 +75,8 @@ public class ShadowCast {
             {0,0,-1, -1,0,0,0,-1,0}, // Y-, (Z-, X-)
 
     };
-    public static List<BlockPos> realShadowcast(Checker checker, int centerX, int centerY, int centerZ, int radius, double leeway, double boffset) {
-        LinkedList<BlockPos> result = new LinkedList<>();
+    public static List<VectorI3D> realShadowcast(Checker checker, int centerX, int centerY, int centerZ, int radius, double leeway, double boffset) {
+        LinkedList<VectorI3D> result = new LinkedList<>();
         for (int[] matrix : TRANSFORM_MATRICES) {
 
 //            shadowcast(checker, centerX, centerY, centerZ, 1, 0, 1, 0, 1, radius, leeway,
@@ -124,7 +124,7 @@ public class ShadowCast {
                                             double xOffset, double yOffset, double zOffset,
                                             int trMatrix11, int trMatrix21, int trMatrix31,
                                             int trMatrix12, int trMatrix22, int trMatrix32,
-                                            int trMatrix13, int trMatrix23, int trMatrix33, LinkedList<BlockPos> result) {
+                                            int trMatrix13, int trMatrix23, int trMatrix33, LinkedList<VectorI3D> result) {
         if (startZ > radius) return;
         // boom. radius is manhatten radius. lol.
         double realZ = startZ - zOffset;
@@ -164,13 +164,13 @@ public class ShadowCast {
                     int trX = centerX * 2 + 1+ (x) * trMatrix11 + (y) * trMatrix21 + (startZ*2-1 ) * trMatrix31;
                     int trY = centerY * 2 + 1+ (x) * trMatrix12 + (y) * trMatrix22 + (startZ*2 -1) * trMatrix32;
                     int trZ = centerZ * 2 + 1+ (x) * trMatrix13 + (y) * trMatrix23 + (startZ*2-1) * trMatrix33;
-                    result.add(new BlockPos(trX, trY, trZ));
+                    result.add(new VectorI3D(trX, trY, trZ));
                 }
                 if (!(currentSlopeYP < startSlopeY || currentSlopeYP > endSlopeY || currentSlopeXP < startSlopeX || currentSlopeXP > endSlopeX)) {
                     int trX = centerX * 2 + 1+ (x) * trMatrix11 + (y) * trMatrix21 + (startZ*2 ) * trMatrix31;
                     int trY = centerY * 2 + 1+ (x) * trMatrix12 + (y) * trMatrix22 + (startZ*2 ) * trMatrix32;
                     int trZ = centerZ * 2 + 1+ (x) * trMatrix13 + (y) * trMatrix23 + (startZ*2 ) * trMatrix33;
-                    result.add(new BlockPos(trX, trY, trZ));
+                    result.add(new VectorI3D(trX, trY, trZ));
                 }
             }
         }

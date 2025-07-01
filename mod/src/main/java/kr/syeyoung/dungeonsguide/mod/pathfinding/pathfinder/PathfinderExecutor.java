@@ -23,7 +23,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.IPathfindWorld;
 import kr.syeyoung.modapi.data.Vector3D;
 import lombok.Getter;
-import net.minecraft.util.Vec3;
 
 import java.util.Collections;
 
@@ -43,8 +42,7 @@ public class PathfinderExecutor implements AutoCloseable {
 
     public PathfinderExecutor(IPathfinder pathfinder, BoundingBox target, IPathfindWorld dungeonRoom) {
         this.pathfinder = pathfinder;
-        Vec3 tv = target.center();
-        this.target = new Vector3D(tv.xCoord, tv.yCoord, tv.zCoord);
+        this.target = target.center();
         this.dungeonRoom = dungeonRoom;
 
         pathfinder.init(dungeonRoom, target);

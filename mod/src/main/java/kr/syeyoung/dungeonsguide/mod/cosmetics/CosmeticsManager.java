@@ -19,12 +19,12 @@
 package kr.syeyoung.dungeonsguide.mod.cosmetics;
 
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors.*;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.SurgicalReplacer;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGPlayerJoinEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGPlayerQuitEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerListItemPacketEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
@@ -32,20 +32,21 @@ import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.entity.UEntityPlayer;
+import kr.syeyoung.modapi.event.ListenerPriority;
+import kr.syeyoung.modapi.event.SubscribeEvent;
+import kr.syeyoung.modapi.event.events.ChatReceivedEvent;
+import kr.syeyoung.modapi.event.events.PlayerNameFormatEvent;
+import kr.syeyoung.modapi.event.events.TabListUpdateEvent;
+import kr.syeyoung.modapi.event.events.TabNameFormatEvent;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.play.server.S38PacketPlayerListItem;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentIteratorType;
+import net.kyori.adventure.text.TextComponent;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -124,7 +125,7 @@ public class CosmeticsManager {
         this.activeCosmeticByPlayerNameLowerCase = activeCosmeticByPlayerName;
     }
 
-    @kr.syeyoung.modapi.event.SubscribeEvent
+    @SubscribeEvent
     public void stompConnect(StompConnectedEvent e) {
 
         e.getStompInterface().subscribe("/topic/cosmetic.set", (stompClient, payload) -> {
@@ -197,8 +198,8 @@ public class CosmeticsManager {
 
                 activeCosmeticMap.put(cosmeticData.getActivityUID(), cosmeticData);
                 try {
-                    if (Minecraft.getMinecraft().theWorld != null) {
-                        EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(cosmeticData.getPlayerUID());
+                    if (ModAPI.getAPI().getWorld() != null) {
+                        UEntityPlayer entityPlayer = ModAPI.getAPI().getWorld().getPlayerEntityByUuid(cosmeticData.getPlayerUID());
                         if (entityPlayer != null) entityPlayer.refreshDisplayName();
                     }
                 } catch (Exception exception) {
@@ -243,13 +244,12 @@ public class CosmeticsManager {
     }
 
     private final ThreadLocal<Stack<List<ReplacementContext>>> contextThreadLocal = new ThreadLocal<>();
-    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
-    public void onChatDetect(ClientChatReceivedEvent clientChatReceivedEvent) {
+    @SubscribeEvent(priority = ListenerPriority.FIRST, receiveCanceled = true)
+    public void onChatDetect(ChatReceivedEvent clientChatReceivedEvent) {
         try {
-            if (clientChatReceivedEvent.type == 2) return;
             List<ReplacementContext> total = new ArrayList<>();
             for (IChatDetector iChatReplacer : iChatDetectors) {
-                List<ReplacementContext> replacementContext = iChatReplacer.getReplacementContext(clientChatReceivedEvent.message);
+                List<ReplacementContext> replacementContext = iChatReplacer.getReplacementContext(clientChatReceivedEvent.chat);
                 if (replacementContext != null) {
                     total.addAll(replacementContext);
                 }
@@ -258,18 +258,17 @@ public class CosmeticsManager {
                 contextThreadLocal.set(new Stack<>());
             contextThreadLocal.get().push(total);
         } catch (Exception t) {
-            System.out.println(clientChatReceivedEvent.message);
+            System.out.println(clientChatReceivedEvent.chat);
             FeatureCollectDiagnostics.queueSendLogAsync(t);
             t.printStackTrace();
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+    @SubscribeEvent(priority = ListenerPriority.LAST, receiveCanceled = true)
+    public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
         try {
             Stack<List<ReplacementContext>> threadCtx = contextThreadLocal.get();
             if (threadCtx == null) return;
-            if (clientChatReceivedEvent.type == 2) return;
             if (clientChatReceivedEvent.isCanceled()) {
                 threadCtx.pop();
                 return;
@@ -277,7 +276,9 @@ public class CosmeticsManager {
 
             List<ReplacementContext> replacementContexts = threadCtx.pop();
 
-            LinkedList<IChatComponent> chatComponents = SurgicalReplacer.linearifyMoveColorCharToStyle(clientChatReceivedEvent.message);
+            Component replaceTarget = clientChatReceivedEvent.chat;
+
+//            LinkedList<Component> chatComponents = SurgicalReplacer.linearifyMoveColorCharToStyle(clientChatReceivedEvent.chat);
             for (ReplacementContext replacementContext : replacementContexts) {
                 if (replacementContext.getUsername().isEmpty()) continue;
                 List<ActiveCosmetic> activeCosmetics = getActiveCosmeticByPlayerNameLowerCase()
@@ -308,11 +309,12 @@ public class CosmeticsManager {
                     }
                 }
 
-
+//                replaceTarget.ren
                 StringBuilder sb = new StringBuilder();
-                for (IChatComponent chatComponent : chatComponents) {
-                    String str = chatComponent.getUnformattedText();
-                    sb.append(str);
+                for (Component component : replaceTarget.iterable(ComponentIteratorType.DEPTH_FIRST)) {
+                    if (component instanceof TextComponent) {
+                        sb.append(((TextComponent) component).content());
+                    }
                 }
 
                 List<Integer> allIdxes = new ArrayList<>();
@@ -328,15 +330,10 @@ public class CosmeticsManager {
                         .min(Comparator.comparingInt(a -> Math.abs(a - replacementContext.getNearIdx()))).orElse(-1);
 
                 if (idx == -1) {
-                    List<IChatComponent> components = SurgicalReplacer.inject(chatComponents,
-                            SurgicalReplacer.linearifyMoveColorCharToStyle(
-                                    new ChatComponentText(prefix+" ")
-                                            .setChatStyle(SurgicalReplacer.getChatStyleAt(chatComponents, 0))
-                            ),
-                            0, 0);
-                    clientChatReceivedEvent.message = SurgicalReplacer.combine(components);
-                    // since we couldn't find username anywhere, just do this.
-                    return;
+                    replaceTarget = Component.text(
+                            prefix
+                    ).append(replaceTarget);
+                    continue; // since we can't find target, continue.
                 }
 
                 int stIdx = theThing.lastIndexOf('\n', idx) + 1;
@@ -358,55 +355,46 @@ public class CosmeticsManager {
                 startingSearch += stIdx;
 
                 if (color != null)
-                    chatComponents = SurgicalReplacer.inject(chatComponents,
-                            SurgicalReplacer.linearifyMoveColorCharToStyle(
-                                    new ChatComponentText(color+replacementContext.getUsername())
-                                            .setChatStyle(SurgicalReplacer.getChatStyleAt(chatComponents, idx))
-                            ),
-                            idx, replacementContext.getUsername().length());
+                    replaceTarget = SurgicalReplacer.inject(idx, replacementContext.getUsername().length(),
+                            replaceTarget,
+                            Component.text(
+                                    color+replacementContext.getUsername()
+                            ));
 
                 if (prefix != null)
-                    chatComponents = SurgicalReplacer.inject(chatComponents,
-                            SurgicalReplacer.linearifyMoveColorCharToStyle(
-                                    new ChatComponentText(prefix+" ")
-                                            .setChatStyle(SurgicalReplacer.getChatStyleAt(chatComponents, 0))
-                            ),
-                            startingSearch, 0);
+                    replaceTarget = SurgicalReplacer.inject(startingSearch, 0,
+                            replaceTarget,
+                            Component.text(
+                                    prefix+" "
+                            ));
             }
-            clientChatReceivedEvent.message = SurgicalReplacer.combine(chatComponents);
+            clientChatReceivedEvent.chat = replaceTarget;
         } catch (Exception t) {
             FeatureCollectDiagnostics.queueSendLogAsync(t);
-            System.out.println(clientChatReceivedEvent.message);
+            System.out.println(clientChatReceivedEvent.chat);
             t.printStackTrace();
         }
     }
 
 
-    @kr.syeyoung.modapi.event.SubscribeEvent
-    public void onTabList(PlayerListItemPacketEvent packetPlayerListItem) {
-        S38PacketPlayerListItem asd = packetPlayerListItem.getPacketPlayerListItem();
-        if (asd.getAction() == S38PacketPlayerListItem.Action.ADD_PLAYER) {
-            if (Minecraft.getMinecraft().getNetHandler() == null) return;
-
-            Map<UUID, NetworkPlayerInfo> playerInfoMap = ReflectionHelper.getPrivateValue(NetHandlerPlayClient.class, Minecraft.getMinecraft().getNetHandler(), "playerInfoMap", "field_147310_i","i");
+    @SubscribeEvent
+    public void onTabList(TabListUpdateEvent event) {
+        if (event.getAction() == TabListUpdateEvent.Action.ADD_PLAYER) {
             List<UUID> pingTarget = new ArrayList<>();
-            for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
-                playerInfoMap.remove(entry.getProfile().getId());
-                playerInfoMap.put(entry.getProfile().getId(), new CustomNetworkPlayerInfo(entry));
+            for (UTabListEntry entry : event.getEntries()) {
+                if (entry.getUUID().version() == 4 && entry.getPlayerName() != null) {
+                    PlayerManager.INSTANCE.subscribeTo(entry.getUUID());
+                    pingTarget.add(entry.getUUID());
 
-                if (entry.getProfile().getId().version() == 4 && entry.getProfile().getName() != null) {
-                    PlayerManager.INSTANCE.subscribeTo(entry.getProfile().getId());
-                    pingTarget.add(entry.getProfile().getId());
-
-                    nameIdCache.put(entry.getProfile().getName(), entry.getProfile().getId());
+                    nameIdCache.put(entry.getPlayerName(), entry.getUUID());
                 }
             }
             PlayerManager.INSTANCE.ping(pingTarget);
-        } else if (asd.getAction() == S38PacketPlayerListItem.Action.REMOVE_PLAYER) {
-            for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
-                if (entry.getProfile().getId().version() == 4) {
-                    PlayerManager.INSTANCE.unsubscribe(entry.getProfile().getId());
-                    nameIdCache.remove(entry.getProfile().getName(), entry.getProfile().getId());
+        } else if (event.getAction() == TabListUpdateEvent.Action.REMOVE_PLAYER) {
+            for (UTabListEntry entry : event.getEntries()) {
+                if (entry.getUUID().version() == 4) {
+                    PlayerManager.INSTANCE.unsubscribe(entry.getUUID());
+                    nameIdCache.remove(entry.getPlayerName(), entry.getUUID());
                 }
             }
         }
@@ -414,8 +402,8 @@ public class CosmeticsManager {
 
     private void refresh(UUID uuid) {
         try {
-            if (Minecraft.getMinecraft().theWorld != null) {
-                EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(uuid);
+            if (ModAPI.getAPI().getWorld() != null) {
+                UEntityPlayer entityPlayer =ModAPI.getAPI().getWorld().getPlayerEntityByUuid(uuid);
                 if (entityPlayer != null) entityPlayer.refreshDisplayName();
             }
         } catch (Exception exception) {
@@ -424,43 +412,74 @@ public class CosmeticsManager {
         }
     }
 
-    @kr.syeyoung.modapi.event.SubscribeEvent
+    @SubscribeEvent
     public void onUpdate(DGPlayerJoinEvent event) {
         refresh(event.getUuid());
     }
-    @kr.syeyoung.modapi.event.SubscribeEvent
+    @SubscribeEvent
     public void onUpdate(DGPlayerQuitEvent event) {
         refresh(event.getUuid());
     }
 
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void nameFormat(PlayerEvent.NameFormat nameFormat) {
-        List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.get(nameFormat.entityPlayer.getGameProfile().getId());
-        boolean dg =
-                FeatureRegistry.DG_INDICATOR.isEnabled() &&
-                PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(nameFormat.entityPlayer.getGameProfile().getId(), false);
+    @SubscribeEvent
+    public void onTabFormat(TabNameFormatEvent formatEvent) {
+        String rawPlayerString = formatEvent.getDisplayName();
 
-        MarkedChatComponent markedChatComponent = null;
-        for (IChatComponent entityPlayerPrefix : nameFormat.entityPlayer.getPrefixes()) {
-            if (entityPlayerPrefix instanceof MarkedChatComponent) {
-                markedChatComponent = (MarkedChatComponent) entityPlayerPrefix;
-                break;
+        String actualName = null;
+        List<ActiveCosmetic> activeCosmetics;
+        for (String s : rawPlayerString.split(" ")) {
+            String strippped = TextUtils.stripColor(s);
+            if (strippped.startsWith("[")) continue;
+            actualName = strippped;
+            break;
+        }
+
+        if (actualName == null) return;
+
+        UUID uuid = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getNameIdCache().get(actualName);
+        boolean dg = FeatureRegistry.DG_INDICATOR.isEnabled() && PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(uuid, false);
+
+
+        activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(actualName.toLowerCase());
+        if (activeCosmetics == null && dg) {
+            formatEvent.setDisplayName("\ued00" + rawPlayerString);
+            return;
+        }
+        else if (activeCosmetics == null) return;
+
+        CosmeticData color=null;
+        for (ActiveCosmetic activeCosmetic : activeCosmetics) {
+            CosmeticData cosmeticData = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
+            if (cosmeticData == null) continue;
+            if (cosmeticData.getCosmeticType().equals("ncolor")) color = cosmeticData;
+        }
+
+//        FontRenderer
+        if (color != null) { // ᨠ
+            String coloredName = color.getData() + actualName;
+            if (dg) {
+                formatEvent.setDisplayName( "\ued00" + rawPlayerString.replace(actualName, coloredName));
+            } else {
+                formatEvent.setDisplayName(coloredName);
+            }
+        } else {
+            if (dg) {
+                formatEvent.setDisplayName( "\ued00" + rawPlayerString);
             }
         }
+    }
 
-        if (markedChatComponent == null) {
-            nameFormat.entityPlayer.addPrefix(markedChatComponent = new MarkedChatComponent("", ""));
-        }
+    @SubscribeEvent(priority = ListenerPriority.LAST)
+    public void nameFormat(PlayerNameFormatEvent nameFormat) {
+        List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.get(nameFormat.getPlayer().getUUID());
+        boolean dg =
+                FeatureRegistry.DG_INDICATOR.isEnabled() &&
+                PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(nameFormat.getPlayer().getUUID(), false);
 
 
-        String formatted = "";
-        if (dg) {
-            formatted += "\ued01";
-        }
-
-        markedChatComponent.setFormatted(formatted);
-        markedChatComponent.setUnformatted(formatted);
+        if (dg)
+            nameFormat.getPrefix().add(Component.text("\ued01")); // dg char.
 
 
         if (activeCosmetics == null) return;
@@ -487,10 +506,8 @@ public class CosmeticsManager {
         }
 
         if (color != null)
-            nameFormat.displayname = color+nameFormat.username;
+            nameFormat.setDisplayName(color+nameFormat.username);
 
-        formatted += prefix+ " ";
-        markedChatComponent.setFormatted(formatted);
-        markedChatComponent.setUnformatted(formatted);
+        nameFormat.getPrefix().add(Component.text(prefix+" "));
     }
 }

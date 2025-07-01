@@ -1,1 +1,0 @@
-this package exists to prevent incompatibilities with other mods due to them modifying various visible parts of the game.

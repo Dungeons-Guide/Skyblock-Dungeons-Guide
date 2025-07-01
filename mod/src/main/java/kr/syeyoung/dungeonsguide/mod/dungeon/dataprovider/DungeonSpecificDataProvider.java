@@ -20,16 +20,16 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.world.World;
+import kr.syeyoung.modapi.world.UWorld;
 
 import javax.vecmath.Vector2d;
 
 public interface DungeonSpecificDataProvider {
 
-    VectorI3D findDoor(World w, String dungeonName);
+    VectorI3D findDoor(UWorld w, String dungeonName);
 
-    Vector2d findDoorOffset(World w, String dungeonName);
-    BossfightProcessor createBossfightProcessor(World w, String dungeonName);
+    Vector2d findDoorOffset(UWorld w, String dungeonName);
+    BossfightProcessor createBossfightProcessor(UWorld w, String dungeonName);
 
     boolean isTrapSpawn(String dungeonName);
 

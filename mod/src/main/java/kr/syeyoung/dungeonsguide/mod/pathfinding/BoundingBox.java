@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.pathfinding;
 
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
-import net.minecraft.util.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +65,7 @@ public class BoundingBox {
         return bb;
     }
 
-    public Vec3 center() {
+    public Vector3D center() {
         double xSum = 0, ySum = 0, zSum = 0;
         double denominator = 0;
         for (AABB boundingBox : boundingBoxes) {
@@ -79,7 +78,7 @@ public class BoundingBox {
             ySum += lcy * area;
             zSum += lcz * area;
         }
-        return new Vec3(xSum/denominator, ySum/denominator, zSum / denominator);
+        return new Vector3D(xSum/denominator, ySum/denominator, zSum / denominator);
     }
 
     @Override

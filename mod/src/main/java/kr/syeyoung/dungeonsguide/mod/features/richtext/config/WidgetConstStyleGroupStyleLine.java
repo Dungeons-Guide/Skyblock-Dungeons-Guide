@@ -22,13 +22,12 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Text;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MinecraftTooltip;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MouseTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.RawMinecraftTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +44,7 @@ public class WidgetConstStyleGroupStyleLine extends AnnotatedImportOnlyWidget {
     private List<String> hover;
     private Supplier<Boolean> eraseEvaluator;
     public WidgetConstStyleGroupStyleLine(String name, Supplier<Boolean> erase, Object value, String eraseReason) {
-        super(new ResourceLocation("dungeonsguide:gui/config/text/styleline.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/text/styleline.gui"));
         this.name.setValue(name);
         this.eraseEvaluator = erase;
         refresh();
@@ -66,8 +65,8 @@ public class WidgetConstStyleGroupStyleLine extends AnnotatedImportOnlyWidget {
         this.erase.setValue(eraseEvaluator.get() ? "show" : "hide");
     }
 
-    private MinecraftTooltip actualTooltip = new MinecraftTooltip();
-    private MouseTooltip tooltip = null;
+    private RawMinecraftTooltip actualTooltip = new RawMinecraftTooltip();
+    private boolean tooltipShown = false;
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY, boolean childHandled) {
         if (childHandled) return false;
@@ -78,33 +77,35 @@ public class WidgetConstStyleGroupStyleLine extends AnnotatedImportOnlyWidget {
         if (toHover != null)
             actualTooltip.setTooltip(toHover);
 
-        if (toHover == null && this.tooltip != null) {
+        if (toHover == null && this.tooltipShown) {
             PopupMgr.getPopupMgr(getDomElement())
-                    .closePopup(this.tooltip);
-            this.tooltip = null;
-        } else if (toHover != null && this.tooltip == null)
+                    .closePopup(actualTooltip);
+            this.tooltipShown = false;
+        } else if (toHover != null && !tooltipShown) {
+            tooltipShown = true;
             PopupMgr.getPopupMgr(getDomElement())
-                    .openPopup(this.tooltip = new MouseTooltip(actualTooltip), (a) -> {
-                        this.tooltip = null;
+                    .openPopup(actualTooltip, (a) -> {
+                        this.tooltipShown = false;
                     });
+        }
         return false;
     }
 
     @Override
     public void mouseExited(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
-        if (this.tooltip != null) {
+        if (this.tooltipShown) {
             PopupMgr.getPopupMgr(getDomElement())
-                    .closePopup(this.tooltip, null);
-            this.tooltip = null;
+                    .closePopup(actualTooltip, null);
+            this.tooltipShown = false;
         }
     }
 
     @Override
     public void onUnmount() {
-        if (this.tooltip != null) {
+        if (this.tooltipShown) {
             PopupMgr.getPopupMgr(getDomElement())
-                    .closePopup(this.tooltip, null);
-            this.tooltip = null;
+                    .closePopup(actualTooltip, null);
+            this.tooltipShown = false;
         }
         super.onUnmount();
     }

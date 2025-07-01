@@ -1,11 +1,11 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.spiritleap;
 
+import kr.syeyoung.modapi.item.UItemStack;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.item.ItemStack;
 
 @Data @AllArgsConstructor
 public class WarpTarget {
-    private ItemStack itemStack;
+    private UItemStack itemStack;
     private int slotId;
 }

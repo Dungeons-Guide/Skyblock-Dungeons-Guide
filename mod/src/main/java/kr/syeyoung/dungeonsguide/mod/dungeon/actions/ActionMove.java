@@ -67,9 +67,18 @@ public class ActionMove extends AbstractActionMove {
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
-        return targets.stream().flatMap(a -> a.getOffsetPointSet().stream()).anyMatch(
-                a-> ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(a.getPos(dungeonRoom)) < 0.625
-        );
+        OffsetVec3 player = new OffsetVec3(dungeonRoom, ModAPI.getAPI().getPlayer().getPositionVector());
+        for (PossibleClickingSpot target : targets) {
+            for (OffsetVec3 offsetVec3 : target.getOffsetPointSet()) {
+                double dx = offsetVec3.xCoord - player.xCoord;
+                double dy = offsetVec3.yCoord - player.yCoord;
+                double dz = offsetVec3.zCoord - player.zCoord;
+                if (dx * dx + dy * dy + dz * dz < 0.625) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

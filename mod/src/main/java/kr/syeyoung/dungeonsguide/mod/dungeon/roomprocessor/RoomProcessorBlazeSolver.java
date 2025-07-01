@@ -32,7 +32,6 @@ import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -59,16 +58,15 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
         super.tick();
 
         DungeonRoom dungeonRoom = getDungeonRoom();
-        World w = dungeonRoom.getContext().getWorld();
         final VectorI3D low = dungeonRoom.getRoomBounds().getMin();
         final VectorI3D high = dungeonRoom.getRoomBounds().getMax();
         entityList.clear();
-        for (UEntity uEntity : dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.ARMOR_STAND, new AABB(low.getX(), 0, low.getZ(), high.getX(), 256, high.getZ()))) {
+        for (UEntity uEntity : dungeonRoom.getContext().getWorld().getEntitiesWithinAabb(EntityType.ARMOR_STAND, new AABB(low.getX(), 0, low.getZ(), high.getX(), 256, high.getZ()))) {
             if (uEntity.getName().toLowerCase().contains("blaze")) {
                 entityList.add((UEntityArmorStand) uEntity);
             }
         }
-        blazeList = dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.BLAZE, new AABB(low.getX(), 0, low.getZ(), high.getX(), 256, high.getZ()));
+        blazeList = dungeonRoom.getContext().getWorld().getEntitiesWithinAabb(EntityType.BLAZE, new AABB(low.getX(), 0, low.getZ(), high.getX(), 256, high.getZ()));
 
         Comparator<UEntityArmorStand> comparator = Comparator.comparingInt(a -> {
             String name = a.getName();

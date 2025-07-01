@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.ParserElement;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
@@ -35,7 +35,7 @@ import java.util.Map;
 public class DelegatingWidget extends Widget implements ExportedWidget, ImportingWidget {
 
     private final List<Widget> widgets;
-    public DelegatingWidget(ResourceLocation location) {
+    public DelegatingWidget(ResourceIdentifier location) {
 
 
         try (Parser parser = DomElementRegistry.obtainParser(location)) {

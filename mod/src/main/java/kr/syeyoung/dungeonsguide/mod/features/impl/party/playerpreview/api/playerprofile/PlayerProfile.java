@@ -19,8 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.dataclasses.*;
+import kr.syeyoung.modapi.item.UItemStack;
 import lombok.Data;
-import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,20 +42,20 @@ public class PlayerProfile {
     private List<Armor> wardrobe = new ArrayList<>();
     private int selectedWardrobe = -1;
 
-    private ItemStack[] inventory;
-    private ItemStack[] enderChest;
-    private ItemStack[] talismans;
+    private UItemStack[] inventory;
+    private UItemStack[] enderChest;
+    private UItemStack[] talismans;
 
     private int totalSecrets;
 
     @Data
     public static class Armor {
-        private final ItemStack[] armorSlots = new ItemStack[4];
+        private final UItemStack[] armorSlots = new UItemStack[4];
 
-        public ItemStack getHelmet() { return armorSlots[3]; }
-        public ItemStack getChestPlate() { return armorSlots[2]; }
-        public ItemStack getLeggings() { return armorSlots[1]; }
-        public ItemStack getBoots() { return armorSlots[0]; }
+        public UItemStack getHelmet() { return armorSlots[3]; }
+        public UItemStack getChestPlate() { return armorSlots[2]; }
+        public UItemStack getLeggings() { return armorSlots[1]; }
+        public UItemStack getBoots() { return armorSlots[0]; }
     }
 
     private Map<DungeonType, DungeonSpecificData<DungeonStat>> dungeonStats = new HashMap<>();

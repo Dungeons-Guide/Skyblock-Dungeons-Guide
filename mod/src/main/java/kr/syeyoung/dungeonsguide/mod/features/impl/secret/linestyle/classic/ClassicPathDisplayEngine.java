@@ -24,7 +24,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -257,7 +256,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
 
 
 
-        float distance = MathHelper.sqrt_double(target.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()));
+        float distance = (float) Math.sqrt(target.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         float scale = 0.45f * multiplier;
         scale *= 25.0 / 6.0;
@@ -267,7 +266,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         }
         RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, 1f, true, false, partialTicks);
 
-        RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(target.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector())))+"m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
+        RenderUtils.drawTextAtWorld(String.format("%.2f",Math.sqrt(target.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector())))+"m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
             if (poses != null){
@@ -282,7 +281,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
                     }
 
                     if (warp == 1) {
-                        BlockPos pos = new BlockPos(Math.floor(pose.getX()), Math.floor(pose.getY()) -1 , Math.floor(pose.getZ()));
+                        VectorI3D pos = new VectorI3D(Math.floor(pose.getX()), Math.floor(pose.getY()) -1 , Math.floor(pose.getZ()));
                         RenderUtils.highlightBox(
                                 new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1)
                                         .expand(0.003, 0.003, 0.003), Color.green, partialTicks, true);

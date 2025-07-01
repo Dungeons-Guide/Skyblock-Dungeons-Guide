@@ -26,9 +26,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.WorldSettings;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
+import kr.syeyoung.modapi.util.GameMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class WidgetStateTooltip extends AnnotatedWidget {
     public final BindableAttribute<Double> scale = new BindableAttribute<>(Double.class);
     private DungeonMechanicState mechanic;
     public WidgetStateTooltip(DungeonRoom dungeonRoom, DungeonMechanicState mechanic, String mechanicId) {
-        super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/tooltip.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/mechanicBrowser/tooltip.gui"));
         scale.setValue(FeatureRegistry.SECRET_BROWSE.getScale());
         this.mechanic = mechanic;
 
@@ -52,9 +52,8 @@ public class WidgetStateTooltip extends AnnotatedWidget {
             widgetList.add(new WidgetState(dungeonRoom, mechanicId, s));
         }
 
-        if ((Minecraft.getMinecraft().playerController.getCurrentGameType() == WorldSettings.GameType.CREATIVE
-                || Minecraft.getMinecraft().playerController.getCurrentGameType() == WorldSettings.GameType.SPECTATOR)&&
-                Minecraft.getMinecraft().isIntegratedServerRunning()) {
+        if (ModAPI.getAPI().getPlayer().getGameMode() == GameMode.SPECTATOR || ModAPI.getAPI().getPlayer().getGameMode() == GameMode.CREATIVE
+                        && ModAPI.getAPI().getFakeServerUtils().isRunning()) {
             widgetList.add(new WidgetTeleport(dungeonRoom, mechanicId));
         }
 

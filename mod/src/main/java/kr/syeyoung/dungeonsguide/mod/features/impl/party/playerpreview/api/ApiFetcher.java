@@ -23,7 +23,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -31,7 +30,6 @@ import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfileParser;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.client.Minecraft;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -41,7 +39,6 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -56,7 +53,6 @@ public class ApiFetcher {
     private static final Map<String, CachedData<PlayerSkyblockData>> playerProfileCache = new ConcurrentHashMap<>();
     private static final Map<String, CachedData<String>> nicknameToUID = new ConcurrentHashMap<>();
     private static final Map<String, CachedData<String>> UIDtoNickname = new ConcurrentHashMap<>();
-    private static final Map<String, CachedData<GameProfile>> UIDtoGameProfile = new ConcurrentHashMap<>();
 
     public static final ExecutorService ex = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newFixedThreadPool(4, new ThreadFactoryBuilder()
             .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
@@ -67,12 +63,10 @@ public class ApiFetcher {
         playerProfileCache.clear();
         nicknameToUID.clear();
         UIDtoNickname.clear();
-        UIDtoGameProfile.clear();
 
         completableFutureMap.clear();
         completableFutureMap2.clear();
         completableFutureMap3.clear();
-        completableFutureMap4.clear();
         PlayerProfileParser.constants = null;
 
         ex.submit(PlayerProfileParser::getLilyWeightConstants);
@@ -110,47 +104,6 @@ public class ApiFetcher {
         return gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonArray.class);
     }
 
-    private static final Map<String, CompletableFuture<Optional<GameProfile>>> completableFutureMap4 = new ConcurrentHashMap<>();
-
-    public static CompletableFuture<Optional<GameProfile>> getSkinGameProfileByUUIDAsync(String uid) {
-        if (UIDtoGameProfile.containsKey(uid)) {
-            CachedData<GameProfile> cachedData = UIDtoGameProfile.get(uid);
-            if (cachedData.getExpire() > System.currentTimeMillis()) {
-                return CompletableFuture.completedFuture(Optional.ofNullable(cachedData.getData()));
-            }
-            UIDtoGameProfile.remove(uid);
-        }
-        if (completableFutureMap4.containsKey(uid)) return completableFutureMap4.get(uid);
-
-        CompletableFuture<Optional<GameProfile>> completableFuture = new CompletableFuture<>();
-        fetchNicknameAsync(uid).thenAccept(nick -> {
-            if (!nick.isPresent()) {
-                completableFuture.complete(Optional.empty());
-                return;
-            }
-            ex.submit(() -> {
-                try {
-                    Optional<GameProfile> playerProfile = getSkinGameProfileByUUID(uid, nick.get());
-                    UIDtoGameProfile.put(uid, new CachedData<GameProfile>(System.currentTimeMillis() + 1000 * 60 * 30, playerProfile.orElse(null)));
-                    completableFuture.complete(playerProfile);
-                    completableFutureMap4.remove(uid);
-                    return;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                completableFuture.complete(Optional.empty());
-                completableFutureMap4.remove(uid);
-            });
-        });
-        completableFutureMap4.put(uid, completableFuture);
-        return completableFuture;
-    }
-
-    public static Optional<GameProfile> getSkinGameProfileByUUID(String uid, String nickname) throws IOException {
-        GameProfile gameProfile = new GameProfile(UUID.fromString(uid), nickname);
-        GameProfile newProf = Minecraft.getMinecraft().getSessionService().fillProfileProperties(gameProfile, true);
-        return newProf == gameProfile ? Optional.empty() : Optional.of(newProf);
-    }
 
 
     private static final Map<String, CompletableFuture<Optional<PlayerSkyblockData>>> completableFutureMap = new ConcurrentHashMap<>();

@@ -20,19 +20,19 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors;
 
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.util.IChatComponent;
+import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChatDetectorPartyMessages implements IChatDetector {
     @Override
-    public List<ReplacementContext> getReplacementContext(IChatComponent chatComponent) {
-        String str = chatComponent.getFormattedText();
+    public List<ReplacementContext> getReplacementContext(Component chatComponent) {
+        String str = TextUtils.getNearestFormattedText(chatComponent);
         String strip = TextUtils.stripColor(str);
 
         List<ReplacementContext> detectors = new ArrayList<>();
-        if (str.endsWith("§aenabled All Invite§r") || str.endsWith("§cdisabled All Invite§r") || str.endsWith("§ejoined the party.§r") || str.endsWith("§ehas been removed from the party.§r") || str.endsWith("§ehas left the party.§r")) {
+        if (str.endsWith("§aenabled All Invite") || str.endsWith("§cdisabled All Invite") || str.endsWith("§ejoined the party.") || str.endsWith("§ehas been removed from the party.") || str.endsWith("§ehas left the party.")) {
             String username = null;
             for (String s : TextUtils.stripColor(str).split(" ")) {
                 if (s.startsWith("[")) continue;
@@ -43,7 +43,7 @@ public class ChatDetectorPartyMessages implements IChatDetector {
                 detectors.add(new ReplacementContext(
                         strip.indexOf(username), username, null
                 ));
-        } else if (str.endsWith(" They have §r§c60 §r§eseconds to accept.§r")) {
+        } else if (str.endsWith(" They have §c60 §eseconds to accept.")) {
             String username = null;
             for (String s : TextUtils.stripColor(str).split(" ")) {
                 if (s.startsWith("[")) continue;
@@ -55,7 +55,7 @@ public class ChatDetectorPartyMessages implements IChatDetector {
                         strip.indexOf(username), username, null
                 ));
             username = null;
-            for (String s : TextUtils.stripColor(str.substring(str.indexOf("§r§einvited ")+12)).split(" ")) {
+            for (String s : TextUtils.stripColor(str.substring(str.indexOf("§einvited ")+12)).split(" ")) {
                 if (s.startsWith("[")) continue;
                 username = s;
                 break;
@@ -73,7 +73,7 @@ public class ChatDetectorPartyMessages implements IChatDetector {
                 break;
             }
             String oldLeader;
-            if (str.endsWith("§r§eleft§r")) {
+            if (str.endsWith("§eleft")) {
                 oldLeader = messageSplit[messageSplit.length - 2];
             } else {
                 oldLeader = messageSplit[messageSplit.length - 1];
@@ -87,7 +87,7 @@ public class ChatDetectorPartyMessages implements IChatDetector {
                 detectors.add(new ReplacementContext(
                         strip.indexOf(newLeader), newLeader, null
                 ));
-        } else if (str.endsWith("§eto Party Leader§r")) {
+        } else if (str.endsWith("§eto Party Leader")) {
             String[] messageSplit = TextUtils.stripColor(str).split(" ");
             String oldLeader = null;
             for (String s : messageSplit) {
@@ -110,7 +110,7 @@ public class ChatDetectorPartyMessages implements IChatDetector {
                 detectors.add(new ReplacementContext(
                         strip.indexOf(newLeader), newLeader, null
                 ));
-        } else if (str.endsWith("§r§eto Party Moderator§r")) {
+        } else if (str.endsWith("§eto Party Moderator")) {
             String[] messageSplit = TextUtils.stripColor(str).split(" ");
             String oldLeader = null;
             for (String s : messageSplit) {
@@ -134,7 +134,7 @@ public class ChatDetectorPartyMessages implements IChatDetector {
                         strip.indexOf(newModerator), newModerator, null
                 ));
 
-        } else if (str.endsWith("§r§eto Party Member§r")) {
+        } else if (str.endsWith("§eto Party Member")) {
             String[] messageSplit = TextUtils.stripColor(str).split(" ");
             String oldLeader = null;
             for (String s : messageSplit) {
@@ -180,7 +180,7 @@ public class ChatDetectorPartyMessages implements IChatDetector {
                         strip.indexOf(player), player, null
                 ));
             }
-        } else if (str.contains("§r§ejoined the dungeon group! (§r§b")) {
+        } else if (str.contains("§ejoined the dungeon group! (§b")) {
             String username = TextUtils.stripColor(str).split(" ")[3];
             detectors.add(new ReplacementContext(
                     strip.indexOf(username), username, null

@@ -26,8 +26,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
 import java.util.function.Supplier;
@@ -41,14 +39,14 @@ public class MenuItem extends AnnotatedImportOnlyWidget {
 
     private Supplier<Widget> pageCreator;
     public MenuItem(String category, Supplier<Widget> creator) {
-        super(new ResourceLocation("dungeonsguide:gui/config/menuitem.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/menuitem.gui"));
         this.pageCreator = creator;
 
         bindableAttribute.setValue(category);
         try {
             String target = "dungeonsguide:textures/config/categoryIcon/"+category.toLowerCase()
                     .replace("&","").replace(" ","_")+".png";
-            if (Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(target)) != null)
+            if (ModAPI.getAPI().getResourceManager().getResource(new ResourceIdentifier(target)) != null)
                 image.setValue(target);
         } catch (IOException e) {}
     }

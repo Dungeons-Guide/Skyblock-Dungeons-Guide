@@ -6,7 +6,6 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.MapConfiguration;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay.MapOverlay;
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapterChestOverride;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
@@ -14,24 +13,25 @@ import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
+import kr.syeyoung.modapi.world.UMapData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec4b;
 
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 import java.awt.*;
 
 public class MapOverlayPlayerClickable implements MapOverlay {
-    private TabListEntry entry;
+    private UTabListEntry entry;
     private String name;
     private MapConfiguration.PlayerHeadSettings settings;
     private WarpTarget target;
     private String clazz;
 
-    public MapOverlayPlayerClickable(TabListEntry entry, MapConfiguration.PlayerHeadSettings headSettings, WarpTarget target) {
+    public MapOverlayPlayerClickable(UTabListEntry entry, MapConfiguration.PlayerHeadSettings headSettings, WarpTarget target) {
         this.name = TabListUtil.getPlayerNameWithChecks(entry);
         this.entry = entry;
         this.settings = headSettings;
@@ -66,10 +66,10 @@ public class MapOverlayPlayerClickable implements MapOverlay {
             // getting player location from map
             String iconName = context.getMapPlayerMarkerProcessor().getMapIconToPlayerMap().get(name);
             if (iconName != null) {
-                Vec4b vec = context.getScaffoldParser().getLatestMapData().mapDecorations.get(iconName);
+                UMapData.MapMarker vec = context.getScaffoldParser().getLatestMapData().getMarkers().get(iconName);
                 if (vec != null) {
-                    VectorI3D worldPt = context.getScaffoldParser().getDungeonMapLayout().mapPointToWorldPoint(new Point(vec.func_176112_b() / 2 + 64, vec.func_176113_c()/2 + 64));
-                    return new Vector3d(worldPt.getX(), worldPt.getZ(), vec.func_176111_d() * 360 / 16.0f);
+                    VectorI3D worldPt = context.getScaffoldParser().getDungeonMapLayout().mapPointToWorldPoint(new Point(vec.getX() / 2 + 64, vec.getY()/2 + 64));
+                    return new Vector3d(worldPt.getX(), worldPt.getZ(), vec.getRotation() * 360 / 16.0f);
                 }
             }
         }
@@ -113,7 +113,7 @@ public class MapOverlayPlayerClickable implements MapOverlay {
             boolean flag1 = settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.HEAD_FLIP;
             GlStateManager.enableTexture2D();
             Minecraft.getMinecraft().getTextureManager().bindTexture(
-                    entry.getLocationSkin()
+                    new ResourceLocation(entry.getLocationSkin().toString())
             );
             int l2 = 8 + (flag1 ? 8 : 0);
             int i3 = 8 * (flag1 ? -1 : 1);

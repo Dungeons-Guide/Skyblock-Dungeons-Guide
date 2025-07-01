@@ -14,7 +14,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,7 @@ public class WidgetModalChooseAbilitySettings extends AnnotatedImportOnlyWidget 
     @Bind(variableName = "api")
     public final BindableAttribute<Column> api = new BindableAttribute<>(Column.class);
     public WidgetModalChooseAbilitySettings() {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/abilityedit/modal_choose_algorithm.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/abilityedit/modal_choose_algorithm.gui"));
 
         List<Widget> optionsList = new ArrayList<>();
         for (AlgorithmSetting option : AlgorithmSettingRegistry.getAlgorithmSettings()) {

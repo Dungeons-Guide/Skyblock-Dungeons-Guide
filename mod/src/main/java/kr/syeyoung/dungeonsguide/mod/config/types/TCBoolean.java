@@ -28,7 +28,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 public class TCBoolean implements FeatureTypeHandler<Boolean> {
     public static final TCBoolean INSTANCE = new TCBoolean();
@@ -53,7 +52,7 @@ public class TCBoolean implements FeatureTypeHandler<Boolean> {
         @Bind(variableName = "enabled")
         public final BindableAttribute<Boolean> isEnabled = new BindableAttribute<>(Boolean.class);
         public BooleanEditWidget(FeatureParameter<Boolean> featureParameter) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/boolean.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/boolean.gui"));
             isEnabled.setValue(featureParameter.getValue());
             isEnabled.addOnUpdate((old,neu) -> {
                 ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);

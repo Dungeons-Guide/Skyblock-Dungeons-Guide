@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.function.Consumer;
 
@@ -41,7 +41,7 @@ public class WidgetDiscordFriend extends AnnotatedImportOnlyWidget {
     private Consumer<String> invite;
 
     public WidgetDiscordFriend(JDiscordRelation relation, boolean invited, Consumer<String> invite) {
-        super(new ResourceLocation("dungeonsguide:gui/features/discordInvite/friend.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/discordInvite/friend.gui"));
         this.avatarUrl.setValue(relation.getDiscordUser().getEffectiveAvatarUrl());
         if (relation.getDiscordUser().getDiscriminator().equalsIgnoreCase("0")) {
             this.username.setValue(relation.getDiscordUser().getName());

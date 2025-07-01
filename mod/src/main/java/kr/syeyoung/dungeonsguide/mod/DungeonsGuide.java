@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod;
 
-import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
@@ -26,18 +25,15 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandDgDebug;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandDungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.commands.CommandReparty;
+import kr.syeyoung.dungeonsguide.mod.commands.CommandRegistrationHelper;
 import kr.syeyoung.dungeonsguide.mod.config.Config;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ConfigGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.config.onboarding.OnboardingPage;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
-import kr.syeyoung.dungeonsguide.mod.cosmetics.CustomNetworkPlayerInfo;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
-import kr.syeyoung.dungeonsguide.mod.events.listener.PacketInjector;
-import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
@@ -49,37 +45,26 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
-import kr.syeyoung.dungeonsguide.mod.resources.DGTexturePack;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.AnnotatedListenerHelper;
+import kr.syeyoung.modapi.event.ListenerRegistration;
 import kr.syeyoung.modapi.event.SubscribeEvent;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.event.events.RegisterCommandEvent;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.command.CommandHandler;
-import net.minecraft.command.ICommand;
-import net.minecraft.entity.Entity;
-import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
@@ -154,24 +139,16 @@ public class DungeonsGuide implements DGInterface {
         return instance;
     }
 
-    @Getter
-    CommandReparty commandReparty;
-    @Getter
-    CommandDungeonsGuide commandDungeonsGuide;
-
 
     private List<Object> registeredListeners = new ArrayList<>();
+    private List<ListenerRegistration> registeredMODAPIListeners = new ArrayList<>();
     public void registerEventsForge(Object object) {
         registeredListeners.add(object);
         MinecraftForge.EVENT_BUS.register(object);
-    }
-    private List<ICommand> registeredCommands = new ArrayList<>();
-    private List<ExecutorService> executorServices = new ArrayList<>();
+        registeredMODAPIListeners.addAll(AnnotatedListenerHelper.registerListeners(ModAPI.getAPI().getEventBus(), object));
 
-    public void registerCommands(ICommand command) {
-        registeredCommands.add(command);
-        ClientCommandHandler.instance.registerCommand(command);
     }
+    private List<ExecutorService> executorServices = new ArrayList<>();
 
     public ExecutorService registerExecutorService(ExecutorService executorService) {
         this.executorServices.add(executorService);
@@ -183,9 +160,11 @@ public class DungeonsGuide implements DGInterface {
         return executorService;
     }
 
-    private PacketInjector packetInjector;
     public void init(File f) {
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 5);
+
+
+        ModAPI.getAPI().init();
 
 
         progressbar.step("Creating Configuration");
@@ -200,14 +179,6 @@ public class DungeonsGuide implements DGInterface {
 
         Config.f = configFile;
         Minecraft.getMinecraft().getFramebuffer().enableStencil();
-
-        try {
-            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
-            resourcePackList.add(new DGTexturePack());
-            Minecraft.getMinecraft().refreshResources();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         registerEventsForge(this);
 
@@ -232,13 +203,6 @@ public class DungeonsGuide implements DGInterface {
 
 
 
-        try {
-            Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) Main.class.getClassLoader(), "invalidClasses");
-            ((LaunchClassLoader) Main.class.getClassLoader()).clearNegativeEntries(Sets.newHashSet("org.slf4j.LoggerFactory"));
-            invalid.clear();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
 
 
@@ -246,21 +210,6 @@ public class DungeonsGuide implements DGInterface {
         this.dungeonFacade = new DungeonFacade();
 
         dungeonFacade.init();
-
-
-        commandDungeonsGuide = new CommandDungeonsGuide();
-        CommandDgDebug command = new CommandDgDebug();
-
-        registerCommands(commandDungeonsGuide);
-        registerCommands(command);
-
-        registerEventsForge(command);
-        registerEventsForge(commandDungeonsGuide);
-
-        registerEventsForge(commandReparty = new CommandReparty());
-
-        registerEventsForge(packetInjector = new PacketInjector());
-        registerEventsForge(new PacketListener());
         registerEventsForge(new Keybinds());
 
         registerEventsForge(PartyManager.INSTANCE);
@@ -282,9 +231,6 @@ public class DungeonsGuide implements DGInterface {
             e.printStackTrace();
         }
 
-        if (FeatureRegistry.ETC_REPARTY.isEnabled()) {
-            registerCommands(commandReparty);
-        }
         DiscordIntegrationManager.INSTANCE.isLoaded();
 
         for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
@@ -298,15 +244,11 @@ public class DungeonsGuide implements DGInterface {
 
         VersionInfo.checkAndOpen();
 
-
         Minecraft.getMinecraft().refreshResources();
 
-        ModAPI.getAPI().init();
+        ModAPI.getAPI().getCommandManager().requestCommandReload();
 
         // Fix Parallel universe not working when player joins hypickle before dg loads
-        if (Minecraft.getMinecraft().getNetHandler() != null)
-            Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler", packetInjector);
-
         if (firstTimeUsingDG) {
             GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")), null, false));
         }
@@ -314,27 +256,6 @@ public class DungeonsGuide implements DGInterface {
 
     // hotswap fails in dev env due to intellij auto log collection or smth. it holds ref to stacktrace.
 
-    private void transform(AbstractClientPlayer abstractClientPlayer) {
-        if (abstractClientPlayer == null) return;
-        NetworkPlayerInfo uuidNetworkPlayerInfoEntry = ReflectionHelper.getPrivateValue(AbstractClientPlayer.class,
-                abstractClientPlayer,
-                "playerInfo", "field_175157_a", "a"
-        );
-        if (uuidNetworkPlayerInfoEntry instanceof CustomNetworkPlayerInfo) {
-            S38PacketPlayerListItem s38PacketPlayerListItem = new S38PacketPlayerListItem();
-            NetworkPlayerInfo newInfo = new NetworkPlayerInfo(s38PacketPlayerListItem.new AddPlayerData(
-                    uuidNetworkPlayerInfoEntry.getGameProfile(),
-                    uuidNetworkPlayerInfoEntry.getResponseTime(),
-                    uuidNetworkPlayerInfoEntry.getGameType(),
-                    ((CustomNetworkPlayerInfo)uuidNetworkPlayerInfoEntry).getOriginalDisplayName()
-            ));
-            ReflectionHelper.setPrivateValue(AbstractClientPlayer.class,
-                    abstractClientPlayer,
-                    newInfo,
-                    "playerInfo", "field_175157_a", "a"
-            );
-        }
-    }
 
     @Override
     public void unload() {
@@ -349,6 +270,9 @@ public class DungeonsGuide implements DGInterface {
             MinecraftForge.EVENT_BUS.unregister(registeredListener);
         }
 
+        for (ListenerRegistration registeredMODAPIListener : registeredMODAPIListeners) {
+            ModAPI.getAPI().getEventBus().unregisterListener(registeredMODAPIListener);
+        }
         EventHandlerRegistry.unregisterListeners();
 
         List<ListenerList> all = ReflectionHelper.getPrivateValue(ListenerList.class, null, "allLists");
@@ -366,57 +290,6 @@ public class DungeonsGuide implements DGInterface {
         }
 
 
-        Set<ICommand> commands = ReflectionHelper.getPrivateValue(CommandHandler.class, ClientCommandHandler.instance, "commandSet","field_71561_b","field_6467","c");
-
-        for (ICommand registeredCommand : registeredCommands) {
-            ClientCommandHandler.instance.getCommands().remove(registeredCommand.getCommandName());
-            for (String commandAlias : registeredCommand.getCommandAliases()) {
-                ClientCommandHandler.instance.getCommands().remove(commandAlias);
-            }
-            commands.remove(registeredCommand);
-        }
-
-        if (packetInjector != null) packetInjector.cleanup();
-
-        try {
-            if (Minecraft.getMinecraft().getRenderManager().livingPlayer instanceof AbstractClientPlayer) {
-                AbstractClientPlayer ep = (AbstractClientPlayer) Minecraft.getMinecraft().getRenderManager().livingPlayer;
-                transform(ep);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            if (Minecraft.getMinecraft().pointedEntity instanceof AbstractClientPlayer) {
-                AbstractClientPlayer ep = (AbstractClientPlayer) Minecraft.getMinecraft().pointedEntity;
-                transform(ep);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        NetHandlerPlayClient netHandlerPlayClient = Minecraft.getMinecraft().getNetHandler();
-        if (netHandlerPlayClient == null && (Minecraft.getMinecraft().getRenderManager().livingPlayer) != null
-                    && Minecraft.getMinecraft().getRenderManager().livingPlayer instanceof EntityPlayerSP)
-            netHandlerPlayClient = ((EntityPlayerSP) Minecraft.getMinecraft().getRenderManager().livingPlayer).sendQueue;
-
-        if (netHandlerPlayClient != null) {
-            Map<UUID, NetworkPlayerInfo> playerInfoMap = ReflectionHelper.getPrivateValue(NetHandlerPlayClient.class,
-                    netHandlerPlayClient, "playerInfoMap", "field_147310_i", "i");
-            for (Map.Entry<UUID, NetworkPlayerInfo> uuidNetworkPlayerInfoEntry : playerInfoMap.entrySet()) {
-                if (uuidNetworkPlayerInfoEntry.getValue() instanceof CustomNetworkPlayerInfo) {
-                    S38PacketPlayerListItem s38PacketPlayerListItem = new S38PacketPlayerListItem();
-                    NetworkPlayerInfo newInfo =  new NetworkPlayerInfo(s38PacketPlayerListItem.new AddPlayerData(
-                            uuidNetworkPlayerInfoEntry.getValue().getGameProfile(),
-                            uuidNetworkPlayerInfoEntry.getValue().getResponseTime(),
-                            uuidNetworkPlayerInfoEntry.getValue().getGameType(),
-                            ((CustomNetworkPlayerInfo) uuidNetworkPlayerInfoEntry.getValue()).getOriginalDisplayName()
-                    ));
-                    playerInfoMap.put(uuidNetworkPlayerInfoEntry.getKey(), newInfo);
-                }
-            }
-        }
-
         Map<ResourceLocation, ITextureObject> mapTextureObjects = ReflectionHelper.getPrivateValue(TextureManager.class, Minecraft.getMinecraft().getTextureManager(), "mapTextureObjects", "field_110585_a", "b");
         for (ITextureObject value : mapTextureObjects.values()) {
             if (value instanceof ThreadDownloadImageData) {
@@ -433,32 +306,6 @@ public class DungeonsGuide implements DGInterface {
         }
 
 
-
-        World world = Minecraft.getMinecraft().getRenderManager().worldObj;
-        if (world != null) {
-            for (AbstractClientPlayer entity : world.getEntities(AbstractClientPlayer.class, input -> true)) {
-                transform(entity);
-            }
-            for (AbstractClientPlayer player : world.getPlayers(AbstractClientPlayer.class, input -> true)) {
-                transform(player);
-            }
-            if (world instanceof WorldClient) {
-                Set<Entity> list = ReflectionHelper.getPrivateValue(WorldClient.class, (WorldClient) world, "entityList", "field_73032_d", "c");
-                for (Entity e : list) {
-                    if (e instanceof AbstractClientPlayer) {
-                        transform((AbstractClientPlayer) e);
-                    }
-                }
-            }
-        }
-
-        try {
-            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
-            resourcePackList.removeIf(a -> a instanceof DGTexturePack);
-            Minecraft.getMinecraft().refreshResources();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         ShaderManager.unload();
         GLCursors.cleanup();
         DiscordIntegrationManager.INSTANCE.cleanup();
@@ -516,18 +363,29 @@ public class DungeonsGuide implements DGInterface {
     private LinkedBlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
 
     public void runNextTick(Runnable r) {
-        tasks.offer(r);
+        try {
+            tasks.offer(r);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @SubscribeEvent
     public void onTick(ClientTickEvent tickEvent) {
-        for (Runnable task : tasks) {
+        while (!tasks.isEmpty()) {
             try {
-                task.run();
+                tasks.poll().run();
             } catch (Exception e) {
                 FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
             }
         }
+    }
+
+    @SubscribeEvent
+    public void onRegisterCommands(RegisterCommandEvent commandEvent) {
+        CommandRegistrationHelper.registerCommands(commandEvent.getCommandManager(), new CommandDungeonsGuide());
+        CommandRegistrationHelper.registerCommands(commandEvent.getCommandManager(), new CommandDgDebug());
+        commandEvent.getCommandManager().addAlias("dg", "dungeonsguide", "dungeonguide", "deegee", "던전가이드", "던전안내");
     }
 }

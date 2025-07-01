@@ -20,12 +20,12 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements;
 
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
+import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.util.MathHelper;
 
 import java.awt.*;
 
@@ -46,7 +46,7 @@ public class MScrollBar extends MPanel {
         if (max < min) max = min;
         this.max = max;
 
-        current = MathHelper.clamp_int(current, min, max);
+        current = MathUtils.clamp_int(current, min, max);
         if (onUpdate != null) onUpdate.run();
     }
 
@@ -54,21 +54,21 @@ public class MScrollBar extends MPanel {
         if (max < min) max = min;
         this.min = min;
 
-        current = MathHelper.clamp_int(current, min, max);
+        current = MathUtils.clamp_int(current, min, max);
         if (onUpdate != null) onUpdate.run();
     }
 
     public void setThumbSize(int thumbSize) {
         this.thumbSize = thumbSize;
 
-        current = MathHelper.clamp_int(current, min, max);
+        current = MathUtils.clamp_int(current, min, max);
         if (onUpdate != null) onUpdate.run();
     }
 
     public void addToCurrent(int dv) {
         int current2 = current + dv;
 
-        current = MathHelper.clamp_int(current2, min, max);
+        current = MathUtils.clamp_int(current2, min, max);
 
         if (onUpdate != null) onUpdate.run();
     }
@@ -90,7 +90,7 @@ public class MScrollBar extends MPanel {
     public MScrollBar(int min, int max, int thumbSize, int current, Axis axis, Runnable onUpdate) {
         if (max < min) max = min;
         this.min = min; this.min = max; this.thumbSize = thumbSize; this.current = current; this.axis = axis;
-        this.current = MathHelper.clamp_int(current, min, max);
+        this.current = MathUtils.clamp_int(current, min, max);
         this.onUpdate = onUpdate;
     }
 
@@ -184,7 +184,7 @@ public class MScrollBar extends MPanel {
             actualValue += dx * (max - min) / subPoint;
         }
 
-        current = MathHelper.clamp_int(actualValue, min, max);
+        current = MathUtils.clamp_int(actualValue, min, max);
 
         if (onUpdate != null && prevVal != current) onUpdate.run();
     }

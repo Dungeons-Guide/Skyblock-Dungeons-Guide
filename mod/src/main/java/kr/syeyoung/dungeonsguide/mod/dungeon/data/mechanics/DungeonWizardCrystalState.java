@@ -32,12 +32,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.item.Item;
+import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.world.BlockType;
 import lombok.Data;
-import net.minecraft.client.Minecraft;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -96,12 +96,13 @@ public class DungeonWizardCrystalState implements DungeonMechanicState {
 
     @Override
     public String getCurrentState() {
-        for (ItemStack stack : Minecraft.getMinecraft().thePlayer.inventory.mainInventory) {
+
+        for (UItemStack stack : ModAPI.getAPI().getPlayer().getInventory().getMainInventory()) {
             if (stack == null) continue;
-            if (stack.getItem() != Items.skull) continue;
+            if (stack.getItem() != Item.SKULL) continue;
             if (stack.getDisplayName().equals("§9Wizard's Crystal")) return "obtained-self";
         }
-        if (data.secretPoint.getBlock(room) == Blocks.skull) {
+        if (data.secretPoint.getBlock(room).isOf(BlockType.SKULL)) {
             return "unobtained";
         }
         return "obtained-other";
@@ -109,7 +110,7 @@ public class DungeonWizardCrystalState implements DungeonMechanicState {
 
     @Override
     public Set<String> getAvailableActions() {
-        if (data.secretPoint.getBlock(room) == Blocks.skull) {
+        if (data.secretPoint.getBlock(room).isOf(BlockType.SKULL)) {
             return Sets.newHashSet("obtained-self", "navigate");
         }
         return Sets.newHashSet("navigate");

@@ -34,7 +34,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BossroomEnterEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.MapUpdateEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
@@ -42,13 +42,11 @@ import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.event.events.MapUpdateEvent;
+import kr.syeyoung.modapi.world.UMapData;
 import kr.syeyoung.modapi.world.UWorld;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -61,9 +59,7 @@ public class DungeonContext {
     @Getter @Setter
     private String dungeonName;
     @Getter
-    private final World world;
-    @Getter
-    private final UWorld uworld;
+    private final UWorld world;
 
     @Getter
     private final MapPlayerProcessor mapPlayerMarkerProcessor;
@@ -125,14 +121,14 @@ public class DungeonContext {
     private final Vector2d doorOffset;
     private final VectorI3D door;
 
-    public DungeonContext(String dungeonName, World world, UWorld uworld) {
-        this(dungeonName, world, uworld, FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset());
+    public DungeonContext(String dungeonName,  UWorld world) {
+        this(dungeonName, world, FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset());
     }
-    public DungeonContext(String dungeonName, World world, UWorld uworld, PathfindPreset preset) {
+    public DungeonContext(String dungeonName, UWorld world, PathfindPreset preset) {
         this.dungeonName = dungeonName;
-        this.uworld = uworld;
-        this.preset = preset;
         this.world = world;
+        this.preset = preset;
+
         recorder.createEvent(new DungeonNodataEvent("DUNGEON_CONTEXT_CREATION"));
         mapPlayerMarkerProcessor = new MapPlayerProcessor(this);
         DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(getDungeonName());
@@ -169,7 +165,7 @@ public class DungeonContext {
             if (doorFinder != null) {
                 bossfightProcessor = doorFinder.createBossfightProcessor(world, getDungeonName());
             } else {
-                ChatTransmitter.sendDebugChat(new ChatComponentText("Error:: Null Data Providier"));
+                ChatTransmitter.sendDebugChat("Error:: Null Data Providier");
             }
         }
 
@@ -189,7 +185,7 @@ public class DungeonContext {
 
 
     private boolean processed = false;
-    private void processFinishedMap(byte[] mapData) {
+    private void processFinishedMap(UMapData mapData) {
         if (MapUtils.getMapColorAt(mapData, 0, 0) == 0) {
             return;
         }
@@ -206,16 +202,16 @@ public class DungeonContext {
     }
     private int mapId = -1;
     public void onMapUpdate(MapUpdateEvent mapUpdateEvent) {
-        if (mapId == -1 && mapUpdateEvent.getMapData().colors[0] == 0) { // dungeon map top left is ALWAYS 0.
+        if (mapId == -1 && mapUpdateEvent.getMapData().get(0,0) == 0) { // dungeon map top left is ALWAYS 0.
             mapId = mapUpdateEvent.getMapId();
         }
         if (mapId != mapUpdateEvent.getMapId()) return;
 
         if (isEnded()) {
-            processFinishedMap(mapUpdateEvent.getMapData().colors);
+            processFinishedMap(mapUpdateEvent.getMapData());
         }
         if (getScaffoldParser() == null) {
-            DungeonMapLayout layout = DungeonMapConstantRetriever.beginParsingMap(mapUpdateEvent.getMapData().colors, door, doorOffset);
+            DungeonMapLayout layout = DungeonMapConstantRetriever.beginParsingMap(mapUpdateEvent.getMapData(), door, doorOffset);
             if (layout != null)
                 scaffoldParser = new DungeonRoomScaffoldParser(
                         layout,
@@ -235,12 +231,11 @@ public class DungeonContext {
     @Getter
     private boolean defeated = false;
 
-    public void onChat(ClientChatReceivedEvent event) {
-        IChatComponent component = event.message;
-        String formatted = component.getFormattedText();
+    public void onChat(DGChatReceivedEvent event) {
+        String formatted = event.getOriginalFormattedText();
         if (formatted.contains("$DG-Comm")) {
             event.setCanceled(true);
-            String data = component.getFormattedText().substring(component.getFormattedText().indexOf("$DG-Comm"));
+            String data = formatted.substring(formatted.indexOf("$DG-Comm"));
             String actual = TextUtils.stripColor(data);
             String coords = actual.split(" ")[1];
             String secrets = actual.split(" ")[2];
@@ -248,19 +243,19 @@ public class DungeonContext {
             int z = Integer.parseInt(coords.split("/")[1]);
             int secrets2 = Integer.parseInt(secrets);
             Point roomPt = scaffoldParser.getDungeonMapLayout().worldPointToRoomPoint(new VectorI3D(x, 70, z));
-            ChatTransmitter.sendDebugChat(new ChatComponentText("Message from Other dungeons guide :: " + roomPt.x + " / " + roomPt.y + " total secrets " + secrets2));
+            ChatTransmitter.sendDebugChat("Message from Other dungeons guide :: " + roomPt.x + " / " + roomPt.y + " total secrets " + secrets2);
             DungeonRoom dr = scaffoldParser.getRoomMap().get(roomPt);
             if (dr != null) {
                 dr.setTotalSecrets(secrets2);
             }
         } else if (formatted.contains("$DG-Mimic")) {
             setGotMimic(true);
-        } else if (formatted.startsWith("§r§c§lPUZZLE FAIL! ") && formatted.endsWith(" §r§4Y§r§ci§r§6k§r§ee§r§as§r§2!§r")) {
+        } else if (TextUtils.startsWith(formatted, "§c§lPUZZLE FAIL! ") && TextUtils.startsWith(formatted, " §4Y§ci§6k§ee§as§2!")) {
             recorder.createEvent(new DungeonPuzzleFailureEvent(TextUtils.stripColor(formatted.split(" ")[2]), formatted));
-        } else if (formatted.contains("§6> §e§lEXTRA STATS §6<")) {
+        } else if (TextUtils.contains(formatted, "§6> §e§lEXTRA STATS §6<")) {
             recorder.createEvent(new DungeonNodataEvent("DUNGEON_END"));
             ended = true;
-        } else if (formatted.contains("§r§c☠ §r§eDefeated ")) {
+        } else if (TextUtils.contains(formatted, "§c☠ §eDefeated ")) {
             defeated = true;
         }
     }

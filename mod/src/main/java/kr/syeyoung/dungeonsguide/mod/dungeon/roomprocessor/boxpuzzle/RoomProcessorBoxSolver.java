@@ -25,29 +25,26 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.block.Block;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UWorld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
 import java.util.Queue;
+import java.util.*;
 
 public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
@@ -77,7 +74,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     }
 
     private byte[][] buildCurrentState() {
-        World w = getDungeonRoom().getContext().getWorld();
+        UWorld w = getDungeonRoom().getContext().getWorld();
         byte[][] board = new byte[poses.length][poses[0].length];
         for (int y = 0; y < poses.length; y++) {
             for (int x = 0; x < poses[0].length; x++) {
@@ -86,8 +83,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                     continue;
                 }
                 VectorI3D pos = poses[y][x];
-                Block b = w.getBlockState(new BlockPos(pos.x, pos.y, pos.z)).getBlock();
-                if (b == Blocks.air)
+                if (w.getBlockStateAt(pos).isOf(BlockType.AIR))
                     board[y][x] = 0;
                 else
                     board[y][x] = 1;
@@ -150,7 +146,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (calcDone2) {
             BoxPuzzleSolvingThread.Route semi_solution = puzzleSolvingThread.solution;
             if (semi_solution == null) {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: §cCouldn't find solution involving less than 20 box moves within 3m concurrent possibility"));
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eBox Solver §7:: §cCouldn't find solution involving less than 20 box moves within 3m concurrent possibility");
                 step = 0;
                 calcDone2 = false;
                 pathFindReq = true;
@@ -160,7 +156,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 return;
             } else{
                 solution = semi_solution.boxMoves;
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: Solution Found!"));
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eBox Solver §7:: Solution Found!");
             }
             step = 0;
             lastState = currBoard;
@@ -234,7 +230,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 VectorI3D pos = poses[fromY][fromX];
                 VectorI3D pos2 = poses[boxMove.y][boxMove.x];
                 VectorI3D dir = pos.subtract(pos2);
-                dir = new VectorI3D(MathHelper.clamp_int(dir.getX(), -1,1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
+                dir = new VectorI3D(MathUtils.clamp_int(dir.getX(), -1,1), 0, MathUtils.clamp_double(dir.getZ(), -1, 1));
 
                 VectorI3D highlight = pos2.add(dir);
                 totalPushedBlocks.add(highlight);
@@ -322,9 +318,9 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(DGChatReceivedEvent chat) {
         if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
-        if (chat.getFormattedText().toLowerCase().contains("recalc")) {
+        if (chat.getOriginalFormattedText().toLowerCase().contains("recalc")) {
             if (calcDone) {
                 calcReq = true;
                 ChatTransmitter.addToQueue("§eDungeons Guide :::: Recalculating Route...");
@@ -363,10 +359,10 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 VectorI3D pos = poses[fromY][fromX];
                 VectorI3D pos2 = poses[boxMove.y][boxMove.x];
                 VectorI3D dir = pos.subtract(pos2);
-                dir = new VectorI3D(MathHelper.clamp_int(dir.getX(), -1, 1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
+                dir = new VectorI3D(MathUtils.clamp_int(dir.getX(), -1, 1), 0, MathUtils.clamp_double(dir.getZ(), -1, 1));
 
                 VectorI3D highlight = pos2.add(dir);
-                AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(MathHelper.clamp_double(ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(highlight), 100, 255) / 255);
+                AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(MathUtils.clamp_double(ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(highlight), 100, 255) / 255);
                 RenderUtils.highlightBoxAColor(new AABB(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, partialTicks, false);
             }
 

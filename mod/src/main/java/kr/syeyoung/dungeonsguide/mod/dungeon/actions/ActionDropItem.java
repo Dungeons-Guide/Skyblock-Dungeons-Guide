@@ -47,7 +47,7 @@ public class ActionDropItem extends AbstractAction {
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
         VectorI3D secretLocation = target.getBlockPos(dungeonRoom);
-        List<UEntity> item = dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.ITEM,
+        List<UEntity> item = dungeonRoom.getContext().getWorld().getEntitiesWithinAabb(EntityType.ITEM,
                 new AABB(
                         secretLocation.getX(),
                         secretLocation.getY(),

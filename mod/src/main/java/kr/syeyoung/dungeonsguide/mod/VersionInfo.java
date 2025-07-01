@@ -119,7 +119,7 @@ public class VersionInfo {
                     FMLCommonHandler.instance().exitJava(9999, false);
                 }
 
-                if (latestUpdate.getName().equals("4.0.0-beta12.5")) return;
+                if (latestUpdate.getName().equals(VersionInfo.VERSION)) return;
                 logger.info("Update Required!!");
 
                 Scaler scaler = new Scaler();

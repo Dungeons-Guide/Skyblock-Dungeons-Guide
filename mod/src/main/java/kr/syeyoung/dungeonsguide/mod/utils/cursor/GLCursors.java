@@ -23,10 +23,10 @@ import com.google.common.base.Throwables;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.launcher.util.cursor.XCursor;
+import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.BufferUtils;
@@ -116,8 +116,8 @@ public class GLCursors {
                     BufferedImage bufferedImage = null;
                     int minC = Cursor.getMinCursorSize(), maxC = Cursor.getMaxCursorSize();
                     try {
-                        ResourceLocation cursorInfo = new ResourceLocation("dungeonsguide:cursors/"+value.getAltFileName());
-                        List<CursorReader.CursorData> cursorDataList = CursorReader.readFromInputStream(Minecraft.getMinecraft().getResourceManager().getResource(cursorInfo).getInputStream());
+                        ResourceIdentifier cursorInfo = new ResourceIdentifier("dungeonsguide:cursors/"+value.getAltFileName());
+                        List<CursorReader.CursorData> cursorDataList = CursorReader.readFromInputStream(ModAPI.getAPI().getResourceManager().getResource(cursorInfo).getInputStream());
                         List<CursorReader.CursorData> cursorDataList2 = cursorDataList.stream()
                                 .filter(cdata -> cdata.getBufferedImage()  != null)
                                 .filter(cdata -> minC <= cdata.getHeight() && cdata.getHeight() <= maxC && minC <= cdata.getWidth() && cdata.getWidth() <= maxC)
@@ -136,8 +136,8 @@ public class GLCursors {
 
                     int width = bufferedImage == null ? 16 : bufferedImage.getWidth();
                     int height = bufferedImage == null ? 16 : bufferedImage.getHeight();
-                    int effWidth = MathHelper.clamp_int(width, Cursor.getMinCursorSize(), Cursor.getMaxCursorSize());
-                    int effHeight = MathHelper.clamp_int(height, Cursor.getMinCursorSize(), Cursor.getMaxCursorSize());
+                    int effWidth = MathUtils.clamp_int(width, Cursor.getMinCursorSize(), Cursor.getMaxCursorSize());
+                    int effHeight = MathUtils.clamp_int(height, Cursor.getMinCursorSize(), Cursor.getMaxCursorSize());
                     int length = effHeight * effWidth;
                     IntBuffer intBuffer = BufferUtils.createIntBuffer(length);
                     for (int i = 0; i < length; i++) {

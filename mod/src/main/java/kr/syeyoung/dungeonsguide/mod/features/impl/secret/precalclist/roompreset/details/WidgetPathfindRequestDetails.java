@@ -11,7 +11,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -33,7 +32,7 @@ public class WidgetPathfindRequestDetails extends AnnotatedImportOnlyWidget {
     private PathfindRequest request;
     private BindableAttribute<AlgorithmSetting> algorithmSettingBindableAttribute = new BindableAttribute<>(AlgorithmSetting.class);
     public WidgetPathfindRequestDetails(PathfindRequest request) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequestdetails.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequestdetails.gui"));
         this.request = request;
         this.id.setValue(request.getId().substring(36, Math.min(request.getId().length(), 66)));
         this.hash.setValue(request.getHash());

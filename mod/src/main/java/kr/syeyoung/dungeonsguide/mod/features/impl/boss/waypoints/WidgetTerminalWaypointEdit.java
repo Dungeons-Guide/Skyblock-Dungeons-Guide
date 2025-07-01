@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.function.Function;
 
@@ -64,7 +64,7 @@ public class WidgetTerminalWaypointEdit extends AnnotatedImportOnlyWidget {
     }
 
     public WidgetTerminalWaypointEdit(FeatureF7TerminalWaypoints waypoints) {
-        super(new ResourceLocation("dungeonsguide:gui/features/f7waypoints/paramEditor.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/f7waypoints/paramEditor.gui"));
 
         allEnable.setValue(this.generateConfigWidget(waypoints, "all",  TCBoolean.BooleanEditWidget::new));
         statusEnable.setValue(this.generateConfigWidget(waypoints, "status", TCBoolean.BooleanEditWidget::new));

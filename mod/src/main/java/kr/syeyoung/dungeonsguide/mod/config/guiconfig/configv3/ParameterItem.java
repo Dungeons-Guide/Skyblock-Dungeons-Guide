@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class ParameterItem extends AnnotatedImportOnlyWidget {
 
@@ -43,7 +43,7 @@ public class ParameterItem extends AnnotatedImportOnlyWidget {
 
     private FeatureParameter featureParameter;
     public ParameterItem(FeatureParameter featureParameter, Widget childEditor) {
-        super(new ResourceLocation("dungeonsguide:gui/config/parameteritem.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/parameteritem.gui"));
         this.featureParameter = featureParameter;
         update();
 

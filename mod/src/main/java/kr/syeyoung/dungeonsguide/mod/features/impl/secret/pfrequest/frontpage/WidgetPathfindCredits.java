@@ -10,7 +10,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.io.IOException;
@@ -26,7 +25,7 @@ public class WidgetPathfindCredits extends AnnotatedImportOnlyWidget {
 
 
     public WidgetPathfindCredits() {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/frontpage/pathfindcredits.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/frontpage/pathfindcredits.gui"));
 
         reload();
     }

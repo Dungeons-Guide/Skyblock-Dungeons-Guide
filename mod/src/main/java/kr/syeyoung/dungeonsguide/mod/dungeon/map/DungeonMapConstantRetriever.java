@@ -22,7 +22,7 @@ import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.util.ChatComponentText;
+import kr.syeyoung.modapi.world.UMapData;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -31,7 +31,7 @@ import java.util.Set;
 
 // This class is responsible for matching the world to hand held map.
 public class DungeonMapConstantRetriever {
-    public static DungeonMapLayout beginParsingMap(byte[] mapData, VectorI3D worldDoorLocation, Vector2d worldDoorDirection) {
+    public static DungeonMapLayout beginParsingMap(UMapData mapData, VectorI3D worldDoorLocation, Vector2d worldDoorDirection) {
         if (worldDoorLocation == null || worldDoorDirection == null) return null;
 
 //        context.createEvent(new DungeonNodataEvent("MAP_PROCESSOR_INIT"));
@@ -51,14 +51,14 @@ public class DungeonMapConstantRetriever {
         VectorI3D worldMin = obtainWorldMin(mapData, firstRoom, mapOriginPoint, mapDoorDimension,
                 mapDoorDirection, worldDoorDirection, worldDoorLocation);
 
-        ChatTransmitter.sendDebugChat(new ChatComponentText("door Pos:" + worldDoorDirection));
+        ChatTransmitter.sendDebugChat("door Pos:" + worldDoorDirection);
 
 
-        ChatTransmitter.sendDebugChat(new ChatComponentText("Found Green room:" + firstRoom));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("World Min:" + worldMin));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("Dimension:" + unitRoomSize));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("top Left:" + mapOriginPoint));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("door dimension:" + mapDoorDimension));
+        ChatTransmitter.sendDebugChat("Found Green room:" + firstRoom);
+        ChatTransmitter.sendDebugChat("World Min:" + worldMin);
+        ChatTransmitter.sendDebugChat("Dimension:" + unitRoomSize);
+        ChatTransmitter.sendDebugChat("top Left:" + mapOriginPoint);
+        ChatTransmitter.sendDebugChat("door dimension:" + mapDoorDimension);
         return new DungeonMapLayout(unitRoomSize, mapRoomGap, mapOriginPoint, worldMin);
     }
 
@@ -67,7 +67,7 @@ public class DungeonMapConstantRetriever {
         int y = (int) ((mapPoint.y - topLeftMapPoint.y) / ((double) unitRoomDimension.height + doorDimensions.height));
         return new Point(x, y);
     }
-    private static VectorI3D obtainWorldMin(byte[] mapData, Rectangle firstRoom, Point topLeftMapPoint, Dimension doorDimension,
+    private static VectorI3D obtainWorldMin(UMapData mapData, Rectangle firstRoom, Point topLeftMapPoint, Dimension doorDimension,
                                     Vector2d mapDoorOffset,
                                     Vector2d worldDoorOffset, VectorI3D worldDoor) {
         Point unitPoint = mapPointToRoomPoint(firstRoom.getLocation(), topLeftMapPoint, firstRoom.getSize(), doorDimension);
@@ -82,7 +82,7 @@ public class DungeonMapConstantRetriever {
         VectorI3D worldMin = worldDoor.add(-worldX, 0, -worldY);
         return worldMin;
     }
-    private static  Point obtainTopLeft(byte[] mapData, Rectangle firstRoom, Dimension doorDimension) {
+    private static  Point obtainTopLeft(UMapData mapData, Rectangle firstRoom, Dimension doorDimension) {
         int topLeftX = firstRoom.x;
         int topLeftY = firstRoom.y;
         while (topLeftX >= firstRoom.width + doorDimension.height)
@@ -91,7 +91,7 @@ public class DungeonMapConstantRetriever {
             topLeftY -= firstRoom.height + doorDimension.height;
         return new Point(topLeftX, topLeftY);
     }
-    private static  Rectangle obtainStartingRoom(byte[] mapData) {
+    private static  Rectangle obtainStartingRoom(UMapData mapData) {
         final Point firstRoom = MapUtils.findFirstColorWithIn(mapData, (byte) 30, new Rectangle(0, 0, 128, 128));
         if (firstRoom == null) return null;
         // Determine room dimension
@@ -102,7 +102,7 @@ public class DungeonMapConstantRetriever {
     }
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0, 1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1, 0));
-    private static  Dimension obtainMapDoorDimensions(byte[] mapData, Rectangle firstRoom, Vector2d doorDirection) {
+    private static  Dimension obtainMapDoorDimensions(UMapData mapData, Rectangle firstRoom, Vector2d doorDirection) {
         Point basePoint = new Point(firstRoom.x, firstRoom.y);
         if (doorDirection.x > 0) basePoint.x += firstRoom.width;
         if (doorDirection.x < 0) basePoint.x -= 1;
@@ -119,7 +119,7 @@ public class DungeonMapConstantRetriever {
         return new Dimension(doorWidth, gap);
     }
 
-    private static  Vector2d obtainStartingRoomToFirstRoomDoorDirection(byte[] mapData, Rectangle firstRoom) {
+    private static  Vector2d obtainStartingRoomToFirstRoomDoorDirection(UMapData mapData, Rectangle firstRoom) {
         Vector2d doorDir = null;
         Point midFirstRoom = new Point(firstRoom.x + firstRoom.width / 2, firstRoom.y + firstRoom.height / 2);
         final int halfWidth = firstRoom.width / 2 + 2;

@@ -1,5 +1,7 @@
 package kr.syeyoung.modapi.entity;
 
+import kr.syeyoung.modapi.item.UItemStack;
+
 public interface UEntityLiving extends UEntity {
 
     float getPrevRotationYawHead();
@@ -7,4 +9,8 @@ public interface UEntityLiving extends UEntity {
     float getRotationYawHead();
 
     float getHealth();
+
+    UItemStack getCurrentArmor(int slotIn);
+
+    UItemStack getHeldItem();
 }

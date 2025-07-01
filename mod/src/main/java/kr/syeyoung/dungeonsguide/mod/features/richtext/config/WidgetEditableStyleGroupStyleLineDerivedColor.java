@@ -32,8 +32,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -59,7 +59,7 @@ public class WidgetEditableStyleGroupStyleLineDerivedColor extends AnnotatedImpo
     public WidgetEditableStyleGroupStyleLineDerivedColor(boolean disableable, String name, boolean isEnabled,
                                                          Supplier<Optional<AColor>> defaultValueSup,
                                                          Supplier<AColor> derivedColorSup, Consumer<Object> setter) {
-        super(new ResourceLocation("dungeonsguide:gui/config/text/editableStyleline.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/text/editableStyleline.gui"));
 
         this.disableable.setValue(disableable ? "show" : "hide");
 
@@ -109,7 +109,7 @@ public class WidgetEditableStyleGroupStyleLineDerivedColor extends AnnotatedImpo
         private final Supplier<AColor> derived;
 
         public ColorEditWidget(BindableAttribute<AColor> color, Supplier<AColor> derivedColor) {
-            super(new ResourceLocation("dungeonsguide:gui/config/text/editableDerivedColor.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/config/text/editableDerivedColor.gui"));
 
             enabled.addOnUpdate((o, n) -> {
                 enabled2.setValue(n ? "enabled" : "disabled");

@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class WidgetInvite extends AnnotatedWidget implements TTL {
 
@@ -45,7 +45,7 @@ public class WidgetInvite extends AnnotatedWidget implements TTL {
 
     private boolean actionDone = false;
     public WidgetInvite(WidgetPartyInviteViewer parent, DiscordUserInvitedEvent invitedEvent) {
-        super(new ResourceLocation("dungeonsguide:gui/features/discordParty/invite.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/discordParty/invite.gui"));
         this.inviteViewer = parent;
         this.event = invitedEvent;
         this.start = System.currentTimeMillis();

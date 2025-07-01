@@ -13,7 +13,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,7 +43,7 @@ public class WidgetPresetRoomDetails extends AnnotatedImportOnlyWidget {
     );
 
     public WidgetPresetRoomDetails(AdditionalInfoCaculatedDungeonRoomInfo roomInfo) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/roompresetview.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/roompresetview/roompresetview.gui"));
         this.roomInfo = roomInfo;
         this.metadata.setValue(new WidgetPresetRoomDetailsMetadata(roomInfo, this));
 

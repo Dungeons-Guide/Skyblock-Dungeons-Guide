@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class WidgetState extends AnnotatedWidget {
 
@@ -38,7 +38,7 @@ public class WidgetState extends AnnotatedWidget {
     private String s;
 
     public WidgetState(DungeonRoom dungeonRoom, String mechanic, String s) {
-        super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/state.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/mechanicBrowser/state.gui"));
         state.setValue(s);
         this.dungeonRoom = dungeonRoom;
         this.mechanic = mechanic;

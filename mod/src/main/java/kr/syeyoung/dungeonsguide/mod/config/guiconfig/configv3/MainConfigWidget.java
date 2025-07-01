@@ -34,7 +34,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,7 +57,7 @@ public class MainConfigWidget extends AnnotatedImportOnlyWidget implements Rende
 
     private long doSearch = Long.MAX_VALUE;
     public MainConfigWidget() {
-        super(new ResourceLocation("dungeonsguide:gui/config/normalconfig.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/normalconfig.gui"));
         menu.setValue(buildMenu());
         relocate.setValue(new GUIOpenItem("GUI Config", () -> new HUDLocationConfig(null)));
 

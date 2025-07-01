@@ -10,7 +10,6 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +31,7 @@ public class OnboardingPage extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<OnboardingPage> self = new BindableAttribute<>(OnboardingPage.class, this);
 
     public OnboardingPage(String name) {
-        super(new ResourceLocation("dungeonsguide:gui/onboarding/"+name));
+        super(new ResourceIdentifier("dungeonsguide:gui/onboarding/"+name));
 
         requiredGroup.addOnUpdate((old, neu) -> check());
     }

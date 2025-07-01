@@ -26,14 +26,12 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.util.RaycastResult;
-import net.minecraft.block.Block;
+import kr.syeyoung.modapi.world.UBlockState;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.settings.GameSettings;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -53,12 +51,11 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
         RaycastResult result = ModAPI.getAPI().getObjectMouseOver();
         if (result.getType() != RaycastResult.HitType.BLOCK) return;
 
-        Block b = getSolver().getDungeonRoom().getCachedWorld().getBlockState(
-                new BlockPos(result.getBlockHit().getX(), result.getBlockHit().getY(), result.getBlockHit().getZ())).getBlock();
+        UBlockState b = getSolver().getDungeonRoom().getRoomWorld().getBlockStateAt(result.getBlockHit());
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        String str = "Press "+ GameSettings.getKeyDisplayString(FeatureRegistry.SOLVER_BOMBDEFUSE.<Integer>getParameter("key").getValue()) + " to request open "+b.getLocalizedName();
+        String str = "Press "+ ModAPI.getAPI().getKeyDisplayString(FeatureRegistry.SOLVER_BOMBDEFUSE.<Integer>getParameter("key").getValue()) + " to request open "+b.getBlock().getLocalizedName();
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -70,11 +67,11 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
         RaycastResult result = ModAPI.getAPI().getObjectMouseOver();
         if (result.getType() != RaycastResult.HitType.BLOCK) return;
         VectorI3D block = result.getBlockHit();
-        Block b = getChamber().getRoom().getContext().getWorld().getBlockState(new BlockPos(block.getX(), block.getY(), block.getZ())).getBlock();
+        UBlockState b = getChamber().getRoom().getContext().getWorld().getBlockStateAt(block);
 
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setByte("a", (byte) 5);
-        nbt.setInteger("b", Block.getIdFromBlock(b));
+        CompoundBinaryTag nbt = CompoundBinaryTag.builder()
+                .putByte("a", (byte)5)
+                .putString("b", b.serialize()).build();
         getSolver().communicate(nbt);
     }
 }

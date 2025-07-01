@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class WidgetGroupButton extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "name")
@@ -38,7 +38,7 @@ public class WidgetGroupButton extends AnnotatedImportOnlyWidget {
     private AColor defaultBG;
     private final DefaultingDelegatingTextStyle toEdit;
     public WidgetGroupButton(WidgetTextStyleConfig config, String name, DefaultingDelegatingTextStyle style, DefaultingDelegatingTextStyle defaultingDelegatingTextStyle) {
-        super(new ResourceLocation("dungeonsguide:gui/config/text/groupbutton.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/text/groupbutton.gui"));
         this.name.setValue(name);
         this.config = config;
         this.style = style;

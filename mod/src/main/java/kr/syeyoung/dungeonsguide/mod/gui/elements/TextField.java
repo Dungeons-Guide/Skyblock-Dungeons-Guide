@@ -30,12 +30,12 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
+import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -155,9 +155,9 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
 
         int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue().substring(0, cursor));
         double cursorX = width + 3- xOffset;
-        cursorX = MathHelper.clamp_double(cursorX,10, getDomElement().getSize().getWidth() - 10);
+        cursorX = MathUtils.clamp_double(cursorX,10, getDomElement().getSize().getWidth() - 10);
         xOffset = width+ 3 - cursorX;
-        xOffset = MathHelper.clamp_double(xOffset, 0,Math.max(0, Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue()) - getDomElement().getSize().getWidth()+10));
+        xOffset = MathUtils.clamp_double(xOffset, 0,Math.max(0, Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue()) - getDomElement().getSize().getWidth()+10));
     }
 
     @Override

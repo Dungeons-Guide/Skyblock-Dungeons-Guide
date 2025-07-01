@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -35,7 +35,7 @@ public class WidgetOnlinePeopleViewer extends AnnotatedWidget {
     public final BindableAttribute<Column> columnApi = new BindableAttribute<>(Column.class);
 
     public WidgetOnlinePeopleViewer() {
-        super(new ResourceLocation("dungeonsguide:gui/features/discordOnline/discordOnlineList.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/discordOnline/discordOnlineList.gui"));
     }
 
     private final Set<String> onlineUid = Collections.synchronizedSet( new HashSet<>());

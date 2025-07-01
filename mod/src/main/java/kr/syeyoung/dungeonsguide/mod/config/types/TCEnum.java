@@ -32,7 +32,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.Getter;
-import net.minecraft.util.ResourceLocation;
 
 public class TCEnum<T extends Enum<T>> implements FeatureTypeHandler<T> {
     @Getter
@@ -68,7 +67,7 @@ public class TCEnum<T extends Enum<T>> implements FeatureTypeHandler<T> {
         private int idx;
         private FeatureParameter<T> featureParameter;
         public EnumEditWidget(T[] values, FeatureParameter<T> featureParameter) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/stringChoice.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/stringChoice.gui"));
             this.idx = featureParameter.getValue().ordinal();
             this.values = values;
             this.featureParameter = featureParameter;

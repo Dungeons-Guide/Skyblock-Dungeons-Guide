@@ -30,8 +30,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Passthrough;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
 
 @Passthrough(exportName = "_", bindName = "wgtNormal", type = Widget.class)
 @Passthrough(exportName = "_hovered", bindName = "wgtHover", type = Widget.class)
@@ -55,7 +55,7 @@ public class Button extends AnnotatedWidget implements Renderer {
     public final BindableAttribute<Boolean> isDisabled = new BindableAttribute<>(Boolean.class);
 
     public Button() {
-        super(new ResourceLocation("dungeonsguide:gui/elements/button.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/elements/button.gui"));
     }
 
     @Override

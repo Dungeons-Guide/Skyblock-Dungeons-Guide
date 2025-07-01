@@ -32,27 +32,27 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
         super(isMasterMode ? "MASTERMODE_CATACOMBS_FLOOR_TWO" : "CATACOMBS_FLOOR_TWO");
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("start")
-                .signatureMsg("§r§c[BOSS] Scarf §r§f: This is where the journey ends for you, Adventurers.§r")
+                .signatureMsg("§c[BOSS] Scarf §f: This is where the journey ends for you, Adventurers.")
                 .nextPhase("fight-1").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight-1")
-                .signatureMsg("§r§c[BOSS] Scarf §r§f: ARISE, MY CREATIONS!§r")
+                .signatureMsg("§c[BOSS] Scarf §f: ARISE, MY CREATIONS!")
                 .nextPhase("first-defeat").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("first-defeat")
-                .signatureMsg("§r§c[BOSS] Scarf §r§f: Those toys are not strong enough I see.§r")
+                .signatureMsg("§c[BOSS] Scarf §f: Those toys are not strong enough I see.")
                 .nextPhase("fight-2").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight-2")
-                .signatureMsg("§r§c[BOSS] Scarf §r§f: Did you forget? I was taught by the best! Let's dance.§r")
+                .signatureMsg("§c[BOSS] Scarf §f: Did you forget? I was taught by the best! Let's dance.")
                 .nextPhase("final-defeat").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("final-defeat")
-                .signatureMsg("§r§c[BOSS] Scarf §r§f: Whatever...§r").build()
+                .signatureMsg("§c[BOSS] Scarf §f: Whatever...").build()
         );
         this.isMasterMode = isMasterMode;
     }

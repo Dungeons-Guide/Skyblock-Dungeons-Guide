@@ -30,7 +30,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.io.IOException;
@@ -58,7 +57,7 @@ public class WidgetNicknamePrefix extends AnnotatedImportOnlyWidget {
     private CosmeticData currentSelectedPrefix;
 
     public WidgetNicknamePrefix() {
-        super(new ResourceLocation("dungeonsguide:gui/config/cosmetics/nicknamePrefix.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/cosmetics/nicknamePrefix.gui"));
 
 
         ArrayList<Widget> list = new ArrayList<>();

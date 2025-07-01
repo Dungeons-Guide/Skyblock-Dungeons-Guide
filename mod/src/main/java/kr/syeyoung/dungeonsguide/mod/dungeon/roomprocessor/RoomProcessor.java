@@ -18,21 +18,17 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
-import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
-import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
-import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
-import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
-import net.minecraft.util.IChatComponent;
+import kr.syeyoung.modapi.event.events.*;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 public interface RoomProcessor {
     void tick();
     void drawScreen(float partialTicks);
     void drawWorld(float partialTicks);
-    void chatReceived(IChatComponent chat);
-    void actionbarReceived(IChatComponent chat);
+    void chatReceived(DGChatReceivedEvent chat);
+    void actionbarReceived(ActionBarReceivedEvent chat);
 
     boolean readGlobalChat();
 

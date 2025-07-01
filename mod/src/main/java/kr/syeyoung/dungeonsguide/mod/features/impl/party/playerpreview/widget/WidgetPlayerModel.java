@@ -27,7 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class WidgetPlayerModel extends AnnotatedWidget {
 
@@ -42,7 +42,7 @@ public class WidgetPlayerModel extends AnnotatedWidget {
     private volatile FakePlayer fakePlayer;
     private final PlayerModelRenderer renderer;
     public WidgetPlayerModel(GameProfile mcProfile, PlayerProfile sbProfile) {
-        super(new ResourceLocation("dungeonsguide:gui/features/profileViewer/player.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/profileViewer/player.gui"));
         this.mcProfile = mcProfile;
         this.sbProfile = sbProfile;
         this.renderer = new PlayerModelRenderer(null);

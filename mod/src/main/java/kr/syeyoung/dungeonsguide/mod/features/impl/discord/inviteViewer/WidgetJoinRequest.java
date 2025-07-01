@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class WidgetJoinRequest extends AnnotatedWidget implements TTL{
 
@@ -43,7 +43,7 @@ public class WidgetJoinRequest extends AnnotatedWidget implements TTL{
     private long start;
     private boolean actionDone = false;
     public WidgetJoinRequest(WidgetPartyInviteViewer parent, DiscordUserJoinRequestEvent joinRequestEvent) {
-        super(new ResourceLocation("dungeonsguide:gui/features/discordParty/joinRequest.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/discordParty/joinRequest.gui"));
         this.inviteViewer = parent;
         this.event = joinRequestEvent;
         start = System.currentTimeMillis();

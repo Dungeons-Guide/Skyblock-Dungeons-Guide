@@ -25,7 +25,6 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import net.minecraft.util.ChatComponentText;
 import org.lwjgl.input.Keyboard;
 
 public class FeatureTogglePathfind extends SimpleFeature {
@@ -40,7 +39,7 @@ public class FeatureTogglePathfind extends SimpleFeature {
         if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue() && isEnabled()) {
             togglePathfindStatus = !togglePathfindStatus;
             try {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Pathfind Line visibility to §e"+(togglePathfindStatus ? "on":"off")));
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fToggled Pathfind Line visibility to §e"+(togglePathfindStatus ? "on":"off"));
             } catch (Exception ignored) {}
         }
     }

@@ -19,7 +19,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalcu
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +44,7 @@ public class WidgetPresetRoomRequestAndCalcView extends AnnotatedImportOnlyWidge
     public WidgetPresetRoomRequestAndCalcView(PathfindRequest request,
                                               AdditionalInfoCaculatedDungeonRoomInfo roomInfo,
                                               WidgetPresetRoomDetailsSecretPathfindRequest parent) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequestandcalcview.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequestandcalcview.gui"));
 
         this.request = request;
         this.parent = parent;

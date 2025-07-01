@@ -35,7 +35,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.io.IOException;
@@ -49,7 +48,7 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "categories")
     public final BindableAttribute categories = new BindableAttribute<>(WidgetList.class);
     public MainPageWidget() {
-        super(new ResourceLocation("dungeonsguide:gui/config/mainpage.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/mainpage.gui"));
         categories.setValue(buildCategory());
     }
 

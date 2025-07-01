@@ -33,9 +33,9 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.world.BlockType;
 import lombok.Data;
 import lombok.Setter;
-import net.minecraft.init.Blocks;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -122,7 +122,7 @@ public class DungeonRedstoneKeyState implements DungeonMechanicState {
         if (didClickOnRedstoneKey) {
             return "obtained-self";
         }
-        if (data.secretPoint.getBlock(room) == Blocks.skull) {
+        if (data.secretPoint.getBlock(room).isOf(BlockType.SKULL)) {
             return "unobtained";
         }
         return "obtained-other";

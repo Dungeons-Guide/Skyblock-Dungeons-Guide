@@ -21,17 +21,17 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UObjective;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScore;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.Objects;
 
@@ -56,33 +56,33 @@ public class FeatureEpicCountdown extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void processChat(ClientChatReceivedEvent receivedEvent) {
-        String txt = receivedEvent.message.getFormattedText();
+    public void processChat(DGChatReceivedEvent receivedEvent) {
+        String txt = receivedEvent.getOriginalFormattedText();
 
         // TODO: make a good chat remover with configurable chats, search chats recieved and stuff, but not for now
         if(cleanChat){
-            if(txt.startsWith("§e[NPC] §bMort§f: §rTalk to me to change your class and ready up.§r")){
+            if(txt.startsWith("§e[NPC] §bMort§f: Talk to me to change your class and ready up.")){
                 receivedEvent.setCanceled(true);
             }
-            if(txt.startsWith("§r§aYour active Potion Effects have been paused and stored.")){
+            if(txt.startsWith("§aYour active Potion Effects have been paused and stored.")){
                 receivedEvent.setCanceled(true);
             }
-            if(txt.startsWith("§e[NPC] §bMort§f: §rGood luck.§r")){
+            if(txt.startsWith("§e[NPC] §bMort§f: Good luck.")){
                 receivedEvent.setCanceled(true);
             }
-            if(txt.startsWith("§e[NPC] §bMort§f: §rYou should find it useful if you get lost.§r")){
+            if(txt.startsWith("§e[NPC] §bMort§f: You should find it useful if you get lost.")){
                 receivedEvent.setCanceled(true);
             }
             if(TextUtils.stripColor(txt).contains("[NPC] Mort: Here, I found this map")){
                 receivedEvent.setCanceled(true);
             }
-            if(txt.startsWith("§r§a[Berserk] §r§f")){ // huh? wtf?
+            if(txt.startsWith("§a[Berserk] §f")){ // huh? wtf?
                 receivedEvent.setCanceled(true);
             }
         }
 
 
-        if (txt.startsWith("§r§aDungeon starts in")) {
+        if (txt.startsWith("§aDungeon starts in")) {
             String striped = TextUtils.stripColor(txt);
 
             String secondsStr = striped.replace("Dungeon starts in ", "");
@@ -104,9 +104,10 @@ public class FeatureEpicCountdown extends SimpleFeature {
         if(!isEnabled() || !SkyblockStatus.isOnDungeon()) return;
 
 
-        Objective objective = ScoreboardManager.INSTANCE.getSidebarObjective();
+        UScoreboardManager scoreboardManager = ModAPI.getAPI().getScoreboardManager();
+        UObjective objective = scoreboardManager.getSidebarObjective();
         if (objective != null) {
-            for (Score score : objective.getScores()) {
+            for (UScore score : objective.getScores()) {
                 String line = TextUtils.stripColor(score.getJustTeam());
                 if(line.contains("Starting in:")){
                     String time = line.replace("Starting in: ", "").replace("§r", "");

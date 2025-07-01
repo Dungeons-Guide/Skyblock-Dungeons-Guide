@@ -36,28 +36,28 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
         super(isMasterMode ? "MASTERMODE_CATACOMBS_FLOOR_ONE" : "CATACOMBS_FLOOR_ONE");
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("start")
-                .signatureMsg("§r§c[BOSS] Bonzo §r§f: Gratz for making it this far, but I’m basically unbeatable.§r")
+                .signatureMsg("§c[BOSS] Bonzo §f: Gratz for making it this far, but I’m basically unbeatable.")
                 .nextPhase("fight-1").build()
         );
 
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight-1")
-                .signatureMsg("§r§c[BOSS] Bonzo §r§f: I can summon lots of undead! Check this out.§r")
+                .signatureMsg("§c[BOSS] Bonzo §f: I can summon lots of undead! Check this out.")
                 .nextPhase("first-defeat").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("first-defeat")
-                .signatureMsg("§r§c[BOSS] Bonzo §r§f: Oh I'm dead!§r").signatureMsg("§r§c[BOSS] Bonzo §r§f: Hoho, looks like you killed me!§r")
+                .signatureMsg("§c[BOSS] Bonzo §f: Oh I'm dead!").signatureMsg("§c[BOSS] Bonzo §f: Hoho, looks like you killed me!")
                 .nextPhase("fight-2").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight-2")
-                .signatureMsg("§r§c[BOSS] Bonzo §r§f: Sike§r").signatureMsg("§r§c[BOSS] Bonzo §r§f: I can revive myself and become much stronger!§r")
+                .signatureMsg("§c[BOSS] Bonzo §f: Sike").signatureMsg("§c[BOSS] Bonzo §f: I can revive myself and become much stronger!")
                 .nextPhase("final-defeat").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("final-defeat")
-                .signatureMsg("§r§c[BOSS] Bonzo §r§f: Alright, maybe I'm just weak after all..§r").build()
+                .signatureMsg("§c[BOSS] Bonzo §f: Alright, maybe I'm just weak after all..").build()
         );
         this.isMasterMode = isMasterMode;
     }

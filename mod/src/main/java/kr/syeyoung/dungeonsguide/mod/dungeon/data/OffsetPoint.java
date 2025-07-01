@@ -26,9 +26,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Data;
-import net.minecraft.block.Block;
-import net.minecraft.util.BlockPos;
 
 import javax.vecmath.Vector2d;
 
@@ -91,7 +90,7 @@ public class OffsetPoint implements Cloneable {
         return new VectorI3D((int) rot.x, y, (int) rot.y);
     }
 
-    public BlockPos toRotatedRelBlockPos(int rotation, int zLen, int xLen) {
+    public VectorI3D toRotatedRelBlockPos(int rotation, int zLen, int xLen) {
         Vector2d rot = new Vector2d(x,z);
         for (int i = 0; i < rotation; i++) {
             rot = VectorUtils.rotateCounterClockwise(rot);
@@ -102,23 +101,17 @@ public class OffsetPoint implements Cloneable {
             }
         }
 
-        return new BlockPos(rot.x, y, rot.y);
+        return new VectorI3D(rot.x, y, rot.y);
     }
 
-    public Block getBlock(DungeonRoom dungeonRoom) {
+    public UBlockState getBlock(DungeonRoom dungeonRoom) {
         VectorI3D relBp = toRotatedRelBlockPos(dungeonRoom);
 
-        return dungeonRoom.getRelativeBlockAt(relBp.getX(), relBp.getY(), relBp.getZ());
+        return dungeonRoom.getRelativeUBlockStateAt(relBp.getX(), relBp.getY(), relBp.getZ());
     }
     public VectorI3D getBlockPos(DungeonRoom dungeonRoom) {
         VectorI3D relBp = toRotatedRelBlockPos(dungeonRoom);
         return dungeonRoom.getRelativeBlockPosAt(relBp.getX(), relBp.getY(), relBp.getZ());
-    }
-
-    public int getData(DungeonRoom dungeonRoom) {
-        VectorI3D relBp = toRotatedRelBlockPos(dungeonRoom);
-
-        return dungeonRoom.getRelativeBlockDataAt(relBp.getX(), relBp.getY(), relBp.getZ());
     }
 
     @Override

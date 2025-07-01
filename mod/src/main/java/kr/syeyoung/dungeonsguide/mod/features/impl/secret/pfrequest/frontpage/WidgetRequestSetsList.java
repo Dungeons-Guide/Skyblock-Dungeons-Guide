@@ -8,7 +8,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class WidgetRequestSetsList extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<Column> columnApi = new BindableAttribute<>(Column.class);
 
     public WidgetRequestSetsList() {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/frontpage/precalculationrequestsets.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/frontpage/precalculationrequestsets.gui"));
 
         loadReqSets();
     }

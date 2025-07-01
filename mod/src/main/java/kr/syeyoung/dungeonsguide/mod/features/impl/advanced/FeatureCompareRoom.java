@@ -25,7 +25,6 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import net.minecraft.util.ChatComponentText;
 import org.lwjgl.input.Keyboard;
 
 public class FeatureCompareRoom extends SimpleFeature {
@@ -42,7 +41,7 @@ public class FeatureCompareRoom extends SimpleFeature {
         if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue() && isEnabled()) {
             toggleCompareStatus = !toggleCompareStatus;
             try {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Compare to §e"+(toggleCompareStatus ? "on":"off")));
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fToggled Compare to §e"+(toggleCompareStatus ? "on":"off"));
             } catch (Exception ignored) {}
         }
     }

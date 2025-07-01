@@ -23,13 +23,14 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.ShadowCast;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.item.Item;
+import kr.syeyoung.modapi.world.BlockType;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Items;
-import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.List;
@@ -40,11 +41,11 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
         super("Debug", "Etherwarp Debug", "Toggles etherwarp 3d shadow casting debug", "etdebug", false);
     }
 
-    private List<BlockPos> toHighlight;
+    private List<VectorI3D> toHighlight;
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onInteract(PlayerInteractEvent event) {
-        if (event.entityPlayer.getHeldItem() == null ||
-                event.entityPlayer.getHeldItem().getItem() != Items.spawn_egg) {
+        if (event.player.getHeldItem() == null ||
+                event.player.getHeldItem().getItem() != Item.SPAWN_EGG) {
             return;
         }
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && event.action != PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
@@ -66,7 +67,7 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
         if (toHighlight == null) return;
         GlStateManager.disableAlpha();
         Color c =  new Color(0x3300FF00, true);
-        for (BlockPos spot : toHighlight) {
+        for (VectorI3D spot : toHighlight) {
              RenderUtils.highlightBox(
 //                     spot
                      new AABB(spot.getX() / 2.0 - 0.25, spot.getY() / 2.0 - 0.25, spot.getZ() / 2.0 - 0.25,
@@ -78,8 +79,7 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
 
     @Override
     public boolean checkIfBlocked(int x, int y, int z) {
-        return !Minecraft.getMinecraft().theWorld.isAirBlock(new BlockPos(x,y,z));
-//
+        return !ModAPI.getAPI().getWorld().getBlockStateAt(x,y,z).isOf(BlockType.AIR);
 //        int maxX = (int) Math.floor(x/2.0);
 //        int maxY = (int) Math.floor(y/2.0);
 //        int maxZ = (int) Math.floor(z/2.0);

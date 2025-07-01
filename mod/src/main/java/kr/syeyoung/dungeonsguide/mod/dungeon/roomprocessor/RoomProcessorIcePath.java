@@ -29,14 +29,14 @@ import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.world.BlockType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.init.Blocks;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class RoomProcessorIcePath extends GeneralRoomProcessor {
 
@@ -61,7 +61,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
     public void findSilverFishAndDoStuff() {
         final VectorI3D low = getDungeonRoom().getRoomBounds().getMin();
         final VectorI3D high = getDungeonRoom().getRoomBounds().getMax();
-        List<UEntity> silverfishs = getDungeonRoom().getContext().getUworld().getEntitiesWithinAabb(EntityType.SILVERFISH,
+        List<UEntity> silverfishs = getDungeonRoom().getContext().getWorld().getEntitiesWithinAabb(EntityType.SILVERFISH,
                 new AABB(low.getX(), 0, low.getZ(), high.getX(), 255, high.getZ()));
 
         if (!silverfishs.isEmpty()) silverfish = silverfishs.get(0);
@@ -91,7 +91,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
             for (int x =0; x < width; x++) {
                 OffsetPoint op = ops.getOffsetPointList().get(y * width + x);
                 map2[y][x] = op;
-                map[y][x] = op.getBlock(getDungeonRoom()) == Blocks.air ? 0 : 1;
+                map[y][x] = op.getBlock(getDungeonRoom()).isOf(BlockType.AIR) ? 0 : 1;
             }
         }
         endNode.addAll(endNodes.getOffsetPointList());

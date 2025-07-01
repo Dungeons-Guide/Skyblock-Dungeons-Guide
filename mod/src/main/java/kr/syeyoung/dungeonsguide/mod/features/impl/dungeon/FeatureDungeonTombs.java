@@ -26,9 +26,9 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextS
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 
 public class FeatureDungeonTombs extends TextHUDFeature {
     public FeatureDungeonTombs() {
@@ -41,7 +41,7 @@ public class FeatureDungeonTombs extends TextHUDFeature {
 
 
     public int getTombsFound() {
-        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+        for (UTabListEntry tabListEntry : ModAPI.getAPI().getTabList().getTabListEntries()) {
             String name = tabListEntry.getEffectiveWithoutName();
             if (name.startsWith("§r Crypts: §r§6")) {
                 return Integer.parseInt(TextUtils.stripColor(name).substring(9));

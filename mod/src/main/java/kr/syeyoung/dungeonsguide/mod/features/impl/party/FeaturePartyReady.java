@@ -22,6 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
@@ -32,7 +33,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.*;
 
@@ -123,16 +123,15 @@ public class FeaturePartyReady extends TextHUDFeature {
 
 
     @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        String txt = clientChatReceivedEvent.message.getFormattedText();
-        System.out.println(txt);
-        if (!txt.startsWith("§r§9Party §8>")) return;
+    public void onChat(DGChatReceivedEvent clientChatReceivedEvent) {
+        String txt = clientChatReceivedEvent.getOriginalFormattedText();
+        if (!txt.startsWith("§9Party §8>")) return;
 
         String chat = TextUtils.stripColor(txt.substring(txt.indexOf(":")+1)).trim().toLowerCase();
 
 
 
-        String usernamearea = TextUtils.stripColor(txt.substring(13, txt.indexOf(":")));
+        String usernamearea = TextUtils.stripColor(txt.substring(11, txt.indexOf(":")));
         String username = null;
         for (String s : usernamearea.split(" ")) {
             if (s.isEmpty()) continue;

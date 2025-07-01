@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class DefaultConfigurePageWidget extends AnnotatedImportOnlyWidget {
     public final BindableAttribute bindableAttribute = new BindableAttribute(WidgetList.class);
 
     public DefaultConfigurePageWidget(List<Widget> widgets) {
-        super(new ResourceLocation("dungeonsguide:gui/config/configure.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/configure.gui"));
         bindableAttribute.setValue(widgets);
     }
 }

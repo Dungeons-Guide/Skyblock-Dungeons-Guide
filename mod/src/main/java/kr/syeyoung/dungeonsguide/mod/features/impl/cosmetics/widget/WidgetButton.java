@@ -22,7 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class WidgetButton extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "text")
@@ -35,13 +35,13 @@ public class WidgetButton extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<Integer> press = new BindableAttribute<>(Integer.class);
 
     @Bind(variableName = "disabled")
-    public final BindableAttribute<Boolean> _ = new BindableAttribute<>(Boolean.class, false);
+    public final BindableAttribute<Boolean> disabled = new BindableAttribute<>(Boolean.class, false);
 
     @Bind(variableName = "click")
     public final BindableAttribute<Runnable> onClick = new BindableAttribute<>(Runnable.class);
 
     public WidgetButton(boolean enabled, String prefix, Runnable onClick) {
-        super(new ResourceLocation("dungeonsguide:gui/config/cosmetics/button2.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/cosmetics/button2.gui"));
         text.setValue(prefix);
         this.onClick.setValue(onClick);
         if (enabled) {

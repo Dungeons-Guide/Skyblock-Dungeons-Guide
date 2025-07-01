@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.init.Blocks;
+import kr.syeyoung.modapi.world.BlockType;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -75,7 +75,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
                         map2[y][x] = level.getOffsetPointList().get(y * width + x).getBlockPos(dungeonRoom);
-                        map[y][x] = level.getOffsetPointList().get(y * width + x).getBlock(dungeonRoom) == Blocks.air ? 0 : 1;
+                        map[y][x] = level.getOffsetPointList().get(y * width + x).getBlock(dungeonRoom).isOf(BlockType.AIR) ? 0 : 1;
                     }
                 }
 

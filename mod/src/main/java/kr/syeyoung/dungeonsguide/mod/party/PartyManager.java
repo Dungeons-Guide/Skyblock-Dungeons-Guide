@@ -32,10 +32,9 @@ import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.SubscribeEvent;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -363,7 +362,7 @@ public class PartyManager {
         cp.subscribe(new ChatSubscriber() {
             @Override
             public ChatProcessResult process(String str, Map<String, Object> a) {
-                if (str.contains("§r§ejoined the dungeon group! (§r§b")) {
+                if (str.contains("§ejoined the dungeon group! (§b")) {
                     String username = TextUtils.stripColor(str).split(" ")[3];
                     if (username.equalsIgnoreCase(ModAPI.getAPI().getSession().getUsername())) {
                         partyContext = new PartyContext();
@@ -567,7 +566,7 @@ public class PartyManager {
                 FeatureTestPeople.handlePartyBroadCast(broadCastPlayload);
             }else {
                 try {
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload).getString("payload")));
+                    ChatTransmitter.addToQueue("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload).getString("payload"));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -591,7 +590,7 @@ public class PartyManager {
             ChatProcessor.INSTANCE.addToChatQueue("/p accept "+invFrom, () -> {}, true);
             long end = System.currentTimeMillis() + 3000;
             ChatProcessor.INSTANCE.subscribe((str, a) -> {
-                if (!str.contains("§r§ehas invited you to join their party!")) return System.currentTimeMillis() > end ? ChatProcessResult.REMOVE_LISTENER : ChatProcessResult.NONE;
+                if (!str.contains("§ehas invited you to join their party!")) return System.currentTimeMillis() > end ? ChatProcessResult.REMOVE_LISTENER : ChatProcessResult.NONE;
                 String[] messageSplit = TextUtils.stripColor(str).split(" ");
                 String inviter = null;
                 for (String s : messageSplit) {

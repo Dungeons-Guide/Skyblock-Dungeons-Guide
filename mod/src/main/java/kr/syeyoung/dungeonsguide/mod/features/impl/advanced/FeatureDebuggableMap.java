@@ -25,9 +25,8 @@ import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Clip;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MinecraftTooltip;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MouseTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.RawMinecraftTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
@@ -94,8 +93,7 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
     }
 
     public class WidgetFeatureWrapper extends Widget implements Renderer, Layouter {
-        private MouseTooltip mouseTooltip;
-        private MinecraftTooltip tooltip;
+        private RawMinecraftTooltip mouseTooltip;
 
         @Override
         public List<Widget> build(DomElement buildContext) {
@@ -119,13 +117,12 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
             int j = (int) (relMouseY0/factor);
             if (i >= 0 && j>= 0 && i <= 128 && j <= 128 && MapUtils.getColors() != null) {
                 if (mouseTooltip == null) {
-                    PopupMgr.getPopupMgr(getDomElement()).openPopup(mouseTooltip = new MouseTooltip(tooltip = new MinecraftTooltip()), a -> {});
+                    PopupMgr.getPopupMgr(getDomElement()).openPopup(mouseTooltip = new RawMinecraftTooltip(), a -> {});
                 }
-                tooltip.setTooltip(Arrays.asList(i+","+j,"Color: "+MapUtils.getColors()[j * 128 + i]));
+                mouseTooltip.setTooltip(Arrays.asList(i+","+j,"Color: "+MapUtils.getColors().get(i,j)));
             } else if (mouseTooltip != null){
                 PopupMgr.getPopupMgr(getDomElement()).closePopup(mouseTooltip, null);
                 mouseTooltip = null;
-                tooltip = null;
             }
             return true;
         }
@@ -135,15 +132,13 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
             if (mouseTooltip != null)
                 PopupMgr.getPopupMgr(getDomElement()).closePopup(mouseTooltip, null);
             mouseTooltip = null;
-            tooltip = null;
         }
     }
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onGuiClose(GuiOpenEvent event) {
-        if (!(event.gui instanceof GuiChat) && widgetFeatureWrapper != null && widgetFeatureWrapper.tooltip != null) {
+        if (!(event.gui instanceof GuiChat) && widgetFeatureWrapper != null) {
             PopupMgr.getPopupMgr(widgetFeatureWrapper.getDomElement()).closePopup(widgetFeatureWrapper.mouseTooltip, null);
             widgetFeatureWrapper.mouseTooltip = null;
-            widgetFeatureWrapper.tooltip = null;
         }
     }
     private WidgetFeatureWrapper widgetFeatureWrapper;

@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 
 public class PopupMgr extends AnnotatedWidget {
     public PopupMgr() {
-        super(new ResourceLocation("dungeonsguide:gui/elements/popupmgr.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/elements/popupmgr.gui"));
     }
     // just stack
 

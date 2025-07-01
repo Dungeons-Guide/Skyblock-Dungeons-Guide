@@ -31,7 +31,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
 
 public class FeatureItem extends AnnotatedImportOnlyWidget {
 
@@ -59,7 +58,7 @@ public class FeatureItem extends AnnotatedImportOnlyWidget {
     private AbstractFeature feature;
 
     public FeatureItem(AbstractFeature feature) {
-        super(new ResourceLocation("dungeonsguide:gui/config/featureitem.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/featureitem.gui"));
         this.feature = feature;
 
         this.name.setValue(feature.getName());

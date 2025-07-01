@@ -40,30 +40,26 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.CachedWorld;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.WorldBackedCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.ArrayBackedBlockMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIBackedBlockMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.WorldBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
-import kr.syeyoung.dungeonsguide.mod.pathfinding.world.EditableChunkCache;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UChunk;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -89,11 +85,11 @@ public class DungeonRoom  {
     private Map<String, DungeonMechanicState> _mechanics = null;
 
     @Setter
-    private World cachedWorld;
-    private WorldBackedCoordinateMap coordinateMap;
-    private EditableChunkCache chunkCache;
+    private ArrayBackedBlockMap roomWorld;
 
-    public DungeonRoom(Set<Point> points, short shape, byte color, VectorI3D min, VectorI3D max, DungeonContext context, Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
+    private WorldBackedBlockMap coordinateMap;
+
+    public DungeonRoom(Set<Point> points, short shape, byte color, VectorI3D min, VectorI3D max, DungeonContext context, Set<Pair<Vector2d, EDungeonDoorType>> doorsAndStates) {
         this.unitPoints = points;
         this.color = color;
         this.context = context;
@@ -111,10 +107,10 @@ public class DungeonRoom  {
     }
 
     public DungeonRoom(DungeonContext context) {
-        if (!(context.getWorld() instanceof DRIWorld)) {
+        if (!(context.getWorld() instanceof DRIBackedBlockMap)) {
             throw new IllegalArgumentException("This constructor only applicable for DRIWorld based DungeonContext");
         }
-        DRIWorld driWorld = (DRIWorld) context.getWorld();
+        DRIBackedBlockMap driWorld = (DRIBackedBlockMap) context.getWorld();
 
         this.dungeonRoomInfo = driWorld.getDungeonRoomInfo();
         this.unitPoints = new HashSet<>();
@@ -141,7 +137,6 @@ public class DungeonRoom  {
 
 
         this.doorsAndStates = new HashSet<>();
-        this.cachedWorld = driWorld;
         this.roomMatcher = new RoomMatcher(this);
         this.roomMatcher.setMatch(dungeonRoomInfo);
         this.roomMatcher.setRotation(0);
@@ -160,12 +155,15 @@ public class DungeonRoom  {
                 }
             }
         }
-        coordinateMap = new WorldBackedCoordinateMap(driWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+        coordinateMap = new WorldBackedBlockMap(driWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+        roomWorld = new ArrayBackedBlockMap(roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+        roomWorld.migrateFromWorld(context.getWorld());
+
     }
 
 
-    public World getCachedWorld() {
-        if (this.cachedWorld != null) return cachedWorld;
+    public ArrayBackedBlockMap getRoomWorld() {
+        if (this.roomWorld != null) return roomWorld;
 
 
         int minZChunk = roomBounds.getMin().getZ() >> 4;
@@ -179,30 +177,21 @@ public class DungeonRoom  {
                 && !getRoomBounds().canAccessAbsolute(new VectorI3D(x * 16+15,0, z*16)) && !getRoomBounds().canAccessAbsolute(new VectorI3D(x * 16,0, z*16+15))) {
                     continue;
                 }
-                Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
+                UChunk c = getContext().getWorld().getChunkAt(x,z);
                 if (c.isEmpty()) {
-                    throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
-                }
-                boolean nonNull = false;
-                for (ExtendedBlockStorage extendedBlockStorage : c.getBlockStorageArray()) {
-                    if (extendedBlockStorage != null) {
-                        nonNull = true;
-                        break;
-                    }
-                }
-                if (!nonNull) {
                     throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
                 }
             }
         }
 
-        this.chunkCache = new EditableChunkCache(getContext().getWorld(), roomBounds.getMin().add(-3, 0, -3), roomBounds.getMax().add(3,0,3), 0);
-        CachedWorld cachedWorld =  new CachedWorld(chunkCache, context.getWorld().provider);
+        roomWorld = new ArrayBackedBlockMap(roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+        roomWorld.migrateFromWorld(context.getWorld());
 
-        coordinateMap = new WorldBackedCoordinateMap(cachedWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
+        coordinateMap = new WorldBackedBlockMap(roomWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
 
 
-        return this.cachedWorld = cachedWorld;
+
+        return this.roomWorld = roomWorld;
     }
 
     public Map<String, DungeonMechanicState> getMechanics() {
@@ -241,7 +230,7 @@ public class DungeonRoom  {
 
     private RoomProcessor roomProcessor;
 
-    private Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates;
+    private Set<Pair<Vector2d, EDungeonDoorType>> doorsAndStates;
 
     private volatile boolean matched = false;
     private volatile boolean matching = false;
@@ -266,7 +255,7 @@ public class DungeonRoom  {
     }
 
     private void matchRoomAndSetupRoomProcessor() {
-        getCachedWorld();
+        getRoomWorld();
         buildRoom();
         buildDoors(doorsAndStates);
 
@@ -284,17 +273,17 @@ public class DungeonRoom  {
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,16), new Vector2d(0, -16), new Vector2d(16, 0), new Vector2d(-16 , 0));
 
-    private void buildDoors(Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
+    private void buildDoors(Set<Pair<Vector2d, EDungeonDoorType>> doorsAndStates) {
         if (getDungeonRoomInfo().getMechanics().values().stream().noneMatch(a -> a instanceof DungeonRoomDoor2State.DungeonRoomDoor2Data)) {
-            Set<Tuple<VectorI3D, EDungeonDoorType>> positions = new HashSet<>();
+            Set<Pair<VectorI3D, EDungeonDoorType>> positions = new HashSet<>();
             VectorI3D pos = context.getScaffoldParser().getDungeonMapLayout().roomPointToWorldPoint(minRoomPt).add(16, 0, 16);
-            for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : doorsAndStates) {
+            for (Pair<Vector2d, EDungeonDoorType> doorsAndState : doorsAndStates) {
                 Vector2d vector2d = doorsAndState.getFirst();
                 VectorI3D neu = pos.add((int) (vector2d.x * 32), 0, (int) (vector2d.y * 32));
-                positions.add(new Tuple<>(neu, doorsAndState.getSecond()));
+                positions.add(new Pair<>(neu, doorsAndState.getSecond()));
             }
 
-            for (Tuple<VectorI3D, EDungeonDoorType> door : positions) {
+            for (Pair<VectorI3D, EDungeonDoorType> door : positions) {
                 doors.add(new DungeonDoor(context.getWorld(), door.getFirst(), door.getSecond()));
             }
         }
@@ -316,9 +305,9 @@ public class DungeonRoom  {
                     dungeonRoomInfo.getName(),
                     dungeonRoomInfo.getProcessorId()));
         }
-        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! shape: " + getRoomBounds().getShape() + " color: " +getColor() + " unitPos: " + unitPoints.iterator().next().x + "," + unitPoints.iterator().next().y));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! mapMin: " + roomBounds.getMin() + " mapMx: " + roomBounds.getMax()));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! id: " + dungeonRoomInfo.getUuid() + " name: " + dungeonRoomInfo.getName() +" proc: "+dungeonRoomInfo.getProcessorId()));
+        ChatTransmitter.sendDebugChat("New Map matched! shape: " + getRoomBounds().getShape() + " color: " +getColor() + " unitPos: " + unitPoints.iterator().next().x + "," + unitPoints.iterator().next().y);
+        ChatTransmitter.sendDebugChat("New Map matched! mapMin: " + roomBounds.getMin() + " mapMx: " + roomBounds.getMax());
+        ChatTransmitter.sendDebugChat("New Map matched! id: " + dungeonRoomInfo.getUuid() + " name: " + dungeonRoomInfo.getName() +" proc: "+dungeonRoomInfo.getProcessorId());
 
 
         this.dungeonRoomInfo = dungeonRoomInfo;
@@ -336,13 +325,12 @@ public class DungeonRoom  {
         }
     }
 
-    public Block getRelativeBlockAt(int x, int y, int z) {
+    public UBlockState getRelativeUBlockStateAt(int x, int y, int z) {
         // validate x y z's
         if (getRoomBounds().canAccessRelative(x,z)) {
-            BlockPos pos = new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
-            return getCachedWorld().getBlockState(pos).getBlock();
+            return getRoomWorld().getBlockStateAt(x+roomBounds.getMinX(),y+roomBounds.getMin().getY(),z + roomBounds.getMin().getZ());
         }
-        return null;
+        return ModAPI.getAPI().getBlockRegistry().oneFromWellknown(BlockType.BEDROCK);
     }
 
     public VectorI3D getRelativeBlockPosAt(int x, int y, int z) {
@@ -353,20 +341,9 @@ public class DungeonRoom  {
         return new Vector3D(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
     }
 
-    public int getRelativeBlockDataAt(int x, int y, int z) {
-        // validate x y z's
-        if (getRoomBounds().canAccessRelative(x,z)) {
-            BlockPos pos = new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
-            IBlockState iBlockState = getCachedWorld().getBlockState(pos);
-            return iBlockState.getBlock().getMetaFromState(iBlockState);
-        }
-        return -1;
-    }
-
     public void chunkUpdate(int cx, int cz) {
-        if (!chunkCache.isManaged(cx, cz)) {
-            return;
-        }
-        chunkCache.updateChunk(new BlockPos(cx*16+8, 0, cz*16+8));
+        UChunk uChunk = context.getWorld().getChunkAt(cx, cz);
+        if (uChunk == null) return;
+        roomWorld.updateChunk(uChunk);
     }
 }

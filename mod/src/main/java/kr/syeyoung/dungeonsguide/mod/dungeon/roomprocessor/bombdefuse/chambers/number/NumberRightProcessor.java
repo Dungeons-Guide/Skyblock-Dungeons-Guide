@@ -28,7 +28,7 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.item.UItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
     public NumberRightProcessor(RoomProcessorBombDefuseSolver solver, BDChamber chamber) {
@@ -77,9 +77,9 @@ public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void onDataReceive(NBTTagCompound compound) {
+    public void onDataReceive(CompoundBinaryTag compound) {
         if (1 == compound.getByte("a")) {
-            answer = compound.getInteger("b");
+            answer = compound.getInt("b");
             d1 = answer / 1000;
             d2 = (answer % 1000) / 100;
             d3 = (answer % 100) / 10;

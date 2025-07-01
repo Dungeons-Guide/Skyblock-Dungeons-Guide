@@ -11,7 +11,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.Getter;
-import net.minecraft.util.ResourceLocation;
 
 public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
 
@@ -47,7 +46,7 @@ public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
 
 
     public WidgetPresetRoom(AdditionalInfoCaculatedDungeonRoomInfo dungeonRoomInfo, PathfindPreset preset, WidgetPresetRoomList roomList) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/presetview/room.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/presetview/room.gui"));
 
         this.roomInfo = dungeonRoomInfo;
         this.preset = preset;

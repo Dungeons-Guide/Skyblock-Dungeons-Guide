@@ -21,10 +21,10 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.utils.ArrayUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.ShortUtils;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 
 import java.util.List;
 
@@ -86,9 +86,9 @@ public class RoomMatcher {
             for (int x = 0; x < res[0].length; x++) {
                 int data = res[z][x];
                 if (data == -1) continue;
-                Block b = dungeonRoom.getRelativeBlockAt(x,0,z);
+                UBlockState b = dungeonRoom.getRelativeUBlockStateAt(x,0,z);
 
-                if (b == null || Block.getIdFromBlock(b) != data) {
+                if (b == null || b.getLegacyId() != data) {
                     wrongs++;
 
                     if (wrongs > 10) return wrongs;
@@ -118,11 +118,11 @@ public class RoomMatcher {
                     continue;
                 }
 
-                Block b = dungeonRoom.getRelativeBlockAt(x,0,z);
-                if (b == null || b == Blocks.chest || b == Blocks.trapped_chest) {
+                UBlockState b = dungeonRoom.getRelativeUBlockStateAt(x,0,z);
+                if (b == null || b.isOf(BlockType.CHEST, BlockType.TRAP_CHEST)) {
                     data[z][x] = -1;
                 } else {
-                    data[z][x] = Block.getIdFromBlock(b);
+                    data[z][x] = b.getLegacyId();
                 }
             }
         }

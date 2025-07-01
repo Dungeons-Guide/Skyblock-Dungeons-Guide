@@ -27,6 +27,7 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
+import kr.syeyoung.modapi.world.UBlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -41,7 +42,6 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
@@ -87,7 +87,7 @@ public class RenderUtils {
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
         double time = System.currentTimeMillis() / 50 + (double)partialTicks;
-        double d1 = MathHelper.func_181162_h(-time * 0.2D - (double)MathHelper.floor_double(-time * 0.1D));
+        double d1 = MathUtils.frac(-time * 0.2D - Math.floor(-time * 0.1D));
 
         int c = getColorAt(x,y,z, aColor);
         float alpha = ((c >> 24) & 0xFF) / 255.0f;
@@ -243,14 +243,14 @@ public class RenderUtils {
         WorldRenderer wr = t.getWorldRenderer();
         wr.begin(GL11.GL_POLYGON, DefaultVertexFormats.POSITION);
         for (double i = 0.1; i < Math.PI*2; i+= delta) {
-            double cos = MathHelper.cos((float) i);
-            double sin = MathHelper.sin((float) i);
-            if (cos * MathHelper.cos((float) (i + delta)) <= 0) {
+            double cos = Math.cos((float) i);
+            double sin = Math.sin((float) i);
+            if (cos * Math.cos((float) (i + delta)) <= 0) {
                 wr.pos(sin * radius + (sin > 0 ? 1 : -1) * (width/2.0 - radius),
                         cos * radius + (cos > 0 ? 1 : -1) * (height/2.0 - radius),0).endVertex();
                 wr.pos(sin * radius + (sin > 0 ? 1 : -1) * (width/2.0 - radius),
                         cos * radius + (cos > 0 ? -1 : 1) * (height/2.0 - radius),0).endVertex();
-            } else if (sin * MathHelper.sin((float) (i+delta)) <= 0) {
+            } else if (sin * Math.sin((float) (i+delta)) <= 0) {
                 wr.pos(sin * radius + (sin > 0 ? 1 : -1) * (width/2.0 - radius),
                         cos * radius + (cos > 0 ? 1 : -1) * (height/2.0 - radius), 0).endVertex();
                 wr.pos(sin * radius + (sin > 0 ? -1 : 1) * (width/2.0 - radius),
@@ -819,17 +819,17 @@ public class RenderUtils {
             maxY = Math.max(maxY, pos.getY() + 1);
             minZ = Math.min(minZ, pos.getZ());
             maxZ = Math.max(maxZ, pos.getZ() + 1);
-            IBlockState iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.x, pos.y, pos.z));
-            if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
+            UBlockState iBlockState = ModAPI.getAPI().getWorld().getBlockStateAt(pos);
+            if (iBlockState.hasTileEntity()) {
                 TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(pos.x, pos.y, pos.z));
                 TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                 if (specialRenderer != null) {
                     specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
                     for (kr.syeyoung.modapi.data.EnumFacing value : kr.syeyoung.modapi.data.EnumFacing.HORIZONTALS) {
                         VectorI3D newPos = pos.add(value.getDirectionVec());
-                        iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(newPos.x, newPos.y, newPos.z));
+                        iBlockState = ModAPI.getAPI().getWorld().getBlockStateAt(newPos);
 
-                        if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
+                        if (iBlockState.hasTileEntity()) {
                             tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(newPos.x, newPos.y, newPos.z));
                             specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                             if (specialRenderer != null)
@@ -838,13 +838,13 @@ public class RenderUtils {
                     }
                 } else {
                     blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
-                            blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
-                            iBlockState.getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
+                            blockrendererdispatcher.getModelFromBlockState((IBlockState) iBlockState.getIBlockState(), Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
+                            ((IBlockState)iBlockState.getIBlockState()).getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
                 }
             } else {
                 blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
-                        blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
-                        iBlockState.getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
+                        blockrendererdispatcher.getModelFromBlockState((IBlockState) iBlockState.getIBlockState(), Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
+                        ((IBlockState)iBlockState.getIBlockState()).getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
             }
         }
 
@@ -914,17 +914,17 @@ public class RenderUtils {
             maxY = Math.max(maxY, pos.getY() + 1);
             minZ = Math.min(minZ, pos.getZ());
             maxZ = Math.max(maxZ, pos.getZ() + 1);
-            IBlockState iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.x, pos.y, pos.z));
-            if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
+            UBlockState iBlockState = ModAPI.getAPI().getWorld().getBlockStateAt(pos);
+            if (iBlockState.hasTileEntity()) {
                 TileEntity tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(pos.x, pos.y, pos.z));
                 TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                 if (specialRenderer != null) {
                     specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
                     for (kr.syeyoung.modapi.data.EnumFacing value : kr.syeyoung.modapi.data.EnumFacing.HORIZONTALS) {
                         VectorI3D newPos = pos.add(value.getDirectionVec());
-                        iBlockState = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(newPos.x, newPos.y, newPos.z));
+                        iBlockState = ModAPI.getAPI().getWorld().getBlockStateAt(newPos);
 
-                        if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
+                        if (iBlockState.hasTileEntity()) {
                             tileEntity = Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(newPos.x, newPos.y, newPos.z));
                             specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                             if (specialRenderer != null)
@@ -933,13 +933,13 @@ public class RenderUtils {
                     }
                 } else {
                     blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
-                            blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
-                            iBlockState.getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
+                            blockrendererdispatcher.getModelFromBlockState((IBlockState) iBlockState.getIBlockState(), Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
+                            ((IBlockState)iBlockState.getIBlockState()).getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
                 }
             } else {
                 blockrendererdispatcher.getBlockModelRenderer().renderModelStandard(Minecraft.getMinecraft().theWorld,
-                        blockrendererdispatcher.getModelFromBlockState(iBlockState, Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
-                        iBlockState.getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
+                        blockrendererdispatcher.getModelFromBlockState((IBlockState) iBlockState.getIBlockState(), Minecraft.getMinecraft().theWorld, new BlockPos(pos.x, pos.y, pos.z)),
+                        ((IBlockState)iBlockState.getIBlockState()).getBlock(), new BlockPos(pos.x, pos.y, pos.z), vertexBuffer, depth ? true : false);
             }
         }
 

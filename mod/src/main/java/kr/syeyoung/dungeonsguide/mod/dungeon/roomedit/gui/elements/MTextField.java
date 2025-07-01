@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements;
 
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
+import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -80,9 +80,9 @@ public class MTextField extends MPanel {
 
         int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text.substring(0, cursor));
         int cursorX = width + 3- xOffset;
-        cursorX = MathHelper.clamp_int(cursorX,10, getBounds().width - 10);
+        cursorX = MathUtils.clamp_int(cursorX,10, getBounds().width - 10);
         xOffset = width+ 3 - cursorX;
-        xOffset = MathHelper.clamp_int(xOffset, 0,Math.max(0, Minecraft.getMinecraft().fontRendererObj.getStringWidth(text) - getBounds().width+10));
+        xOffset = MathUtils.clamp_int(xOffset, 0,Math.max(0, Minecraft.getMinecraft().fontRendererObj.getStringWidth(text) - getBounds().width+10));
     }
 
     @Override

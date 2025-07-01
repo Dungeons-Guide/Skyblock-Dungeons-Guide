@@ -22,13 +22,10 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.world.World;
 
 import java.awt.*;
 import java.util.LinkedList;
@@ -67,14 +64,14 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(DGChatReceivedEvent chat) {
         super.chatReceived(chat);
-        if (chat.getFormattedText().contains("$DG-BDGP ")) {
-            String data = chat.getFormattedText().substring(chat.getFormattedText().indexOf("$DG-BDGP"));
+        if (chat.getOriginalFormattedText().contains("$DG-BDGP ")) {
+            String data = chat.getOriginalFormattedText().substring(chat.getOriginalFormattedText().indexOf("$DG-BDGP"));
             String actual = TextUtils.stripColor(data).trim().split(" ")[1].trim();
 
             blocksolution.clear();
-            BlockPos lastLoc = new BlockPos(4,0,0);
+            VectorI3D lastLoc = new VectorI3D(4,0,0);
             blocksolution.addFirst(getChamber().getBlockPos(4,1,0));
             for (Character c:actual.toCharArray()) {
                 int dir = Integer.parseInt(c+"") % 4;
@@ -82,17 +79,19 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
                 blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()));
             }
 
-            World w = getChamber().getRoom().getContext().getWorld();
-            for (int x = 0; x <9; x++) {
-                for (int z =0; z < 6; z++) {
-                    VectorI3D pos = getChamber().getBlockPos(x,1,z);
-                    if (blocksolution.contains(pos)) {
-                        w.setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Blocks.light_weighted_pressure_plate.getDefaultState());
-                    } else {
-                        w.setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Blocks.wooden_pressure_plate.getDefaultState());
-                    }
-                }
-            }
+            // TODO: find better way to show solution
+
+//            World w = getChamber().getRoom().getContext().getWorld();
+//            for (int x = 0; x <9; x++) {
+//                for (int z =0; z < 6; z++) {
+//                    VectorI3D pos = getChamber().getBlockPos(x,1,z);
+//                    if (blocksolution.contains(pos)) {
+//                        w.setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Blocks.light_weighted_pressure_plate.getDefaultState());
+//                    } else {
+//                        w.setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Blocks.wooden_pressure_plate.getDefaultState());
+//                    }
+//                }
+//            }
         }
     }
 }

@@ -26,7 +26,6 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.*;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -47,7 +46,6 @@ public class PathfindLineProperties extends SimpleFeature {
 
     }
 
-    @Setter
     private PathDisplayEngineSetting<?> setting;
 
     public void setSetting(PathDisplayEngineSetting<?> setting) {

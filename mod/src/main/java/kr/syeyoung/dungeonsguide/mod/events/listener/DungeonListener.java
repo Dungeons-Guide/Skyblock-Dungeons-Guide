@@ -38,14 +38,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.PearlCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
-import kr.syeyoung.dungeonsguide.mod.fakeserver.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
+import kr.syeyoung.dungeonsguide.mod.utils.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
@@ -53,7 +51,11 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
+import kr.syeyoung.modapi.event.ListenerPriority;
 import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.profiler.UProfiler;
+import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UChunk;
 import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -67,19 +69,11 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.network.play.server.S21PacketChunkData;
-import net.minecraft.network.play.server.S26PacketMapChunkBulk;
-import net.minecraft.profiler.Profiler;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -92,22 +86,20 @@ import java.util.Map;
 public class DungeonListener {
 
 
-    @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Unload event) {
-        TabList.INSTANCE.clear();
-        TeamManager.INSTANCE.clear();
-        ScoreboardManager.INSTANCE.clear();
+    @kr.syeyoung.modapi.event.SubscribeEvent
+    public void onWorldLoad(WorldUnloadEvent event) {
         Config.scheduleConfigSave();
         DungeonActionContext.getSpawnLocation().clear();
         DungeonActionContext.getKilleds().clear();
     }
+
 
     @SubscribeEvent
     public void onPostDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
 
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        UProfiler profiler = ModAPI.getAPI().getProfiler();
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
@@ -188,7 +180,6 @@ public class DungeonListener {
                     } else if (SkyblockStatus.isOnDungeon()) {
                         DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(new DungeonContext(
                                 SkyblockStatus.getLocationName(),
-                                Minecraft.getMinecraft().theWorld,
                                 ModAPI.getAPI().getWorld()));
                         ModAPI.getAPI().getEventBus().fireEvent(new DungeonStartedEvent());
                     }
@@ -258,7 +249,7 @@ public class DungeonListener {
             return;
 
         if (!SkyblockStatus.isOnDungeon()) return;
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        UProfiler profiler = ModAPI.getAPI().getProfiler();
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context != null) {
@@ -320,27 +311,23 @@ public class DungeonListener {
             context.onMapUpdate(mapUpdateEvent);
         }
     }
-    @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGHEST)
-    public void onChatReceived(ClientChatReceivedEvent clientChatReceivedEvent) {
+
+    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FIRST)
+    public void onDGChatReceived(DGChatReceivedEvent receivedEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        if (clientChatReceivedEvent.type != 2 && clientChatReceivedEvent.message.getFormattedText().contains("§6> §e§lEXTRA STATS §6<")) {
+        String format = receivedEvent.getOriginalFormattedText();
+        if (TextUtils.contains(format, "§6> §e§lEXTRA STATS §6<")) {
             ModAPI.getAPI().getEventBus().fireEvent(new DungeonEndedEvent());
         }
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-
         if (context != null) {
-
             UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
-            context.onChat(clientChatReceivedEvent);
+            context.onChat(receivedEvent);
 
             if (context.getBossfightProcessor() != null) {
-                if (clientChatReceivedEvent.type == 2) {
-                    context.getBossfightProcessor().actionbarReceived(clientChatReceivedEvent.message);
-                } else {
-                    context.getBossfightProcessor().chatReceived(clientChatReceivedEvent.message);
-                }
+                context.getBossfightProcessor().chatReceived(receivedEvent);
             }
             if (context.getScaffoldParser() != null) {
                 Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
@@ -350,22 +337,48 @@ public class DungeonListener {
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 if (dungeonRoom != null) {
                     if (dungeonRoom.getRoomProcessor() != null) {
-                        if (clientChatReceivedEvent.type == 2) {
-                            dungeonRoom.getRoomProcessor().actionbarReceived(clientChatReceivedEvent.message);
-                            roomProcessor = dungeonRoom.getRoomProcessor();
-                        } else {
-                            dungeonRoom.getRoomProcessor().chatReceived(clientChatReceivedEvent.message);
-                            roomProcessor = dungeonRoom.getRoomProcessor();
-                        }
+                        dungeonRoom.getRoomProcessor().chatReceived(receivedEvent);
+                        roomProcessor = dungeonRoom.getRoomProcessor();
                     }
-                }
-                if (clientChatReceivedEvent.type == 2) {
-                    return;
                 }
 
                 for (RoomProcessor globalRoomProcessor : context.getGlobalRoomProcessors()) {
                     if (globalRoomProcessor != roomProcessor) {
-                        globalRoomProcessor.chatReceived(clientChatReceivedEvent.message);
+                        globalRoomProcessor.chatReceived(receivedEvent);
+                    }
+                }
+            }
+        }
+    }
+
+    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FIRST)
+    public void onActionBarReceived(ActionBarReceivedEvent receivedEvent) {
+        if (!SkyblockStatus.isOnDungeon()) return;
+
+        String format = TextUtils.getNearestFormattedText(receivedEvent.chat);
+        if (format.contains("§6> §e§lEXTRA STATS §6<")) {
+            ModAPI.getAPI().getEventBus().fireEvent(new DungeonEndedEvent());
+        }
+
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+
+        if (context != null) {
+
+            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
+
+            if (context.getBossfightProcessor() != null) {
+                context.getBossfightProcessor().actionbarReceived(receivedEvent);
+            }
+            if (context.getScaffoldParser() != null) {
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+
+
+                RoomProcessor roomProcessor = null;
+                DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
+                if (dungeonRoom != null) {
+                    if (dungeonRoom.getRoomProcessor() != null) {
+                        dungeonRoom.getRoomProcessor().actionbarReceived(receivedEvent);
+                        roomProcessor = dungeonRoom.getRoomProcessor();
                     }
                 }
             }
@@ -373,12 +386,13 @@ public class DungeonListener {
     }
 
 
+
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent renderWorldLastEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
         try {
 
-            Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+            UProfiler profiler = ModAPI.getAPI().getProfiler();
 
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (context == null) {
@@ -423,10 +437,10 @@ public class DungeonListener {
 
                     GeneralRoomProcessor roomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
                     Vector3D player = ModAPI.getAPI().getPlayer().getPositionVector();
-                    BlockPos real = new BlockPos(player.x * 2, player.y * 2, player.z * 2);
+                    VectorI3D real = new VectorI3D(player.x * 2, player.y * 2, player.z * 2);
                     try {
 
-                        for (BlockPos allInBox : BlockPos.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
+                        for (VectorI3D allInBox : VectorI3D.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
                             CollisionStateCalculatingCoordinateMap.CollisionState blocked = roomProcessor.getPathfinderWorld().getBlock(allInBox.getX(), allInBox.getY(), allInBox.getZ());
                             RenderUtils.highlightBox(
                                     new AABB(
@@ -443,8 +457,8 @@ public class DungeonListener {
                         OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new VectorI3D(0,0,0));
                         for (VectorI3D allInBox : VectorI3D.getAllInBox(dungeonRoom.getRoomBounds().getMin().add(0, -60, 0), dungeonRoom.getRoomBounds().getMax().add(0, 180, 0))) {
                             offsetPoint.setPosInWorld(dungeonRoom, allInBox);
-                            IBlockState blockState = dungeonRoom.getDungeonRoomInfo().getBlock(offsetPoint, dungeonRoom.getRoomMatcher().getRotation());
-                            if (!blockState.equals(dungeonRoom.getCachedWorld().getBlockState(new BlockPos(allInBox.getX(), allInBox.getY(), allInBox.getZ())))) {
+                            UBlockState blockState = dungeonRoom.getDungeonRoomInfo().getBlock(offsetPoint, dungeonRoom.getRoomMatcher().getRotation());
+                            if (blockState != dungeonRoom.getRoomWorld().getBlockStateAt(allInBox)) {
                                 RenderUtils.highlightBlock(allInBox, new Color(0x70FF0000,true), renderWorldLastEvent.partialTicks, false);
                                 Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
                                 float partialTicks = renderWorldLastEvent.partialTicks;
@@ -466,8 +480,8 @@ public class DungeonListener {
                                 BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 //                        GlStateManager.color(1.0f,1.0f,1.0f,0.1f);
                                 blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld,
-                                        blockrendererdispatcher.getBlockModelShapes().getModelForState(blockState),
-                                        blockState, new BlockPos(0,0,0), vertexBuffer, false);
+                                        blockrendererdispatcher.getBlockModelShapes().getModelForState((IBlockState) blockState.getIBlockState()),
+                                        (IBlockState) blockState.getIBlockState(), new BlockPos(0,0,0), vertexBuffer, false);
                                 tessellator.draw();
 
                                 GlStateManager.enableLighting();
@@ -585,7 +599,7 @@ public class DungeonListener {
             if (ec == null) {
                 DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
                 if (context == null) {
-                    ChatTransmitter.addToQueue(new ChatComponentText("Not in dungeons"));
+                    ChatTransmitter.addToQueue("Not in dungeons");
                     return;
                 }
                 UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
@@ -594,12 +608,12 @@ public class DungeonListener {
                     DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
 
                     if (dungeonRoom == null) {
-                        ChatTransmitter.addToQueue(new ChatComponentText("Can't determine the dungeon room you're in"));
+                        ChatTransmitter.addToQueue("Can't determine the dungeon room you're in");
                         return;
                     }
 
                     if (EditingContext.getEditingContext() != null) {
-                        ChatTransmitter.addToQueue(new ChatComponentText("There is an editing session currently open."));
+                        ChatTransmitter.addToQueue("There is an editing session currently open.");
                         return;
                     }
 
@@ -610,9 +624,8 @@ public class DungeonListener {
         }
     }
 
-    @SubscribeEvent
+    @kr.syeyoung.modapi.event.SubscribeEvent
     public void onInteract(PlayerInteractEvent keyInputEvent) {
-        if (!keyInputEvent.world.isRemote) return;
         if (!SkyblockStatus.isOnDungeon()) return;
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
@@ -656,52 +669,31 @@ public class DungeonListener {
     public void onEntityDespawn2(EntityExitWorldEvent worldEvent) {
         for (int entityId : worldEvent.getEntityIds()) {
             UEntity en = ModAPI.getAPI().getWorld().getEntityById(entityId);
-            if (en.getEntityType() == EntityType.BAT && en.getPositionVector().distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) < 3025)
+            if (en != null && en.getEntityType() == EntityType.BAT && en.getPositionVector().distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) < 3025)
                 DungeonActionContext.getKilleds().add(entityId);
         }
     }
 
     @kr.syeyoung.modapi.event.SubscribeEvent
-    public void onChunkUpdate(PacketProcessedEvent.Post post) {
+    public void onChunkUpdate(ChunkUpdateEvent.Post post) {
         if (!SkyblockStatus.isOnDungeon()) return;
-        if (post.packet instanceof S21PacketChunkData) {
-            S21PacketChunkData p = (S21PacketChunkData) post.packet;
-            if (p.func_149274_i() && p.getExtractedSize() == 0) return; // IGNORE unloading chunks. :D
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
-            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-
-            if (context != null) {
-                if (context.getScaffoldParser() != null) {
-                    for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
-                        dungeonRoom.chunkUpdate(p.getChunkX(), p.getChunkZ());
+        if (context != null) {
+            if (context.getScaffoldParser() != null) {
+                for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
+                    for (UChunk chunk : post.getUpdatedChunks()) {
+                        dungeonRoom.chunkUpdate(chunk.getChunkX(), chunk.getChunkZ());
 
                         RoomProcessor roomProcessor = dungeonRoom.getRoomProcessor();
                         if (roomProcessor != null) {
-                            roomProcessor.chunkUpdate(p.getChunkX(), p.getChunkZ());
-                        }
-                    }
-                }
-            }
-        } else if (post.packet instanceof S26PacketMapChunkBulk) {
-            S26PacketMapChunkBulk p = (S26PacketMapChunkBulk) post.packet;
-
-            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-
-            if (context != null) {
-                if (context.getScaffoldParser() != null) {
-                    for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
-                        for (int i = 0; i < p.getChunkCount(); i++) {
-                            dungeonRoom.chunkUpdate(p.getChunkX(i), p.getChunkZ(i));
-
-                            RoomProcessor roomProcessor = dungeonRoom.getRoomProcessor();
-                            if (roomProcessor != null) {
-                                roomProcessor.chunkUpdate(p.getChunkX(i), p.getChunkZ(i));
-                            }
+                            roomProcessor.chunkUpdate(chunk.getChunkX(), chunk.getChunkZ());
                         }
                     }
                 }
             }
         }
+
     }
     @kr.syeyoung.modapi.event.SubscribeEvent
     public void onEntityDeSpawn(LivingEntityDeathEvent deathEvent) {

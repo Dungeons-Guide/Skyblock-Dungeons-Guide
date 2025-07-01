@@ -11,9 +11,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.function.Predicate;
 
@@ -102,7 +99,7 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<Integer> hasteSettings = new BindableAttribute<>(Integer.class, 0);
 
     public WidgetCreateAbilitySettings(AlgorithmSetting defaultAlgorithm) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/abilityedit/abilitycreate.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/abilityedit/abilitycreate.gui"));
 
         pickaxeSettings.addOnUpdate((old ,neu) -> {
             pickaxeIndex.setValue(neu == null ? 3 : neu.getTool().getToolMaterial().ordinal() * 8);
@@ -147,13 +144,13 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
         txtEtherwarpOffset.setValue(String.valueOf(defaultAlgorithm.getEtherwarpOffset()));
         txtEtherwarpLeeway.setValue(String.valueOf(defaultAlgorithm.getEtherwarpLeeway()));
 
-        etherwarp.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F)));
-        stair.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F)));
-        teleportdown.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F)));
-        enderchest.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F)));
-        tntpearl.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F)));
-        enderpearl.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F)));
-        slowstonk.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F)));
+        etherwarp.addOnUpdate((old, neu) -> ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F));
+        stair.addOnUpdate((old, neu) -> ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F));
+        teleportdown.addOnUpdate((old, neu) -> ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F));
+        enderchest.addOnUpdate((old, neu) -> ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F));
+        tntpearl.addOnUpdate((old, neu) -> ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F));
+        enderpearl.addOnUpdate((old, neu) -> ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F));
+        slowstonk.addOnUpdate((old, neu) -> ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F));
     }
 
 

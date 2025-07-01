@@ -21,14 +21,15 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.catacombs;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonSpecificDataProvider;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityArmorStand;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UWorld;
 import org.jetbrains.annotations.Nullable;
 
 import javax.vecmath.Vector2d;
-import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 public abstract class CatacombsDataProvider implements DungeonSpecificDataProvider {
@@ -36,14 +37,13 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1 , 0));
 
     @Nullable
-    static Vector2d getVector2d(World w, Collection<EntityArmorStand> armorStand, Set<Vector2d> directions) {
-        EntityArmorStand mort = armorStand.iterator().next();
-        BlockPos pos = mort.getPosition();
+    static Vector2d getVector2d(UWorld w, UEntityArmorStand mort, Set<Vector2d> directions) {
+        VectorI3D pos = mort.getPosition();
         pos = pos.add(0, 3, 0);
         for (int i = 0; i < 5; i++) {
             for (Vector2d vector2d: directions) {
-                BlockPos test = pos.add(vector2d.x * i, 0, vector2d.y * i);
-                if (w.getChunkFromBlockCoords(test).getBlock(test) == Blocks.iron_bars) {
+                VectorI3D test = pos.add((int) (vector2d.x * i), 0, (int) (vector2d.y * i));
+                if (w.getBlockStateAt(test).isOf(BlockType.IRON_BARS)) {
                     return vector2d;
                 }
             }
@@ -51,8 +51,12 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
         return null;
     }
 
-    public static Collection<EntityArmorStand> getMorts(World w){
-        return w.getEntities(EntityArmorStand.class, input -> input.getName().equals("§bMort"));
+    public static UEntityArmorStand getMorts(UWorld w){
+        List<UEntity> uEntityList = w.getEntities(EntityType.ARMOR_STAND);
+        for (UEntity uEntity : uEntityList) {
+            if (uEntity.getName().equals("§bMort")) return (UEntityArmorStand) uEntity;
+        }
+        return null;
     }
 
     /**
@@ -64,17 +68,16 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
      * @param dungeonName dungeon type e.g. master mode, currently unused
      * @return Block pos of the dungeon entrance
      */
-    public VectorI3D findDoor(World w, String dungeonName) {
-        Collection<EntityArmorStand> armorStand = getMorts(w);
+    public VectorI3D findDoor(UWorld w, String dungeonName) {
+        UEntityArmorStand armorStand = getMorts(w);
 
-        if (!armorStand.isEmpty()) {
-            EntityArmorStand mort = armorStand.iterator().next();
-            BlockPos pos = mort.getPosition();
+        if (armorStand != null) {
+            VectorI3D pos = armorStand.getPosition();
             pos = pos.add(0, 3, 0);
             for (int i = 0; i < 5; i++) {
                 for (Vector2d vector2d:directions) {
-                    BlockPos test = pos.add(vector2d.x * i, 0, vector2d.y * i);
-                    if (w.getChunkFromBlockCoords(test).getBlock(test) == Blocks.iron_bars) {
+                    VectorI3D test = pos.add((int) (vector2d.x * i), 0, (int) (vector2d.y * i));
+                    if (w.getBlockStateAt(test).isOf(BlockType.IRON_BARS)) {
                         return new VectorI3D(pos.getX(), pos.getY(), pos.getZ()).add((int) (vector2d.x * (i + 2)), -2, (int) (vector2d.y * (i+2)));
                     }
                 }
@@ -83,10 +86,10 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
         return null;
     }
 
-    public Vector2d findDoorOffset(World w, String dungeonName) {
-        Collection<EntityArmorStand> armorStand = getMorts(w);
+    public Vector2d findDoorOffset(UWorld w, String dungeonName) {
+        UEntityArmorStand armorStand = getMorts(w);
 
-        if (!armorStand.isEmpty()) {
+        if (armorStand != null) {
             return getVector2d(w, armorStand, directions);
         }
         return null;

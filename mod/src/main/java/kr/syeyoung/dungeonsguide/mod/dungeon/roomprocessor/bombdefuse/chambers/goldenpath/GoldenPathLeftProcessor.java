@@ -23,17 +23,16 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import kr.syeyoung.modapi.world.BlockType;
+import net.kyori.adventure.text.Component;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     public GoldenPathLeftProcessor(RoomProcessorBombDefuseSolver solver, BDChamber chamber) {
@@ -76,8 +75,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
                 if (target2.getX() < 0 || target2.getZ() < 0 || target2.getX() > 8 || target2.getZ() > 5) continue;
 
                 visited.add(target2);
-                if (getChamber().getBlock(target2.getX(), 0, target2.getZ()).getBlock() == Blocks.hardened_clay
-                || getChamber().getBlock(target2.getX(), 0, target2.getZ()).getBlock() == Blocks.stained_hardened_clay) {
+                if (getChamber().getBlock(target2.getX(), 0, target2.getZ()).isOf(BlockType.HARDENED_CLAY, BlockType.STAINED_HARDENED_CLAY)) {
                     lastLoc = target2;
 
                     blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()));
@@ -113,7 +111,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
         if (goldenPathsolution == null) return;
         ChatProcessor.INSTANCE.addToChatQueue("/pc $DG-BDGP "+goldenPathsolution, null, false);
 
-        ChatComponentText text = new ChatComponentText("$DG-BDGP "+goldenPathsolution);
+        DGChatReceivedEvent text = new DGChatReceivedEvent("$DG-BDGP "+goldenPathsolution, Component.text("$DG-BDGP "+goldenPathsolution), Component.text("$DG-BDGP "+goldenPathsolution), false);
         for (RoomProcessorBombDefuseSolver.ChamberSet ch: getSolver().getChambers()) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
                 ch.getLeft().getProcessor().chatReceived(text);
@@ -123,14 +121,14 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(DGChatReceivedEvent chat) {
         super.chatReceived(chat);
-        if (chat.getFormattedText().contains("$DG-BDGP ")) {
-            String data = chat.getFormattedText().substring(chat.getFormattedText().indexOf("$DG-BDGP "));
+        if (chat.getOriginalFormattedText().contains("$DG-BDGP ")) {
+            String data = chat.getOriginalFormattedText().substring(chat.getOriginalFormattedText().indexOf("$DG-BDGP "));
             String actual = TextUtils.stripColor(data).trim().split(" ")[1].trim();
 
             blocksolution.clear();
-            BlockPos lastLoc = new BlockPos(4,0,0);
+            VectorI3D lastLoc = new VectorI3D(4,0,0);
             blocksolution.addFirst(getChamber().getBlockPos(4,1,0));
             for (Character c:actual.toCharArray()) {
                 int dir = Integer.parseInt(c+"") % 4;

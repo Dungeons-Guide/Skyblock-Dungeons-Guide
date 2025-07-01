@@ -7,7 +7,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.lang.ref.WeakReference;
 
@@ -23,7 +23,7 @@ public class WidgetPrecalcStep1Calculating extends AnnotatedImportOnlyWidget {
     private WidgetPendingRequestPage parent;
 
     public WidgetPrecalcStep1Calculating(WidgetPendingRequestPage parent, PathfindPrecalculationRequestSet requestSet) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/step1/calculating.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/requestcalculation/pendingreq/step1/calculating.gui"));
         this.requestSet = requestSet;
         this.parent = parent;
         step2calc.setValue(new WidgetPrecalcStep1.WidgetStep2Calc(requestSet));

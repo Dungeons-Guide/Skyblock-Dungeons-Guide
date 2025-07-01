@@ -28,8 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.function.Consumer;
 
@@ -43,10 +42,10 @@ public class WidgetSecret extends AnnotatedWidget {
     private DungeonMechanicState mechanic;
     private Consumer<String> onSelect;
     public WidgetSecret(String name, DungeonRoom room, DungeonMechanicState dungeonMechanicState, Consumer<String> selectedId) {
-        super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/secret.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/mechanicBrowser/secret.gui"));
         secretName.setValue(name+" §7("+ dungeonMechanicState.getCurrentState() +", "+
                 (dungeonMechanicState.getRepresentingPoint() != null ?
-                        String.format("%.1f", MathHelper.sqrt_double(dungeonMechanicState.getRepresentingPoint().getBlockPos(room).distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()))) : "")
+                        String.format("%.1f", Math.sqrt(dungeonMechanicState.getRepresentingPoint().getBlockPos(room).distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()))) : "")
                 +"m)");
         this.id = name;
         this.mechanic = dungeonMechanicState;
@@ -59,7 +58,7 @@ public class WidgetSecret extends AnnotatedWidget {
         super.onMount();
         secretName.setValue(id+" §7("+ mechanic.getCurrentState() +", "+
                 (mechanic.getRepresentingPoint() != null ?
-                        String.format("%.1f", MathHelper.sqrt_double(mechanic.getRepresentingPoint().getBlockPos(room).distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()))) : "")
+                        String.format("%.1f", Math.sqrt(mechanic.getRepresentingPoint().getBlockPos(room).distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()))) : "")
                 +"m)");
     }
 

@@ -25,14 +25,14 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.B
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.item.UItemStack;
-import net.minecraft.block.Block;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
+import kr.syeyoung.modapi.world.IBlockAccessible;
+import kr.syeyoung.modapi.world.UBlockState;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +48,7 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
 
     private final VectorI3D center;
 
-    private Block w1, w2, w3, c1, c2, c3;
+    private UBlockState w1, w2, w3, c1, c2, c3;
     private final VectorI3D b1p;
     private final VectorI3D b2p;
     private final VectorI3D b3p;
@@ -65,9 +65,9 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
     public void tick() {
         super.tick();
         if (solutionBuilt) return;
-        World w = getChamber().getRoom().getContext().getWorld();
+        IBlockAccessible w = getChamber().getRoom().getContext().getWorld();
 
-        if ((c1 = w.getBlockState(new BlockPos(b1p.getX(), b1p.getY(), b1p.getZ())).getBlock()) == w1 && s1t < 7) {
+        if ((c1 = w.getBlockStateAt(b1p)) == w1 && s1t < 7) {
             int semi = match(getChamber().getEntityAt(EntityType.ARMOR_STAND,b1p.add(0, 1, 0)));
             if (s1 == semi) {
                 s1t++;
@@ -76,7 +76,7 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
                 s1t = 0;
             }
         }
-        if ((c2 = w.getBlockState(new BlockPos(b2p.getX(), b2p.getY(), b2p.getZ())).getBlock()) == w2 && s2t < 7) {
+        if ((c2 = w.getBlockStateAt(b2p)) == w2 && s2t < 7) {
             int semi = match(getChamber().getEntityAt(EntityType.ARMOR_STAND,b2p.add(0, 2, 0)));
             if (s2 == semi) {
                 s2t++;
@@ -85,7 +85,7 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
                 s2t = 0;
             }
         }
-        if ((c3 =w.getBlockState(new BlockPos(b3p.getX(), b3p.getY(), b3p.getZ())).getBlock()) == w3 && s3t < 7) {
+        if ((c3 =w.getBlockStateAt(b3p)) == w3 && s3t < 7) {
             int semi = match(getChamber().getEntityAt(EntityType.ARMOR_STAND,b3p.add(0, 1, 0)));
             if (s3== semi) {
                 s3t++;
@@ -110,14 +110,14 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        RenderUtils.drawTextAtWorld(w1 == null ? "Request Not Received Yet" : "Building- "+w1.getLocalizedName() +" / "+w2.getLocalizedName() +" / "+w3.getLocalizedName() , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(w1 == null ? "Request Not Received Yet" : "Building- "+w1.getBlock().getLocalizedName() +" / "+w2.getBlock().getLocalizedName() +" / "+w3.getBlock().getLocalizedName() , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
 
-        RenderUtils.drawTextAtWorld(w1 == null ? "null" : w1.getLocalizedName(), b1p.getX()+ 0.5f, b1p.getY() + 0.2f, b1p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(w2 == null ? "null" : w2.getLocalizedName(), b2p.getX()+ 0.5f, b2p.getY() + 0.2f, b2p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(w3 == null ? "null" : w3.getLocalizedName(), b3p.getX()+ 0.5f, b3p.getY() + 0.2f, b3p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(c1 == null ? "null" : c1.getLocalizedName(), b1p.getX()+ 0.5f, b1p.getY() + 0.6f, b1p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(c2 == null ? "null" : c2.getLocalizedName(), b2p.getX()+ 0.5f, b2p.getY() + 0.6f, b2p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(c3 == null ? "null" : c3.getLocalizedName(), b3p.getX()+ 0.5f, b3p.getY() + 0.6f, b3p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(w1 == null ? "null" : w1.getBlock().getLocalizedName(), b1p.getX()+ 0.5f, b1p.getY() + 0.2f, b1p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(w2 == null ? "null" : w2.getBlock().getLocalizedName(), b2p.getX()+ 0.5f, b2p.getY() + 0.2f, b2p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(w3 == null ? "null" : w3.getBlock().getLocalizedName(), b3p.getX()+ 0.5f, b3p.getY() + 0.2f, b3p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(c1 == null ? "null" : c1.getBlock().getLocalizedName(), b1p.getX()+ 0.5f, b1p.getY() + 0.6f, b1p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(c2 == null ? "null" : c2.getBlock().getLocalizedName(), b2p.getX()+ 0.5f, b2p.getY() + 0.6f, b2p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(c3 == null ? "null" : c3.getBlock().getLocalizedName(), b3p.getX()+ 0.5f, b3p.getY() + 0.6f, b3p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
 
         if (FeatureRegistry.DEBUG.isEnabled()) {
             RenderUtils.drawTextAtWorld(s1 + "", b1p.getX() + 0.5f, b1p.getY() + 2.6f, b1p.getZ() + 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
@@ -140,19 +140,18 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
     public void onSendData() {
         super.onSendData();
         if (!solutionBuilt) return;
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setByte("a", (byte) 7);
-        int answer = s1 * 10000 + s2 * 100 + s3;
-        nbt.setInteger("b", answer);
+        CompoundBinaryTag nbt = CompoundBinaryTag.builder()
+                .putByte("a", (byte) 7)
+                .putInt("b", s1*10000+s2*100+s3).build();
         getSolver().communicate(nbt);
     }
 
     @Override
-    public void onDataReceive(NBTTagCompound compound) {
+    public void onDataReceive(CompoundBinaryTag compound) {
         if (6 == compound.getByte("a")) {
-            w1 = Block.getBlockById(compound.getByte("f"));
-            w2 = Block.getBlockById(compound.getByte("s"));
-            w3 = Block.getBlockById(compound.getByte("t"));
+            w1 = ModAPI.getAPI().getBlockRegistry().fromSerializedSeting(compound.getString("f"));
+            w2 = ModAPI.getAPI().getBlockRegistry().fromSerializedSeting(compound.getString("s"));
+            w3 = ModAPI.getAPI().getBlockRegistry().fromSerializedSeting(compound.getString("t"));
             solutionBuilt = false;
             s1 = s2 = s3 = s1t = s2t = s3t =0;
         }

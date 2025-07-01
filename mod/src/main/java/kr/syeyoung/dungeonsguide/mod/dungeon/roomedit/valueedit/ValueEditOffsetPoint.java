@@ -30,7 +30,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Getter;
-import net.minecraft.block.Block;
 
 import java.awt.*;
 
@@ -99,8 +98,7 @@ public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
                 @Override
                 public String getText() {
                     OffsetPoint offsetPoint = (OffsetPoint) parameter.getNewData();
-                    return Block.getIdFromBlock(offsetPoint.getBlock(EditingContext.getEditingContext().getRoom())) +
-                            ":" + offsetPoint.getData(EditingContext.getEditingContext().getRoom());
+                    return offsetPoint.getBlock(EditingContext.getEditingContext().getRoom()).serialize();
                 }
             };
             MLabelAndElement mLabelAndElement = new MLabelAndElement("newPt",setToHEre);

@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class SearchPageWidget extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "resultShow")
     public final BindableAttribute<String> resultShow = new BindableAttribute<>(String.class, "hide");
     public SearchPageWidget(String word) {
-        super(new ResourceLocation("dungeonsguide:gui/config/search/searchpage.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/search/searchpage.gui"));
 
         Map<String, List<AbstractFeature>> categoryMap = new HashMap<>();
         for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {

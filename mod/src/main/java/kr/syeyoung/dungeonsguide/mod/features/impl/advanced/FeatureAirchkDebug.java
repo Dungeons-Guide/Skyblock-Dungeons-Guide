@@ -21,17 +21,23 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleMoveSpot;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.InstaBreakFactorCalculatingCoordinateMap;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.WorldBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
-import net.minecraft.init.Items;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
+import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.item.Item;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
+import java.util.Collections;
 import java.util.List;
 
 public class FeatureAirchkDebug extends SimpleFeature {
@@ -43,8 +49,8 @@ public class FeatureAirchkDebug extends SimpleFeature {
     private List<PossibleMoveSpot> spots;
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onInteract(PlayerInteractEvent event) {
-        if (event.entityPlayer.getHeldItem() == null ||
-                event.entityPlayer.getHeldItem().getItem() != Items.golden_axe) {
+        if (event.player.getHeldItem() == null ||
+                event.player.getHeldItem().getItem() != Item.GOLDEN_AXE) {
             return;
         }
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && event.action != PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
@@ -53,15 +59,21 @@ public class FeatureAirchkDebug extends SimpleFeature {
         if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             event.setCanceled(true);
             // reset
-            Vec3 vec = new Vec3(event.pos.getX() + 0.5, event.pos.getY() + 0.5, event.pos.getZ() + 0.5);
-            AxisAlignedBB check = AxisAlignedBB.fromBounds(
-                    vec.xCoord - 3.1, vec.yCoord + 1.1, vec.zCoord -3.1,
-                    vec.xCoord + 3.1, vec.yCoord - 3.6, vec.zCoord + 3.1
+            Vector3D vec = new Vector3D(event.pos.getX() + 0.5, event.pos.getY() + 0.5, event.pos.getZ() + 0.5);
+            AABB check = new AABB(
+                    vec.x - 3.1, vec.y + 1.1, vec.z -3.1,
+                    vec.x + 3.1, vec.y - 3.6, vec.z + 3.1
             );
 
-            this.spots =
-                    RaytraceHelper.findMovespots(event.world, event.pos, a -> check.isVecInside(a), 3)
-            ;
+            WorldBackedBlockMap coordinateMap = new WorldBackedBlockMap(event.world, Integer.MIN_VALUE, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 255, Integer.MAX_VALUE);
+            InstaBreakFactorCalculatingCoordinateMap coordinateMap1 = new InstaBreakFactorCalculatingCoordinateMap(coordinateMap, AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING);
+            CollisionStateCalculatingCoordinateMap collisionStateCalculatingCoordinateMap = new CollisionStateCalculatingCoordinateMap(
+                    coordinateMap, Collections.emptySet(), coordinateMap1, new RoomBounds(
+                    (short) 51, event.pos.add(-32, -100, -32), event.pos.add(32, 100, 32))
+            );
+
+            this.spots = RaytraceHelper.findMovespots(event.world,
+                    new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ()), a -> check.isVecInside(a), 3, (x, y, z) -> collisionStateCalculatingCoordinateMap.getBlock(x,y,z).isBlocked());
             System.out.println(spots);
         } else {
 //            this.spots = null;

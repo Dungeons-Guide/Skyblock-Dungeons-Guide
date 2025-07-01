@@ -22,17 +22,16 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.item.UItemStack;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionClick extends AbstractAction {
     private OffsetPoint target;
-    private Predicate<ItemStack> predicate = Predicates.alwaysTrue();
+    private Predicate<UItemStack> predicate = Predicates.alwaysTrue();
 
     private boolean clicked = false;
 
@@ -48,8 +47,8 @@ public class ActionClick extends AbstractAction {
     @Override
     public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event) {
         if (clicked) return;
-        if (target.getBlockPos(dungeonRoom).equals(new VectorI3D(event.pos.getX(), event.pos.getY(), event.pos.getZ())) &&
-                (predicate == null || predicate.apply(event.entityLiving.getHeldItem()))) {
+        if (target.getBlockPos(dungeonRoom).equals(event.pos) &&
+                (predicate == null || predicate.apply(event.player.getHeldItem()))) {
             clicked = true;
         }
     }

@@ -28,15 +28,14 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonRoomDiscoveredEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Pair;
+import kr.syeyoung.modapi.world.UMapData;
 import lombok.Getter;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.storage.MapData;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class DungeonRoomScaffoldParser {
     @Getter
@@ -44,7 +43,7 @@ public class DungeonRoomScaffoldParser {
     private DungeonContext context;
 
     @Getter
-    private MapData latestMapData;
+    private UMapData latestMapData;
 
     @Getter
     private final Map<Point, DungeonRoom> roomMap = new HashMap<>();
@@ -76,17 +75,17 @@ public class DungeonRoomScaffoldParser {
         ModAPI.getAPI().getEventBus().fireEvent(new DungeonRoomDiscoveredEvent(dungeonRoom));
     }
 
-    public void processMap(MapData mapData2) {
+    public void processMap(UMapData mapData) {
         int roomHeight = (int) ((128.0 - dungeonMapLayout.getOriginPoint().y) / (dungeonMapLayout.getUnitRoomSize().height + dungeonMapLayout.getMapRoomGap()));
         int roomWidth = (int) ((128.0 - dungeonMapLayout.getOriginPoint().x) / (dungeonMapLayout.getUnitRoomSize().width + dungeonMapLayout.getMapRoomGap()));
-        latestMapData = mapData2;
-        byte[] mapData = mapData2.colors;
-        if (MapUtils.getMapColorAt(mapData, 0, 0) != 0) return;
+        latestMapData = mapData;
+//        byte[] mapData = mapData2.colors;
+        if (mapData.get(0,0) != 0) return;
         undiscoveredRoom = 0;
         for (int y = 0; y <= roomHeight; y++) {
             for (int x = 0; x <= roomWidth; x++) {
                 Point mapPoint = dungeonMapLayout.roomPointToMapPoint(new Point(x, y));
-                byte color = MapUtils.getMapColorAt(mapData, mapPoint.x, mapPoint.y);
+                byte color = mapData.get(mapPoint.x, mapPoint.y);
                 MapUtils.record(mapData, mapPoint.x, mapPoint.y, new Color(255, 255, 0, 80));
                 if (roomMap.containsKey(new Point(x, y))) {
                     DungeonRoom dungeonRoom = roomMap.get(new Point(x, y));
@@ -125,8 +124,8 @@ public class DungeonRoomScaffoldParser {
                     context.getRecorder().createEvent(new DungeonRoomDiscoverEvent(room.getUnitPoints().iterator().next(),
                             new SerializableBlockPos(room.getRoomBounds().getMin()), new SerializableBlockPos(room.getRoomBounds().getMax()),
                             room.getRoomBounds().getShape(), room.getColor()));
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("New Map discovered! shape: " + room.getRoomBounds().getShape() + " color: " + room.getColor() + " unitPos: " + x + "," + y));
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: " + room.getRoomBounds().getMin() + " mapMx: " + room.getRoomBounds().getMax()));
+                    ChatTransmitter.sendDebugChat("New Map discovered! shape: " + room.getRoomBounds().getShape() + " color: " + room.getColor() + " unitPos: " + x + "," + y);
+                    ChatTransmitter.sendDebugChat("New Map discovered! mapMin: " + room.getRoomBounds().getMin() + " mapMx: " + room.getRoomBounds().getMax());
                     StringBuilder builder = new StringBuilder();
                     for (int dy = 0; dy < 4; dy++) {
                         builder.append("\n");
@@ -135,7 +134,7 @@ public class DungeonRoomScaffoldParser {
                             builder.append(isSet ? "O" : "X");
                         }
                     }
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("Shape visual: " + builder));
+                    ChatTransmitter.sendDebugChat("Shape visual: " + builder);
                     // END
 
 
@@ -157,7 +156,7 @@ public class DungeonRoomScaffoldParser {
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0, 1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1, 0));
     private static final Set<Vector2d> door_dirs = Sets.newHashSet(new Vector2d(0, 0.5), new Vector2d(0, -0.5), new Vector2d(0.5, 0), new Vector2d(-0.5, 0));
 
-    private DungeonRoom buildRoom(byte[] mapData, Point unitPoint) {
+    private DungeonRoom buildRoom(UMapData mapData, Point unitPoint) {
         java.util.Queue<Point[]> toCheck = new LinkedList<>();
         toCheck.add(new Point[]{unitPoint, unitPoint}); // requester, target
         Set<Point> checked = new HashSet<>();
@@ -205,7 +204,7 @@ public class DungeonRoomScaffoldParser {
         byte unit1 = MapUtils.getMapColorAt(mapData, pt2.x, pt2.y);
 
         // 0: none 1: open door 2. unopen door 3: wither door 4. red door
-        Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates = new HashSet<>();
+        Set<Pair<Vector2d, EDungeonDoorType>> doorsAndStates = new HashSet<>();
         final int halfWidth = dungeonMapLayout.getUnitRoomSize().width + 4;
         for (Vector2d door : doors) {
             int floorX = (int) Math.floor(door.x);
@@ -220,15 +219,15 @@ public class DungeonRoomScaffoldParser {
             Vector2d vector2d = new Vector2d(door.x - minX, door.y - minY);
 
             if (color == 0) {
-                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.NONE));
+                doorsAndStates.add(new Pair<>(vector2d, EDungeonDoorType.NONE));
             } else if (color == 85) {
-                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.UNOPEN));
+                doorsAndStates.add(new Pair<>(vector2d, EDungeonDoorType.UNOPEN));
             } else if (color == 119) {
-                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.WITHER));
+                doorsAndStates.add(new Pair<>(vector2d, EDungeonDoorType.WITHER));
             } else if (color == 18 && unit1 != 18) {
-                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.BLOOD));
+                doorsAndStates.add(new Pair<>(vector2d, EDungeonDoorType.BLOOD));
             } else {
-                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.ENTRANCE));
+                doorsAndStates.add(new Pair<>(vector2d, EDungeonDoorType.ENTRANCE));
             }
 
         }
@@ -238,7 +237,7 @@ public class DungeonRoomScaffoldParser {
 
     }
 
-    private boolean checkIfConnected(byte[] mapData, Point unitPoint1, Point unitPoint2) {
+    private boolean checkIfConnected(UMapData mapData, Point unitPoint1, Point unitPoint2) {
         if (unitPoint1 == unitPoint2) return true;
         if (unitPoint1.equals(unitPoint2)) return true;
 

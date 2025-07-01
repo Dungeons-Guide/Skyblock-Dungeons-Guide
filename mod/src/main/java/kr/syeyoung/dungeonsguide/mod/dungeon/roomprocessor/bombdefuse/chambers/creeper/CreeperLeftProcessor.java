@@ -24,9 +24,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.B
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import kr.syeyoung.modapi.world.BlockType;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 import java.awt.*;
 
@@ -55,7 +54,7 @@ public class CreeperLeftProcessor extends GeneralDefuseChamberProcessor {
         answer = 0;
         for (int i = 0; i < poses.length; i++) {
             VectorI3D pos = poses[i];
-            if (getChamber().getRoom().getContext().getWorld().getBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ())).getBlock() == Blocks.air) {
+            if (getChamber().getRoom().getContext().getWorld().getBlockStateAt(pos).isOf(BlockType.AIR)) {
                 answer |= (1 << i);
             }
         }
@@ -82,16 +81,17 @@ public class CreeperLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void onSendData() {
         if (answer == -1) return;
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setByte("a", (byte) 2);
-        nbt.setInteger("b", answer);
+        CompoundBinaryTag nbt = CompoundBinaryTag.builder()
+                .putByte("a", (byte)2)
+                .putInt("b", answer)
+                .build();
         getSolver().communicate(nbt);
     }
 
     @Override
-    public void onDataReceive(NBTTagCompound compound) {
+    public void onDataReceive(CompoundBinaryTag compound) {
         if (2 == compound.getByte("a")) {
-            answer = compound.getInteger("b");
+            answer = compound.getInt("b");
         }
     }
 }

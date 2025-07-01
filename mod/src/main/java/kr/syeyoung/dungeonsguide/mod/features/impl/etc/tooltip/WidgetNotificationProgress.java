@@ -27,10 +27,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.SingleChildRenderer;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 import java.util.UUID;
@@ -45,7 +45,7 @@ public class WidgetNotificationProgress extends AnnotatedImportOnlyWidget implem
     public final BindableAttribute<String> progressTitle = new BindableAttribute<>(String.class);
     private UUID uuid;
     public WidgetNotificationProgress(UUID uuid, String title) {
-        super(new ResourceLocation("dungeonsguide:gui/features/notifications/tooltipProgress.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/notifications/tooltipProgress.gui"));
         this.uuid = uuid;
 
         this.progressTitle.setValue(title);
@@ -113,7 +113,7 @@ public class WidgetNotificationProgress extends AnnotatedImportOnlyWidget implem
         private Progress progress;
 
         public WidgetProgressPart(Progress progress) {
-            super(new ResourceLocation("dungeonsguide:gui/features/notifications/progresspart.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/features/notifications/progresspart.gui"));
             this.progress = progress;
 //            this.bar.setValue(progress.isBar()  ? "true" : "false");
             this.text.setValue(progress.getMessage());

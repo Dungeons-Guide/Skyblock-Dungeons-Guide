@@ -22,7 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.function.Consumer;
 
@@ -36,7 +36,7 @@ public class WidgetScalebar extends AnnotatedImportOnlyWidget {
 
 
     public WidgetScalebar(FeatureParameter<Double> featureParameter, double min, double max) {
-        super(new ResourceLocation("dungeonsguide:gui/features/map/scaleScrollbar.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/map/scaleScrollbar.gui"));
         this.max.setValue(max);
         this.min.setValue(min);
         this.current.setValue(featureParameter.getValue());
@@ -44,7 +44,7 @@ public class WidgetScalebar extends AnnotatedImportOnlyWidget {
     }
 
     public WidgetScalebar(double curr, Consumer<Double> onUpdate, double min, double max) {
-        super(new ResourceLocation("dungeonsguide:gui/features/map/scaleScrollbar.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/map/scaleScrollbar.gui"));
         this.max.setValue(max);
         this.min.setValue(min);
         this.current.setValue(curr);

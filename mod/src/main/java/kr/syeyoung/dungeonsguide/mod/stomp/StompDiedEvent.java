@@ -18,15 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.mod.stomp;
 
+import kr.syeyoung.modapi.event.UEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
-public class StompDiedEvent extends Event {
+public class StompDiedEvent extends UEvent {
     int code;
     String reason;
     boolean remote;

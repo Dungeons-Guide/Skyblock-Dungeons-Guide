@@ -41,18 +41,19 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.world.BlockType;
+import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.world.UTileEntity;
+import kr.syeyoung.modapi.world.tileentities.UTileEntitySkull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntitySkull;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret {
@@ -69,20 +70,15 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
     private int nearbyTicks = 0;
     public void tick(DungeonRoom dungeonRoom) {
         VectorI3D pos = data.secretPoint.getBlockPos(dungeonRoom);
-        IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
-        if (blockState.getBlock() == Blocks.skull) {
+        UBlockState blockState = dungeonRoom.getContext().getWorld().getBlockStateAt(pos);
+        if (blockState.isOf(BlockType.SKULL)) {
             essenceWasThere = true;
-            List<UEntity> entities = dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.ARMOR_STAND, new AABB(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
-            TileEntity tileEntity = dungeonRoom.getCachedWorld().getTileEntity(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
+            List<UEntity> entities = dungeonRoom.getContext().getWorld().getEntitiesWithinAabb(EntityType.ARMOR_STAND, new AABB(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
+            UTileEntity tileEntity = dungeonRoom.getContext().getWorld().getTileEntityAt(pos);
 
             if (ModAPI.getAPI().getPlayer().getPosition().distanceSq(pos) < 25) {
-                if (tileEntity instanceof TileEntitySkull) {
-                    String texture = Optional.ofNullable(((TileEntitySkull) tileEntity).getPlayerProfile())
-                            .map(a -> a.getProperties())
-                            .map(a -> a.get("textures"))
-                            .flatMap(a -> a.stream().findFirst())
-                            .map(a -> a.getValue()).orElse(null);
-
+                if (tileEntity instanceof UTileEntitySkull) {
+                    String texture = ((UTileEntitySkull) tileEntity).getTexture();
                     if (texture == null) return;
                     for (UEntity entity : entities) {
                         UItemStack itemStackIn = ((UEntityArmorStand)entity).getEquipmentInSlot(4);
@@ -96,9 +92,9 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
                     }
                 }
             }
-        } else if (blockState.getBlock() == Blocks.air && essenceWasThere) {
+        } else if (blockState.isOf(BlockType.AIR) && essenceWasThere) {
             found = true;
-        } else if (blockState.getBlock() == Blocks.air && !essenceWasThere) {
+        } else if (blockState.isOf(BlockType.AIR) && !essenceWasThere) {
             if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(pos) < 25) {
                 nearbyTicks++;
             }

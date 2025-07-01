@@ -15,20 +15,20 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISec
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculationRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Data;
-import net.minecraft.block.material.MapColor;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
@@ -96,7 +96,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
         if (j / 4 == 0) {
             color = 0x00000000;
         } else {
-            color = MapColor.mapColorArray[j / 4].getMapColor(j & 3);
+            color = ModAPI.getAPI().getMapUtils().getRGBColor(j);
         }
         this.roomColor = color;
         this.roomType = color+"";
@@ -199,8 +199,8 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
     }
 
     private void recalculateAdditionalInfo() {
-        DRIWorld driWorld = new DRIWorld(dungeonRoomInfo);
-        DungeonContext fakeContext = new DungeonContext("TEST DG", driWorld, driWorld, roomPreset.getParent());
+        DRIBackedBlockMap driWorld = new DRIBackedBlockMap(dungeonRoomInfo);
+        DungeonContext fakeContext = new DungeonContext("TEST DG", driWorld, roomPreset.getParent());
         DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(
                 new Dimension(16, 16),
                 5,

@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
@@ -31,13 +32,11 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.entity.UPlayerSelf;
+import kr.syeyoung.modapi.event.events.ActionBarReceivedEvent;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.modapi.item.UItemStack;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -289,43 +288,44 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
     }
 
     Pattern thePattern = Pattern.compile("§b-(\\d+) Mana \\(§6(.+)§b\\)");
-    Pattern thePattern2 = Pattern.compile("§r§aUsed (.+)§r§a! §r§b\\((1194) Mana\\)§r");
-    Pattern thePattern3 = Pattern.compile("§r§aUsed (.+)§r§a!§r");
+    Pattern thePattern2 = Pattern.compile("§aUsed (.+)§a! §b\\((1194) Mana\\)");
+    Pattern thePattern3 = Pattern.compile("§aUsed (.+)§a!");
 
     private String lastActionbarAbility;
 
-    @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        if (clientChatReceivedEvent.type == 2) {
-            Matcher m = thePattern.matcher(clientChatReceivedEvent.message.getFormattedText());
-            if (m.find()) {
-                String name = m.group(2);
-                if (!name.equalsIgnoreCase(lastActionbarAbility)) {
-                    used(name);
-                }
-                lastActionbarAbility = name;
-            } else {
-                lastActionbarAbility = null;
+
+    @DGEventHandler
+    public void onActionBar(ActionBarReceivedEvent receivedEvent) {
+        Matcher m = thePattern.matcher(TextUtils.getNearestFormattedText(receivedEvent.chat));
+        if (m.find()) {
+            String name = m.group(2);
+            if (!name.equalsIgnoreCase(lastActionbarAbility)) {
+                used(name);
             }
+            lastActionbarAbility = name;
         } else {
-            String message = clientChatReceivedEvent.message.getFormattedText();
-            if (message.equals("§r§aYour §r§9Bonzo's Mask §r§asaved your life!§r")) {
-                used("Clownin' Around");
+            lastActionbarAbility = null;
+        }
+    }
+    @DGEventHandler()
+    public void onChat(DGChatReceivedEvent clientChatReceivedEvent) {
+        String message = clientChatReceivedEvent.getOriginalFormattedText();
+        if (message.equals("§aYour §9Bonzo's Mask §asaved your life!")) {
+            used("Clownin' Around");
+        } else {
+            Matcher m = thePattern2.matcher(message);
+            if (m.matches()) {
+                String abilityName = TextUtils.stripColor(m.group(1));
+                used(abilityName);
             } else {
-                Matcher m = thePattern2.matcher(message);
-                if (m.matches()) {
-                    String abilityName = TextUtils.stripColor(m.group(1));
+                Matcher m2 = thePattern3.matcher(message);
+                if (m2.matches()) {
+                    String abilityName = TextUtils.stripColor(m2.group(1));
                     used(abilityName);
-                } else {
-                    Matcher m2 = thePattern3.matcher(message);
-                    if (m2.matches()) {
-                        String abilityName = TextUtils.stripColor(m2.group(1));
-                        used(abilityName);
-                    } else if (message.startsWith("§r§aYou used your ") || message.endsWith("§r§aPickaxe Ability!§r")) {
-                        String nocolor = TextUtils.stripColor(message);
-                        String abilityName = nocolor.substring(nocolor.indexOf("your") + 5, nocolor.indexOf("Pickaxe") - 1);
-                        used(abilityName);
-                    }
+                } else if (message.startsWith("§aYou used your ") || message.endsWith("§aPickaxe Ability!")) {
+                    String nocolor = TextUtils.stripColor(message);
+                    String abilityName = nocolor.substring(nocolor.indexOf("your") + 5, nocolor.indexOf("Pickaxe") - 1);
+                    used(abilityName);
                 }
             }
         }
@@ -344,22 +344,15 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
         }
     }
 
-    public void checkForCooldown(ItemStack itemStack) {
+    public void checkForCooldown(UItemStack itemStack) {
         if (itemStack == null) return;
-        NBTTagCompound nbt = itemStack.getTagCompound();
-        if (nbt == null) return;
-        NBTTagCompound extra = nbt.getCompoundTag("ExtraAttributes");
-        if (extra == null) return;
-        String id = extra.getString("id");
+        String id = itemStack.getSkyblockId();
         List<SkyblockAbility> skyblockAbility = skyblockAbilitiesByItemID.get(id);
 
-        NBTTagCompound display = nbt.getCompoundTag("display");
-        if (display == null) return;
-        NBTTagList lore = display.getTagList("Lore", 8);
+        List<String> lore = itemStack.getLore();
         int thecd = -1;
         SkyblockAbility currentAbility = null;
-        for (int i = 0; i < lore.tagCount(); i++) {
-            String specific = lore.getStringTagAt(i);
+        for (String specific : lore) {
             if (specific.startsWith("§8Cooldown: §a") && currentAbility != null) {
                 String thecdstr = TextUtils.stripColor(specific).substring(10).trim();
                 thecdstr = thecdstr.substring(0, thecdstr.length() - 1);
@@ -391,13 +384,14 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
 
     @DGEventHandler
     public void onTick(ClientTickEvent event) {
-        EntityPlayerSP sp = Minecraft.getMinecraft().thePlayer;
+        UPlayerSelf sp = ModAPI.getAPI().getPlayer();
+
         if (sp == null) return;
-        if (sp.inventory == null || sp.inventory.armorInventory == null) return;
-        for (ItemStack itemStack : sp.inventory.armorInventory) {
+        if (sp.getInventory() == null || sp.getInventory().getArmorInventory() == null || sp.getInventory().getMainInventory() == null) return;
+        for (UItemStack itemStack : sp.getInventory().getArmorInventory()) {
             checkForCooldown(itemStack);
         }
-        for (ItemStack itemStack : sp.inventory.mainInventory) {
+        for (UItemStack itemStack : sp.getInventory().getMainInventory()) {
             checkForCooldown(itemStack);
         }
     }

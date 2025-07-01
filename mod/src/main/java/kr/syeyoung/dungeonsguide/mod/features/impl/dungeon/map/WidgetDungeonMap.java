@@ -19,8 +19,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
+import kr.syeyoung.modapi.world.UMapData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
@@ -29,8 +31,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.storage.MapData;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector2d;
@@ -158,7 +158,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
         if (context == null || context.getScaffoldParser() == null) return;
         DungeonRoomScaffoldParser mapProcessor = context.getScaffoldParser();
 
-        MapData mapData = mapProcessor.getLatestMapData();
+        UMapData mapData = mapProcessor.getLatestMapData();
         Size featureSize = getDomElement().getSize();
         // TODO: redo chroma
         Gui.drawRect(0, 0, (int)featureSize.getWidth(), (int)featureSize.getHeight(), RenderUtils.getColorAt(0,0, mapConfiguration.getBackgroundColor()));
@@ -766,7 +766,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
             }
 
             Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
-            for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : dungeonRoom.getDoorsAndStates()) {
+            for (Pair<Vector2d, EDungeonDoorType> doorsAndState : dungeonRoom.getDoorsAndStates()) {
                 double x = doorsAndState.getFirst().x;
                 double y = doorsAndState.getFirst().y;
                 if (doorsAndState.getSecond() == EDungeonDoorType.NONE) continue;

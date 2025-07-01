@@ -23,16 +23,18 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.event.events.ItemTooltipEvent;
+import kr.syeyoung.modapi.gui.UContainer;
+import kr.syeyoung.modapi.gui.UContainerChest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.Slot;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
@@ -66,9 +68,9 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         solutionProvider = null;
         clicked.clear();
         if (event.gui instanceof GuiChest) {
-            ContainerChest cc = (ContainerChest) ((GuiChest) event.gui).inventorySlots;
+            UContainerChest cc = ModAPI.getAPI().extractContainerChest(event.gui);
             if (provider.isApplicable(cc)) {
-                solution = provider.provideSolution(cc, clicked);
+                solution = provider.provideSolution(cc);
                 this.solutionProvider = provider;
             }
         }
@@ -84,9 +86,10 @@ public class FeatureTerminalSolvers extends SimpleFeature {
             clicked.clear();
             return;
         }
-        ContainerChest cc = (ContainerChest) ((GuiChest) Minecraft.getMinecraft().currentScreen).inventorySlots;
-
-        solution = solutionProvider.provideSolution(cc, clicked);
+        UContainer cc = ModAPI.getAPI().getPlayer().getOpenContainer();
+        if (cc instanceof UContainerChest) {
+            solution = solutionProvider.provideSolution((UContainerChest) cc);
+        }
     }
 
     @DGEventHandler
@@ -98,11 +101,16 @@ public class FeatureTerminalSolvers extends SimpleFeature {
             clicked.clear();
             return;
         }
+        UContainer cc = ModAPI.getAPI().getPlayer().getOpenContainer();
+        if (!(cc instanceof UContainerChest)) {
+            return;
+        }
+        UContainerChest containerChest = (UContainerChest) cc;
 
         if (solution != null) {
             int i = 222;
             int j = i - 108;
-            int ySize = j + (((ContainerChest)(((GuiChest) Minecraft.getMinecraft().currentScreen).inventorySlots)).getLowerChestInventory().getSizeInventory() / 9) * 18;
+            int ySize = j + (((UContainerChest) cc).getChestContainerSize() / 9) * 18;
             int left = (rendered.gui.width - 176) / 2;
             int top = (rendered.gui.height - ySize ) / 2;
             GlStateManager.pushMatrix();
@@ -111,16 +119,17 @@ public class FeatureTerminalSolvers extends SimpleFeature {
             GlStateManager.colorMask(true, true, true, false);
             GlStateManager.translate(left, top, 0);
             if (solution.getCurrSlots() != null) {
-                for (Slot currSlot : solution.getCurrSlots()) {
-                    int x = currSlot.xDisplayPosition;
-                    int y = currSlot.yDisplayPosition;
+                for (Integer currSlot : solution.getCurrSlots()) {
+
+                    int x = containerChest.getChestSlotAt(currSlot).getX();
+                    int y = containerChest.getChestSlotAt(currSlot).getY();
                     Gui.drawRect(x, y, x + 16, y + 16, 0x7700FFFF);
                 }
             }
             if (solution.getNextSlots() != null) {
-                for (Slot nextSlot : solution.getNextSlots()) {
-                    int x = nextSlot.xDisplayPosition;
-                    int y = nextSlot.yDisplayPosition;
+                for (Integer nextSlot : solution.getNextSlots()) {
+                    int x = containerChest.getChestSlotAt(nextSlot).getX();
+                    int y = containerChest.getChestSlotAt(nextSlot).getY();
                     Gui.drawRect(x, y, x + 16, y + 16, 0x77FFFF00);
                 }
             }

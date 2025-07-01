@@ -22,20 +22,16 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.MinecraftTooltip;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.RawMinecraftTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
+import kr.syeyoung.modapi.item.Item;
+import kr.syeyoung.modapi.item.UItemStack;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 
@@ -44,7 +40,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
     private WidgetPartyFinder widgetPartyFinder;
 
     @Bind(variableName = "item")
-    public final BindableAttribute<ItemStack> itemstack = new BindableAttribute<>(ItemStack.class);
+    public final BindableAttribute<UItemStack> itemstack = new BindableAttribute<>(UItemStack.class);
 
     @Bind(variableName = "name")
     public final BindableAttribute<String> name = new BindableAttribute<>(String.class, "");
@@ -70,7 +66,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
     private PartyFinderParty party;
 
     public WidgetPartyElement(WidgetPartyFinder widgetPartyFinder, int slot) {
-        super(new ResourceLocation("dungeonsguide:gui/features/partyFinder/party_element.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/partyFinder/party_element.gui"));
         this.slot = slot;
         this.widgetPartyFinder = widgetPartyFinder;
         WidgetHoverTooltip hoverTooltip;
@@ -85,7 +81,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
             String note = party.note;
             boolean notFound = false;
             boolean cantJoin = !party.canJoin;
-            if (itemstack.getValue().getItem() == Item.getItemFromBlock(Blocks.bedrock)) {
+            if (itemstack.getValue().getItem() == Item.BEDROCK) {
                 cantJoin = true;
                 notFound = true;
             }
@@ -148,18 +144,10 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
         this.party = party;
     }
 
-    public MinecraftTooltip createTooltip() {
-        if (party == null) return new MinecraftTooltip();
-        List<String> toHover = party.itemStack.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
-        for (int i = 0; i < toHover.size(); ++i) {
-            if (i == 0) {
-                toHover.set(i, party.itemStack.getRarity().rarityColor + toHover.get(i));
-            } else {
-                toHover.set(i, EnumChatFormatting.GRAY + toHover.get(i));
-            }
-        }
-
-        MinecraftTooltip minecraftTooltip =  new MinecraftTooltip();
+    public RawMinecraftTooltip createTooltip() {
+        if (party == null) return new RawMinecraftTooltip();
+        List<String> toHover = party.itemStack.getNormalTooltip();
+        RawMinecraftTooltip minecraftTooltip =  new RawMinecraftTooltip();
         minecraftTooltip.setTooltip(toHover);
         return minecraftTooltip;
     }

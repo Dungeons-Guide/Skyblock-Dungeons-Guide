@@ -29,13 +29,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightPr
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorNecron;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.MarkerData;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.waypoints.WidgetTerminalWaypointsEditor;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -44,11 +43,11 @@ import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.util.*;
@@ -141,12 +140,12 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
 
     long nextRefresh;
-    Set<TabListEntry> playerListCached;
+    Set<? extends UTabListEntry> playerListCached;
 
-    public Set<TabListEntry> getPlayerListCached(){
+    public Set<? extends UTabListEntry> getPlayerListCached(){
         if(playerListCached == null || nextRefresh <= System.currentTimeMillis()){
             ChatTransmitter.sendDebugChat("Refreshing players on map");
-            playerListCached = TabList.INSTANCE.getTabListEntries();
+            playerListCached = ModAPI.getAPI().getTabList().getTabListEntries();
             nextRefresh = System.currentTimeMillis() + 10000;
         }
         return playerListCached;
@@ -159,14 +158,14 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
         if (!necron.getCurrentPhase().startsWith("goldor-terminals")) return;
 
 
-        Set<TabListEntry> playerList = getPlayerListCached();
+        Set<? extends UTabListEntry> playerList = getPlayerListCached();
 
 
         nearPlayer.clear();
 
         // 21 iterations bc we only want to scan the player part of tab list
         int i = 0;
-        for (TabListEntry playerInfo : playerList) {
+        for (UTabListEntry playerInfo : playerList) {
             if (++i >= 20) break;
 
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
@@ -185,10 +184,10 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onMessage(ClientChatReceivedEvent event) {
-        String txt = event.message.getFormattedText();
+    public void onMessage(DGChatReceivedEvent event) {
+        String txt = event.getOriginalFormattedText();
         String player = TextUtils.stripColor(txt.split(" ")[0]);
-        if (txt.contains("§r§a completed a device! (§r§c")) {
+        if (txt.contains("§a completed a device! (§c")) {
             UEntityPlayer player1 = ModAPI.getAPI().getWorld().getUPlayerEntityByName(player);
             if (player1 == null) {
                 System.out.println("umm no player found named "+player);
@@ -211,7 +210,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
             }
 
             completedTerminals.put(minDistId, player);
-        } else if (txt.contains("§r§a activated a lever! (§r§c")) {
+        } else if (txt.contains("§a activated a lever! (§c")) {
             UEntityPlayer player1 = ModAPI.getAPI().getWorld().getUPlayerEntityByName(player);
             if (player1 == null) {
                 System.out.println("umm no player found named "+player);
@@ -233,7 +232,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
             }
 
             completedTerminals.put(minDistId, player);
-        } else if (txt.contains("§r§a activated a terminal! (§r§c")) {
+        } else if (txt.contains("§a activated a terminal! (§c")) {
             UEntityPlayer player1 = ModAPI.getAPI().getWorld().getUPlayerEntityByName(player);
             if (player1 == null) {
                 System.out.println("umm no player found named "+player);

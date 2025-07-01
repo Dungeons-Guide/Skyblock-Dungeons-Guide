@@ -12,7 +12,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.nbt.CompressedStreamTools;
+import net.kyori.adventure.nbt.BinaryTagIO;
 
 import java.io.*;
 import java.time.Instant;
@@ -148,7 +148,7 @@ public class PathfindPreset implements Cloneable {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream dataOutputStream = new DataOutputStream(baos);
-            CompressedStreamTools.write(algorithmSetting.serializeToNBT(), dataOutputStream);
+            BinaryTagIO.writer().write(algorithmSetting.serializeToNBT(), (DataOutput) dataOutputStream);
             dataOutputStream.flush();
             String algoSettings = Base64.getEncoder().encodeToString(baos.toByteArray());
 

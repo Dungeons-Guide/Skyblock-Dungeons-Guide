@@ -23,8 +23,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
 
 public class WidgetUpdateLog extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "updatelog")
@@ -36,7 +36,7 @@ public class WidgetUpdateLog extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<Boolean> disabled = new BindableAttribute<>(Boolean.class, false);
 
     public WidgetUpdateLog(String version, String updateLog, boolean autoupdate) {
-        super(new ResourceLocation("dungeonsguide:gui/update.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/update.gui"));
         this.version.setValue(version);
         this.updateLog.setValue(updateLog);
         this.disabled.setValue(!autoupdate);

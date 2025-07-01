@@ -24,11 +24,11 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class TestView extends AnnotatedImportOnlyWidget {
     public TestView() {
-        super(new ResourceLocation("dungeonsguide:gui/testview.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/testview.gui"));
     }
 
     @Bind(variableName = "variable")

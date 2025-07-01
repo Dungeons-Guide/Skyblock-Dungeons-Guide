@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class WidgetTerminalWaypointsEditor extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "config")
@@ -32,7 +32,7 @@ public class WidgetTerminalWaypointsEditor extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<Widget> preview = new BindableAttribute<>(Widget.class);
 
     public WidgetTerminalWaypointsEditor(FeatureF7TerminalWaypoints lineProperties) {
-        super(new ResourceLocation("dungeonsguide:gui/features/f7waypoints/editor.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/f7waypoints/editor.gui"));
         this.config.setValue(new WidgetTerminalWaypointEdit(lineProperties));
         this.preview.setValue(new WidgetPreview(lineProperties));
     }

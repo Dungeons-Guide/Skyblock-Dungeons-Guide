@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.elements;
 
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.Gui;
@@ -27,7 +28,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.MathHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -160,7 +160,7 @@ public class MPortableColorEdit extends MTooltip {
             float g2 = (rgb2 >> 8 & 255) / 255.0f;
             float b2 = (rgb2 & 255) / 255.0f;
             GlStateManager.color(r2,g2,b2, alpha);
-            GL11.glVertex3f(MathHelper.sin(rad) * radius + cx, MathHelper.cos(rad) * radius + cy, 0);
+            GL11.glVertex3d(Math.sin(rad) * radius + cx, Math.cos(rad) * radius + cy, 0);
         }
         GL11.glEnd();
         GlStateManager.shadeModel(shadeModel);
@@ -168,11 +168,11 @@ public class MPortableColorEdit extends MTooltip {
         GlStateManager.color(1,1,1,1);
         worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
         float rad2 = 2 * 3.141592653f * hsv[0] ;
-        float x = 5 + radius + (MathHelper.sin(rad2)) * hsv[1] * radius;
-        float y = 5 + radius + (MathHelper.cos(rad2))* hsv[1] * radius;
+        double x = 5 + radius + (Math.sin(rad2)) * hsv[1] * radius;
+        double y = 5 + radius + (Math.cos(rad2))* hsv[1] * radius;
         for (int i = 0; i < 100; i++) {
             float rad = 2 * 3.141592653f * (i / 100f);
-            worldrenderer.pos(MathHelper.sin(rad) * 2 + x, MathHelper.cos(rad) * 2 + y, 0).endVertex();
+            worldrenderer.pos(Math.sin(rad) * 2 + x, Math.cos(rad) * 2 + y, 0).endVertex();
         }
         tessellator.draw();
 
@@ -217,9 +217,9 @@ public class MPortableColorEdit extends MTooltip {
             float dx = relMouseX - circleX;
             float dy = circleY - relMouseY;
             if (dx * dx + dy * dy <= radius * radius) {
-                double theta = (MathHelper.atan2(dy, dx) / Math.PI * 180+90) % 360;
+                double theta = (Math.atan2(dy, dx) / Math.PI * 180+90) % 360;
                 hsv[0] = (float) theta / 360f;
-                hsv[1] = MathHelper.sqrt_float(dx * dx + dy * dy) / radius;
+                hsv[1] = (float) (Math.sqrt(dx * dx + dy * dy) / radius);
                 selected = 1;
             }
         }
@@ -258,20 +258,20 @@ public class MPortableColorEdit extends MTooltip {
             float dx = relMouseX - circleX; // sin theta
             float dy = circleY - relMouseY; // cos theta
             if (selected == 1) {
-                double theta = (MathHelper.atan2(dy, dx) / Math.PI * 180+90) % 360;
+                double theta = (Math.atan2(dy, dx) / Math.PI * 180+90) % 360;
                 hsv[0] = (float) theta / 360f;
-                hsv[1] = MathHelper.clamp_float(MathHelper.sqrt_float(dx * dx + dy * dy) / radius, 0, 1);
+                hsv[1] = MathUtils.clamp_float((float) (Math.sqrt(dx * dx + dy * dy) / radius), 0, 1);
             }
         }
         {
             if (selected == 2) {
-                hsv[2] = MathHelper.clamp_float((relMouseY - 5) / (float)width, 0, 1);
+                hsv[2] = MathUtils.clamp_float((relMouseY - 5) / (float)width, 0, 1);
             }
             if (selected == 3) {
-                alpha = MathHelper.clamp_float((relMouseY - 5) / (float)width, 0, 1);
+                alpha = MathUtils.clamp_float((relMouseY - 5) / (float)width, 0, 1);
             }
             if (selected == 4) {
-                chromaSpeed = MathHelper.clamp_float((relMouseY - 5) / (float)width, 0, 1);
+                chromaSpeed = MathUtils.clamp_float((relMouseY - 5) / (float)width, 0, 1);
             }
         }
         update();
@@ -286,7 +286,7 @@ public class MPortableColorEdit extends MTooltip {
     }
 
     public void update2() {
-        color = new AColor(Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]) & 0xffffff | (MathHelper.clamp_int((int)(alpha * 255), 0, 255) << 24), true);
+        color = new AColor(Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]) & 0xffffff | (MathUtils.clamp_int((int)(alpha * 255), 0, 255) << 24), true);
         color.setChromaSpeed(chromaSpeed);
         color.setChroma(chromaSpeed != 0);
     }
