@@ -65,7 +65,7 @@ public class ChatProcessor {
 
     private long minimumNext = 0;
 
-    @kr.syeyoung.modapi.event.SubscribeEvent
+    @SubscribeEvent
     public void onTick(ClientTickEvent clientTickEvent) {
         try {
             if (ModAPI.getAPI().getPlayer() != null && minimumNext < System.currentTimeMillis()) {
@@ -126,10 +126,8 @@ public class ChatProcessor {
 
 
     private ThreadLocal<Stack<Component>> origin = ThreadLocal.withInitial(() -> new Stack<>());
-    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FIRST)
+    @SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FIRST)
     public void onChatReceived1(ChatReceivedEvent event) {
-        System.out.println(event.chat);
-
         origin.get().push(event.chat);
         DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
                 TextUtils.getNearestFormattedText(event.chat),
@@ -141,7 +139,7 @@ public class ChatProcessor {
         event.chat = dgChatReceivedEvent.getChat();
         event.setCanceled(dgChatReceivedEvent.isCanceled());
     }
-    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.SECOND)
+    @SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.SECOND)
     public void onChatReceived2(ChatReceivedEvent event) {
         DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
                 TextUtils.getNearestFormattedText(event.chat),
@@ -153,7 +151,7 @@ public class ChatProcessor {
         event.chat = dgChatReceivedEvent.getChat();
         event.setCanceled(dgChatReceivedEvent.isCanceled());
     }
-    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.THIRD)
+    @SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.THIRD)
     public void onChatReceived3(ChatReceivedEvent event) {
         DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
                 TextUtils.getNearestFormattedText(event.chat),
@@ -165,7 +163,7 @@ public class ChatProcessor {
         event.chat = dgChatReceivedEvent.getChat();
         event.setCanceled(dgChatReceivedEvent.isCanceled());
     }
-    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FOURTH)
+    @SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FOURTH)
     public void onChatReceived4(ChatReceivedEvent event) {
         DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
                 TextUtils.getNearestFormattedText(event.chat),
@@ -177,7 +175,7 @@ public class ChatProcessor {
         event.chat = dgChatReceivedEvent.getChat();
         event.setCanceled(dgChatReceivedEvent.isCanceled());
     }
-    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.LAST)
+    @SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.LAST)
     public void onChatReceived5(ChatReceivedEvent event) {
         DGChatReceivedEvent dgChatReceivedEvent = new DGChatReceivedEvent(
                 TextUtils.getNearestFormattedText(event.chat),

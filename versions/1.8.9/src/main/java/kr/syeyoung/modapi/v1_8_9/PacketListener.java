@@ -18,7 +18,6 @@
 
 package kr.syeyoung.modapi.v1_8_9;
 
-import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.VectorI3D;
@@ -26,6 +25,8 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityItem;
 import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
+import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
+import kr.syeyoung.modapi.v1_8_9.util.CustomNetworkPlayerInfo;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.FakeWorld;
 import kr.syeyoung.modapi.v1_8_9.world.UChunkImpl;
@@ -33,6 +34,8 @@ import kr.syeyoung.modapi.v1_8_9.world.UMapDataImpl;
 import kr.syeyoung.modapi.world.UChunk;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.*;
@@ -41,10 +44,9 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.storage.MapData;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class PacketListener {
 
@@ -121,6 +123,15 @@ public class PacketListener {
                 ((S34PacketMaps) packet).setMapdataTo(mapData);
             } catch (Exception ignored) {} // hypixel seem to be sending bad map datas.
             ModAPI.getAPI().getEventBus().fireEvent(new MapUpdateEvent(((S34PacketMaps) packet).getMapId(), new UMapDataImpl(mapData)));
+        } else if (packet instanceof S38PacketPlayerListItem) {
+            S38PacketPlayerListItem p = (S38PacketPlayerListItem) packet;
+            Map<UUID, NetworkPlayerInfo> playerInfoMap = ReflectionHelper.getPrivateValue(NetHandlerPlayClient.class, Minecraft.getMinecraft().getNetHandler(), "playerInfoMap", "field_147310_i","i");
+            if (p.getAction() == S38PacketPlayerListItem.Action.ADD_PLAYER) {
+                for (S38PacketPlayerListItem.AddPlayerData entry : p.getEntries()) {
+                    playerInfoMap.remove(entry.getProfile().getId());
+                    playerInfoMap.put(entry.getProfile().getId(), new CustomNetworkPlayerInfo(entry));
+                }
+            }
         }
     }
 

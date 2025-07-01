@@ -9,6 +9,7 @@ import lombok.Getter;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public class UEntityPlayerImpl extends UEntityLivingImpl implements UEntityPlayer {
     @Getter
@@ -32,5 +33,14 @@ public class UEntityPlayerImpl extends UEntityLivingImpl implements UEntityPlaye
 
     public UItemStack getHeldItem() {
         return delegate.getHeldItem() == null ? null : new UItemStackImpl(delegate.getHeldItem());
+    }
+
+    @Override
+    public UUID getUUID() {
+        return delegate.getGameProfile().getId();
+    }
+
+    public void refreshDisplayName() {
+        delegate.refreshDisplayName();
     }
 }

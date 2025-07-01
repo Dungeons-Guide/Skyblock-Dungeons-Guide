@@ -31,7 +31,6 @@ import kr.syeyoung.dungeonsguide.mod.config.Config;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ConfigGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.config.onboarding.OnboardingPage;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
-import kr.syeyoung.dungeonsguide.mod.cosmetics.CustomNetworkPlayerInfo;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
@@ -62,22 +61,14 @@ import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.event.events.RegisterCommandEvent;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
@@ -283,27 +274,6 @@ public class DungeonsGuide implements DGInterface {
 
     // hotswap fails in dev env due to intellij auto log collection or smth. it holds ref to stacktrace.
 
-    private void transform(AbstractClientPlayer abstractClientPlayer) {
-        if (abstractClientPlayer == null) return;
-        NetworkPlayerInfo uuidNetworkPlayerInfoEntry = ReflectionHelper.getPrivateValue(AbstractClientPlayer.class,
-                abstractClientPlayer,
-                "playerInfo", "field_175157_a", "a"
-        );
-        if (uuidNetworkPlayerInfoEntry instanceof CustomNetworkPlayerInfo) {
-            S38PacketPlayerListItem s38PacketPlayerListItem = new S38PacketPlayerListItem();
-            NetworkPlayerInfo newInfo = new NetworkPlayerInfo(s38PacketPlayerListItem.new AddPlayerData(
-                    uuidNetworkPlayerInfoEntry.getGameProfile(),
-                    uuidNetworkPlayerInfoEntry.getResponseTime(),
-                    uuidNetworkPlayerInfoEntry.getGameType(),
-                    ((CustomNetworkPlayerInfo)uuidNetworkPlayerInfoEntry).getOriginalDisplayName()
-            ));
-            ReflectionHelper.setPrivateValue(AbstractClientPlayer.class,
-                    abstractClientPlayer,
-                    newInfo,
-                    "playerInfo", "field_175157_a", "a"
-            );
-        }
-    }
 
     @Override
     public void unload() {
@@ -339,44 +309,6 @@ public class DungeonsGuide implements DGInterface {
 
         if (packetInjector != null) packetInjector.cleanup();
 
-        try {
-            if (Minecraft.getMinecraft().getRenderManager().livingPlayer instanceof AbstractClientPlayer) {
-                AbstractClientPlayer ep = (AbstractClientPlayer) Minecraft.getMinecraft().getRenderManager().livingPlayer;
-                transform(ep);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            if (Minecraft.getMinecraft().pointedEntity instanceof AbstractClientPlayer) {
-                AbstractClientPlayer ep = (AbstractClientPlayer) Minecraft.getMinecraft().pointedEntity;
-                transform(ep);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        NetHandlerPlayClient netHandlerPlayClient = Minecraft.getMinecraft().getNetHandler();
-        if (netHandlerPlayClient == null && (Minecraft.getMinecraft().getRenderManager().livingPlayer) != null
-                    && Minecraft.getMinecraft().getRenderManager().livingPlayer instanceof EntityPlayerSP)
-            netHandlerPlayClient = ((EntityPlayerSP) Minecraft.getMinecraft().getRenderManager().livingPlayer).sendQueue;
-
-        if (netHandlerPlayClient != null) {
-            Map<UUID, NetworkPlayerInfo> playerInfoMap = ReflectionHelper.getPrivateValue(NetHandlerPlayClient.class,
-                    netHandlerPlayClient, "playerInfoMap", "field_147310_i", "i");
-            for (Map.Entry<UUID, NetworkPlayerInfo> uuidNetworkPlayerInfoEntry : playerInfoMap.entrySet()) {
-                if (uuidNetworkPlayerInfoEntry.getValue() instanceof CustomNetworkPlayerInfo) {
-                    S38PacketPlayerListItem s38PacketPlayerListItem = new S38PacketPlayerListItem();
-                    NetworkPlayerInfo newInfo =  new NetworkPlayerInfo(s38PacketPlayerListItem.new AddPlayerData(
-                            uuidNetworkPlayerInfoEntry.getValue().getGameProfile(),
-                            uuidNetworkPlayerInfoEntry.getValue().getResponseTime(),
-                            uuidNetworkPlayerInfoEntry.getValue().getGameType(),
-                            ((CustomNetworkPlayerInfo) uuidNetworkPlayerInfoEntry.getValue()).getOriginalDisplayName()
-                    ));
-                    playerInfoMap.put(uuidNetworkPlayerInfoEntry.getKey(), newInfo);
-                }
-            }
-        }
 
         Map<ResourceLocation, ITextureObject> mapTextureObjects = ReflectionHelper.getPrivateValue(TextureManager.class, Minecraft.getMinecraft().getTextureManager(), "mapTextureObjects", "field_110585_a", "b");
         for (ITextureObject value : mapTextureObjects.values()) {
@@ -394,24 +326,6 @@ public class DungeonsGuide implements DGInterface {
         }
 
 
-
-        World world = Minecraft.getMinecraft().getRenderManager().worldObj;
-        if (world != null) {
-            for (AbstractClientPlayer entity : world.getEntities(AbstractClientPlayer.class, input -> true)) {
-                transform(entity);
-            }
-            for (AbstractClientPlayer player : world.getPlayers(AbstractClientPlayer.class, input -> true)) {
-                transform(player);
-            }
-            if (world instanceof WorldClient) {
-                Set<Entity> list = ReflectionHelper.getPrivateValue(WorldClient.class, (WorldClient) world, "entityList", "field_73032_d", "c");
-                for (Entity e : list) {
-                    if (e instanceof AbstractClientPlayer) {
-                        transform((AbstractClientPlayer) e);
-                    }
-                }
-            }
-        }
         ShaderManager.unload();
         GLCursors.cleanup();
         DiscordIntegrationManager.INSTANCE.cleanup();

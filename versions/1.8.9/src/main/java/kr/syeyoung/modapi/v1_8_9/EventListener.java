@@ -9,6 +9,7 @@ import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.event.ListenerPriority;
 import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
+import kr.syeyoung.modapi.v1_8_9.util.MarkedChatComponent;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.*;
@@ -28,6 +30,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.function.BiConsumer;
 
 public class EventListener {
@@ -95,6 +98,38 @@ public class EventListener {
         }
     }
 
+
+    private ThreadLocal<Stack<PlayerNameFormatEvent>> nameFormatEvents = ThreadLocal.withInitial(Stack::new);
+
+    public void onNameFormat(PlayerEvent.NameFormat nameFormat, EventPriority priority) {
+        if (priority == EventPriority.HIGHEST) nameFormatEvents.get().push(new PlayerNameFormatEvent(
+                (UEntityPlayer) UEntityDelegateFactory.createEntityFor(nameFormat.entityPlayer),
+                nameFormat.displayname,
+                nameFormat.username
+        ));
+        try {
+            nameFormatEvents.get().peek().setDisplayName(nameFormat.displayname);
+            ModAPI.getAPI().getEventBus().fireEvent(nameFormatEvents.get().peek(), mapPriority(priority));
+
+            nameFormat.displayname = nameFormatEvents.get().peek().displayName;
+
+            if (priority == EventPriority.LOWEST) {
+                PlayerNameFormatEvent result = nameFormatEvents.get().peek();
+                nameFormat.entityPlayer.getPrefixes().removeIf(iChatComponent -> iChatComponent instanceof MarkedChatComponent);
+                for (Component prefix : result.getPrefix()) {
+                    nameFormat.entityPlayer.getPrefixes().add(
+                            new MarkedChatComponent("")
+                                    .appendSibling(IChatComponent.Serializer.jsonToComponent(GsonComponentSerializer.colorDownsamplingGson().serialize(prefix)))
+                    );
+                }
+            }
+        } finally {
+            if (priority == EventPriority.LOWEST) {
+                nameFormatEvents.get().pop();
+            }
+        }
+    }
+
     private ListenerPriority mapPriority(EventPriority priority) {
         switch (priority) {
             case HIGHEST: return ListenerPriority.FIRST;
@@ -153,6 +188,7 @@ public class EventListener {
         registerEvents(PlayerInteractEvent.class, this::onPlayerInteract);
         registerEvents(WorldEvent.Unload.class, this::onWorldUnload);
         registerEvents(ClientChatReceivedEvent.class, this::onChat);
+        registerEvents(PlayerEvent.NameFormat.class, this::onNameFormat);
     }
 
     public void unregister() {

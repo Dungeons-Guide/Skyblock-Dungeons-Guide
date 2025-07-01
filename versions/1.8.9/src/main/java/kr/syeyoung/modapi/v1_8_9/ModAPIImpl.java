@@ -27,6 +27,7 @@ import kr.syeyoung.modapi.v1_8_9.item.IItemStackRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
 import kr.syeyoung.modapi.v1_8_9.resources.DGTexturePack;
 import kr.syeyoung.modapi.v1_8_9.resources.UResourceManagerImpl;
+import kr.syeyoung.modapi.v1_8_9.util.CustomNetworkPlayerInfoUnloader;
 import kr.syeyoung.modapi.v1_8_9.util.USessionImpl;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
@@ -186,6 +187,7 @@ public class ModAPIImpl implements ModAPI {
     @Override
     public void unload() {
         MinecraftForge.EVENT_BUS.unregister(packetInjector);
+        CustomNetworkPlayerInfoUnloader.unload();
         eventListener.unregister();
 
         commandManager.unregisterCommands();
