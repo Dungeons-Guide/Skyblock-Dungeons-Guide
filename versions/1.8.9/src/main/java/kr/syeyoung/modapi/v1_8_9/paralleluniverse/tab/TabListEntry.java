@@ -16,13 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab;
+package kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab;
 
 import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.Team;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
+import kr.syeyoung.modapi.util.GameMode;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.Team;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.TeamManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -31,15 +33,15 @@ import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.WorldSettings.GameType;
 
 @RequiredArgsConstructor
-public class TabListEntry {
+public class TabListEntry implements UTabListEntry {
     @Getter
     private final GameProfile gameProfile;
-    // properties?
     @Getter
-    private final GameType gameMode;
+    // properties?
+    private final GameMode gameMode;
+
     @Getter @Setter
     private int ping;
     @Getter

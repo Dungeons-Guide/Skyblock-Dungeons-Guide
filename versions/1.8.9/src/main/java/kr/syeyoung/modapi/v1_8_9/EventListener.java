@@ -10,6 +10,9 @@ import kr.syeyoung.modapi.event.ListenerPriority;
 import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
 import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.TeamManager;
 import kr.syeyoung.modapi.v1_8_9.util.MarkedChatComponent;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
@@ -78,6 +81,11 @@ public class EventListener {
     }
 
     public void onWorldUnload(WorldEvent.Unload event, EventPriority priority) {
+        if (priority == EventPriority.HIGHEST) {
+            TabList.INSTANCE.clear();
+            TeamManager.INSTANCE.clear();
+            ScoreboardManager.INSTANCE.clear();
+        }
         ModAPI.getAPI().getEventBus().fireEvent(new WorldUnloadEvent(), mapPriority(priority));
     }
 

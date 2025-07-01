@@ -4,11 +4,11 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 
 public class WidgetLeapPlayer extends AnnotatedImportOnlyWidget {
 
@@ -25,7 +25,7 @@ public class WidgetLeapPlayer extends AnnotatedImportOnlyWidget {
     private WarpTarget warpTarget;
     private String clazz;
 
-    public WidgetLeapPlayer(WarpTarget target, TabListEntry entry) {
+    public WidgetLeapPlayer(WarpTarget target, UTabListEntry entry) {
         super(new ResourceIdentifier("dungeonsguide:gui/features/spiritleap/leapplayer.gui"));
         this.backgroundColor.setValue(0xFF555555);
         this.borderColor.setValue(0xFFFFFFFF);

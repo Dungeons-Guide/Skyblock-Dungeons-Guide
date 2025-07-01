@@ -29,14 +29,13 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -245,7 +244,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
      * @param networkPlayerInfo the network player info of player
      * @return the username of player
      */
-    private String getPlayerNameWithChecks(TabListEntry networkPlayerInfo) {
+    private String getPlayerNameWithChecks(UTabListEntry networkPlayerInfo) {
         String name = networkPlayerInfo.getEffectiveName();
 
         if (name.trim().equals("§r") || name.startsWith("§r ")) return null;
@@ -259,7 +258,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 
         // 19 iterations bc we only want to scan the player part of tab list
         int i = 0;
-        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+        for (UTabListEntry tabListEntry : ModAPI.getAPI().getTabList().getTabListEntries()) {
             if (++i >= 20) break;
             String name = getPlayerNameWithChecks(tabListEntry);
             if (name == null) continue;

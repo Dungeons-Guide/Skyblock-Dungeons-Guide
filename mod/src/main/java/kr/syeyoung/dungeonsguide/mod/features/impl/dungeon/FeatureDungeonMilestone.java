@@ -32,9 +32,9 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextS
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ public class FeatureDungeonMilestone extends TextHUDFeature {
         TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
         actualBit.addChild(new TextSpan(getStyle("title"), "Milestone"));
         actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
-        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+        for (UTabListEntry tabListEntry : ModAPI.getAPI().getTabList().getTabListEntries()) {
             String name = tabListEntry.getEffectiveName();
             if (name.startsWith("§r Milestone: §r")) {
                 String milestone = TextUtils.stripColor(name).substring(13);

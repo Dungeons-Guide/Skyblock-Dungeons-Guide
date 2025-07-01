@@ -46,11 +46,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectPositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import lombok.Getter;
 
 import java.lang.reflect.Type;
@@ -258,7 +257,7 @@ public class FeatureDungeonMap2 extends AbstractHUDFeature {
         }
 
         int i = 0;
-        for (TabListEntry playerInfo : TabList.INSTANCE.getTabListEntries()) {
+        for (UTabListEntry playerInfo : ModAPI.getAPI().getTabList().getTabListEntries()) {
             if (++i >= 20) break;
 
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);

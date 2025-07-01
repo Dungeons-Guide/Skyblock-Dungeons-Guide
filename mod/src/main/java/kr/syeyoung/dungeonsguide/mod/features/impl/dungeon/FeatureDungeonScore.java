@@ -33,13 +33,13 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextS
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResource;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -169,7 +169,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
     }
 
     public int getCompleteRooms() {
-        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+        for (UTabListEntry tabListEntry : ModAPI.getAPI().getTabList().getTabListEntries()) {
             String name = tabListEntry.getEffectiveName();
             if (name.startsWith("§r Completed Rooms: §r")) {
                 String milestone = TextUtils.stripColor(name).substring(18);
@@ -185,7 +185,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
     }
     public int getUndiscoveredPuzzles() {
         int cnt = 0;
-        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+        for (UTabListEntry tabListEntry : ModAPI.getAPI().getTabList().getTabListEntries()) {
             String name = tabListEntry.getEffectiveName();
             if (name.startsWith("§r ???: ")) {
                 cnt ++;

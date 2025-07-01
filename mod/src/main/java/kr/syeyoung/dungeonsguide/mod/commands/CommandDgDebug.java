@@ -51,8 +51,6 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRoute
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.view.TestView;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
@@ -62,6 +60,7 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.command.UCommandContext;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScore;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import kr.syeyoung.modapi.world.BlockType;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
@@ -229,7 +228,7 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug tablist")
     public void tabListCommand() {
-        for (TabListEntry entry : TabList.INSTANCE.getTabListEntries()) {
+        for (UTabListEntry entry : ModAPI.getAPI().getTabList().getTabListEntries()) {
             ChatTransmitter.addToQueue(entry.getFormatted() + " " + entry.getEffectiveName() + "(" + entry.getPing() + ")" + entry.getGameMode());
         }
         ChatTransmitter.addToQueue("VS");

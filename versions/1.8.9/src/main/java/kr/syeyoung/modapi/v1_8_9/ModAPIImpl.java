@@ -6,6 +6,7 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.Platform;
 import kr.syeyoung.modapi.audio.USoundHandler;
 import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabList;
 import kr.syeyoung.modapi.resources.UResourcePackRepository;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
@@ -25,6 +26,7 @@ import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.v1_8_9.audio.USoundHandlerImpl;
 import kr.syeyoung.modapi.v1_8_9.client.renderer.entity.URenderManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
 import kr.syeyoung.modapi.v1_8_9.resources.UResourcePackRepositoryImpl;
 import kr.syeyoung.modapi.v1_8_9.command.CommandManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
@@ -328,6 +330,10 @@ public class ModAPIImpl implements ModAPI {
 
     public UScoreboardManager getScoreboardManager() {
         return ScoreboardManager.INSTANCE;
+    }
+
+    public UTabList getTabList() {
+        return TabList.INSTANCE;
     }
 
     @Override

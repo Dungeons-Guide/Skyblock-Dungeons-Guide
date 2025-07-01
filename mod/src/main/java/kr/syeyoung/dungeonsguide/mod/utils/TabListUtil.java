@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.utils;
 
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class TabListUtil {
         List<String> players = new ArrayList<>();
 
         int i = 1;
-        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+        for (UTabListEntry tabListEntry : ModAPI.getAPI().getTabList().getTabListEntries()) {
             if (i >= 20) break;
             String na = getPlayerNameWithChecks(tabListEntry);
 
@@ -53,7 +53,7 @@ public class TabListUtil {
      * @return the username of player
      */
     @Nullable
-    public static String getPlayerNameWithChecks(TabListEntry tabListEntry) {
+    public static String getPlayerNameWithChecks(UTabListEntry tabListEntry) {
         String name = tabListEntry.getEffectiveName();
 
         if (name.trim().equals("§r") || name.startsWith("§r ")) return null;
@@ -69,7 +69,7 @@ public class TabListUtil {
         return getString(name, tabListRegex);
     }
     @Nullable
-    public static String getPlayerNameWithChecksIncludingDead(TabListEntry tabListEntry) {
+    public static String getPlayerNameWithChecksIncludingDead(UTabListEntry tabListEntry) {
         String name = tabListEntry.getEffectiveName();
 
         if (name.trim().equals("§r") || name.startsWith("§r ")) return null;

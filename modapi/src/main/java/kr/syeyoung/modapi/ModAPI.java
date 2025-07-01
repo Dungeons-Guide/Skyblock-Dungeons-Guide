@@ -2,6 +2,7 @@ package kr.syeyoung.modapi;
 
 import kr.syeyoung.modapi.audio.USoundHandler;
 import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabList;
 import kr.syeyoung.modapi.resources.UResourcePackRepository;
 import kr.syeyoung.modapi.command.UCommandManager;
 import kr.syeyoung.modapi.entity.UEntity;
@@ -86,4 +87,6 @@ public interface ModAPI {
     UResourcePackRepository getResourcePackRepository();
 
     UScoreboardManager getScoreboardManager();
+
+    UTabList getTabList();
 }

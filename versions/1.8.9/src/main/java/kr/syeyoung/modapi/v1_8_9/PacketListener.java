@@ -24,10 +24,16 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityItem;
 import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.util.GameMode;
 import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
 import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.Objective;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabListEntry;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.NameTagVisibility;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.Team;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.TeamManager;
 import kr.syeyoung.modapi.v1_8_9.util.CustomNetworkPlayerInfo;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.FakeWorld;
@@ -43,6 +49,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.*;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldProviderSurface;
@@ -249,6 +256,114 @@ public class PacketListener {
         } else if (packet instanceof S3DPacketDisplayScoreboard) {
             S3DPacketDisplayScoreboard board = (S3DPacketDisplayScoreboard) packet;
             ScoreboardManager.INSTANCE.displayScoreboard(board.func_149371_c(), board.func_149370_d());
+        } else if (packet instanceof S3EPacketTeams) {
+            S3EPacketTeams pkt = (S3EPacketTeams) packet;
+            if (pkt.getAction() == 0) {
+                // CREATE
+                Team team = new Team(pkt.getName());
+                team.setDisplayName(pkt.getDisplayName());
+                team.setPrefix(pkt.getPrefix());
+                team.setSuffix(pkt.getSuffix());
+                team.setNameTagVisibility(NameTagVisibility.of(pkt.getNameTagVisibility()));
+                team.setColor(EnumChatFormatting.func_175744_a(pkt.getColor()));
+
+                for (String player : pkt.getPlayers()) {
+                    team.addTeamMember(player);
+                }
+
+                TeamManager.INSTANCE.createTeam(team);
+            } else if (pkt.getAction() == 1) {
+                // REMOVE
+                TeamManager.INSTANCE.removeTeam(pkt.getName());
+            } else if (pkt.getAction() == 2) {
+                // UPDATE
+                Team team = TeamManager.INSTANCE.getTeamByName(pkt.getName());
+                if (team != null) {
+                    team.setDisplayName(pkt.getDisplayName());
+                    team.setPrefix(pkt.getPrefix());
+                    team.setSuffix(pkt.getSuffix());
+                    team.setNameTagVisibility(NameTagVisibility.of(pkt.getNameTagVisibility()));
+                    team.setColor(EnumChatFormatting.func_175744_a(pkt.getColor()));
+                }
+            } else if (pkt.getAction() == 3) {
+                // PLAYER UPDATE
+                Team team = TeamManager.INSTANCE.getTeamByName(pkt.getName());
+                if (team != null) {
+                    for (String player : pkt.getPlayers()) {
+                        team.addTeamMember(player);
+                    }
+                }
+            } else if (pkt.getAction() == 4) {
+                // PLAYER REMOVE
+                Team team = TeamManager.INSTANCE.getTeamByName(pkt.getName());
+                if (team != null) {
+                    for (String player : pkt.getPlayers()) {
+                        team.removeTeamMember(player);
+                    }
+                }
+            }
+        } else if (packet instanceof S38PacketPlayerListItem) {
+            S38PacketPlayerListItem pkt = (S38PacketPlayerListItem) packet;
+            S38PacketPlayerListItem.Action action = pkt.getAction();
+            if (action == S38PacketPlayerListItem.Action.ADD_PLAYER) {
+                for (S38PacketPlayerListItem.AddPlayerData entry : pkt.getEntries()) {
+                    GameMode gameMode;
+                    switch (entry.getGameMode()) {
+                        case CREATIVE:
+                            gameMode = GameMode.CREATIVE;
+                        case SPECTATOR:
+                            gameMode = GameMode.SPECTATOR;
+                        case SURVIVAL:
+                            gameMode =  GameMode.SURVIVAL;
+                        case ADVENTURE:
+                            gameMode =  GameMode.ADVENTURE;
+                        default:
+                            gameMode = null;
+                    }
+
+                    TabListEntry tabListEntry = new TabListEntry(entry.getProfile(),gameMode);
+                    tabListEntry.setPing(entry.getPing());
+                    tabListEntry.setDisplayName(entry.getDisplayName());
+                    TabList.INSTANCE.updateEntry(tabListEntry);
+                }
+            } else if (action == S38PacketPlayerListItem.Action.REMOVE_PLAYER) {
+                for (S38PacketPlayerListItem.AddPlayerData entry : pkt.getEntries()) {
+                    TabList.INSTANCE.removeEntry(entry.getProfile().getId());
+                }
+            } else if (action == S38PacketPlayerListItem.Action.UPDATE_LATENCY) {
+                for (S38PacketPlayerListItem.AddPlayerData entry : pkt.getEntries()) {
+                    TabListEntry entry1 = TabList.INSTANCE.getEntry(entry.getProfile().getId());
+                    if (entry1 != null) entry1.setPing(entry.getPing());
+                }
+            } else if (action == S38PacketPlayerListItem.Action.UPDATE_DISPLAY_NAME) {
+                for (S38PacketPlayerListItem.AddPlayerData entry : pkt.getEntries()) {
+                    TabListEntry entry1 = TabList.INSTANCE.getEntry(entry.getProfile().getId());
+                    if (entry1 != null) entry1.setDisplayName(entry.getDisplayName());
+                }
+            } else if (action == S38PacketPlayerListItem.Action.UPDATE_GAME_MODE) {
+                for (S38PacketPlayerListItem.AddPlayerData entry : pkt.getEntries()) {
+                    TabListEntry entry1 = TabList.INSTANCE.getEntry(entry.getProfile().getId());
+                    if (entry1 == null) return;
+                    GameMode gameMode;
+                    switch (entry.getGameMode()) {
+                        case CREATIVE:
+                            gameMode = GameMode.CREATIVE;
+                        case SPECTATOR:
+                            gameMode = GameMode.SPECTATOR;
+                        case SURVIVAL:
+                            gameMode =  GameMode.SURVIVAL;
+                        case ADVENTURE:
+                            gameMode =  GameMode.ADVENTURE;
+                        default:
+                            gameMode = null;
+                    }
+                    TabListEntry neu = new TabListEntry(entry1.getGameProfile(), gameMode);
+                    neu.setPing(entry1.getPing());
+                    neu.setDisplayName(entry1.getDisplayName());
+
+                    TabList.INSTANCE.updateEntry(neu);
+                }
+            }
         }
     }
 

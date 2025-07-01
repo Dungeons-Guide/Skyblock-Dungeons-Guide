@@ -18,8 +18,8 @@
 
 package kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard;
 
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.Team;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.Team;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.TeamManager;
 import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScore;
 import lombok.Data;
 

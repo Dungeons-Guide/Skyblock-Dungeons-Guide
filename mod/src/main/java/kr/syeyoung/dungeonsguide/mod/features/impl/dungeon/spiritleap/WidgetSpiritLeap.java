@@ -11,8 +11,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Placeholder;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
@@ -23,6 +21,7 @@ import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.gui.UContainerSlot;
 import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +54,7 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
 
 
         int i = 0;
-        for (TabListEntry playerInfo : TabList.INSTANCE.getTabListEntries()) {
+        for (UTabListEntry playerInfo : ModAPI.getAPI().getTabList().getTabListEntries()) {
             if (++i >= 20) break;
 
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
@@ -120,9 +119,9 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
     public void update() {
         this.api.getValue().removeAllWidget();
 
-        Map<String, TabListEntry> map = new HashMap<>();
+        Map<String, UTabListEntry> map = new HashMap<>();
         int i = 0;
-        for (TabListEntry playerInfo : TabList.INSTANCE.getTabListEntries()) {
+        for (UTabListEntry playerInfo : ModAPI.getAPI().getTabList().getTabListEntries()) {
             if (++i >= 20) break;
 
             String name = TabListUtil.getPlayerNameWithChecksIncludingDead(playerInfo);

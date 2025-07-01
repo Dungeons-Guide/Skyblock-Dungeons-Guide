@@ -16,19 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab;
+package kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Ordering;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.Team;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabList;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.Team;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.TeamManager;
 import net.minecraft.world.WorldSettings;
 
 import java.util.*;
 
-public class TabList {
+public class TabList implements UTabList {
     public static final TabList INSTANCE = new TabList();
 
     private final SortedSet<TabListEntry> tabListEntries = new TreeSet<>(Ordering.from((compare1, compare2) -> {
@@ -54,7 +55,7 @@ public class TabList {
         return playerMap.get(name);
     }
 
-    public SortedSet<TabListEntry> getTabListEntries() {
+    public SortedSet<? extends TabListEntry> getTabListEntries() {
         return Collections.unmodifiableSortedSet(tabListEntries);
     }
 

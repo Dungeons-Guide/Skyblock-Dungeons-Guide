@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams;
+package kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams;
 
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabListEntry;
 
 import java.util.HashMap;
 import java.util.Map;

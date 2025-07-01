@@ -40,9 +40,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.world.PearlCalculatingCoordinateMap
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
 import kr.syeyoung.dungeonsguide.mod.utils.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
@@ -91,9 +88,6 @@ public class DungeonListener {
 
     @kr.syeyoung.modapi.event.SubscribeEvent
     public void onWorldLoad(WorldUnloadEvent event) {
-        TabList.INSTANCE.clear();
-        TeamManager.INSTANCE.clear();
-        ScoreboardManager.INSTANCE.clear();
         Config.scheduleConfigSave();
         DungeonActionContext.getSpawnLocation().clear();
         DungeonActionContext.getKilleds().clear();

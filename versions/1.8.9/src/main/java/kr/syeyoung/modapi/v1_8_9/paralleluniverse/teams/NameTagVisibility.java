@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams;
+package kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams;
 
 public enum NameTagVisibility {
     HIDE_FOR_OTHER_TEAMS,
