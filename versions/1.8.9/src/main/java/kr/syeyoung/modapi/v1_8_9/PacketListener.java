@@ -364,6 +364,35 @@ public class PacketListener {
                     TabList.INSTANCE.updateEntry(neu);
                 }
             }
+
+
+            if (action == S38PacketPlayerListItem.Action.ADD_PLAYER || action == S38PacketPlayerListItem.Action.REMOVE_PLAYER) {
+                List<TabListEntry> entries = new ArrayList<>();
+                for (S38PacketPlayerListItem.AddPlayerData entry : ((S38PacketPlayerListItem) packet).getEntries()) {
+                    GameMode gameMode;
+                    switch (entry.getGameMode()) {
+                        case CREATIVE:
+                            gameMode = GameMode.CREATIVE;
+                        case SPECTATOR:
+                            gameMode = GameMode.SPECTATOR;
+                        case SURVIVAL:
+                            gameMode =  GameMode.SURVIVAL;
+                        case ADVENTURE:
+                            gameMode =  GameMode.ADVENTURE;
+                        default:
+                            gameMode = null;
+                    }
+                    entries.add(new TabListEntry(entry.getProfile(), gameMode));
+                }
+
+
+                TabListUpdateEvent updateEvent = new TabListUpdateEvent(
+                        action == S38PacketPlayerListItem.Action.ADD_PLAYER ? TabListUpdateEvent.Action.ADD_PLAYER : TabListUpdateEvent.Action.REMOVE_PLAYER,
+                        entries
+                );
+
+                ModAPI.getAPI().getEventBus().fireEvent(updateEvent);
+            }
         }
     }
 

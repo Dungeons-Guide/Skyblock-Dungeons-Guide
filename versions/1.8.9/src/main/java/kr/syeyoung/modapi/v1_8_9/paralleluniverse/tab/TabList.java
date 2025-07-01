@@ -23,9 +23,9 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Ordering;
 import kr.syeyoung.modapi.paralleluniverse.tablist.UTabList;
+import kr.syeyoung.modapi.util.GameMode;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.Team;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.TeamManager;
-import net.minecraft.world.WorldSettings;
 
 import java.util.*;
 
@@ -36,8 +36,8 @@ public class TabList implements UTabList {
         Team scorePlayerTeam = TeamManager.INSTANCE.getPlayerTeam(compare1.getGameProfile().getName());
         Team scorePlayerTeam1 = TeamManager.INSTANCE.getPlayerTeam(compare2.getGameProfile().getName());
         return ComparisonChain.start()
-                .compareTrueFirst(compare1.getGameMode() != WorldSettings.GameType.SPECTATOR,
-                        compare2.getGameMode() != WorldSettings.GameType.SPECTATOR)
+                .compareTrueFirst(compare1.getGameMode() != GameMode.SPECTATOR,
+                        compare2.getGameMode() != GameMode.SPECTATOR)
                 .compare(scorePlayerTeam != null ? scorePlayerTeam.getTeamName() : "",
                         scorePlayerTeam1 != null ? scorePlayerTeam1.getTeamName() : "")
                 .compare(compare1.getGameProfile().getName(), compare2.getGameProfile().getName()).result();

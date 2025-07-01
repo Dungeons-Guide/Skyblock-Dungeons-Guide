@@ -21,6 +21,7 @@ package kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab;
 import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import kr.syeyoung.modapi.util.GameMode;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.Team;
@@ -33,6 +34,8 @@ import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class TabListEntry implements UTabListEntry {
@@ -89,12 +92,12 @@ public class TabListEntry implements UTabListEntry {
         return this.skinType == null ? DefaultPlayerSkin.getSkinType(this.gameProfile.getId()) : this.skinType;
     }
 
-    public ResourceLocation getLocationSkin() {
+    public ResourceIdentifier getLocationSkin() {
         if (this.locationSkin == null) {
             this.loadPlayerTextures();
         }
 
-        return (ResourceLocation) Objects.firstNonNull(this.locationSkin, DefaultPlayerSkin.getDefaultSkin(this.gameProfile.getId()));
+        return new ResourceIdentifier(Objects.firstNonNull(this.locationSkin, DefaultPlayerSkin.getDefaultSkin(this.gameProfile.getId())).toString());
     }
 
     public ResourceLocation getLocationCape() {
@@ -129,5 +132,13 @@ public class TabListEntry implements UTabListEntry {
         }
     }
 
+    @Override
+    public UUID getUUID() {
+        return gameProfile.getId();
+    }
 
+    @Override
+    public String getPlayerName() {
+        return gameProfile.getName();
+    }
 }

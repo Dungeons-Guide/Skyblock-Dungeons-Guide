@@ -25,7 +25,6 @@ import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.SurgicalReplacer;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGPlayerJoinEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGPlayerQuitEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerListItemPacketEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
@@ -40,13 +39,14 @@ import kr.syeyoung.modapi.event.ListenerPriority;
 import kr.syeyoung.modapi.event.SubscribeEvent;
 import kr.syeyoung.modapi.event.events.ChatReceivedEvent;
 import kr.syeyoung.modapi.event.events.PlayerNameFormatEvent;
+import kr.syeyoung.modapi.event.events.TabListUpdateEvent;
 import kr.syeyoung.modapi.event.events.TabNameFormatEvent;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentIteratorType;
 import net.kyori.adventure.text.TextComponent;
-import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -378,24 +378,23 @@ public class CosmeticsManager {
 
 
     @SubscribeEvent
-    public void onTabList(PlayerListItemPacketEvent packetPlayerListItem) {
-        S38PacketPlayerListItem asd = packetPlayerListItem.getPacketPlayerListItem();
-        if (asd.getAction() == S38PacketPlayerListItem.Action.ADD_PLAYER) {
+    public void onTabList(TabListUpdateEvent event) {
+        if (event.getAction() == TabListUpdateEvent.Action.ADD_PLAYER) {
             List<UUID> pingTarget = new ArrayList<>();
-            for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
-                if (entry.getProfile().getId().version() == 4 && entry.getProfile().getName() != null) {
-                    PlayerManager.INSTANCE.subscribeTo(entry.getProfile().getId());
-                    pingTarget.add(entry.getProfile().getId());
+            for (UTabListEntry entry : event.getEntries()) {
+                if (entry.getUUID().version() == 4 && entry.getPlayerName() != null) {
+                    PlayerManager.INSTANCE.subscribeTo(entry.getUUID());
+                    pingTarget.add(entry.getUUID());
 
-                    nameIdCache.put(entry.getProfile().getName(), entry.getProfile().getId());
+                    nameIdCache.put(entry.getPlayerName(), entry.getUUID());
                 }
             }
             PlayerManager.INSTANCE.ping(pingTarget);
-        } else if (asd.getAction() == S38PacketPlayerListItem.Action.REMOVE_PLAYER) {
-            for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
-                if (entry.getProfile().getId().version() == 4) {
-                    PlayerManager.INSTANCE.unsubscribe(entry.getProfile().getId());
-                    nameIdCache.remove(entry.getProfile().getName(), entry.getProfile().getId());
+        } else if (event.getAction() == TabListUpdateEvent.Action.REMOVE_PLAYER) {
+            for (UTabListEntry entry : event.getEntries()) {
+                if (entry.getUUID().version() == 4) {
+                    PlayerManager.INSTANCE.unsubscribe(entry.getUUID());
+                    nameIdCache.remove(entry.getPlayerName(), entry.getUUID());
                 }
             }
         }

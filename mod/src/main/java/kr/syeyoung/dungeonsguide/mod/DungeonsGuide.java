@@ -34,8 +34,6 @@ import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
-import kr.syeyoung.dungeonsguide.mod.events.listener.PacketInjector;
-import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
@@ -162,7 +160,6 @@ public class DungeonsGuide implements DGInterface {
         return executorService;
     }
 
-    private PacketInjector packetInjector;
     public void init(File f) {
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 5);
 
@@ -213,9 +210,6 @@ public class DungeonsGuide implements DGInterface {
         this.dungeonFacade = new DungeonFacade();
 
         dungeonFacade.init();
-
-        registerEventsForge(packetInjector = new PacketInjector());
-        registerEventsForge(new PacketListener());
         registerEventsForge(new Keybinds());
 
         registerEventsForge(PartyManager.INSTANCE);
@@ -255,9 +249,6 @@ public class DungeonsGuide implements DGInterface {
         ModAPI.getAPI().getCommandManager().requestCommandReload();
 
         // Fix Parallel universe not working when player joins hypickle before dg loads
-        if (Minecraft.getMinecraft().getNetHandler() != null)
-            Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler", packetInjector);
-
         if (firstTimeUsingDG) {
             GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")), null, false));
         }
@@ -297,8 +288,6 @@ public class DungeonsGuide implements DGInterface {
                 throw new RuntimeException(e);
             }
         }
-
-        if (packetInjector != null) packetInjector.cleanup();
 
 
         Map<ResourceLocation, ITextureObject> mapTextureObjects = ReflectionHelper.getPrivateValue(TextureManager.class, Minecraft.getMinecraft().getTextureManager(), "mapTextureObjects", "field_110585_a", "b");
