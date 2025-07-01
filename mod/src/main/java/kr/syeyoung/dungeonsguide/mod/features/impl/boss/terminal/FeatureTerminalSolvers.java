@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.event.events.ItemTooltipEvent;
 import kr.syeyoung.modapi.gui.UContainer;
 import kr.syeyoung.modapi.gui.UContainerChest;
 import net.minecraft.client.Minecraft;
@@ -34,7 +35,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.Slot;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;

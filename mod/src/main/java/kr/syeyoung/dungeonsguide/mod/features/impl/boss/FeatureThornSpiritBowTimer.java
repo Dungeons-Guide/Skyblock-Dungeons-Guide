@@ -24,7 +24,6 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorThorn;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.TitleEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextStyle;
@@ -32,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.util.IChatComponent;
+import kr.syeyoung.modapi.event.events.TitleEvent;
 
 public class FeatureThornSpiritBowTimer extends TextHUDFeature {
     public FeatureThornSpiritBowTimer() {
@@ -94,8 +93,8 @@ public class FeatureThornSpiritBowTimer extends TextHUDFeature {
     @DGEventHandler
     public void onTitle(TitleEvent event) {
         if (!(SkyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
-        IChatComponent text = event.getPacketTitle().getMessage();
-        if (text != null && text.getFormattedText() != null && text.getFormattedText().contains("picked up")) {
+        String text = event.getTitle() == null ? null : TextUtils.getNearestFormattedText(event.getTitle());
+        if (text != null && text.contains("picked up")) {
             time = System.currentTimeMillis() + 21000;
         }
     }

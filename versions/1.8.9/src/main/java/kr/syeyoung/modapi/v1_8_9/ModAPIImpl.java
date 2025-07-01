@@ -115,7 +115,7 @@ public class ModAPIImpl implements ModAPI {
     }
 
     public boolean isCallingFromMinecraftThread() {
-        return delegate.isCallingFromMinecraftThread();
+        return Minecraft.getMinecraft().isCallingFromMinecraftThread();
     }
 
 

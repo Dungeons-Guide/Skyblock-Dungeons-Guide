@@ -15,6 +15,8 @@ public interface UItemStack {
 
     CompoundBinaryTag serialize();
 
+    CompoundBinaryTag getSkyblockAttrib();
+
     List<String> getLore();
 
     String getDisplayName();

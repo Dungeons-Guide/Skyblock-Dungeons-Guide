@@ -4,22 +4,18 @@ import com.mojang.authlib.GameProfile;
 import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.item.UItemStack;
 import kr.syeyoung.modapi.util.EnumDyeColor;
+import kr.syeyoung.modapi.v1_8_9.util.NBTUtils;
 import lombok.Getter;
-import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumChatFormatting;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -72,18 +68,20 @@ public class UItemStackImpl implements UItemStack {
     @Override
     public CompoundBinaryTag serialize() {
         NBTTagCompound compound = delegate.getTagCompound();
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            DataOutputStream dataOutputStream = new DataOutputStream(baos);
-            CompressedStreamTools.write(compound, dataOutputStream);
-            dataOutputStream.close();
-            byte[] result = baos.toByteArray();
-            ByteArrayInputStream bais = new ByteArrayInputStream(result);
-            return BinaryTagIO.reader().read(bais);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return NBTUtils.convertNBT(compound);
     }
+
+    @Override
+    public CompoundBinaryTag getSkyblockAttrib() {
+        NBTTagCompound compound = delegate.getTagCompound();
+        if (compound == null)
+            return null;
+        if (!compound.hasKey("ExtraAttributes"))
+            return null;
+        NBTTagCompound nbtTagCompound = compound.getCompoundTag("ExtraAttributes");
+        return NBTUtils.convertNBT(nbtTagCompound);
+    }
+
 
     @Override
     public List<String> getLore() {

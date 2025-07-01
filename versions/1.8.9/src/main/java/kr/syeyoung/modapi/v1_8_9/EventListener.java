@@ -9,6 +9,7 @@ import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.event.ListenerPriority;
 import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
+import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
 import kr.syeyoung.modapi.v1_8_9.util.MarkedChatComponent;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
@@ -130,6 +131,15 @@ public class EventListener {
         }
     }
 
+    public void onItemToolip(net.minecraftforge.event.entity.player.ItemTooltipEvent itemTooltipEvent, EventPriority eventPriority) {
+        ItemTooltipEvent itemTooltipEvent1 = new ItemTooltipEvent(
+                itemTooltipEvent.showAdvancedItemTooltips,
+                new UItemStackImpl(itemTooltipEvent.itemStack),
+                itemTooltipEvent.toolTip
+        );
+        ModAPI.getAPI().getEventBus().fireEvent(itemTooltipEvent1, mapPriority(eventPriority));
+    }
+
     private ListenerPriority mapPriority(EventPriority priority) {
         switch (priority) {
             case HIGHEST: return ListenerPriority.FIRST;
@@ -189,6 +199,7 @@ public class EventListener {
         registerEvents(WorldEvent.Unload.class, this::onWorldUnload);
         registerEvents(ClientChatReceivedEvent.class, this::onChat);
         registerEvents(PlayerEvent.NameFormat.class, this::onNameFormat);
+        registerEvents(net.minecraftforge.event.entity.player.ItemTooltipEvent.class, this::onItemToolip);
     }
 
     public void unregister() {

@@ -22,7 +22,6 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PacketProcessedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerListItemPacketEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RawPacketReceivedEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.TitleEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
@@ -64,9 +63,7 @@ public class PacketListener {
     @SubscribeEvent
     public void packetProcessPost(PacketProcessedEvent.Post post) {
         Packet packet = post.packet;
-        if (packet instanceof S45PacketTitle) {
-            ModAPI.getAPI().getEventBus().fireEvent(new TitleEvent((S45PacketTitle) packet));
-        } else if (packet instanceof S38PacketPlayerListItem) {
+        if (packet instanceof S38PacketPlayerListItem) {
             ModAPI.getAPI().getEventBus().fireEvent(new PlayerListItemPacketEvent((S38PacketPlayerListItem) packet));
         }
     }

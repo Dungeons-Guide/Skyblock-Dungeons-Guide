@@ -16,17 +16,25 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.events.impl;
+package kr.syeyoung.modapi.event.events;
 
 import kr.syeyoung.modapi.event.UEvent;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.network.play.server.S45PacketTitle;
+import lombok.Getter;
+import net.kyori.adventure.text.Component;
 
-@Data
+@Getter
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 public class TitleEvent extends UEvent {
-    S45PacketTitle packetTitle;
+    private Type type;
+    private Component title;
+    private int fadeInTime;
+    private int displayTime;
+    private int fadeOutTime;
+
+    public enum Type {
+        TITLE, SUBTITLE, TIMES, CLEAR, RESET
+    }
 }

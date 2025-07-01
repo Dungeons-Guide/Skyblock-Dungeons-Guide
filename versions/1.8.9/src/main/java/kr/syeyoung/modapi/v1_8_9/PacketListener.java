@@ -32,6 +32,7 @@ import kr.syeyoung.modapi.v1_8_9.world.FakeWorld;
 import kr.syeyoung.modapi.v1_8_9.world.UChunkImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UMapDataImpl;
 import kr.syeyoung.modapi.world.UChunk;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -40,6 +41,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.*;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.chunk.Chunk;
@@ -132,6 +134,20 @@ public class PacketListener {
                     playerInfoMap.put(entry.getProfile().getId(), new CustomNetworkPlayerInfo(entry));
                 }
             }
+        } else if (packet instanceof S45PacketTitle) {
+            S45PacketTitle title = (S45PacketTitle) packet;
+            TitleEvent titleEvent = new TitleEvent(
+                    title.getType() == S45PacketTitle.Type.TITLE ? TitleEvent.Type.TITLE :
+                            title.getType() == S45PacketTitle.Type.SUBTITLE ? TitleEvent.Type.SUBTITLE :
+                                    title.getType() == S45PacketTitle.Type.RESET ? TitleEvent.Type.RESET :
+                                            title.getType() == S45PacketTitle.Type.CLEAR ? TitleEvent.Type.CLEAR :
+                                                    TitleEvent.Type.TIMES,
+                    title.getMessage() == null ? null : GsonComponentSerializer.colorDownsamplingGson().deserialize(IChatComponent.Serializer.componentToJson(title.getMessage())),
+                    title.getFadeInTime(),
+                    title.getDisplayTime(),
+                    title.getFadeOutTime()
+            );
+            ModAPI.getAPI().getEventBus().fireEvent(titleEvent);
         }
     }
 
