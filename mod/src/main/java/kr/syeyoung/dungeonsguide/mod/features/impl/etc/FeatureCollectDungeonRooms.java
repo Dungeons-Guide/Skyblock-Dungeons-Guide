@@ -38,6 +38,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonRoomDiscoveredEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -67,14 +68,13 @@ import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.BinaryTagTypes;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.nbt.ListBinaryTag;
+import net.kyori.adventure.text.Component;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -184,7 +184,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         @Data @AllArgsConstructor
         public static class ChatMessage {
             private long time;
-            private IChatComponent chat;
+            private Component chat;
         }
 
 
@@ -258,9 +258,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @DGEventHandler(ignoreDisabled = true)
-    public void onChat(ClientChatReceivedEvent event) {
-        if (event.type == 2) return;
-        if (!event.message.getFormattedText().contains(":")) {
+    public void onChat(DGChatReceivedEvent event) {
+        if (!event.getFormattedText().contains(":")) {
             // this is not user message.
             if (Minecraft.getMinecraft().thePlayer == null) return;
             Vector3D pos = ModAPI.getAPI().getPlayer().getPositionVector();
@@ -273,7 +272,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
             if (roomInfo == null) return;
 
-            roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), event.message));
+            roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), event.getOriginalComponent()));
         }
     }
     private int lastNo = 0;
@@ -295,7 +294,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
             if (roomInfo == null) return;
 
-            roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), new ChatComponentText("SECRET UPDATE: "+secret+"/"+total)));
+            roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), Component.text("SECRET UPDATE: "+secret+"/"+total)));
         }
 
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
@@ -35,7 +36,6 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,16 +88,15 @@ public class FeatureDungeonMilestone extends TextHUDFeature {
     @Getter
     private final List<String[]> milestoneReached = new ArrayList<>();
 
-    public static final Pattern milestone_pattern = Pattern.compile("§r§e§l(.+) Milestone §r§e(.)§r§7: .+ §r§a(.+)§r");
+    public static final Pattern milestone_pattern = Pattern.compile("§e§l(.+) Milestone §e(.)§7: .+ §a(.+)");
 
 
     @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        if (clientChatReceivedEvent.type == 2) return;
+    public void onChat(DGChatReceivedEvent actionBarReceivedEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return;
-        String txt = clientChatReceivedEvent.message.getFormattedText();
+        String txt = actionBarReceivedEvent.getFormattedText();
         if (milestone_pattern.matcher(txt).matches()) {
             milestoneReached.add(new String[] {
                     TextUtils.formatTime(FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed()),

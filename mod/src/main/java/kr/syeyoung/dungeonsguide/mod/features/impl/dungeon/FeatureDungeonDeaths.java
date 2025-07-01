@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonDeathEvent;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
@@ -37,7 +38,6 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -129,21 +129,20 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
         return d;
     }
 
-    Pattern deathPattern = Pattern.compile("§r§c ☠ (.+?)§r§7 .+and became a ghost.+");
-    Pattern meDeathPattern = Pattern.compile("§r§c ☠ §r§7You .+and became a ghost.+");
+    Pattern deathPattern = Pattern.compile("§c ☠ (.+?)§7 .+and became a ghost.+");
+    Pattern meDeathPattern = Pattern.compile("§c ☠ §7You .+and became a ghost.+");
 
     @DGEventHandler(ignoreDisabled = true)
     public void onDungeonEnd(DungeonLeftEvent dungeonEndedEvent) {
         this.deaths.clear();
     }
     @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        if (clientChatReceivedEvent.type == 2) return;
+    public void onChat(DGChatReceivedEvent clientChatReceivedEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return;
 
-        String txt = clientChatReceivedEvent.message.getFormattedText();
+        String txt = clientChatReceivedEvent.getFormattedText();
         Matcher m = deathPattern.matcher(txt);
         if (m.matches()) {
             String nickname = TextUtils.stripColor(m.group(1));

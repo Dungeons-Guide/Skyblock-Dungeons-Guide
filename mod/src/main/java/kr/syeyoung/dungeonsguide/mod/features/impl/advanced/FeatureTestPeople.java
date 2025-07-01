@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
@@ -46,7 +47,6 @@ import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -194,14 +194,14 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
     }
 
     @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        String txt = clientChatReceivedEvent.message.getFormattedText();
-        if (!txt.startsWith("§r§9Party §8>")) return;
+    public void onChat(DGChatReceivedEvent clientChatReceivedEvent) {
+        String txt = clientChatReceivedEvent.getFormattedText();
+        if (!txt.startsWith("§9Party §8>")) return;
 
         String chat = TextUtils.stripColor(txt.substring(txt.indexOf(":") + 1)).trim().toLowerCase();
 
 
-        String usernameArea = TextUtils.stripColor(txt.substring(13, txt.indexOf(":")));
+        String usernameArea = TextUtils.stripColor(txt.substring(11, txt.indexOf(":")));
         String username = null;
         for (String s : usernameArea.split(" ")) {
             if (s.isEmpty()) continue;

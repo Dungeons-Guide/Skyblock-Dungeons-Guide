@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
@@ -33,9 +34,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
+import kr.syeyoung.modapi.event.events.ActionBarReceivedEvent;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.item.UItemStack;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -287,43 +288,44 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
     }
 
     Pattern thePattern = Pattern.compile("§b-(\\d+) Mana \\(§6(.+)§b\\)");
-    Pattern thePattern2 = Pattern.compile("§r§aUsed (.+)§r§a! §r§b\\((1194) Mana\\)§r");
-    Pattern thePattern3 = Pattern.compile("§r§aUsed (.+)§r§a!§r");
+    Pattern thePattern2 = Pattern.compile("§aUsed (.+)§a! §b\\((1194) Mana\\)");
+    Pattern thePattern3 = Pattern.compile("§aUsed (.+)§a!");
 
     private String lastActionbarAbility;
 
-    @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        if (clientChatReceivedEvent.type == 2) {
-            Matcher m = thePattern.matcher(clientChatReceivedEvent.message.getFormattedText());
-            if (m.find()) {
-                String name = m.group(2);
-                if (!name.equalsIgnoreCase(lastActionbarAbility)) {
-                    used(name);
-                }
-                lastActionbarAbility = name;
-            } else {
-                lastActionbarAbility = null;
+
+    @DGEventHandler
+    public void onActionBar(ActionBarReceivedEvent receivedEvent) {
+        Matcher m = thePattern.matcher(TextUtils.getNearestFormattedText(receivedEvent.chat));
+        if (m.find()) {
+            String name = m.group(2);
+            if (!name.equalsIgnoreCase(lastActionbarAbility)) {
+                used(name);
             }
+            lastActionbarAbility = name;
         } else {
-            String message = clientChatReceivedEvent.message.getFormattedText();
-            if (message.equals("§r§aYour §r§9Bonzo's Mask §r§asaved your life!§r")) {
-                used("Clownin' Around");
+            lastActionbarAbility = null;
+        }
+    }
+    @DGEventHandler()
+    public void onChat(DGChatReceivedEvent clientChatReceivedEvent) {
+        String message = clientChatReceivedEvent.getFormattedText();
+        if (message.equals("§aYour §9Bonzo's Mask §asaved your life!")) {
+            used("Clownin' Around");
+        } else {
+            Matcher m = thePattern2.matcher(message);
+            if (m.matches()) {
+                String abilityName = TextUtils.stripColor(m.group(1));
+                used(abilityName);
             } else {
-                Matcher m = thePattern2.matcher(message);
-                if (m.matches()) {
-                    String abilityName = TextUtils.stripColor(m.group(1));
+                Matcher m2 = thePattern3.matcher(message);
+                if (m2.matches()) {
+                    String abilityName = TextUtils.stripColor(m2.group(1));
                     used(abilityName);
-                } else {
-                    Matcher m2 = thePattern3.matcher(message);
-                    if (m2.matches()) {
-                        String abilityName = TextUtils.stripColor(m2.group(1));
-                        used(abilityName);
-                    } else if (message.startsWith("§r§aYou used your ") || message.endsWith("§r§aPickaxe Ability!§r")) {
-                        String nocolor = TextUtils.stripColor(message);
-                        String abilityName = nocolor.substring(nocolor.indexOf("your") + 5, nocolor.indexOf("Pickaxe") - 1);
-                        used(abilityName);
-                    }
+                } else if (message.startsWith("§aYou used your ") || message.endsWith("§aPickaxe Ability!")) {
+                    String nocolor = TextUtils.stripColor(message);
+                    String abilityName = nocolor.substring(nocolor.indexOf("your") + 5, nocolor.indexOf("Pickaxe") - 1);
+                    used(abilityName);
                 }
             }
         }

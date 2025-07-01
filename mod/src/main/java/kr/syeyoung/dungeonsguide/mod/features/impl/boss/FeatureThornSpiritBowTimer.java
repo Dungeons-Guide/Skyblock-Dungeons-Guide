@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorThorn;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.TitleEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
@@ -32,7 +33,6 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 public class FeatureThornSpiritBowTimer extends TextHUDFeature {
     public FeatureThornSpiritBowTimer() {
@@ -68,25 +68,25 @@ public class FeatureThornSpiritBowTimer extends TextHUDFeature {
     private long time = 0;
 
     @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+    public void onChat(DGChatReceivedEvent event) {
         if (!(SkyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
-        String text = clientChatReceivedEvent.message.getFormattedText();
-        if (text.equals("§r§a§lThe §r§5§lSpirit Bow §r§a§lhas dropped!§r")) {
+        String text = event.getFormattedText();
+        if (text.equals("§a§lThe §5§lSpirit Bow §a§lhas dropped!")) {
             time = System.currentTimeMillis() + 16000;
-        } else if (text.startsWith("§r§c[BOSS] Thorn§r§f: ")) {
+        } else if (text.startsWith("§c[BOSS] Thorn§f: ")) {
             if (text.contains("another wound")
             || text.contains("My energy, it goes away")
             || text.contains("dizzy")
             || text.contains("a delicate feeling")) {
                 time = 0;
             }
-        } else if (text.startsWith("§r§b[CROWD]")) {
+        } else if (text.startsWith("§b[CROWD]")) {
             if (text.contains("That wasn't fair!!!") || text.contains("how to damage") || text.contains("Cheaters!") || text.contains("BOOOO")) {
                 time = 0;
             } else if (text.contains("missing easy shots like that") || text.contains("missed the shot!") || text.contains("Keep dodging") || text.contains("no thumbs") || text.contains("can't aim")) {
                 time = 0;
             }
-        } else if (text.equals("§r§cThe §r§5Spirit Bow§r§c disintegrates as you fire off the shot!§r")) {
+        } else if (text.equals("§cThe §5Spirit Bow§c disintegrates as you fire off the shot!")) {
             time = 0;
         }
     }
