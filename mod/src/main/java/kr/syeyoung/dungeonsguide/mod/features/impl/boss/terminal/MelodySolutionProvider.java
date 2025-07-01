@@ -18,27 +18,25 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
+import kr.syeyoung.modapi.gui.UContainerChest;
+import kr.syeyoung.modapi.gui.UContainerSlot;
+import kr.syeyoung.modapi.item.Item;
+import kr.syeyoung.modapi.util.EnumDyeColor;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MelodySolutionProvider implements TerminalSolutionProvider {
     @Override
-    public TerminalSolution provideSolution(ContainerChest chest, List<Slot> clicked) {
+    public TerminalSolution provideSolution(UContainerChest chest) {
         TerminalSolution ts = new TerminalSolution();
-        ts.setCurrSlots(new ArrayList<Slot>());
+        ts.setCurrSlots(new ArrayList());
 
         int target = -1;
         for (int i = 0; i < 5; i++) {
-            Slot toChk = chest.getSlot(1 + i);
-            if (toChk.getHasStack() && toChk.getStack() != null &&
-                    toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                    toChk.getStack().getItemDamage() == EnumDyeColor.MAGENTA.getMetadata()) {
+            UContainerSlot toChk = chest.getChestSlotAt(1 + i);
+            if (toChk.getItemStack() != null &&
+                    toChk.getItemStack().getItem() == Item.STAINED_GLASS_PANE &&
+                    toChk.getItemStack().getItemColor() == EnumDyeColor.MAGENTA) { // MAGENTA
                 target = i;
                 break;
             }
@@ -46,27 +44,27 @@ public class MelodySolutionProvider implements TerminalSolutionProvider {
 
         int row = -1;
         for (int i = 0; i < 4; i++) {
-            Slot toChk = chest.getSlot(16 + 9*i);
+            UContainerSlot toChk = chest.getChestSlotAt(16 + 9*i);
 
-            if (toChk.getHasStack() && toChk.getStack() != null &&
-                    toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_hardened_clay) &&
-                    toChk.getStack().getItemDamage() == EnumDyeColor.LIME.getMetadata()) {
+            if (toChk.getItemStack() != null &&
+                    toChk.getItemStack().getItem() == Item.STAINED_HARDENED_CLAY &&
+                    toChk.getItemStack().getItemColor() == EnumDyeColor.LIME) { // LIME
                 row = i;
                 break;
             }
         }
-        Slot toChk = chest.getSlot(10 + target + 9 * row);
-        if (toChk.getHasStack() && toChk.getStack() != null &&
-                toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                toChk.getStack().getItemDamage() == EnumDyeColor.LIME.getMetadata()) {
-            ts.getCurrSlots().add(chest.getSlot(16 + 9 * row));
+        UContainerSlot toChk = chest.getChestSlotAt(10 + target + 9 * row);
+        if (toChk.getItemStack() != null &&
+                toChk.getItemStack().getItem() == Item.STAINED_GLASS_PANE &&
+                toChk.getItemStack().getItemColor() == EnumDyeColor.LIME) { // LIME
+            ts.getCurrSlots().add(16 + 9*row);
         }
 
         return ts;
     }
 
     @Override
-    public boolean isApplicable(ContainerChest chest) {
-        return chest.getLowerChestInventory().getName().equals("Click the button on time!");
+    public boolean isApplicable(UContainerChest chest) {
+        return chest.getName().equals("Click the button on time!");
     }
 }

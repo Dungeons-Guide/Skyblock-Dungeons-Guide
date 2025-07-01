@@ -1,5 +1,7 @@
 package kr.syeyoung.modapi.v1_8_9;
 
+import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.Platform;
 import kr.syeyoung.modapi.audio.USoundHandler;
@@ -15,6 +17,7 @@ import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.item.IItemStackRegistry;
 import kr.syeyoung.modapi.profiler.UProfiler;
 import kr.syeyoung.modapi.resources.UResourceManager;
+import kr.syeyoung.modapi.settings.UGameSettings;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.v1_8_9.audio.USoundHandlerImpl;
@@ -29,6 +32,7 @@ import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
 import kr.syeyoung.modapi.v1_8_9.profiler.UProfilerImpl;
 import kr.syeyoung.modapi.v1_8_9.resources.DGTexturePack;
 import kr.syeyoung.modapi.v1_8_9.resources.UResourceManagerImpl;
+import kr.syeyoung.modapi.v1_8_9.settings.UGameSettingsImpl;
 import kr.syeyoung.modapi.v1_8_9.util.CustomNetworkPlayerInfoUnloader;
 import kr.syeyoung.modapi.v1_8_9.util.USessionImpl;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
@@ -40,20 +44,28 @@ import kr.syeyoung.modapi.world.UWorld;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.json.legacyimpl.NBTLegacyHoverEventSerializer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.simple.SimpleLogger;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 public class ModAPIImpl implements ModAPI {
     Minecraft delegate; // dummy to trick. TODO
@@ -93,8 +105,17 @@ public class ModAPIImpl implements ModAPI {
 
 
     private UProfiler profiler = new UProfilerImpl(Minecraft.getMinecraft().mcProfiler);
+
     public UProfiler getProfiler() {
         return profiler;
+    }
+
+    public UGameSettings getGameSettings() {
+        return new UGameSettingsImpl(Minecraft.getMinecraft().gameSettings);
+    }
+
+    public boolean isCallingFromMinecraftThread() {
+        return delegate.isCallingFromMinecraftThread();
     }
 
 
@@ -179,6 +200,15 @@ public class ModAPIImpl implements ModAPI {
         MinecraftForge.EVENT_BUS.register(packetInjector);
         eventListener.register();
         registry.init();
+
+
+        try {
+            Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) Main.class.getClassLoader(), "invalidClasses");
+            ((LaunchClassLoader) Main.class.getClassLoader()).clearNegativeEntries(Sets.newHashSet("org.slf4j.LoggerFactory"));
+            invalid.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         try {
             List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
@@ -276,6 +306,20 @@ public class ModAPIImpl implements ModAPI {
 
 //        String json = IChatComponent.Serializer.componentToJson(ichatcomponent);
 //        return GsonComponentSerializer.colorDownsamplingGson().deserialize(json); apparently adventure has a bug where it is unable to deserialize legacy hover event. welp. #890. but I'm in a rush to impl 1.21 so let me just hack a solution.
+    }
 
+    @Override
+    public void disableDefaultChatLogger() {
+        Logger l = LogManager.getLogger(GuiNewChat.class);
+        if (l instanceof SimpleLogger) {
+            ((SimpleLogger) l).setLevel(Level.OFF);
+        } else if (l instanceof org.apache.logging.log4j.core.Logger) {
+            ((org.apache.logging.log4j.core.Logger) l).setLevel(Level.OFF);
+        }
+    }
+
+    @Override
+    public String getKeyDisplayString(int currentKey) {
+        return GameSettings.getKeyDisplayString(currentKey);
     }
 }

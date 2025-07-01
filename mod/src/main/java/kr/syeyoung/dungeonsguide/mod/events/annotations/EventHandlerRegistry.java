@@ -29,7 +29,6 @@ import kr.syeyoung.modapi.event.UEvent;
 import kr.syeyoung.modapi.profiler.UProfiler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
@@ -129,10 +128,10 @@ public class EventHandlerRegistry {
                     UProfiler profiler = ModAPI.getAPI().getProfiler();
                     IEventListener registered;
                     ev.getListenerList().register(busID, EventPriority.NORMAL, registered = (event) -> {
-                        if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                        if (ModAPI.getAPI().isCallingFromMinecraftThread())
                             profiler.startSection("Dungeons Guide UEvent Handling");
                         for (InvocationTarget target : targetList) {
-                            if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                            if (ModAPI.getAPI().isCallingFromMinecraftThread())
                                 profiler.startSection(target.getTargetName());
                             try {
                                 if (target.condition == null || (target.condition.get() == Boolean.TRUE)) { // it is safe to use this here.
@@ -145,10 +144,10 @@ public class EventHandlerRegistry {
                                 FeatureCollectDiagnostics.queueSendLogAsync(t);
                                 throw new RuntimeException("An catastrophic error occured while handling event: ", t);
                             }
-                            if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                            if (ModAPI.getAPI().isCallingFromMinecraftThread())
                                 profiler.endSection();
                         }
-                        if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                        if (ModAPI.getAPI().isCallingFromMinecraftThread())
                             profiler.endSection();
                     });
                     registeredHandlers.put(aClass, registered);
@@ -158,10 +157,10 @@ public class EventHandlerRegistry {
                     ListenerRegistration registration = ModAPI.getAPI().getEventBus().registerListener(
                             aClass,
                             ListenerPriority.THIRD, (event) -> {
-                                if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                                if (ModAPI.getAPI().isCallingFromMinecraftThread())
                                     profiler.startSection("Dungeons Guide UEvent Handling");
                                 for (InvocationTarget target : targetList) {
-                                    if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                                    if (ModAPI.getAPI().isCallingFromMinecraftThread())
                                         profiler.startSection(target.getTargetName());
                                     try {
                                         if (target.condition == null || (target.condition.get() == Boolean.TRUE)) { // it is safe to use this here.
@@ -174,10 +173,10 @@ public class EventHandlerRegistry {
                                         FeatureCollectDiagnostics.queueSendLogAsync(t);
                                         throw new RuntimeException("An catastrophic error occured while handling event: ", t);
                                     }
-                                    if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                                    if (ModAPI.getAPI().isCallingFromMinecraftThread())
                                         profiler.endSection();
                                 }
-                                if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                                if (ModAPI.getAPI().isCallingFromMinecraftThread())
                                     profiler.endSection();
 
                                 return EventProcessResult.COMPLETE;

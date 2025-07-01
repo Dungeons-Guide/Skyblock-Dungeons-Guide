@@ -54,7 +54,7 @@ public class CreeperLeftProcessor extends GeneralDefuseChamberProcessor {
         answer = 0;
         for (int i = 0; i < poses.length; i++) {
             VectorI3D pos = poses[i];
-            if (getChamber().getRoom().getContext().getUworld().getBlockStateAt(pos).isOf(BlockType.AIR)) {
+            if (getChamber().getRoom().getContext().getWorld().getBlockStateAt(pos).isOf(BlockType.AIR)) {
                 answer |= (1 << i);
             }
         }

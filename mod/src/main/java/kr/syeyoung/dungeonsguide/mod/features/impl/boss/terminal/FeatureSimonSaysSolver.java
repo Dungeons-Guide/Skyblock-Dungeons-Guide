@@ -74,7 +74,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
 
-        UWorld w = dc.getUworld();
+        UWorld w = dc.getWorld();
         if (wasButton && w.getBlockStateAt(110,121,92).isOf(BlockType.AIR)) { // check here instead :D
             orderClick.clear();
             orderBuild.clear();
@@ -102,7 +102,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         if (dc == null) return;
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
-        UWorld w = dc.getUworld();
+        UWorld w = dc.getWorld();
 
         VectorI3D pos = event.pos.add(1,0,0);
 

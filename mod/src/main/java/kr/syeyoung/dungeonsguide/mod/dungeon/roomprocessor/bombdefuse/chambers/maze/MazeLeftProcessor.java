@@ -32,7 +32,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.settings.GameSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -56,7 +55,7 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        String str = "Press "+ GameSettings.getKeyDisplayString(FeatureRegistry.SOLVER_BOMBDEFUSE.<Integer>getParameter("key").getValue()) + " to request open "+b.getBlock().getLocalizedName();
+        String str = "Press "+ ModAPI.getAPI().getKeyDisplayString(FeatureRegistry.SOLVER_BOMBDEFUSE.<Integer>getParameter("key").getValue()) + " to request open "+b.getBlock().getLocalizedName();
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -68,7 +67,7 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
         RaycastResult result = ModAPI.getAPI().getObjectMouseOver();
         if (result.getType() != RaycastResult.HitType.BLOCK) return;
         VectorI3D block = result.getBlockHit();
-        UBlockState b = getChamber().getRoom().getContext().getUworld().getBlockStateAt(block);
+        UBlockState b = getChamber().getRoom().getContext().getWorld().getBlockStateAt(block);
 
         CompoundBinaryTag nbt = CompoundBinaryTag.builder()
                 .putByte("a", (byte)5)

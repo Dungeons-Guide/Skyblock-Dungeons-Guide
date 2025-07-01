@@ -109,7 +109,7 @@ public class MapPlayerProcessor {
     }
 
     private boolean isPlayerNear(String player, VectorI3D mapPos) {
-        UEntityPlayer entityPlayer = context.getUworld().getUPlayerEntityByName(player);
+        UEntityPlayer entityPlayer = context.getWorld().getUPlayerEntityByName(player);
 
         if (entityPlayer != null && !entityPlayer.isInvisible()) {
             VectorI3D pos = entityPlayer.getPosition();

@@ -94,7 +94,7 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(-2,120,75) > 400) return;
 
         if (System.currentTimeMillis() < nextUpdate) return;
-        List<UEntity> frames = dc.getUworld().getEntitiesWithinAabb(EntityType.ITEM_FRAME, new AABB(-2, 121, 75, -1, 125, 79));
+        List<UEntity> frames = dc.getWorld().getEntitiesWithinAabb(EntityType.ITEM_FRAME, new AABB(-2, 121, 75, -1, 125, 79));
 //        filter -> {
 //            BlockPos pos = filter.getPosition();
 //            if (pos.getX() != -2) return false;

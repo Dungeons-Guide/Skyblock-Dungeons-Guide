@@ -61,12 +61,12 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
         final VectorI3D low = dungeonRoom.getRoomBounds().getMin();
         final VectorI3D high = dungeonRoom.getRoomBounds().getMax();
         entityList.clear();
-        for (UEntity uEntity : dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.ARMOR_STAND, new AABB(low.getX(), 0, low.getZ(), high.getX(), 256, high.getZ()))) {
+        for (UEntity uEntity : dungeonRoom.getContext().getWorld().getEntitiesWithinAabb(EntityType.ARMOR_STAND, new AABB(low.getX(), 0, low.getZ(), high.getX(), 256, high.getZ()))) {
             if (uEntity.getName().toLowerCase().contains("blaze")) {
                 entityList.add((UEntityArmorStand) uEntity);
             }
         }
-        blazeList = dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.BLAZE, new AABB(low.getX(), 0, low.getZ(), high.getX(), 256, high.getZ()));
+        blazeList = dungeonRoom.getContext().getWorld().getEntitiesWithinAabb(EntityType.BLAZE, new AABB(low.getX(), 0, low.getZ(), high.getX(), 256, high.getZ()));
 
         Comparator<UEntityArmorStand> comparator = Comparator.comparingInt(a -> {
             String name = a.getName();

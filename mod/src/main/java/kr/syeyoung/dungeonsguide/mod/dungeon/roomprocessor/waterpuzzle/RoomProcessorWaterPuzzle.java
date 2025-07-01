@@ -105,7 +105,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
         for (OffsetPoint offsetPoint : levers.getOffsetPointList()) {
             if (offsetPoint.getBlock(getDungeonRoom()).isOf(BlockType.LEVER)){
                 VectorI3D pos = offsetPoint.getBlockPos(getDungeonRoom());
-                UWorld w=  getDungeonRoom().getContext().getUworld();
+                UWorld w=  getDungeonRoom().getContext().getWorld();
                 EnumFacing enumFacing = w.getBlockStateAt(pos).getLeverFacing();
                 if (enumFacing == null) continue;
                 VectorI3D newPos = pos.add(-enumFacing.getDirectionVec().getX(),0,-enumFacing.getDirectionVec().getZ());

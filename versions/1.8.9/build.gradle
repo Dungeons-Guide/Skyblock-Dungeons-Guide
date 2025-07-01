@@ -98,7 +98,6 @@ dependencies {
     devenvMod(project(path: ":1.8.9-loader", configuration: "unmappedMod"))
     modLocalRuntime("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 
-//    implementation("net.kyori:adventure-text-serializer-gson:4.23.0")
     implementation("net.kyori:adventure-text-serializer-gson-legacy-impl:4.23.0")
 }
 

@@ -72,7 +72,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
             final String name = TextUtils.stripColor(ch2.split(":")[0]).replace("[NPC] ","").trim();
             final VectorI3D low = getDungeonRoom().getRoomBounds().getMin();
             final VectorI3D high = getDungeonRoom().getRoomBounds().getMax();
-            UWorld w = getDungeonRoom().getContext().getUworld();
+            UWorld w = getDungeonRoom().getContext().getWorld();
             List<UEntity> armor = w.getEntitiesWithinAabb(EntityType.ARMOR_STAND,
                     new AABB(low.getX(), 0, low.getZ(), high.getX(), 255, high.getZ()));
             UEntity target = null;

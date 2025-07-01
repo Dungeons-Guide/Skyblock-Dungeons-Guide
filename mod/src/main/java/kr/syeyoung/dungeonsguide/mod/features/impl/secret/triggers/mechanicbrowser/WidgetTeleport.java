@@ -23,9 +23,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.data.VectorI3D;
-import net.minecraft.server.MinecraftServer;
 
 public class WidgetTeleport extends AnnotatedWidget {
 
@@ -45,7 +45,6 @@ public class WidgetTeleport extends AnnotatedWidget {
     @On(functionName = "navigate")
     public void navigate() {
         VectorI3D pos = dungeonRoom.getMechanics().get(mechanic).getRepresentingPoint().getBlockPos(dungeonRoom);
-//        Minecraft.getMinecraft().thePlayer.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
-        MinecraftServer.getServer().getEntityWorld().getClosestPlayer(0,0,0,1000000000).setPositionAndUpdate(pos.getX(),pos.getY(),pos.getZ());
+        ModAPI.getAPI().getPlayer().sendMessageToServer("/tp "+pos.getX()+" "+pos.getY()+" " +pos.getZ());
     }
 }

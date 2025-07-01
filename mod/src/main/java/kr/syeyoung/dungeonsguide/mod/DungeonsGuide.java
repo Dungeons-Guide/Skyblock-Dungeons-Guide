@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod;
 
-import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
@@ -67,7 +66,6 @@ import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.ProgressManager;
@@ -208,13 +206,6 @@ public class DungeonsGuide implements DGInterface {
 
 
 
-        try {
-            Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) Main.class.getClassLoader(), "invalidClasses");
-            ((LaunchClassLoader) Main.class.getClassLoader()).clearNegativeEntries(Sets.newHashSet("org.slf4j.LoggerFactory"));
-            invalid.clear();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
 
 

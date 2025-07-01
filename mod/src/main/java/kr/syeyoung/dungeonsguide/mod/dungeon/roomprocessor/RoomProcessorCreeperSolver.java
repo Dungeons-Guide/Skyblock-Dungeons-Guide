@@ -122,7 +122,7 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
         if (!FeatureRegistry.SOLVER_CREEPER.isEnabled()) return;
-        UWorld w = getDungeonRoom().getContext().getUworld();
+        UWorld w = getDungeonRoom().getContext().getWorld();
         for (int i = 0; i < poses.size(); i++) {
             VectorI3D[] poset = poses.get(i);
             Color color = colors[i % colors.length];

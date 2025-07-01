@@ -28,9 +28,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonRoomDiscoveredEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.world.UMapData;
 import lombok.Getter;
-import net.minecraft.util.Tuple;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -204,7 +204,7 @@ public class DungeonRoomScaffoldParser {
         byte unit1 = MapUtils.getMapColorAt(mapData, pt2.x, pt2.y);
 
         // 0: none 1: open door 2. unopen door 3: wither door 4. red door
-        Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates = new HashSet<>();
+        Set<Pair<Vector2d, EDungeonDoorType>> doorsAndStates = new HashSet<>();
         final int halfWidth = dungeonMapLayout.getUnitRoomSize().width + 4;
         for (Vector2d door : doors) {
             int floorX = (int) Math.floor(door.x);
@@ -219,15 +219,15 @@ public class DungeonRoomScaffoldParser {
             Vector2d vector2d = new Vector2d(door.x - minX, door.y - minY);
 
             if (color == 0) {
-                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.NONE));
+                doorsAndStates.add(new Pair<>(vector2d, EDungeonDoorType.NONE));
             } else if (color == 85) {
-                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.UNOPEN));
+                doorsAndStates.add(new Pair<>(vector2d, EDungeonDoorType.UNOPEN));
             } else if (color == 119) {
-                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.WITHER));
+                doorsAndStates.add(new Pair<>(vector2d, EDungeonDoorType.WITHER));
             } else if (color == 18 && unit1 != 18) {
-                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.BLOOD));
+                doorsAndStates.add(new Pair<>(vector2d, EDungeonDoorType.BLOOD));
             } else {
-                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.ENTRANCE));
+                doorsAndStates.add(new Pair<>(vector2d, EDungeonDoorType.ENTRANCE));
             }
 
         }

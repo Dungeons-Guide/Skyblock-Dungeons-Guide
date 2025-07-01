@@ -76,7 +76,7 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
 
         VectorI3D pos = data.secretPoint.getBlockPos(dungeonRoom);
         boolean itemFound = false;
-        for (UEntity entityItem : dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.ITEM, new AABB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()))) {
+        for (UEntity entityItem : dungeonRoom.getContext().getWorld().getEntitiesWithinAabb(EntityType.ITEM, new AABB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()))) {
             if (((UEntityItem)entityItem).getItem().getItem() == Item.DYE) continue;
             itemFound = true;
         }
@@ -87,7 +87,7 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
                 status = SecretStatus.DEFINITELY_NOT;
             } else if (status != SecretStatus.FOUND && nearbyTicks > 40) {
                 status = SecretStatus.FOUND;
-                List<UEntity> items = dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.ITEM, new AABB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()));
+                List<UEntity> items = dungeonRoom.getContext().getWorld().getEntitiesWithinAabb(EntityType.ITEM, new AABB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()));
                 ChatTransmitter.sendDebugChat("Assume at " + ISecret.toString(pos) + "found? " + items.size());
             }
         }

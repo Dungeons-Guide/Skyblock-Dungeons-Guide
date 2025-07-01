@@ -19,6 +19,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.world.UMapData;
@@ -30,7 +31,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector2d;
@@ -766,7 +766,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
             }
 
             Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
-            for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : dungeonRoom.getDoorsAndStates()) {
+            for (Pair<Vector2d, EDungeonDoorType> doorsAndState : dungeonRoom.getDoorsAndStates()) {
                 double x = doorsAndState.getFirst().x;
                 double y = doorsAndState.getFirst().y;
                 if (doorsAndState.getSecond() == EDungeonDoorType.NONE) continue;

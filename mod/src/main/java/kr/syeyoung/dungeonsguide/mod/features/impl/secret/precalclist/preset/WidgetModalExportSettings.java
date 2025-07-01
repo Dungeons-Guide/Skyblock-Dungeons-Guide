@@ -21,8 +21,8 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalcu
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.util.Tuple;
 import org.apache.commons.io.FileUtils;
 
 import java.awt.*;
@@ -125,12 +125,12 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
             WidgetNotificationProgress progress = new WidgetNotificationProgress(uid, "Exporting Preset");
             FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(uid, progress);
 
-            List<Tuple<String, File>> files = new ArrayList<>();
+            List<Pair<String, File>> files = new ArrayList<>();
             PathfindPrecalculationRegistry registry = PathfindPrecalculationRegistry.getINSTANCE();
             for (RoomPreset value : preset.getPresets().values()) {
                 for (String calcid : value.getPrecalculations()) {
                     PathfindPrecalculation precalc = registry.getById(calcid);
-                    files.add(new Tuple(precalc.getId(), new File(precalc.getFile())));
+                    files.add(new Pair(precalc.getId(), new File(precalc.getFile())));
                 }
             }
 
@@ -158,7 +158,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
 
                 if (includePrecalc) {
-                    for (Tuple<String, File> srcFile : files) {
+                    for (Pair<String, File> srcFile : files) {
                         FileInputStream fis = new FileInputStream(srcFile.getSecond());
                         ZipEntry zipEntry = new ZipEntry("precalculations/"+srcFile.getFirst()+".pfres");
                         zipOut.putNextEntry(zipEntry);

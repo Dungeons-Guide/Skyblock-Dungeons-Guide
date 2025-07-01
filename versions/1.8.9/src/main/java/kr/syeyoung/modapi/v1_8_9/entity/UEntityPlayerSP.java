@@ -3,6 +3,7 @@ package kr.syeyoung.modapi.v1_8_9.entity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.gui.UContainer;
 import kr.syeyoung.modapi.item.UInventoryPlayer;
+import kr.syeyoung.modapi.util.GameMode;
 import kr.syeyoung.modapi.v1_8_9.gui.UContainerChestImpl;
 import kr.syeyoung.modapi.v1_8_9.gui.UContainerImpl;
 import kr.syeyoung.modapi.v1_8_9.item.UInventoryPlayerImpl;
@@ -14,6 +15,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.util.IChatComponent;
@@ -68,6 +70,24 @@ public class UEntityPlayerSP extends UEntityPlayerImpl implements UPlayerSelf, A
         MinecraftForge.EVENT_BUS.post(event);
         if (!event.isCanceled()) {
             Minecraft.getMinecraft().thePlayer.addChatMessage(event.message);
+        }
+    }
+
+    @Override
+    public GameMode getGameMode() {
+        PlayerControllerMP controller = Minecraft.getMinecraft().playerController;
+        if (controller == null) return null;
+        switch (controller.getCurrentGameType()) {
+            case CREATIVE:
+                return GameMode.CREATIVE;
+            case SPECTATOR:
+                return GameMode.SPECTATOR;
+            case SURVIVAL:
+                return GameMode.SURVIVAL;
+            case ADVENTURE:
+                return GameMode.ADVENTURE;
+            default:
+                return null;
         }
     }
 }

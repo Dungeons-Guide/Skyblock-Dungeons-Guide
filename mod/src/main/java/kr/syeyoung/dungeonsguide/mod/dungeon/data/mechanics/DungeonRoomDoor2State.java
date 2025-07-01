@@ -31,9 +31,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.Data;
-import net.minecraft.util.Tuple;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -76,7 +76,7 @@ public class DungeonRoomDoor2State implements DungeonMechanicState {
     public String getCurrentState() {
 //        return doorfinder.getType().isKeyRequired() ? "key" : "normal";
         Vector2d id = getIdentifier(room);
-        for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : room.getDoorsAndStates()) {
+        for (Pair<Vector2d, EDungeonDoorType> doorsAndState : room.getDoorsAndStates()) {
             if (doorsAndState.getFirst().equals(id) && doorsAndState.getSecond() != EDungeonDoorType.NONE) {
                 return doorsAndState.getSecond().isKeyRequired() ? "key" : "normal";
             }
@@ -86,7 +86,7 @@ public class DungeonRoomDoor2State implements DungeonMechanicState {
 
     public boolean isHeadtoBlood(DungeonRoom dungeonRoom) {
         Vector2d id = getIdentifier(dungeonRoom);
-        for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : dungeonRoom.getDoorsAndStates()) {
+        for (Pair<Vector2d, EDungeonDoorType> doorsAndState : dungeonRoom.getDoorsAndStates()) {
             if (doorsAndState.getFirst().equals(id)) {
                 return doorsAndState.getSecond().isHeadToBlood();
             }

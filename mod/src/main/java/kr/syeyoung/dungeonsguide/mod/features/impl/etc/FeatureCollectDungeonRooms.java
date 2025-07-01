@@ -58,6 +58,7 @@ import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UChunk;
@@ -69,12 +70,9 @@ import net.kyori.adventure.nbt.BinaryTagTypes;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.nbt.ListBinaryTag;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -128,7 +126,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     private Map<Integer, EntityData> entityDataMap = new HashMap<>();
-    private Map<ChunkCoordIntPair, ChunkData> initialChunkDataMap = new HashMap<>();
+    private Map<Pair<Integer, Integer>, ChunkData> initialChunkDataMap = new HashMap<>();
     private Map<DungeonRoom, RoomInfo> roomInfoMap = new HashMap<>();
 
     @Data @Getter
@@ -390,7 +388,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             chunkData.x = updatedChunk.getChunkX();
             chunkData.z = updatedChunk.getChunkZ();
             chunkData.initialBlockStorages = updatedChunk;
-            initialChunkDataMap.put(new ChunkCoordIntPair(chunkData.x, chunkData.z), chunkData);
+            initialChunkDataMap.put(new Pair<>(chunkData.x, chunkData.z), chunkData);
         }
         if (!updates.isEmpty()) {
             BlockUpdateEvent.Pre pre = new BlockUpdateEvent.Pre();
@@ -444,7 +442,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onWorldLoad(WorldUnloadEvent event) {
         try {
-            Gson gson = new GsonBuilder()
+            GsonBuilder builder = new GsonBuilder()
                     .disableHtmlEscaping()
                     .registerTypeAdapter(UItemStack.class, new TypeAdapter<UItemStack>() {
                         @Override
@@ -472,18 +470,18 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                             return null;
                         }
                     })
-                    .registerTypeAdapter(Vec3.class, new TypeAdapter<Vec3>() {
+                    .registerTypeAdapter(Vector3D.class, new TypeAdapter<Vector3D>() {
                         @Override
-                        public void write(JsonWriter out, Vec3 value) throws IOException {
+                        public void write(JsonWriter out, Vector3D value) throws IOException {
                             if (value == null) {
                                 out.nullValue();
                                 return;
                             }
-                            out.beginArray().value(value.xCoord).value(value.yCoord).value(value.zCoord).endArray();
+                            out.beginArray().value(value.x).value(value.y).value(value.z).endArray();
                         }
 
                         @Override
-                        public Vec3 read(JsonReader in) throws IOException {
+                        public Vector3D read(JsonReader in) throws IOException {
                             return null;
                         }
                     }).registerTypeAdapter(RoomInfo.BlockUpdate.BlockUpdateData.class, new TypeAdapter<RoomInfo.BlockUpdate.BlockUpdateData>() {
@@ -498,9 +496,9 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                         public RoomInfo.BlockUpdate.BlockUpdateData read(JsonReader in) throws IOException {
                             return null;
                         }
-                    })
-                    .registerTypeAdapter(IChatComponent.class, new IChatComponent.Serializer())
-                    .create();
+                    });
+            Gson gson = GsonComponentSerializer.gson().populator().apply(builder).create();
+
             String correlationId = Optional.ofNullable(PartyManager.INSTANCE.getPartyContext())
                     .map(PartyContext::getPartyID)
                     .orElse(UUID.randomUUID().toString());
@@ -624,7 +622,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                 for (int z = 0; z < length; z++) {
                     int index = x + (y * length + z) * width;
                     VectorI3D pos = dungeonRoom.getRelativeBlockPosAt(x,y - 70,z);
-                    ChunkData chunkData = initialChunkDataMap.get(new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4));
+                    ChunkData chunkData = initialChunkDataMap.get(new Pair<>(pos.getX() >> 4, pos.getZ() >> 4));
 
                     UBlockState blockState = chunkData.initialBlockStorages.getRelativeBlockAt(x&0xF, y, z&0xF);
 
@@ -663,15 +661,16 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (!FeatureRegistry.DEBUG.isEnabled()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
 
-        Entity hovered = Minecraft.getMinecraft().pointedEntity;
+        RaycastResult result = ModAPI.getAPI().getObjectMouseOver();
+        UEntity hovered = result.getEntityHit();
         if (hovered == null) return;
         EntityData entityData = entityDataMap.get(hovered.getEntityId());
         if (entityData == null) {
-            RenderUtils.drawTextAtWorld("??Unknown??", (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
+            RenderUtils.drawTextAtWorld("??Unknown??", (float) hovered.getPosX(), (float) hovered.getPosY()+3, (float) hovered.getPosZ(), 0xFF000000, 0.02f, false, true, event.partialTicks);
         } else {
             if (entityData.getArmorstand() != null)
-                RenderUtils.drawTextAtWorld(entityData.getArmorstand(), (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
-            RenderUtils.drawTextAtWorld(entityData.getType(), (float) hovered.posX, (float) hovered.posY+3.2f, (float) hovered.posZ, 0xFF00FF00, 0.02f, false, true, event.partialTicks);
+                RenderUtils.drawTextAtWorld(entityData.getArmorstand(), (float) hovered.getPosX(), (float) hovered.getPosY()+3, (float) hovered.getPosZ(), 0xFF000000, 0.02f, false, true, event.partialTicks);
+            RenderUtils.drawTextAtWorld(entityData.getType(), (float) hovered.getPosX(), (float) hovered.getPosY()+3.2f, (float) hovered.getPosZ(), 0xFF00FF00, 0.02f, false, true, event.partialTicks);
             Vector3D pos = entityData.getTrajectory().getFirst().getPos();
             RenderUtils.renderBeaconBeam(
                     pos.x,

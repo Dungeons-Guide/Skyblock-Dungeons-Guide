@@ -61,7 +61,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
     public void findSilverFishAndDoStuff() {
         final VectorI3D low = getDungeonRoom().getRoomBounds().getMin();
         final VectorI3D high = getDungeonRoom().getRoomBounds().getMax();
-        List<UEntity> silverfishs = getDungeonRoom().getContext().getUworld().getEntitiesWithinAabb(EntityType.SILVERFISH,
+        List<UEntity> silverfishs = getDungeonRoom().getContext().getWorld().getEntitiesWithinAabb(EntityType.SILVERFISH,
                 new AABB(low.getX(), 0, low.getZ(), high.getX(), 255, high.getZ()));
 
         if (!silverfishs.isEmpty()) silverfish = silverfishs.get(0);

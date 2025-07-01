@@ -33,7 +33,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Singular;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiScreenEvent;
 
 import java.io.IOException;
@@ -121,8 +120,6 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
         private Map<String, BossfightRenderSettings> resources = new HashMap<>();
         private Map<String, String> phaseMap = new HashMap<>();
     }
-
-    private World world;
 
     public void addPhase(PhaseData phaseData) {
         if (phaseData == null) return;

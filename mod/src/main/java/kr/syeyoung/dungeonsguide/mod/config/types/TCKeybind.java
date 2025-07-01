@@ -29,7 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.settings.GameSettings;
 
 public class TCKeybind implements FeatureTypeHandler<Integer> {
     public static final TCKeybind INSTANCE = new TCKeybind();
@@ -61,14 +60,14 @@ public class TCKeybind implements FeatureTypeHandler<Integer> {
             super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/keybind.gui"));
             this.parameter = featureParameter;
             currentKey = featureParameter.getValue();
-            value.setValue(GameSettings.getKeyDisplayString(currentKey));
+            value.setValue(ModAPI.getAPI().getKeyDisplayString(currentKey));
         }
 
         @On(functionName = "setKey")
         public void listen() {
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
             getDomElement().obtainFocus();
-            value.setValue("> "+GameSettings.getKeyDisplayString(currentKey)+" <");
+            value.setValue("> "+ModAPI.getAPI().getKeyDisplayString(currentKey)+" <");
             listen =true;
         }
 
@@ -84,7 +83,7 @@ public class TCKeybind implements FeatureTypeHandler<Integer> {
             }
             listen = false;
             parameter.setValue(currentKey);
-            value.setValue(GameSettings.getKeyDisplayString(currentKey));
+            value.setValue(ModAPI.getAPI().getKeyDisplayString(currentKey));
             return true;
         }
     }

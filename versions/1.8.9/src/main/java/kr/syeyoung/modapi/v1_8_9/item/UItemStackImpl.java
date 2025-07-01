@@ -3,6 +3,7 @@ package kr.syeyoung.modapi.v1_8_9.item;
 import com.mojang.authlib.GameProfile;
 import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.util.EnumDyeColor;
 import lombok.Getter;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
@@ -35,7 +36,7 @@ public class UItemStackImpl implements UItemStack {
     public Item getItem() {
         if (delegate.getItem() == Items.skull) return Item.SKULL;
         if (delegate.getItem() == Items.dye) return Item.DYE;
-        if (delegate.getItem() == Items.map ) return Item.MAP;
+        if (delegate.getItem() == Items.map) return Item.MAP;
         if (delegate.getItem() == Items.filled_map) return Item.FILLED_MAP;
         if (delegate.getItem() == Items.arrow) return Item.ARROW;
         if (delegate.getItem() == Items.stick) return Item.STICK;
@@ -44,6 +45,8 @@ public class UItemStackImpl implements UItemStack {
         if (delegate.getItem() == Items.golden_shovel) return Item.GOLDEN_SHOVEL;
         if (delegate.getItem() == net.minecraft.item.Item.getItemFromBlock(Blocks.bedrock)) return Item.BEDROCK;
         if (delegate.getItem() == net.minecraft.item.Item.getItemFromBlock(Blocks.bookshelf)) return Item.BOOKSHELF;
+        if (delegate.getItem() == net.minecraft.item.Item.getItemFromBlock(Blocks.stained_glass_pane)) return Item.STAINED_GLASS_PANE;
+        if (delegate.getItem() == net.minecraft.item.Item.getItemFromBlock(Blocks.stained_hardened_clay)) return Item.STAINED_HARDENED_CLAY;
         return Item.UNKNOWN;
     }
 
@@ -124,5 +127,20 @@ public class UItemStackImpl implements UItemStack {
             }
         }
         return tooltip;
+    }
+
+    public boolean isItemEnchanted() {
+        return delegate.isItemEnchanted();
+    }
+
+    @Override
+    public EnumDyeColor getItemColor() {
+        if (delegate.getItem() == Items.dye) return EnumDyeColor.VALUES[15 - delegate.getItemDamage()];
+        return EnumDyeColor.VALUES[delegate.getItemDamage()];
+    }
+
+    @Override
+    public int getCount() {
+        return delegate.stackSize;
     }
 }

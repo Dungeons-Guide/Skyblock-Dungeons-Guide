@@ -22,17 +22,14 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.event.ListenerPriority;
 import kr.syeyoung.modapi.event.SubscribeEvent;
 import kr.syeyoung.modapi.event.events.ChatReceivedEvent;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import net.kyori.adventure.text.Component;
-import net.minecraft.client.gui.GuiNewChat;
-import net.minecraft.util.Tuple;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.simple.SimpleLogger;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -42,16 +39,11 @@ public class ChatProcessor {
 
     private static final Logger logger = LogManager.getLogger("DG-ChatProcessor");
     private ChatProcessor() {
-        Logger l = LogManager.getLogger(GuiNewChat.class);
-        if (l instanceof SimpleLogger) {
-            ((SimpleLogger) l).setLevel(Level.OFF);
-        } else if (l instanceof org.apache.logging.log4j.core.Logger) {
-            ((org.apache.logging.log4j.core.Logger) l).setLevel(Level.OFF);
-        }
+        ModAPI.getAPI().disableDefaultChatLogger();
     }
 
     private Queue<ChatSubscriber> chatSubscriberQueue = new ConcurrentLinkedQueue<>();
-    private Queue<Tuple<String, Runnable>> chatQueue = new ConcurrentLinkedQueue<>();
+    private Queue<Pair<String, Runnable>> chatQueue = new ConcurrentLinkedQueue<>();
 
 
     public void subscribe(ChatSubscriber chatSubscribed) {
@@ -59,7 +51,7 @@ public class ChatProcessor {
     }
     public void addToChatQueue(String chat, Runnable onSend, boolean noDupe) {
         if (noDupe && chatQueue.stream().anyMatch(a -> a.getFirst().trim().equalsIgnoreCase(chat.trim()))) return;
-        chatQueue.add(new Tuple<>(chat, onSend));
+        chatQueue.add(new Pair<>(chat, onSend));
     }
 
 
@@ -70,7 +62,7 @@ public class ChatProcessor {
         try {
             if (ModAPI.getAPI().getPlayer() != null && minimumNext < System.currentTimeMillis()) {
                 if (!chatQueue.isEmpty()) {
-                    Tuple<String, Runnable> tuple = chatQueue.poll();
+                    Pair<String, Runnable> tuple = chatQueue.poll();
                     ModAPI.getAPI().getPlayer().sendMessageToServer(tuple.getFirst());
                     if (tuple.getSecond() != null)
                         tuple.getSecond().run();

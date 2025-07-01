@@ -74,7 +74,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     }
 
     private byte[][] buildCurrentState() {
-        UWorld w = getDungeonRoom().getContext().getUworld();
+        UWorld w = getDungeonRoom().getContext().getWorld();
         byte[][] board = new byte[poses.length][poses[0].length];
         for (int y = 0; y < poses.length; y++) {
             for (int x = 0; x < poses[0].length; x++) {

@@ -66,9 +66,9 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
 
     public void tick(DungeonRoom dungeonRoom) {
         VectorI3D pos = data.secretPoint.getBlockPos(dungeonRoom);
-        UBlockState blockState = dungeonRoom.getContext().getUworld().getBlockStateAt(pos);
+        UBlockState blockState = dungeonRoom.getContext().getWorld().getBlockStateAt(pos);
         if (blockState.isOf(BlockType.CHEST, BlockType.TRAP_CHEST)) {
-            UTileEntityChest chest = (UTileEntityChest) dungeonRoom.getContext().getUworld().getTileEntityAt(pos);
+            UTileEntityChest chest = (UTileEntityChest) dungeonRoom.getContext().getWorld().getTileEntityAt(pos);
             if (chest != null) {
                 if (chest.getViewers() > 0) {
                     lastMeasuredChestStatus = LastMeasuredChestStatus.OPENED;
@@ -89,7 +89,7 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
 
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
         VectorI3D pos = data.secretPoint.getBlockPos(dungeonRoom);
-        UBlockState blockState = dungeonRoom.getContext().getUworld().getBlockStateAt(pos);
+        UBlockState blockState = dungeonRoom.getContext().getWorld().getBlockStateAt(pos);
         if (lastMeasuredChestStatus != LastMeasuredChestStatus.WASNT_THERE)
             return (lastMeasuredChestStatus == LastMeasuredChestStatus.OPENED || blockState.isOf(BlockType.AIR)) ? SecretStatus.FOUND : SecretStatus.CREATED;
 
@@ -98,7 +98,7 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
         } else if (!blockState.isOf(BlockType.CHEST, BlockType.TRAP_CHEST)) {
             return SecretStatus.ERROR;
         } else {
-            UTileEntityChest chest = (UTileEntityChest) dungeonRoom.getContext().getUworld().getTileEntityAt(pos);
+            UTileEntityChest chest = (UTileEntityChest) dungeonRoom.getContext().getWorld().getTileEntityAt(pos);
             if (chest != null && chest.getViewers() > 0) {
                 return SecretStatus.FOUND;
             } else {

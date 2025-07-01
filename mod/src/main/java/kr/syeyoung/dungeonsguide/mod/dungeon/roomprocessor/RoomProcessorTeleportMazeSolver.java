@@ -59,7 +59,7 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
         super.tick();
 
 
-        UWorld w = getDungeonRoom().getContext().getUworld();
+        UWorld w = getDungeonRoom().getContext().getWorld();
         UPlayerSelf entityPlayerSP = ModAPI.getAPI().getPlayer();
         VectorI3D pos2 = entityPlayerSP.getPosition();
         UBlockState b = w.getBlockStateAt(pos2);

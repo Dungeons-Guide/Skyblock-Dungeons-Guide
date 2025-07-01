@@ -287,7 +287,7 @@ public class GeneralEditPane extends MPanel {
                     }
 
                     if (blockState.hasTileEntity()) {
-                        UTileEntity tileEntity = dungeonRoom.getContext().getUworld().getTileEntityAt(pos);
+                        UTileEntity tileEntity = dungeonRoom.getContext().getWorld().getTileEntityAt(pos);
                         try {
                             tileEntitiesList.add(tileEntity.serialize());
                         } catch (final Exception e) {

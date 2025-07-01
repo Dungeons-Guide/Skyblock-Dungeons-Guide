@@ -47,7 +47,6 @@ import kr.syeyoung.modapi.world.UMapData;
 import kr.syeyoung.modapi.world.UWorld;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.world.World;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -60,9 +59,7 @@ public class DungeonContext {
     @Getter @Setter
     private String dungeonName;
     @Getter
-    private final World world;
-    @Getter
-    private final UWorld uworld;
+    private final UWorld world;
 
     @Getter
     private final MapPlayerProcessor mapPlayerMarkerProcessor;
@@ -124,14 +121,13 @@ public class DungeonContext {
     private final Vector2d doorOffset;
     private final VectorI3D door;
 
-    public DungeonContext(String dungeonName,  UWorld uworld) {
-        this(dungeonName, uworld, FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset());
+    public DungeonContext(String dungeonName,  UWorld world) {
+        this(dungeonName, world, FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset());
     }
-    public DungeonContext(String dungeonName,UWorld uworld, PathfindPreset preset) {
+    public DungeonContext(String dungeonName, UWorld world, PathfindPreset preset) {
         this.dungeonName = dungeonName;
-        this.uworld = uworld;
+        this.world = world;
         this.preset = preset;
-        this.world = null;
 
         recorder.createEvent(new DungeonNodataEvent("DUNGEON_CONTEXT_CREATION"));
         mapPlayerMarkerProcessor = new MapPlayerProcessor(this);
@@ -144,8 +140,8 @@ public class DungeonContext {
             throw new IllegalStateException("No door finder found");
         }
 
-        doorOffset = doorFinder.findDoorOffset(uworld, getDungeonName());
-        door = doorFinder.findDoor(uworld, getDungeonName());
+        doorOffset = doorFinder.findDoorOffset(world, getDungeonName());
+        door = doorFinder.findDoor(world, getDungeonName());
 
         if (doorOffset == null || door == null) throw new IllegalStateException("?");
 
@@ -167,7 +163,7 @@ public class DungeonContext {
             recorder.createEvent(new DungeonNodataEvent("BOSSROOM_ENTER"));
             DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(getDungeonName());
             if (doorFinder != null) {
-                bossfightProcessor = doorFinder.createBossfightProcessor(uworld, getDungeonName());
+                bossfightProcessor = doorFinder.createBossfightProcessor(world, getDungeonName());
             } else {
                 ChatTransmitter.sendDebugChat("Error:: Null Data Providier");
             }

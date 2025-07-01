@@ -19,32 +19,31 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.Slot;
+import kr.syeyoung.modapi.gui.UContainerChest;
+import kr.syeyoung.modapi.gui.UContainerSlot;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class WhatStartsWithSolutionProvider implements TerminalSolutionProvider{
     @Override
-    public TerminalSolution provideSolution(ContainerChest chest, List<Slot> clicked) {
-        String that = chest.getLowerChestInventory().getName().replace("What starts with: '", "").replace("'?", "").trim().toLowerCase();
+    public TerminalSolution provideSolution(UContainerChest chest) {
+        String that = chest.getName().replace("What starts with: '", "").replace("'?", "").trim().toLowerCase();
 
         TerminalSolution ts = new TerminalSolution();
-        ts.setCurrSlots(new ArrayList<Slot>());
-        for (Slot inventorySlot : chest.inventorySlots) {
-            if (inventorySlot.inventory != chest.getLowerChestInventory()) continue;
-            if (inventorySlot.getHasStack() && inventorySlot.getStack() != null && !inventorySlot.getStack().isItemEnchanted() ) {
-                String name = TextUtils.stripColor(inventorySlot.getStack().getDisplayName()).toLowerCase();
+        ts.setCurrSlots(new ArrayList());
+        for (int slot = 0; slot< chest.getChestContainerSize(); slot++) {
+            UContainerSlot slot1 = chest.getChestSlotAt(slot);
+            if (slot1 != null && slot1.getItemStack() != null && !slot1.getItemStack().isItemEnchanted() ) {
+                String name = TextUtils.stripColor(slot1.getItemStack().getDisplayName()).toLowerCase();
                 if (name.startsWith(that))
-                    ts.getCurrSlots().add(inventorySlot);
+                    ts.getCurrSlots().add(slot);
             }
         }
         return ts;
     }
 
     @Override
-    public boolean isApplicable(ContainerChest chest) {
-        return chest.getLowerChestInventory().getName().startsWith("What starts with: '");
+    public boolean isApplicable(UContainerChest chest) {
+        return chest.getName().startsWith("What starts with: '");
     }
 }

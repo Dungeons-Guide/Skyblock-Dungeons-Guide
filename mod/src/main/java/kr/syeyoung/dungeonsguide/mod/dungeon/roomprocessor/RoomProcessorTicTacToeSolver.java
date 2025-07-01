@@ -50,7 +50,7 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
     // -1 com, 1 pla, 0 emp
     private byte[][] buildBoardState() {
         byte[][] board = new byte[3][3];
-        UWorld w= getDungeonRoom().getContext().getUworld();
+        UWorld w= getDungeonRoom().getContext().getWorld();
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
                 OffsetPoint op = this.board.getOffsetPointList().get(x * 3 + y);
@@ -60,7 +60,7 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
                     board[y][x] = 0;
                 } else if (b.isOf(BlockType.AIR)){
                     AABB abab = new AABB(bpos.getX() , bpos.getY(), bpos.getZ(), bpos.getX() +1, bpos.getY() +1, bpos.getZ() +1);
-                    List<UEntity> frames = getDungeonRoom().getContext().getUworld().getEntitiesWithinAabb(EntityType.ITEM_FRAME, abab);
+                    List<UEntity> frames = getDungeonRoom().getContext().getWorld().getEntitiesWithinAabb(EntityType.ITEM_FRAME, abab);
                     if (frames.isEmpty()) board[y][x] = 0;
                     else {
                         UItemStack displayedItem = ((UEntityItemFrame)frames.get(0)).getItem();
@@ -68,7 +68,7 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
                             board[y][x] = 0;
                             continue;
                         }
-                        UMapData mapData = getDungeonRoom().getContext().getUworld().getMapData(displayedItem);
+                        UMapData mapData = getDungeonRoom().getContext().getWorld().getMapData(displayedItem);
                         byte center = mapData.get(64, 64);
                         if (center == 114)
                             board[y][x] = -1;

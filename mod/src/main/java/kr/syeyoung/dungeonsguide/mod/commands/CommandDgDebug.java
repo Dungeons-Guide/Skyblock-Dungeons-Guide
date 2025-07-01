@@ -67,7 +67,6 @@ import kr.syeyoung.modapi.world.BlockType;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.GameSettings;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -240,7 +239,7 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug mockdungeonstart {time}")
     public void mockDungeonStartCommand(int time) {
-        if (!Minecraft.getMinecraft().isSingleplayer()) {
+        if (!ModAPI.getAPI().isSinglePlayer()) {
             ChatTransmitter.addToQueue("This only works in singlepauer", false);
             return;
         }
@@ -1394,11 +1393,11 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug fullbright {gamma}")
     public void fullBrightCommand(int gamma) {
-        Minecraft.getMinecraft().gameSettings.setOptionFloatValue(GameSettings.Options.GAMMA, gamma);
+        ModAPI.getAPI().getGameSettings().setGamma(gamma);
     }
     @DGCommand("dgdebug fullbright")
     public void fullBright() {
-        Minecraft.getMinecraft().gameSettings.setOptionFloatValue(GameSettings.Options.GAMMA, 1000);
+        ModAPI.getAPI().getGameSettings().setGamma(1000);
     }
 
     @DGCommand("dgdebug pfall")

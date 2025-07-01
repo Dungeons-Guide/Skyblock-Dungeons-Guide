@@ -65,7 +65,7 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
     public void tick() {
         super.tick();
         if (solutionBuilt) return;
-        IBlockAccessible w = getChamber().getRoom().getContext().getUworld();
+        IBlockAccessible w = getChamber().getRoom().getContext().getWorld();
 
         if ((c1 = w.getBlockStateAt(b1p)) == w1 && s1t < 7) {
             int semi = match(getChamber().getEntityAt(EntityType.ARMOR_STAND,b1p.add(0, 1, 0)));

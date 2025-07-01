@@ -69,7 +69,7 @@ public class BDChamber {
         return getEntityAt(entity, pos);
     }
     public <T extends UEntity> T getEntityAt(EntityType entity, final VectorI3D pos) {
-        List<UEntity> entities = room.getContext().getUworld().getEntitiesWithinAabb(entity, new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1,pos.getY()+1, pos.getZ()+1));
+        List<UEntity> entities = room.getContext().getWorld().getEntitiesWithinAabb(entity, new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1,pos.getY()+1, pos.getZ()+1));
         if (entities.size() == 0) return null;
 
         for (UEntity uEntity : entities) {

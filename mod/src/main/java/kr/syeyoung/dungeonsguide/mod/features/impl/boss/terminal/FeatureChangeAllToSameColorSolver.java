@@ -23,16 +23,17 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.gui.UContainer;
+import kr.syeyoung.modapi.gui.UContainerChest;
+import kr.syeyoung.modapi.gui.UContainerSlot;
+import kr.syeyoung.modapi.item.Item;
+import kr.syeyoung.modapi.util.EnumDyeColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Blocks;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -56,8 +57,8 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
         if (!isEnabled()) return;
         isCorrectGui = false;
         if (event.gui instanceof GuiChest) {
-            ContainerChest cc = (ContainerChest) ((GuiChest) event.gui).inventorySlots;
-            if (cc.getLowerChestInventory().getName().equals("Change all to same color!")) {
+            UContainerChest cc = ModAPI.getAPI().extractContainerChest(event.gui);
+            if (cc.getName().equals("Change all to same color!")) {
                 isCorrectGui = true;
             }
         }
@@ -71,24 +72,27 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
             isCorrectGui = false;
             return;
         }
-        ContainerChest cc = (ContainerChest) ((GuiChest) Minecraft.getMinecraft().currentScreen).inventorySlots;
+
+        UContainer cc2 = ModAPI.getAPI().getPlayer().getOpenContainer();
+        if (!(cc2 instanceof UContainerChest)) return;
+        UContainerChest cc = (UContainerChest) cc2;
         int[] currSlot = new int[9];
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
-                Slot toChk = cc.getSlot(y * 9 + x + 12);
-                if (toChk.getHasStack() && toChk.getStack() != null &&
-                        toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane)) {
-                    int meta = toChk.getStack().getItemDamage();
+                UContainerSlot toChk = cc.getChestSlotAt(y * 9 + x + 12);
+                if (toChk.getItemStack() != null&&
+                        toChk.getItemStack().getItem() == Item.STAINED_GLASS_PANE) {
+                    EnumDyeColor meta = toChk.getItemStack().getItemColor();
                     int idx = y * 3 + x;
-                    if (meta == EnumDyeColor.RED.getMetadata()) {
+                    if (meta == EnumDyeColor.RED) {
                         currSlot[idx] = 0;
-                    } else if (meta == EnumDyeColor.ORANGE.getMetadata()) {
+                    } else if (meta == EnumDyeColor.ORANGE) {
                         currSlot[idx] = 1;
-                    } else if (meta == EnumDyeColor.YELLOW.getMetadata()) {
+                    } else if (meta == EnumDyeColor.YELLOW) {
                         currSlot[idx] = 2;
-                    } else if (meta == EnumDyeColor.GREEN.getMetadata()) {
+                    } else if (meta == EnumDyeColor.GREEN) {
                         currSlot[idx] = 3;
-                    } else if (meta == EnumDyeColor.BLUE.getMetadata()) {
+                    } else if (meta == EnumDyeColor.BLUE) {
                         currSlot[idx] = 4;
                     }
                 }
@@ -145,9 +149,12 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
         if (solution != null) {
             int i = 222;
             int j = i - 108;
-            ContainerChest container = (ContainerChest) (((GuiChest) Minecraft.getMinecraft().currentScreen).inventorySlots);
-            IInventory inventory  = container.getLowerChestInventory();
-            int ySize = j + (inventory.getSizeInventory() / 9) * 18;
+
+            UContainer cc2 = ModAPI.getAPI().getPlayer().getOpenContainer();
+            if (!(cc2 instanceof UContainerChest)) return;
+            UContainerChest cc = (UContainerChest) cc2;
+
+            int ySize = j + (cc.getChestContainerSize() / 9) * 18;
             int left = (rendered.gui.width - 176) / 2;
             int top = (rendered.gui.height - ySize ) / 2;
             GlStateManager.pushMatrix();
@@ -160,9 +167,9 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
                 for (int x = 0; x < 3; x++) {
                     int slotId = y * 9 + x + 12;
                     int clicks = solution[y * 3 + x];
-                    Slot currSlot = container.getSlot(slotId);
-                    int rx = currSlot.xDisplayPosition;
-                    int ry = currSlot.yDisplayPosition;
+                    UContainerSlot currSlot = cc.getChestSlotAt(slotId);
+                    int rx = currSlot.getX();
+                    int ry = currSlot.getY();
                     Minecraft.getMinecraft().fontRendererObj
                             .drawString(String.valueOf(clicks), rx, ry, 0xFF00FF00);
                 }

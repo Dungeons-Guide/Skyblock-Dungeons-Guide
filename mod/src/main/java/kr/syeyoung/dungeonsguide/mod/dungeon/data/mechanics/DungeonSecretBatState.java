@@ -87,7 +87,7 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
         Vector3D pos = new Vector3D(bpos);
         for (Map.Entry<Integer, Vector3D> integerVec3Entry : DungeonActionContext.getSpawnLocation().entrySet()) {
             if (integerVec3Entry.getValue().distanceSq(pos) < 100) {
-                UEntity e = dungeonRoom.getContext().getUworld().getEntityById(integerVec3Entry.getKey());
+                UEntity e = dungeonRoom.getContext().getWorld().getEntityById(integerVec3Entry.getKey());
                 if (e == null) continue;
                 if (e.getEntityType() != EntityType.BAT) continue;
                 if (e.isDead()) continue;

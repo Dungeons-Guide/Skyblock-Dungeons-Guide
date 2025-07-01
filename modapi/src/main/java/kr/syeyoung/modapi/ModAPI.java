@@ -11,6 +11,7 @@ import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.item.IItemStackRegistry;
 import kr.syeyoung.modapi.profiler.UProfiler;
 import kr.syeyoung.modapi.resources.UResourceManager;
+import kr.syeyoung.modapi.settings.UGameSettings;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.world.IBlockRegistry;
@@ -19,6 +20,8 @@ import kr.syeyoung.modapi.world.UWorld;
 import net.kyori.adventure.text.Component;
 
 public interface ModAPI {
+    String getKeyDisplayString(int currentKey);
+
     Platform getPlatform();
 
     EventBus getEventBus();
@@ -71,4 +74,10 @@ public interface ModAPI {
     Component getHoveredComponent();
 
     UProfiler getProfiler();
+
+    UGameSettings getGameSettings();
+
+    void disableDefaultChatLogger();
+
+    boolean isCallingFromMinecraftThread();
 }

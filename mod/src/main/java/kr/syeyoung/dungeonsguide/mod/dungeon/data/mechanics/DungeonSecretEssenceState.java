@@ -70,11 +70,11 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
     private int nearbyTicks = 0;
     public void tick(DungeonRoom dungeonRoom) {
         VectorI3D pos = data.secretPoint.getBlockPos(dungeonRoom);
-        UBlockState blockState = dungeonRoom.getContext().getUworld().getBlockStateAt(pos);
+        UBlockState blockState = dungeonRoom.getContext().getWorld().getBlockStateAt(pos);
         if (blockState.isOf(BlockType.SKULL)) {
             essenceWasThere = true;
-            List<UEntity> entities = dungeonRoom.getContext().getUworld().getEntitiesWithinAabb(EntityType.ARMOR_STAND, new AABB(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
-            UTileEntity tileEntity = dungeonRoom.getContext().getUworld().getTileEntityAt(pos);
+            List<UEntity> entities = dungeonRoom.getContext().getWorld().getEntitiesWithinAabb(EntityType.ARMOR_STAND, new AABB(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
+            UTileEntity tileEntity = dungeonRoom.getContext().getWorld().getTileEntityAt(pos);
 
             if (ModAPI.getAPI().getPlayer().getPosition().distanceSq(pos) < 25) {
                 if (tileEntity instanceof UTileEntitySkull) {
