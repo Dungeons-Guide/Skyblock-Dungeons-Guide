@@ -3,6 +3,7 @@
 .vscode
 
 eclipse/*
+.DS_Store
 
 build/*
 jars/*
