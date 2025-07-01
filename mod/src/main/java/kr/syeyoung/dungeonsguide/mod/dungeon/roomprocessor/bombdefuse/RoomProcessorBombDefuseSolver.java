@@ -44,6 +44,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.event.events.ActionBarReceivedEvent;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
@@ -54,7 +55,6 @@ import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import org.apache.commons.codec.binary.Base64;
 
@@ -306,7 +306,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void actionbarReceived(IChatComponent chat) {
+    public void actionbarReceived(ActionBarReceivedEvent chat) {
         super.actionbarReceived(chat);
         if (bugged) return;
 

@@ -32,7 +32,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Singular;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -168,7 +167,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     }
 
     @Override
-    public void actionbarReceived(IChatComponent chat) {}
+    public void actionbarReceived(ActionBarReceivedEvent chat) {}
 
     @Override
     public void tick() {}

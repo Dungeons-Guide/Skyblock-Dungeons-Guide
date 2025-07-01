@@ -74,11 +74,9 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -369,11 +367,12 @@ public class DungeonListener {
         }
     }
 
-    @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGHEST)
-    public void onChatReceived(ClientChatReceivedEvent clientChatReceivedEvent) {
+    @kr.syeyoung.modapi.event.SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FIRST)
+    public void onActionBarReceived(ActionBarReceivedEvent receivedEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        if (clientChatReceivedEvent.type != 2 && clientChatReceivedEvent.message.getFormattedText().contains("§6> §e§lEXTRA STATS §6<")) {
+        String format = TextUtils.getNearestFormattedText(receivedEvent.chat);
+        if (format.contains("§6> §e§lEXTRA STATS §6<")) {
             ModAPI.getAPI().getEventBus().fireEvent(new DungeonEndedEvent());
         }
 
@@ -384,9 +383,7 @@ public class DungeonListener {
             UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
 
             if (context.getBossfightProcessor() != null) {
-                if (clientChatReceivedEvent.type == 2) {
-                    context.getBossfightProcessor().actionbarReceived(clientChatReceivedEvent.message);
-                }
+                context.getBossfightProcessor().actionbarReceived(receivedEvent);
             }
             if (context.getScaffoldParser() != null) {
                 Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
@@ -396,15 +393,14 @@ public class DungeonListener {
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 if (dungeonRoom != null) {
                     if (dungeonRoom.getRoomProcessor() != null) {
-                        if (clientChatReceivedEvent.type == 2) {
-                            dungeonRoom.getRoomProcessor().actionbarReceived(clientChatReceivedEvent.message);
-                            roomProcessor = dungeonRoom.getRoomProcessor();
-                        }
+                        dungeonRoom.getRoomProcessor().actionbarReceived(receivedEvent);
+                        roomProcessor = dungeonRoom.getRoomProcessor();
                     }
                 }
             }
         }
     }
+
 
 
     @SubscribeEvent

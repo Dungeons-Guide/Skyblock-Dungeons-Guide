@@ -60,7 +60,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -180,12 +179,13 @@ public class GeneralRoomProcessor implements RoomProcessor {
     private int stack = 0;
     private long secrets2 = 0;
     @Override
-    public void actionbarReceived(IChatComponent chat) {
+    public void actionbarReceived(ActionBarReceivedEvent chat) {
         if (!SkyblockStatus.isOnDungeon()) return;
+        String format = TextUtils.getNearestFormattedText(chat.chat);
         if (dungeonRoom.getTotalSecrets() == -1) {
-            ChatTransmitter.sendDebugChat(chat.getFormattedText().replace('§', '&') + " - received");
+            ChatTransmitter.sendDebugChat(format.replace('§', '&') + " - received");
         }
-        if (!chat.getFormattedText().contains("/")) return;
+        if (!format.contains("/")) return;
         VectorI3D pos = ModAPI.getAPI().getPlayer().getPosition();
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
@@ -198,17 +198,16 @@ public class GeneralRoomProcessor implements RoomProcessor {
         }
         VectorI3D pos2 = dungeonRoom.getRoomBounds().getMin().add(5, 0, 5);
 
-        String text = chat.getFormattedText();
-        int secretsIndex = text.indexOf("Secrets");
+        int secretsIndex = format.indexOf("Secrets");
         int secrets = 0;
         if (secretsIndex != -1) {
             int theIndex = 0;
             for (int i = secretsIndex; i >= 0; i--) {
-                if (text.startsWith("§7", i)) {
+                if (format.startsWith("§7", i)) {
                     theIndex = i;
                 }
             }
-            String it = text.substring(theIndex + 2, secretsIndex - 1);
+            String it = format.substring(theIndex + 2, secretsIndex - 1);
      
             secrets = Integer.parseInt(it.split("/")[1]);
         }
