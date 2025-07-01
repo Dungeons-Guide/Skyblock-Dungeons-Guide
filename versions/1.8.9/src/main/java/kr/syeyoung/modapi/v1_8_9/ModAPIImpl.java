@@ -13,6 +13,7 @@ import kr.syeyoung.modapi.event.listenerlist.BasicEventBus;
 import kr.syeyoung.modapi.fakeserver.FakeServerUtils;
 import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.item.IItemStackRegistry;
+import kr.syeyoung.modapi.profiler.UProfiler;
 import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
@@ -25,6 +26,7 @@ import kr.syeyoung.modapi.v1_8_9.fakeserver.BlockAccessibleServerLaunchUtils;
 import kr.syeyoung.modapi.v1_8_9.gui.UContainerChestImpl;
 import kr.syeyoung.modapi.v1_8_9.item.IItemStackRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
+import kr.syeyoung.modapi.v1_8_9.profiler.UProfilerImpl;
 import kr.syeyoung.modapi.v1_8_9.resources.DGTexturePack;
 import kr.syeyoung.modapi.v1_8_9.resources.UResourceManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.util.CustomNetworkPlayerInfoUnloader;
@@ -87,6 +89,12 @@ public class ModAPIImpl implements ModAPI {
 
     public UResourceManager getResourceManager() {
         return new UResourceManagerImpl(Minecraft.getMinecraft().getResourceManager());
+    }
+
+
+    private UProfiler profiler = new UProfilerImpl(Minecraft.getMinecraft().mcProfiler);
+    public UProfiler getProfiler() {
+        return profiler;
     }
 
 

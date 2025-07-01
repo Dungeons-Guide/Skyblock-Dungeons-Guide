@@ -56,6 +56,7 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.ListenerPriority;
 import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.profiler.UProfiler;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UChunk;
 import lombok.Getter;
@@ -71,7 +72,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.profiler.Profiler;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -105,7 +105,7 @@ public class DungeonListener {
         if (!SkyblockStatus.isOnDungeon()) return;
 
 
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        UProfiler profiler = ModAPI.getAPI().getProfiler();
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
@@ -255,7 +255,7 @@ public class DungeonListener {
             return;
 
         if (!SkyblockStatus.isOnDungeon()) return;
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        UProfiler profiler = ModAPI.getAPI().getProfiler();
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context != null) {
@@ -398,7 +398,7 @@ public class DungeonListener {
         if (!SkyblockStatus.isOnDungeon()) return;
         try {
 
-            Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+            UProfiler profiler = ModAPI.getAPI().getProfiler();
 
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (context == null) {

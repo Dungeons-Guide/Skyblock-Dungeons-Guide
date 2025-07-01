@@ -9,6 +9,7 @@ import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.fakeserver.FakeServerUtils;
 import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.item.IItemStackRegistry;
+import kr.syeyoung.modapi.profiler.UProfiler;
 import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
@@ -68,4 +69,6 @@ public interface ModAPI {
     IMapUtils getMapUtils();
 
     Component getHoveredComponent();
+
+    UProfiler getProfiler();
 }

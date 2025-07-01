@@ -1389,7 +1389,7 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug clearprofile")
     public void clearProfileCommand() {
-        Minecraft.getMinecraft().mcProfiler.clearProfiling();
+        ModAPI.getAPI().getProfiler().clearprofiling();
     }
 
     @DGCommand("dgdebug fullbright {gamma}")
