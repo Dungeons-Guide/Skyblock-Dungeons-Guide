@@ -96,7 +96,7 @@ public class FeatureDungeonMilestone extends TextHUDFeature {
         if (!SkyblockStatus.isOnDungeon()) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return;
-        String txt = actionBarReceivedEvent.getFormattedText();
+        String txt = actionBarReceivedEvent.getOriginalFormattedText();
         if (milestone_pattern.matcher(txt).matches()) {
             milestoneReached.add(new String[] {
                     TextUtils.formatTime(FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed()),

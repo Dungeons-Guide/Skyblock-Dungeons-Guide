@@ -33,7 +33,7 @@ public class FeatureAutoAcceptReparty extends SimpleFeature {
 
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onChat(DGChatReceivedEvent clientChatReceivedEvent) {
-        String msg = clientChatReceivedEvent.getFormattedText();
+        String msg = clientChatReceivedEvent.getOriginalFormattedText();
         if (msg.endsWith("§ehas disbanded the party!")) {
             lastDisband = null;
             String[] texts = TextUtils.stripColor(msg).split(" ");

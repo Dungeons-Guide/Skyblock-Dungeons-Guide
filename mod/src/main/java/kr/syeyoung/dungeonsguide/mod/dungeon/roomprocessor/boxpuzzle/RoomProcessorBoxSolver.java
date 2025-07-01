@@ -320,7 +320,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     @Override
     public void chatReceived(DGChatReceivedEvent chat) {
         if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
-        if (chat.getFormattedText().toLowerCase().contains("recalc")) {
+        if (chat.getOriginalFormattedText().toLowerCase().contains("recalc")) {
             if (calcDone) {
                 calcReq = true;
                 ChatTransmitter.addToQueue("§eDungeons Guide :::: Recalculating Route...");

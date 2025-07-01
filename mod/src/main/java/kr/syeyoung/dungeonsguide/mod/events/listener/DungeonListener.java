@@ -322,7 +322,7 @@ public class DungeonListener {
     public void onDGChatReceived(DGChatReceivedEvent receivedEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        String format = receivedEvent.getFormattedText();
+        String format = receivedEvent.getOriginalFormattedText();
         if (TextUtils.contains(format, "§6> §e§lEXTRA STATS §6<")) {
             ModAPI.getAPI().getEventBus().fireEvent(new DungeonEndedEvent());
         }

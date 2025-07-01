@@ -111,7 +111,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
         if (goldenPathsolution == null) return;
         ChatProcessor.INSTANCE.addToChatQueue("/pc $DG-BDGP "+goldenPathsolution, null, false);
 
-        DGChatReceivedEvent text = new DGChatReceivedEvent("$DG-BDGP "+goldenPathsolution, Component.text("$DG-BDGP "+goldenPathsolution), false);
+        DGChatReceivedEvent text = new DGChatReceivedEvent("$DG-BDGP "+goldenPathsolution, Component.text("$DG-BDGP "+goldenPathsolution), Component.text("$DG-BDGP "+goldenPathsolution), false);
         for (RoomProcessorBombDefuseSolver.ChamberSet ch: getSolver().getChambers()) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
                 ch.getLeft().getProcessor().chatReceived(text);
@@ -123,8 +123,8 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void chatReceived(DGChatReceivedEvent chat) {
         super.chatReceived(chat);
-        if (chat.getFormattedText().contains("$DG-BDGP ")) {
-            String data = chat.getFormattedText().substring(chat.getFormattedText().indexOf("$DG-BDGP "));
+        if (chat.getOriginalFormattedText().contains("$DG-BDGP ")) {
+            String data = chat.getOriginalFormattedText().substring(chat.getOriginalFormattedText().indexOf("$DG-BDGP "));
             String actual = TextUtils.stripColor(data).trim().split(" ")[1].trim();
 
             blocksolution.clear();

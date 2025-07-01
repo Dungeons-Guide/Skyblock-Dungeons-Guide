@@ -236,7 +236,7 @@ public class DungeonContext {
     private boolean defeated = false;
 
     public void onChat(DGChatReceivedEvent event) {
-        String formatted = event.getFormattedText();
+        String formatted = event.getOriginalFormattedText();
         if (formatted.contains("$DG-Comm")) {
             event.setCanceled(true);
             String data = formatted.substring(formatted.indexOf("$DG-Comm"));

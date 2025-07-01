@@ -158,7 +158,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
         for (String nextPhase : currentPhase.getNextPhases()) {
             PhaseData phaseData = phases.get(nextPhase);
             if (phaseData == null) continue;
-            if (phaseData.signatureMsgs.contains(chat.getFormattedText().replace(" ", ""))) {
+            if (phaseData.signatureMsgs.contains(chat.getOriginalFormattedText().replace(" ", ""))) {
                     currentPhase = phaseData;
                     onPhaseChange();
                     return;

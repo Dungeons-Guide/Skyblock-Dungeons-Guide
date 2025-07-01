@@ -8,8 +8,9 @@ import net.kyori.adventure.text.Component;
 
 @Data @AllArgsConstructor
 public class DGChatReceivedEvent extends UEvent implements Cancelable {
-    private final String formattedText;
+    private final String originalFormattedText;
     private final Component originalComponent;
+    private Component chat;
 
 
     private boolean canceled;

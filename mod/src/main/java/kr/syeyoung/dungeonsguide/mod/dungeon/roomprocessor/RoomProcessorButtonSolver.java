@@ -81,7 +81,7 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
         if (clickedButton == -1) return;
         if (clicked + 500 < System.currentTimeMillis()) return;
 
-        String msg = chat.getFormattedText();
+        String msg = chat.getOriginalFormattedText();
         if (TextUtils.compareString(msg, "§cThis button doesn't seem to do anything...")) {
             result[clickedButton] = -1;
             clickedButton = -1;

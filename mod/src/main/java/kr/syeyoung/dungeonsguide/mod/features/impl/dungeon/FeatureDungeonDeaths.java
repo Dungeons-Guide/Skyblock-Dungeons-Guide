@@ -142,7 +142,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return;
 
-        String txt = clientChatReceivedEvent.getFormattedText();
+        String txt = clientChatReceivedEvent.getOriginalFormattedText();
         Matcher m = deathPattern.matcher(txt);
         if (m.matches()) {
             String nickname = TextUtils.stripColor(m.group(1));

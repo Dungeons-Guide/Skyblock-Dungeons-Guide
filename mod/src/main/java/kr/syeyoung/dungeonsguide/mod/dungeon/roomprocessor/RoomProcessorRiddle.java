@@ -55,7 +55,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
     public void chatReceived(DGChatReceivedEvent chat) {
         super.chatReceived(chat);
         if (!FeatureRegistry.SOLVER_RIDDLE.isEnabled()) return;
-        String ch2 = chat.getFormattedText();
+        String ch2 = chat.getOriginalFormattedText();
         if (!TextUtils.startsWith(ch2, "§e[NPC] ")) {
             return;
         }

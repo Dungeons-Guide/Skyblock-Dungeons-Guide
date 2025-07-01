@@ -111,6 +111,11 @@ public class ModAPIImpl implements ModAPI {
             return true;
         }
 
+        @Override
+        public boolean supportCopyClickEvent() {
+            return false;
+        }
+
         public static final PlatformImpl INST = new PlatformImpl();
     }
 

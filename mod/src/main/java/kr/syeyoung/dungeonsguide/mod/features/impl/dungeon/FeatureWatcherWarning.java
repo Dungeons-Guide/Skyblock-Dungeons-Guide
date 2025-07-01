@@ -58,7 +58,7 @@ public class FeatureWatcherWarning extends TextHUDFeature {
 
     @DGEventHandler()
     public void onChat(DGChatReceivedEvent clientChatReceivedEvent) {
-        if (clientChatReceivedEvent.getFormattedText().equals("§c[BOSS] The Watcher§f: That will be enough for now."))  {
+        if (clientChatReceivedEvent.getOriginalFormattedText().equals("§c[BOSS] The Watcher§f: That will be enough for now."))  {
             warning = System.currentTimeMillis() + 2500;
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (context ==null) return;

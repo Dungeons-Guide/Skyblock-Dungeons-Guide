@@ -309,7 +309,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
     }
     @DGEventHandler()
     public void onChat(DGChatReceivedEvent clientChatReceivedEvent) {
-        String message = clientChatReceivedEvent.getFormattedText();
+        String message = clientChatReceivedEvent.getOriginalFormattedText();
         if (message.equals("§aYour §9Bonzo's Mask §asaved your life!")) {
             used("Clownin' Around");
         } else {

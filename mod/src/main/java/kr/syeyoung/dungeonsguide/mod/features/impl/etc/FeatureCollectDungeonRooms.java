@@ -259,7 +259,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
     @DGEventHandler(ignoreDisabled = true)
     public void onChat(DGChatReceivedEvent event) {
-        if (!event.getFormattedText().contains(":")) {
+        if (!event.getOriginalFormattedText().contains(":")) {
             // this is not user message.
             if (Minecraft.getMinecraft().thePlayer == null) return;
             Vector3D pos = ModAPI.getAPI().getPlayer().getPositionVector();

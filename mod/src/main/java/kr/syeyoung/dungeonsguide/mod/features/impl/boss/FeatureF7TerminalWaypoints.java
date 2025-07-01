@@ -186,7 +186,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
     @DGEventHandler
     public void onMessage(DGChatReceivedEvent event) {
-        String txt = event.getFormattedText();
+        String txt = event.getOriginalFormattedText();
         String player = TextUtils.stripColor(txt.split(" ")[0]);
         if (txt.contains("§a completed a device! (§c")) {
             UEntityPlayer player1 = ModAPI.getAPI().getWorld().getUPlayerEntityByName(player);

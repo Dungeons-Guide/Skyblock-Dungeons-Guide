@@ -67,7 +67,7 @@ public class FeatureDisableMessage extends SimpleFeature {
     @DGEventHandler()
     public void onChat(DGChatReceivedEvent clientChatReceivedEvent) {
         if (!SkyblockStatus.isOnSkyblock()) return;
-        String msg = clientChatReceivedEvent.getFormattedText();
+        String msg = clientChatReceivedEvent.getOriginalFormattedText();
         for (MessageData md:PRE_DEFINED) {
             if (this.<Boolean>getParameter(md.key).getValue() && md.pattern.matcher(msg).matches()) {
                 clientChatReceivedEvent.setCanceled(true);

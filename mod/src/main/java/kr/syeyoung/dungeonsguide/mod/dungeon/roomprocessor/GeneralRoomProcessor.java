@@ -141,7 +141,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void chatReceived(DGChatReceivedEvent chat) {
-        String format = chat.getFormattedText();
+        String format = chat.getOriginalFormattedText();
         if (lastChest != null && format.equals("§cThis chest has already been searched!")) {
             for (DungeonMechanicState mechanic : getDungeonRoom().getMechanics().values()) {
                 if (mechanic instanceof DungeonSecretChestState) {

@@ -6,4 +6,5 @@ public interface Platform {
     String getPlatformVersion();
 
     boolean isOldChat();
+    boolean supportCopyClickEvent();
 }

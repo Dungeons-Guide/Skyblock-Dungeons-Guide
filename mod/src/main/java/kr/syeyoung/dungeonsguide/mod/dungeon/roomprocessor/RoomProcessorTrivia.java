@@ -54,7 +54,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     public void chatReceived(DGChatReceivedEvent chat) {
         super.chatReceived(chat);
         if (!FeatureRegistry.SOLVER_KAHOOT.isEnabled()) return;
-        String ch2 = chat.getFormattedText();
+        String ch2 = chat.getOriginalFormattedText();
         if (parseDialog) {
             parseDialog = false;
             parseDialog();

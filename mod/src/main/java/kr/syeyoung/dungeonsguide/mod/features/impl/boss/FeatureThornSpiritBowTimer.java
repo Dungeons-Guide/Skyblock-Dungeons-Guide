@@ -70,7 +70,7 @@ public class FeatureThornSpiritBowTimer extends TextHUDFeature {
     @DGEventHandler()
     public void onChat(DGChatReceivedEvent event) {
         if (!(SkyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
-        String text = event.getFormattedText();
+        String text = event.getOriginalFormattedText();
         if (text.equals("§a§lThe §5§lSpirit Bow §a§lhas dropped!")) {
             time = System.currentTimeMillis() + 16000;
         } else if (text.startsWith("§c[BOSS] Thorn§f: ")) {

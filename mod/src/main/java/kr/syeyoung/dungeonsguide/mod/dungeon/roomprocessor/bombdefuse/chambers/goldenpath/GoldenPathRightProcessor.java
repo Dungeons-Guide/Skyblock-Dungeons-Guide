@@ -66,8 +66,8 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void chatReceived(DGChatReceivedEvent chat) {
         super.chatReceived(chat);
-        if (chat.getFormattedText().contains("$DG-BDGP ")) {
-            String data = chat.getFormattedText().substring(chat.getFormattedText().indexOf("$DG-BDGP"));
+        if (chat.getOriginalFormattedText().contains("$DG-BDGP ")) {
+            String data = chat.getOriginalFormattedText().substring(chat.getOriginalFormattedText().indexOf("$DG-BDGP"));
             String actual = TextUtils.stripColor(data).trim().split(" ")[1].trim();
 
             blocksolution.clear();
