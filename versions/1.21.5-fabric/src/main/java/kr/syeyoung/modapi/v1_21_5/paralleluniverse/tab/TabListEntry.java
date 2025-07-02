@@ -24,6 +24,8 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import kr.syeyoung.modapi.util.GameMode;
+import kr.syeyoung.modapi.v1_21_5.paralleluniverse.teams.Team;
+import kr.syeyoung.modapi.v1_21_5.paralleluniverse.teams.TeamManager;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.Team;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.TeamManager;
 import lombok.Getter;
@@ -32,6 +34,7 @@ import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
+import net.minecraft.text.Text;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 
@@ -48,14 +51,14 @@ public class TabListEntry implements UTabListEntry {
     @Getter @Setter
     private int ping;
     @Getter
-    private IChatComponent displayName;
+    private Text displayName;
 
     @Getter
     private String formatted;
 
-    public void setDisplayName(IChatComponent displayName) {
+    public void setDisplayName(Text displayName) {
         this.displayName = displayName;
-        formatted = displayName == null ? null : displayName.getFormattedText();
+        formatted = displayName == null ? null : displayName.getString();
     }
 
     public String getEffectiveName() {
@@ -79,8 +82,8 @@ public class TabListEntry implements UTabListEntry {
 
 
     private boolean playerTexturesLoaded = false;
-    private ResourceLocation locationSkin;
-    private ResourceLocation locationCape;
+    private ResourceIdentifier locationSkin;
+    private ResourceIdentifier locationCape;
     private String skinType;
 
 

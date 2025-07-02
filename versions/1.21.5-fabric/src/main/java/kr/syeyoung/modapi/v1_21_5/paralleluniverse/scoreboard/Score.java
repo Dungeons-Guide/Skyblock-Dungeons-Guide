@@ -19,8 +19,8 @@
 package kr.syeyoung.modapi.v1_21_5.paralleluniverse.scoreboard;
 
 import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScore;
-import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.Team;
-import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.TeamManager;
+import kr.syeyoung.modapi.v1_21_5.paralleluniverse.teams.Team;
+import kr.syeyoung.modapi.v1_21_5.paralleluniverse.teams.TeamManager;
 import lombok.Data;
 
 @Data

@@ -1,20 +1,19 @@
 package kr.syeyoung.modapi.v1_21_5.world.entities;
 
-import kr.syeyoung.modapi.v1_8_9.util.NBTUtils;
+import kr.syeyoung.modapi.v1_21_5.util.NBTUtils;
 import kr.syeyoung.modapi.world.UTileEntity;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.nbt.NbtCompound;
 
 public class UTileEntityImpl implements UTileEntity {
-    protected TileEntity delegate;
-    public UTileEntityImpl(TileEntity delegate) {
+    protected BlockEntity delegate;
+    public UTileEntityImpl(BlockEntity delegate) {
         this.delegate = delegate;
     }
 
     public CompoundBinaryTag serialize() {
-        NBTTagCompound compound = new NBTTagCompound();
-        delegate.writeToNBT(compound);
-        return NBTUtils.convertNBT(compound);
+        NbtCompound compound1 = delegate.createNbt(delegate.getWorld().getRegistryManager());
+        return NBTUtils.convertNBT(compound1);
     }
 }

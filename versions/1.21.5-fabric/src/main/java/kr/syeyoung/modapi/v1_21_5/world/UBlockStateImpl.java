@@ -10,22 +10,26 @@ import kr.syeyoung.modapi.world.IBlockAccessible;
 import kr.syeyoung.modapi.world.UBlock;
 import kr.syeyoung.modapi.world.UBlockState;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.LeverBlock;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class UBlockStateImpl implements UBlockState {
-    private IBlockState delegate;
+    private BlockState delegate;
     private UBlockImpl block;
     private BlockStateRegistryImpl registry;
 
     private String id;
-    protected UBlockStateImpl(IBlockState blockState, UBlockImpl block, BlockStateRegistryImpl blockStateRegistry) {
+    protected UBlockStateImpl(BlockState blockState, UBlockImpl block, BlockStateRegistryImpl blockStateRegistry) {
         this.delegate = blockState;
         id = block.getId();
         this.block = block;
@@ -46,7 +50,7 @@ public class UBlockStateImpl implements UBlockState {
     public String serialize() {
         // universal.... id.... :/
 //        return delegat;
-        return Block.getIdFromBlock(delegate.getBlock())+":"+delegate.getBlock().getMetaFromState(delegate);
+        return getLegacyId()+":"+getLegacyMeta();
     }
 
 
@@ -97,19 +101,19 @@ public class UBlockStateImpl implements UBlockState {
     }
 
     @Override
-    public IBlockState getIBlockState() {
+    public BlockState getIBlockState() {
         return delegate;
     }
 
 
 
     private static final ThreadLocal<FakeWorld> fakeWorldGen = ThreadLocal.withInitial(() -> new FakeWorld());
-    private static final ThreadLocal<BlockPos.MutableBlockPos> posGen = ThreadLocal.withInitial(() -> new BlockPos.MutableBlockPos(0,0,0));
+    private static final ThreadLocal<BlockPos.Mutable> posGen = ThreadLocal.withInitial(() -> new BlockPos.Mutable(0,0,0));
     @Override
     public AABB getSelectedBoundingBox(IBlockAccessible blockAccessible, VectorI3D pos) {
         FakeWorld fakeWorld = fakeWorldGen.get();
         fakeWorld.setAccessible(blockAccessible);
-        BlockPos.MutableBlockPos pos2 = posGen.get();
+        BlockPos.Mutable pos2 = posGen.get();
         pos2.set(pos.x, pos.y, pos.z);
         delegate.getBlock().setBlockBoundsBasedOnState(fakeWorld, pos2);
         AxisAlignedBB bb = block.getDelegate().getSelectedBoundingBox(fakeWorld, pos2);
@@ -120,7 +124,7 @@ public class UBlockStateImpl implements UBlockState {
     public AABB getCollisionBoundingBox(IBlockAccessible theWorld, VectorI3D pos) {
         FakeWorld fakeWorld = fakeWorldGen.get();
         fakeWorld.setAccessible(theWorld);
-        BlockPos.MutableBlockPos pos2 = posGen.get();
+        BlockPos.Mutable pos2 = posGen.get();
         pos2.set(pos.x, pos.y, pos.z);
         delegate.getBlock().setBlockBoundsBasedOnState(fakeWorld, pos2);
         AxisAlignedBB bb = block.getDelegate().getCollisionBoundingBox(fakeWorld, pos2, delegate);
@@ -151,11 +155,13 @@ public class UBlockStateImpl implements UBlockState {
 
         FakeWorld fakeWorld = fakeWorldGen.get();
         fakeWorld.setAccessible(worldIn);
-        BlockPos.MutableBlockPos pos2 = posGen.get();
+        BlockPos.Mutable pos2 = posGen.get();
         pos2.set(pos.x, pos.y, pos.z);
 
-        List<AxisAlignedBB> result = listTemp.get();
+        List<Box> result = listTemp.get();
         result.clear();
+//        delegate.getCollisionShape(BlockView).
+
 
         delegate.getBlock().addCollisionBoxesToList(
                 fakeWorld, pos2, delegate,
@@ -194,7 +200,7 @@ public class UBlockStateImpl implements UBlockState {
         return Block.BLOCK_STATE_IDS.get(delegate);
     }
 
-    public IBlockState getDelegate() {
+    public BlockState getDelegate() {
         return delegate;
     }
 }

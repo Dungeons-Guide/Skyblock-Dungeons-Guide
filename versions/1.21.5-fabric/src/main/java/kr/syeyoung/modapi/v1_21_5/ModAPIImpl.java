@@ -1,6 +1,8 @@
 package kr.syeyoung.modapi.v1_21_5;
 
 import com.google.common.collect.Sets;
+import com.google.gson.JsonElement;
+import com.mojang.serialization.JsonOps;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.Platform;
@@ -24,110 +26,131 @@ import kr.syeyoung.modapi.settings.UGameSettings;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.v1_21_5.audio.USoundHandlerImpl;
-import kr.syeyoung.modapi.v1_8_9.audio.USoundHandlerImpl;
-import kr.syeyoung.modapi.v1_8_9.client.renderer.entity.URenderManagerImpl;
-import kr.syeyoung.modapi.v1_8_9.command.CommandManagerImpl;
-import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
-import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerSP;
-import kr.syeyoung.modapi.v1_8_9.fakeserver.BlockAccessibleServerLaunchUtils;
-import kr.syeyoung.modapi.v1_8_9.gui.UContainerChestImpl;
-import kr.syeyoung.modapi.v1_8_9.item.IItemStackRegistryImpl;
-import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
-import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
-import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
-import kr.syeyoung.modapi.v1_8_9.profiler.UProfilerImpl;
-import kr.syeyoung.modapi.v1_8_9.resources.DGTexturePack;
-import kr.syeyoung.modapi.v1_8_9.resources.UResourceManagerImpl;
-import kr.syeyoung.modapi.v1_8_9.resources.UResourcePackRepositoryImpl;
-import kr.syeyoung.modapi.v1_8_9.settings.UGameSettingsImpl;
-import kr.syeyoung.modapi.v1_8_9.util.CustomNetworkPlayerInfoUnloader;
-import kr.syeyoung.modapi.v1_8_9.util.USessionImpl;
-import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
-import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
+import kr.syeyoung.modapi.v1_21_5.command.CommandManagerImpl;
+import kr.syeyoung.modapi.v1_21_5.entity.UEntityDelegateFactory;
+import kr.syeyoung.modapi.v1_21_5.entity.UEntityPlayerSP;
+import kr.syeyoung.modapi.v1_21_5.entity.URenderManagerImpl;
+import kr.syeyoung.modapi.v1_21_5.fakeserver.BlockAccessibleServerLaunchUtils;
+import kr.syeyoung.modapi.v1_21_5.gui.UContainerChestImpl;
+import kr.syeyoung.modapi.v1_21_5.item.IItemStackRegistryImpl;
+import kr.syeyoung.modapi.v1_21_5.map.MapDataManager;
+import kr.syeyoung.modapi.v1_21_5.paralleluniverse.scoreboard.ScoreboardManager;
+import kr.syeyoung.modapi.v1_21_5.paralleluniverse.tab.TabList;
+import kr.syeyoung.modapi.v1_21_5.profiler.UProfilerImpl;
+import kr.syeyoung.modapi.v1_21_5.resources.DGTexturePack;
+import kr.syeyoung.modapi.v1_21_5.resources.UResourceManagerImpl;
+import kr.syeyoung.modapi.v1_21_5.resources.UResourcePackRepositoryImpl;
+import kr.syeyoung.modapi.v1_21_5.settings.UGameSettingsImpl;
+import kr.syeyoung.modapi.v1_21_5.util.CustomNetworkPlayerInfoUnloader;
+import kr.syeyoung.modapi.v1_21_5.util.USessionImpl;
+import kr.syeyoung.modapi.v1_21_5.world.BlockStateRegistryImpl;
+import kr.syeyoung.modapi.v1_21_5.world.UWorldImpl;
 import kr.syeyoung.modapi.world.IBlockAccessible;
 import kr.syeyoung.modapi.world.IBlockRegistry;
 import kr.syeyoung.modapi.world.IMapUtils;
 import kr.syeyoung.modapi.world.UWorld;
+import net.fabricmc.loader.api.FabricLoader;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.json.legacyimpl.NBTLegacyHoverEventSerializer;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.screen.ChatScreen;
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.event.HoverEvent;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.screen.GenericContainerScreenHandler;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraftforge.common.ForgeVersion;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.profiler.Profilers;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.simple.SimpleLogger;
-import org.lwjgl.input.Mouse;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
 public class ModAPIImpl implements ModAPI {
-    Minecraft delegate; // dummy to trick. TODO
 
     public ModAPIImpl() {
     }
 
     public URenderManager getRenderManager() {
-        return new URenderManagerImpl(Minecraft.getMinecraft().getRenderManager());
+        return new URenderManagerImpl(MinecraftClient.getInstance().getEntityRenderDispatcher());
     }
 
     public UEntity getRenderViewEntity() {
-        return Minecraft.getMinecraft().getRenderViewEntity() == null ? null : UEntityDelegateFactory.createEntityFor(Minecraft.getMinecraft().getRenderViewEntity());
+        return MinecraftClient.getInstance().getCameraEntity() == null ? null : UEntityDelegateFactory.createEntityFor(MinecraftClient.getInstance().getCameraEntity());
     }
 
     public RaycastResult getObjectMouseOver() {
-        MovingObjectPosition position = Minecraft.getMinecraft().objectMouseOver;
+//        MinecraftClient.getInstance().tra
+        HitResult hitres = MinecraftClient.getInstance().crosshairTarget;
 
-        if (position == null) return new RaycastResult(null, RaycastResult.HitType.MISS, null, null);
-        return new RaycastResult(
-                position.getBlockPos() == null ? null : new VectorI3D(position.getBlockPos().getX(), position.getBlockPos().getY(), position.getBlockPos().getZ()),
-                position.typeOfHit == MovingObjectPosition.MovingObjectType.MISS ? RaycastResult.HitType.MISS :
-                        position.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY ? RaycastResult.HitType.ENTITY :
-                                RaycastResult.HitType.BLOCK,
-                position.hitVec == null ? null : new Vector3D(position.hitVec.xCoord, position.hitVec.yCoord, position.hitVec.zCoord),
-                position.entityHit == null ? null : UEntityDelegateFactory.createEntityFor(position.entityHit)
-        );
+        if (hitres == null) return new RaycastResult(null, RaycastResult.HitType.MISS, null, null);
+
+        if (hitres instanceof EntityHitResult position) {
+            return new RaycastResult(
+                    null,
+                    RaycastResult.HitType.ENTITY,
+                    new Vector3D(position.getPos().x, position.getPos().y, position.getPos().z),
+                    UEntityDelegateFactory.createEntityFor(position.getEntity())
+            );
+        } else if (hitres instanceof BlockHitResult position) {
+            return new RaycastResult(
+                    position.getPos() == null ? null : new VectorI3D(position.getBlockPos().getX(), position.getBlockPos().getY(), position.getBlockPos().getZ()),
+                    RaycastResult.HitType.BLOCK,
+                    new Vector3D(position.getPos().x, position.getPos().y, position.getPos().z),
+                    null
+            );
+        } else {
+            return new RaycastResult(
+                    null,
+                    RaycastResult.HitType.MISS,
+                    null, null
+            );
+        }
     }
 
     public boolean isSinglePlayer() {
-        return Minecraft.getMinecraft().isSingleplayer();
+        return MinecraftClient.getInstance().isInSingleplayer();
     }
 
     public UResourceManager getResourceManager() {
-        return new UResourceManagerImpl(Minecraft.getMinecraft().getResourceManager());
+        return new UResourceManagerImpl(MinecraftClient.getInstance().getResourceManager());
     }
 
 
-    private UProfiler profiler = new UProfilerImpl(Minecraft.getMinecraft().mcProfiler);
+//    private UProfiler profiler = new UProfilerImpl(Profilers.get());
 
     public UProfiler getProfiler() {
-        return profiler;
+        return new UProfilerImpl(Profilers.get());
     }
 
     public UGameSettings getGameSettings() {
-        return new UGameSettingsImpl(Minecraft.getMinecraft().gameSettings);
+        return new UGameSettingsImpl(MinecraftClient.getInstance().options);
     }
 
     public boolean isCallingFromMinecraftThread() {
-        return Minecraft.getMinecraft().isCallingFromMinecraftThread();
+        return MinecraftClient.getInstance().isOnThread();
     }
 
     public UResourcePackRepository getResourcePackRepository() {
-        return new UResourcePackRepositoryImpl(Minecraft.getMinecraft().getResourcePackRepository());
+        return new UResourcePackRepositoryImpl(MinecraftClient.getInstance().getResourcePackManager());
     }
 
 
@@ -135,27 +158,29 @@ public class ModAPIImpl implements ModAPI {
 
         @Override
         public String getName() {
-            return "forge";
+            return "fabric";
         }
 
         @Override
         public String getMinecraftVersion() {
-            return ForgeVersion.mcVersion;
+            return "1.21.5";
         }
 
         @Override
         public String getPlatformVersion() {
-            return ForgeVersion.getVersion();
+            return FabricLoader.getInstance().getModContainer("fabricloader")
+                    .map(mod -> mod.getMetadata().getVersion().getFriendlyString())
+                    .orElse("unknown");
         }
 
         @Override
         public boolean isOldChat() {
-            return true;
+            return false;
         }
 
         @Override
         public boolean supportCopyClickEvent() {
-            return false;
+            return true;
         }
 
         public static final PlatformImpl INST = new PlatformImpl();
@@ -175,7 +200,7 @@ public class ModAPIImpl implements ModAPI {
 
     @Override
     public USession getSession() {
-        return new USessionImpl(Minecraft.getMinecraft().getSession());
+        return new USessionImpl(MinecraftClient.getInstance().getSession());
     }
 
     public USoundHandler getSoundHandler() {
@@ -183,15 +208,15 @@ public class ModAPIImpl implements ModAPI {
     }
 
     public int getDisplayWidth() {
-        return Minecraft.getMinecraft().displayWidth;
+        return MinecraftClient.getInstance().getWindow().getWidth();
     }
 
     public int getDisplayHeight() {
-        return Minecraft.getMinecraft().displayHeight;
+        return MinecraftClient.getInstance().getWindow().getHeight();
     }
 
     public UPlayerSelf getPlayer() {
-        return Minecraft.getMinecraft().thePlayer == null ? null : new UEntityPlayerSP(Minecraft.getMinecraft().thePlayer);
+        return MinecraftClient.getInstance().player == null ? null : new UEntityPlayerSP(MinecraftClient.getInstance().player);
     }
 
     @Override
@@ -209,47 +234,47 @@ public class ModAPIImpl implements ModAPI {
 
     @Override
     public void init() {
-        MinecraftForge.EVENT_BUS.register(packetInjector);
+//        MinecraftForge.EVENT_BUS.register(packetInjector);
         eventListener.register();
         registry.init();
 
 
-        try {
-            Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) Main.class.getClassLoader(), "invalidClasses");
-            ((LaunchClassLoader) Main.class.getClassLoader()).clearNegativeEntries(Sets.newHashSet("org.slf4j.LoggerFactory"));
-            invalid.clear();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
-            resourcePackList.add(new DGTexturePack());
-            Minecraft.getMinecraft().refreshResources();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+//        try {
+//            Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) Main.class.getClassLoader(), "invalidClasses");
+//            ((LaunchClassLoader) Main.class.getClassLoader()).clearNegativeEntries(Sets.newHashSet("org.slf4j.LoggerFactory"));
+//            invalid.clear();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
+//            resourcePackList.add(new DGTexturePack());
+//            Minecraft.getMinecraft().refreshResources();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
         if (Minecraft.getMinecraft().getNetHandler() != null)
             Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler_2", packetInjector);
     }
 
     @Override
     public void unload() {
-        MinecraftForge.EVENT_BUS.unregister(packetInjector);
-        CustomNetworkPlayerInfoUnloader.unload();
-        eventListener.unregister();
+//        MinecraftForge.EVENT_BUS.unregister(packetInjector);
+//        CustomNetworkPlayerInfoUnloader.unload();
+//        eventListener.unregister();
+//
+//        commandManager.unregisterCommands();
+//        packetInjector.cleanup();
 
-        commandManager.unregisterCommands();
-        packetInjector.cleanup();
-
-        try {
-            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
-            resourcePackList.removeIf(a -> a instanceof DGTexturePack);
-            Minecraft.getMinecraft().refreshResources();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
+//            resourcePackList.removeIf(a -> a instanceof DGTexturePack);
+//            Minecraft.getMinecraft().refreshResources();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     private BlockStateRegistryImpl registry = new BlockStateRegistryImpl();
@@ -271,15 +296,15 @@ public class ModAPIImpl implements ModAPI {
 
             @Override
             public boolean isRunning() {
-                return BlockAccessibleServerLaunchUtils.isDungeonIntegratedServerRunning();
+                return false; // TODO: impl
             }
         };
     }
 
     @Override
     public UContainerChest extractContainerChest(Object object) {
-        if (object instanceof GuiChest) {
-            return new UContainerChestImpl((ContainerChest) ((GuiChest) object).inventorySlots);
+        if (object instanceof GenericContainerScreen) {
+            return new UContainerChestImpl(((GenericContainerScreen) object).getScreenHandler(), ((GenericContainerScreen) object).getTitle());
         }
         return null;
     }
@@ -291,7 +316,7 @@ public class ModAPIImpl implements ModAPI {
 
     @Override
     public boolean isDevEnv() {
-        return (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
+        return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
     @Override
@@ -301,33 +326,23 @@ public class ModAPIImpl implements ModAPI {
 
     @Override
     public Component getHoveredComponent() {
-        IChatComponent ichatcomponent = Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
-        if (ichatcomponent == null) return null;
-        if (ichatcomponent.getChatStyle() == null) return null;
-        if (ichatcomponent.getChatStyle().getChatHoverEvent() == null) return null;
-        HoverEvent hoverEvent = ichatcomponent.getChatStyle().getChatHoverEvent();
-        if (hoverEvent.getAction() != HoverEvent.Action.SHOW_ITEM) return null;
-        try {
-            net.kyori.adventure.text.event.HoverEvent.ShowItem showItem = NBTLegacyHoverEventSerializer.get().deserializeShowItem(
-                    Component.text(hoverEvent.getValue().getUnformattedText())
-            );
-            return Component.text(ichatcomponent.getUnformattedText()).hoverEvent(net.kyori.adventure.text.event.HoverEvent.showItem(showItem));
-        } catch (IOException e) {
-            return null;
-        }
+        Style style = MinecraftClient.getInstance().inGameHud.getChatHud().getTextStyleAt(MinecraftClient.getInstance().mouse.getX(), MinecraftClient.getInstance().mouse.getY());
+        if (style == null) return null;
+        Text t = Text.literal("").setStyle(style);
 
-//        String json = IChatComponent.Serializer.componentToJson(ichatcomponent);
-//        return GsonComponentSerializer.colorDownsamplingGson().deserialize(json); apparently adventure has a bug where it is unable to deserialize legacy hover event. welp. #890. but I'm in a rush to impl 1.21 so let me just hack a solution.
+        JsonElement element = TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, t).getOrThrow();
+
+        return GsonComponentSerializer.gson().deserializeFromTree(element);
     }
 
     @Override
-    public void disableDefaultChatLogger() {
-        Logger l = LogManager.getLogger(GuiNewChat.class);
-        if (l instanceof SimpleLogger) {
-            ((SimpleLogger) l).setLevel(Level.OFF);
-        } else if (l instanceof org.apache.logging.log4j.core.Logger) {
-            ((org.apache.logging.log4j.core.Logger) l).setLevel(Level.OFF);
-        }
+    public void disableDefaultChatLogger() { // TODO: impl
+//        Logger l = LogManager.getLogger(GuiNewChat.class);
+//        if (l instanceof SimpleLogger) {
+//            ((SimpleLogger) l).setLevel(Level.OFF);
+//        } else if (l instanceof org.apache.logging.log4j.core.Logger) {
+//            ((org.apache.logging.log4j.core.Logger) l).setLevel(Level.OFF);
+//        }
     }
 
     public UScoreboardManager getScoreboardManager() {
@@ -340,6 +355,6 @@ public class ModAPIImpl implements ModAPI {
 
     @Override
     public String getKeyDisplayString(int currentKey) {
-        return GameSettings.getKeyDisplayString(currentKey);
+        return InputUtil.fromKeyCode(currentKey, 0).getLocalizedText().getString();
     }
 }

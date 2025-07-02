@@ -1,16 +1,16 @@
 package kr.syeyoung.modapi.v1_21_5.world;
 
 import kr.syeyoung.modapi.world.UMapData;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.util.Vec4b;
-import net.minecraft.world.storage.MapData;
+import net.minecraft.block.MapColor;
+import net.minecraft.item.map.MapDecoration;
+import net.minecraft.item.map.MapState;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class UMapDataImpl implements UMapData {
-    private MapData delegate;
-    public UMapDataImpl(MapData mapData) {
+    private MapState delegate;
+    public UMapDataImpl(MapState mapData) {
         this.delegate = mapData;
     }
 
@@ -33,7 +33,7 @@ public class UMapDataImpl implements UMapData {
         }
         else
         {
-            theColor = MapColor.mapColorArray[j / 4].getMapColor(j & 3);
+            theColor = MapColor.getRenderColor(j);
         }
 
         return theColor;
@@ -42,12 +42,12 @@ public class UMapDataImpl implements UMapData {
     @Override
     public Map<String, MapMarker> getMarkers() {
         Map<String, MapMarker> markers = new HashMap<>();
-        for (Map.Entry<String, Vec4b> stringVec4bEntry : delegate.mapDecorations.entrySet()) {
-            markers.put(stringVec4bEntry.getKey(), new MapMarker(
-                    stringVec4bEntry.getValue().func_176110_a(),
-                    stringVec4bEntry.getValue().func_176112_b(),
-                    stringVec4bEntry.getValue().func_176113_c(),
-                    stringVec4bEntry.getValue().func_176111_d()
+        for (MapDecoration decoration : delegate.getDecorations()) {
+            markers.put(decoration.name().get().getString(), new MapMarker(
+                    2 , // TODO: migrate markeri d
+                    decoration.x(),
+                    decoration.z(),
+                    decoration.rotation()
             ));
         }
         return markers;

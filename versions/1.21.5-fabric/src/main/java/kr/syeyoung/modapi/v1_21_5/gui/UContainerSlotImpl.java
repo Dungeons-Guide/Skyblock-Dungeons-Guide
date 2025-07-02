@@ -2,8 +2,8 @@ package kr.syeyoung.modapi.v1_21_5.gui;
 
 import kr.syeyoung.modapi.gui.UContainerSlot;
 import kr.syeyoung.modapi.item.UItemStack;
-import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
-import net.minecraft.inventory.Slot;
+import kr.syeyoung.modapi.v1_21_5.item.UItemStackImpl;
+import net.minecraft.screen.slot.Slot;
 
 public class UContainerSlotImpl implements UContainerSlot {
     private Slot delegate;
@@ -13,17 +13,17 @@ public class UContainerSlotImpl implements UContainerSlot {
 
     @Override
     public int getX() {
-        return delegate.xDisplayPosition;
+        return delegate.x;
     }
 
     @Override
     public int getY() {
-        return delegate.yDisplayPosition;
+        return delegate.y;
     }
 
     @Override
     public int getSlotIndex() {
-        return delegate.slotNumber;
+        return delegate.getIndex();
     }
 
     @Override

@@ -2,10 +2,10 @@ package kr.syeyoung.modapi.v1_21_5.entity;
 
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.item.UItemStack;
-import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
+import kr.syeyoung.modapi.v1_21_5.item.UItemStackImpl;
 import lombok.Getter;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.item.ItemStack;
 
 public class UEntityArmorStandImpl extends UEntityLivingImpl implements UEntityArmorStand {
@@ -17,12 +17,20 @@ public class UEntityArmorStandImpl extends UEntityLivingImpl implements UEntityA
         this.delegate = delegate;
     }
 
+
+    EquipmentSlot[] slot = new EquipmentSlot[] {
+            EquipmentSlot.MAINHAND,
+            EquipmentSlot.FEET,
+            EquipmentSlot.LEGS,
+            EquipmentSlot.CHEST,
+            EquipmentSlot.HEAD
+    };
     public UItemStack getEquipmentInSlot(int slotIn) {
-        ItemStack itemStack = delegate.getEquipmentInSlot(slotIn);
+        ItemStack itemStack = delegate.getEquippedStack(slot[slotIn]);
         return itemStack == null ? null : new UItemStackImpl(itemStack);
     }
 
     public boolean getAlwaysRenderNameTag() {
-        return delegate.getAlwaysRenderNameTag();
+        return delegate.isCustomNameVisible();
     }
 }

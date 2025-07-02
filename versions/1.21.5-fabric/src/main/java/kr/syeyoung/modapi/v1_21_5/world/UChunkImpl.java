@@ -1,20 +1,20 @@
 package kr.syeyoung.modapi.v1_21_5.world;
 
 import kr.syeyoung.modapi.data.VectorI3D;
-import kr.syeyoung.modapi.v1_8_9.world.entities.UTileEntityChestImpl;
-import kr.syeyoung.modapi.v1_8_9.world.entities.UTileEntityImpl;
-import kr.syeyoung.modapi.v1_8_9.world.entities.UTileEntitySkullImpl;
+import kr.syeyoung.modapi.v1_21_5.world.entities.UTileEntityChestImpl;
+import kr.syeyoung.modapi.v1_21_5.world.entities.UTileEntityImpl;
+import kr.syeyoung.modapi.v1_21_5.world.entities.UTileEntitySkullImpl;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UChunk;
 import kr.syeyoung.modapi.world.UTileEntity;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.tileentity.TileEntitySkull;
-import net.minecraft.util.BlockPos;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.ChestBlockEntity;
+import net.minecraft.block.entity.SkullBlockEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import net.minecraft.world.chunk.ChunkSection;
 
 public class UChunkImpl implements UChunk {
     private Chunk delegate;
@@ -27,22 +27,22 @@ public class UChunkImpl implements UChunk {
 
     @Override
     public int getChunkX() {
-        return delegate.getChunkCoordIntPair().chunkXPos;
+        return delegate.getPos().x;
     }
 
     @Override
     public int getChunkZ() {
-        return delegate.getChunkCoordIntPair().chunkZPos;
+        return delegate.getPos().z;
     }
 
-    private ThreadLocal<BlockPos.MutableBlockPos> posThreadLocal = ThreadLocal.withInitial(() -> new BlockPos.MutableBlockPos());
+    private ThreadLocal<BlockPos.Mutable> posThreadLocal = ThreadLocal.withInitial(() -> new BlockPos.Mutable());
 
     @Override
     public UBlockState getRelativeBlockAt(int x, int y, int z) {
-        BlockPos.MutableBlockPos pos = posThreadLocal.get();
+        BlockPos.Mutable pos = posThreadLocal.get();
         pos.set(x, y, z);
-        IBlockState blockState = delegate.getBlockState(pos);
-        return registry.getByStateId(Block.BLOCK_STATE_IDS.get(blockState));
+        BlockState blockState = delegate.getBlockState(pos);
+        return registry.getByStateId(Block.STATE_IDS.getRawId(blockState));
     }
 
     @Override
@@ -56,10 +56,8 @@ public class UChunkImpl implements UChunk {
     }
 
     public boolean isEmpty() {
-        boolean empty =  delegate.isEmpty();
-        if (empty) return true;
-        for (ExtendedBlockStorage extendedBlockStorage : delegate.getBlockStorageArray()) {
-            if (extendedBlockStorage != null) return false;
+        for (ChunkSection section : delegate.getSectionArray()) {
+            if (!section.isEmpty()) return false;
         }
         return true;
     }
@@ -71,7 +69,7 @@ public class UChunkImpl implements UChunk {
 
     @Override
     public int getLenY() {
-        return 256;
+        return delegate.getHeight();
     }
 
     @Override
@@ -81,17 +79,17 @@ public class UChunkImpl implements UChunk {
 
     @Override
     public int getMinX() {
-        return delegate.getChunkCoordIntPair().getXStart();
+        return delegate.getPos().getStartX();
     }
 
     @Override
     public int getMinY() {
-        return 0;
+        return delegate.getBottomY();
     }
 
     @Override
     public int getMinZ() {
-        return delegate.getChunkCoordIntPair().getZStart();
+        return delegate.getPos().getStartZ();
     }
 
     @Override
@@ -101,13 +99,13 @@ public class UChunkImpl implements UChunk {
 
     @Override
     public UTileEntity getTileEntityAt(int x, int y, int z) {
-        BlockPos.MutableBlockPos pos = posThreadLocal.get();
+        BlockPos.Mutable pos = posThreadLocal.get();
         pos.set(x, y, z);
-        TileEntity tileEntity = delegate.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
-        if (tileEntity instanceof TileEntityChest)
-            return new UTileEntityChestImpl((TileEntityChest) tileEntity);
-        else if (tileEntity instanceof TileEntitySkull)
-            return new UTileEntitySkullImpl((TileEntitySkull) tileEntity);
+        BlockEntity tileEntity = delegate.getBlockEntity(pos);
+        if (tileEntity instanceof ChestBlockEntity)
+            return new UTileEntityChestImpl((ChestBlockEntity) tileEntity);
+        else if (tileEntity instanceof SkullBlockEntity)
+            return new UTileEntitySkullImpl((SkullBlockEntity) tileEntity);
         else if (tileEntity != null)
             return new UTileEntityImpl(tileEntity);
         return null;

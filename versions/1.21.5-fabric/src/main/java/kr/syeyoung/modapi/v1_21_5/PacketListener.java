@@ -23,6 +23,7 @@ import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityItem;
+import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.util.GameMode;
 import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
 import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
@@ -126,7 +127,7 @@ public class PacketListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else if (packet instanceof S34PacketMaps) {
+        }else if (packet instanceof S34PacketMaps) { MapPacket
             MapData mapData = MapDataManager.INSTANCE.createMapData(((S34PacketMaps) packet).getMapId());
             try {
                 ((S34PacketMaps) packet).setMapdataTo(mapData);

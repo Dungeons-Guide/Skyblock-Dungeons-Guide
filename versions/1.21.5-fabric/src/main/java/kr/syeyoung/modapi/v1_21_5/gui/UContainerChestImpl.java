@@ -2,23 +2,26 @@ package kr.syeyoung.modapi.v1_21_5.gui;
 
 import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.gui.UContainerSlot;
-import net.minecraft.inventory.ContainerChest;
+import net.minecraft.screen.GenericContainerScreenHandler;
+import net.minecraft.text.Text;
 
 public class UContainerChestImpl extends UContainerImpl implements UContainerChest {
-    protected ContainerChest delegate;
-    public UContainerChestImpl(ContainerChest delegate) {
+    protected GenericContainerScreenHandler delegate;
+    protected Text title;
+    public UContainerChestImpl(GenericContainerScreenHandler delegate, Text title) {
         super(delegate);
         this.delegate = delegate;
+        this.title = title;
     }
 
     @Override
-    public String getName() {
-        return delegate.getLowerChestInventory() == null ? null : delegate.getLowerChestInventory().getName();
+    public String getName() { // TODO: to comp.
+        return delegate.getInventory() == null ? null : title.getLiteralString();
     }
 
     @Override
     public int getChestContainerSize() {
-        return delegate.getLowerChestInventory().getSizeInventory();
+        return delegate.getRows() * 9;
     }
 
     @Override

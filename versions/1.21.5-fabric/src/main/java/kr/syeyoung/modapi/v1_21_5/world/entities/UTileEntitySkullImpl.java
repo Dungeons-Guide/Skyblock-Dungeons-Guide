@@ -1,23 +1,26 @@
 package kr.syeyoung.modapi.v1_21_5.world.entities;
 
+import com.mojang.authlib.properties.Property;
 import kr.syeyoung.modapi.world.tileentities.UTileEntitySkull;
-import net.minecraft.tileentity.TileEntitySkull;
-
-import java.util.Optional;
+import net.minecraft.block.entity.SkullBlockEntity;
+import net.minecraft.component.type.ProfileComponent;
 
 public class UTileEntitySkullImpl extends UTileEntityImpl implements UTileEntitySkull {
-    protected TileEntitySkull delegate;
-    public UTileEntitySkullImpl(TileEntitySkull delegate) {
+    protected SkullBlockEntity delegate;
+    public UTileEntitySkullImpl(SkullBlockEntity delegate) {
         super(delegate);
         this.delegate = delegate;
     }
     @Override
     public String getTexture() {
-        String texture = Optional.ofNullable(((TileEntitySkull) delegate).getPlayerProfile())
-                .map(a -> a.getProperties())
-                .map(a -> a.get("textures"))
-                .flatMap(a -> a.stream().findFirst())
-                .map(a -> a.getValue()).orElse(null);
+        ProfileComponent component = delegate.getOwner();
+        if (component == null) return null;
+        String texture = component.gameProfile()
+                .getProperties()
+                .get("textures")
+                .stream().findFirst()
+                .map(Property::value)
+                .orElse(null);
         return texture;
     }
 }

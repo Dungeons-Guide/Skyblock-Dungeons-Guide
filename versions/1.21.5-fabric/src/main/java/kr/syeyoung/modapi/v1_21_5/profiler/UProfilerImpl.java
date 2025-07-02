@@ -1,7 +1,7 @@
 package kr.syeyoung.modapi.v1_21_5.profiler;
 
 import kr.syeyoung.modapi.profiler.UProfiler;
-import net.minecraft.profiler.Profiler;
+import net.minecraft.util.profiler.Profiler;
 
 public class UProfilerImpl implements UProfiler {
     private Profiler delegate;
@@ -11,18 +11,18 @@ public class UProfilerImpl implements UProfiler {
     }
 
     public void startSection(String name) {
-        delegate.startSection(name);
+        delegate.push(name);
     }
 
     public void endSection() {
-        delegate.endSection();
+        delegate.pop();
     }
 
     public void endStartSection(String name) {
-        delegate.endStartSection(name);
+        delegate.swap(name);
     }
 
     public void clearprofiling() {
-        delegate.clearProfiling();
+//        delegate.();
     }
 }

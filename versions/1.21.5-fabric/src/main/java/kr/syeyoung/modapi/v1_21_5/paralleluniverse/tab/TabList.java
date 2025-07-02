@@ -24,8 +24,8 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Ordering;
 import kr.syeyoung.modapi.paralleluniverse.tablist.UTabList;
 import kr.syeyoung.modapi.util.GameMode;
-import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.Team;
-import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.TeamManager;
+import kr.syeyoung.modapi.v1_21_5.paralleluniverse.teams.Team;
+import kr.syeyoung.modapi.v1_21_5.paralleluniverse.teams.TeamManager;
 
 import java.util.*;
 

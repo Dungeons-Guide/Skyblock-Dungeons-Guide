@@ -1,7 +1,7 @@
 package kr.syeyoung.modapi.v1_21_5.util;
 
 import kr.syeyoung.modapi.util.USession;
-import net.minecraft.util.Session;
+import net.minecraft.client.session.Session;
 
 import java.util.UUID;
 
@@ -18,6 +18,6 @@ public class USessionImpl implements USession {
 
     @Override
     public UUID getUUID() {
-        return delegate.getProfile().getId();
+        return delegate.getUuidOrNull();
     }
 }

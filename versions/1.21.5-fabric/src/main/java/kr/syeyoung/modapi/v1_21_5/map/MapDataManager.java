@@ -19,8 +19,10 @@
 package kr.syeyoung.modapi.v1_21_5.map;
 
 import kr.syeyoung.modapi.world.IMapUtils;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.world.storage.MapData;
+import net.minecraft.block.MapColor;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.component.type.MapIdComponent;
+import net.minecraft.item.map.MapState;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,16 +30,16 @@ import java.util.Map;
 
 public class MapDataManager implements IMapUtils {
     public static final MapDataManager INSTANCE = new MapDataManager();
-    private Map<Integer, MapData> mapDataMap = new HashMap<>();
+    private Map<MapIdComponent, MapState> mapDataMap = new HashMap<>();
 
-    public MapData createMapData(int mapId) {
+    public MapState createMapData(MapIdComponent mapId, byte scale, boolean locked) {
         if (!mapDataMap.containsKey(mapId))
-            mapDataMap.put(mapId, new MapData("map_"+mapId));
+            mapDataMap.put(mapId, MapState.of(scale, locked, MinecraftClient.getInstance().world.getRegistryKey()));
         return mapDataMap.get(mapId);
 
     }
 
-    public MapData getMapData(int mapId) {
+    public MapState getMapData(MapIdComponent mapId) {
         return mapDataMap.get(mapId);
     }
 
@@ -45,12 +47,12 @@ public class MapDataManager implements IMapUtils {
         mapDataMap.clear();
     }
 
-    public Map<Integer, MapData> getMapDataMap() {
+    public Map<MapIdComponent, MapState> getMapDataMap() {
         return Collections.unmodifiableMap(mapDataMap);
     }
 
     @Override
     public int getRGBColor(int mapColor) {
-        return MapColor.mapColorArray[mapColor / 4].getMapColor(mapColor & 3);
+        return MapColor.getRenderColor(mapColor);
     }
 }

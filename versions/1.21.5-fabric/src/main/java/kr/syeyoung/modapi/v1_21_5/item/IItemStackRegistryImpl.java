@@ -4,10 +4,10 @@ import kr.syeyoung.modapi.item.IItemStackRegistry;
 import kr.syeyoung.modapi.item.UItemStack;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.minecraft.init.Blocks;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtIo;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,11 +21,10 @@ public class IItemStackRegistryImpl implements IItemStackRegistry {
             BinaryTagIO.writer().write(binaryTag, baos);
             byte[] result = baos.toByteArray();
             ByteArrayInputStream bais = new ByteArrayInputStream(result);
-            NBTTagCompound nbt = CompressedStreamTools.read(new DataInputStream(bais));
+            NbtCompound nbt = NbtIo.readCompound(new DataInputStream(bais));
 
-            ItemStack itemStack = new ItemStack(Blocks.stone);
-            itemStack.deserializeNBT(nbt);
-            return new UItemStackImpl(itemStack);
+            ItemStack itemStack = ItemStack.fromNbt(MinecraftClient.getInstance().world.getRegistryManager(), nbt).orElse(null);
+            return itemStack == null ? null : new UItemStackImpl(itemStack);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

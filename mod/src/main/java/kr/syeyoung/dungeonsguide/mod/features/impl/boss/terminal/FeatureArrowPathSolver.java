@@ -37,6 +37,7 @@ import kr.syeyoung.modapi.entity.UEntityItemFrame;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import kr.syeyoung.modapi.item.Item;
+import kr.syeyoung.modapi.util.EnumDyeColor;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
@@ -118,7 +119,7 @@ public class FeatureArrowPathSolver extends SimpleFeature {
             if (frame.getItem().getItem() == Item.ARROW) {
                 mapping[y][x] = frame.getRotation()+1;
                 bfsAble[y][x] = 9999;
-            } else if (frame.getItem().getMetadata() == 5) { // LIME WOOL. TODO: CHECK IF REALLY WOOL
+            } else if (frame.getItem().getItemColor() == EnumDyeColor.LIME) { // LIME WOOL. TODO: CHECK IF REALLY WOOL
                 mapping[y][x] = 10; // starting
                 bfsAble[y][x] = 99999;
             } else {

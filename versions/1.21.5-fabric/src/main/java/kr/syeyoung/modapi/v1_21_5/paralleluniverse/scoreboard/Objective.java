@@ -24,7 +24,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.minecraft.scoreboard.IScoreObjectiveCriteria;
+import net.minecraft.scoreboard.ScoreboardCriterion;
 
 import java.util.*;
 
@@ -35,7 +35,7 @@ public class Objective implements UObjective {
     @Setter
     private String displayName;
     @Getter @Setter
-    private IScoreObjectiveCriteria.EnumRenderType displayType;
+    private ScoreboardCriterion.RenderType displayType;
     private SortedSet<Score> scores = new TreeSet<>(Comparator.comparingInt(Score::getScore).reversed());
     private Map<String, Score> currentObjects = new HashMap<>();
 
@@ -50,7 +50,7 @@ public class Objective implements UObjective {
 
     @Override
     public String getRenderType() {
-        return displayType == IScoreObjectiveCriteria.EnumRenderType.HEARTS ? "hearts" : "integer";
+        return displayType == ScoreboardCriterion.RenderType.HEARTS ? "hearts" : "integer";
     }
 
     public void updateScore(String playerName, int score) {
