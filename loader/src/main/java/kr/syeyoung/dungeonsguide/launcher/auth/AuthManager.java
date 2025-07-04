@@ -34,6 +34,7 @@ import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.WidgetNotification;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.elements.GlobalHUDScale;
+import kr.syeyoung.dungeonsguide.launcher.loader.RemoteLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
@@ -90,9 +91,11 @@ public class AuthManager {
 
         scheduler.scheduleAtFixedRate(() -> {
             boolean shouldReAuth = false;
-            if (getToken().isUserVerified() && !getToken().getUUID().replace("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
+            if (getToken().isUserVerified()
+                    && !getToken().getUUID().replace("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
                 shouldReAuth = true;
-                Main.getMain().unloadWithoutStacktraceReference();
+                if (Main.getMain().getCurrentLoader() instanceof RemoteLoader)
+                    Main.getMain().unloadWithoutStacktraceReference();
             }
             if (!getToken().isAuthenticated()) {
                 shouldReAuth = true;

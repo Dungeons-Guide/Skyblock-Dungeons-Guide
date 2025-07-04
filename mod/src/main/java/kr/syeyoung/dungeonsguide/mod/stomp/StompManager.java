@@ -112,4 +112,8 @@ public class StompManager {
 
         ex.shutdownNow();
     }
+
+    public void reconnect() {
+        stompConnection.disconnect();
+    }
 }

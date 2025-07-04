@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.launcher.events.AuthChangedEvent;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -40,6 +41,8 @@ import kr.syeyoung.dungeonsguide.mod.events.listener.PacketInjector;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.Notification;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificationAutoClose;
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.PassthroughManager;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
@@ -59,7 +62,8 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -68,7 +72,6 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.entity.Entity;
@@ -77,7 +80,6 @@ import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ClientCommandHandler;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
@@ -504,6 +506,18 @@ public class DungeonsGuide implements DGInterface {
         return skyblockStatus;
     }
 
+
+    @SubscribeEvent
+    public void onAuthChange(AuthChangedEvent changedEvent) {
+        StompManager.getInstance().reconnect();
+
+        UUID uid = UUID.randomUUID();
+        FeatureRegistry.NOTIFICATIONS.getRootWidget().updateNotification(uid, new WidgetNotificationAutoClose(uid, Notification.builder()
+                .title("User Changed!")
+                .description("Reloading Dungeons Guide for new player...")
+                .titleColor(0xFFFFFF00)
+                .build(), 10000));
+    }
 
     @Override
     public Class<? extends GuiScreen> getModConfigGUI() {
