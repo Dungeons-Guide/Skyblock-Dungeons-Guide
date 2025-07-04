@@ -92,7 +92,7 @@ public class AuthManager {
         scheduler.scheduleAtFixedRate(() -> {
             boolean shouldReAuth = false;
             if (getToken().isUserVerified()
-                    && !getToken().getUUID().replace("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
+                    && !getToken().getUUID().equals(Minecraft.getMinecraft().getSession().getProfile().getId().toString())) {
                 shouldReAuth = true;
                 if (Main.getMain().getCurrentLoader() instanceof RemoteLoader)
                     Main.getMain().unloadWithoutStacktraceReference();
