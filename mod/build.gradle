@@ -7,7 +7,7 @@ plugins {
     id "gg.essential.loom"
 }
 
-version =  "4.0.0-beta13.1"
+version =  "4.0.0-beta13.2"
 group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide"
 
