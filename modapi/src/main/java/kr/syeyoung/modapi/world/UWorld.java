@@ -24,4 +24,6 @@ public interface UWorld extends IBlockAccessible {
     UChunk getChunkAt(int x, int z);
 
     Object getWorld();
+
+    List<UEntity> getEntities();
 }

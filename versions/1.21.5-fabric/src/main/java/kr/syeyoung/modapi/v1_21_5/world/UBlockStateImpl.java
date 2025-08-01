@@ -16,7 +16,6 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -254,18 +253,18 @@ public class UBlockStateImpl implements UBlockState {
     // Make legacy id mapper!
     @Override
     public int getLegacyId() {
-        return Block.getIdFromBlock(delegate.getBlock());
+        return 0; // TODO: TODO
     }
 
     @Override
     public int getLegacyMeta() {
-        return delegate.getBlock().getMetaFromState(delegate);
+        return 0; // TODO: TODO
     }
 
 
     @Override
     public int getLegacyStateId() {
-        return Block.BLOCK_STATE_IDS.get(delegate);
+        return 0; // TODO: TODO
     }
 
     public BlockState getDelegate() {

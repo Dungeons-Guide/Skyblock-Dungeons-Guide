@@ -7,7 +7,6 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.item.UItemStack;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
-import kr.syeyoung.modapi.v1_8_9.entity.UEntityImpl;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerImpl;
 import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
 import kr.syeyoung.modapi.v1_8_9.world.entities.UTileEntityChestImpl;
@@ -47,7 +46,7 @@ public class UWorldImpl implements UWorld {
         return e == null ? null : UEntityDelegateFactory.createEntityFor(e);
     }
 
-    public List<UEntity> getLoadedUEntityList() {
+    public List<UEntity> getEntities() {
         List<UEntity> converted = new ArrayList<>();
         for (Entity entity : delegate.getLoadedEntityList()) {
             converted.add(UEntityDelegateFactory.createEntityFor(entity));
@@ -75,6 +74,20 @@ public class UWorldImpl implements UWorld {
     }
 
     @Override
+    public List<UEntity> getEntitiesWithinAabb(AABB bb) {
+        List<Entity> entities = delegate.getEntitiesWithinAABBExcludingEntity(
+                null,
+                new AxisAlignedBB(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ)
+        );
+
+        List<UEntity> mapped = new ArrayList<>();
+        for (Entity e : entities) {
+            mapped.add(UEntityDelegateFactory.createEntityFor(e));
+        }
+        return mapped;
+    }
+
+    @Override
     public UMapData getMapData(UItemStack itemMap) {
         ItemStack itemStack = ((UItemStackImpl) itemMap).getDelegate();
         MapData mapData = Items.filled_map.getMapData(itemStack, delegate);
@@ -86,17 +99,6 @@ public class UWorldImpl implements UWorld {
         EntityPlayer entityPlayer = delegate.getPlayerEntityByName(name);
         return entityPlayer == null ? null : new UEntityPlayerImpl(entityPlayer);
     }
-
-    public List<UEntity> getEntities(EntityType entityType) {
-        List<Entity> entities = delegate.getEntities(UEntityImpl.bimap.inverse().get(entityType), a -> true);
-
-        List<UEntity> mapped = new ArrayList<>();
-        for (Entity e : entities) {
-            mapped.add(UEntityDelegateFactory.createEntityFor(e));
-        }
-        return mapped;
-    }
-
 
     private ThreadLocal<BlockPos.MutableBlockPos> posThreadLocal = ThreadLocal.withInitial(() -> new BlockPos.MutableBlockPos());
     @Override

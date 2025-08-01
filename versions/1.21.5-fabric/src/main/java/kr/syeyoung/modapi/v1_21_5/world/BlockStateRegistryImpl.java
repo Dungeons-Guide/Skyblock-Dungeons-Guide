@@ -65,7 +65,7 @@ public class BlockStateRegistryImpl implements IBlockRegistry {
 
     @Override
     public UBlockState fromOldId(int stateId) {
-        return map.getByValue(stateId);
+        return map.get(stateId);
     }
 
 

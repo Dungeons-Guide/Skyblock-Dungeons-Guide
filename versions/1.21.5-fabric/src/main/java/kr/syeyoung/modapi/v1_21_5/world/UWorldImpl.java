@@ -18,6 +18,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.block.entity.SkullBlockEntity;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FilledMapItem;
@@ -140,6 +141,17 @@ public class UWorldImpl implements UWorld {
     public UChunk getChunkAt(int x, int z) {
         Chunk c = delegate.getChunk(x, z);
         return new UChunkImpl(c, stateRegistry);
+    }
+
+    @Override
+    public List<UEntity> getEntities() {
+        ClientWorld clientWorld = ((ClientWorld) delegate);
+        List<UEntity> entities = new ArrayList<>();
+        for (Entity entity : clientWorld.getEntities()) {
+            entities.add(UEntityDelegateFactory.createEntityFor(entity));
+        }
+
+        return entities;
     }
 
     @Override

@@ -58,11 +58,11 @@ dependencies {
 
     implementation "org.jetbrains:annotations-java5:19.0.0"
 
-    compileOnly "org.projectlombok:lombok:1.18.20"
-    annotationProcessor "org.projectlombok:lombok:1.18.16"
+    compileOnly "org.projectlombok:lombok:1.18.36"
+    annotationProcessor "org.projectlombok:lombok:1.18.36"
 
-    testCompileOnly "org.projectlombok:lombok:1.18.20"
-    testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+    testCompileOnly "org.projectlombok:lombok:1.18.36"
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.36"
 
     shadowImpl project(path: ":modapi")
 //    shadowImpl project(path: ":mod")
@@ -73,6 +73,12 @@ dependencies {
 
 
 loom {
+    accessWidenerPath = file("src/main/resources/dungeonsguide.accesswidener")
+    mixin {
+        useLegacyMixinAp.set(true)
+        defaultRefmapName.set("mixins.dungeonsguide.refmap.json")
+    }
+
     runs {
         client {
             ideConfigGenerated = true

@@ -50,6 +50,7 @@ import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityLiving;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.ListenerPriority;
 import kr.syeyoung.modapi.event.events.*;
@@ -160,10 +161,6 @@ public class DungeonListener {
             MapUtils.clearMap();
         }
     }
-
-
-
-
 
     @kr.syeyoung.modapi.event.SubscribeEvent
     public void onTick(ClientTickEvent ev) {

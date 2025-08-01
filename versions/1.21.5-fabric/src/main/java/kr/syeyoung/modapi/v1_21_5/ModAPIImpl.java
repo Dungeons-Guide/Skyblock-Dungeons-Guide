@@ -45,6 +45,7 @@ import kr.syeyoung.modapi.world.IBlockAccessible;
 import kr.syeyoung.modapi.world.IBlockRegistry;
 import kr.syeyoung.modapi.world.IMapUtils;
 import kr.syeyoung.modapi.world.UWorld;
+import lombok.Getter;
 import net.fabricmc.loader.api.FabricLoader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -205,13 +206,15 @@ public class ModAPIImpl implements ModAPI {
         return commandManager;
     }
 
-    private PacketInjector packetInjector = new PacketInjector();
-    private EventListenerOld eventListenerOld = new EventListenerOld();
+    @Getter
+    private PacketListener packetInjector = new PacketListener();
+    @Getter
+    private EventListener eventListener = new EventListener();
 
     @Override
     public void init() {
 //        MinecraftForge.EVENT_BUS.register(packetInjector);
-        eventListenerOld.register();
+        eventListener.init();
         registry.init();
         commandManager.init();
 
@@ -240,7 +243,6 @@ public class ModAPIImpl implements ModAPI {
     public void unload() {
 //        MinecraftForge.EVENT_BUS.unregister(packetInjector);
 //        CustomNetworkPlayerInfoUnloader.unload();
-//        eventListenerOld.unregister();
 //
 //        commandManager.unregisterCommands();
 //        packetInjector.cleanup();

@@ -174,17 +174,17 @@ public class DRIBackedBlockMap implements ICoordinateMap<UBlockState>, UWorld, I
     }
 
     @Override
-    public List<UEntity> getLoadedUEntityList() {
-        return Collections.emptyList();
-    }
-
-    @Override
     public UEntityPlayer getPlayerEntityByUuid(UUID uuid) {
         return null;
     }
 
     @Override
     public List<UEntity> getEntitiesWithinAabb(EntityType type, AABB bb) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<UEntity> getEntitiesWithinAabb(AABB bb) {
         return Collections.emptyList();
     }
 
@@ -199,7 +199,7 @@ public class DRIBackedBlockMap implements ICoordinateMap<UBlockState>, UWorld, I
     }
 
     @Override
-    public List<UEntity> getEntities(EntityType type) {
+    public List<UEntity> getEntities() {
         return Collections.emptyList();
     }
 
