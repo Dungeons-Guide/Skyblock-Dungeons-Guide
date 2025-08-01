@@ -12,17 +12,14 @@ import java.util.UUID;
 public interface UWorld extends IBlockAccessible {
     UEntity getEntityById(int id);
 
-    List<UEntity> getLoadedUEntityList();
-
     UEntityPlayer getPlayerEntityByUuid(UUID uuid);
 
     List<UEntity> getEntitiesWithinAabb(EntityType type, AABB bb);
+    List<UEntity> getEntitiesWithinAabb(AABB bb);
 
     UMapData getMapData(UItemStack itemMap);
 
     UEntityPlayer getUPlayerEntityByName(String name);
-
-    List<UEntity> getEntities(EntityType type);
 
     UChunk getChunkAt(int x, int z);
 

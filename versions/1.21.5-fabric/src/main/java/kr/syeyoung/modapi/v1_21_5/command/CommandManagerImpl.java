@@ -1,147 +1,108 @@
 package kr.syeyoung.modapi.v1_21_5.command;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.suggestion.Suggestion;
-import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.tree.ArgumentCommandNode;
+import com.mojang.brigadier.tree.CommandNode;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.command.UCommandContext;
 import kr.syeyoung.modapi.command.UCommandManager;
 import kr.syeyoung.modapi.event.events.RegisterCommandEvent;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandHandler;
-import net.minecraft.command.ICommand;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.client.ClientCommandHandler;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
-import org.jetbrains.annotations.NotNull;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CommandManagerImpl implements UCommandManager {
-
-    public static class BrigadierCommand implements ICommand {
-        private final String name;
-        private CommandDispatcher<UCommandContext> dispatcher;
-        private List<String> alias = new ArrayList<>();
-
-        public BrigadierCommand(String name) {
-            dispatcher = new CommandDispatcher<>();
-            this.name = name;
-        }
-
-
-        @Override
-        public String getCommandName() {
-            return name;
-        }
-
-        @Override
-        public String getCommandUsage(ICommandSender sender) {
-            return String.join("\n", dispatcher.getAllUsage(dispatcher.getRoot(), new UCommandContextImpl(sender), false));
-        }
-
-        @Override
-        public List<String> getCommandAliases() {
-            return alias;
-        }
-
-        @Override
-        public void processCommand(ICommandSender sender, String[] args) throws CommandException {
-            String command = args.length == 0 ? name : name+" "+String.join(" ", args);
-            try {
-                dispatcher.execute(command, new UCommandContextImpl(sender));
-            } catch (CommandSyntaxException e) {
-                sender.addChatMessage(new ChatComponentText("§c"+e.getMessage()));
-            }
-        }
-
-        @Override
-        public boolean canCommandSenderUseCommand(ICommandSender sender) {
-            return true;
-        }
-
-        @Override
-        public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
-            String command = name+" "+String.join(" ", args);
-            ParseResults<UCommandContext> results = dispatcher.parse(command, new UCommandContextImpl(sender));
-            try {
-                Suggestions suggestions = dispatcher.getCompletionSuggestions(results).get(1000, TimeUnit.MILLISECONDS);
-                List<String> suggestionList = new ArrayList<>();
-                for (Suggestion suggestion : suggestions.getList()) {
-                    suggestionList.add(suggestion.getText());
-                }
-                return suggestionList;
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                e.printStackTrace();
-                return Collections.emptyList();
-            }
-        }
-
-        @Override
-        public boolean isUsernameIndex(String[] args, int index) {
-            return false;
-        }
-
-        @Override
-        public int compareTo(@NotNull ICommand o) {
-            return name.compareTo(o.getCommandName());
-        }
-    }
-
-    private Map<String, BrigadierCommand> mapping = new HashMap<>();
-
+    private CommandDispatcher<UCommandContext> dispatcher = new CommandDispatcher<>();
 
     @Override
     public void registerCommand(LiteralArgumentBuilder<UCommandContext> command) {
-        if (!mapping.containsKey(command.getLiteral())) {
-            mapping.put(command.getLiteral(), new BrigadierCommand(command.getLiteral()));
-            ClientCommandHandler.instance.registerCommand(mapping.get(command.getLiteral()));
-        }
-        mapping.get(command.getLiteral()).dispatcher.register(command);
+        LiteralCommandNode<UCommandContext> incompatibleNode = command.build();
+        dispatcher.register(command);
     }
 
     @Override
-    public void addAlias(String root, String... alias) {
-        BrigadierCommand command = mapping.get(root);
-        if (command == null) registerCommand(LiteralArgumentBuilder.literal(root));
-        command = mapping.get(root);
+    public CommandNode<UCommandContext> getCommandNode(String command) {
+        return dispatcher.findNode(Collections.singletonList(command));
+    }
 
-        boolean modified = false;
-        for (String s : alias) {
-            if (!command.alias.contains(s)) {
-                command.alias.add(s);
-                modified = true;
+    private final ThreadLocal<CommandDispatcher<FabricClientCommandSource>> dispatcherEvent = new ThreadLocal<>();
+
+    private CommandNode<FabricClientCommandSource> migrate(CommandNode<FabricClientCommandSource> fabricCommand, CommandNode<UCommandContext> command,
+                                Map<CommandNode<UCommandContext>, CommandNode<FabricClientCommandSource>> mapping) {
+        CommandNode<FabricClientCommandSource> redirect = null;
+        if (command.getRedirect() != null) {
+            redirect = migrate(null, command.getRedirect(), mapping); // yes this is orphan.
+        }
+
+        CommandNode<FabricClientCommandSource> migrated;
+        if (!mapping.containsKey(command)) {
+            if (command instanceof LiteralCommandNode<UCommandContext> literal) {
+                LiteralArgumentBuilder<FabricClientCommandSource> builder = ClientCommandManager.literal(
+                        literal.getLiteral()
+                );
+                if (redirect != null)
+                    builder = builder.forward(redirect, context -> Collections.singleton(context.getSource()), command.isFork());
+                if (literal.getRequirement() != null)
+                    builder = builder.requires(ctx -> literal.getRequirement().test(new UCommandContextImpl(ctx)));
+                if (literal.getCommand() != null) builder = builder.executes(ctx -> {
+                    return this.dispatcher.execute(ctx.getInput(), new UCommandContextImpl(ctx.getSource()));
+                });
+                migrated = builder.build();
+            } else if (command instanceof ArgumentCommandNode<UCommandContext, ?> argument) {
+                ArgumentBuilder<FabricClientCommandSource, ?> builder = ClientCommandManager.argument(
+                        argument.getName(),
+                        argument.getType()
+                );
+                if (redirect != null)
+                    builder = builder.forward(redirect, context -> Collections.singleton(context.getSource()), command.isFork());
+                if (argument.getRequirement() != null)
+                    builder = builder.requires(ctx -> argument.getRequirement().test(new UCommandContextImpl(ctx)));
+                if (argument.getCommand() != null) builder = builder.executes(ctx -> {
+                    return this.dispatcher.execute(ctx.getInput(), new UCommandContextImpl(ctx.getSource()));
+                });
+                migrated = builder.build();
+            } else {
+                throw new IllegalArgumentException("Invalid Command!");
+            }
+            mapping.put(command, migrated);
+        } else {
+            migrated = mapping.get(command);
+        }
+        if (fabricCommand != null) fabricCommand.addChild(migrated);
+        mapping.put(command, migrated);
+
+        if (command.getChildren().isEmpty() && !migrated.getChildren().isEmpty()) {
+            for (CommandNode<UCommandContext> child : command.getChildren()) {
+                migrate(migrated, child, mapping);
             }
         }
 
-        if (modified)
-            ClientCommandHandler.instance.registerCommand(command);
+
+        return mapping.get(command);
     }
 
-    public void unregisterCommands() {
-        Set<ICommand> commands = ReflectionHelper.getPrivateValue(CommandHandler.class, ClientCommandHandler.instance, "commandSet","field_71561_b","field_6467","c");
 
-        for (BrigadierCommand registeredCommand : mapping.values()) {
-            ClientCommandHandler.instance.getCommands().remove(registeredCommand.getCommandName());
-            for (String commandAlias : registeredCommand.getCommandAliases()) {
-                ClientCommandHandler.instance.getCommands().remove(commandAlias);
+    public void init() {
+        ClientCommandRegistrationCallback.EVENT.register((fabricDispatcher, access) -> {
+            this.dispatcher = new CommandDispatcher<>();
+            ModAPI.getAPI().getEventBus().fireEvent(new RegisterCommandEvent(this));
+
+            // now we merge.
+            Map<CommandNode<UCommandContext>, CommandNode<FabricClientCommandSource>> hashmap = new HashMap<>();
+            for (CommandNode<UCommandContext> child : this.dispatcher.getRoot().getChildren()) {
+                migrate(fabricDispatcher.getRoot(), child, hashmap);
             }
-            commands.remove(registeredCommand);
-        }
-        mapping.clear();
+        });
     }
-
     @Override
     public void requestCommandReload() {
-        unregisterCommands();
-        ModAPI.getAPI().getEventBus().fireEvent(new RegisterCommandEvent(this));
+        // TODO: do nothing.... hmmm...
     }
 }

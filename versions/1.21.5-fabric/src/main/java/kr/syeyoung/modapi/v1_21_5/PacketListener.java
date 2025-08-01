@@ -60,7 +60,7 @@ import java.util.*;
 
 public class PacketListener {
 
-    public Packet  onPacketReceive(Packet packet) { // this runs async.
+    public Packet onPacketReceive(Packet packet) { // this runs async.
         return packet;
     }
 

@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.tree.CommandNode;
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
@@ -51,6 +53,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.command.UCommandContext;
 import kr.syeyoung.modapi.event.AnnotatedListenerHelper;
 import kr.syeyoung.modapi.event.ListenerRegistration;
 import kr.syeyoung.modapi.event.SubscribeEvent;
@@ -386,6 +389,13 @@ public class DungeonsGuide implements DGInterface {
     public void onRegisterCommands(RegisterCommandEvent commandEvent) {
         CommandRegistrationHelper.registerCommands(commandEvent.getCommandManager(), new CommandDungeonsGuide());
         CommandRegistrationHelper.registerCommands(commandEvent.getCommandManager(), new CommandDgDebug());
-        commandEvent.getCommandManager().addAlias("dg", "dungeonsguide", "dungeonguide", "deegee", "던전가이드", "던전안내");
+
+        CommandNode<UCommandContext> cmd = commandEvent.getCommandManager().getCommandNode("dg");
+
+        for (String alias : Arrays.asList("dg", "dungeonsguide", "dungeonguide", "deegee", "던전가이드", "던전안내")) {
+            commandEvent.getCommandManager().registerCommand(
+                    LiteralArgumentBuilder.<UCommandContext>literal(alias).redirect(cmd)
+            );
+        }
     }
 }

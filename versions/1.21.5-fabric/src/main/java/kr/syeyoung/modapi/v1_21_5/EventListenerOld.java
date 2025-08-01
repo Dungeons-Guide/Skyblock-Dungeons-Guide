@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.function.BiConsumer;
 
-public class EventListener {
+public class EventListenerOld {
 
     public void onEntityTick(LivingEvent.LivingUpdateEvent updateEvent, EventPriority priority) {
         ModAPI.getAPI().getEventBus().fireEvent(new LivingEntityTickEvent(

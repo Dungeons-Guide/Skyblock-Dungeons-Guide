@@ -6,6 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.tree.CommandNode;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.command.UCommandContext;
 import kr.syeyoung.modapi.command.UCommandManager;
@@ -26,17 +27,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class CommandManagerImpl implements UCommandManager {
+    private CommandDispatcher<UCommandContext> dispatcher = new CommandDispatcher<>();
 
-    public static class BrigadierCommand implements ICommand {
+    public class BrigadierCommand implements ICommand {
         private final String name;
-        private CommandDispatcher<UCommandContext> dispatcher;
-        private List<String> alias = new ArrayList<>();
 
         public BrigadierCommand(String name) {
-            dispatcher = new CommandDispatcher<>();
             this.name = name;
         }
 
+
+        @Override
+        public List<String> getCommandAliases() {
+            return Collections.emptyList();
+        }
 
         @Override
         public String getCommandName() {
@@ -46,11 +50,6 @@ public class CommandManagerImpl implements UCommandManager {
         @Override
         public String getCommandUsage(ICommandSender sender) {
             return String.join("\n", dispatcher.getAllUsage(dispatcher.getRoot(), new UCommandContextImpl(sender), false));
-        }
-
-        @Override
-        public List<String> getCommandAliases() {
-            return alias;
         }
 
         @Override
@@ -105,28 +104,17 @@ public class CommandManagerImpl implements UCommandManager {
             mapping.put(command.getLiteral(), new BrigadierCommand(command.getLiteral()));
             ClientCommandHandler.instance.registerCommand(mapping.get(command.getLiteral()));
         }
-        mapping.get(command.getLiteral()).dispatcher.register(command);
+        dispatcher.register(command);
     }
 
     @Override
-    public void addAlias(String root, String... alias) {
-        BrigadierCommand command = mapping.get(root);
-        if (command == null) registerCommand(LiteralArgumentBuilder.literal(root));
-        command = mapping.get(root);
-
-        boolean modified = false;
-        for (String s : alias) {
-            if (!command.alias.contains(s)) {
-                command.alias.add(s);
-                modified = true;
-            }
-        }
-
-        if (modified)
-            ClientCommandHandler.instance.registerCommand(command);
+    public CommandNode<UCommandContext> getCommandNode(String command) {
+        return dispatcher.findNode(Collections.singletonList(command));
     }
 
     public void unregisterCommands() {
+        dispatcher = new CommandDispatcher<>();
+
         Set<ICommand> commands = ReflectionHelper.getPrivateValue(CommandHandler.class, ClientCommandHandler.instance, "commandSet","field_71561_b","field_6467","c");
 
         for (BrigadierCommand registeredCommand : mapping.values()) {

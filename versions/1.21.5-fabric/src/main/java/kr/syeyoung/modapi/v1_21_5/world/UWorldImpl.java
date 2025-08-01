@@ -12,7 +12,6 @@ import kr.syeyoung.modapi.v1_21_5.item.UItemStackImpl;
 import kr.syeyoung.modapi.v1_21_5.world.entities.UTileEntityChestImpl;
 import kr.syeyoung.modapi.v1_21_5.world.entities.UTileEntityImpl;
 import kr.syeyoung.modapi.v1_21_5.world.entities.UTileEntitySkullImpl;
-import kr.syeyoung.modapi.v1_8_9.entity.UEntityImpl;
 import kr.syeyoung.modapi.world.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -49,14 +48,6 @@ public class UWorldImpl implements UWorld {
         return e == null ? null : UEntityDelegateFactory.createEntityFor(e);
     }
 
-    public List<UEntity> getLoadedUEntityList() {
-        List<UEntity> converted = new ArrayList<>();
-        for (Entity entity : delegate.entities) {
-            converted.add(UEntityDelegateFactory.createEntityFor(entity));
-        }
-        return converted;
-    }
-
     public UEntityPlayer getPlayerEntityByUuid(UUID uuid) {
         PlayerEntity player = delegate.getPlayerByUuid(uuid);
         return player == null ? null : new UEntityPlayerImpl(player);
@@ -68,6 +59,20 @@ public class UWorldImpl implements UWorld {
                 TypeFilter.instanceOf(UEntityPlayerImpl.bimap.inverse().get(entityType)),
                 new Box(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ),
                 (e) -> true
+        );
+
+        List<UEntity> mapped = new ArrayList<>();
+        for (Entity e : entities) {
+            mapped.add(UEntityDelegateFactory.createEntityFor(e));
+        }
+        return mapped;
+    }
+
+    @Override
+    public List<UEntity> getEntitiesWithinAabb(AABB bb) {
+        List<? extends Entity> entities = delegate.getOtherEntities(
+                null,
+                new Box(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ)
         );
 
         List<UEntity> mapped = new ArrayList<>();
@@ -91,17 +96,6 @@ public class UWorldImpl implements UWorld {
         }
         return null;
     }
-
-    public List<UEntity> getEntities(EntityType entityType) {
-        List<Entity> entities = delegate.getEntities(UEntityImpl.bimap.inverse().get(entityType), a -> true);
-
-        List<UEntity> mapped = new ArrayList<>();
-        for (Entity e : entities) {
-            mapped.add(UEntityDelegateFactory.createEntityFor(e));
-        }
-        return mapped;
-    }
-
 
     private ThreadLocal<BlockPos.Mutable> posThreadLocal = ThreadLocal.withInitial(() -> new BlockPos.Mutable());
     @Override

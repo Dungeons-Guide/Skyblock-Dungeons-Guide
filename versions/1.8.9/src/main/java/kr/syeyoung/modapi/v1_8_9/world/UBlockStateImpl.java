@@ -5,6 +5,7 @@ import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.data.EnumHalf;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.util.EnumDyeColor;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.IBlockAccessible;
 import kr.syeyoung.modapi.world.UBlock;
@@ -92,8 +93,9 @@ public class UBlockStateImpl implements UBlockState {
     }
 
     @Override
-    public int getColor() {
-        return delegate.getPropertyNames().contains(BlockColored.COLOR) ? delegate.getValue(BlockColored.COLOR).getMetadata() : 0;
+    public EnumDyeColor getColor() {
+        return delegate.getPropertyNames().contains(BlockColored.COLOR) ?
+                EnumDyeColor.VALUES[delegate.getValue(BlockColored.COLOR).getMetadata()] : null;
     }
 
     @Override

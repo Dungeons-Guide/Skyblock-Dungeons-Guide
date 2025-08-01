@@ -21,7 +21,7 @@ package kr.syeyoung.modapi.v1_21_5.paralleluniverse.teams;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.Formatting;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -39,7 +39,7 @@ public class Team {
     private String displayName;
 
     @Getter @Setter
-    private EnumChatFormatting color;
+    private Formatting color;
     @Getter @Setter
     private NameTagVisibility nameTagVisibility;
 

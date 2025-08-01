@@ -2,63 +2,45 @@ package kr.syeyoung.modapi.v1_21_5.world;
 
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.IBlockRegistry;
-import kr.syeyoung.modapi.world.UBlock;
 import kr.syeyoung.modapi.world.UBlockState;
-import lombok.Getter;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFence;
-import net.minecraft.block.BlockStairs;
-import net.minecraft.block.BlockWall;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.ObjectIntIdentityMap;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.collection.IdList;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class BlockStateRegistryImpl implements IBlockRegistry {
 
-    private ObjectIntIdentityMap<UBlockStateImpl> map = new ObjectIntIdentityMap<>();
-    private UBlockImpl[] byId;
+    private IdList<UBlockStateImpl> map = new IdList<>();
+    private Map<Block, UBlockImpl> blockMap = new HashMap<>();
 
-
-    @Getter
-    private PropertyDirection[] directionMap = new PropertyDirection[4096];
 
     private Set<UBlockState>[] blockTypeStateMapping;
     public void init() {
-        byId = new UBlockImpl[4096];
-        for (Block block : Block.blockRegistry) {
-            byId[Block.getIdFromBlock(block)] = new UBlockImpl(block);
+        blockMap = new HashMap<>();
+        for (Block block : Registries.BLOCK) {
+            blockMap.put(block, new UBlockImpl(block));
         }
 
-        map = new ObjectIntIdentityMap<>();
-        for (IBlockState blockStateId : Block.BLOCK_STATE_IDS) {
-            int stateId = Block.BLOCK_STATE_IDS.get(blockStateId);
-            map.put(new UBlockStateImpl(blockStateId, byId[Block.getIdFromBlock(blockStateId.getBlock())], this), stateId);
-        }
-
-        directionMap = new PropertyDirection[4096];
-        for (Block block : Block.blockRegistry) {
-            Optional<PropertyDirection> propertyDirection = block.getDefaultState().getPropertyNames().stream()
-                    .filter(a -> a instanceof PropertyDirection)
-                    .map(PropertyDirection.class::cast).findFirst();
-            directionMap[Block.getIdFromBlock(block)] = propertyDirection.orElse(null);
+        map = new IdList<>();
+        for (BlockState blockStateId : Block.STATE_IDS) {
+            int stateId = Block.STATE_IDS.getRawId(blockStateId);
+            map.set(new UBlockStateImpl(blockStateId, blockMap.get(blockStateId.getBlock()), this), stateId);
         }
 
         setupBlockTypes();
     }
 
-    public UBlock getBlockById(int id) {
-        return byId[id];
+    public UBlockState getByStateId(int stateId) {
+        return map.get(stateId);
+    }
+    public UBlockState getByState(BlockState state) {
+        return map.get(Block.STATE_IDS.getRawId(state));
     }
 
-    public UBlockState getByStateId(int stateId) {
-        return map.getByValue(stateId);
-    }
 
     @Override
     public UBlockState fromSerializedSeting(String id) {
@@ -68,15 +50,15 @@ public class BlockStateRegistryImpl implements IBlockRegistry {
     @Override
     public UBlockState oneFromWellknown(BlockType blockType) {
         if (blockType == BlockType.AIR) {
-            return map.getByValue(0);
+            return getByState(Blocks.AIR.getDefaultState());
         } else if (blockType == BlockType.BEDROCK) {
-            return map.getByValue(7 << 4); // bedrock state id.
+            return getByState(Blocks.BEDROCK.getDefaultState());
         } else if (blockType == BlockType.CHEST) {
-            return map.getByValue(Block.BLOCK_STATE_IDS.get(Blocks.chest.getDefaultState()));
+            return getByState(Blocks.CHEST.getDefaultState());
         } else if (blockType == BlockType.SKULL){
-            return map.getByValue(Block.BLOCK_STATE_IDS.get(Blocks.skull.getDefaultState()));
+            return getByState(Blocks.PLAYER_HEAD.getDefaultState());
         } else if (blockType == BlockType.LEVER) {
-            return map.getByValue(Block.BLOCK_STATE_IDS.get(Blocks.lever.getDefaultState()));
+            return getByState(Blocks.LEVER.getDefaultState());
         }
         throw new IllegalArgumentException("Unsupported blocktype: "+blockType);
     }
@@ -94,9 +76,8 @@ public class BlockStateRegistryImpl implements IBlockRegistry {
 
 
     private void addAllVariantsOf(Block b, Set<UBlockState> blockStates) {
-        for (int i = 0; i < 16; i++) {
-            IBlockState blockState = b.getStateFromMeta(i);
-            UBlockState blockState1 = getByStateId(Block.BLOCK_STATE_IDS.get(blockState));
+        for (BlockState state : b.getStateManager().getStates()) {
+            UBlockState blockState1 = getByState(state);
             if (!blockStates.contains(blockState1))
                 blockStates.add(blockState1);
         }
@@ -108,114 +89,132 @@ public class BlockStateRegistryImpl implements IBlockRegistry {
             Set<UBlockState> b = blockTypeStateMapping[value.ordinal()] = new HashSet<>();
             switch (value) {
                 case AIR:
-                    addAllVariantsOf(Blocks.air, b);
+                    addAllVariantsOf(Blocks.AIR, b);
                     break;
                 case CHEST:
-                    addAllVariantsOf(Blocks.chest, b);
+                    addAllVariantsOf(Blocks.CHEST, b);
                     break;
                 case TRAP_CHEST:
-                    addAllVariantsOf(Blocks.trapped_chest, b);
+                    addAllVariantsOf(Blocks.TRAPPED_CHEST, b);
                     break;
                 case LEVER:
-                    addAllVariantsOf(Blocks.lever, b);
+                    addAllVariantsOf(Blocks.LEVER, b);
                     break;
                 case SKULL:
-                    addAllVariantsOf(Blocks.skull, b);
+                    addAllVariantsOf(Blocks.SKELETON_SKULL, b);
+                    addAllVariantsOf(Blocks.SKELETON_WALL_SKULL, b);
+                    addAllVariantsOf(Blocks.WITHER_SKELETON_SKULL, b);
+                    addAllVariantsOf(Blocks.WITHER_SKELETON_WALL_SKULL, b);
+                    addAllVariantsOf(Blocks.PLAYER_HEAD, b);
+                    addAllVariantsOf(Blocks.PLAYER_WALL_HEAD, b);
                     break;
                 case STONE:
-                    addAllVariantsOf(Blocks.stone, b); // not sure
+                    addAllVariantsOf(Blocks.STONE, b); // not sure
                     break;
                 case CARPET:
-                    addAllVariantsOf(Blocks.carpet, b);
+                    for (Map.Entry<RegistryKey<Block>, Block> registryKeyBlockEntry : Registries.BLOCK.getEntrySet()) {
+                        if (registryKeyBlockEntry.getKey().getValue().getPath().endsWith("_carpet"))
+                            addAllVariantsOf(registryKeyBlockEntry.getValue(), b);
+                    }
                     break;
                 case SPONGE:
-                    addAllVariantsOf(Blocks.sponge, b);
+                    addAllVariantsOf(Blocks.SPONGE, b);
+                    addAllVariantsOf(Blocks.WET_SPONGE, b);
                     break;
                 case BARRIER:
-                    addAllVariantsOf(Blocks.barrier, b);
+                    addAllVariantsOf(Blocks.BARRIER, b);
                     break;
                 case COAL_BLOCK:
-                    addAllVariantsOf(Blocks.coal_block, b);
+                    addAllVariantsOf(Blocks.COAL_BLOCK, b);
                     break;
                 case PRISMARINE:
-                    addAllVariantsOf(Blocks.prismarine, b);
+                    addAllVariantsOf(Blocks.PRISMARINE, b);
                     break;
                 case IRON_BARS:
-                    addAllVariantsOf(Blocks.iron_bars, b);
+                    addAllVariantsOf(Blocks.IRON_BARS, b);
                     break;
                 case STONE_SLAB:
-                    addAllVariantsOf(Blocks.stone_slab, b);
+                    addAllVariantsOf(Blocks.SMOOTH_STONE_SLAB, b);
+                    addAllVariantsOf(Blocks.STONE_SLAB, b);
+                    addAllVariantsOf(Blocks.STONE_BRICK_SLAB, b);
                     break;
                 case SEA_LANTERN:
-                    addAllVariantsOf(Blocks.sea_lantern, b);
+                    addAllVariantsOf(Blocks.SEA_LANTERN, b);
                     break;
                 case STONE_BRICK:
-                    addAllVariantsOf(Blocks.stonebrick, b);
+                    addAllVariantsOf(Blocks.STONE_BRICKS, b);
                     break;
                 case WOOD_PLANKS:
-                    addAllVariantsOf(Blocks.planks, b);
+                    for (Map.Entry<RegistryKey<Block>, Block> registryKeyBlockEntry : Registries.BLOCK.getEntrySet()) {
+                        if (registryKeyBlockEntry.getKey().getValue().getPath().endsWith("_planks"))
+                            addAllVariantsOf(registryKeyBlockEntry.getValue(), b);
+                    }
                     break;
                 case STONE_BUTTON:
-                    addAllVariantsOf(Blocks.stone_button, b);
+                    addAllVariantsOf(Blocks.STONE_BUTTON, b);
                     break;
-                case FLOWING_WATER:
-                    addAllVariantsOf(Blocks.flowing_water, b);
-                    break;
-                case STATIONARY_WATER:
-                    addAllVariantsOf(Blocks.water, b);
+                case FLOWING_WATER, STATIONARY_WATER:
+                    addAllVariantsOf(Blocks.WATER, b);
                     break;
                 case HARDENED_CLAY:
-                    addAllVariantsOf(Blocks.hardened_clay, b);
+                    addAllVariantsOf(Blocks.TERRACOTTA, b);
                     break;
                 case END_PORTAL_FRAME:
-                    addAllVariantsOf(Blocks.end_portal_frame, b);
+                    addAllVariantsOf(Blocks.END_PORTAL_FRAME, b);
                     break;
                 case DOUBLE_STONE_SLAB:
-                    addAllVariantsOf(Blocks.double_stone_slab, b);
+                    addAllVariantsOf(Blocks.STONE_SLAB, b);
                     break;
                 case STAINED_HARDENED_CLAY:
-                    addAllVariantsOf(Blocks.stained_hardened_clay, b);
+                    for (Map.Entry<RegistryKey<Block>, Block> registryKeyBlockEntry : Registries.BLOCK.getEntrySet()) {
+                        if (registryKeyBlockEntry.getKey().getValue().getPath().endsWith("terracotta"))
+                            addAllVariantsOf(registryKeyBlockEntry.getValue(), b);
+                    }
                     break;
                 case BEDROCK:
-                    addAllVariantsOf(Blocks.bedrock, b);
+                    addAllVariantsOf(Blocks.BEDROCK, b);
                     break;
                 case TAG_SLAB:
-                    addAllVariantsOf(Blocks.stone_slab, b);
-                    addAllVariantsOf(Blocks.double_stone_slab, b);
-                    addAllVariantsOf(Blocks.wooden_slab, b);
-                    addAllVariantsOf(Blocks.double_wooden_slab, b);
-                    addAllVariantsOf(Blocks.stone_slab2, b);
-                    addAllVariantsOf(Blocks.double_stone_slab2, b);
+                    for (Map.Entry<RegistryKey<Block>, Block> registryKeyBlockEntry : Registries.BLOCK.getEntrySet()) {
+                        if (registryKeyBlockEntry.getKey().getValue().getPath().endsWith("_slab"))
+                            addAllVariantsOf(registryKeyBlockEntry.getValue(), b);
+                    }
                     break;
                 case TAG_STAIR:
-                    for (Block block : Block.blockRegistry) {
-                        if (block instanceof BlockStairs)
-                            addAllVariantsOf(block, b);
+                    for (Map.Entry<RegistryKey<Block>, Block> registryKeyBlockEntry : Registries.BLOCK.getEntrySet()) {
+                        if (registryKeyBlockEntry.getKey().getValue().getPath().endsWith("_stair"))
+                            addAllVariantsOf(registryKeyBlockEntry.getValue(), b);
                     }
                     break;
                 case TAG_WALL:
-                    for (Block block : Block.blockRegistry) {
-                        if (block instanceof BlockWall)
-                            addAllVariantsOf(block, b);
+                    for (Map.Entry<RegistryKey<Block>, Block> registryKeyBlockEntry : Registries.BLOCK.getEntrySet()) {
+                        if (registryKeyBlockEntry.getKey().getValue().getPath().endsWith("_wall"))
+                            addAllVariantsOf(registryKeyBlockEntry.getValue(), b);
                     }
                     break;
                 case TAG_FENCE:
-                    for (Block block : Block.blockRegistry) {
-                        if (block instanceof BlockFence)
-                            addAllVariantsOf(block, b);
+                    for (Map.Entry<RegistryKey<Block>, Block> registryKeyBlockEntry : Registries.BLOCK.getEntrySet()) {
+                        if (registryKeyBlockEntry.getKey().getValue().getPath().endsWith("_fence"))
+                            addAllVariantsOf(registryKeyBlockEntry.getValue(), b);
                     }
                     break;
                 case WALL_SIGN:
-                    addAllVariantsOf(Blocks.wall_sign, b);
+                    for (Map.Entry<RegistryKey<Block>, Block> registryKeyBlockEntry : Registries.BLOCK.getEntrySet()) {
+                        if (registryKeyBlockEntry.getKey().getValue().getPath().endsWith("_wall_sign"))
+                            addAllVariantsOf(registryKeyBlockEntry.getValue(), b);
+                    }
                     break;
                 case QUARTZ_ORE:
-                    addAllVariantsOf(Blocks.quartz_ore, b);
+                    addAllVariantsOf(Blocks.NETHER_QUARTZ_ORE, b);
                     break;
                 case STANDING_SIGN:
-                    addAllVariantsOf(Blocks.standing_sign, b);
+                    for (Map.Entry<RegistryKey<Block>, Block> registryKeyBlockEntry : Registries.BLOCK.getEntrySet()) {
+                        if (registryKeyBlockEntry.getKey().getValue().getPath().endsWith("_sign") && !registryKeyBlockEntry.getKey().getValue().getPath().endsWith("_wall_sign"))
+                            addAllVariantsOf(registryKeyBlockEntry.getValue(), b);
+                    }
                     break;
                 case DISPENSER:
-                    addAllVariantsOf(Blocks.dispenser, b);
+                    addAllVariantsOf(Blocks.DISPENSER, b);
                     break;
             }
         }

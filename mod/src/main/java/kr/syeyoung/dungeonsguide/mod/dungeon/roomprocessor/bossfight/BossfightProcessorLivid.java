@@ -76,7 +76,7 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     private int correctLivid = 14;
     @Override
     public void onEntityUpdate(LivingEntityTickEvent updateEvent) {
-        correctLivid = ModAPI.getAPI().getWorld().getBlockStateAt(5, 108, 42).getColor();
+        correctLivid = ModAPI.getAPI().getWorld().getBlockStateAt(5, 108, 42).getColor().ordinal();
         realLividName = lividMetadata.get(correctLivid);
         prefix = lividColorPrefix.get(realLividName);
 

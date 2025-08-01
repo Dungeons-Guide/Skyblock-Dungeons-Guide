@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.BossfightRenderSettings;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityLiving;
@@ -106,7 +107,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     @Override
     public List<MarkerData> getMarkers() {
         List<MarkerData> markerData = new ArrayList<>();
-        for (UEntity entity : ModAPI.getAPI().getWorld().getLoadedUEntityList()) {
+        for (UEntity entity : ModAPI.getAPI().getWorld().getEntitiesWithinAabb(new AABB(-1000, -1000, -1000,1000,1000,1000))) {
             if (!(entity instanceof UEntityLiving)) continue;
             if (((UEntityLiving) entity).getHealth() <= 0) continue;
             MarkerData markerData1 = convertToMarker(entity);

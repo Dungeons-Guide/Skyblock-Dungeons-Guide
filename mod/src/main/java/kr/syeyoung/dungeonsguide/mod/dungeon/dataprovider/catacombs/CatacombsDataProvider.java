@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.catacombs;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonSpecificDataProvider;
+import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
@@ -52,7 +53,7 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
     }
 
     public static UEntityArmorStand getMorts(UWorld w){
-        List<UEntity> uEntityList = w.getEntities(EntityType.ARMOR_STAND);
+        List<UEntity> uEntityList = w.getEntitiesWithinAabb(EntityType.ARMOR_STAND, new AABB(-1000, -1000, -1000, 1000, 1000, 1000));
         for (UEntity uEntity : uEntityList) {
             if (uEntity.getName().equals("§bMort")) return (UEntityArmorStand) uEntity;
         }

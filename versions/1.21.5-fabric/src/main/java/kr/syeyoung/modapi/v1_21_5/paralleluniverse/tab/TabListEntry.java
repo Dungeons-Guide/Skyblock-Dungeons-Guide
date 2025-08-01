@@ -18,27 +18,24 @@
 
 package kr.syeyoung.modapi.v1_21_5.paralleluniverse.tab;
 
-import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import kr.syeyoung.modapi.util.GameMode;
 import kr.syeyoung.modapi.v1_21_5.paralleluniverse.teams.Team;
 import kr.syeyoung.modapi.v1_21_5.paralleluniverse.teams.TeamManager;
-import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.Team;
-import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.TeamManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.client.resources.SkinManager;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.texture.PlayerSkinProvider;
+import net.minecraft.client.util.DefaultSkinHelper;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.text.Text;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.ResourceLocation;
 
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
 public class TabListEntry implements UTabListEntry {
@@ -80,61 +77,32 @@ public class TabListEntry implements UTabListEntry {
         return gameProfile.getName();
     }
 
-
-    private boolean playerTexturesLoaded = false;
-    private ResourceIdentifier locationSkin;
-    private ResourceIdentifier locationCape;
-    private String skinType;
-
-
-    public boolean hasLocationSkin() {
-        return this.locationSkin != null;
-    }
-
-    public String getSkinType() {
-        return this.skinType == null ? DefaultPlayerSkin.getSkinType(this.gameProfile.getId()) : this.skinType;
+    private static java.util.function.Supplier<SkinTextures> texturesSupplier(GameProfile profile) {
+        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        PlayerSkinProvider playerSkinProvider = minecraftClient.getSkinProvider();
+        CompletableFuture<Optional<SkinTextures>> completableFuture = playerSkinProvider.fetchSkinTextures(profile);
+        boolean bl = !minecraftClient.uuidEquals(profile.getId());
+        SkinTextures skinTextures = DefaultSkinHelper.getSkinTextures(profile);
+        return () -> {
+            SkinTextures skinTextures2 = completableFuture.getNow(Optional.empty()).orElse(skinTextures);
+            if (bl && !skinTextures2.secure()) {
+                return skinTextures;
+            }
+            return skinTextures2;
+        };
     }
 
     public ResourceIdentifier getLocationSkin() {
-        if (this.locationSkin == null) {
-            this.loadPlayerTextures();
-        }
-
-        return new ResourceIdentifier(Objects.firstNonNull(this.locationSkin, DefaultPlayerSkin.getDefaultSkin(this.gameProfile.getId())).toString());
+//        if (this.locationSkin == null) {
+//
+//            this.loadPlayerTextures();
+//        }
+//
+//        MinecraftClient.getInstance().getNetworkHandler().getp
+////        if (this.lo)
+        return new ResourceIdentifier("","");
+//        return new ResourceIdentifier((this.locationSkin, DefaultPlayerSkin.getDefaultSkin(this.gameProfile.getId())).toString());
     }
-
-    public ResourceLocation getLocationCape() {
-        if (this.locationCape == null) {
-            this.loadPlayerTextures();
-        }
-
-        return this.locationCape;
-    }
-    protected void loadPlayerTextures() {
-        synchronized(this) {
-            if (!this.playerTexturesLoaded) {
-                this.playerTexturesLoaded = true;
-                Minecraft.getMinecraft().getSkinManager().loadProfileTextures(this.gameProfile, new SkinManager.SkinAvailableCallback() {
-                    public void skinAvailable(MinecraftProfileTexture.Type type, ResourceLocation location, MinecraftProfileTexture profileTexture) {
-                        switch (type) {
-                            case SKIN:
-                                TabListEntry.this.locationSkin = location;
-                                TabListEntry.this.skinType = profileTexture.getMetadata("model");
-                                if (TabListEntry.this.skinType == null) {
-                                    TabListEntry.this.skinType = "default";
-                                }
-                                break;
-                            case CAPE:
-                                TabListEntry.this.locationCape = location;
-                        }
-
-                    }
-                }, true);
-            }
-
-        }
-    }
-
     @Override
     public UUID getUUID() {
         return gameProfile.getId();

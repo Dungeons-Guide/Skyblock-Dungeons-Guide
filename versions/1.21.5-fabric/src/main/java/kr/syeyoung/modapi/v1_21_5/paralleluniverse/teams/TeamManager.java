@@ -18,8 +18,8 @@
 
 package kr.syeyoung.modapi.v1_21_5.paralleluniverse.teams;
 
-import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
-import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabListEntry;
+import kr.syeyoung.modapi.v1_21_5.paralleluniverse.tab.TabList;
+import kr.syeyoung.modapi.v1_21_5.paralleluniverse.tab.TabListEntry;
 
 import java.util.HashMap;
 import java.util.Map;

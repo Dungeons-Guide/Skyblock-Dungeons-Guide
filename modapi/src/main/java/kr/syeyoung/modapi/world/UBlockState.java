@@ -4,6 +4,7 @@ import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.data.EnumHalf;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.util.EnumDyeColor;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public interface UBlockState {
 
     int getWaterLevel();
 
-    int getColor();
+    EnumDyeColor getColor();
 
     Object getIBlockState();
 

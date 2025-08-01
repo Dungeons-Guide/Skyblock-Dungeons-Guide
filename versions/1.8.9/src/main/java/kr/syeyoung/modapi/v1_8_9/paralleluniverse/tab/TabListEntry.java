@@ -84,13 +84,6 @@ public class TabListEntry implements UTabListEntry {
     private String skinType;
 
 
-    public boolean hasLocationSkin() {
-        return this.locationSkin != null;
-    }
-
-    public String getSkinType() {
-        return this.skinType == null ? DefaultPlayerSkin.getSkinType(this.gameProfile.getId()) : this.skinType;
-    }
 
     public ResourceIdentifier getLocationSkin() {
         if (this.locationSkin == null) {
@@ -100,13 +93,6 @@ public class TabListEntry implements UTabListEntry {
         return new ResourceIdentifier(Objects.firstNonNull(this.locationSkin, DefaultPlayerSkin.getDefaultSkin(this.gameProfile.getId())).toString());
     }
 
-    public ResourceLocation getLocationCape() {
-        if (this.locationCape == null) {
-            this.loadPlayerTextures();
-        }
-
-        return this.locationCape;
-    }
     protected void loadPlayerTextures() {
         synchronized(this) {
             if (!this.playerTexturesLoaded) {

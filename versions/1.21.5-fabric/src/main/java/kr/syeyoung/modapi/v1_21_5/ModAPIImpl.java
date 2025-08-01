@@ -1,9 +1,7 @@
 package kr.syeyoung.modapi.v1_21_5;
 
-import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.Platform;
 import kr.syeyoung.modapi.audio.USoundHandler;
@@ -37,11 +35,9 @@ import kr.syeyoung.modapi.v1_21_5.map.MapDataManager;
 import kr.syeyoung.modapi.v1_21_5.paralleluniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.modapi.v1_21_5.paralleluniverse.tab.TabList;
 import kr.syeyoung.modapi.v1_21_5.profiler.UProfilerImpl;
-import kr.syeyoung.modapi.v1_21_5.resources.DGTexturePack;
 import kr.syeyoung.modapi.v1_21_5.resources.UResourceManagerImpl;
 import kr.syeyoung.modapi.v1_21_5.resources.UResourcePackRepositoryImpl;
 import kr.syeyoung.modapi.v1_21_5.settings.UGameSettingsImpl;
-import kr.syeyoung.modapi.v1_21_5.util.CustomNetworkPlayerInfoUnloader;
 import kr.syeyoung.modapi.v1_21_5.util.USessionImpl;
 import kr.syeyoung.modapi.v1_21_5.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_21_5.world.UWorldImpl;
@@ -52,37 +48,16 @@ import kr.syeyoung.modapi.world.UWorld;
 import net.fabricmc.loader.api.FabricLoader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.GuiNewChat;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.launchwrapper.Launch;
-import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.profiler.Profilers;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.simple.SimpleLogger;
-
-import java.util.List;
-import java.util.Set;
 
 public class ModAPIImpl implements ModAPI {
 
@@ -221,7 +196,8 @@ public class ModAPIImpl implements ModAPI {
 
     @Override
     public UWorld getWorld() {
-        return Minecraft.getMinecraft().theWorld == null ? null : new UWorldImpl(Minecraft.getMinecraft().theWorld, (BlockStateRegistryImpl) ModAPI.getAPI().getBlockRegistry());
+        return MinecraftClient.getInstance().world == null ? null :
+                new UWorldImpl(MinecraftClient.getInstance().world, (BlockStateRegistryImpl) ModAPI.getAPI().getBlockRegistry());
     }
 
     @Override
@@ -230,13 +206,14 @@ public class ModAPIImpl implements ModAPI {
     }
 
     private PacketInjector packetInjector = new PacketInjector();
-    private EventListener eventListener = new EventListener();
+    private EventListenerOld eventListenerOld = new EventListenerOld();
 
     @Override
     public void init() {
 //        MinecraftForge.EVENT_BUS.register(packetInjector);
-        eventListener.register();
+        eventListenerOld.register();
         registry.init();
+        commandManager.init();
 
 
 //        try {
@@ -255,15 +232,15 @@ public class ModAPIImpl implements ModAPI {
 //            e.printStackTrace();
 //        }
 //
-        if (Minecraft.getMinecraft().getNetHandler() != null)
-            Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler_2", packetInjector);
+//        if (Minecraft.getMinecraft().getNetHandler() != null)
+//            Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler_2", packetInjector);
     }
 
     @Override
     public void unload() {
 //        MinecraftForge.EVENT_BUS.unregister(packetInjector);
 //        CustomNetworkPlayerInfoUnloader.unload();
-//        eventListener.unregister();
+//        eventListenerOld.unregister();
 //
 //        commandManager.unregisterCommands();
 //        packetInjector.cleanup();
