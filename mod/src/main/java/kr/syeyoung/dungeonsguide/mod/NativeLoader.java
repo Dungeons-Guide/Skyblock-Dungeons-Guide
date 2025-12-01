@@ -47,7 +47,12 @@ public class NativeLoader {
         String libName = System.mapLibraryName(name);
         String dir;
 
-        if (Platform.isARM()) {
+        String osArch = System.getProperty("os.arch").toLowerCase();
+        String osName = System.getProperty("os.name").toLowerCase();
+
+        if (osName.contains("mac") && (osArch.equals("aarch64") || osArch.equals("arm64"))) {
+            dir = "aarch64";
+        } else if (Platform.isARM()) {
             dir = "aarch64";
         } else if (Platform.is64Bit()) {
             dir = "x86_64";
