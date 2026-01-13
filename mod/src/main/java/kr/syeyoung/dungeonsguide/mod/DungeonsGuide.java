@@ -70,15 +70,12 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.ProgressManager;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
-import net.minecraftforge.fml.common.eventhandler.ListenerList;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -97,6 +94,9 @@ public class DungeonsGuide implements DGInterface {
 
     @Getter
     private File tempDir = new File(Main.getConfigDir(), "tmp");
+
+    @Getter
+    private File configDir = Main.getConfigDir();
 
     @Getter
     public static final ThreadGroup THREAD_GROUP = new ThreadGroup("Dungeons Guide");
@@ -277,20 +277,6 @@ public class DungeonsGuide implements DGInterface {
             ModAPI.getAPI().getEventBus().unregisterListener(registeredMODAPIListener);
         }
         EventHandlerRegistry.unregisterListeners();
-
-        List<ListenerList> all = ReflectionHelper.getPrivateValue(ListenerList.class, null, "allLists");
-        int busId = ReflectionHelper.getPrivateValue(EventBus.class, MinecraftForge.EVENT_BUS, "busID");
-        for (ListenerList listenerList : all) {
-            Object[] list = ReflectionHelper.getPrivateValue(ListenerList.class, listenerList, "lists");
-            Object inst = list[busId];
-            try {
-                Method m = inst.getClass().getDeclaredMethod("buildCache"); // refresh cache
-                m.setAccessible(true);
-                m.invoke(inst);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
 
 
         Map<ResourceLocation, ITextureObject> mapTextureObjects = ReflectionHelper.getPrivateValue(TextureManager.class, Minecraft.getMinecraft().getTextureManager(), "mapTextureObjects", "field_110585_a", "b");

@@ -30,8 +30,10 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.*;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -215,5 +217,20 @@ public class EventListener {
             listener.listenerList.unregister(busID, listener);
         }
         listeners.clear();
+
+
+        List<ListenerList> all = ReflectionHelper.getPrivateValue(ListenerList.class, null, "allLists");
+        int busId = ReflectionHelper.getPrivateValue(EventBus.class, MinecraftForge.EVENT_BUS, "busID");
+        for (ListenerList listenerList : all) {
+            Object[] list = ReflectionHelper.getPrivateValue(ListenerList.class, listenerList, "lists");
+            Object inst = list[busId];
+            try {
+                Method m = inst.getClass().getDeclaredMethod("buildCache"); // refresh cache
+                m.setAccessible(true);
+                m.invoke(inst);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

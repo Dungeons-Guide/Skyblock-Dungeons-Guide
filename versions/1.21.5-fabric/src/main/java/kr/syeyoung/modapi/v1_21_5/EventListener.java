@@ -1,6 +1,8 @@
 package kr.syeyoung.modapi.v1_21_5;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.systems.RenderSystem;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.data.Vector3D;
@@ -19,6 +21,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.*;
 import net.kyori.adventure.text.Component;
@@ -33,6 +37,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -54,6 +59,18 @@ public class EventListener {
         AttackBlockCallback.EVENT.register(this::onAttackBlock);
         AttackEntityCallback.EVENT.register(this::onAttackEntity);
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register(this::onWorldChange);
+        HudLayerRegistrationCallback.EVENT.register((a) -> {
+            a.attachLayerAfter(IdentifiedLayer.DEBUG, IdentifiedLayer.of(Identifier.of("dungeonsguide", "hud"), (ctx, counter) -> {
+//                ModAPI.getAPI().getEventBus().fireEvent(new )
+//                ctx.ctx
+
+//                        welp i have to do 1.21 support for 1.8 mod... and i alrdy hate this rendering system
+            }));
+        });
+        RenderSystem.getDevice()
+                .createCommandEncoder()
+                .createRenderPass(null, null)
+                .setPipeline(RenderPipeline.builder().build());
     }
 
     private void onWorldChange(MinecraftClient minecraftClient, ClientWorld clientWorld) {

@@ -536,8 +536,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
                     // if debug
                     if (FeatureRegistry.DEBUG.isEnabled()) {
-                        new File(Main.getConfigDir(), "runs").mkdirs();
-                        FileOutputStream fos = new FileOutputStream(new File(Main.getConfigDir(), "runs/" + UUID.randomUUID() + ".dgroom"));
+                        new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "runs").mkdirs();
+                        FileOutputStream fos = new FileOutputStream(new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "runs/" + UUID.randomUUID() + ".dgroom"));
                         JsonWriter jsonWriter = new JsonWriter(new OutputStreamWriter(fos));
                         gson.toJson(jsonObject, jsonWriter);
                         jsonWriter.flush();

@@ -1,6 +1,5 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
 
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.Notification;
@@ -30,8 +29,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -130,7 +129,7 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
                     if (zipEntry == null) {
                         throw new IllegalArgumentException("File is not valid pathfind preset export");
                     }
-                    File presetExtractionTarget = new File(new File(Main.getConfigDir(), "presets"), random+".json");
+                    File presetExtractionTarget = new File(new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "presets"), random+".json");
                     try (InputStream inputStream = zipFile.getInputStream(zipEntry)) {
                         preset = PathfindPreset.loadFromStream(inputStream);
                         preset.setEditable(false);
@@ -158,7 +157,7 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
                 WidgetNotificationProgress.Progress extracting = new WidgetNotificationProgress.Progress("Extracting Precalculations 0/"+targets.size(), new AtomicLong(0), new AtomicLong(targets.size()), true);
                 progress.addProgress(extracting);
 
-                File importTarget = new File(new File(Main.getConfigDir(), "precalculations"), preset.getPresetId());
+                File importTarget = new File(new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "precalculations"), preset.getPresetId());
                 if (!importTarget.exists())
                     importTarget.mkdirs();
 

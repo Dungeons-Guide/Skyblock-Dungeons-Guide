@@ -2,7 +2,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.remotereq;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
@@ -36,8 +35,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
@@ -181,7 +180,7 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
                 progressForTopRight.addProgress(progress);
                 List<File> toLoad = new ArrayList<>();
                 try {
-                    File targetDir = new File(Main.getConfigDir(), "precalculations/"+requestId);
+                    File targetDir = new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "precalculations/"+requestId);
                     targetDir.mkdirs();
 
                     try (ZipFile zipFile = new ZipFile(downloadTarget)) {

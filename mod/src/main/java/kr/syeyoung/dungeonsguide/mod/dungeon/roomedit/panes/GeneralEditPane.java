@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.panes;
 
 
-import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
@@ -151,7 +151,7 @@ public class GeneralEditPane extends MPanel {
                     try {
                         CompoundBinaryTag nbtTagCompound2 = createNBT();
 
-                        File f=new File(Main.getConfigDir(), "schematics/"+
+                        File f=new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "schematics/"+
                                 dungeonRoom.getDungeonRoomInfo().getName()+"-"+dungeonRoom.getDungeonRoomInfo().getUuid().toString()+"-"+ UUID.randomUUID()+".schematic");
 
                         FileOutputStream fos = new FileOutputStream(f);

@@ -5,7 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
-import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
@@ -43,7 +43,7 @@ public class PathfindPreset implements Cloneable {
         this.presetName = presetId;
         this.generatedAt = Instant.now();
         this.origin = "Manually Generated";
-        this.file = new File(Main.getConfigDir(), "presets/"+presetId+".json");
+        this.file = new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "presets/"+presetId+".json");
         this.dirty = true;
         this.editable = true;
 
@@ -178,7 +178,7 @@ public class PathfindPreset implements Cloneable {
             preset.editable = true;
             preset.origin = "Clone of "+presetName+"("+presetId+")";
 
-            preset.file = new File(Main.getConfigDir(), "presets/"+preset.presetId.toString()+".json");
+            preset.file = new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "presets/"+preset.presetId.toString()+".json");
 
             for (Map.Entry<UUID, RoomPreset> uuidRoomPresetEntry : presets.entrySet()) {
                 RoomPreset roomPreset = uuidRoomPresetEntry.getValue().clone();

@@ -1,8 +1,8 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step1;
 
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.FeatureRequestCalculation;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.PathfindPrecalculationRequestSet;
@@ -48,7 +48,7 @@ public class WidgetPrecalcStep1 extends AnnotatedImportOnlyWidget {
             // usually it results in 52x reduction for zip so....
             totalSize = (long) (totalSize * 1.04); // assuming 25x reduction for zip.
 
-            long usablespace = Files.getFileStore(Main.getConfigDir().toPath()).getUsableSpace();
+            long usablespace = Files.getFileStore(DungeonsGuide.getDungeonsGuide().getConfigDir().toPath()).getUsableSpace();
             if (usablespace < totalSize) {
                 throw new IllegalStateException(FileUtils.byteCountToDisplaySize(totalSize) + " of storage required but only " + FileUtils.byteCountToDisplaySize(usablespace) + " available");
             }

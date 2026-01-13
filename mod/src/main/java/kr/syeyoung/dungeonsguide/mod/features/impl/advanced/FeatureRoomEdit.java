@@ -23,7 +23,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCKeybind;
@@ -86,8 +85,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class FeatureRoomEdit  extends SimpleFeature {
@@ -326,7 +325,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
         public  void loadSchematic() {
             Frame parent = new Frame();
             FileDialog dialog = new FileDialog(parent, "Choose a Schematic file", FileDialog.LOAD);
-            dialog.setDirectory(Main.getConfigDir().getAbsolutePath());
+            dialog.setDirectory(DungeonsGuide.getDungeonsGuide().getConfigDir().getAbsolutePath());
 
             dialog.setFilenameFilter((dir, name) -> name.endsWith(".schematic")); //osx
             dialog.setFile("*.schematic"); // windows
@@ -351,7 +350,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
             Frame parent = new Frame();
             FileDialog dialog = new FileDialog(parent, "Choose a DG Run file", FileDialog.LOAD);
-            dialog.setDirectory(Main.getConfigDir().getAbsolutePath());
+            dialog.setDirectory(DungeonsGuide.getDungeonsGuide().getConfigDir().getAbsolutePath());
 
             dialog.setFilenameFilter((dir, name) -> name.endsWith(".dgrun")); //osx
             dialog.setFile("*.dgrun"); // windows

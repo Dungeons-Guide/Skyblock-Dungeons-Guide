@@ -25,7 +25,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatRoutine;
@@ -270,7 +269,7 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug saverooms")
     public void saveRoomsCommand() {
-        DungeonRoomInfoRegistry.saveAll(new File(Main.getConfigDir(), "roomdatas"));
+        DungeonRoomInfoRegistry.saveAll(new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "roomdatas"));
         ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata");
     }
 
@@ -337,7 +336,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug loadrooms")
     public void loadRoomsCommand() {
         try {
-            DungeonRoomInfoRegistry.loadAll(new File(Main.getConfigDir(), "roomdatas"));
+            DungeonRoomInfoRegistry.loadAll(new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "roomdatas"));
             ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fSuccessfully loaded roomdatas");
             return;
         } catch (BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException |
@@ -355,7 +354,7 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug removedoors")
     public void removedoors() throws Exception {
-        File fileRoot = Main.getConfigDir();
+        File fileRoot = DungeonsGuide.getDungeonsGuide().getConfigDir();
         File dir = new File(fileRoot, "grouped2");
         File outdir = new File(fileRoot, "grouped3");
 
@@ -497,7 +496,7 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug removedoorschematic {file}")
     public void removedoorsSchematic(@CommandParam(value = "file", stringType = CommandParam.EnumStringType.GREEDY) String file) throws Exception {
-        File fileRoot = Main.getConfigDir();
+        File fileRoot = DungeonsGuide.getDungeonsGuide().getConfigDir();
         File dir = new File(fileRoot, "schematics");
 
         File outdir = new File(fileRoot, "schematics");
@@ -632,7 +631,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug nodupeprocess")
     public void removedupe() throws Exception  {
 
-        File fileRoot = Main.getConfigDir();
+        File fileRoot = DungeonsGuide.getDungeonsGuide().getConfigDir();
         File dir = new File(fileRoot, "grouped");
         File outdir = new File(fileRoot, "grouped2");
 
@@ -692,7 +691,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug groupunknowns")
     public void groupunknowns() throws Exception {
 
-        File fileRoot = Main.getConfigDir();
+        File fileRoot = DungeonsGuide.getDungeonsGuide().getConfigDir();
         File dir = new File(fileRoot, "compressed");
         File outdir = new File(fileRoot, "unk_grouped");
         Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
@@ -783,7 +782,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug groupprocess")
     public void groupprocess() throws Exception {
         // This take about 7m to complete.  :30:35 to 39:19 -> Around 9min.
-        File fileRoot = Main.getConfigDir();
+        File fileRoot = DungeonsGuide.getDungeonsGuide().getConfigDir();
         File dir = new File(fileRoot, "compressed");
         File outdir = new File(fileRoot, "grouped");
         Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
@@ -1086,7 +1085,7 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug process")
     public void processCommand1() {
-        File fileRoot = Main.getConfigDir();
+        File fileRoot = DungeonsGuide.getDungeonsGuide().getConfigDir();
         File dir = new File(fileRoot, "processorinput");
         File outsecret = new File(fileRoot, "processoroutsecret");
         CBORMapper cborMapper = new CBORMapper();
@@ -1161,7 +1160,7 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug check")
     public void checkCommand() {
-        File fileroot = new File(Main.getConfigDir(), "processorinput");
+        File fileroot = new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "processorinput");
         CBORMapper cborMapper = new CBORMapper();
         for (File f : fileroot.listFiles()) {
             if (!f.getName().endsWith(".roomdata.cbor")) {
@@ -1246,7 +1245,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug saverun")
     public void saveRunCommand() {
         try {
-            File f = Main.getConfigDir();
+            File f = DungeonsGuide.getDungeonsGuide().getConfigDir();
             File runDir = new File(f, "dungeonruns");
             runDir.mkdirs();
 

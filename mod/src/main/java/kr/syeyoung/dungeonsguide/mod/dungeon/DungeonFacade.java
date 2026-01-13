@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon;
 
-import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculationRegistry;
@@ -48,8 +48,8 @@ public class DungeonFacade {
 
     public void init() {
         try {
-            new File(Main.getConfigDir(), "roomdatas").mkdirs();
-            DungeonRoomInfoRegistry.loadAll(new File(Main.getConfigDir(), "roomdatas"));
+            new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "roomdatas").mkdirs();
+            DungeonRoomInfoRegistry.loadAll(new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "roomdatas"));
         } catch (BadPaddingException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException |
                  IOException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
@@ -58,8 +58,8 @@ public class DungeonFacade {
 
         {
             try {
-                new File(Main.getConfigDir(), "precalculations").mkdirs();
-                new PathfindPrecalculationRegistry(new File(Main.getConfigDir(), "precalculations"));
+                new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "precalculations").mkdirs();
+                new PathfindPrecalculationRegistry(new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "precalculations"));
                 System.out.println(PathfindPrecalculationRegistry.getINSTANCE().getLoaded().size());
             } catch (IOException e) {
                 FeatureCollectDiagnostics.queueSendLogAsync(e);
@@ -67,12 +67,12 @@ public class DungeonFacade {
             }
         }
         {
-            new File(Main.getConfigDir(), "presets").mkdirs();
-            new PathfindPresetRegistry(new File(Main.getConfigDir(), "presets"));
+            new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "presets").mkdirs();
+            new PathfindPresetRegistry(new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "presets"));
         }
         {
-            new File(Main.getConfigDir(), "tspCache").mkdirs();
-            new TSPCacheRegistry(new File(Main.getConfigDir(), "tspCache"));
+            new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "tspCache").mkdirs();
+            new TSPCacheRegistry(new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "tspCache"));
         }
     }
 }

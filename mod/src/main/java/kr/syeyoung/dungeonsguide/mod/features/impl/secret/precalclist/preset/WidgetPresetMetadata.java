@@ -1,6 +1,5 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
@@ -75,7 +74,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
         this.generatedAt.setValue(dateTimeFormatter.format(preset.getGeneratedAt().atZone(ZoneId.systemDefault())));
         this.origin.setValue(preset.getOrigin());
         if (preset.getFile() != null)
-            this.filename.setValue(Main.getConfigDir().toPath().relativize(preset.getFile().toPath()).toString());
+            this.filename.setValue(DungeonsGuide.getDungeonsGuide().getConfigDir().toPath().relativize(preset.getFile().toPath()).toString());
         else
             this.filename.setValue("no file");
         algorithmSettingBindableAttribute.setValue(preset.getAlgorithmSetting());

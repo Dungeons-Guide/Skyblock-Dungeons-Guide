@@ -1,6 +1,5 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -159,7 +158,7 @@ public class FeatureDefaultPresetLoader extends SimpleFeature {
                         if (zipEntry == null) {
                             throw new IllegalArgumentException("File is not valid pathfind preset export");
                         }
-                        File presetExtractionTarget = new File(new File(Main.getConfigDir(), "presets"), "default.json");
+                        File presetExtractionTarget = new File(new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "presets"), "default.json");
                         try (InputStream inputStream = zipFile.getInputStream(zipEntry)) {
                             preset = PathfindPreset.loadFromStream(inputStream);
                             preset.setEditable(false);
@@ -186,7 +185,7 @@ public class FeatureDefaultPresetLoader extends SimpleFeature {
                     WidgetNotificationProgress.Progress extracting = new WidgetNotificationProgress.Progress("Extracting Precalculations 0/"+targets.size(), new AtomicLong(0), new AtomicLong(targets.size()), true);
                     progressForTopRight.addProgress(extracting);
 
-                    File importTarget = new File(new File(Main.getConfigDir(), "precalculations"), preset.getPresetId());
+                    File importTarget = new File(new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "precalculations"), preset.getPresetId());
                     if (!importTarget.exists())
                         importTarget.mkdirs();
 

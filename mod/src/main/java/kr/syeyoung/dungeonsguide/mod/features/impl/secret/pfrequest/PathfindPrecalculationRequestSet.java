@@ -2,7 +2,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
@@ -305,7 +304,7 @@ public class PathfindPrecalculationRequestSet {
                 progressForGui.addProgress(zip);
 
                 try {
-                    zipFile = new File(Main.getConfigDir(), "pfreq-"+System.currentTimeMillis() + ".zip");
+                    zipFile = new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "pfreq-"+System.currentTimeMillis() + ".zip");
                     {
                         System.out.println("Writing to " + zipFile);
                         ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eWriting pathfind request zip file to " + zipFile.getAbsolutePath());

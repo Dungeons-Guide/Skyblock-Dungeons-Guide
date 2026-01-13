@@ -3,7 +3,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.preset;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.Notification;
@@ -61,7 +60,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
 
 
-        File target = new File(Main.getConfigDir(), "presetExports");
+        File target = new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "presetExports");
         if (!target.exists())
             target.mkdirs();
 
@@ -104,7 +103,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
         UUID uid = UUID.randomUUID();
         boolean includePrecalc = this.includePrecalc.getValue();
         try {
-            File targetDir = new File(Main.getConfigDir(), "presetExports");
+            File targetDir = new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "presetExports");
 
 
             Frame parent = new Frame();
