@@ -63,7 +63,7 @@ public class EventListener {
             a.attachLayerAfter(IdentifiedLayer.DEBUG, IdentifiedLayer.of(Identifier.of("dungeonsguide", "hud"), (ctx, counter) -> {
 //                ModAPI.getAPI().getEventBus().fireEvent(new )
 //                ctx.ctx
-
+//                EditBoxWidget
 //                        welp i have to do 1.21 support for 1.8 mod... and i alrdy hate this rendering system
             }));
         });

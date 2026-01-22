@@ -12,12 +12,29 @@ group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide"
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+    sourceCompatibility = JavaLanguageVersion.of(8)
+    targetCompatibility = JavaLanguageVersion.of(8)
+
 }
 
-//sourceSets.main {
-//    output.setResourcesDir(file("$buildDir/classes/java/main"))
-//}
+
+sourceSets {
+    main {
+        java {
+            exclude("**/dungeon/roomedit/**")
+        }
+    }
+    java8 {
+        java {
+
+        }
+    }
+    java21 {
+        java {
+
+        }
+    }
+}
 
 repositories {
     mavenCentral()
@@ -97,11 +114,11 @@ dependencies {
     shadowImpl('com.fasterxml.jackson.core:jackson-databind:2.18.2')
     shadowImpl 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.18.1'
 
-    compileOnly "org.projectlombok:lombok:1.18.20"
-    annotationProcessor "org.projectlombok:lombok:1.18.16"
+    compileOnly "org.projectlombok:lombok:1.18.32"
+    annotationProcessor "org.projectlombok:lombok:1.18.32"
 
-    testCompileOnly "org.projectlombok:lombok:1.18.20"
-    testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+    testCompileOnly "org.projectlombok:lombok:1.18.32"
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.32"
 
     compileOnly project(path: ":modapi")
     compileOnly project(path: ":1.8.9-loader")
@@ -131,9 +148,47 @@ task generateVersionInfo {
 }
 sourceSets.main.output.dir genOutputDir, builtBy: generateVersionInfo
 
+tasks.register("compileJava8", JavaCompile) {
+    source = sourceSets.java8.java
+    classpath = sourceSets.main.compileClasspath + sourceSets.main.compileClasspath
+    destinationDirectory = file("$buildDir/classes/java8")
+
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+tasks.register("compileJavaCommon", JavaCompile) {
+    source = sourceSets.java8.java
+    classpath = sourceSets.main.compileClasspath + sourceSets.main.compileClasspath
+    destinationDirectory = file("$buildDir/classes/java8")
+
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+tasks.register("compileJava21", JavaCompile) {
+    source = sourceSets.java21.java
+    classpath = sourceSets.main.compileClasspath + sourceSets.java21.compileClasspath
+    destinationDirectory = file("$buildDir/classes/java21")
+
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
-    options.compilerArgs += ["-Xdiags:verbose"]
+    // for internal API
+    classpath = files(tasks.named('compileJava8').get().destinationDirectory) + sourceSets.main.compileClasspath
+//    options.release = 8 // ensures APIs match Java 8
+    options.compilerArgs += [
+            "-XDignore.symbol.file"
+////            '--add-exports', 'java.base/sun.security.x509=ALL-UNNAMED',
+//            '--add-exports', 'java.base/sun.misc=ALL-UNNAMED',
+////            '--add-opens', 'java.base/sun.misc=ALL-UNNAMED'
+    ]
+
 }
 
 tasks.withType(Jar) {

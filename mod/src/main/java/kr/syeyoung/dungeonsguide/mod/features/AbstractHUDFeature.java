@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
 import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCGUIPosition;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Navigator;
@@ -34,7 +34,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 
 import java.util.List;
 
@@ -156,8 +155,8 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
         public void configure() {
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
             MainConfigWidget mainConfigWidget = new MainConfigWidget();
-            GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(mainConfigWidget), Minecraft.getMinecraft().currentScreen);
-            Minecraft.getMinecraft().displayGuiScreen(adapter);
+            CustomGuiScreenAdapter adapter = new CustomGuiScreenAdapter(new GlobalHUDScale(mainConfigWidget), ModAPI.getAPI().getCurrentGuiScreen());
+            ModAPI.getAPI().displayGuiScreen(adapter);
 
             Navigator.getNavigator(mainConfigWidget.getDomElement()).openPage(
                     abstractHUDFeature.getConfigureWidget()

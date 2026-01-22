@@ -28,9 +28,8 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.DataRendererEditor;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget.WidgetProfileViewer;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.CompatLayer;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.Placeholder;
 import kr.syeyoung.dungeonsguide.mod.overlay.AbsPosPositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
@@ -39,6 +38,7 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.gui.UGuiScreenChat;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.nbt.TagStringIO;
@@ -61,9 +61,6 @@ import java.util.*;
 // TODO: do not limit element positioning
 // maybe a cool editor?
 public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
-
-    static Minecraft mc = Minecraft.getMinecraft();
-
     public static UUID fromString(String input) {
         return UUID.fromString(input.replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"));
     }
@@ -73,13 +70,14 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         addParameter("datarenderers", new FeatureParameter<List<String>>("datarenderers", "DataRenderers", "Datarenderssdasd", new ArrayList<>(Arrays.asList(
                 "catalv", "selected_class_lv", "dungeon_catacombs_higheststat", "dungeon_master_catacombs_higheststat", "skill_combat_lv", "skill_foraging_lv", "skill_mining_lv", "fairysouls", "dummy"
         )), TCStringList.INSTANCE)
-                .setWidgetGenerator(param -> new CompatLayer(new DataRendererEditor(FeatureViewPlayerStatsOnJoin.this))));
+                .setWidgetGenerator(param -> new Placeholder()));
+//                .setWidgetGenerator(param -> new CompatLayer(new DataRendererEditor(FeatureViewPlayerStatsOnJoin.this)))); $$ ROOMEDIT
 
 
         ChatProcessor.INSTANCE.subscribe(((txt, messageContext) -> {
             if (isEnabled() && txt.contains("§ejoined the dungeon group! (§b")) {
                 String username = TextUtils.stripColor(txt).split(" ")[3];
-                if (username.equalsIgnoreCase(mc.getSession().getUsername())) {
+                if (username.equalsIgnoreCase(ModAPI.getAPI().getSession().getUsername())) {
                     PartyManager.INSTANCE.requestPartyList(context -> {
                         if (context == null) {
                             ChatTransmitter.addToQueue("§eDungeons Guide §7:: §cBugged Dungeon Party ");
@@ -137,7 +135,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
 
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onGuiPostRender(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
-        if (!(mc.currentScreen instanceof GuiChat)) {
+        if (!(ModAPI.getAPI().getCurrentGuiScreen() instanceof UGuiScreenChat)) {
             return;
         }
         if (widget != null) return;
@@ -177,7 +175,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         }
 
         if (widget == null) {
-            ScaledResolution scaledResolution = new ScaledResolution(mc);
+            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
 
             int mouseX = Mouse.getX();
             int mouseY = (ModAPI.getAPI().getDisplayHeight() - Mouse.getY());

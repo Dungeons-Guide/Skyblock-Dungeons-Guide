@@ -29,11 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISecret;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonAddSet;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonRoomEdit;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonValueEdit;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditOffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
@@ -49,7 +44,6 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.event.events.*;
-import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
@@ -57,7 +51,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -66,8 +59,6 @@ import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
 
 public class GeneralRoomProcessor implements RoomProcessor {
 
@@ -131,12 +122,12 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void drawWorld(float partialTicks) {
-        if (FeatureRegistry.DEBUG.isEnabled() && (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit)) {
-            for (Map.Entry<String, DungeonMechanicState> value : dungeonRoom.getMechanics().entrySet()) {
-                if (value.getValue() == null) continue;
-                value.getValue().highlight(new Color(0,255,255,50), value.getKey(), partialTicks);
-            }
-        }
+//        if (FeatureRegistry.DEBUG.isEnabled() && (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit)) { $$ ROOMEDIT
+//            for (Map.Entry<String, DungeonMechanicState> value : dungeonRoom.getMechanics().entrySet()) {
+//                if (value.getValue() == null) continue;
+//                value.getValue().highlight(new Color(0,255,255,50), value.getKey(), partialTicks);
+//            }
+//        }
     }
 
     @Override
@@ -262,84 +253,84 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 lastChest = ePos;
         }
 
-        if (event.player.getHeldItem() != null &&
-            event.player.getHeldItem().getItem() == Item.STICK &&
-                FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() &&
-                FeatureRegistry.DEBUG.isEnabled()) {
-            EditingContext ec = EditingContext.getEditingContext();
-            if (ec != null && ec.getCurrent() instanceof GuiDungeonAddSet) {
-                GuiDungeonAddSet gdas = (GuiDungeonAddSet) ec.getCurrent();
-                if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
-                    if (last)
-                        gdas.getEnd().setPosInWorld(getDungeonRoom(), ePos);
-                    else
-                        gdas.getStart().setPosInWorld(getDungeonRoom(), ePos);
-
-                    last = !last;
-                }
-            }
-            if (ec != null && ec.getCurrent() instanceof GuiDungeonValueEdit) {
-                GuiDungeonValueEdit gdas = (GuiDungeonValueEdit) ec.getCurrent();
-                if (gdas.getValueEdit() instanceof ValueEditOffsetPoint) {
-                    ValueEditOffsetPoint offsetPoint = (ValueEditOffsetPoint) gdas.getValueEdit();
-
-                    if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
-                        OffsetPoint offsetPoint1 = (OffsetPoint) offsetPoint.getParameter().getNewData();
-                        offsetPoint1.setPosInWorld(getDungeonRoom(), ePos);
-                    }
-                }
-            }
-            try {
-                if (ec != null && ePos != null && event.world.getBlockStateAt(event.pos).isOf(BlockType.SPONGE)) {
-                    int nextId = 1;
-                    while (ec.getRoom().getDungeonRoomInfo().getMechanics().containsKey("ent-" + nextId)) nextId++;
-                    DungeonRoomDoor2State.DungeonRoomDoor2Data door2 = new DungeonRoomDoor2State.DungeonRoomDoor2Data();
-                    ec.getRoom().getDungeonRoomInfo().getMechanics().put("ent-" + nextId, door2);
-                    EnumFacing enumFacing = event.face;
-                    enumFacing = enumFacing.rotateY();
-                    for (int x = -1; x <= 1; x++) {
-                        for (int y = 0; y < 4; y++) {
-                            VectorI3D pos = ePos.add(enumFacing.getFrontOffsetX() * x, y, enumFacing.getFrontOffsetZ() * x);
-                            door2.getBlocks().getOffsetPointList().add(new OffsetPoint(dungeonRoom, pos));
-                        }
-                    }
-                    door2.getPfPoint().setPosInWorld(dungeonRoom, ePos
-                            .add(eFacing.getDirectionVec())
-                            .add(eFacing.getDirectionVec()));
-                    if (ec.getCurrent() instanceof GuiDungeonRoomEdit) {
-                        ((GuiDungeonRoomEdit) ec.getCurrent()).getSep().buildElements();
-                    }
-
-
-                }
-            } catch (Exception  e) {e.printStackTrace();}
-        }
+//        if (event.player.getHeldItem() != null && $$ ROOMEDIT
+//            event.player.getHeldItem().getItem() == Item.STICK &&
+//                FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() &&
+//                FeatureRegistry.DEBUG.isEnabled()) {
+//            EditingContext ec = EditingContext.getEditingContext();
+//            if (ec != null && ec.getCurrent() instanceof GuiDungeonAddSet) {
+//                GuiDungeonAddSet gdas = (GuiDungeonAddSet) ec.getCurrent();
+//                if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+//                    if (last)
+//                        gdas.getEnd().setPosInWorld(getDungeonRoom(), ePos);
+//                    else
+//                        gdas.getStart().setPosInWorld(getDungeonRoom(), ePos);
+//
+//                    last = !last;
+//                }
+//            }
+//            if (ec != null && ec.getCurrent() instanceof GuiDungeonValueEdit) {
+//                GuiDungeonValueEdit gdas = (GuiDungeonValueEdit) ec.getCurrent();
+//                if (gdas.getValueEdit() instanceof ValueEditOffsetPoint) {
+//                    ValueEditOffsetPoint offsetPoint = (ValueEditOffsetPoint) gdas.getValueEdit();
+//
+//                    if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+//                        OffsetPoint offsetPoint1 = (OffsetPoint) offsetPoint.getParameter().getNewData();
+//                        offsetPoint1.setPosInWorld(getDungeonRoom(), ePos);
+//                    }
+//                }
+//            }
+//            try {
+//                if (ec != null && ePos != null && event.world.getBlockStateAt(event.pos).isOf(BlockType.SPONGE)) {
+//                    int nextId = 1;
+//                    while (ec.getRoom().getDungeonRoomInfo().getMechanics().containsKey("ent-" + nextId)) nextId++;
+//                    DungeonRoomDoor2State.DungeonRoomDoor2Data door2 = new DungeonRoomDoor2State.DungeonRoomDoor2Data();
+//                    ec.getRoom().getDungeonRoomInfo().getMechanics().put("ent-" + nextId, door2);
+//                    EnumFacing enumFacing = event.face;
+//                    enumFacing = enumFacing.rotateY();
+//                    for (int x = -1; x <= 1; x++) {
+//                        for (int y = 0; y < 4; y++) {
+//                            VectorI3D pos = ePos.add(enumFacing.getFrontOffsetX() * x, y, enumFacing.getFrontOffsetZ() * x);
+//                            door2.getBlocks().getOffsetPointList().add(new OffsetPoint(dungeonRoom, pos));
+//                        }
+//                    }
+//                    door2.getPfPoint().setPosInWorld(dungeonRoom, ePos
+//                            .add(eFacing.getDirectionVec())
+//                            .add(eFacing.getDirectionVec()));
+//                    if (ec.getCurrent() instanceof GuiDungeonRoomEdit) {
+//                        ((GuiDungeonRoomEdit) ec.getCurrent()).getSep().buildElements();
+//                    }
+//
+//
+//                }
+//            } catch (Exception  e) {e.printStackTrace();}
+//        }
     }
 
     @Override
     public void onEntityDeath(LivingEntityDeathEvent deathEvent) {
-        if (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getRoom() == getDungeonRoom()) {
-            if (deathEvent.getEntityLiving().getEntityType() == EntityType.BAT) {
-                for (GuiScreen screen : EditingContext.getEditingContext().getGuiStack()) {
-                    if (screen instanceof GuiDungeonRoomEdit) {
-                        DungeonSecretBatState.DungeonSecretBatData secret = new DungeonSecretBatState.DungeonSecretBatData();
-                        secret.setSecretPoint(new OffsetPoint(dungeonRoom,
-                                DungeonActionContext.getSpawnLocation().get(deathEvent.getEntityLiving().getEntityId())
-                        ));
-                        ((GuiDungeonRoomEdit) screen).getSep().createNewMechanic("BAT-"+ UUID.randomUUID(), secret);
-                        return;
-                    }
-                }
-                if (EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit) {
-                    DungeonSecretBatState.DungeonSecretBatData secret = new DungeonSecretBatState.DungeonSecretBatData();
-                    secret.setSecretPoint(new OffsetPoint(dungeonRoom,
-                            DungeonActionContext.getSpawnLocation().get(deathEvent.getEntityLiving().getEntityId())
-                    ));
-                    ((GuiDungeonRoomEdit) EditingContext.getEditingContext().getCurrent()).getSep().createNewMechanic("BAT-"+ UUID.randomUUID(),
-                            secret);
-                }
-            }
-        }
+//        if (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getRoom() == getDungeonRoom()) { $$ ROOMEDIT
+//            if (deathEvent.getEntityLiving().getEntityType() == EntityType.BAT) {
+//                for (GuiScreen screen : EditingContext.getEditingContext().getGuiStack()) {
+//                    if (screen instanceof GuiDungeonRoomEdit) {
+//                        DungeonSecretBatState.DungeonSecretBatData secret = new DungeonSecretBatState.DungeonSecretBatData();
+//                        secret.setSecretPoint(new OffsetPoint(dungeonRoom,
+//                                DungeonActionContext.getSpawnLocation().get(deathEvent.getEntityLiving().getEntityId())
+//                        ));
+//                        ((GuiDungeonRoomEdit) screen).getSep().createNewMechanic("BAT-"+ UUID.randomUUID(), secret);
+//                        return;
+//                    }
+//                }
+//                if (EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit) {
+//                    DungeonSecretBatState.DungeonSecretBatData secret = new DungeonSecretBatState.DungeonSecretBatData();
+//                    secret.setSecretPoint(new OffsetPoint(dungeonRoom,
+//                            DungeonActionContext.getSpawnLocation().get(deathEvent.getEntityLiving().getEntityId())
+//                    ));
+//                    ((GuiDungeonRoomEdit) EditingContext.getEditingContext().getCurrent()).getSep().createNewMechanic("BAT-"+ UUID.randomUUID(),
+//                            secret);
+//                }
+//            }
+//        }
     }
 
     @Override

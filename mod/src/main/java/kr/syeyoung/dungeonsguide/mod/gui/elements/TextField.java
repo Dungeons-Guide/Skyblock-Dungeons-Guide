@@ -245,14 +245,38 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
         return lastOffset != xOffset;
     }
 
+
     @Override
-    public void keyHeld(char typedChar, int keyCode) {
-        if (!getDomElement().isFocused()) return;
-        this.keyPressed(typedChar, keyCode);
+    public boolean charTyped(char chr, int modifiers) {
+        if (!getDomElement().isFocused()) return false;
+        if (selectionStart == -1) {
+            // text
+            if (isPrintableChar(chr)) {
+                value.setValue(
+                        this.value.getValue().substring(0, this.cursor)
+                                + chr
+                                + this.value.getValue().substring(this.cursor));
+                this.setCursor0(this.cursor+1);;
+                return true;
+            }
+        } else {
+
+            // text
+            if (isPrintableChar(chr)) {
+                value.setValue(
+                        this.value.getValue().substring(0, this.selectionStart)
+                                + chr
+                                + this.value.getValue().substring(this.selectionEnd));
+                setCursor0(this.selectionStart + 1);
+                selectionStart = -1;
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    public boolean keyPressed(char typedChar, int keycode) {
+    public boolean keyPressed(int keycode, int scanCode, int modifiers) {
         if (!getDomElement().isFocused()) return false;
         if (selectionStart == -1) {
             if (keycode == 199) { // home
@@ -326,16 +350,6 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
                         e.printStackTrace();
                     }
                 }
-                return true;
-            }
-
-            // text
-            if (isPrintableChar(typedChar)) {
-                value.setValue(
-                        this.value.getValue().substring(0, this.cursor)
-                                + typedChar
-                                + this.value.getValue().substring(this.cursor));
-                this.setCursor0(this.cursor+1);;
                 return true;
             }
         } else {
@@ -432,20 +446,10 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
                 clipboard.setContents(selection, selection);
                 return true;
             }
-
-            // text
-            if (isPrintableChar(typedChar)) {
-                value.setValue(
-                        this.value.getValue().substring(0, this.selectionStart)
-                                + typedChar
-                                + this.value.getValue().substring(this.selectionEnd));
-                setCursor0(this.selectionStart + 1);
-                selectionStart = -1;
-                return true;
-            }
         }
         return false;
     }
+
     public boolean isPrintableChar( char c ) {
         Character.UnicodeBlock block = Character.UnicodeBlock.of( c );
         return (!Character.isISOControl(c)) &&

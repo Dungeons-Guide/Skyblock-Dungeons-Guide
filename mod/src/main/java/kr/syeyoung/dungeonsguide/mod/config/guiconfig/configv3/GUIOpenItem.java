@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3;
 
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
@@ -27,7 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.Minecraft;
 
 import java.io.IOException;
 import java.util.function.Supplier;
@@ -58,6 +57,6 @@ public class GUIOpenItem extends AnnotatedImportOnlyWidget {
     @On(functionName = "click")
     public void openPage() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(pageCreator.get()), Minecraft.getMinecraft().currentScreen));
+        ModAPI.getAPI().displayGuiScreen(new CustomGuiScreenAdapter(new GlobalHUDScale(pageCreator.get()), ModAPI.getAPI().getCurrentGuiScreen()));
     }
 }

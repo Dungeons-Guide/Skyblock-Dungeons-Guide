@@ -32,13 +32,7 @@ Arrows denote that `[from] depends on [to]`
 
 LoaderAPI -- impl by -- Loader
 MinecraftAPI -- impl by -- MC API impl
-SkyvelutterAPI -- impl by -- Skyvelutter 
+SkyvelutterAPI -- impl by -- Skyvelutter
 
 
-I've just written a complex abstraction layer that doesn't do shit.
-
-Relaunch is an option too!
-
-Theer's no such thing as stable api for rendering.
-every platform is different.
-
+Mod - Loader - Platform

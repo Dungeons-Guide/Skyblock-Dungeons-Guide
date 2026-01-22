@@ -27,11 +27,11 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.gui.UContainer;
 import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.gui.UContainerSlot;
+import kr.syeyoung.modapi.gui.UGuiScreenChest;
 import kr.syeyoung.modapi.item.Item;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.opengl.GL11;
@@ -44,7 +44,7 @@ public class FeatureGoodParties extends SimpleFeature {
 
     @DGEventHandler
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
-        if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) return;
+        if (!(ModAPI.getAPI().getCurrentGuiScreen() instanceof UGuiScreenChest)) return;
         UContainer container = ModAPI.getAPI().getPlayer().getOpenContainer();
         if (!(container instanceof UContainerChest)) return;
         UContainerChest containerChest = (UContainerChest) container;

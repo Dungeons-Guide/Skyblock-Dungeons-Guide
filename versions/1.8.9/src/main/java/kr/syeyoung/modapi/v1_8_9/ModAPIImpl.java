@@ -5,9 +5,6 @@ import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.Platform;
 import kr.syeyoung.modapi.audio.USoundHandler;
-import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
-import kr.syeyoung.modapi.paralleluniverse.tablist.UTabList;
-import kr.syeyoung.modapi.resources.UResourcePackRepository;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntity;
@@ -16,28 +13,33 @@ import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.event.listenerlist.BasicEventBus;
 import kr.syeyoung.modapi.fakeserver.FakeServerUtils;
-import kr.syeyoung.modapi.gui.UContainerChest;
+import kr.syeyoung.modapi.gui.UCustomGuiScreen;
+import kr.syeyoung.modapi.gui.UGuiScreen;
 import kr.syeyoung.modapi.item.IItemStackRegistry;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabList;
 import kr.syeyoung.modapi.profiler.UProfiler;
 import kr.syeyoung.modapi.resources.UResourceManager;
+import kr.syeyoung.modapi.resources.UResourcePackRepository;
 import kr.syeyoung.modapi.settings.UGameSettings;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.v1_8_9.audio.USoundHandlerImpl;
 import kr.syeyoung.modapi.v1_8_9.client.renderer.entity.URenderManagerImpl;
-import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
-import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
-import kr.syeyoung.modapi.v1_8_9.resources.UResourcePackRepositoryImpl;
 import kr.syeyoung.modapi.v1_8_9.command.CommandManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerSP;
 import kr.syeyoung.modapi.v1_8_9.fakeserver.BlockAccessibleServerLaunchUtils;
-import kr.syeyoung.modapi.v1_8_9.gui.UContainerChestImpl;
+import kr.syeyoung.modapi.v1_8_9.gui.UGuiScreenAdapter;
+import kr.syeyoung.modapi.v1_8_9.gui.UNativeGuiScreen;
 import kr.syeyoung.modapi.v1_8_9.item.IItemStackRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
+import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
 import kr.syeyoung.modapi.v1_8_9.profiler.UProfilerImpl;
 import kr.syeyoung.modapi.v1_8_9.resources.DGTexturePack;
 import kr.syeyoung.modapi.v1_8_9.resources.UResourceManagerImpl;
+import kr.syeyoung.modapi.v1_8_9.resources.UResourcePackRepositoryImpl;
 import kr.syeyoung.modapi.v1_8_9.settings.UGameSettingsImpl;
 import kr.syeyoung.modapi.v1_8_9.util.CustomNetworkPlayerInfoUnloader;
 import kr.syeyoung.modapi.v1_8_9.util.USessionImpl;
@@ -51,11 +53,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.json.legacyimpl.NBTLegacyHoverEventSerializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
-import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.event.HoverEvent;
-import net.minecraft.inventory.ContainerChest;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.IChatComponent;
@@ -275,14 +275,6 @@ public class ModAPIImpl implements ModAPI {
     }
 
     @Override
-    public UContainerChest extractContainerChest(Object object) {
-        if (object instanceof GuiChest) {
-            return new UContainerChestImpl((ContainerChest) ((GuiChest) object).inventorySlots);
-        }
-        return null;
-    }
-
-    @Override
     public IItemStackRegistry getItemStackRegistry() {
         return new IItemStackRegistryImpl();
     }
@@ -339,5 +331,17 @@ public class ModAPIImpl implements ModAPI {
     @Override
     public String getKeyDisplayString(int currentKey) {
         return GameSettings.getKeyDisplayString(currentKey);
+    }
+
+    @Override
+    public void displayGuiScreen(UGuiScreen guiScreen) {
+        if (guiScreen == null) Minecraft.getMinecraft().displayGuiScreen(null);
+        else if (guiScreen instanceof UNativeGuiScreen) Minecraft.getMinecraft().displayGuiScreen(((UNativeGuiScreen) guiScreen).getHandle());
+        else Minecraft.getMinecraft().displayGuiScreen(new UGuiScreenAdapter((UCustomGuiScreen) guiScreen));
+    }
+
+    public UGuiScreen getCurrentGuiScreen() {
+        if (Minecraft.getMinecraft().currentScreen == null) return null;
+        return new UNativeGuiScreen(Minecraft.getMinecraft().currentScreen);
     }
 }

@@ -20,18 +20,11 @@ package kr.syeyoung.dungeonsguide.mod.events.listener;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.Config;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonDoor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonAddSet;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonParameterEdit;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonRoomEdit;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonValueEdit;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
@@ -50,7 +43,6 @@ import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
-import kr.syeyoung.modapi.entity.UEntityLiving;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.ListenerPriority;
 import kr.syeyoung.modapi.event.events.*;
@@ -62,7 +54,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
@@ -491,22 +482,22 @@ public class DungeonListener {
 
 
             profiler.endStartSection("Dungeons Guide - RenderWorldLast :: Room Edit");
-            if (EditingContext.getEditingContext() != null) {
-                GuiScreen guiScreen = EditingContext.getEditingContext().getCurrent();
-                if (guiScreen instanceof GuiDungeonParameterEdit) {
-                    ValueEdit valueEdit = ((GuiDungeonParameterEdit) guiScreen).getValueEdit();
-                    if (valueEdit != null) {
-                        valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
-                    }
-                } else if (guiScreen instanceof GuiDungeonValueEdit) {
-                    ValueEdit valueEdit = ((GuiDungeonValueEdit) guiScreen).getValueEdit();
-                    if (valueEdit != null) {
-                        valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
-                    }
-                } else if (guiScreen instanceof GuiDungeonAddSet) {
-                    ((GuiDungeonAddSet) guiScreen).onWorldRender(renderWorldLastEvent.partialTicks);
-                }
-            }
+//            if (EditingContext.getEditingContext() != null) { $$ ROOMEDIT
+//                GuiScreen guiScreen = EditingContext.getEditingContext().getCurrent();
+//                if (guiScreen instanceof GuiDungeonParameterEdit) {
+//                    ValueEdit valueEdit = ((GuiDungeonParameterEdit) guiScreen).getValueEdit();
+//                    if (valueEdit != null) {
+//                        valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
+//                    }
+//                } else if (guiScreen instanceof GuiDungeonValueEdit) {
+//                    ValueEdit valueEdit = ((GuiDungeonValueEdit) guiScreen).getValueEdit();
+//                    if (valueEdit != null) {
+//                        valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
+//                    }
+//                } else if (guiScreen instanceof GuiDungeonAddSet) {
+//                    ((GuiDungeonAddSet) guiScreen).onWorldRender(renderWorldLastEvent.partialTicks);
+//                }
+//            }
             profiler.endSection();
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
@@ -592,32 +583,32 @@ public class DungeonListener {
     @kr.syeyoung.modapi.event.SubscribeEvent
     public void onKeyInput(KeyBindPressedEvent keyInputEvent) {
         if (FeatureRegistry.DEBUG.isEnabled() && FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && keyInputEvent.getKey() == FeatureRegistry.ADVANCED_ROOMEDIT.<Integer>getParameter("key").getValue()) {
-            EditingContext ec = EditingContext.getEditingContext();
-            if (ec == null) {
-                DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-                if (context == null) {
-                    ChatTransmitter.addToQueue("Not in dungeons");
-                    return;
-                }
-                UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
-                if (context.getScaffoldParser() != null) {
-                    Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
-                    DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
-
-                    if (dungeonRoom == null) {
-                        ChatTransmitter.addToQueue("Can't determine the dungeon room you're in");
-                        return;
-                    }
-
-                    if (EditingContext.getEditingContext() != null) {
-                        ChatTransmitter.addToQueue("There is an editing session currently open.");
-                        return;
-                    }
-
-                    EditingContext.createEditingContext(dungeonRoom);
-                    EditingContext.getEditingContext().openGui(new GuiDungeonRoomEdit(dungeonRoom));
-                }
-            } else ec.reopen();
+//            EditingContext ec = EditingContext.getEditingContext(); $$ ROOMEDIT
+//            if (ec == null) {
+//                DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+//                if (context == null) {
+//                    ChatTransmitter.addToQueue("Not in dungeons");
+//                    return;
+//                }
+//                UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
+//                if (context.getScaffoldParser() != null) {
+//                    Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+//                    DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
+//
+//                    if (dungeonRoom == null) {
+//                        ChatTransmitter.addToQueue("Can't determine the dungeon room you're in");
+//                        return;
+//                    }
+//
+//                    if (EditingContext.getEditingContext() != null) {
+//                        ChatTransmitter.addToQueue("There is an editing session currently open.");
+//                        return;
+//                    }
+//
+//                    EditingContext.createEditingContext(dungeonRoom);
+//                    EditingContext.getEditingContext().openGui(new GuiDungeonRoomEdit(dungeonRoom));
+//                }
+//            } else ec.reopen();
         }
     }
 

@@ -22,7 +22,7 @@ import com.mojang.brigadier.context.CommandContext;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ConfigGuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ConfigCustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.HUDLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
@@ -47,7 +47,6 @@ import net.kyori.adventure.nbt.api.BinaryTagHolder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.client.Minecraft;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -67,14 +66,14 @@ public class CommandDungeonsGuide  {
     @DGCommand("dg gui")
     public void openGuiConfig() {
         DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
-            Minecraft.getMinecraft().displayGuiScreen(new ConfigGuiScreenAdapter(null, new GlobalHUDScale(new HUDLocationConfig(null))));
+            ModAPI.getAPI().displayGuiScreen(new ConfigCustomGuiScreenAdapter(null, new GlobalHUDScale(new HUDLocationConfig(null))));
         });
     }
 
     @DGCommand("dg")
     public void openConfig() {
         DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
-            Minecraft.getMinecraft().displayGuiScreen(new ConfigGuiScreenAdapter(null));
+            ModAPI.getAPI().displayGuiScreen(new ConfigCustomGuiScreenAdapter(null));
         });
     }
 

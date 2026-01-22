@@ -147,34 +147,39 @@ public class DomElement {
         requestRelayout();
     }
 
-    public boolean keyPressed0(char typedChar, int keyCode) {
+    public boolean keyPressed0(int keyCode, int scanCode, int modifiers) {
         boolean handled = false;
         for (DomElement childComponent  : children) {
-            handled |= childComponent.keyPressed0(typedChar, keyCode);
+            handled |= childComponent.keyPressed0(keyCode, scanCode, modifiers);
             if (widget instanceof Stack) break;
         }
 
 //        if (isFocused())
-        handled |= widget.keyPressed(typedChar, keyCode);
+        handled |= widget.keyPressed(keyCode, scanCode, modifiers);
         return handled;
     }
-    public void keyHeld0(char typedChar, int keyCode) {
+    public boolean keyReleased0(int keyCode, int scanCode, int modifiers) {
+        boolean handled = false;
         for (DomElement childComponent  : children) {
-            childComponent.keyHeld0(typedChar, keyCode);
+            handled |= childComponent.keyReleased0(keyCode, scanCode,modifiers);
+            if (widget instanceof Stack) break;
+        }
+//        if (isFocused())
+        handled |= widget.keyReleased(keyCode, scanCode,modifiers);
+        return handled;
+    }
+    public boolean charTyped0(char chr, int modifiers) {
+        boolean handled = false;
+        for (DomElement childComponent  : children) {
+            handled |= childComponent.charTyped0(chr, modifiers);
             if (widget instanceof Stack) break;
         }
 
 //        if (isFocused())
-            widget.keyHeld(typedChar, keyCode);
+        handled |= widget.charTyped(chr, modifiers);
+        return handled;
     }
-    public void keyReleased0(char typedChar, int keyCode) {
-        for (DomElement childComponent  : children) {
-            childComponent.keyReleased0(typedChar, keyCode);
-            if (widget instanceof Stack) break;
-        }
-//        if (isFocused())
-            widget.keyReleased(typedChar, keyCode);
-    }
+
 
     public void obtainFocus() {
         context.CONTEXT.put("focus", this);

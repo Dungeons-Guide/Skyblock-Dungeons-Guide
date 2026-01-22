@@ -80,9 +80,12 @@ public abstract class Widget {
     public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
         return false;
     }
-    public void keyReleased(char typedChar, int keyCode) {}
-    public void keyHeld(char typedChar, int keyCode) {}
-    public boolean keyPressed(char typedChar, int keyCode) { return false; }
+
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) { return false; }
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) { return false; }
+    public boolean charTyped(char chr, int modifiers) { return false; }
+
+
     public void mouseExited(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {}
     public void mouseEntered(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {}
 

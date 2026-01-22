@@ -23,8 +23,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.Minecraft;
 
 public class WidgetUpdateLog extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "updatelog")
@@ -44,7 +44,7 @@ public class WidgetUpdateLog extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "continue")
     public void continueB() {
-        Minecraft.getMinecraft().displayGuiScreen(null);
+        ModAPI.getAPI().displayGuiScreen(null);
     }
 
     @On(functionName = "unload")

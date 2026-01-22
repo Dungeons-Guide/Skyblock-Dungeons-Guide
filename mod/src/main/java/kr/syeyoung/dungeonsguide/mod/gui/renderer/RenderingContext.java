@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.gui.renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.rendering.URenderContext;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -35,6 +36,11 @@ import java.util.Stack;
  * Well, might put them all into one gigantic array and only do 1 call.
  */
 public class RenderingContext {
+    private URenderContext renderContext;
+    public RenderingContext(URenderContext context) {
+        this.renderContext = context;
+    }
+
     public void drawRect(double left, double top, double right, double bottom, int color) {
         double i;
         if (left < right) {

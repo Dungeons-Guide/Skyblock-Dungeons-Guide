@@ -22,9 +22,10 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.gui.UGuiScreen;
+import kr.syeyoung.modapi.gui.UGuiScreenChest;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.input.Mouse;
@@ -37,12 +38,12 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
 
     @DGEventHandler
     public void onKeyInput(GuiScreenEvent.KeyboardInputEvent keyboardInputEvent) {
-        GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-        
+        UGuiScreen screen = ModAPI.getAPI().getCurrentGuiScreen();
+
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        if (screen instanceof GuiChest){
-            ContainerChest ch = (ContainerChest) ((GuiChest)screen).inventorySlots;
+        if (screen instanceof UGuiScreenChest){
+            ContainerChest ch = (ContainerChest) ((UGuiScreenChest)screen).getContainer();
             if (!("Large Chest".equals(ch.getLowerChestInventory().getName())
                     || "Chest".equals(ch.getLowerChestInventory().getName()))) return;
 //            IInventory actualChest = ch.getLowerChestInventory();
@@ -61,13 +62,13 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
 
     @DGEventHandler
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
-        GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-        
+        UGuiScreen screen = ModAPI.getAPI().getCurrentGuiScreen();
+
         if (!SkyblockStatus.isOnDungeon()) return;
         if (Mouse.getEventButton() == -1) return;
 
-        if (screen instanceof GuiChest){
-            ContainerChest ch = (ContainerChest) ((GuiChest)screen).inventorySlots;
+        if (screen instanceof UGuiScreenChest){
+            ContainerChest ch = (ContainerChest) ((UGuiScreenChest)screen).getContainer();
             if (!("Large Chest".equals(ch.getLowerChestInventory().getName())
                     || "Chest".equals(ch.getLowerChestInventory().getName()))) return;
 //            IInventory actualChest = ch.getLowerChestInventory();

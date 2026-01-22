@@ -1,19 +1,19 @@
 package kr.syeyoung.modapi;
 
 import kr.syeyoung.modapi.audio.USoundHandler;
-import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
-import kr.syeyoung.modapi.paralleluniverse.tablist.UTabList;
-import kr.syeyoung.modapi.resources.UResourcePackRepository;
 import kr.syeyoung.modapi.command.UCommandManager;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.fakeserver.FakeServerUtils;
-import kr.syeyoung.modapi.gui.UContainerChest;
+import kr.syeyoung.modapi.gui.UGuiScreen;
 import kr.syeyoung.modapi.item.IItemStackRegistry;
+import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
+import kr.syeyoung.modapi.paralleluniverse.tablist.UTabList;
 import kr.syeyoung.modapi.profiler.UProfiler;
 import kr.syeyoung.modapi.resources.UResourceManager;
+import kr.syeyoung.modapi.resources.UResourcePackRepository;
 import kr.syeyoung.modapi.settings.UGameSettings;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
@@ -70,8 +70,6 @@ public interface ModAPI {
 
     boolean isDevEnv();
 
-    UContainerChest extractContainerChest(Object object);
-
     IMapUtils getMapUtils();
 
     Component getHoveredComponent();
@@ -89,4 +87,8 @@ public interface ModAPI {
     UScoreboardManager getScoreboardManager();
 
     UTabList getTabList();
+
+    void displayGuiScreen(UGuiScreen guiScreen);
+
+    UGuiScreen getCurrentGuiScreen();
 }

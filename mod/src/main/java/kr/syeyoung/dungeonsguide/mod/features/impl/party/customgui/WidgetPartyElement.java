@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapterChestOverride;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.RawMinecraftTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
@@ -155,7 +155,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
     @On(functionName = "click")
     public void onClick() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(slot, 0, 0);
+        CustomGuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(slot, 0, 0);
     }
 
 

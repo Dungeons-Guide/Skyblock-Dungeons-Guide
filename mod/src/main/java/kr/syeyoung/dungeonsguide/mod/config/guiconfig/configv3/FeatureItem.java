@@ -22,7 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.HUDLocationConfi
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
@@ -30,7 +30,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.Minecraft;
 
 public class FeatureItem extends AnnotatedImportOnlyWidget {
 
@@ -90,7 +89,7 @@ public class FeatureItem extends AnnotatedImportOnlyWidget {
     @On(functionName = "relocate")
     public void onRelocate() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig((AbstractHUDFeature) feature)), Minecraft.getMinecraft().currentScreen));
+        ModAPI.getAPI().displayGuiScreen(new CustomGuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig((AbstractHUDFeature) feature)), ModAPI.getAPI().getCurrentGuiScreen()));
         // do stuff
     }
 }

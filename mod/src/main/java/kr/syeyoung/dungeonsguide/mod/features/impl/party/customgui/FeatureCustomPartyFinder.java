@@ -22,7 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapterChestOverride;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.WindowUpdateEvent;
@@ -72,7 +72,7 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
 
 //    GuiCustomPartyFinder guiCustomPartyFinder;
     private WidgetPartyFinder widgetPartyFinder;
-    private GuiScreenAdapterChestOverride guiScreenAdapter;
+    private CustomGuiScreenAdapterChestOverride guiScreenAdapter;
 
 
     @DGEventHandler
@@ -92,7 +92,7 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
             Scaler scaler = new Scaler();
             scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
             scaler.child.setValue(widgetPartyFinder);
-            guiScreenAdapter = new GuiScreenAdapterChestOverride(scaler);
+            guiScreenAdapter = new CustomGuiScreenAdapterChestOverride(scaler);
         }
         guiScreenAdapter.setGuiChest(container);
 

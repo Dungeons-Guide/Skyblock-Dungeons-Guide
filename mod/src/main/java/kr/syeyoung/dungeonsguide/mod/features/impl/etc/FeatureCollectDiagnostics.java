@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
@@ -67,7 +67,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
         public void onApprove() {
             FeatureCollectDiagnostics.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDiagnostics.this.setEnabled(true);
-            Minecraft.getMinecraft().displayGuiScreen(null);
+            ModAPI.getAPI().displayGuiScreen(null);
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         }
 
@@ -75,7 +75,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
         public void onDeny() {
             FeatureCollectDiagnostics.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDiagnostics.this.setEnabled(false);
-            Minecraft.getMinecraft().displayGuiScreen(null);
+            ModAPI.getAPI().displayGuiScreen(null);
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         }
     }
@@ -91,7 +91,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
             Scaler scaler = new Scaler();
             scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
             scaler.child.setValue(new WidgetUserApproval());
-            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler, null, false));
+            GuiDisplayer.INSTANCE.displayGui(new CustomGuiScreenAdapter(scaler, null, false));
         }
     }
 

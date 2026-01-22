@@ -28,8 +28,8 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteTooltip.WidgetEnableAskToJoin;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteTooltip.WidgetInvite;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapterChestOverride;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Navigator;
@@ -47,7 +47,6 @@ import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.gui.UContainerSlot;
 import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.item.UItemStack;
-import net.minecraft.client.Minecraft;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -121,24 +120,24 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     @On(functionName = "goBack")
     public void goBack() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+3, 0, 0);
+        CustomGuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+3, 0, 0);
     }
 
     @On(functionName = "next")
     public void nextPage() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*2+8, 0, 0);
+        CustomGuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*2+8, 0, 0);
     }
     @On(functionName = "prev")
     public void prevPage() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*2, 0, 0);
+        CustomGuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*2, 0, 0);
     }
 
     @On(functionName = "refresh")
     public void refresh() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+1, 0, 0);
+        CustomGuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+1, 0, 0);
     }
 
     @On(functionName = "leave")
@@ -164,17 +163,17 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     @On(functionName = "create")
     public void createParty() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+0, 0, 0);
+        CustomGuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+0, 0, 0);
     }
     @On(functionName = "delist")
     public void delistParty() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+7, 0, 0);
+        CustomGuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+7, 0, 0);
     }
     @On(functionName = "searchSettings")
     public void openSearchSettings() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+5, 0, 0);
+        CustomGuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+5, 0, 0);
     }
 
 
@@ -201,8 +200,8 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
 
         MainConfigWidget mainConfigWidget = new MainConfigWidget();
-        GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(mainConfigWidget));
-        Minecraft.getMinecraft().displayGuiScreen(adapter);
+        CustomGuiScreenAdapter adapter = new CustomGuiScreenAdapter(new GlobalHUDScale(mainConfigWidget));
+        ModAPI.getAPI().displayGuiScreen(adapter);
 
         Navigator.getNavigator(mainConfigWidget.getDomElement()).openPage(
                 new CategoryPageWidget("Dungeon Party")
@@ -213,7 +212,7 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     private final Map<Integer, WidgetPartyElement> partyElementMap = new HashMap<>();
     public void onChestUpdate(WindowUpdateEvent windowUpdateEvent) {
         if (windowUpdateEvent == null) {
-            UContainerChest guiChest = GuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest();
+            UContainerChest guiChest = CustomGuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest();
             if (guiChest == null) {
                 partyElementMap.clear();
             } else {
@@ -260,7 +259,7 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
                 }
             }
         } else {
-            if (windowUpdateEvent.getWindowId() !=  GuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest().getWindowId()) return;
+            if (windowUpdateEvent.getWindowId() !=  CustomGuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest().getWindowId()) return;
             for (WindowUpdateEvent.SlotUpdate slotUpdate : windowUpdateEvent.getSlotUpdateList()) {
                 int i = slotUpdate.getSlotId();
                 UItemStack stack = slotUpdate.getItemStack();
@@ -406,8 +405,9 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
         onChestUpdate(null);
     }
 
+
     @Override
-    public boolean keyPressed(char typedChar, int keyCode) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == 63) {
             refresh();
             return true;

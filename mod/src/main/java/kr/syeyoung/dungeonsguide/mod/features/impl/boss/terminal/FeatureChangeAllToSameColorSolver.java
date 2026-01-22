@@ -29,6 +29,7 @@ import kr.syeyoung.modapi.event.events.ItemTooltipEvent;
 import kr.syeyoung.modapi.gui.UContainer;
 import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.gui.UContainerSlot;
+import kr.syeyoung.modapi.gui.UGuiScreenChest;
 import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.util.EnumDyeColor;
 import net.minecraft.client.Minecraft;
@@ -68,7 +69,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     public void onTick(ClientTickEvent tickEvent) {
         if (!isEnabled()) return;
         if (!isCorrectGui) return;
-        if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) {
+        if (!(ModAPI.getAPI().getCurrentGuiScreen() instanceof UGuiScreenChest)) {
             isCorrectGui = false;
             return;
         }
@@ -141,7 +142,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     @DGEventHandler
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
         if (!isCorrectGui) return;
-        if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) {
+        if (!(ModAPI.getAPI().getCurrentGuiScreen() instanceof UGuiScreenChest)) {
             isCorrectGui = false;
             return;
         }
@@ -188,14 +189,14 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
         if (Mouse.getEventButton() == -1) return;
         if (!isCorrectGui) return;
 
-        GuiChest chest = (GuiChest) Minecraft.getMinecraft().currentScreen;
+        UGuiScreenChest chest = (UGuiScreenChest) ModAPI.getAPI().getCurrentGuiScreen();
 
 //        if (Mouse.getEventButton())
 
-        Slot s = chest.getSlotUnderMouse();
+        UContainerSlot s = chest.getSlotUnderMouse();
         if (s == null) return;
-        int row = s.slotNumber / 9;
-        int column = s.slotNumber % 9;
+        int row = s.getSlotIndex() / 9;
+        int column = s.getSlotIndex() % 9;
 
         if (1 <= row && row <= 3 && 3 <= column && column <= 5) {
             int solutionSlotId = (row - 1) * 3 + column - 3;

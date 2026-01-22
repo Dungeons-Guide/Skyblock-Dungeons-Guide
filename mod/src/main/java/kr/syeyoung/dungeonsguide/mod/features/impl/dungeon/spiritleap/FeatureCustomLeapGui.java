@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.spiritleap;
 
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapterChestOverride;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.WindowUpdateEvent;
@@ -41,7 +41,7 @@ public class FeatureCustomLeapGui extends SimpleFeature {
     private String lastClass = "";
 
     private WidgetSpiritLeap widgetSpiritLeap;
-    private GuiScreenAdapterChestOverride guiScreenAdapter;
+    private CustomGuiScreenAdapterChestOverride guiScreenAdapter;
 
     @DGEventHandler
     public void onGuiOpen(GuiOpenEvent event) {
@@ -62,7 +62,7 @@ public class FeatureCustomLeapGui extends SimpleFeature {
             scaler.child.setValue(widgetSpiritLeap);
             int x = (int) (Math.max(0, ModAPI.getAPI().getDisplayWidth() / 2 - 200 * scaler.scale.getValue()));
             int y = (int) (Math.max(0, ModAPI.getAPI().getDisplayHeight() / 2 - 200 * scaler.scale.getValue()) + 100);
-            guiScreenAdapter = new GuiScreenAdapterChestOverride(scaler, x, y);
+            guiScreenAdapter = new CustomGuiScreenAdapterChestOverride(scaler, x, y);
         }
         guiScreenAdapter.setGuiChest(container);
 

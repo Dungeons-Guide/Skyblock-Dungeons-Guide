@@ -30,4 +30,15 @@ public class UContainerSlotImpl implements UContainerSlot {
     public UItemStack getItemStack() {
         return delegate.getStack() == null ? null : new UItemStackImpl(delegate.getStack());
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof UContainerSlotImpl)) return false;
+        return delegate.equals(((UContainerSlotImpl) obj).delegate);
+    }
+
+    @Override
+    public int hashCode() {
+        return delegate.hashCode();
+    }
 }

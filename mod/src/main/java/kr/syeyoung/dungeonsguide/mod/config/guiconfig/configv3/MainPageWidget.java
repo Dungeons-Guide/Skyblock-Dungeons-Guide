@@ -22,7 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.HUDLocationConfi
 import kr.syeyoung.dungeonsguide.mod.config.onboarding.OnboardingPage;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.Modal;
@@ -34,7 +34,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 import java.io.IOException;
@@ -64,7 +63,7 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
     @On(functionName = "guiconfig")
     public void guiConfig() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig(null)), Minecraft.getMinecraft().currentScreen));
+        ModAPI.getAPI().displayGuiScreen(new CustomGuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig(null)), ModAPI.getAPI().getCurrentGuiScreen()));
     }
     @On(functionName = "discord")
     public void discord() {
@@ -119,8 +118,8 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Are you sure?", modalMessage, true), (a) -> {
             if (a == null) return;
             if (a == Boolean.TRUE) {
-                Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")),
-                        GuiScreenAdapter.getAdapter(getDomElement()), true));
+                 ModAPI.getAPI().displayGuiScreen(new CustomGuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")),
+                        CustomGuiScreenAdapter.getAdapter(getDomElement()), true));
             }
         });
     }

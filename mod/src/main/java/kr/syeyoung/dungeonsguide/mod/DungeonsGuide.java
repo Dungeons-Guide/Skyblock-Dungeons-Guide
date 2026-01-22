@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.commands.CommandDgDebug;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandDungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandRegistrationHelper;
 import kr.syeyoung.dungeonsguide.mod.config.Config;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ConfigGuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ConfigCustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.config.onboarding.OnboardingPage;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
@@ -39,7 +39,7 @@ import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.PassthroughManager;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.fonts.DefaultFontRenderer;
@@ -253,7 +253,7 @@ public class DungeonsGuide implements DGInterface {
 
         // Fix Parallel universe not working when player joins hypickle before dg loads
         if (firstTimeUsingDG) {
-            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")), null, false));
+            GuiDisplayer.INSTANCE.displayGui(new CustomGuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")), null, false));
         }
     }
 
@@ -319,7 +319,6 @@ public class DungeonsGuide implements DGInterface {
         } catch (InterruptedException e) {
         }
         THREAD_GROUP.destroy();
-
     }
 
     @Override
@@ -345,7 +344,7 @@ public class DungeonsGuide implements DGInterface {
 
     @Override
     public Class<? extends GuiScreen> getModConfigGUI() {
-        return ConfigGuiScreenAdapter.class;
+        return null; // $$
     }
 
 

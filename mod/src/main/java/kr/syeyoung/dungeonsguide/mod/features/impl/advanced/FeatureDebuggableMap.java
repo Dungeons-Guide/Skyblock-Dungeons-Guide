@@ -37,6 +37,8 @@ import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.gui.UGuiScreenChat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiChat;
@@ -80,7 +82,7 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
         GlStateManager.popMatrix();
 
 
-        if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChat)) return;
+        if (!(ModAPI.getAPI().getCurrentGuiScreen() instanceof UGuiScreenChat)) return;
     }
 
     @Override

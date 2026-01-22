@@ -14,6 +14,7 @@ import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.event.listenerlist.BasicEventBus;
 import kr.syeyoung.modapi.fakeserver.FakeServerUtils;
 import kr.syeyoung.modapi.gui.UContainerChest;
+import kr.syeyoung.modapi.gui.UCustomGuiScreen;
 import kr.syeyoung.modapi.item.IItemStackRegistry;
 import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
 import kr.syeyoung.modapi.paralleluniverse.tablist.UTabList;
@@ -30,6 +31,7 @@ import kr.syeyoung.modapi.v1_21_5.entity.UEntityPlayerSP;
 import kr.syeyoung.modapi.v1_21_5.entity.URenderManagerImpl;
 import kr.syeyoung.modapi.v1_21_5.fakeserver.BlockAccessibleServerLaunchUtils;
 import kr.syeyoung.modapi.v1_21_5.gui.UContainerChestImpl;
+import kr.syeyoung.modapi.v1_21_5.gui.UGuiScreenAdapter;
 import kr.syeyoung.modapi.v1_21_5.item.IItemStackRegistryImpl;
 import kr.syeyoung.modapi.v1_21_5.map.MapDataManager;
 import kr.syeyoung.modapi.v1_21_5.paralleluniverse.scoreboard.ScoreboardManager;
@@ -335,5 +337,11 @@ public class ModAPIImpl implements ModAPI {
     @Override
     public String getKeyDisplayString(int currentKey) {
         return InputUtil.fromKeyCode(currentKey, 0).getLocalizedText().getString();
+    }
+
+    @Override
+    public void displayGuiScreen(UCustomGuiScreen guiScreen) {
+        if (guiScreen == null) MinecraftClient.getInstance().setScreen(null);
+        else MinecraftClient.getInstance().setScreen(new UGuiScreenAdapter(guiScreen));
     }
 }

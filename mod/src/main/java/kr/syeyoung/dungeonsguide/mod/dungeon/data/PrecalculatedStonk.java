@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTombState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
+//import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
@@ -151,7 +151,8 @@ public class PrecalculatedStonk {
     }
 
     public void render(float partialTicks, DungeonRoom dungeonRoom) {
-        if (EditingContext.getEditingContext() == null) return;
+        if (true) return;
+//        if (EditingContext.getEditingContext() == null) return; $$ ROOMEDIT
         List<PossibleClickingSpot> targets = getPrecalculatedStonk(dungeonRoom.getMechanics().entrySet().stream()
                 .filter(a -> a.getValue() instanceof WorldMutatingMechanicState)
                 .filter(a -> !((WorldMutatingMechanicState) a.getValue()).isBlocking(dungeonRoom)).map(a -> a.getKey()).collect(Collectors.toList()));

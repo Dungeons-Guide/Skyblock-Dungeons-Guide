@@ -47,7 +47,7 @@ import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.view.TestView;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
@@ -63,7 +63,6 @@ import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import kr.syeyoung.modapi.world.BlockType;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.minecraft.client.Minecraft;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -100,12 +99,12 @@ public class CommandDgDebug {
     @DGCommand("dgdebug re")
     public void openRoomedit() {
         MainConfigWidget mainConfigWidget = new MainConfigWidget();
-        GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(
+        CustomGuiScreenAdapter adapter = new CustomGuiScreenAdapter(new GlobalHUDScale(
                 FeatureRegistry.ADVANCED_ROOMEDIT.getConfigureWidget()
         ));
 
         DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
-            Minecraft.getMinecraft().displayGuiScreen(adapter);
+            ModAPI.getAPI().displayGuiScreen(adapter);
         });
     }
 
@@ -276,10 +275,10 @@ public class CommandDgDebug {
     @DGCommand("dgdebug process2")
     public void process2() throws IOException {
 
-        GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")), null, false);
+        CustomGuiScreenAdapter adapter = new CustomGuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")), null, false);
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
             DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
-                Minecraft.getMinecraft().displayGuiScreen(adapter);
+                ModAPI.getAPI().displayGuiScreen(adapter);
             });
         }).start();
         String features = "advanced.coords,dungeon.map2,secret.actionview,bossfight.health,bossfight.spiritbear,bossfight.spiritbowdisplay,bossfight.terracota,bossfight.phasedisplay,party.list,party.readylist,secret.fairysoulwarn,dungen.watcherwarn,dungeon.lowhealthwarn,dungeon.stats.score,dungeon.stats.tombs,dungeon.stats.totaltombs,dungeon.stats.secretsroom,dungeon.stats.secrets,dungeon.stats.igtime,dungeon.stats.realtime,dungeon.stats.milestone,dungeon.stats.deaths,dungeon.roomname,etc.abilitycd2,qol.cooldown";
@@ -1375,10 +1374,10 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug testgui")
     public void testGuiCommand() {
-        GuiScreenAdapter adapter = new GuiScreenAdapter(new TestView());
+        CustomGuiScreenAdapter adapter = new CustomGuiScreenAdapter(new TestView());
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
             DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
-                Minecraft.getMinecraft().displayGuiScreen(adapter);
+                ModAPI.getAPI().displayGuiScreen(adapter);
             });
         }).start();
     }

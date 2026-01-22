@@ -28,11 +28,10 @@ import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.event.events.ItemTooltipEvent;
 import kr.syeyoung.modapi.gui.UContainer;
 import kr.syeyoung.modapi.gui.UContainerChest;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.modapi.gui.UContainerSlot;
+import kr.syeyoung.modapi.gui.UGuiScreenChest;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.Slot;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.input.Mouse;
@@ -59,7 +58,7 @@ public class FeatureTerminalSolvers extends SimpleFeature {
 
     private TerminalSolutionProvider solutionProvider;
     private TerminalSolution solution;
-    private final List<Slot> clicked = new ArrayList<Slot>();
+    private final List<UContainerSlot> clicked = new ArrayList<UContainerSlot>();
 
     @DGEventHandler
     public void onGuiOpen(GuiOpenEvent event) {
@@ -67,8 +66,8 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         solution = null;
         solutionProvider = null;
         clicked.clear();
-        if (event.gui instanceof GuiChest) {
-            UContainerChest cc = ModAPI.getAPI().extractContainerChest(event.gui);
+        if (event.gui instanceof UGuiScreenChest) {
+            UContainerChest cc = ((UGuiScreenChest) event.gui).getContainer();
             if (provider.isApplicable(cc)) {
                 solution = provider.provideSolution(cc);
                 this.solutionProvider = provider;
@@ -80,7 +79,7 @@ public class FeatureTerminalSolvers extends SimpleFeature {
     public void onTick(ClientTickEvent tickEvent) {
         if (!isEnabled()) return;
         if (solutionProvider == null) return;
-        if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) {
+        if (!(ModAPI.getAPI().getCurrentGuiScreen() instanceof UGuiScreenChest)) {
             solution = null;
             solutionProvider = null;
             clicked.clear();
@@ -95,7 +94,7 @@ public class FeatureTerminalSolvers extends SimpleFeature {
     @DGEventHandler
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
         if (solutionProvider == null) return;
-        if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) {
+        if (!(ModAPI.getAPI().getCurrentGuiScreen() instanceof UGuiScreenChest)) {
             solution = null;
             solutionProvider = null;
             clicked.clear();
@@ -149,10 +148,14 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         if (solution.getCurrSlots() == null) {
             return;
         }
-        GuiChest chest = (GuiChest) Minecraft.getMinecraft().currentScreen;
+        UGuiScreenChest chest = (UGuiScreenChest) ModAPI.getAPI().getCurrentGuiScreen();
 
-        Slot s = chest.getSlotUnderMouse();
-        if (solution.getCurrSlots().contains(s)) {
+//        if (Mouse.getEventButton())
+
+        UContainerSlot s = chest.getSlotUnderMouse();
+        if (s == null) return;
+
+        if (solution.getCurrSlots().contains(s.getSlotIndex())) {
             clicked.add(s);
             // swap with middle click
 //            mouseInputEvent.setCanceled(true);

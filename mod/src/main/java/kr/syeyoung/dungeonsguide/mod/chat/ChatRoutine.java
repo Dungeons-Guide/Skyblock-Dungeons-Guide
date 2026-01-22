@@ -20,10 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.chat;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import lombok.AllArgsConstructor;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraft.client.gui.GuiMultiplayer;
-import net.minecraft.client.multiplayer.WorldClient;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -126,20 +122,20 @@ public class ChatRoutine {
 
         @Override
         public void execute(Runnable next) {
-            Minecraft.getMinecraft().theWorld.sendQuittingDisconnectingPacket();
-            Minecraft.getMinecraft().loadWorld((WorldClient)null);
-            GuiMultiplayer guiMultiplayer;
-            Minecraft.getMinecraft().displayGuiScreen(guiMultiplayer = new GuiMultiplayer(new GuiMainMenu()));
-            ses.schedule(() -> {
-                DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
-                    guiMultiplayer.selectServer(0);
-                    guiMultiplayer.connectToSelected();
-
-                    ses.schedule(() -> {
-                        DungeonsGuide.getDungeonsGuide().runNextTick(next::run);
-                    }, 10, TimeUnit.SECONDS);
-                });
-            }, 3, TimeUnit.SECONDS);
+//            Minecraft.getMinecraft().theWorld.sendQuittingDisconnectingPacket(); $$ UNMIGRATABLE.
+//            Minecraft.getMinecraft().loadWorld((WorldClient)null);
+//            GuiMultiplayer guiMultiplayer;
+//            Minecraft.getMinecraft().displayGuiScreen(guiMultiplayer = new GuiMultiplayer(new GuiMainMenu()));
+//            ses.schedule(() -> {
+//                DungeonsGuide.getDungeonsGuide().runNextTick(() -> {
+//                    guiMultiplayer.selectServer(0);
+//                    guiMultiplayer.connectToSelected();
+//
+//                    ses.schedule(() -> {
+//                        DungeonsGuide.getDungeonsGuide().runNextTick(next::run);
+//                    }, 10, TimeUnit.SECONDS);
+//                });
+//            }, 3, TimeUnit.SECONDS);
         }
     }
 

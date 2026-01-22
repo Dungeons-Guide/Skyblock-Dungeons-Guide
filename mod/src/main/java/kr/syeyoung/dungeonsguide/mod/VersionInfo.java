@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.loader.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -84,7 +84,7 @@ public class VersionInfo {
                 scaler.child.setValue(new WidgetUpdateLog(
                         latestUpdate.getName(), latestUpdate.getUpdateLog(), true
                 ));
-                GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler));
+                GuiDisplayer.INSTANCE.displayGui(new CustomGuiScreenAdapter(scaler));
 
                 logger.info("Update Required!!");
             } else if (VersionInfo.getCurrentLoader() instanceof JarLoader || VersionInfo.getCurrentLoader() instanceof LocalLoader) {
@@ -127,7 +127,7 @@ public class VersionInfo {
                 scaler.child.setValue(new WidgetUpdateLog(
                         latestUpdate.getName(), latestUpdate.getUpdateLog(), autoupdate
                 ));
-                GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler));
+                GuiDisplayer.INSTANCE.displayGui(new CustomGuiScreenAdapter(scaler));
             } else {
                 logger.error("Failed to check version: Unknown Loader: " + VersionInfo.getLoaderInfo() + " / " + VersionInfo.getCurrentLoader().getClass().getName());
             }

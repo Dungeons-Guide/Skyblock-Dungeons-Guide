@@ -43,7 +43,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonRoomDiscoveredEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
@@ -102,7 +102,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         public void onApprove() {
             FeatureCollectDungeonRooms.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDungeonRooms.this.setEnabled(true);
-            Minecraft.getMinecraft().displayGuiScreen(null);
+            ModAPI.getAPI().displayGuiScreen(null);
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         }
 
@@ -110,7 +110,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         public void onDeny() {
             FeatureCollectDungeonRooms.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDungeonRooms.this.setEnabled(false);
-            Minecraft.getMinecraft().displayGuiScreen(null);
+            ModAPI.getAPI().displayGuiScreen(null);
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         }
     }
@@ -121,7 +121,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             Scaler scaler = new Scaler();
             scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
             scaler.child.setValue(new FeatureCollectDungeonRooms.WidgetUserApproval());
-            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler, null, false));
+            GuiDisplayer.INSTANCE.displayGui(new CustomGuiScreenAdapter(scaler, null, false));
         }
     }
 

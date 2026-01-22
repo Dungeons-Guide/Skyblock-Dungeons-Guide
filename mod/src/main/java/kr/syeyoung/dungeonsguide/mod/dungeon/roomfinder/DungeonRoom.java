@@ -36,7 +36,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.SerializableBlockPos;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonRoomMatchEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonStateChangeEvent;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
+//import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
@@ -196,7 +196,7 @@ public class DungeonRoom  {
 
     public Map<String, DungeonMechanicState> getMechanics() {
         if (dungeonRoomInfo == null) return Collections.EMPTY_MAP;
-        if (_mechanics == null || EditingContext.getEditingContext() != null) {
+        if (_mechanics == null/* || EditingContext.getEditingContext() != null $$ ROOMEDIT */) {
             _mechanics = new HashMap<>();
             for (Map.Entry<String, DungeonMechanicData> stringDungeonMechanicDataEntry : dungeonRoomInfo.getMechanics().entrySet()) {
                 _mechanics.put(stringDungeonMechanicDataEntry.getKey(), stringDungeonMechanicDataEntry.getValue().createState(this));

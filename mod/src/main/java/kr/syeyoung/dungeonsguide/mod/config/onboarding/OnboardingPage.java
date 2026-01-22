@@ -1,15 +1,14 @@
 package kr.syeyoung.dungeonsguide.mod.config.onboarding;
 
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import kr.syeyoung.modapi.gui.UGuiScreen;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -101,14 +100,14 @@ public class OnboardingPage extends AnnotatedImportOnlyWidget {
     public void prev() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
         if (prevPage.getValue() == null) return;
-        GuiScreen parent = getDomElement().getContext().getValue(GuiScreenAdapter.class, "screenAdapter").getParent();
-        Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage(prevPage.getValue())), parent, false));
+        UGuiScreen parent = getDomElement().getContext().getValue(CustomGuiScreenAdapter.class, "screenAdapter").getParent();
+        ModAPI.getAPI().displayGuiScreen(new CustomGuiScreenAdapter(new GlobalHUDScale(new OnboardingPage(prevPage.getValue())), parent, false));
     }
 
     @On(functionName = "next")
     public void next() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        GuiScreen parent = getDomElement().getContext().getValue(GuiScreenAdapter.class, "screenAdapter").getParent();
+        UGuiScreen parent = getDomElement().getContext().getValue(CustomGuiScreenAdapter.class, "screenAdapter").getParent();
         // apply settings.
 
         if (registered.get("$default") != null) {
@@ -125,9 +124,9 @@ public class OnboardingPage extends AnnotatedImportOnlyWidget {
 
         if (nextPage.getValue() == null) return;
         if (nextPage.getValue().equals("quit")) {
-            Minecraft.getMinecraft().displayGuiScreen(parent);
+            ModAPI.getAPI().displayGuiScreen(parent);
             return;
         }
-        Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage(nextPage.getValue())), parent, false));
+        ModAPI.getAPI().displayGuiScreen(new CustomGuiScreenAdapter(new GlobalHUDScale(new OnboardingPage(nextPage.getValue())), parent, false));
     }
 }

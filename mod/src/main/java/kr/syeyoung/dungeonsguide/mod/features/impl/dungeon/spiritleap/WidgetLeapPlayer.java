@@ -1,7 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.spiritleap;
 
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapterChestOverride;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -97,7 +97,7 @@ public class WidgetLeapPlayer extends AnnotatedImportOnlyWidget {
         if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY) && getDomElement().isFocused()) {
             this.backgroundColor.setValue(0xFF777777);
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-            GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(this.warpTarget.getSlotId(), 0, 0);
+            CustomGuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(this.warpTarget.getSlotId(), 0, 0);
         } else {
             this.backgroundColor.setValue(0xFF555555);
         }

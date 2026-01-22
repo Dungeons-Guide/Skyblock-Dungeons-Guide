@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
+//import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.ArrayBackedBlockMap;
@@ -42,7 +42,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
@@ -383,7 +383,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
     @DGEventHandler
     public void onKey(KeyBindPressedEvent event) {
         if (event.getKey() == 68) {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new RoomConfiguration()));
+            ModAPI.getAPI().displayGuiScreen(new CustomGuiScreenAdapter(new RoomConfiguration()));
         }
     }
     @DGEventHandler()
@@ -483,7 +483,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
     @DGEventHandler
     public void onWorldUnload(WorldUnloadEvent e) {
         if (flag) {
-            EditingContext.endEditingSession();
+//            EditingContext.endEditingSession(); $$ ROOMEDIT
             DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
             DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon2(false);
             blockUpdates = null;

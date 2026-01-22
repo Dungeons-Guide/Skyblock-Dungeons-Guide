@@ -5,7 +5,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.MapConfiguration;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.WidgetDungeonMap;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay.MapOverlay;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapterChestOverride;
+import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Placeholder;
@@ -80,7 +80,7 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
 
     public void onChestUpdate(WindowUpdateEvent windowUpdateEvent) {
         if (windowUpdateEvent == null) {
-            UContainerChest guiChest = GuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest();
+            UContainerChest guiChest = CustomGuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest();
             if (guiChest == null) {
                 slotMap.clear();
             } else {
