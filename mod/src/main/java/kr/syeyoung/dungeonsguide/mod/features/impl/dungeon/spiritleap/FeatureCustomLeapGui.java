@@ -24,13 +24,14 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.events.GuiOpenEvent;
 import kr.syeyoung.modapi.event.events.WindowUpdateEvent;
 import kr.syeyoung.modapi.gui.UContainerChest;
+import kr.syeyoung.modapi.gui.UGuiScreenChest;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraftforge.client.event.GuiOpenEvent;
 
 public class FeatureCustomLeapGui extends SimpleFeature {
     public FeatureCustomLeapGui() {
@@ -45,7 +46,11 @@ public class FeatureCustomLeapGui extends SimpleFeature {
 
     @DGEventHandler
     public void onGuiOpen(GuiOpenEvent event) {
-        UContainerChest container = ModAPI.getAPI().extractContainerChest(event.gui);
+        if (!(event.getGui() instanceof UGuiScreenChest)) {
+            return;
+        }
+        UContainerChest container = ((UGuiScreenChest) event.getGui()).getContainer();
+
         if (container == null || !"Spirit Leap".equals((container).getName())) {
             if (guiScreenAdapter != null) {
                 widgetSpiritLeap = null;
@@ -66,7 +71,7 @@ public class FeatureCustomLeapGui extends SimpleFeature {
         }
         guiScreenAdapter.setGuiChest(container);
 
-        event.gui = guiScreenAdapter;
+        event.setGui(guiScreenAdapter);
     }
 
     @DGEventHandler

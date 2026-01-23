@@ -342,6 +342,7 @@ public class ModAPIImpl implements ModAPI {
 
     public UGuiScreen getCurrentGuiScreen() {
         if (Minecraft.getMinecraft().currentScreen == null) return null;
-        return new UNativeGuiScreen(Minecraft.getMinecraft().currentScreen);
+        if (Minecraft.getMinecraft().currentScreen instanceof UGuiScreenAdapter) return ((UGuiScreenAdapter) Minecraft.getMinecraft().currentScreen).getDelegate();
+        return UNativeGuiScreen.getUScreen(Minecraft.getMinecraft().currentScreen);
     }
 }

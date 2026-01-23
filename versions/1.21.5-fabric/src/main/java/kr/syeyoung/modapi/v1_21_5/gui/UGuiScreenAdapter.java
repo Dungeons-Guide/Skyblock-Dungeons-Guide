@@ -1,11 +1,13 @@
 package kr.syeyoung.modapi.v1_21_5.gui;
 
 import kr.syeyoung.modapi.gui.UCustomGuiScreen;
+import lombok.Getter;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
 public class UGuiScreenAdapter extends Screen {
+    @Getter
     private UCustomGuiScreen delegate;
     public UGuiScreenAdapter(UCustomGuiScreen screen) {
         super(Text.empty());

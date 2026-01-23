@@ -144,10 +144,10 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
         this.party = party;
     }
 
-    public RawMinecraftTooltip createTooltip() {
-        if (party == null) return new RawMinecraftTooltip();
+    public RawMinecraftTooltip createTooltip(double mouseX, double mouseY) {
+        if (party == null) return new RawMinecraftTooltip(mouseX, mouseY);
         List<String> toHover = party.itemStack.getNormalTooltip();
-        RawMinecraftTooltip minecraftTooltip =  new RawMinecraftTooltip();
+        RawMinecraftTooltip minecraftTooltip =  new RawMinecraftTooltip(mouseX, mouseY);
         minecraftTooltip.setTooltip(toHover);
         return minecraftTooltip;
     }

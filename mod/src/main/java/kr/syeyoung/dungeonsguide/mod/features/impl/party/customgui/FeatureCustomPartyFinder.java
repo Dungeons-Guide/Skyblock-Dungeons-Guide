@@ -25,15 +25,16 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.events.GuiOpenEvent;
 import kr.syeyoung.modapi.event.events.WindowUpdateEvent;
 import kr.syeyoung.modapi.gui.UContainer;
 import kr.syeyoung.modapi.gui.UContainerChest;
+import kr.syeyoung.modapi.gui.UGuiScreenChest;
 import kr.syeyoung.modapi.item.UItemStack;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraftforge.client.event.GuiOpenEvent;
 
 import java.util.List;
 
@@ -77,7 +78,11 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
 
     @DGEventHandler
     public void onGuiOpen(GuiOpenEvent event) {
-        UContainerChest container = ModAPI.getAPI().extractContainerChest(event.gui);
+        if (!(event.getGui() instanceof UGuiScreenChest)) {
+            return;
+        }
+        UContainerChest container = ((UGuiScreenChest) event.getGui()).getContainer();
+
         if (container == null || !"Party Finder".equals((container).getName())) {
             if (guiScreenAdapter != null) {
                 widgetPartyFinder = null;
@@ -96,7 +101,7 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
         }
         guiScreenAdapter.setGuiChest(container);
 
-        event.gui = guiScreenAdapter;
+        event.setGui(guiScreenAdapter);
     }
 
     @DGEventHandler

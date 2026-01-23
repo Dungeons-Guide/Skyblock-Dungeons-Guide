@@ -45,7 +45,9 @@ public class UNativeGuiScreen implements UGuiScreen {
     }
 
     public static UNativeGuiScreen getUScreen(GuiScreen screen) {
+        if (screen == null) return null;
         if (screen instanceof GuiChat) return new UGuiScreenChatImpl((GuiChat) screen);
+        else if (screen instanceof GuiChest) return new UGuiScreenChestImpl((GuiChest) screen);
         else return new UNativeGuiScreen(screen);
     }
 }

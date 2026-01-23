@@ -28,7 +28,7 @@ public class HoverTooltip extends AnnotatedExportOnlyWidget {
     public void mouseEntered(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
         if (this.tooltip == null) {
             PopupMgr.getPopupMgr(getDomElement())
-                    .openPopup(this.tooltip = new MouseTooltip(actualTooltip.getValue()), (a) -> {
+                    .openPopup(this.tooltip = new MouseTooltip(actualTooltip.getValue(), absMouseX, absMouseY), (a) -> {
                         this.tooltip = null;
                     });
         }

@@ -38,6 +38,7 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.events.ScreenMouseEvent;
 import kr.syeyoung.modapi.gui.UGuiScreenChat;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
@@ -51,9 +52,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.*;
@@ -134,7 +133,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
     private OverlayWidget widget;
 
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void onGuiPostRender(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
+    public void onMouseEvent(ScreenMouseEvent.MouseMoved mouseMoved) {
         if (!(ModAPI.getAPI().getCurrentGuiScreen() instanceof UGuiScreenChat)) {
             return;
         }
@@ -177,8 +176,8 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         if (widget == null) {
             ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
 
-            int mouseX = Mouse.getX();
-            int mouseY = (ModAPI.getAPI().getDisplayHeight() - Mouse.getY());
+            int mouseX = (int) mouseMoved.getMouseX();
+            int mouseY = (int) mouseMoved.getMouseY();
 
             double width = 220 * scaledResolution.getScaleFactor();
             double height = 220 * scaledResolution.getScaleFactor();

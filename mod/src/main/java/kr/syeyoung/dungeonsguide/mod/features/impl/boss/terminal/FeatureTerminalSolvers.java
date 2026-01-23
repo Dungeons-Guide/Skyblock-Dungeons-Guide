@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.event.events.ItemTooltipEvent;
+import kr.syeyoung.modapi.event.events.ScreenMouseEvent;
 import kr.syeyoung.modapi.gui.UContainer;
 import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.gui.UContainerSlot;
@@ -34,7 +35,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,9 +140,8 @@ public class FeatureTerminalSolvers extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
+    public void onMouseInput(ScreenMouseEvent.MouseClicked event) {
         if (!isEnabled()) return;
-        if (Mouse.getEventButton() == -1) return;
         if (solutionProvider == null) return;
         if (solution == null) return;
         if (solution.getCurrSlots() == null) {
@@ -162,7 +161,7 @@ public class FeatureTerminalSolvers extends SimpleFeature {
 //            Minecraft.getMinecraft().playerController.windowClick(chest.inventorySlots.windowId, s.slotNumber, 0, 4, Minecraft.getMinecraft().thePlayer);
         } else {
             if (block)
-                mouseInputEvent.setCanceled(true);
+                event.setCanceled(true);
         }
     }
 

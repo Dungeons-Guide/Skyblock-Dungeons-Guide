@@ -30,7 +30,7 @@ public class WidgetHelp extends AnnotatedImportOnlyWidget {
         super(new ResourceIdentifier("dungeonsguide:gui/config/text/help.gui"));
     }
 
-    private RawMinecraftTooltip actualTooltip = new RawMinecraftTooltip();
+    private RawMinecraftTooltip actualTooltip = new RawMinecraftTooltip(0,0);
     private boolean tooltipShown;
 
     @Override
@@ -42,6 +42,7 @@ public class WidgetHelp extends AnnotatedImportOnlyWidget {
                     "If checkbox is disabled, the shown value is the value that is currently applied to text",
                     "MC Default: means that the color will be calculated based on visible textColor automatically"));
 
+            actualTooltip.setMousePos(absMouseX, absMouseY);
             PopupMgr.getPopupMgr(getDomElement())
                     .openPopup(actualTooltip, (a) -> {
                         this.tooltipShown = false;

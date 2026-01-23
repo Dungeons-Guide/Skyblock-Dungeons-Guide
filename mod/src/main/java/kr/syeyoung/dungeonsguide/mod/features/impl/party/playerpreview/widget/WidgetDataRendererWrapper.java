@@ -66,7 +66,7 @@ public class WidgetDataRendererWrapper extends Widget implements Layouter, Rende
     }
 
 
-    private RawMinecraftTooltip actualTooltip = new RawMinecraftTooltip();
+    private RawMinecraftTooltip actualTooltip = new RawMinecraftTooltip(0, 0);
     private boolean tooltipShown = false;
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
@@ -83,6 +83,7 @@ public class WidgetDataRendererWrapper extends Widget implements Layouter, Rende
             this.tooltipShown = false;
         } else if (toHover != null && !tooltipShown) {
             tooltipShown = true;
+            actualTooltip.setMousePos(absMouseX, absMouseY);
             PopupMgr.getPopupMgr(getDomElement())
                     .openPopup(actualTooltip, (a) -> {
                         this.tooltipShown = false;

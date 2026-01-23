@@ -130,7 +130,7 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
         fr.drawString(toDraw, (90 - fr.getStringWidth(toDraw)) / 2, 10 - (fr.FONT_HEIGHT / 2), -1);
     }
 
-    private RawMinecraftTooltip actualTooltip = new RawMinecraftTooltip();
+    private RawMinecraftTooltip actualTooltip = new RawMinecraftTooltip(0, 0);
     private boolean tooltipShow = false;
     private double relMouseX;
     @Override
@@ -170,6 +170,7 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
                     .closePopup(this.actualTooltip, null);
         } else if (toHover != null && !tooltipShow) {
             tooltipShow = true;
+            actualTooltip.setMousePos(absMouseX, absMouseY);
             PopupMgr.getPopupMgr(getDomElement())
                     .openPopup(this.actualTooltip, (a) -> {
                         tooltipShow = false;

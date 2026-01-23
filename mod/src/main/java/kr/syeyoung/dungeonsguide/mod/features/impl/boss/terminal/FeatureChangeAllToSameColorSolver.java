@@ -25,7 +25,9 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.event.events.GuiOpenEvent;
 import kr.syeyoung.modapi.event.events.ItemTooltipEvent;
+import kr.syeyoung.modapi.event.events.ScreenMouseEvent;
 import kr.syeyoung.modapi.gui.UContainer;
 import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.gui.UContainerSlot;
@@ -33,12 +35,8 @@ import kr.syeyoung.modapi.gui.UGuiScreenChest;
 import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.util.EnumDyeColor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.Slot;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import org.lwjgl.input.Mouse;
 
 public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     public FeatureChangeAllToSameColorSolver() {
@@ -57,8 +55,8 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     public void onGuiOpen(GuiOpenEvent event) {
         if (!isEnabled()) return;
         isCorrectGui = false;
-        if (event.gui instanceof GuiChest) {
-            UContainerChest cc = ModAPI.getAPI().extractContainerChest(event.gui);
+        if (event.getGui() instanceof UGuiScreenChest) {
+            UContainerChest cc = ((UGuiScreenChest) event.getGui()).getContainer();
             if (cc.getName().equals("Change all to same color!")) {
                 isCorrectGui = true;
             }
@@ -184,14 +182,11 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
+    public void onMouseInput(ScreenMouseEvent.MouseClicked event) {
         if (!isEnabled()) return;
-        if (Mouse.getEventButton() == -1) return;
         if (!isCorrectGui) return;
 
         UGuiScreenChest chest = (UGuiScreenChest) ModAPI.getAPI().getCurrentGuiScreen();
-
-//        if (Mouse.getEventButton())
 
         UContainerSlot s = chest.getSlotUnderMouse();
         if (s == null) return;
@@ -202,12 +197,12 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
             int solutionSlotId = (row - 1) * 3 + column - 3;
             int clicks = solution[solutionSlotId];
 
-            if ((clicks > 0 && Mouse.getEventButton() == 0) || (clicks < 0 && Mouse.getEventButton() == 1)) {
+            if ((clicks > 0 && event.getEventButton() == 0) || (clicks < 0 && event.getEventButton() == 1)) {
                 // correct.
 
             } else {
                 if (block)
-                    mouseInputEvent.setCanceled(true);
+                    event.setCanceled(true);
             }
         }
 

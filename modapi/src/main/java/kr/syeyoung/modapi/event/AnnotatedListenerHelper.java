@@ -47,7 +47,7 @@ public class AnnotatedListenerHelper {
             Parameter parameter = declaredMethod.getParameters()[0];
             Class type = parameter.getType();
             if (!UEvent.class.isAssignableFrom(type)) throw new IllegalArgumentException("Method "+declaredMethod.getName()+" should only take in 1 parameter, that extends event");
-            if ((declaredMethod.getModifiers() & Modifier.PUBLIC)  == 0 ) throw new IllegalArgumentException("Method is not public");
+            if ((declaredMethod.getModifiers() & Modifier.PUBLIC)  == 0 ) throw new IllegalArgumentException("Method "+declaredMethod.getName()+"is not public");
             MethodHandle handle = null;
             try {
                 handle = MethodHandles.publicLookup().unreflect(declaredMethod).bindTo(o);

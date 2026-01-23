@@ -14,7 +14,6 @@ archivesBaseName = "dungeonsguide"
 java {
     sourceCompatibility = JavaLanguageVersion.of(8)
     targetCompatibility = JavaLanguageVersion.of(8)
-
 }
 
 
@@ -26,12 +25,10 @@ sourceSets {
     }
     java8 {
         java {
-
         }
     }
     java21 {
         java {
-
         }
     }
 }
@@ -138,62 +135,51 @@ loom {
     }
 }
 
-ext.genOutputDir = file("$buildDir/generated-resources")
-task generateVersionInfo {
-    ext.outputFile = file("$genOutputDir/versionMeta.properties")
-    outputs.file(outputFile)
-    doLast {
-        outputFile.text = "VERSION=${project.version}\nMANDATORY_VERSION=0"
-    }
-}
-sourceSets.main.output.dir genOutputDir, builtBy: generateVersionInfo
 
-tasks.register("compileJava8", JavaCompile) {
+tasks.named("compileJava8Java", JavaCompile) {
     source = sourceSets.java8.java
-    classpath = sourceSets.main.compileClasspath + sourceSets.main.compileClasspath
-    destinationDirectory = file("$buildDir/classes/java8")
-
+    classpath = sourceSets.java8.compileClasspath
+    destinationDirectory = file("$buildDir/classes/java/java8")
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(8)
     }
+    sourceCompatibility =  JavaLanguageVersion.of(8)
+    targetCompatibility =  JavaLanguageVersion.of(8)
 }
 
-tasks.register("compileJavaCommon", JavaCompile) {
-    source = sourceSets.java8.java
-    classpath = sourceSets.main.compileClasspath + sourceSets.main.compileClasspath
-    destinationDirectory = file("$buildDir/classes/java8")
+tasks.named("compileJava", JavaCompile) {
+    classpath += sourceSets.java8.output
+    destinationDirectory = file("$buildDir/classes/java/main")
 
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(8)
-    }
+    dependsOn tasks.compileJava8Java
+
+    sourceCompatibility =  JavaLanguageVersion.of(8)
+    targetCompatibility =  JavaLanguageVersion.of(8)
 }
-tasks.register("compileJava21", JavaCompile) {
+tasks.named("compileJava21Java", JavaCompile) {
     source = sourceSets.java21.java
-    classpath = sourceSets.main.compileClasspath + sourceSets.java21.compileClasspath
-    destinationDirectory = file("$buildDir/classes/java21")
-
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
+    classpath = sourceSets.java21.compileClasspath
+    destinationDirectory = file("$buildDir/classes/java/java21")
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
-    // for internal API
-    classpath = files(tasks.named('compileJava8').get().destinationDirectory) + sourceSets.main.compileClasspath
-//    options.release = 8 // ensures APIs match Java 8
-    options.compilerArgs += [
-            "-XDignore.symbol.file"
-////            '--add-exports', 'java.base/sun.security.x509=ALL-UNNAMED',
-//            '--add-exports', 'java.base/sun.misc=ALL-UNNAMED',
-////            '--add-opens', 'java.base/sun.misc=ALL-UNNAMED'
-    ]
-
 }
 
 tasks.withType(Jar) {
     archivesBaseName = "dungeonsguide"
-    manifest {}
+    manifest { attributes 'Multi-Release': 'true' }
+
+    // Default classes (Java 8 common + impl)
+    from("$buildDir/classes/java/main")
+    from("$buildDir/classes/java/java8")
+
+    // Java 21 version in META-INF/versions/21
+    from("$buildDir/classes/java/java21") {
+        into 'META-INF/versions/21'
+    }
+
+    dependsOn tasks.java8Classes, tasks.java21Classes, tasks.classes
 }
 
 
@@ -202,12 +188,27 @@ tasks.shadowJar {
 
     configurations = [project.configurations.shadowImpl]
 
+    manifest { attributes 'Multi-Release': 'true' }
+
+    // Default classes (Java 8 common + impl)
+    from("$buildDir/classes/java/common")
+    from("$buildDir/classes/java/java8")
+
+    // Java 21 version in META-INF/versions/21
+    from("$buildDir/classes/java/java21") {
+        into 'META-INF/versions/21'
+    }
+
+
     enableRelocation = true
     relocationPrefix = "kr.syeyoung.dungeonsguide.libs"
 
     dependencies {
         exclude(dependency("org.json:json")) // provided via loader
     }
+
+    dependsOn tasks.classes, tasks.java8Classes, tasks.java21Classes
+
 }
 
 tasks.named("remapJar") {

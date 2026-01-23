@@ -58,7 +58,7 @@ public class WidgetConstStyleGroupStyleLineDerivedColor extends AnnotatedImportO
         this.erase.setValue(eraseEvaluator.get() ? "show" : "hide");
     }
 
-    private RawMinecraftTooltip actualTooltip = new RawMinecraftTooltip();
+    private RawMinecraftTooltip actualTooltip = new RawMinecraftTooltip(0,0);
     private boolean tooltipShown;
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY, boolean childHandled) {
@@ -76,6 +76,7 @@ public class WidgetConstStyleGroupStyleLineDerivedColor extends AnnotatedImportO
             this.tooltipShown = false;
         } else if (toHover != null&& !tooltipShown) {
             tooltipShown = true;
+            actualTooltip.setMousePos(absMouseX, absMouseY);
             PopupMgr.getPopupMgr(getDomElement())
                     .openPopup(actualTooltip, (a) -> {
                         this.tooltipShown = false;

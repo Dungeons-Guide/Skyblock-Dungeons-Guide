@@ -23,12 +23,12 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.events.ScreenKeyboardEvent;
+import kr.syeyoung.modapi.event.events.ScreenMouseEvent;
 import kr.syeyoung.modapi.gui.UGuiScreen;
 import kr.syeyoung.modapi.gui.UGuiScreenChest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.ContainerChest;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import org.lwjgl.input.Mouse;
 
 public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
     public FeaturePressAnyKeyToCloseChest() {
@@ -37,7 +37,7 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onKeyInput(GuiScreenEvent.KeyboardInputEvent keyboardInputEvent) {
+    public void onKeyInput(ScreenKeyboardEvent.KeyPressed keyboardInputEvent) {
         UGuiScreen screen = ModAPI.getAPI().getCurrentGuiScreen();
 
         if (!SkyblockStatus.isOnDungeon()) return;
@@ -61,11 +61,10 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
+    public void onMouseInput(ScreenMouseEvent.MouseClicked event) {
         UGuiScreen screen = ModAPI.getAPI().getCurrentGuiScreen();
 
         if (!SkyblockStatus.isOnDungeon()) return;
-        if (Mouse.getEventButton() == -1) return;
 
         if (screen instanceof UGuiScreenChest){
             ContainerChest ch = (ContainerChest) ((UGuiScreenChest)screen).getContainer();

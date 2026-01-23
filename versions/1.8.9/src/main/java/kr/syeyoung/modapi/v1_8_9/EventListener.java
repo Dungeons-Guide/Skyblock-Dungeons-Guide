@@ -1,5 +1,6 @@
 package kr.syeyoung.modapi.v1_8_9;
 
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.data.Vector3D;
@@ -8,19 +9,25 @@ import kr.syeyoung.modapi.entity.UEntityLiving;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.event.ListenerPriority;
 import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.gui.UCustomGuiScreen;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
+import kr.syeyoung.modapi.v1_8_9.gui.UGuiScreenAdapter;
+import kr.syeyoung.modapi.v1_8_9.gui.UNativeGuiScreen;
 import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.TeamManager;
+import kr.syeyoung.modapi.v1_8_9.util.KeyboardModernizer;
 import kr.syeyoung.modapi.v1_8_9.util.MarkedChatComponent;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -31,6 +38,8 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.*;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -150,6 +159,91 @@ public class EventListener {
         ModAPI.getAPI().getEventBus().fireEvent(itemTooltipEvent1, mapPriority(eventPriority));
     }
 
+    public void onGuiOpen(net.minecraftforge.client.event.GuiOpenEvent guiOpenEvent, EventPriority eventPriority) {
+        GuiOpenEvent openEvent = new GuiOpenEvent(
+                guiOpenEvent.gui instanceof UGuiScreenAdapter ? ((UGuiScreenAdapter) guiOpenEvent.gui).getDelegate() : UNativeGuiScreen.getUScreen(guiOpenEvent.gui)
+        );
+
+
+        ModAPI.getAPI().getEventBus().fireEvent(openEvent, mapPriority(eventPriority));
+        if (openEvent.getGui() instanceof UNativeGuiScreen) {
+            guiOpenEvent.gui = ((UNativeGuiScreen) openEvent.getGui()).getHandle();
+        } else if (openEvent.getGui() instanceof UCustomGuiScreen) {
+            guiOpenEvent.gui = new UGuiScreenAdapter((UCustomGuiScreen) openEvent.getGui());
+        } else if (openEvent.getGui() == null) {
+            guiOpenEvent.gui = null;
+        }
+    }
+
+    public void onKeyboardInputEvent(GuiScreenEvent.KeyboardInputEvent inputEvent, EventPriority eventPriority) {
+        if (Keyboard.getEventKeyState()) {
+            if (!Keyboard.isRepeatEvent()) {
+                ModAPI.getAPI().getEventBus().fireEvent(new ScreenKeyboardEvent.KeyPressed(
+                        KeyboardModernizer.getKeyCode(),
+                        KeyboardModernizer.getScanCode(),
+                        KeyboardModernizer.getModifiers()
+                ), mapPriority(eventPriority));
+            }
+        } else {
+            ModAPI.getAPI().getEventBus().fireEvent(new ScreenKeyboardEvent.KeyReleased(
+                    KeyboardModernizer.getKeyCode(),
+                    KeyboardModernizer.getScanCode(),
+                    KeyboardModernizer.getModifiers()
+            ), mapPriority(eventPriority));
+        }
+    }
+
+
+    private int lastMouseEventButton;
+    private long lastMouseEventTime;
+    private int lastX, lastY;
+    public void onMouseInputEvent(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent, EventPriority eventPriority) {
+        int i = Mouse.getEventX();
+
+        int j = mouseInputEvent.gui.mc.displayHeight - Mouse.getEventY();
+        int k = Mouse.getEventButton();
+
+        if (Mouse.getEventButtonState()) {
+            boolean isCanceled = ModAPI.getAPI().getEventBus().fireEvent(new ScreenMouseEvent.MouseClicked(
+                    i, j, k, mouseInputEvent.isCanceled()
+            ));
+            mouseInputEvent.setCanceled(isCanceled);
+
+            this.lastMouseEventButton = k;
+            this.lastMouseEventTime = Minecraft.getSystemTime();
+        } else if (k != -1) {
+            this.lastMouseEventButton = -1;
+            ModAPI.getAPI().getEventBus().fireEvent(new ScreenMouseEvent.MouseReleased(
+                    i, j, k
+            ));
+        } else if (this.lastMouseEventButton != -1 && this.lastMouseEventTime > 0L) {
+            long l = Minecraft.getSystemTime() - this.lastMouseEventTime;
+            ModAPI.getAPI().getEventBus().fireEvent(new ScreenMouseEvent.MouseDragged(
+                    i,j, lastX - i, lastY - j, k
+            ));
+        }
+        if (lastX != i || lastY != j) {
+            ModAPI.getAPI().getEventBus().fireEvent(new ScreenMouseEvent.MouseMoved(
+                    i, j
+            ));
+        }
+
+        int wheel = Mouse.getEventDWheel();
+        if (wheel != 0) {
+            try {
+                boolean cancel = ModAPI.getAPI().getEventBus().fireEvent(new ScreenMouseEvent.MouseScrolled(
+                        i, j, wheel, wheel, mouseInputEvent.isCanceled()
+                ));
+                mouseInputEvent.setCanceled(cancel);
+            } catch (Exception e) {
+                FeatureCollectDiagnostics.queueSendLogAsync(e);
+                e.printStackTrace();
+            }
+        }
+        lastX = i;
+        lastY = j;
+    }
+
     private ListenerPriority mapPriority(EventPriority priority) {
         switch (priority) {
             case HIGHEST: return ListenerPriority.FIRST;
@@ -210,6 +304,9 @@ public class EventListener {
         registerEvents(ClientChatReceivedEvent.class, this::onChat);
         registerEvents(PlayerEvent.NameFormat.class, this::onNameFormat);
         registerEvents(net.minecraftforge.event.entity.player.ItemTooltipEvent.class, this::onItemToolip);
+        registerEvents(net.minecraftforge.client.event.GuiOpenEvent.class, this::onGuiOpen);
+        registerEvents(GuiScreenEvent.KeyboardInputEvent.class, this::onKeyboardInputEvent);
+        registerEvents(GuiScreenEvent.MouseInputEvent.Pre.class, this::onMouseInputEvent);
     }
 
     public void unregister() {

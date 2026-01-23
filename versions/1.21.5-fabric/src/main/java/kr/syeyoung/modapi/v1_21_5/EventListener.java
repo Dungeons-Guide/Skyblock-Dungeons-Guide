@@ -23,12 +23,19 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.*;
 import net.kyori.adventure.text.Component;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.hud.MessageIndicator;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.input.KeyboardInput;
+import net.minecraft.client.util.Window;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -38,6 +45,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.crash.CrashException;
+import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -59,6 +69,14 @@ public class EventListener {
         AttackBlockCallback.EVENT.register(this::onAttackBlock);
         AttackEntityCallback.EVENT.register(this::onAttackEntity);
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register(this::onWorldChange);
+        ScreenEvents.BEFORE_INIT.register((mc, screen, w, h) -> {
+            ScreenKeyboardEvents.beforeKeyPress(screen).register(this::onKeyPress);
+            ScreenKeyboardEvents.beforeKeyRelease(screen).register(this::onKeyRelease);
+            ScreenEvents.beforeTick(screen).register(this::onScreenTick);
+            ScreenMouseEvents.allowMouseClick(screen).register(this::onScreenClick);
+            ScreenMouseEvents.allowMouseScroll(screen).register(this::onScreenScroll);
+            ScreenMouseEvents.allowMouseRelease(screen).register(this::onScreenMouseRelease);
+        });
         HudLayerRegistrationCallback.EVENT.register((a) -> {
             a.attachLayerAfter(IdentifiedLayer.DEBUG, IdentifiedLayer.of(Identifier.of("dungeonsguide", "hud"), (ctx, counter) -> {
 //                ModAPI.getAPI().getEventBus().fireEvent(new )
@@ -71,6 +89,48 @@ public class EventListener {
                 .createCommandEncoder()
                 .createRenderPass(null, null)
                 .setPipeline(RenderPipeline.builder().build());
+    }
+
+    private void onScreenTick(Screen screen) {
+        Mouse mouse = MinecraftClient.getInstance().mouse;
+        Window window = MinecraftClient.getInstance().getWindow();
+        double f = mouse.getScaledX(window);
+        double g = mouse.getScaledY(window);
+
+        ModAPI.getAPI().getEventBus().fireEvent(new ScreenMouseEvent.MouseMoved(
+                f, g
+        ));
+
+        if (mouse.activeButton != -1 && mouse.glfwTime > 0.0) {
+            double h = mouse.scaleX(window, mouse.cursorDeltaX);
+            double i = mouse.scaleY(window, mouse.cursorDeltaY);
+
+            ModAPI.getAPI().getEventBus().fireEvent(new ScreenMouseEvent.MouseDragged(
+                    f,g,h,i, mouse.activeButton
+            ));
+        }
+    }
+
+
+    private boolean onScreenClick(Screen screen, double mouseX, double mouseY, int button) {
+        return !ModAPI.getAPI().getEventBus().fireEvent(new ScreenMouseEvent.MouseClicked(mouseX, mouseY, button, false));
+    }
+
+    private boolean onScreenMouseRelease(Screen screen, double mouseX, double mouseY, int button) {
+        ModAPI.getAPI().getEventBus().fireEvent(new ScreenMouseEvent.MouseReleased(mouseX, mouseY, button));
+        return true;
+    }
+
+    private boolean onScreenScroll(Screen screen, double mouseX, double mouseY, double scrollX, double scrollY) {
+        return !ModAPI.getAPI().getEventBus().fireEvent(new ScreenMouseEvent.MouseScrolled(mouseX, mouseY, scrollX, scrollY, false));
+    }
+
+    private void onKeyRelease(Screen screen, int i, int i1, int i2) {
+        ModAPI.getAPI().getEventBus().fireEvent(new ScreenKeyboardEvent.KeyPressed(i, i1, i2));
+    }
+
+    private void onKeyPress(Screen screen, int keyCode, int scanCode, int modifier) {
+        ModAPI.getAPI().getEventBus().fireEvent(new ScreenKeyboardEvent.KeyPressed(keyCode, scanCode, modifier));
     }
 
     private void onWorldChange(MinecraftClient minecraftClient, ClientWorld clientWorld) {

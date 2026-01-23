@@ -24,12 +24,12 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.function.BiFunction;
 
 public class WidgetHoverTooltip extends Widget {
-    private Supplier<Widget> popupSupplier;
+    private BiFunction<Double, Double, Widget> popupSupplier;
 
-    public WidgetHoverTooltip( Supplier<Widget> popupSupplier) {
+    public WidgetHoverTooltip( BiFunction<Double, Double, Widget> popupSupplier) {
         this.popupSupplier = popupSupplier;
     }
     @Override
@@ -43,7 +43,7 @@ public class WidgetHoverTooltip extends Widget {
         if (childHandled) return false;
         if (this.tooltip == null)
             PopupMgr.getPopupMgr(getDomElement())
-                    .openPopup(this.tooltip = popupSupplier.get(), (a) -> {
+                    .openPopup(this.tooltip = popupSupplier.apply((double) absMouseX, (double) absMouseY), (a) -> {
                         this.tooltip = null;
                     });
         return false;

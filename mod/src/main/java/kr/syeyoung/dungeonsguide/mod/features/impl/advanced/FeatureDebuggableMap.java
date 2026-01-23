@@ -119,7 +119,7 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
             int j = (int) (relMouseY0/factor);
             if (i >= 0 && j>= 0 && i <= 128 && j <= 128 && MapUtils.getColors() != null) {
                 if (mouseTooltip == null) {
-                    PopupMgr.getPopupMgr(getDomElement()).openPopup(mouseTooltip = new RawMinecraftTooltip(), a -> {});
+                    PopupMgr.getPopupMgr(getDomElement()).openPopup(mouseTooltip = new RawMinecraftTooltip(absMouseX, absMouseY), a -> {});
                 }
                 mouseTooltip.setTooltip(Arrays.asList(i+","+j,"Color: "+MapUtils.getColors().get(i,j)));
             } else if (mouseTooltip != null){

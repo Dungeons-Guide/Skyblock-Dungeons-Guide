@@ -2,6 +2,8 @@ package kr.syeyoung.modapi.v1_8_9.gui;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.modapi.gui.UCustomGuiScreen;
+import kr.syeyoung.modapi.v1_8_9.util.KeyboardModernizer;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
@@ -11,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 public class UGuiScreenAdapter extends GuiScreen  {
+    @Getter
     private UCustomGuiScreen delegate;
     public UGuiScreenAdapter(UCustomGuiScreen delegate) {
         this.delegate = delegate;
@@ -100,18 +103,14 @@ public class UGuiScreenAdapter extends GuiScreen  {
 
     public void handleKeyboardInput() throws IOException {
         // modifiers
-        int mod = 0;
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) mod |= 0x1;
-        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) mod |= 2;
-        if (Keyboard.isKeyDown(Keyboard.KEY_LMETA) || Keyboard.isKeyDown(Keyboard.KEY_RMETA)) mod |= 4;
 
         if (Keyboard.getEventKeyState()) {
             if (!Keyboard.isRepeatEvent())
-                delegate.keyPressed(Keyboard.getEventKey(), 0, mod);
+                delegate.keyPressed(KeyboardModernizer.getKeyCode(), KeyboardModernizer.getScanCode(), KeyboardModernizer.getModifiers());
             if (isPrintableChar(Keyboard.getEventCharacter()))
-                delegate.charTyped(Keyboard.getEventCharacter(), mod);
+                delegate.charTyped(Keyboard.getEventCharacter(), KeyboardModernizer.getModifiers());
         } else {
-            delegate.keyReleased(Keyboard.getEventKey(), 0, mod);
+            delegate.keyReleased(KeyboardModernizer.getKeyCode(), KeyboardModernizer.getScanCode(), KeyboardModernizer.getModifiers());
         }
 
         this.mc.dispatchKeypresses();

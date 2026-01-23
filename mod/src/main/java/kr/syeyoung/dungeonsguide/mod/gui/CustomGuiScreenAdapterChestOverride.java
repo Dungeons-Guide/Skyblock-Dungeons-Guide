@@ -22,7 +22,6 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.gui.UContainer;
 import kr.syeyoung.modapi.gui.UContainerChest;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Mouse;
 
 public class CustomGuiScreenAdapterChestOverride extends CustomGuiScreenAdapter {
@@ -45,8 +44,8 @@ public class CustomGuiScreenAdapterChestOverride extends CustomGuiScreenAdapter 
     }
 
     @Override
-    public void setWorldAndResolution(Minecraft mc, int width, int height) {
-        super.setWorldAndResolution(mc, width, height);
+    public void init() {
+        ModAPI.getAPI().getPlayer().setOpenContainer(guiChest);
         if (repositionCursor) {
             Mouse.setCursorPosition(cursorX, cursorY);
         }
@@ -68,12 +67,6 @@ public class CustomGuiScreenAdapterChestOverride extends CustomGuiScreenAdapter 
 
     private boolean flag = false;
 
-    @Override
-    public void initGui() {
-        ModAPI.getAPI().getPlayer().setOpenContainer(guiChest);
-        super.initGui();
-    }
-
     public void setCanExitWithoutClosing(boolean flag) {
         this.flag =flag;
     }
@@ -84,9 +77,10 @@ public class CustomGuiScreenAdapterChestOverride extends CustomGuiScreenAdapter 
             guiChest.closeContainer();
     }
 
+
     @Override
-    public void onGuiClosed() {
+    public void onRemoved() {
+        super.onRemoved();
         guiChest = null;
-        super.onGuiClosed();
     }
 }

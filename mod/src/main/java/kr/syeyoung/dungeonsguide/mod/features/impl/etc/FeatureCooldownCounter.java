@@ -27,10 +27,9 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextS
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
-import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.events.GuiOpenEvent;
 import kr.syeyoung.modapi.gui.UContainerChest;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraftforge.client.event.GuiOpenEvent;
+import kr.syeyoung.modapi.gui.UGuiScreenChest;
 
 public class FeatureCooldownCounter extends TextHUDFeature {
     public FeatureCooldownCounter() {
@@ -72,9 +71,11 @@ public class FeatureCooldownCounter extends TextHUDFeature {
     }
 
     @DGEventHandler
-    public void onGuiOpen(GuiOpenEvent rendered) {
-        if (!(rendered.gui instanceof GuiChest)) return;
-        UContainerChest chest = ModAPI.getAPI().extractContainerChest(rendered.gui);
+    public void onGuiOpen(GuiOpenEvent event) {
+        if (!(event.getGui() instanceof UGuiScreenChest)) {
+            return;
+        }
+        UContainerChest chest = ((UGuiScreenChest) event.getGui()).getContainer();
 
         if (chest.getName().contains("On cooldown!")) {
             leftDungeonTime = System.currentTimeMillis();

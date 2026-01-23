@@ -23,6 +23,7 @@ import com.google.common.base.Throwables;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.launcher.util.cursor.XCursor;
+import kr.syeyoung.dungeonsguide.mod.jvminternal.UnsafeWrapper;
 import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
@@ -33,7 +34,6 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.input.Cursor;
-import sun.misc.Unsafe;
 
 import java.awt.image.BufferedImage;
 import java.lang.reflect.*;
@@ -55,7 +55,6 @@ public class GLCursors {
     @SuppressWarnings("unsafe")
     static boolean verbose = false;
 
-    private static Unsafe unsafe;
     private static Class cursorElement;
     private static Constructor constructor;
     private static Field cursorField;
@@ -69,9 +68,6 @@ public class GLCursors {
 
     static {
         try {
-            Field f = Unsafe.class.getDeclaredField("theUnsafe");
-            f.setAccessible(true);
-            unsafe = (Unsafe) f.get(null);
             cursorElement = Class.forName("org.lwjgl.input.Cursor$CursorElement");
             constructor = cursorElement.getDeclaredConstructor(Object.class, long.class, long.class);
             constructor.setAccessible(true);
@@ -81,7 +77,7 @@ public class GLCursors {
             linuxDisplay = Class.forName("org.lwjgl.opengl.LinuxDisplay");
             linuxDisplayGetDisplay = linuxDisplay.getDeclaredMethod("getDisplay");
             linuxDisplayGetDisplay.setAccessible(true);
-        } catch (NoSuchFieldException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException e) {
+        } catch (NoSuchFieldException | ClassNotFoundException | NoSuchMethodException e) {
             e.printStackTrace();
         }
     }
@@ -249,7 +245,7 @@ public class GLCursors {
 
     private static Cursor createCursor(Object handle) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         // Yes. I had no way.
-        Cursor ADANGEROUSOBJECT = (Cursor) unsafe.allocateInstance(Cursor.class);
+        Cursor ADANGEROUSOBJECT = (Cursor) UnsafeWrapper.allocateInstance(Cursor.class);
         Object cursorElement = constructor.newInstance(handle, 0, LWJGLUtil.getPlatform() == LWJGLUtil.PLATFORM_LINUX ? -1 : System.currentTimeMillis());
         Object array = Array.newInstance(GLCursors.cursorElement, 1);
         Array.set(array, 0, cursorElement);

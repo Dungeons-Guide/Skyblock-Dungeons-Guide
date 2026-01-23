@@ -5,6 +5,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
+import kr.syeyoung.dungeonsguide.mod.jvminternal.CleanerWrapper;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.IPathfinder;
@@ -15,7 +16,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.TSPCacheRegistry;
 import kr.syeyoung.modapi.data.AABB;
 import lombok.Getter;
-import sun.misc.Cleaner;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -69,7 +69,8 @@ public class RoomPresetPathPlanner {
                     ((GeneralRoomProcessor)dungeonRoom.getRoomProcessor()).getPathfinderWorld());
             executor1.doStep();
 
-            Cleaner.create(executor1, pathfinder::close); // WELLLLLL... well... well...
+//            CleanerWrapper
+            CleanerWrapper.registerCleaner(executor1, pathfinder::close); // WELLLLLL... well... well...
 
             return executor1;
         } catch (IOException e) {

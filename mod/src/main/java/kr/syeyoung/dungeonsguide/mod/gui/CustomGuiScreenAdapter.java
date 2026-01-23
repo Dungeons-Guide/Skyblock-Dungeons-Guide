@@ -234,7 +234,7 @@ public class CustomGuiScreenAdapter implements UCustomGuiScreen {
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         try {
-            view.mouseClickMove0((int) mouseX, (int) mouseY, mouseX, mouseY, 0, 0);
+            view.mouseClickMove0((int) mouseX, (int) mouseY, mouseX, mouseY, button, 0);
         } catch (Exception e) {
 
             FeatureCollectDiagnostics.queueSendLogAsync(e);
@@ -243,14 +243,31 @@ public class CustomGuiScreenAdapter implements UCustomGuiScreen {
         return true;
     }
 
+    private double lastX, lastY;
+
     public void mouseMoved(double mouseX,double mouseY) {
         try {
-            view.mouseMoved0((int) mouseX, (int) mouseY
-                    , mouseX, mouseY, true);
+            if (lastX != mouseX|| lastY != mouseY) {
+                EnumCursor prevCursor = view.getCurrentCursor();
+                view.setCursor(EnumCursor.DEFAULT);
+
+                view.mouseMoved0((int) mouseX, (int) mouseY
+                        , mouseX, mouseY, true);
+
+                EnumCursor newCursor = view.getCurrentCursor();
+                try {
+                    if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
+                } catch (Throwable e) {
+
+                    e.printStackTrace();
+                }
+            }
         } catch (Exception e) {
 
             FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
+        } finally {
+            this.lastX = mouseX; this.lastY = mouseY;
         }
     }
 

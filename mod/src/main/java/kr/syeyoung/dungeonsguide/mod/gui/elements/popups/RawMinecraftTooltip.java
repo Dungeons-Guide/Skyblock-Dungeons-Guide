@@ -26,11 +26,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
-import kr.syeyoung.modapi.ModAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.client.config.GuiUtils;
-import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +36,14 @@ import java.util.List;
 
 public class RawMinecraftTooltip extends Widget implements Renderer, Layouter {
     public List<String> tooltip = new ArrayList<>();
+    private double mouseX;
+    private double mouseY;
+
+    public RawMinecraftTooltip(double mouseX, double mouseY) {
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
+    }
+
 
     public void setTooltip(List<String> tooltip) {
         this.tooltip = tooltip;
@@ -72,8 +78,11 @@ public class RawMinecraftTooltip extends Widget implements Renderer, Layouter {
                 (int) buildContext.getRelativeBound().getHeight(), -1, Minecraft.getMinecraft().fontRendererObj);
     }
 
-    private int mouseX = Mouse.getX();
-    private int mouseY = ModAPI.getAPI().getDisplayHeight() - Mouse.getY();
+    public void setMousePos(double mouseX, double mouseY) {
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
+    }
+
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
         mouseX = absMouseX;
