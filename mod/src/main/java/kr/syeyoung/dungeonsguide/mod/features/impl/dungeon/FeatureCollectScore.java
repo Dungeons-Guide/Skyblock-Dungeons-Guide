@@ -27,13 +27,18 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
+import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResource;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import net.minecraft.util.ChatComponentText;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
+import java.util.concurrent.TimeoutException;
+
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class FeatureCollectScore extends SimpleFeature {
     Logger logger = LogManager.getLogger("FeatureCollectScore");
@@ -61,13 +66,19 @@ public class FeatureCollectScore extends SimpleFeature {
             return;
         }
 
+        StaticResource targetResource = null;
         String target = null;
         try {
-            target = StaticResourceCache.INSTANCE.getResource(StaticResourceCache.DATA_COLLECTION).get().getValue();
+            targetResource = StaticResourceCache.INSTANCE.getResource(StaticResourceCache.DATA_COLLECTION).get(1, TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            ChatTransmitter.sendDebugChat("Idk but this fixed the new bug.");
+            e.printStackTrace();
+            return;
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+            target = targetResource.getValue();
 
         if (FeatureRegistry.ETC_COLLECT_SCORE.isEnabled() && !target.contains("falsefalsefalsefalse")) {
             StompManager.getInstance().send(new StompPayload().payload(payload.toString()).destination(target.replace("false", "").trim()));
