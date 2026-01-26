@@ -22,11 +22,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import net.minecraft.util.Vec3;
 
 import java.util.*;
 
-@Getter @Setter
+@Getter @Setter @ToString
 public class RoomState {
     private DungeonRoom dungeonRoom;
     private Vec3 playerPos;
