@@ -26,8 +26,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightPr
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import net.minecraft.entity.passive.*;
-import net.minecraftforge.client.event.RenderLivingEvent;
+import kr.syeyoung.modapi.entity.EntityType;
+import kr.syeyoung.modapi.event.events.RenderLivingEvent;
 
 
 public class FeatureHideAnimals extends SimpleFeature  {
@@ -49,22 +49,22 @@ public class FeatureHideAnimals extends SimpleFeature  {
 
 
     @DGEventHandler()
-    public void onEntityRenderPre(RenderLivingEvent.Pre renderPlayerEvent) {
+    public void onEntityRenderPre(RenderLivingEvent renderPlayerEvent) {
         
         if (!SkyblockStatus.isOnDungeon()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() == null) return;
         if (!(DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
 
-        if (renderPlayerEvent.entity instanceof EntitySheep && sheep) {
+        if (renderPlayerEvent.getEntity().getEntityType() == EntityType.SHEEP && sheep) {
             renderPlayerEvent.setCanceled(true);
-        } else if (renderPlayerEvent.entity instanceof EntityCow && cow ) {
+        } else if (renderPlayerEvent.getEntity().getEntityType() == EntityType.COW && cow ) {
             renderPlayerEvent.setCanceled(true);
-        } else if (renderPlayerEvent.entity instanceof EntityChicken && chicken) {
+        } else if (renderPlayerEvent.getEntity().getEntityType() == EntityType.CHICKEN && chicken) {
             renderPlayerEvent.setCanceled(true);
-        } else if (renderPlayerEvent.entity instanceof EntityWolf && wolf) {
+        } else if (renderPlayerEvent.getEntity().getEntityType() == EntityType.WOLF && wolf) {
             renderPlayerEvent.setCanceled(true);
-        } else if (renderPlayerEvent.entity instanceof EntityRabbit && rabbit) {
+        } else if (renderPlayerEvent.getEntity().getEntityType() == EntityType.RABBIT && rabbit) {
             renderPlayerEvent.setCanceled(true);
         }
     }

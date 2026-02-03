@@ -22,8 +22,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraftforge.client.event.RenderLivingEvent;
+import kr.syeyoung.modapi.entity.UEntityArmorStand;
+import kr.syeyoung.modapi.event.events.RenderLivingEvent;
 
 
 public class FeatureHideNameTags extends SimpleFeature  {
@@ -34,14 +34,14 @@ public class FeatureHideNameTags extends SimpleFeature  {
 
 
     @DGEventHandler
-    public void onEntityRenderPre(RenderLivingEvent.Pre renderPlayerEvent) {
+    public void onEntityRenderPre(RenderLivingEvent event) {
         
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        if (renderPlayerEvent.entity instanceof EntityArmorStand) {
-            EntityArmorStand armorStand = (EntityArmorStand) renderPlayerEvent.entity;
+        if (event.getEntity() instanceof UEntityArmorStand) {
+            UEntityArmorStand armorStand = (UEntityArmorStand) event.getEntity();
             if (armorStand.getAlwaysRenderNameTag() && armorStand.getName().contains("❤"))
-                renderPlayerEvent.setCanceled(true);
+                event.setCanceled(true);
         }
     }
 }

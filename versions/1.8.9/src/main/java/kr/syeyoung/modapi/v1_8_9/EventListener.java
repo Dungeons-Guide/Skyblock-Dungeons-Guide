@@ -295,6 +295,14 @@ public class EventListener {
                         UNativeGuiScreen.getUScreen(event.gui)));
     }
 
+    public void onRenderLiving(net.minecraftforge.client.event.RenderLivingEvent.Pre event, EventPriority priority) {
+        boolean canceled = ModAPI.getAPI().getEventBus().fireEvent(new RenderLivingEvent(
+                (UEntityLiving) UEntityDelegateFactory.createEntityFor(event.entity),
+                event.isCanceled()
+        ), mapPriority(priority));
+        event.setCanceled(canceled);
+    }
+
 
     private ListenerPriority mapPriority(EventPriority priority) {
         switch (priority) {
@@ -363,6 +371,7 @@ public class EventListener {
         registerEvents(GuiScreenEvent.DrawScreenEvent.Pre.class, this::onScreenRenderPre);
         registerEvents(GuiScreenEvent.DrawScreenEvent.Post.class, this::onScreenRenderPost);
         registerEvents(GuiScreenEvent.InitGuiEvent.Post.class, this::onScreenInitPost);
+        registerEvents(net.minecraftforge.client.event.RenderLivingEvent.Pre.class, this::onRenderLiving);
     }
 
     public void unregister() {
