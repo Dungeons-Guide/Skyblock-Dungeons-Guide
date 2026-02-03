@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.gui;
+package kr.syeyoung.modapi.v1_8_9.render;
 
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.profiler.UProfiler;

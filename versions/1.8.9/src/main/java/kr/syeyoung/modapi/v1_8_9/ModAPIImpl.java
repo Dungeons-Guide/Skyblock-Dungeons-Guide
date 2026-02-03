@@ -43,12 +43,14 @@ import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
 import kr.syeyoung.modapi.v1_8_9.profiler.UProfilerImpl;
+import kr.syeyoung.modapi.v1_8_9.render.PassthroughManager;
 import kr.syeyoung.modapi.v1_8_9.render.UFontCalculatorImpl;
 import kr.syeyoung.modapi.v1_8_9.render.UTextureManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.resources.DGTexturePack;
 import kr.syeyoung.modapi.v1_8_9.resources.UResourceManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.resources.UResourcePackRepositoryImpl;
 import kr.syeyoung.modapi.v1_8_9.settings.UGameSettingsImpl;
+import kr.syeyoung.modapi.v1_8_9.shader.ShaderManager;
 import kr.syeyoung.modapi.v1_8_9.util.CustomNetworkPlayerInfoUnloader;
 import kr.syeyoung.modapi.v1_8_9.util.USessionImpl;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
@@ -63,6 +65,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.boss.BossStatus;
@@ -221,6 +224,7 @@ public class ModAPIImpl implements ModAPI {
     @Override
     public void init() {
         MinecraftForge.EVENT_BUS.register(packetInjector);
+        MinecraftForge.EVENT_BUS.register(PassthroughManager.INSTANCE);
         eventListener.register();
         registry.init();
 
@@ -233,6 +237,12 @@ public class ModAPIImpl implements ModAPI {
             e.printStackTrace();
         }
 
+
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(a -> {
+            ShaderManager.onResourceReload();
+
+        });
+
         try {
             List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
             resourcePackList.add(new DGTexturePack());
@@ -243,16 +253,19 @@ public class ModAPIImpl implements ModAPI {
 
         if (Minecraft.getMinecraft().getNetHandler() != null)
             Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler_2", packetInjector);
+
     }
 
     @Override
     public void unload() {
         MinecraftForge.EVENT_BUS.unregister(packetInjector);
+        MinecraftForge.EVENT_BUS.unregister(PassthroughManager.INSTANCE);
         CustomNetworkPlayerInfoUnloader.unload();
         eventListener.unregister();
 
         commandManager.unregisterCommands();
         packetInjector.cleanup();
+        ShaderManager.unload();
 
         try {
             List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
@@ -381,7 +394,8 @@ public class ModAPIImpl implements ModAPI {
 
     @Override
     public void purgeCache() {
-        SkinFetcher.purgeCache();;
+        SkinFetcher.purgeCache();
+        ShaderManager.onResourceReload();
     }
 
     @Override

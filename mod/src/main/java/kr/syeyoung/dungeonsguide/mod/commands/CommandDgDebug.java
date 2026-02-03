@@ -52,7 +52,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.view.TestView;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
-import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import kr.syeyoung.modapi.ModAPI;
@@ -75,8 +74,8 @@ import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -89,11 +88,6 @@ public class CommandDgDebug {
         ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info.");
         ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer.");
         ChatTransmitter.addToQueue("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata.");
-    }
-
-    @DGCommand("dgdebug reloadshader")
-    public void reloadshader() {
-        ShaderManager.onResourceReload();
     }
 
     @DGCommand("dgdebug re")

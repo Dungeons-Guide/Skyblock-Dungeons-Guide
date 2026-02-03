@@ -18,7 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.gui.primitive;
 
-public interface IRect {
+import kr.syeyoung.modapi.data.URect;
+
+public interface IRect extends URect {
     default boolean contains(double x, double y) {
         return getX() <= x && x < getX() + getWidth() &&
                 getY() <= y && y < getY()+ getHeight();

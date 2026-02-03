@@ -18,7 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.gui.primitive;
 
-public interface ISize {
+import kr.syeyoung.modapi.data.USize;
+
+public interface ISize extends USize {
     double getWidth();
 
     double getHeight();
