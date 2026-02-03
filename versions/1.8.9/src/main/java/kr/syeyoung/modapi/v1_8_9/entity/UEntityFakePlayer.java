@@ -26,7 +26,7 @@ public class UEntityFakePlayer extends UEntityPlayerImpl implements UEntityPlaye
 
     @Override
     public void setCurrentArmor(int i, UItemStack itemStack) {
-        player.inventory.armorInventory[i] = (ItemStack) itemStack.getItemStack();
+        player.inventory.armorInventory[i] = itemStack == null ? null : (ItemStack) itemStack.getItemStack();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class UEntityFakePlayer extends UEntityPlayerImpl implements UEntityPlaye
 
     @Override
     public void setMainInventory(int i, UItemStack itemStack) {
-        player.inventory.mainInventory[i] = (ItemStack) itemStack.getItemStack();
+        player.inventory.mainInventory[i] = itemStack == null ? null : (ItemStack) itemStack.getItemStack();
     }
 
 

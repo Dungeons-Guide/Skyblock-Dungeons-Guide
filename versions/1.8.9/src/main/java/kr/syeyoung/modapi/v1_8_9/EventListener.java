@@ -172,6 +172,12 @@ public class EventListener {
         if (openEvent.getGui() instanceof UNativeGuiScreen) {
             guiOpenEvent.gui = ((UNativeGuiScreen) openEvent.getGui()).getHandle();
         } else if (openEvent.getGui() instanceof UCustomGuiScreen) {
+            if (Minecraft.getMinecraft().currentScreen instanceof UGuiScreenAdapter) {
+                if (((UGuiScreenAdapter) Minecraft.getMinecraft().currentScreen).getDelegate() == openEvent.getGui()) {
+                    guiOpenEvent.gui = Minecraft.getMinecraft().currentScreen; // don't change ref
+                    return;
+                }
+            }
             guiOpenEvent.gui = new UGuiScreenAdapter((UCustomGuiScreen) openEvent.getGui());
         } else if (openEvent.getGui() == null) {
             guiOpenEvent.gui = null;

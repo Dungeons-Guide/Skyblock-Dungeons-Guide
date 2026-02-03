@@ -45,6 +45,7 @@ public class CustomGuiScreenAdapterChestOverride extends CustomGuiScreenAdapter 
 
     @Override
     public void init() {
+        super.init();
         ModAPI.getAPI().getPlayer().setOpenContainer(guiChest);
         if (repositionCursor) {
             Mouse.setCursorPosition(cursorX, cursorY);
@@ -75,6 +76,7 @@ public class CustomGuiScreenAdapterChestOverride extends CustomGuiScreenAdapter 
     public void closeScreenRequested() {
         if (guiChest != null)
             guiChest.closeContainer();
+        super.closeScreenRequested();
     }
 
 
