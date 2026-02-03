@@ -54,8 +54,6 @@ import lombok.Data;
 import lombok.Getter;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayInputStream;
@@ -248,19 +246,19 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                     if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                         ch.getLeft().getProcessor().drawScreen(partialTicks, context);
 
-                        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+//                        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
                         String str = "Current: " + ch.getChamberGen().getName() + " Specific: " + ch.getLeft().getProcessor().getName();
-                        fr.drawString(str, 0, 0, 0xFFFFFFFF);
+                        context.drawString(str, 0, 0, 0xFFFFFFFF);
                     }
                 }
                 if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
                     if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                         ch.getRight().getProcessor().drawScreen(partialTicks, context);
 
-                        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+//                        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
                         if (ch.getChamberGen() == null || ch.getRight().getProcessor() == null) continue;
                         String str = "Current: " + ch.getChamberGen().getName() + " Specific: " + ch.getRight().getProcessor().getName();
-                        fr.drawString(str, 0, 0, 0xFFFFFFFF);
+                        context.drawString(str, 0, 0, 0xFFFFFFFF);
                     }
                 }
             }

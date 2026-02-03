@@ -50,12 +50,6 @@ import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -104,18 +98,21 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void drawScreen(float partialTicks, RenderingContext context) {
         if (FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && FeatureRegistry.DEBUG.isEnabled()) {
-            FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
             RaycastResult result = ModAPI.getAPI().getObjectMouseOver();
             UEntity en = result.getEntityHit();
             if (en == null) return;
 
-            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+//            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+
             if (DungeonActionContext.getSpawnLocation().containsKey(en.getEntityId())) {
-                GlStateManager.enableBlend();
-                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                fr.drawString("Spawned at " + DungeonActionContext.getSpawnLocation().get(en.getEntityId()), sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, 0xFFFFFFFF);
+//                GlStateManager.enableBlend();
+//                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                int x = (int) (ModAPI.getAPI().getDisplayWidth() / ModAPI.getAPI().getScaleFactor());
+                int y = (int) (ModAPI.getAPI().getDisplayHeight() / ModAPI.getAPI().getScaleFactor());
+
+                context.drawString("Spawned at " + DungeonActionContext.getSpawnLocation().get(en.getEntityId()), x / 2, y / 2, 0xFFFFFFFF);
             }
         }
     }

@@ -2,6 +2,7 @@ package kr.syeyoung.modapi;
 
 import kr.syeyoung.modapi.audio.USoundHandler;
 import kr.syeyoung.modapi.command.UCommandManager;
+import kr.syeyoung.modapi.data.UBossBar;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityPlayerFake;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
@@ -25,6 +26,7 @@ import kr.syeyoung.modapi.world.IMapUtils;
 import kr.syeyoung.modapi.world.UWorld;
 import net.kyori.adventure.text.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ModAPI {
@@ -106,4 +108,6 @@ public interface ModAPI {
     UEntityPlayerFake createFakePlayer(UUID uuid, String name);
 
     void purgeCache();
+
+    List<UBossBar> getBossBars();
 }

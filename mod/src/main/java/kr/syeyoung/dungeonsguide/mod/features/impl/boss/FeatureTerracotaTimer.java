@@ -29,7 +29,10 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.entity.boss.BossStatus;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.UBossBar;
+
+import java.util.List;
 
 public class FeatureTerracotaTimer extends TextHUDFeature {
     public FeatureTerracotaTimer() {
@@ -57,10 +60,14 @@ public class FeatureTerracotaTimer extends TextHUDFeature {
 
     @Override
     public TextSpan getText() {
+        float percent = 0;
+        List<UBossBar> bossBars = ModAPI.getAPI().getBossBars();
+        if (!bossBars.isEmpty()) percent = bossBars.get(0).getPercent();
+
         TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
         actualBit.addChild(new TextSpan(getStyle("title"), "Terracottas"));
         actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
-        actualBit.addChild(new TextSpan(getStyle("time"), TextUtils.formatTime((long) (BossStatus.healthScale * 1000 * 60 * 1.5))));
+        actualBit.addChild(new TextSpan(getStyle("time"), TextUtils.formatTime((long) (percent * 1000 * 60 * 1.5))));
         return actualBit;
     }
 

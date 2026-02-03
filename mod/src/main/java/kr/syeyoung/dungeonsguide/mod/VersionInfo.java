@@ -27,8 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics
 import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
 import kr.syeyoung.dungeonsguide.mod.utils.GuiDisplayer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
+import kr.syeyoung.modapi.ModAPI;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -80,7 +79,7 @@ public class VersionInfo {
                 if (latestUpdate.getId() == loader.getUpdateId()) return;
 
                 Scaler scaler = new Scaler();
-                scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+                scaler.scale.setValue(ModAPI.getAPI().getScaleFactor());
                 scaler.child.setValue(new WidgetUpdateLog(
                         latestUpdate.getName(), latestUpdate.getUpdateLog(), true
                 ));
@@ -123,7 +122,7 @@ public class VersionInfo {
                 logger.info("Update Required!!");
 
                 Scaler scaler = new Scaler();
-                scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+                scaler.scale.setValue(ModAPI.getAPI().getScaleFactor());
                 scaler.child.setValue(new WidgetUpdateLog(
                         latestUpdate.getName(), latestUpdate.getUpdateLog(), autoupdate
                 ));

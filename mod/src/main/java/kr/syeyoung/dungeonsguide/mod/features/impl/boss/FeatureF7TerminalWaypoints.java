@@ -47,7 +47,6 @@ import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.util.*;
@@ -107,9 +106,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
                 RenderUtils.renderBeaconBeam(allWaypt.x, allWaypt.y, allWaypt.z, beamColor, event.partialTicks);
             }
             if (beacon) {
-                GlStateManager.pushMatrix();
                 RenderUtils.highlightBlock(new VectorI3D(allWaypt.x, allWaypt.y, allWaypt.z), highlightColor, event.partialTicks, false);
-                GlStateManager.popMatrix();
             }
 
             if (status) {

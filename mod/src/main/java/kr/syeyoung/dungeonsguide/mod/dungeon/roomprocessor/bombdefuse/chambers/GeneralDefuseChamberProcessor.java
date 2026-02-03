@@ -26,14 +26,9 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.rendering.UFontCalculator;
 import lombok.Getter;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 @Getter
 public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor{
@@ -95,14 +90,17 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
 
     }
 
-    protected void drawPressKey() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+    protected void drawPressKey(RenderingContext context) {
+//        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+//        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
         String str = "Press "+ ModAPI.getAPI().getKeyDisplayString(FeatureRegistry.SOLVER_BOMBDEFUSE.<Integer>getParameter("key").getValue()) + " to save and send solution";
-        GlStateManager.enableBlend();
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        fr.drawString(str, (sr.getScaledWidth() - fr.getStringWidth(str)) / 2, (sr.getScaledHeight() - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
+//        GlStateManager.enableBlend();
+//        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        int width = (int) (ModAPI.getAPI().getDisplayWidth() / ModAPI.getAPI().getScaleFactor());
+        int height = (int) (ModAPI.getAPI().getDisplayHeight() / ModAPI.getAPI().getScaleFactor());
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
+        context.drawString(str, (width- fr.getStringWidth(str)) / 2, (height - fr.getFontHeight()) / 2, 0xFFFFFFFF);
     }
 
     @Override

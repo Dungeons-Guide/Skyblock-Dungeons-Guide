@@ -24,7 +24,6 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,10 +81,6 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     }
 
     private UEntityArmorStand bonzoStand;
-
-
-    private static final ResourceLocation UNDEAD = new ResourceLocation("dungeonsguide:map/bossfight/f1/undead.png");
-    private static final ResourceLocation BONZO = new ResourceLocation("dungeonsguide:map/bossfight/f1/bonzo.png");
 
     @Override
     public MarkerData convertToMarker(UEntity entity) {

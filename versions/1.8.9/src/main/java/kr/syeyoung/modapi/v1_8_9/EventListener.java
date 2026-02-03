@@ -27,6 +27,7 @@ import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -43,6 +44,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -260,6 +263,13 @@ public class EventListener {
         RenderUtils.preRenderGui();
         ModAPI.getAPI().getEventBus().fireEvent(new OverlayRenderEvent(event.partialTicks, URenderContextmpl.INSTANCE));
         RenderUtils.postRenderGui();
+
+        GlStateManager.enableBlend();
+        GlStateManager.color(1, 1, 1, 1);
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        Minecraft.getMinecraft().entityRenderer.setupOverlayRendering();
+        GlStateManager.enableAlpha();
     }
     public void onScreenRenderPre(GuiScreenEvent.DrawScreenEvent.Pre event, EventPriority priority) {
         if (priority != EventPriority.NORMAL) return;

@@ -22,6 +22,8 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.UBossBar;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
@@ -29,7 +31,6 @@ import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UWorld;
-import net.minecraft.entity.boss.BossStatus;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -74,7 +75,10 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
     @Override
     public List<HealthData> getHealths() {
         List<HealthData> healths = new ArrayList<HealthData>();
-        healths.add(new HealthData("Thorn", Math.round(BossStatus.healthScale * (isMasterMode ? 6 : 4)),isMasterMode ? 6 : 4, true));
+        float percent = 0;
+        List<UBossBar> bossBars = ModAPI.getAPI().getBossBars();
+        if (!bossBars.isEmpty()) percent = bossBars.get(0).getPercent();
+        healths.add(new HealthData("Thorn", Math.round(percent * (isMasterMode ? 6 : 4)),isMasterMode ? 6 : 4, true));
         return healths;
     }
 

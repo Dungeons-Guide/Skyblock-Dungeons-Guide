@@ -239,6 +239,7 @@ public class FeatureRegistry {
     public static final FeatureEtherwarpDebug DEBUG_ETHER = register(new FeatureEtherwarpDebug());
     public static final FeaturePathfinderDebug DEBUG_PFRES = register(new FeaturePathfinderDebug());
     public static final FeatureCompareRoom COMPARE_ROOM = register(new FeatureCompareRoom());
+    public static final FeatureDebugBlocked DEBUG_BLOCKED = register(new FeatureDebugBlocked());
     public static final FeatureRoomEdit ADVANCED_ROOMEDIT = register(new FeatureRoomEdit());
     public static final FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM = register(new FeatureRoomDebugInfo());
     public static final FeatureDebuggableMap ADVANCED_DEBUGGABLE_MAP = register(new FeatureDebuggableMap());

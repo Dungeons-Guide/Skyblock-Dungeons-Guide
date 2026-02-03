@@ -5,6 +5,7 @@ import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.Platform;
 import kr.syeyoung.modapi.audio.USoundHandler;
+import kr.syeyoung.modapi.data.UBossBar;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntity;
@@ -58,11 +59,13 @@ import kr.syeyoung.modapi.world.IMapUtils;
 import kr.syeyoung.modapi.world.UWorld;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.json.legacyimpl.NBTLegacyHoverEventSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -78,6 +81,7 @@ import org.apache.logging.log4j.simple.SimpleLogger;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -378,5 +382,13 @@ public class ModAPIImpl implements ModAPI {
     @Override
     public void purgeCache() {
         SkinFetcher.purgeCache();;
+    }
+
+    @Override
+    public List<UBossBar> getBossBars() {
+        return Collections.singletonList(new UBossBar(
+                LegacyComponentSerializer.legacySection().deserialize(BossStatus.bossName),
+                BossStatus.healthScale
+        ));
     }
 }

@@ -42,15 +42,11 @@ import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiChat;
+import kr.syeyoung.modapi.event.events.GuiOpenEvent;
+import kr.syeyoung.modapi.gui.UGuiScreenChat;
+import kr.syeyoung.modapi.rendering.UFontCalculator;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.List;
@@ -92,15 +88,15 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         GUIPosition bigDim = getFeatureRect();
         Dimension effectiveDim = new Dimension((int) (bigDim.getWidth() / scale),(int)( bigDim.getHeight() / scale));
 
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        Gui.drawRect(0, 0, effectiveDim.width, fr.FONT_HEIGHT + 4, 0xFF444444);
-        Gui.drawRect(1, 1, effectiveDim.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
-        GlStateManager.enableBlend();
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        fr.drawString("Selected: ", 2,2, 0xFFAAAAAA);
-        fr.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
-        fr.drawString("Open Chat to Select Secrets", 2, fr.FONT_HEIGHT + 5, 0xFFAAAAAA);
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
+        context.drawRect(0, 0, effectiveDim.width, fr.getFontHeight() + 4, 0xFF444444);
+        context.drawRect(1, 1, effectiveDim.width - 1, fr.getFontHeight() + 3, 0xFF262626);
+//        GlStateManager.enableBlend();
+//        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        context.drawString("Selected: ", 2,2, 0xFFAAAAAA);
+        context.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
+        context.drawString("Open Chat to Select Secrets", 2, fr.getFontHeight() + 5, 0xFFAAAAAA);
     }
 
     @Override
@@ -122,20 +118,20 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         GUIPosition bigDim = getFeatureRect();
         Dimension effectiveDim = new Dimension((int) (bigDim.getWidth() / scale),(int)( bigDim.getHeight() / scale));
 
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        Gui.drawRect(0, 0, effectiveDim.width, fr.FONT_HEIGHT + 4, 0xFF444444);
-        Gui.drawRect(1, 1, effectiveDim.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
-        GlStateManager.enableBlend();
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        fr.drawString("Selected: ", 2,2, 0xFFAAAAAA);
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
+        ctx.drawRect(0, 0, effectiveDim.width, fr.getFontHeight() + 4, 0xFF444444);
+        ctx.drawRect(1, 1, effectiveDim.width - 1, fr.getFontHeight() + 3, 0xFF262626);
+//        GlStateManager.enableBlend();
+//        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        ctx.drawString("Selected: ", 2,2, 0xFFAAAAAA);
         if (roomRouteHandler.getPath("MECH-BROWSER") == null)
-            fr.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
+            ctx.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
         else {
             IPathDisplayEngine<?> route = roomRouteHandler.getPath("MECH-BROWSER");
-            fr.drawString(route.getActionRoute().toString(), fr.getStringWidth("Selected: ") + 2,2, 0xFFFFFF00);
+            ctx.drawString(route.getActionRoute().toString(), fr.getStringWidth("Selected: ") + 2,2, 0xFFFFFF00);
         }
-        fr.drawString("Open Chat to Select Secrets", 2, fr.FONT_HEIGHT + 5, 0xFFAAAAAA);
+        ctx.drawString("Open Chat to Select Secrets", 2, fr.getFontHeight() + 5, 0xFFAAAAAA);
     }
 
 
@@ -177,7 +173,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
 
     @DGEventHandler
     public void onOpen(GuiOpenEvent event) {
-        if (event.gui instanceof GuiChat) {
+        if (event.getGui() instanceof UGuiScreenChat) {
             if (widget != null)
                 OverlayManager.getInstance().addOverlay(lastOpen = widget);
         } else {

@@ -105,7 +105,7 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
     public void drawScreen(float partialTicks, RenderingContext context) {
         super.drawScreen(partialTicks, context);
         if (solutionBuilt)
-            drawPressKey();
+            drawPressKey(context);
     }
 
     @Override

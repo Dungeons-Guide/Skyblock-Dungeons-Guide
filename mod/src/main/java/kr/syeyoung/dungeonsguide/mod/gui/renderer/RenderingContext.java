@@ -309,7 +309,7 @@ public class RenderingContext {
         GL11.glLineWidth(lineWidth);
         GL11.glEnable(GL11.GL_LINE_STIPPLE);
 
-        GlStateManager.color((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF,(color >> 16) & 0xFF);
+        GlStateManager.color((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF,(color >> 24) & 0xFF);
         GlStateManager.disableTexture2D();
 
 
@@ -326,7 +326,7 @@ public class RenderingContext {
     public void drawLine(double x1, double y1, double x2, double y2, int color, float lineWidth) {
         GL11.glLineWidth(lineWidth);
 
-        GlStateManager.color((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF,(color >> 16) & 0xFF);
+        GlStateManager.color((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF,(color >> 24) & 0xFF);
         GlStateManager.disableTexture2D();
 
         GL11.glBegin(GL11.GL_LINES);

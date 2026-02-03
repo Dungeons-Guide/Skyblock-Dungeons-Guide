@@ -64,7 +64,7 @@ public class CreeperLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void drawScreen(float partialTicks, RenderingContext context) {
         if (answer == -1) return;
-        drawPressKey();
+        drawPressKey(context);
     }
 
     @Override

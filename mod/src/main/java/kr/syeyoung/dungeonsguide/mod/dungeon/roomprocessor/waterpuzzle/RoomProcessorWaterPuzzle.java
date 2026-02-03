@@ -39,11 +39,10 @@ import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UWorld;
-import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -347,7 +346,6 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                     // target:
 
                     if (i == idx) {
-                        GlStateManager.color(1,1,1,1);
                         RenderUtils.drawLine(
                                 ModAPI.getAPI().getPlayer().getPositionEyes(partialTicks),
                                 new Vector3D(pos).add(0.5, 0, 0.5),

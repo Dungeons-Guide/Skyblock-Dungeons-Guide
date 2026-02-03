@@ -19,10 +19,11 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.UBossBar;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntitySkeleton;
-import net.minecraft.entity.boss.BossStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -217,7 +218,10 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
             maxHealth = 1_000_000_000;
         }
         if (name.equals("")) return Collections.emptyList();
-        healths.add(new HealthData(name, (int) (BossStatus.healthScale * maxHealth),maxHealth , this.getCurrentPhase().startsWith("fight-")));
+        float percent = 0;
+        List<UBossBar> bossBars = ModAPI.getAPI().getBossBars();
+        if (!bossBars.isEmpty()) percent = bossBars.get(0).getPercent();
+        healths.add(new HealthData(name, (int) (percent * maxHealth),maxHealth , this.getCurrentPhase().startsWith("fight-")));
         return healths;
     }
 

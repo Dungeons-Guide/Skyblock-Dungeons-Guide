@@ -36,16 +36,11 @@ import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UWorld;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
+import java.util.*;
 import java.util.List;
 import java.util.Queue;
-import java.util.*;
 
 public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
@@ -337,11 +332,11 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         super.drawScreen(partialTicks, context);
         if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
         if (FeatureRegistry.SOLVER_BOX.disableText()) return;
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        GlStateManager.enableBlend();
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        fr.drawString("Type \"recalc\" in chat to recalculate the solution", 0, 0, 0xFFFFFFFF);
+//        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+//        GlStateManager.enableBlend();
+//        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        context.drawString("Type \"recalc\" in chat to recalculate the solution", 0, 0, 0xFFFFFFFF);
     }
 
     @Override

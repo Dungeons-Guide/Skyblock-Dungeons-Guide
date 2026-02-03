@@ -23,13 +23,9 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.Config;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonDoor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.PearlCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
@@ -39,40 +35,20 @@ import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
-import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
-import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.ListenerPriority;
 import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.profiler.UProfiler;
-import kr.syeyoung.modapi.world.UBlockState;
+import kr.syeyoung.modapi.rendering.UFontCalculator;
 import kr.syeyoung.modapi.world.UChunk;
-import lombok.Getter;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DungeonListener {
 
@@ -202,9 +178,10 @@ public class DungeonListener {
 
             UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
 
+            RenderingContext context1 = new RenderingContext(postRender.getRenderContext());
             profiler.startSection("Dungeons Guide - RenderGameOverlay.Post :: Bossfight Processor");
             if (context.getBossfightProcessor() != null)
-                context.getBossfightProcessor().drawScreen(postRender.getPartialTicks(), new RenderingContext(postRender.getRenderContext()));
+                context.getBossfightProcessor().drawScreen(postRender.getPartialTicks(),context1);
 
             profiler.endStartSection("Dungeons Guide - RenderGameOverlay.Post :: Room Processor");
             if (context.getScaffoldParser() != null) {
@@ -212,39 +189,34 @@ public class DungeonListener {
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 if (dungeonRoom != null) {
                     if (dungeonRoom.getRoomProcessor() != null) {
-                        dungeonRoom.getRoomProcessor().drawScreen(postRender.getPartialTicks(), new RenderingContext(postRender.getRenderContext()));
+                        dungeonRoom.getRoomProcessor().drawScreen(postRender.getPartialTicks(), context1);
                     }
                 }
             }
             profiler.endSection();
 
             if (context.getDungeonName().equals("TEST DG")) {
-                FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-                ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+                int swidth = (int) (ModAPI.getAPI().getDisplayWidth() / ModAPI.getAPI().getScaleFactor());
+                int sheight = (int) (ModAPI.getAPI().getDisplayHeight() / ModAPI.getAPI().getScaleFactor());
+
+                UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
 
                 int width = fr.getStringWidth("Dungeons Guide Mockup Dungeon");
                 int width2 = fr.getStringWidth("Preset: "+context.getPreset().getPresetName());
                 int bigger = Math.max(width, width2);
-                Gui.drawRect(
-                        (sr.getScaledWidth()-bigger - 10)/2,
-                        (sr.getScaledHeight()/9 - 5) ,
-                        (sr.getScaledWidth() + bigger + 10) /2,
-                        (sr.getScaledHeight()/9) + 5 + fr.FONT_HEIGHT*2,
+                context1.drawRect(
+                        (swidth-bigger - 10)/2,
+                        (sheight/9 - 5) ,
+                        (swidth + bigger + 10) /2,
+                        (sheight/9) + 5 + fr.getFontHeight()*2,
                         0x77111111
                 );
 
-                fr.drawString("Dungeons Guide Mockup Dungeon", (sr.getScaledWidth()-width)/2, sr.getScaledHeight()/9, 0xFF00FF00);
+                context1.drawString("Dungeons Guide Mockup Dungeon", (swidth-width)/2, sheight/9, 0xFF00FF00);
 
-                fr.drawString("Preset: "+context.getPreset().getPresetName(), (sr.getScaledWidth() - width2) / 2, sr.getScaledHeight() / 9 + fr.FONT_HEIGHT, 0xFF00FF00);
+                context1.drawString("Preset: "+context.getPreset().getPresetName(), (swidth - width2) / 2, sheight / 9 + fr.getFontHeight(), 0xFF00FF00);
             }
-
         }
-        GlStateManager.enableBlend();
-        GlStateManager.color(1, 1, 1, 1);
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        Minecraft.getMinecraft().entityRenderer.setupOverlayRendering();
-        GlStateManager.enableAlpha();
     }
 
     @kr.syeyoung.modapi.event.SubscribeEvent
@@ -374,66 +346,6 @@ public class DungeonListener {
                 if (dungeonRoom != null) {
                     if (dungeonRoom.getRoomProcessor() != null) {
                         dungeonRoom.getRoomProcessor().drawWorld(renderWorldLastEvent.partialTicks);
-                    }
-                }
-
-
-
-                if (FeatureRegistry.DEBUG.isEnabled() && dungeonRoom != null && dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor) {
-
-                    GeneralRoomProcessor roomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
-                    Vector3D player = ModAPI.getAPI().getPlayer().getPositionVector();
-                    VectorI3D real = new VectorI3D(player.x * 2, player.y * 2, player.z * 2);
-                    try {
-
-                        for (VectorI3D allInBox : VectorI3D.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
-                            CollisionStateCalculatingCoordinateMap.CollisionState blocked = roomProcessor.getPathfinderWorld().getBlock(allInBox.getX(), allInBox.getY(), allInBox.getZ());
-                            RenderUtils.highlightBox(
-                                    new AABB(
-                                            allInBox.getX() / 2.0 - 0.1, allInBox.getY() / 2.0 - 0.1, allInBox.getZ() / 2.0 - 0.1,
-                                            allInBox.getX() / 2.0 + 0.1, allInBox.getY() / 2.0 + 0.1, allInBox.getZ() / 2.0 + 0.1
-                                    ), blocked.getColor(), renderWorldLastEvent.partialTicks, false);
-                            PearlCalculatingCoordinateMap.PearlLandType type = roomProcessor.getPathfinderWorld().getPearl(allInBox.getX(), allInBox.getY(), allInBox.getZ());
-                            RenderUtils.drawTextAtWorld(type.name(), (float) (allInBox.getX() / 2.0 - 0.1), (float) (allInBox.getY() / 2.0 - 0.1), (float) (allInBox.getZ() / 2.0 - 0.1),
-                                    0xFFFFFFFF,0.01f, false, true, renderWorldLastEvent.partialTicks);
-                        }
-                    } catch (Exception ignored) {}
-
-                    if (FeatureRegistry.COMPARE_ROOM.toggleCompareStatus && dungeonRoom.getDungeonRoomInfo().hasSchematic()) {
-                        OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new VectorI3D(0,0,0));
-                        for (VectorI3D allInBox : VectorI3D.getAllInBox(dungeonRoom.getRoomBounds().getMin().add(0, -60, 0), dungeonRoom.getRoomBounds().getMax().add(0, 180, 0))) {
-                            offsetPoint.setPosInWorld(dungeonRoom, allInBox);
-                            UBlockState blockState = dungeonRoom.getDungeonRoomInfo().getBlock(offsetPoint, dungeonRoom.getRoomMatcher().getRotation());
-                            if (blockState != dungeonRoom.getRoomWorld().getBlockStateAt(allInBox)) {
-                                RenderUtils.highlightBlock(allInBox, new Color(0x70FF0000,true), renderWorldLastEvent.partialTicks, false);
-                                Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-                                float partialTicks = renderWorldLastEvent.partialTicks;
-                                RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
-                                GlStateManager.translate(allInBox.getX(), allInBox.getY(), allInBox.getZ());
-                                GlStateManager.scale(0.5f, 0.5f, 0.5f);
-                                GlStateManager.translate(0.5f,0.5f,0.5f);
-                                GlStateManager.disableLighting();
-                                GlStateManager.enableAlpha();
-                                GlStateManager.enableDepth();
-                                GlStateManager.depthMask(true);
-//                        GlStateManager.disableDepth();
-//                        GlStateManager.depthMask(false);
-                                GlStateManager.enableBlend();
-
-                                Tessellator tessellator = Tessellator.getInstance();
-                                WorldRenderer vertexBuffer = tessellator.getWorldRenderer();
-                                vertexBuffer.begin(7, DefaultVertexFormats.BLOCK);
-                                BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-//                        GlStateManager.color(1.0f,1.0f,1.0f,0.1f);
-                                blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld,
-                                        blockrendererdispatcher.getBlockModelShapes().getModelForState((IBlockState) blockState.getIBlockState()),
-                                        (IBlockState) blockState.getIBlockState(), new BlockPos(0,0,0), vertexBuffer, false);
-                                tessellator.draw();
-
-                                GlStateManager.enableLighting();
-                                GlStateManager.popMatrix();
-                            }
-                        }
                     }
                 }
             }
@@ -594,9 +506,6 @@ public class DungeonListener {
             }
         }
     }
-
-    @Getter
-    private final Map<Integer, Vec3> entityIdToPosMap = new HashMap<>();
 
     @kr.syeyoung.modapi.event.SubscribeEvent
     public void onEntitySpawn(EntityEnterWorldEvent spawn) {

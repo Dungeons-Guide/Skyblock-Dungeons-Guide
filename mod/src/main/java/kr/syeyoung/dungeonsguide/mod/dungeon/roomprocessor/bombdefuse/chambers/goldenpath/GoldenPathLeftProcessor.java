@@ -98,7 +98,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void drawScreen(float partialTicks, RenderingContext context) {
         if (goldenPathsolution == null) return;
-        drawPressKey();
+        drawPressKey(context);
     }
 
     @Override
