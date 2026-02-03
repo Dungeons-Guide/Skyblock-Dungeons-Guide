@@ -23,8 +23,6 @@ import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.*;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetError;
-import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetPrivacyPolicy;
-import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetPrivacyPolicyLocal;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.version.WidgetChooseVersion;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
@@ -102,7 +100,7 @@ public class Main
 
 
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(a -> {
-            if (dgInterface != null) dgInterface.onResourceReload(a);
+            if (dgInterface != null) dgInterface.onResourceReload();
             DefaultFontRenderer.DEFAULT_RENDERER.onResourceManagerReload();
         });
 

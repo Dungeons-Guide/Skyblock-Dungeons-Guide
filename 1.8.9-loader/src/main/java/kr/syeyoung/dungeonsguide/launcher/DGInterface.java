@@ -18,15 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.launcher;
 
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.IResourceManager;
-
 import java.io.File;
 
 public interface DGInterface {
     void init(File resourceDir);
     void unload();
-    void onResourceReload(IResourceManager a);
+    void onResourceReload();
 
-    Class<? extends GuiScreen> getModConfigGUI();
+//    Class<? extends GuiScreen> getModConfigGUI();
 }

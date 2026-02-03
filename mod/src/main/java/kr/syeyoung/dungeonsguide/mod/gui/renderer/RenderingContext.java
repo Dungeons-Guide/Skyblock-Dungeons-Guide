@@ -76,8 +76,6 @@ public class RenderingContext {
     }
 
     public void pushClip(Rect absBounds, Size size, double x, double y, double width, double height) {
-
-
         uGuiRenderContext.pushClip(absBounds, size, x, y, width, height);
     }
 
@@ -111,7 +109,6 @@ public class RenderingContext {
     }
 
     public void drawSplitString(String value, int x, int y, int maxWidth, int color) {
-
         uGuiRenderContext.drawSplitString(value, x, y, maxWidth, color);
     }
 

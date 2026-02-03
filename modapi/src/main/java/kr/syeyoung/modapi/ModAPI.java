@@ -110,4 +110,6 @@ public interface ModAPI {
     void purgeCache();
 
     List<UBossBar> getBossBars();
+
+    void refreshResources();
 }

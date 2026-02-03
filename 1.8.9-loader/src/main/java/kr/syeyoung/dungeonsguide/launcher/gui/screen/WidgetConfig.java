@@ -20,31 +20,18 @@ package kr.syeyoung.dungeonsguide.launcher.gui.screen;
 
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
-import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
-import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
-import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.WidgetNotificationAutoClose;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.annotations.On;
-import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.client.IModGuiFactory;
 
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.UUID;
 
 public class WidgetConfig extends AnnotatedImportOnlyWidget {
 //    @Bind(variableName = "stacktrace")
@@ -98,8 +85,9 @@ public class WidgetConfig extends AnnotatedImportOnlyWidget {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 
         try {
-            GuiScreen newScreen = Main.getMain().getCurrentLoader().getInstance().getModConfigGUI().getConstructor(GuiScreen.class).newInstance(Minecraft.getMinecraft().currentScreen);
-            Minecraft.getMinecraft().displayGuiScreen(newScreen);
+//            GuiScreen newScreen = Main.getMain().getCurrentLoader().getInstance().getModConfigGUI()
+//                    .getConstructor(GuiScreen.class).newInstance(Minecraft.getMinecraft().currentScreen);
+//            Minecraft.getMinecraft().displayGuiScreen(newScreen);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -63,8 +63,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.json.legacyimpl.NBTLegacyHoverEventSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.ThreadDownloadImageData;
+import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.settings.GameSettings;
@@ -74,6 +78,7 @@ import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -84,10 +89,7 @@ import org.apache.logging.log4j.simple.SimpleLogger;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class ModAPIImpl implements ModAPI {
     Minecraft delegate; // dummy to trick. TODO
@@ -228,6 +230,8 @@ public class ModAPIImpl implements ModAPI {
         eventListener.register();
         registry.init();
 
+        Minecraft.getMinecraft().getFramebuffer().enableStencil();
+
 
         try {
             Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) Main.class.getClassLoader(), "invalidClasses");
@@ -241,6 +245,12 @@ public class ModAPIImpl implements ModAPI {
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(a -> {
             ShaderManager.onResourceReload();
 
+            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj; // $$
+            byte[] glypthWidths = ReflectionHelper.getPrivateValue(FontRenderer.class, fontRenderer, "glyphWidth", "field_78287_e", "field_2819", "e");
+            for (int i = 0; i < 255; i++) {
+                glypthWidths[0xed00 + i] = 14;
+            }
+            glypthWidths[0xed02] = 1;
         });
 
         try {
@@ -273,6 +283,21 @@ public class ModAPIImpl implements ModAPI {
             Minecraft.getMinecraft().refreshResources();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        Map<ResourceLocation, ITextureObject> mapTextureObjects = ReflectionHelper.getPrivateValue(TextureManager.class, Minecraft.getMinecraft().getTextureManager(), "mapTextureObjects", "field_110585_a", "b");
+        for (ITextureObject value : mapTextureObjects.values()) {
+            if (value instanceof ThreadDownloadImageData) {
+                ReflectionHelper.setPrivateValue(ThreadDownloadImageData.class,(ThreadDownloadImageData) value, null, "imageBuffer", "field_110563_c", "k");
+            }
+        }
+        Set<ResourceLocation> toRemove = new HashSet<>();
+        for (Map.Entry<ResourceLocation, ITextureObject> resourceLocationITextureObjectEntry : mapTextureObjects.entrySet()) {
+            if (resourceLocationITextureObjectEntry.getKey().getResourceDomain().equalsIgnoreCase("dungeonsguide"))
+                toRemove.add(resourceLocationITextureObjectEntry.getKey());
+        }
+        for (ResourceLocation resourceLocation : toRemove) {
+            ITextureObject textureObject = mapTextureObjects.remove(resourceLocation);
         }
     }
 
@@ -404,5 +429,10 @@ public class ModAPIImpl implements ModAPI {
                 LegacyComponentSerializer.legacySection().deserialize(BossStatus.bossName),
                 BossStatus.healthScale
         ));
+    }
+
+    @Override
+    public void refreshResources() {
+        Minecraft.getMinecraft().refreshResources();
     }
 }

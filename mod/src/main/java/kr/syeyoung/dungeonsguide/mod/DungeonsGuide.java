@@ -58,23 +58,15 @@ import kr.syeyoung.modapi.event.SubscribeEvent;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.event.events.RegisterCommandEvent;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.ThreadDownloadImageData;
-import net.minecraft.client.renderer.texture.ITextureObject;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.ProgressManager;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
@@ -162,13 +154,12 @@ public class DungeonsGuide implements DGInterface {
     }
 
     public void init(File f) {
-        ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 5);
-
+//        ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 5); $$ PROGRESS
 
         ModAPI.getAPI().init();
 
 
-        progressbar.step("Creating Configuration");
+//        progressbar.step("Creating Configuration");
 
         tempDir.mkdirs();
 
@@ -179,11 +170,10 @@ public class DungeonsGuide implements DGInterface {
         }
 
         Config.f = configFile;
-        Minecraft.getMinecraft().getFramebuffer().enableStencil();
 
         registerEventsForge(this);
 
-        progressbar.step("Loading Native Libraries");
+//        progressbar.step("Loading Native Libraries");
 
         try {
             NativeLoader.extractLibraryAndLoad("waterboard");
@@ -192,7 +182,7 @@ public class DungeonsGuide implements DGInterface {
             e.printStackTrace();
         }
 
-        progressbar.step("Registering Events & Commands");
+//        progressbar.step("Registering Events & Commands");
 
         skyblockStatus = new SkyblockStatus();
 
@@ -200,10 +190,6 @@ public class DungeonsGuide implements DGInterface {
         registerEventsForge(ChatTransmitter.INSTANCE);
 
         FeatureRegistry.getFeatureList();
-
-
-
-
 
 
         registerEventsForge(new DungeonListener());
@@ -219,12 +205,12 @@ public class DungeonsGuide implements DGInterface {
         registerEventsForge(OverlayManager.getEventHandler());
 
 
-        progressbar.step("Opening connection");
+//        progressbar.step("Opening connection");
         StompManager.getInstance().init();
         registerEventsForge(cosmeticsManager = new CosmeticsManager());
 
 
-        progressbar.step("Loading Config");
+//        progressbar.step("Loading Config");
         try {
             Config.loadConfig(null);
         } catch (IOException e) {
@@ -240,11 +226,11 @@ public class DungeonsGuide implements DGInterface {
 
         TimeScoreUtil.init();
 
-        ProgressManager.pop(progressbar);
+//        ProgressManager.pop(progressbar);
 
         VersionInfo.checkAndOpen();
 
-        Minecraft.getMinecraft().refreshResources();
+        ModAPI.getAPI().refreshResources();
 
         ModAPI.getAPI().getCommandManager().requestCommandReload();
 
@@ -276,20 +262,6 @@ public class DungeonsGuide implements DGInterface {
         EventHandlerRegistry.unregisterListeners();
 
 
-        Map<ResourceLocation, ITextureObject> mapTextureObjects = ReflectionHelper.getPrivateValue(TextureManager.class, Minecraft.getMinecraft().getTextureManager(), "mapTextureObjects", "field_110585_a", "b");
-        for (ITextureObject value : mapTextureObjects.values()) {
-            if (value instanceof ThreadDownloadImageData) {
-                ReflectionHelper.setPrivateValue(ThreadDownloadImageData.class,(ThreadDownloadImageData) value, null, "imageBuffer", "field_110563_c", "k");
-            }
-        }
-        Set<ResourceLocation> toRemove = new HashSet<>();
-        for (Map.Entry<ResourceLocation, ITextureObject> resourceLocationITextureObjectEntry : mapTextureObjects.entrySet()) {
-            if (resourceLocationITextureObjectEntry.getKey().getResourceDomain().equalsIgnoreCase("dungeonsguide"))
-                toRemove.add(resourceLocationITextureObjectEntry.getKey());
-        }
-        for (ResourceLocation resourceLocation : toRemove) {
-            ITextureObject textureObject = mapTextureObjects.remove(resourceLocation);
-        }
 
 
         ShaderManager.unload();
@@ -319,18 +291,12 @@ public class DungeonsGuide implements DGInterface {
     }
 
     @Override
-    public void onResourceReload(IResourceManager a) {
+    public void onResourceReload() {
         GLCursors.setupCursors();
         DefaultFontRenderer.DEFAULT_RENDERER.onResourceManagerReload();
         ShaderManager.onResourceReload();
         DomElementRegistry.onResourceManagerReload();
 
-        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-        byte[] glypthWidths = ReflectionHelper.getPrivateValue(FontRenderer.class, fontRenderer, "glyphWidth", "field_78287_e", "field_2819", "e");
-        for (int i = 0; i < 255; i++) {
-            glypthWidths[0xed00 + i] = 14;
-        }
-        glypthWidths[0xed02] = 1;
     }
 
 
@@ -339,10 +305,10 @@ public class DungeonsGuide implements DGInterface {
     }
 
 
-    @Override
-    public Class<? extends GuiScreen> getModConfigGUI() {
-        return null; // $$
-    }
+//    @Override
+//    public Class<? extends GuiScreen> getModConfigGUI() {
+//        return null; // $$
+//    }
 
 
     private LinkedBlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();

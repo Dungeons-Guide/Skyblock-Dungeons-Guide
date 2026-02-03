@@ -34,7 +34,8 @@ public class DGModGuiFactory implements IModGuiFactory {
         IDGLoader idgLoader = Main.getMain().getCurrentLoader();
         if (idgLoader == null) return null;
         if (!idgLoader.isLoaded()) return null;
-        return idgLoader.getInstance().getModConfigGUI();
+        return null;
+//        return idgLoader.getInstance().getModConfigGUI();
     }
 
     @Override
