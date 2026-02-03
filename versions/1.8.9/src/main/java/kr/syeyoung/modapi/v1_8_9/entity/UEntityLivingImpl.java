@@ -38,4 +38,9 @@ public class UEntityLivingImpl extends UEntityImpl implements UEntityLiving {
         ItemStack itemStack =  delegate.getHeldItem();
         return itemStack == null ? null : new UItemStackImpl(itemStack);
     }
+
+    @Override
+    public Object getHandle() {
+        return delegate;
+    }
 }

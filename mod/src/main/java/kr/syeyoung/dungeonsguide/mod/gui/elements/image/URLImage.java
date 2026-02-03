@@ -56,7 +56,7 @@ public class URLImage extends AnnotatedExportOnlyWidget implements Renderer, Lay
     @Override
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         if (imageTexture == null) return;
-        imageTexture.drawFrame(0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight());
+        imageTexture.drawFrame(context, 0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight());
     }
 
     @Override

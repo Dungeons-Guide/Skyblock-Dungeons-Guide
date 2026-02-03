@@ -18,16 +18,17 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget;
 
-import com.mojang.authlib.GameProfile;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FakePlayer;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.SkinFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
+import kr.syeyoung.modapi.entity.UEntityPlayerFake;
+
+import java.util.UUID;
 
 public class WidgetPlayerModel extends AnnotatedWidget {
 
@@ -38,21 +39,24 @@ public class WidgetPlayerModel extends AnnotatedWidget {
     public final BindableAttribute<Widget> widgetBindable = new BindableAttribute<>(Widget.class, null);
 
     private volatile PlayerProfile sbProfile;
-    private final GameProfile mcProfile;
-    private volatile FakePlayer fakePlayer;
+    private final UUID uuid;
+    private final String name;
+    private UEntityPlayerFake fakePlayer;
     private final PlayerModelRenderer renderer;
-    public WidgetPlayerModel(GameProfile mcProfile, PlayerProfile sbProfile) {
+    public WidgetPlayerModel(UUID uuid, String name, PlayerProfile sbProfile) {
         super(new ResourceIdentifier("dungeonsguide:gui/features/profileViewer/player.gui"));
-        this.mcProfile = mcProfile;
+        this.uuid = uuid;
+        this.name = name;
         this.sbProfile = sbProfile;
-        this.renderer = new PlayerModelRenderer(null);
+        this.renderer = new PlayerModelRenderer(null, null);
         refresh();
     }
 
     public void setSbProfile(PlayerProfile sbProfile) {
         this.sbProfile = sbProfile;
-        if (this.fakePlayer != null)
-            this.fakePlayer.setSkyblockProfile(sbProfile);
+        if (this.fakePlayer != null) {
+            this.renderer.setSkyblockProfile(sbProfile);
+        }
     }
 
     @On(functionName = "refresh")
@@ -61,19 +65,26 @@ public class WidgetPlayerModel extends AnnotatedWidget {
         widgetBindable.setValue(null);
         renderer.setFakePlayer(null);
         visible.setValue("fetching");
-        SkinFetcher.getSkinSet(mcProfile)
-                .whenComplete((a,e) ->{
-                    if (e != null){
-                        e.printStackTrace();
-                        visible.setValue("noPlayer");
-                    } else {
-                        fakePlayer = new FakePlayer(
-                                mcProfile, a, sbProfile
-                        );
-                        renderer.setFakePlayer(fakePlayer);
-                        widgetBindable.setValue(renderer);
-                        visible.setValue("player");
-                    }
-                });
+
+        fakePlayer = ModAPI.getAPI().createFakePlayer(uuid, name);
+        renderer.setFakePlayer(fakePlayer);
+        renderer.setSkyblockProfile(sbProfile);
+        widgetBindable.setValue(renderer);
+        visible.setValue("player");
+//
+//        SkinFetcher.getSkinSet(mcProfile)
+//                .whenComplete((a,e) ->{
+//                    if (e != null){
+//                        e.printStackTrace();
+//                        visible.setValue("noPlayer");
+//                    } else {
+//
+////                        = new FakePlayer(
+//                                mcProfile, a, sbProfile
+////                        );
+//                        UEntityPlayerFake player
+//
+//                    }
+//                });
     }
 }

@@ -3,6 +3,7 @@ package kr.syeyoung.modapi;
 import kr.syeyoung.modapi.audio.USoundHandler;
 import kr.syeyoung.modapi.command.UCommandManager;
 import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityPlayerFake;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
@@ -12,6 +13,8 @@ import kr.syeyoung.modapi.item.IItemStackRegistry;
 import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
 import kr.syeyoung.modapi.paralleluniverse.tablist.UTabList;
 import kr.syeyoung.modapi.profiler.UProfiler;
+import kr.syeyoung.modapi.rendering.UFontCalculator;
+import kr.syeyoung.modapi.rendering.UTextureManager;
 import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.resources.UResourcePackRepository;
 import kr.syeyoung.modapi.settings.UGameSettings;
@@ -21,6 +24,8 @@ import kr.syeyoung.modapi.world.IBlockRegistry;
 import kr.syeyoung.modapi.world.IMapUtils;
 import kr.syeyoung.modapi.world.UWorld;
 import net.kyori.adventure.text.Component;
+
+import java.util.UUID;
 
 public interface ModAPI {
     String getKeyDisplayString(int currentKey);
@@ -91,4 +96,14 @@ public interface ModAPI {
     void displayGuiScreen(UGuiScreen guiScreen);
 
     UGuiScreen getCurrentGuiScreen();
+
+    double getScaleFactor();
+
+    UFontCalculator getFontCalculator();
+
+    UTextureManager getTextureManager();
+
+    UEntityPlayerFake createFakePlayer(UUID uuid, String name);
+
+    void purgeCache();
 }

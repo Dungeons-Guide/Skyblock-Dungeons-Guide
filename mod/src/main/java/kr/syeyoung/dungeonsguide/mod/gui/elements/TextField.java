@@ -32,11 +32,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.input.Keyboard;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.rendering.UFontCalculator;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -114,34 +111,33 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
         context.drawRect(0,0,bounds.getWidth(), bounds.getHeight(), getDomElement().isFocused() ? focusedBorderColor.getValue() : borderColor.getValue());
         context.drawRect(1,1,bounds.getWidth() - 1, bounds.getHeight() - 1, Color.black.getRGB());
 
-        Minecraft mc = Minecraft.getMinecraft();
         context.pushClip(buildContext.getAbsBounds(), bounds, 1, 1, bounds.getWidth() -2, bounds.getHeight()-2);
 
+        UFontCalculator calc = ModAPI.getAPI().getFontCalculator();
+
         String text = value.getValue();
-        FontRenderer fr = mc.fontRendererObj;
-        int y = (int) ((bounds.getHeight() - fr.FONT_HEIGHT) / 2);
-        GlStateManager.enableTexture2D();
-        fr.drawString(value.getValue(), (int) (3 - xOffset), y, color.getValue());
+        int y = (int) ((bounds.getHeight() - calc.getFontHeight()) / 2);
+
+        context.drawString(value.getValue(), (int) (3 - xOffset), y, color.getValue());
         if (text.isEmpty())
-            fr.drawString(placeholder.getValue(), 3, y, placeholderColor.getValue());
+            context.drawString(placeholder.getValue(), 3, y, placeholderColor.getValue());
         // draw selection
         if (getDomElement().isFocused()) {
             if (selectionStart != -1) {
                 if (selectionEnd > text.length()) selectionEnd = text.length();
-                int startX = (int) (fr.getStringWidth(text.substring(0, selectionStart)) - xOffset);
-                int endX = (int) (fr.getStringWidth(text.substring(0, selectionEnd)) - xOffset);
-                Gui.drawRect( (3 + startX), y,  (3 + endX), y + fr.FONT_HEIGHT, 0xFF00FF00);
-                GlStateManager.enableTexture2D();
-                fr.drawString(text.substring(selectionStart, selectionEnd), (int) (3 + startX), y, color.getValue());
+                int startX = (int) (calc.getStringWidth(text.substring(0, selectionStart)) - xOffset);
+                int endX = (int) (calc.getStringWidth(text.substring(0, selectionEnd)) - xOffset);
+                context.drawRect( (3 + startX), y,  (3 + endX), y + calc.getFontHeight(), 0xFF00FF00);
+                context.drawString(text.substring(selectionStart, selectionEnd), (int) (3 + startX), y, color.getValue());
             }
 
             // draw cursor
             if (cursor != -1) {
                 if (cursor > text.length()) setCursor0(text.length());
-                int x = (int) (fr.getStringWidth(text.substring(0, cursor)) - xOffset);
+                int x = (int) (calc.getStringWidth(text.substring(0, cursor)) - xOffset);
 
                 if (System.currentTimeMillis() % 1500 < 750)
-                    Gui.drawRect(3 + x, y, 4 + x, y + fr.FONT_HEIGHT, 0xFFFFFFFF);
+                    context.drawRect(3 + x, y, 4 + x, y + calc.getFontHeight(), 0xFFFFFFFF);
             }
         }
         context.popClip();
@@ -153,11 +149,11 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
         this.cursor = cursor;
 
 
-        int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue().substring(0, cursor));
+        int width = ModAPI.getAPI().getFontCalculator().getStringWidth(value.getValue().substring(0, cursor));
         double cursorX = width + 3- xOffset;
         cursorX = MathUtils.clamp_double(cursorX,10, getDomElement().getSize().getWidth() - 10);
         xOffset = width+ 3 - cursorX;
-        xOffset = MathUtils.clamp_double(xOffset, 0,Math.max(0, Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue()) - getDomElement().getSize().getWidth()+10));
+        xOffset = MathUtils.clamp_double(xOffset, 0,Math.max(0, ModAPI.getAPI().getFontCalculator().getStringWidth(value.getValue()) - getDomElement().getSize().getWidth()+10));
     }
 
     @Override
@@ -177,7 +173,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
         selectionStart = -1;
 
 
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
 
         for (int i = 0; i < value.getValue().length(); i++) {
             int totalWidth = fr.getStringWidth(value.getValue().substring(0, i));
@@ -199,7 +195,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
         double relStartT = relMouseX-3;
         double offseted = relStartT + xOffset;
 
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
 
         for (int i = 0; i < value.getValue().length(); i++) {
             int totalWidth = fr.getStringWidth(value.getValue().substring(0, i));
@@ -233,7 +229,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
         if (xOffset < 0) {
             xOffset = 0;
         }
-        int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue());
+        int width = ModAPI.getAPI().getFontCalculator().getStringWidth(value.getValue());
         double overflow = getDomElement().getSize().getWidth() - 3 - width;
 
 
@@ -288,7 +284,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
             if (keycode == 207) { // end
                 setCursor0(value.getValue().length());
 
-                int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue());
+                int width = ModAPI.getAPI().getFontCalculator().getStringWidth(value.getValue());
                 xOffset = Math.max(0, width - getDomElement().getSize().getWidth()+10);
                 return true;
             }
@@ -321,15 +317,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
             // paste
             boolean shouldPaste = false;
             if (keycode == 47) {
-                if (Minecraft.isRunningOnMac) {  // mac
-                    if (Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220)) {
-                        shouldPaste = true;
-                    }
-                } else { // literally everything else
-                    if (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)) {
-                        shouldPaste = true;
-                    }
-                }
+                if ((modifiers & 2) != 0) shouldPaste = true;
             }
             if (shouldPaste) {
                 Transferable transferable = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
@@ -363,7 +351,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
             if (keycode == 207) { // end
                 selectionStart = -1;
                 setCursor0(value.getValue().length());
-                int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue());
+                int width = ModAPI.getAPI().getFontCalculator().getStringWidth(value.getValue());
                 xOffset = Math.max(0, width - getDomElement().getSize().getWidth()+10);
                 return true;
             }
@@ -399,15 +387,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
             // paste
             boolean shouldPaste = false;
             if (keycode == 47) {
-                if (Minecraft.isRunningOnMac) {  // mac
-                    if (Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220)) {
-                        shouldPaste = true;
-                    }
-                } else { // literally everything else
-                    if (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)) {
-                        shouldPaste = true;
-                    }
-                }
+                if ((modifiers & 2) != 0) shouldPaste = true;
             }
             if (shouldPaste) {
                 Transferable transferable = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
@@ -430,15 +410,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
             }
             boolean shouldCopy = false;
             if (keycode == 46) {
-                if (Minecraft.isRunningOnMac) {  // mac
-                    if (Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220)) {
-                        shouldCopy = true;
-                    }
-                } else { // literally everything else
-                    if (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)) {
-                        shouldCopy = true;
-                    }
-                }
+                if ((modifiers & 2) != 0) shouldCopy = true;
             }
             if (shouldCopy) {
                 StringSelection selection = new StringSelection(value.getValue().substring(selectionStart, selectionEnd));

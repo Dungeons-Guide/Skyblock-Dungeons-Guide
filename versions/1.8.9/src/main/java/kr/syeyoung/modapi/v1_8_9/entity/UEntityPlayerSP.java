@@ -13,6 +13,8 @@ import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.title.Title;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
@@ -71,6 +73,21 @@ public class UEntityPlayerSP extends UEntityPlayerImpl implements UPlayerSelf, A
         if (!event.isCanceled()) {
             Minecraft.getMinecraft().thePlayer.addChatMessage(event.message);
         }
+    }
+
+    @Override
+    public void showTitle(@NotNull Title title) {
+//        IChatComponent component = IChatComponent.Serializer.jsonToComponent(
+//                GsonComponentSerializer.colorDownsamplingGson().serialize(message)
+//        )
+//
+        Minecraft.getMinecraft().ingameGUI.displayTitle(
+                LegacyComponentSerializer.legacySection().serialize(title.title()),
+                LegacyComponentSerializer.legacySection().serialize(title.subtitle()),
+                (int) title.times().fadeIn().toMillis() / 50,
+                (int) title.times().stay().toMillis() / 50,
+                (int) title.times().fadeOut().toMillis() / 50
+        );
     }
 
     @Override

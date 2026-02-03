@@ -14,4 +14,9 @@ public class UGameSettingsImpl implements UGameSettings {
     public void setGamma(float value) {
         delegate.getGamma().setValue((double) value);
     }
+
+    @Override
+    public int getRenderDistanceChunks() {
+        return delegate.getClampedViewDistance();
+    }
 }

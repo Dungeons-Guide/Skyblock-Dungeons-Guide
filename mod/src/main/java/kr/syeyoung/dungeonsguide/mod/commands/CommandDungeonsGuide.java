@@ -30,7 +30,6 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FeatureViewPlayerStatsOnJoin;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.SkinFetcher;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.image.ImageTexture;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.DomElementRegistry;
@@ -204,7 +203,7 @@ public class CommandDungeonsGuide  {
         cosmeticsManager.requestActiveCosmetics();
         StaticResourceCache.INSTANCE.purgeCache();
         ImageTexture.imageMap.clear();
-        SkinFetcher.purgeCache();
+        ModAPI.getAPI().purgeCache();
         DomElementRegistry.onResourceManagerReload();
 
         ChatTransmitter.addToQueue("§eDungeons Guide §7:: §fSuccessfully purged API Cache!");

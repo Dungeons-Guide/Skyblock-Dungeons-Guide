@@ -29,11 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.modapi.item.UItemStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.item.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
@@ -60,25 +55,20 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
 
     @Override
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
-        Gui.drawRect(0, 0, 164, 74, 0xFF000000);
-        GlStateManager.disableLighting();
+        context.drawRect(0, 0, 164, 74, 0xFF000000);
 
         if (playerProfile.getInventory() != null) {
-            GlStateManager.disableRescaleNormal();
-            RenderHelper.enableGUIStandardItemLighting();
-            GlStateManager.disableLighting();
             for (int i = 0; i < playerProfile.getInventory().length; i++) {
                 int x = (i % 9) * 18 + 1;
                 int y = (i / 9) * 18 + 1;
-                Gui.drawRect(x, y, x + 18, y + 18, 0xFF000000);
-                Gui.drawRect(x + 1, y + 1, x + 17, y + 17, 0xFF666666);
-                GlStateManager.color(1, 1, 1, 1.0F);
+                context.drawRect(x, y, x + 18, y + 18, 0xFF000000);
+                context.drawRect(x + 1, y + 1, x + 17, y + 17, 0xFF666666);
 
-                Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI((ItemStack) playerProfile.getInventory()[(i + 9) % 36].getItemStack(), (i % 9) * 18 + 2, (i / 9) * 18 + 2);
+                context.drawItemStackAndEffect(playerProfile.getInventory()[(i + 9) % 36], (i % 9) * 18 + 2, (i / 9) * 18 + 2);
             }
         } else {
-            Gui.drawRect(1, 1, 162, 72, 0xFF666666);
-            Minecraft.getMinecraft().fontRendererObj.drawSplitString("Player has disabled Inventory API", 6, 6, 142, -1);
+            context.drawRect(1, 1, 162, 72, 0xFF666666);
+            context.drawSplitString("Player has disabled Inventory API", 6, 6, 142, -1);
         }
     }
 

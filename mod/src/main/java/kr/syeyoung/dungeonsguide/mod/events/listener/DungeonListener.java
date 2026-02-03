@@ -33,6 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.world.PearlCalculatingCoordinateMap
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
@@ -63,8 +64,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
@@ -85,45 +84,6 @@ public class DungeonListener {
         DungeonActionContext.getKilleds().clear();
     }
 
-
-    @SubscribeEvent
-    public void onPostDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
-        if (!SkyblockStatus.isOnDungeon()) return;
-
-
-        UProfiler profiler = ModAPI.getAPI().getProfiler();
-
-        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-
-        if (context != null) {
-
-            UPlayerSelf thePlayer = ModAPI.getAPI().getPlayer();
-            if (thePlayer == null) {
-                return;
-            }
-            profiler.startSection("Dungeons Guide - DrawScreen.Post: Bossfight Processor");
-            if (context.getBossfightProcessor() != null) {
-                context.getBossfightProcessor().onPostGuiRender(e);
-            }
-            profiler.endStartSection("Dungeons Guide - DrawScreen.Post: Room Processor");
-
-            if (context.getScaffoldParser() != null) {
-                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
-
-                DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
-                if (dungeonRoom != null && dungeonRoom.getRoomProcessor() != null) {
-                    dungeonRoom.getRoomProcessor().onPostGuiRender(e);
-                }
-            }
-            profiler.endSection();
-        }
-
-        GlStateManager.enableBlend();
-        GlStateManager.color(1, 1, 1, 1);
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.enableAlpha();
-    }
 
     @kr.syeyoung.modapi.event.SubscribeEvent
     public void onEntityUpdate(LivingEntityTickEvent e) {
@@ -231,10 +191,8 @@ public class DungeonListener {
             ModAPI.getAPI().getEventBus().fireEvent(new DungeonRoomEnterEvent(currentRoom));
     }
 
-    @SubscribeEvent
-    public void onRender(RenderGameOverlayEvent.Post postRender) {
-        if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
-            return;
+    @kr.syeyoung.modapi.event.SubscribeEvent
+    public void onRender(OverlayRenderEvent postRender) {
 
         if (!SkyblockStatus.isOnDungeon()) return;
         UProfiler profiler = ModAPI.getAPI().getProfiler();
@@ -246,7 +204,7 @@ public class DungeonListener {
 
             profiler.startSection("Dungeons Guide - RenderGameOverlay.Post :: Bossfight Processor");
             if (context.getBossfightProcessor() != null)
-                context.getBossfightProcessor().drawScreen(postRender.partialTicks);
+                context.getBossfightProcessor().drawScreen(postRender.getPartialTicks(), new RenderingContext(postRender.getRenderContext()));
 
             profiler.endStartSection("Dungeons Guide - RenderGameOverlay.Post :: Room Processor");
             if (context.getScaffoldParser() != null) {
@@ -254,7 +212,7 @@ public class DungeonListener {
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 if (dungeonRoom != null) {
                     if (dungeonRoom.getRoomProcessor() != null) {
-                        dungeonRoom.getRoomProcessor().drawScreen(postRender.partialTicks);
+                        dungeonRoom.getRoomProcessor().drawScreen(postRender.getPartialTicks(), new RenderingContext(postRender.getRenderContext()));
                     }
                 }
             }

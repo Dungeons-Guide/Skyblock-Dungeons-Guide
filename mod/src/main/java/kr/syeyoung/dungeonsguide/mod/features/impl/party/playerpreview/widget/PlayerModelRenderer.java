@@ -22,7 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.ActiveCosmetic;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticData;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FakePlayer;
+import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
@@ -34,25 +34,59 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.entity.UEntityPlayerFake;
+import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.rendering.UFontCalculator;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 import java.util.Collections;
 import java.util.List;
 
 public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements Layouter, Renderer {
     @Setter
-    private FakePlayer fakePlayer;
-    public PlayerModelRenderer(FakePlayer fakePlayer) {
+    private UEntityPlayerFake fakePlayer;
+    private PlayerProfile skyblockProfile;
+
+    public PlayerModelRenderer(UEntityPlayerFake fakePlayer,  PlayerProfile skyblockProfile) {
         this.fakePlayer = fakePlayer;
+        this.skyblockProfile = skyblockProfile;
     }
+
+    public void setSkyblockProfile(PlayerProfile skyblockProfile) {
+        this.skyblockProfile = skyblockProfile;
+
+        if (skyblockProfile.getCurrentArmor() != null) {
+            for (int i = 0; i < 4; i++)
+                fakePlayer.setCurrentArmor(i, skyblockProfile.getCurrentArmor().getArmorSlots()[i]);
+        } else {
+            for (int i = 0; i < 4; i++)
+                fakePlayer.setCurrentArmor(i, null);
+        }
+
+        int highestDungeonScore = Integer.MIN_VALUE;
+        this.fakePlayer.setMainInventory(0, null);
+        if (skyblockProfile.getInventory() != null) {
+            UItemStack highestItem = null;
+            for (UItemStack itemStack : skyblockProfile.getInventory()) {
+                if (itemStack == null) continue;
+                for (String str : itemStack.getLore()) {
+                    if (TextUtils.stripColor(str).startsWith("Gear")) {
+                        int dungeonScore = Integer.parseInt(TextUtils.keepIntegerCharactersOnly(TextUtils.stripColor(str).split(" ")[2]));
+                        if (dungeonScore > highestDungeonScore) {
+                            highestItem = itemStack;
+                            highestDungeonScore = dungeonScore;
+                        }
+                    }
+                }
+            }
+
+            this.fakePlayer.setMainInventory(0, highestItem);
+            this.fakePlayer.setCurrentItem(0);
+        }
+    }
+
     // let me do the skin fetching myself.
     @Override
     public List<Widget> build(DomElement buildContext) {
@@ -76,14 +110,11 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
 
     @Override
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
-        GlStateManager.enableDepth();
-        GlStateManager.color(1, 1, 1, 1.0F);
-        GuiInventory.drawEntityOnScreen(45, 150, 60, (float) -relMouseX+75, 0, fakePlayer);
-        GlStateManager.disableDepth();
+        context.drawEntityOnScreen(45, 150, 60, (float) -relMouseX+75, 0, fakePlayer);
 
         String toDraw = fakePlayer.getName();
         List<ActiveCosmetic> activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayer().get(
-                fakePlayer.getGameProfile().getId());
+                fakePlayer.getUUID());
 
 
 
@@ -116,18 +147,20 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
         toDraw = (color == null ? "§e" : color) + toDraw;
         if (prefix != null) toDraw = prefix + " " + toDraw;
 
-        if (FeatureRegistry.DG_INDICATOR.isEnabled() && PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(fakePlayer.getGameProfile().getId(), false)) {
+        if (FeatureRegistry.DG_INDICATOR.isEnabled() && PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(fakePlayer.getUUID(), false)) {
             toDraw = "\ued00\ued02"+ toDraw;
         }
-        GlStateManager.enableBlend();
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//        GlStateManager.enableBlend();
+//        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 
-        String profileName = "on §6" + this.fakePlayer.getSkyblockProfile().getProfileName();
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString(profileName, (90 - fr.getStringWidth(profileName)) / 2, 15, -1);
-        fr.drawString(toDraw, (90 - fr.getStringWidth(toDraw)) / 2, 10 - (fr.FONT_HEIGHT / 2), -1);
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
+        if (this.skyblockProfile != null) {
+            String profileName = "on §6" + this.skyblockProfile.getProfileName();
+            context.drawString(profileName, (90 - fr.getStringWidth(profileName)) / 2, 15, -1);
+        }
+        context.drawString(toDraw, (90 - fr.getStringWidth(toDraw)) / 2, 10 - (fr.getFontHeight() / 2), -1);
     }
 
     private RawMinecraftTooltip actualTooltip = new RawMinecraftTooltip(0, 0);
@@ -136,33 +169,25 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
         // yes, we don't care if child handled
-        ItemStack toHover = null;
+        UItemStack toHover = null;
         this.relMouseX = relMouseX0;
         if (relMouseX0 > 20 && relMouseX0 < 70) {
             if (33 <= relMouseY0 && relMouseY0 <= 66) {
-                toHover = fakePlayer.getInventory()[3];
+                toHover = fakePlayer.getCurrentArmor(3);
             } else if (66 <= relMouseY0 && relMouseY0 <= 108) {
-                toHover = fakePlayer.getInventory()[2];
+                toHover = fakePlayer.getCurrentArmor(2);
             } else if (108 <= relMouseY0 && relMouseY0 <= 130) {
-                toHover = fakePlayer.getInventory()[1];
+                toHover = fakePlayer.getCurrentArmor(1);
             } else if (130 <= relMouseY0 && relMouseY0 <= 154) {
-                toHover = fakePlayer.getInventory()[0];
+                toHover = fakePlayer.getCurrentArmor(0);
             }
         } else if (relMouseX0 > 0 && relMouseX0 <= 20) {
             if (80 <= relMouseY0 && relMouseY0 <= 120) {
-                toHover = fakePlayer.inventory.mainInventory[fakePlayer.inventory.currentItem];
+                toHover = fakePlayer.getHeldItem();
             }
         }
         if (toHover != null) {
-            List<String> list = toHover.getTooltip(Minecraft.getMinecraft().thePlayer,
-                    Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
-            for (int i = 0; i < list.size(); ++i) {
-                if (i == 0) {
-                    list.set(i, toHover.getRarity().rarityColor + list.get(i));
-                } else {
-                    list.set(i, EnumChatFormatting.GRAY + list.get(i));
-                }
-            }
+            List<String> list = toHover.getNormalTooltip();
             actualTooltip.setTooltip(list);
         }
         if (toHover == null && tooltipShow) {

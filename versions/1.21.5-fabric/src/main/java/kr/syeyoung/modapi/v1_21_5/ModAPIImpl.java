@@ -13,13 +13,14 @@ import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
 import kr.syeyoung.modapi.event.listenerlist.BasicEventBus;
 import kr.syeyoung.modapi.fakeserver.FakeServerUtils;
-import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.gui.UCustomGuiScreen;
 import kr.syeyoung.modapi.gui.UGuiScreen;
 import kr.syeyoung.modapi.item.IItemStackRegistry;
 import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
 import kr.syeyoung.modapi.paralleluniverse.tablist.UTabList;
 import kr.syeyoung.modapi.profiler.UProfiler;
+import kr.syeyoung.modapi.rendering.UFontCalculator;
+import kr.syeyoung.modapi.rendering.UTextureManager;
 import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.resources.UResourcePackRepository;
 import kr.syeyoung.modapi.settings.UGameSettings;
@@ -31,7 +32,6 @@ import kr.syeyoung.modapi.v1_21_5.entity.UEntityDelegateFactory;
 import kr.syeyoung.modapi.v1_21_5.entity.UEntityPlayerSP;
 import kr.syeyoung.modapi.v1_21_5.entity.URenderManagerImpl;
 import kr.syeyoung.modapi.v1_21_5.fakeserver.BlockAccessibleServerLaunchUtils;
-import kr.syeyoung.modapi.v1_21_5.gui.UContainerChestImpl;
 import kr.syeyoung.modapi.v1_21_5.gui.UGuiScreenAdapter;
 import kr.syeyoung.modapi.v1_21_5.gui.UNativeGuiScreen;
 import kr.syeyoung.modapi.v1_21_5.item.IItemStackRegistryImpl;
@@ -39,6 +39,7 @@ import kr.syeyoung.modapi.v1_21_5.map.MapDataManager;
 import kr.syeyoung.modapi.v1_21_5.paralleluniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.modapi.v1_21_5.paralleluniverse.tab.TabList;
 import kr.syeyoung.modapi.v1_21_5.profiler.UProfilerImpl;
+import kr.syeyoung.modapi.v1_21_5.render.UFontCalculatorImpl;
 import kr.syeyoung.modapi.v1_21_5.resources.UResourceManagerImpl;
 import kr.syeyoung.modapi.v1_21_5.resources.UResourcePackRepositoryImpl;
 import kr.syeyoung.modapi.v1_21_5.settings.UGameSettingsImpl;
@@ -55,7 +56,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -286,14 +286,6 @@ public class ModAPIImpl implements ModAPI {
     }
 
     @Override
-    public UContainerChest extractContainerChest(Object object) {
-        if (object instanceof GenericContainerScreen) {
-            return new UContainerChestImpl(((GenericContainerScreen) object).getScreenHandler(), ((GenericContainerScreen) object).getTitle());
-        }
-        return null;
-    }
-
-    @Override
     public IItemStackRegistry getItemStackRegistry() {
         return new IItemStackRegistryImpl();
     }
@@ -352,6 +344,21 @@ public class ModAPIImpl implements ModAPI {
     public UGuiScreen getCurrentGuiScreen() {
         Screen s = MinecraftClient.getInstance().currentScreen;
         if (s instanceof UGuiScreenAdapter screen) return screen.getDelegate();
-        else UNativeGuiScreen.getUScreen(s);
+        else return UNativeGuiScreen.getUScreen(s);
+    }
+
+    @Override
+    public double getScaleFactor() {
+        return 1;
+    }
+
+    @Override
+    public UFontCalculator getFontCalculator() {
+        return UFontCalculatorImpl.INSTANCE; // $$ welp
+    }
+
+    @Override
+    public UTextureManager getTextureManager() {
+        return UTextureManagerImpl.INSTANCE;
     }
 }

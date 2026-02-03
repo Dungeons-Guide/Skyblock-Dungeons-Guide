@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.gui.renderer;
 
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
-import net.minecraft.client.renderer.GlStateManager;
 
 public class OnlyChildrenRenderer implements Renderer {
     public static OnlyChildrenRenderer INSTANCE = new OnlyChildrenRenderer();
@@ -30,8 +29,8 @@ public class OnlyChildrenRenderer implements Renderer {
             Rect original = value.getRelativeBound();
             if (original == null) continue;
 
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(original.getX(), original.getY(), 0);
+            renderingContext.ctx().pushMatrix();
+            renderingContext.ctx().translate(original.getX(), original.getY(), 0);
 
             double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
             double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();
@@ -47,7 +46,7 @@ public class OnlyChildrenRenderer implements Renderer {
                 value.getRenderer().doRender(
                         partialTicks,renderingContext, value);
             }
-            GlStateManager.popMatrix();
+            renderingContext.ctx().popMatrix();
         }
     }
 }

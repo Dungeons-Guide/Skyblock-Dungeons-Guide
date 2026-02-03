@@ -40,8 +40,6 @@ import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 
 import java.util.*;
 
@@ -88,10 +86,6 @@ public abstract class TextHUDFeature extends AbstractHUDFeature {
             checkVisibility();
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);}
-    }
-
-    public static FontRenderer getFontRenderer() {
-        return Minecraft.getMinecraft().fontRendererObj;
     }
 
     @RequiredArgsConstructor

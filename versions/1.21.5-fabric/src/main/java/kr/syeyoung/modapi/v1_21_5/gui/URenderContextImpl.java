@@ -8,4 +8,24 @@ public class URenderContextImpl implements URenderContext {
     public URenderContextImpl(DrawContext context) {
         this.context = context;
     }
+
+    @Override
+    public void pushMatrix() {
+
+    }
+
+    @Override
+    public void popMatrix() {
+
+    }
+
+    @Override
+    public void translate(double x, double y, double z) {
+
+    }
+
+    @Override
+    public void scale(double x, double y, double z) {
+
+    }
 }

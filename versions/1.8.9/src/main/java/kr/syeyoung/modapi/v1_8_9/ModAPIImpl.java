@@ -8,6 +8,7 @@ import kr.syeyoung.modapi.audio.USoundHandler;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.entity.UEntityPlayerFake;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.entity.URenderManager;
 import kr.syeyoung.modapi.event.EventBus;
@@ -19,6 +20,8 @@ import kr.syeyoung.modapi.item.IItemStackRegistry;
 import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
 import kr.syeyoung.modapi.paralleluniverse.tablist.UTabList;
 import kr.syeyoung.modapi.profiler.UProfiler;
+import kr.syeyoung.modapi.rendering.UFontCalculator;
+import kr.syeyoung.modapi.rendering.UTextureManager;
 import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.resources.UResourcePackRepository;
 import kr.syeyoung.modapi.settings.UGameSettings;
@@ -27,7 +30,9 @@ import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.v1_8_9.audio.USoundHandlerImpl;
 import kr.syeyoung.modapi.v1_8_9.client.renderer.entity.URenderManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.command.CommandManagerImpl;
+import kr.syeyoung.modapi.v1_8_9.entity.SkinFetcher;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityDelegateFactory;
+import kr.syeyoung.modapi.v1_8_9.entity.UEntityFakePlayer;
 import kr.syeyoung.modapi.v1_8_9.entity.UEntityPlayerSP;
 import kr.syeyoung.modapi.v1_8_9.fakeserver.BlockAccessibleServerLaunchUtils;
 import kr.syeyoung.modapi.v1_8_9.gui.UGuiScreenAdapter;
@@ -37,6 +42,8 @@ import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
 import kr.syeyoung.modapi.v1_8_9.profiler.UProfilerImpl;
+import kr.syeyoung.modapi.v1_8_9.render.UFontCalculatorImpl;
+import kr.syeyoung.modapi.v1_8_9.render.UTextureManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.resources.DGTexturePack;
 import kr.syeyoung.modapi.v1_8_9.resources.UResourceManagerImpl;
 import kr.syeyoung.modapi.v1_8_9.resources.UResourcePackRepositoryImpl;
@@ -53,6 +60,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.json.legacyimpl.NBTLegacyHoverEventSerializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.event.HoverEvent;
@@ -72,6 +80,7 @@ import org.lwjgl.input.Mouse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class ModAPIImpl implements ModAPI {
     Minecraft delegate; // dummy to trick. TODO
@@ -344,5 +353,30 @@ public class ModAPIImpl implements ModAPI {
         if (Minecraft.getMinecraft().currentScreen == null) return null;
         if (Minecraft.getMinecraft().currentScreen instanceof UGuiScreenAdapter) return ((UGuiScreenAdapter) Minecraft.getMinecraft().currentScreen).getDelegate();
         return UNativeGuiScreen.getUScreen(Minecraft.getMinecraft().currentScreen);
+    }
+
+    @Override
+    public double getScaleFactor() {
+        return (double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+    }
+
+    @Override
+    public UFontCalculator getFontCalculator() {
+        return UFontCalculatorImpl.INSTANCE;
+    }
+
+    @Override
+    public UTextureManager getTextureManager() {
+        return UTextureManagerImpl.INSTANCE;
+    }
+
+    @Override
+    public UEntityPlayerFake createFakePlayer(UUID uuid, String name) {
+        return UEntityFakePlayer.createFakePlayer(uuid, name);
+    }
+
+    @Override
+    public void purgeCache() {
+        SkinFetcher.purgeCache();;
     }
 }

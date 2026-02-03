@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
@@ -101,8 +102,8 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void drawScreen(float partialTicks) {
-        super.drawScreen(partialTicks);
+    public void drawScreen(float partialTicks, RenderingContext context) {
+        super.drawScreen(partialTicks, context);
         if (solutionBuilt)
             drawPressKey();
     }

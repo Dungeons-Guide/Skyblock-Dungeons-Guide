@@ -34,7 +34,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectPositioner;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import lombok.Getter;
-import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
@@ -134,9 +133,9 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
         public void doRender(float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
             if (enable)
                 renderingContext.drawRect(0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0x40000000);
-            GlStateManager.pushMatrix();
+            renderingContext.ctx().pushMatrix();
             super.doRender(partialTicks, renderingContext, buildContext);
-            GlStateManager.popMatrix();
+            renderingContext.ctx().popMatrix();
             if (!enable) return;
             if (((HUDWidgetWrapper)buildContext.getWidget()).isHover)
                 renderingContext.drawRect(0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0x33FFFFFF);

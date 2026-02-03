@@ -13,4 +13,6 @@ public interface UEntityLiving extends UEntity {
     UItemStack getCurrentArmor(int slotIn);
 
     UItemStack getHeldItem();
+
+    Object getHandle();
 }

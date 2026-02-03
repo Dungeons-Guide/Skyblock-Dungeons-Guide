@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "version": "${version}",
+  "id": "dungeonsguidemod",
+  "name": "Dungeons Guide",
+  "description": "TESTING!!",
+  "authors": [],
+  "depends": {
+    "minecraft": "1.21.11"
+  },
+  "entrypoints": {
+    "client": [
+      "kr.syeyoung.modapi.v1_21_11.TestMod"
+    ]
+  },
+  "mixins": [
+    "mixins.dungeonsguide.json"
+  ],
+  "accessWidener": "dungeonsguide.accesswidener"
+}

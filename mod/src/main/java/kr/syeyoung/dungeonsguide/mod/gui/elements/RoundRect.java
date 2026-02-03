@@ -26,10 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.SingleChildRenderer;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
-import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
-import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
 import kr.syeyoung.modapi.ModAPI;
-import org.lwjgl.opengl.GL20;
 
 import java.util.Collections;
 import java.util.List;
@@ -57,16 +54,13 @@ public class RoundRect extends AnnotatedExportOnlyWidget {
     public class BRender extends SingleChildRenderer {
         @Override
         public void doRender(float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
-            ShaderProgram shaderProgram = ShaderManager.getShader("shaders/roundrect");
-            shaderProgram.useShader();
-            shaderProgram.uploadUniform("radius", (float)(radius.getValue() * buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth()));
-            shaderProgram.uploadUniform("halfSize", (float) buildContext.getAbsBounds().getWidth()/2, (float) buildContext.getAbsBounds().getHeight()/2);
-            shaderProgram.uploadUniform("centerPos",
+            renderingContext.drawRoundRect(
+                    (float)(radius.getValue() * buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth()),
+                    (float) buildContext.getAbsBounds().getWidth()/2, (float) buildContext.getAbsBounds().getHeight()/2,
                     (float) (buildContext.getAbsBounds().getX()+buildContext.getAbsBounds().getWidth()/2),
-                    ModAPI.getAPI().getDisplayHeight() - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight()/2));
-            shaderProgram.uploadUniform("smoothness", 0.0f);
-            renderingContext.drawRect(0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), color.getValue());
-            GL20.glUseProgram(0);
+                    ModAPI.getAPI().getDisplayHeight() - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight()/2),
+                    0.0f, 0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), color.getValue()
+            );
             super.doRender(partialTicks, renderingContext, buildContext);
         }
     }

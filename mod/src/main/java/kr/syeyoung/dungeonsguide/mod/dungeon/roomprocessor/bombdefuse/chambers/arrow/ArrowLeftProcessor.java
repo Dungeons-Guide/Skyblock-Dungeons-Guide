@@ -23,6 +23,7 @@ import com.google.common.collect.HashBiMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
@@ -65,7 +66,7 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void drawScreen(float partialTicks) {
+    public void drawScreen(float partialTicks, RenderingContext context) {
         if (answer == -1) return;
         drawPressKey();
     }

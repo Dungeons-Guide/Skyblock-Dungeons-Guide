@@ -28,8 +28,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Collections;
 import java.util.List;
@@ -106,34 +104,23 @@ public class Line extends AnnotatedExportOnlyWidget implements Layouter, Rendere
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         double w = buildContext.getSize().getWidth(), h = buildContext.getSize().getHeight();
 
-        GlStateManager.color(r,g,b,a);
-        GlStateManager.disableTexture2D();
-        GL11.glLineWidth((float) (thickness.getValue() *
+        float lineWidth = (float) (thickness.getValue() *
                     Double.max(
                             buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight(),
                             buildContext.getAbsBounds().getWidth()/buildContext.getSize().getWidth()
-                    ))
-        );
+                    ));
 
-        Short pattern = this.pattern.getValue();
-        if (pattern != null) {
-            GL11.glLineStipple(factor.getValue(), pattern);
-            GL11.glEnable(GL11.GL_LINE_STIPPLE);
-        }
-
-        GL11.glBegin(GL11.GL_LINES);
         if (direction.getValue() == Orientation.HORIZONTAL) {
-            GL11.glVertex2d(0,h/2.0f);
-            GL11.glVertex2d(w, h/2.0f);
+            if (pattern.getValue() != null)
+                context.drawLineStipple(0, h/2, w, h/2, lineWidth, color.getValue(), factor.getValue(), pattern.getValue());
+            else
+                context.drawLine(0, h/2, w, h/2, color.getValue(), lineWidth);
         } else {
-            GL11.glVertex2d(w/2.0f,0);
-            GL11.glVertex2d(w/2.0f, h);
+            if (pattern.getValue() != null)
+                context.drawLineStipple(w/2, 0, w/2, h, lineWidth, color.getValue(), factor.getValue(), pattern.getValue());
+            else
+                context.drawLine(w/2, 0, w/2, h, color.getValue(), lineWidth);
         }
-        GL11.glEnd();
-        GlStateManager.enableTexture2D();
 
-        if (pattern != null) {
-            GL11.glDisable(GL11.GL_LINE_STIPPLE);
-        }
     }
 }

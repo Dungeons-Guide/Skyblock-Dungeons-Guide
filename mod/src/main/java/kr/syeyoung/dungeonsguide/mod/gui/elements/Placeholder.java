@@ -25,8 +25,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.layouter.NullLayouter;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,21 +40,13 @@ public class Placeholder extends AnnotatedExportOnlyWidget implements Renderer {
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         double w = buildContext.getSize().getWidth(), h = buildContext.getSize().getHeight();
         context.drawRect(0,0,w,h, 0xFFFFFFFF);
-        GlStateManager.color(0,0,0,1);
-        GlStateManager.disableTexture2D();
-        GL11.glLineWidth(1.0f);
-        GL11.glBegin(GL11.GL_LINE_LOOP);
-        GL11.glVertex2d(0,0);
-        GL11.glVertex2d(w, 0);
-        GL11.glVertex2d(w, h);
-        GL11.glVertex2d(0, h);
-        GL11.glEnd();
-        GL11.glBegin(GL11.GL_LINES);
-        GL11.glVertex2d(0,0);
-        GL11.glVertex2d(w,h);
-        GL11.glVertex2d(w,0);
-        GL11.glVertex2d(0, h);
-        GL11.glEnd();
+
+        context.drawLine(0,0,w,0, 0xFF000000, 1);
+        context.drawLine(w,0,w,h, 0xFF000000, 1);
+        context.drawLine(w,h,0,h, 0xFF000000, 1);
+        context.drawLine(0,h,0,0, 0xFF000000, 1);
+        context.drawLine(0,0,w,h,0xFF000000, 1);
+        context.drawLine(w,0,0,h,0xFF000000,1);
     }
 
     @Override

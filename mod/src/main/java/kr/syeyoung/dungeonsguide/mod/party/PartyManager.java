@@ -25,7 +25,6 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatSubscriber;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.events.impl.HypixelJoinedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
-import kr.syeyoung.dungeonsguide.mod.features.impl.advanced.FeatureTestPeople;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
@@ -562,9 +561,7 @@ public class PartyManager {
         event.getStompInterface().subscribe("/user/queue/party.broadcast", (stompClient ,payload) -> {
             String broadCastPlayload = new JSONObject(payload).getString("payload");
             System.out.println("Received broadcast");
-            if(broadCastPlayload.startsWith("C:")) {
-                FeatureTestPeople.handlePartyBroadCast(broadCastPlayload);
-            }else {
+            {
                 try {
                     ChatTransmitter.addToQueue("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload).getString("payload"));
                 } catch (Exception e) {

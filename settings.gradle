@@ -19,7 +19,7 @@ pluginManagement {
 }
 
 plugins {
-    id "gg.essential.loom" version "1.9+" apply false
+    id "gg.essential.loom" version "1.13+" apply false
     id "dev.architectury.architectury-pack200" version "0.1.3" apply false
 }
 
@@ -29,7 +29,7 @@ include 'modapi'
 
 rootProject.name = "Dungeons Guide"
 
-var versions = ["1.8.9", "1.21.5-fabric"]
+var versions = ["1.8.9", "1.21.5-fabric", "1.21.11-fabric"]
 for (final def ver in versions) {
     include(":"+ver)
     var p = project(":"+ver)

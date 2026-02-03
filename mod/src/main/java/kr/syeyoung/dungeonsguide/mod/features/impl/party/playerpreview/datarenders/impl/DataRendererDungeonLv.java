@@ -23,11 +23,12 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playe
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.dataclasses.DungeonStat;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.dataclasses.DungeonType;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.IDataRenderer;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.XPUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.rendering.UFontCalculator;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -39,34 +40,35 @@ public class DataRendererDungeonLv implements IDataRenderer {
         this.dungeonType = dungeonType;
     }
     @Override
-    public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+    public Dimension renderData(RenderingContext context, PlayerProfile playerProfile) {
         DungeonSpecificData<DungeonStat> dungeonStatDungeonSpecificData = playerProfile.getDungeonStats().get(dungeonType);
+
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
         if (dungeonStatDungeonSpecificData == null) {
-            fr.drawString(dungeonType.getFamiliarName(), 0,0, 0xFFFF5555);
-            fr.drawString("Unknown", fr.getStringWidth(dungeonType.getFamiliarName()+" "),0,0xFFFFFFFF);
+            context.drawString(dungeonType.getFamiliarName(), 0,0, 0xFFFF5555);
+            context.drawString("Unknown", fr.getStringWidth(dungeonType.getFamiliarName()+" "),0,0xFFFFFFFF);
         } else {
             XPUtils.XPCalcResult xpCalcResult = XPUtils.getCataXp(dungeonStatDungeonSpecificData.getData().getExperience());
-            fr.drawString(dungeonType.getFamiliarName(), 0,0, 0xFFFF5555);
-            fr.drawString(xpCalcResult.getLevel()+"", fr.getStringWidth(dungeonType.getFamiliarName()+" "),0,0xFFFFFFFF);
+            context.drawString(dungeonType.getFamiliarName(), 0,0, 0xFFFF5555);
+            context.drawString(xpCalcResult.getLevel()+"", fr.getStringWidth(dungeonType.getFamiliarName()+" "),0,0xFFFFFFFF);
 
-            RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,xpCalcResult.getRemainingXp() == 0 ? 1 : (float) (xpCalcResult.getRemainingXp() / xpCalcResult.getNextLvXp()));
+            RenderUtils.renderBar(context, 0, fr.getFontHeight(), 100,xpCalcResult.getRemainingXp() == 0 ? 1 : (float) (xpCalcResult.getRemainingXp() / xpCalcResult.getNextLvXp()));
         }
 
-        return new Dimension(100, fr.FONT_HEIGHT*2);
+        return new Dimension(100, fr.getFontHeight()*2);
     }
 
     @Override
-    public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString(dungeonType.getFamiliarName(), 0,0, 0xFFFF5555);
-        fr.drawString("99", fr.getStringWidth(dungeonType.getFamiliarName()+" "),0,0xFFFFFFFF);
-        RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,1.0f);
-        return new Dimension(100, fr.FONT_HEIGHT*2);
+    public Dimension renderDummy(RenderingContext context) {
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
+        context.drawString(dungeonType.getFamiliarName(), 0,0, 0xFFFF5555);
+        context.drawString("99", fr.getStringWidth(dungeonType.getFamiliarName()+" "),0,0xFFFFFFFF);
+        RenderUtils.renderBar(context, 0, fr.getFontHeight(), 100,1.0f);
+        return new Dimension(100, fr.getFontHeight()*2);
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT*2);
+        return new Dimension(100, ModAPI.getAPI().getFontCalculator().getFontHeight()*2);
     }
 
     @Override

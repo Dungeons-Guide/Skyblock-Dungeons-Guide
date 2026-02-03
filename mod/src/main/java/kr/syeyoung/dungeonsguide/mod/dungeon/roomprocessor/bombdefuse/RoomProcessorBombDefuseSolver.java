@@ -40,6 +40,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
@@ -55,7 +56,6 @@ import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayInputStream;
@@ -236,8 +236,8 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
 
 
     @Override
-    public void drawScreen(float partialTicks) {
-        super.drawScreen(partialTicks);
+    public void drawScreen(float partialTicks, RenderingContext context) {
+        super.drawScreen(partialTicks, context);
         if (bugged) return;
         VectorI3D playerPos = ModAPI.getAPI().getPlayer().getPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new VectorI3D(playerPos.x, 68, playerPos.z));
@@ -246,7 +246,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                 if (ch.getChamberGen() == null) continue;
                 if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
                     if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
-                        ch.getLeft().getProcessor().drawScreen(partialTicks);
+                        ch.getLeft().getProcessor().drawScreen(partialTicks, context);
 
                         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
                         String str = "Current: " + ch.getChamberGen().getName() + " Specific: " + ch.getLeft().getProcessor().getName();
@@ -255,7 +255,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                 }
                 if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
                     if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
-                        ch.getRight().getProcessor().drawScreen(partialTicks);
+                        ch.getRight().getProcessor().drawScreen(partialTicks, context);
 
                         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
                         if (ch.getChamberGen() == null || ch.getRight().getProcessor() == null) continue;
@@ -315,27 +315,6 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                 ch.getLeft().getProcessor().actionbarReceived(chat);
             if (ch.getRight() != null && ch.getRight().getProcessor() != null)
                 ch.getRight().getProcessor().actionbarReceived(chat);
-        }
-    }
-
-    @Override
-    public void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event) {
-        super.onPostGuiRender(event);
-        if (bugged) return;
-
-        VectorI3D playerPos = ModAPI.getAPI().getPlayer().getPosition();
-        OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new VectorI3D(playerPos.x, 68, playerPos.z));
-        for (ChamberSet ch:chambers) {
-            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
-                if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
-                    ch.getLeft().getProcessor().onPostGuiRender(event);
-                }
-            }
-            if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
-                if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
-                    ch.getRight().getProcessor().onPostGuiRender(event);
-                }
-            }
         }
     }
 

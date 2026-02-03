@@ -14,13 +14,13 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
@@ -48,7 +48,7 @@ public class WidgetEtherwarpPreview extends AnnotatedExportOnlyWidget implements
     }
 
 
-    private ResourceLocation sampleBlock = new ResourceLocation("minecraft:textures/blocks/diamond_block.png");
+    private ResourceIdentifier sampleBlock = new ResourceIdentifier("minecraft:textures/blocks/diamond_block.png");
 
 
     @Override
@@ -64,8 +64,7 @@ public class WidgetEtherwarpPreview extends AnnotatedExportOnlyWidget implements
         GlStateManager.pushMatrix();
         GlStateManager.translate(halfWidth, size.getHeight() - 24, 0);
 
-        Minecraft.getMinecraft().getTextureManager().bindTexture(sampleBlock);
-        context.drawScaledCustomSizeModalRect(-8, 0, 0, 0, 16, 16,
+        context.drawScaledCustomSizeModalRect(sampleBlock, -8, 0, 0, 0, 16, 16,
                 16, 16, 16, 16);
 
         ShaderProgram shaderProgram = ShaderManager.getShader("shaders/etherwarppreview");
@@ -185,9 +184,7 @@ public class WidgetEtherwarpPreview extends AnnotatedExportOnlyWidget implements
         context.drawRect(-halfWidth,-size.getHeight(),halfWidth, 40, 0xFFFFFFFF);
         GL20.glUseProgram(0);
 
-
-        Minecraft.getMinecraft().getTextureManager().bindTexture(sampleBlock);
-        context.drawScaledCustomSizeModalRect(24, -80, 0, 0, 16, 16,
+        context.drawScaledCustomSizeModalRect(sampleBlock, 24, -80, 0, 0, 16, 16,
                 16, 16, 16, 16);
 
         GlStateManager.enableCull();

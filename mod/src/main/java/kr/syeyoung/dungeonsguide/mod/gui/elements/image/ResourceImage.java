@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.Collections;
 import java.util.List;
@@ -58,7 +58,7 @@ public class ResourceImage extends AnnotatedExportOnlyWidget {
         if (getDomElement().getWidget() != null) {
             getDomElement().getChildren().clear();
             getDomElement().addElement(new Image(
-                    new ResourceLocation(location.getValue()), uvX.getValue(), uvY.getValue(), textureWidth.getValue(), textureHeight.getValue(), uvWidth.getValue(), uvHeight.getValue()
+                    new ResourceIdentifier(location.getValue()), uvX.getValue(), uvY.getValue(), textureWidth.getValue(), textureHeight.getValue(), uvWidth.getValue(), uvHeight.getValue()
             ).createDomElement(getDomElement()));
         }
     }
@@ -67,7 +67,7 @@ public class ResourceImage extends AnnotatedExportOnlyWidget {
     @Override
     public List<Widget> build(DomElement buildContext) {
         return Collections.singletonList(new Image(
-                new ResourceLocation(location.getValue()), uvX.getValue(), uvY.getValue(), textureWidth.getValue(), textureHeight.getValue(), uvWidth.getValue(), uvHeight.getValue()
+                new ResourceIdentifier(location.getValue()), uvX.getValue(), uvY.getValue(), textureWidth.getValue(), textureHeight.getValue(), uvWidth.getValue(), uvHeight.getValue()
         ));
     }
 }

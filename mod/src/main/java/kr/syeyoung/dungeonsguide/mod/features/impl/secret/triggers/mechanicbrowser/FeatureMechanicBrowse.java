@@ -34,6 +34,7 @@ import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectPositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
@@ -84,7 +85,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
     }
 
     @Override
-    public void drawDemo(float partialTicks) {
+    public void drawDemo(RenderingContext context, float partialTicks) {
         double scale = FeatureMechanicBrowse.this.<Double>getParameter("scale").getValue();
         GlStateManager.scale(scale, scale, 1.0);
 
@@ -103,7 +104,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
     }
 
     @Override
-    public void drawHUD(float partialTicks) {
+    public void drawHUD(RenderingContext ctx, float partialTicks) {
         if (!SkyblockStatus.isOnDungeon()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null || DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser() == null) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

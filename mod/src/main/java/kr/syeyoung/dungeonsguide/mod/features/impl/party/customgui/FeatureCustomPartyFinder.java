@@ -33,8 +33,6 @@ import kr.syeyoung.modapi.gui.UGuiScreenChest;
 import kr.syeyoung.modapi.item.UItemStack;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 
 import java.util.List;
 
@@ -95,7 +93,7 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
             widgetPartyFinder = new WidgetPartyFinder();
 
             Scaler scaler = new Scaler();
-            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+            scaler.scale.setValue(ModAPI.getAPI().getScaleFactor());
             scaler.child.setValue(widgetPartyFinder);
             guiScreenAdapter = new CustomGuiScreenAdapterChestOverride(scaler);
         }

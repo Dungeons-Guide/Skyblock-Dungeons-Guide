@@ -33,6 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.CoordinateMapBackedPathfindWorld;
@@ -53,7 +54,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -102,7 +102,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
     @Override
-    public void drawScreen(float partialTicks) {
+    public void drawScreen(float partialTicks, RenderingContext context) {
         if (FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && FeatureRegistry.DEBUG.isEnabled()) {
             FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
@@ -219,12 +219,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public boolean readGlobalChat() {
         return false;
-    }
-
-
-    @Override
-    public void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event) {
-
     }
 
     @Override

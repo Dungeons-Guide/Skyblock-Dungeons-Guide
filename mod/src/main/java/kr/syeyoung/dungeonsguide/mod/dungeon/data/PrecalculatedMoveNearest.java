@@ -26,26 +26,19 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonDoorState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.DungeonTombState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicData;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicData;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
-//import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.InstaBreakFactorCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import net.minecraft.client.renderer.GlStateManager;
 
-import java.awt.*;
-import java.util.List;
 import java.util.*;
-import java.util.stream.Collectors;
 @EqualsAndHashCode
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class PrecalculatedMoveNearest {
@@ -203,66 +196,66 @@ public class PrecalculatedMoveNearest {
     public void render(float partialTicks, DungeonRoom dungeonRoom) {
         if (true) return;
 //        if (EditingContext.getEditingContext() == null) return;  $$ ROOMEDIT
-        int i = 0;
-        List<PossibleMoveSpot> targets = getPrecalculatedStonk(dungeonRoom.getMechanics().entrySet().stream()
-                .filter(a -> a.getValue() instanceof WorldMutatingMechanicState)
-                .filter(a -> !((WorldMutatingMechanicState) a.getValue()).isBlocking(dungeonRoom)).map(a -> a.getKey()).collect(Collectors.toList()));
-        for (PossibleMoveSpot spot : targets) {
-            GlStateManager.disableAlpha();
-            i++;
-            Color c = Color.getHSBColor(
-                    1.0f * i / targets.size(), 0.5f, 1.0f
-            );
-            Color actual;
-
-
-            GlStateManager.disableAlpha();
-            if (!spot.isBlocked()) {
-                actual = new Color(c.getRGB() & 0xFFFFFF | 0x90000000, true);
-                PossibleMoveSpot spot2 = RaytraceHelper.chooseMinimalY2(Arrays.asList(spot)).get(0);
-                for (OffsetVec3 _vec3 : spot2.getOffsetPointSet()) {
-                    Vector3D offsetVec3 = _vec3.getPos(dungeonRoom);
-                    RenderUtils.highlightBox(
-                            new AABB(
-                                    offsetVec3.x - 0.25f, offsetVec3.y + 0.025f, offsetVec3.z - 0.25f,
-                                    offsetVec3.x + 0.25f, offsetVec3.y + 0.026f, offsetVec3.z + 0.25f
-                            ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
-                            actual,
-                            partialTicks,
-                            true
-                    );
-                }
-            }
-            actual = new Color(c.getRGB() & 0xFFFFFF | 0x10000000, true);
-            for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
-                Vector3D offsetVec3 = _vec3.getPos(dungeonRoom);
-                RenderUtils.highlightBox(
-                        new AABB(
-                                offsetVec3.x - 0.25f, offsetVec3.y - 0.025f, offsetVec3.z - 0.25f,
-                                offsetVec3.x + 0.25f, offsetVec3.y + 0.475f, offsetVec3.z + 0.25f
-                        ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
-                        actual,
-                        partialTicks,
-                        true
-                );
-            }
-            double cx = 0, cy = 0, cz = 0;
-            for (OffsetVec3 _offsetVec3 : spot.getOffsetPointSet()) {
-                Vector3D offsetVec3 = _offsetVec3.getPos(dungeonRoom);
-                cx += offsetVec3.x;
-                cy += offsetVec3.y;
-                cz += offsetVec3.z;
-            }
-            cx /= spot.getOffsetPointSet().size();
-            cy /= spot.getOffsetPointSet().size();
-            cz /= spot.getOffsetPointSet().size();
-            cy += 0.2f;
-            RenderUtils.drawTextAtWorld(
-                    spot.getClusterId() + "/" + spot.isBlocked() + " / "+spot.getOffsetPointSet().size(), (float) cx, (float) cy, (float) cz, actual.getRGB() | 0xFF000000, 0.01f, false, true, partialTicks);
-
-
-            GlStateManager.enableAlpha();
-        }
+//        int i = 0;
+//        List<PossibleMoveSpot> targets = getPrecalculatedStonk(dungeonRoom.getMechanics().entrySet().stream()
+//                .filter(a -> a.getValue() instanceof WorldMutatingMechanicState)
+//                .filter(a -> !((WorldMutatingMechanicState) a.getValue()).isBlocking(dungeonRoom)).map(a -> a.getKey()).collect(Collectors.toList()));
+//        for (PossibleMoveSpot spot : targets) {
+//            GlStateManager.disableAlpha();
+//            i++;
+//            Color c = Color.getHSBColor(
+//                    1.0f * i / targets.size(), 0.5f, 1.0f
+//            );
+//            Color actual;
+//
+//
+//            GlStateManager.disableAlpha();
+//            if (!spot.isBlocked()) {
+//                actual = new Color(c.getRGB() & 0xFFFFFF | 0x90000000, true);
+//                PossibleMoveSpot spot2 = RaytraceHelper.chooseMinimalY2(Arrays.asList(spot)).get(0);
+//                for (OffsetVec3 _vec3 : spot2.getOffsetPointSet()) {
+//                    Vector3D offsetVec3 = _vec3.getPos(dungeonRoom);
+//                    RenderUtils.highlightBox(
+//                            new AABB(
+//                                    offsetVec3.x - 0.25f, offsetVec3.y + 0.025f, offsetVec3.z - 0.25f,
+//                                    offsetVec3.x + 0.25f, offsetVec3.y + 0.026f, offsetVec3.z + 0.25f
+//                            ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
+//                            actual,
+//                            partialTicks,
+//                            true
+//                    );
+//                }
+//            }
+//            actual = new Color(c.getRGB() & 0xFFFFFF | 0x10000000, true);
+//            for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
+//                Vector3D offsetVec3 = _vec3.getPos(dungeonRoom);
+//                RenderUtils.highlightBox(
+//                        new AABB(
+//                                offsetVec3.x - 0.25f, offsetVec3.y - 0.025f, offsetVec3.z - 0.25f,
+//                                offsetVec3.x + 0.25f, offsetVec3.y + 0.475f, offsetVec3.z + 0.25f
+//                        ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
+//                        actual,
+//                        partialTicks,
+//                        true
+//                );
+//            }
+//            double cx = 0, cy = 0, cz = 0;
+//            for (OffsetVec3 _offsetVec3 : spot.getOffsetPointSet()) {
+//                Vector3D offsetVec3 = _offsetVec3.getPos(dungeonRoom);
+//                cx += offsetVec3.x;
+//                cy += offsetVec3.y;
+//                cz += offsetVec3.z;
+//            }
+//            cx /= spot.getOffsetPointSet().size();
+//            cy /= spot.getOffsetPointSet().size();
+//            cz /= spot.getOffsetPointSet().size();
+//            cy += 0.2f;
+//            RenderUtils.drawTextAtWorld(
+//                    spot.getClusterId() + "/" + spot.isBlocked() + " / "+spot.getOffsetPointSet().size(), (float) cx, (float) cy, (float) cz, actual.getRGB() | 0xFF000000, 0.01f, false, true, partialTicks);
+//
+//
+//            GlStateManager.enableAlpha();
+//          }
     }
 
 }

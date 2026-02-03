@@ -21,11 +21,12 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarend
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.dataclasses.ClassSpecificData;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.IDataRenderer;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.XPUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.rendering.UFontCalculator;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -33,35 +34,35 @@ import java.util.List;
 
 public class DataRendererSelectedClassLv implements IDataRenderer {
     @Override
-    public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+    public Dimension renderData(RenderingContext context, PlayerProfile playerProfile) {
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
         ClassSpecificData<PlayerProfile.PlayerClassData> dungeonStatDungeonSpecificData = playerProfile.getPlayerClassData().get(playerProfile.getSelectedClass());
         if (dungeonStatDungeonSpecificData == null) {
-            fr.drawString("Unknown Selected", 0,0, 0xFF55ffff);
+            context.drawString("Unknown Selected", 0,0, 0xFF55ffff);
         } else {
             XPUtils.XPCalcResult xpCalcResult = XPUtils.getCataXp(dungeonStatDungeonSpecificData.getData().getExperience());
-            fr.drawString(playerProfile.getSelectedClass().getFamiliarName(), 0,0, 0xFF55ffff);
-            fr.drawString(xpCalcResult.getLevel()+"", fr.getStringWidth(playerProfile.getSelectedClass().getFamiliarName()+" "),0,0xFFFFFFFF);
-            fr.drawString("★", fr.getStringWidth(playerProfile.getSelectedClass().getFamiliarName()+" "+xpCalcResult.getLevel()+" "),0,0xFFAAAAAA);
+            context.drawString(playerProfile.getSelectedClass().getFamiliarName(), 0,0, 0xFF55ffff);
+            context.drawString(xpCalcResult.getLevel()+"", fr.getStringWidth(playerProfile.getSelectedClass().getFamiliarName()+" "),0,0xFFFFFFFF);
+            context.drawString("★", fr.getStringWidth(playerProfile.getSelectedClass().getFamiliarName()+" "+xpCalcResult.getLevel()+" "),0,0xFFAAAAAA);
 
-            RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,xpCalcResult.getRemainingXp() == 0 ? 1 : (float) (xpCalcResult.getRemainingXp() / xpCalcResult.getNextLvXp()));
+            RenderUtils.renderBar(context, 0, fr.getFontHeight(), 100,xpCalcResult.getRemainingXp() == 0 ? 1 : (float) (xpCalcResult.getRemainingXp() / xpCalcResult.getNextLvXp()));
         }
 
-        return new Dimension(100, fr.FONT_HEIGHT*2);
+        return new Dimension(100, fr.getFontHeight()*2);
     }
 
     @Override
-    public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString("SelectedClass", 0,0, 0xFF55ffff);
-        fr.drawString("99", fr.getStringWidth("SelectedClass "),0,0xFFFFFFFF);
-        fr.drawString("★", fr.getStringWidth("SelectedClass 99 "),0,0xFFAAAAAA);
-        RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,1.0f);
-        return new Dimension(100, fr.FONT_HEIGHT*2);
+    public Dimension renderDummy(RenderingContext context) {
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
+        context.drawString("SelectedClass", 0,0, 0xFF55ffff);
+        context.drawString("99", fr.getStringWidth("SelectedClass "),0,0xFFFFFFFF);
+        context.drawString("★", fr.getStringWidth("SelectedClass 99 "),0,0xFFAAAAAA);
+        RenderUtils.renderBar(context, 0, fr.getFontHeight(), 100,1.0f);
+        return new Dimension(100, fr.getFontHeight()*2);
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT*2);
+        return new Dimension(100, ModAPI.getAPI().getFontCalculator().getFontHeight()*2);
     }
 
     @Override

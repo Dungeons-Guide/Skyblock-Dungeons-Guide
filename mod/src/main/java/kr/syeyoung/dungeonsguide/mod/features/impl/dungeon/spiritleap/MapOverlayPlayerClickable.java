@@ -4,8 +4,9 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.MapConfiguration;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay.MapOverlay;
-import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapterChestOverride;
+import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
@@ -15,10 +16,6 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
 import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import kr.syeyoung.modapi.world.UMapData;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
 
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
@@ -92,39 +89,39 @@ public class MapOverlayPlayerClickable implements MapOverlay {
         return 0;
     }
 
-    private final ResourceLocation resourceLocation = new ResourceLocation("dungeonsguide:map/maptexture.png");
+    private final ResourceIdentifier resourceLocation = new ResourceIdentifier("dungeonsguide:map/maptexture.png");
 
     @Override
-    public void doRender(float rotation, float partialTicks, double scale, double relMouseX, double relMouseY) {
+    public void doRender(RenderingContext context, float rotation, float partialTicks, double scale, double relMouseX, double relMouseY) {
         Vector3d vec = getLocation(partialTicks);
         double yaw = vec.getZ();
         if (vec.getX() == 0 && vec.getZ() == 0) return;
 
         if (settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.NONE) return;
         if (settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.ARROW) {
-            GlStateManager.enableTexture2D();
-            Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
+//            GlStateManager.enableTexture2D();
+//            Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
 
-            GlStateManager.rotate((float) yaw, 0, 0, 1);
-            GlStateManager.scale(settings.getIconSize(), settings.getIconSize(), 0);
-            Gui.drawScaledCustomSizeModalRect(-4, -4, 128 - 16,
+            context.ctx().rotate((float) yaw, 0, 0, 1);
+            context.ctx().scale(settings.getIconSize(), settings.getIconSize(), 0);
+            context.drawScaledCustomSizeModalRect(resourceLocation, -4, -4, 128 - 16,
                     name.equals(ModAPI.getAPI().getPlayer().getName()) ? 128 - 16 : 128 - 0, 16, -16, 8, 8, 128, 128);
         } else {
             boolean flag1 = settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.HEAD_FLIP;
-            GlStateManager.enableTexture2D();
-            Minecraft.getMinecraft().getTextureManager().bindTexture(
-                    new ResourceLocation(entry.getLocationSkin().toString())
-            );
+//            GlStateManager.enableTexture2D();
+//            Minecraft.getMinecraft().getTextureManager().bindTexture(
+//                    new ResourceLocation(entry.getLocationSkin().toString())
+//            );
             int l2 = 8 + (flag1 ? 8 : 0);
             int i3 = 8 * (flag1 ? -1 : 1);
 
 
-            GlStateManager.rotate((float) yaw, 0, 0, 1);
-            GlStateManager.scale(settings.getIconSize(), settings.getIconSize(), 0);
+            context.ctx().rotate((float) yaw, 0, 0, 1);
+            context.ctx().scale(settings.getIconSize(), settings.getIconSize(), 0);
 
             // cutting out the player head out of the skin texture
             if (relMouseX > -4 * settings.getIconSize() && relMouseX < 4 * settings.getIconSize() && relMouseY > -4 * settings.getIconSize() && relMouseY < 4 * settings.getIconSize()) {
-                Gui.drawRect(-5, -5, 5, 5, 0xFF00FF00);
+                context.drawRect(-5, -5, 5, 5, 0xFF00FF00);
             } else {
                 int color = 0xFFFFFFFF;
                 if (clazz.startsWith("Archer")) {
@@ -140,18 +137,18 @@ public class MapOverlayPlayerClickable implements MapOverlay {
                 } else if (clazz.startsWith("DEAD")) {
                     color = (0xFF333333); // black
                 }
-                Gui.drawRect(-5, -5, 5, 5, color);
+                context.drawRect(-5, -5, 5, 5, color);
             }
-            GlStateManager.color(1,1,1,1);
+//            GlStateManager.color(1,1,1,1);
 
             // backside of head
-            GlStateManager.pushMatrix();
-            GlStateManager.scale(9.0 / 8, 9.0 / 8.0, 1.0);
-            Gui.drawScaledCustomSizeModalRect(-4, -4, 56.0F, l2, 8, i3, 8, 8, 64.0F, 64.0F);
-            GlStateManager.popMatrix();
-            Gui.drawScaledCustomSizeModalRect(-4, -4, 8.0F, l2, 8, i3, 8, 8, 64.0F, 64.0F);
-            GlStateManager.scale(9.0 / 8, 9.0 / 8.0, 1.0);
-            Gui.drawScaledCustomSizeModalRect(-4, -4, 40.0F, l2, 8, i3, 8, 8, 64.0F, 64.0F);
+            context.ctx().pushMatrix();
+            context.ctx().scale(9.0 / 8, 9.0 / 8.0, 1.0);
+            context.drawScaledCustomSizeModalRect( new ResourceIdentifier(entry.getLocationSkin().toString()), -4, -4, 56.0F, l2, 8, i3, 8, 8, 64.0F, 64.0F);
+            context.ctx().popMatrix();
+            context.drawScaledCustomSizeModalRect(new ResourceIdentifier(entry.getLocationSkin().toString()), -4, -4, 8.0F, l2, 8, i3, 8, 8, 64.0F, 64.0F);
+            context.ctx().scale(9.0 / 8, 9.0 / 8.0, 1.0);
+            context.drawScaledCustomSizeModalRect(new ResourceIdentifier(entry.getLocationSkin().toString()), -4, -4, 40.0F, l2, 8, i3, 8, 8, 64.0F, 64.0F);
 
         }
 

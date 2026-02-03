@@ -134,8 +134,7 @@ public class DomElementRegistry {
     public static Parser obtainParser(ResourceIdentifier resourceLocation) {
         if (cache.containsKey(resourceLocation)) return cache.get(resourceLocation);
         try {
-            UResource iResource = ModAPI.getAPI().getResourceManager().getResource(
-                    new ResourceIdentifier(resourceLocation.getMod(), resourceLocation.getLocation()));
+            UResource iResource = ModAPI.getAPI().getResourceManager().getResource(resourceLocation);
             W3CBackedParser parser = new W3CBackedParser(iResource.getInputStream());
             cache.put(resourceLocation, parser);
             return parser;

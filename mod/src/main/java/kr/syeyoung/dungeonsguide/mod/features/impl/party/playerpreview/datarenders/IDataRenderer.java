@@ -19,16 +19,17 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 
 import java.awt.*;
 import java.util.List;
 
 public interface IDataRenderer {
-    Dimension renderData(PlayerProfile playerProfile);
+    Dimension renderData(RenderingContext context, PlayerProfile playerProfile);
     List<String> onHover(PlayerProfile playerProfile);
 
 
-    Dimension renderDummy();
+    Dimension renderDummy(RenderingContext context);
 
     Dimension getDimension();
 }

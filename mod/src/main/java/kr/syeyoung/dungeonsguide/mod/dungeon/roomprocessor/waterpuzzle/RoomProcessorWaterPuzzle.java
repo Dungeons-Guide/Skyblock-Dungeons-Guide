@@ -29,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerato
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle.fallback.Simulator;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.EnumFacing;
@@ -278,8 +279,8 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawScreen(float partialTicks) {
-        super.drawScreen(partialTicks);
+    public void drawScreen(float partialTicks, RenderingContext context) {
+        super.drawScreen(partialTicks, context);
     }
 
     @Override

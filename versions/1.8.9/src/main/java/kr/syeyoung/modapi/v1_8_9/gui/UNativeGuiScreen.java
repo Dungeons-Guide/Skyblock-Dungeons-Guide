@@ -18,6 +18,16 @@ public class UNativeGuiScreen implements UGuiScreen {
         return handle;
     }
 
+    @Override
+    public int getWidth() {
+        return handle.width;
+    }
+
+    @Override
+    public int getHeight() {
+        return handle.height;
+    }
+
     public static class UGuiScreenChatImpl extends UNativeGuiScreen implements UGuiScreenChat {
         public UGuiScreenChatImpl(GuiChat handle) {
             super(handle);

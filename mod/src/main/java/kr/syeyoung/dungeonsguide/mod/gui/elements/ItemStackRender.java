@@ -31,11 +31,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
 import kr.syeyoung.modapi.item.UItemStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.item.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
@@ -60,15 +55,10 @@ public class ItemStackRender extends AnnotatedExportOnlyWidget implements Render
                 getDomElement().getSize().getHeight());
 
 
-        RenderItem renderItem=  Minecraft.getMinecraft().getRenderItem();
-        GlStateManager.pushMatrix();
-        RenderHelper.disableStandardItemLighting();
-        RenderHelper.enableGUIStandardItemLighting();
-        GlStateManager.scale(min/18.0, min/18.0, 1.0);
-        GlStateManager.enableDepth();
-        renderItem.renderItemAndEffectIntoGUI((ItemStack) itemstack.getValue().getItemStack(), 0,0);
-        GlStateManager.popMatrix();
-        GlStateManager.disableDepth();
+        context.ctx().pushMatrix();
+        context.ctx().scale(min/18.0, min/18.0, 1.0);
+        context.drawItemStackAndEffect(itemstack.getValue(), 0, 0);
+        context.ctx().popMatrix();
     }
 
     @Override

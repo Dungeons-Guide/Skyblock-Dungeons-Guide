@@ -20,32 +20,33 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarend
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.IDataRenderer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.rendering.UFontCalculator;
 
 import java.awt.*;
 import java.util.List;
 
 public class DataRendererSecrets implements IDataRenderer {
     @Override
-    public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+    public Dimension renderData(RenderingContext context, PlayerProfile playerProfile) {
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
         double theInt = playerProfile.getTotalSecrets()/ (double)playerProfile.getDungeonStats().values().stream().flatMap(s -> s.getData().getPlays().values().stream())
                 .map(fs -> fs.getData().getWatcherKills()).reduce(0, Integer::sum);
-        fr.drawString("§eSecrets §b"+playerProfile.getTotalSecrets()+" §7("+
+        context.drawString("§eSecrets §b"+playerProfile.getTotalSecrets()+" §7("+
                 String.format("%.2f", theInt)+"/run)", 0,0,-1);
-        return new Dimension(100, fr.FONT_HEIGHT);
+        return new Dimension(100, fr.getFontHeight());
     }
 
     @Override
-    public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString("§eSecrets §b99999 §7(X/run)", 0,0,-1);
-        return new Dimension(100, fr.FONT_HEIGHT);
+    public Dimension renderDummy(RenderingContext context) {
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
+        context.drawString("§eSecrets §b99999 §7(X/run)", 0,0,-1);
+        return new Dimension(100, fr.getFontHeight());
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT);
+        return new Dimension(100, ModAPI.getAPI().getFontCalculator().getFontHeight());
     }
 
     @Override

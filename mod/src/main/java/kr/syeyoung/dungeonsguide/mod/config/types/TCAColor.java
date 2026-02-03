@@ -37,7 +37,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.renderer.GlStateManager;
 
 public class TCAColor implements FeatureTypeHandler<AColor> {
     public static final TCAColor INSTANCE = new TCAColor();
@@ -125,7 +124,7 @@ public class TCAColor implements FeatureTypeHandler<AColor> {
 
             Rect original = value.getRelativeBound();
             if (original == null) return;
-            GlStateManager.translate(original.getX(), original.getY(), 0);
+            context.ctx().translate(original.getX(), original.getY(), 0);
 
             double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
             double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();

@@ -12,6 +12,8 @@ archivesBaseName = "dungeonsguide"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    sourceCompatibility = JavaLanguageVersion.of(21)
+    targetCompatibility = JavaLanguageVersion.of(21)
 }
 
 repositories {

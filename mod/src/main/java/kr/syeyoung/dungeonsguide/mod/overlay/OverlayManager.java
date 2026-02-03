@@ -29,25 +29,16 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.ListenerPriority;
 import kr.syeyoung.modapi.event.SubscribeEvent;
-import kr.syeyoung.modapi.event.events.ScreenKeyboardEvent;
-import kr.syeyoung.modapi.event.events.ScreenMouseEvent;
+import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.gui.UGuiScreenChat;
 import kr.syeyoung.modapi.profiler.UProfiler;
+import kr.syeyoung.modapi.rendering.URenderContext;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 
-import static org.lwjgl.opengl.GL11.GL_GREATER;
-
 public class OverlayManager {
     private final RootDom view;
-    private final Minecraft mc;
 
     private static final OverlayManager INSTANCE = new OverlayManager();
     @Getter
@@ -65,8 +56,6 @@ public class OverlayManager {
     public static final String OVERLAY_TYPE_KEY = "OVERLAY_TYPE";
 
     private OverlayManager() {
-        this.mc = Minecraft.getMinecraft();
-
         PopupMgr popupMgr = new PopupMgr();
         popupMgr.child.setValue(root);
 
@@ -77,8 +66,8 @@ public class OverlayManager {
         view.setMounted(true);
     }
 
-    @net.minecraftforge.fml.common.eventhandler.SubscribeEvent()
-    public void guiResize(GuiScreenEvent.InitGuiEvent.Post post){
+    @SubscribeEvent()
+    public void guiResize(ScreenInitEvent post){
         UProfiler profiler = ModAPI.getAPI().getProfiler();
         profiler.startSection("Dungeons Guide Overlay Lauout");
         try {
@@ -98,16 +87,14 @@ public class OverlayManager {
         profiler.endSection();
     }
 
-    @net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-    public void renderOverlay(RenderGameOverlayEvent.Post postRender) {
-        if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
-            return;
+    @SubscribeEvent
+    public void renderOverlay(OverlayRenderEvent event) {
 
         UProfiler profiler = ModAPI.getAPI().getProfiler();
-        profiler.startSection("Dungeons Guide - RenderGameOverlayEvent.Post :: Overlay");
+        profiler.startSection("Dungeons Guide - OverlayRenderEvent :: Overlay");
         try {
             view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.UNDER_CHAT);
-            drawScreen(postRender.partialTicks);
+            drawScreen(event.getPartialTicks(), event.getRenderContext());
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
@@ -115,16 +102,16 @@ public class OverlayManager {
         profiler.endSection();
     }
 
-    @net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-    public void renderGui(GuiScreenEvent.DrawScreenEvent.Post postRender) {
+    @SubscribeEvent
+    public void renderGui(ScreenRenderEvent.Post postRender) {
         UProfiler profiler = ModAPI.getAPI().getProfiler();
-        profiler.startSection("Dungeons Guide - DrawScreenEvent.Post :: Overlay");
+        profiler.startSection("Dungeons Guide - ScreenRenderEvent.Post :: Overlay");
         try {
-            if (postRender.gui instanceof GuiChat)
+            if (postRender.getGui() instanceof UGuiScreenChat)
                 view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_CHAT);
             else
                 view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_ANY);
-            drawScreen(postRender.renderPartialTicks);
+            drawScreen(postRender.getPartialTicks(), postRender.getRenderContext());
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
@@ -133,7 +120,7 @@ public class OverlayManager {
     }
 
 
-    private void drawScreen( float partialTicks) {
+    private void drawScreen( float partialTicks, URenderContext renderCtx) {
         if (view.isRelayoutRequested()) {
             view.setRelayoutRequested(false);
             UProfiler profiler = ModAPI.getAPI().getProfiler();
@@ -146,21 +133,12 @@ public class OverlayManager {
             ));
             profiler.endSection();
         }
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(0,0,50);
-        GlStateManager.disableDepth();
-        GlStateManager.enableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.alphaFunc(GL_GREATER, 0);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
-        view.getRenderer().doRender(partialTicks, new RenderingContext(null), view);
-        GlStateManager.alphaFunc(GL_GREATER, 0.1f);
-        GlStateManager.popMatrix();
-        GlStateManager.enableDepth();
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        double factor = ModAPI.getAPI().getScaleFactor();
+        renderCtx.pushMatrix();
+        renderCtx.translate(0,0,50);
+        renderCtx.scale(1.0 / factor, 1.0 / factor, 1.0d);
+        view.getRenderer().doRender(partialTicks, new RenderingContext(renderCtx), view);
+        renderCtx.popMatrix();
     }
 
 

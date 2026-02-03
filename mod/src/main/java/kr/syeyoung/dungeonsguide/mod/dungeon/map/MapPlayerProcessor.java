@@ -29,7 +29,6 @@ import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.item.UItemStack;
 import kr.syeyoung.modapi.world.UMapData;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,7 +37,6 @@ import java.util.Map;
 
 public class MapPlayerProcessor {
 
-   private static final Minecraft mc = Minecraft.getMinecraft();
     private final DungeonContext context;
     @Getter
     private final BiMap<String, String> mapIconToPlayerMap = HashBiMap.create();
@@ -75,7 +73,8 @@ public class MapPlayerProcessor {
 
 
     private void getPlayersFromMap(UMapData mapdata) {
-        int lim = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16;
+
+        int lim = ModAPI.getAPI().getGameSettings().getRenderDistanceChunks() * 16;
         lim = lim * lim;
 
         if (context.getScaffoldParser() == null) return;

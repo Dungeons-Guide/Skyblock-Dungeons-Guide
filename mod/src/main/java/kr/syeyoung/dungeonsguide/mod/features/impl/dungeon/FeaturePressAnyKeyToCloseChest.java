@@ -25,10 +25,9 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.ScreenKeyboardEvent;
 import kr.syeyoung.modapi.event.events.ScreenMouseEvent;
+import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.gui.UGuiScreen;
 import kr.syeyoung.modapi.gui.UGuiScreenChest;
-import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.ContainerChest;
 
 public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
     public FeaturePressAnyKeyToCloseChest() {
@@ -43,9 +42,9 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
         if (!SkyblockStatus.isOnDungeon()) return;
 
         if (screen instanceof UGuiScreenChest){
-            ContainerChest ch = (ContainerChest) ((UGuiScreenChest)screen).getContainer();
-            if (!("Large Chest".equals(ch.getLowerChestInventory().getName())
-                    || "Chest".equals(ch.getLowerChestInventory().getName()))) return;
+            UContainerChest ch = ((UGuiScreenChest)screen).getContainer();
+            if (!("Large Chest".equals(ch.getName())
+                    || "Chest".equals(ch.getName()))) return;
 //            IInventory actualChest = ch.getLowerChestInventory();
 
 //            int priceSum = 0;
@@ -55,7 +54,7 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
 
 //            int threshold = this.<Integer>getParameter("threshold").getValue();
 //            if (priceSum < threshold) {
-                Minecraft.getMinecraft().thePlayer.closeScreen();
+            ch.closeContainer();
 //            }
         }
     }
@@ -67,9 +66,9 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
         if (!SkyblockStatus.isOnDungeon()) return;
 
         if (screen instanceof UGuiScreenChest){
-            ContainerChest ch = (ContainerChest) ((UGuiScreenChest)screen).getContainer();
-            if (!("Large Chest".equals(ch.getLowerChestInventory().getName())
-                    || "Chest".equals(ch.getLowerChestInventory().getName()))) return;
+            UContainerChest ch = ((UGuiScreenChest)screen).getContainer();
+            if (!("Large Chest".equals(ch.getName())
+                    || "Chest".equals(ch.getName()))) return;
 //            IInventory actualChest = ch.getLowerChestInventory();
 
 //            int priceSum = 0;
@@ -79,7 +78,7 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
 
 //            int threshold = this.<Integer>getParameter("threshold").getValue();
 //            if (priceSum < threshold) {
-                Minecraft.getMinecraft().thePlayer.closeScreen();
+            ch.closeContainer();
 //            }
         }
     }

@@ -10,12 +10,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.SingleChildRenderer;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
+import kr.syeyoung.modapi.ModAPI;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,15 +40,15 @@ public class WidgetMapDemo extends Widget implements Renderer {
         renderCtx.pushClip(buildContext.getAbsBounds(), buildContext.getSize(), 0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight());
 
         Size featureRect = getDomElement().getSize();
-        Gui.drawRect(0, 0, (int) featureRect.getWidth(), (int) featureRect.getWidth(), RenderUtils.getColorAt(0,0, featureDungeonMap2.getMapConfiguration().getBackgroundColor()));
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        renderCtx.drawRect(0, 0, (int) featureRect.getWidth(), (int) featureRect.getWidth(), RenderUtils.getColorAt(0,0, featureDungeonMap2.getMapConfiguration().getBackgroundColor()));
+//        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
-        GlStateManager.enableBlend();
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        fr.drawString("Please join a dungeon to see preview", (int) featureRect.getWidth() / 2 - fr.getStringWidth("Please join a dungeon to see preview") / 2, (int) featureRect.getWidth() / 2 - fr.FONT_HEIGHT / 2, 0xFFFFFFFF);
-        GL11.glLineWidth((float) mapConfiguration.getBorderWidth());
-        RenderUtils.drawUnfilledBox(0, 0, (int) featureRect.getWidth(), (int) featureRect.getWidth(),mapConfiguration.getBorder());
+//        GlStateManager.enableBlend();
+//        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        renderCtx.drawString("Please join a dungeon to see preview", (int) featureRect.getWidth() / 2 - ModAPI.getAPI().getFontCalculator().getStringWidth("Please join a dungeon to see preview") / 2, (int) featureRect.getWidth() / 2 - ModAPI.getAPI().getFontCalculator().getFontHeight() / 2, 0xFFFFFFFF);
+//        GL11.glLineWidth((float) mapConfiguration.getBorderWidth());
+        renderCtx.drawUnfilledBox(0, 0, (int) featureRect.getWidth(), (int) featureRect.getWidth(),mapConfiguration.getBorder(),(float) mapConfiguration.getBorderWidth());
 
         renderCtx.popClip();
 

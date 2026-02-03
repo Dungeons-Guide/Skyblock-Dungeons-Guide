@@ -24,7 +24,6 @@ import kr.syeyoung.modapi.event.ListenerPriority;
 import kr.syeyoung.modapi.event.SubscribeEvent;
 import kr.syeyoung.modapi.event.events.GuiOpenEvent;
 import kr.syeyoung.modapi.gui.UGuiScreen;
-import net.minecraft.client.Minecraft;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -53,7 +52,7 @@ public class GuiDisplayer {
         if (specialGuiScreen == null) return;
         if (!guiScreensToShow.contains(specialGuiScreen))
             guiScreensToShow.add(specialGuiScreen);
-        if (isMcLoaded && Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+        if (isMcLoaded && ModAPI.getAPI().isCallingFromMinecraftThread()) {
             if (guiScreensToShow.size() == 1)
                 ModAPI.getAPI().displayGuiScreen(guiScreensToShow.peek());
         } else if (isMcLoaded) {

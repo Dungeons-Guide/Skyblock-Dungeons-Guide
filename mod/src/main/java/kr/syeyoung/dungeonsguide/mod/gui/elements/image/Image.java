@@ -22,16 +22,15 @@ import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import lombok.AllArgsConstructor;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
 public class Image extends Widget implements Renderer {
-    public final ResourceLocation location;
+    public final ResourceIdentifier location;
     public final int uvX;
     public final int uvY ;
     public final int textureWidth;
@@ -46,8 +45,7 @@ public class Image extends Widget implements Renderer {
 
     @Override
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(location);
-        context.drawScaledCustomSizeModalRect(0, 0, 
+        context.drawScaledCustomSizeModalRect(location, 0, 0,
                 uvX, 
                 uvY, 
                 uvWidth, 

@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget;
 
-import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.PlayerSkyblockData;
@@ -38,6 +37,7 @@ import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class WidgetProfileViewerData extends AnnotatedWidget {
     @Bind(variableName = "playerModel")
@@ -51,20 +51,22 @@ public class WidgetProfileViewerData extends AnnotatedWidget {
     private final PlayerSkyblockData playerSkyblockData;
     private int idx;
 
-    private final GameProfile gameProfile;
+    private final UUID uuid;
+    private final String name;
 
 
     private final WidgetPlayerModel widgetPlayerModel;
 
     private List<WidgetDataRendererWrapper> dataRendererWrapperList = new ArrayList<>();
 
-    public WidgetProfileViewerData(GameProfile gameProfile, PlayerSkyblockData playerSkyblockData) {
+    public WidgetProfileViewerData(UUID uuid, String name, PlayerSkyblockData playerSkyblockData) {
         super(new ResourceIdentifier("dungeonsguide:gui/features/profileViewer/data.gui"));
 
         this.playerSkyblockData = playerSkyblockData;
-        this.gameProfile = gameProfile;
+        this.uuid = uuid;
+        this.name = name;
 
-        playerModel.setValue(widgetPlayerModel = new WidgetPlayerModel(gameProfile, playerSkyblockData.getPlayerProfiles()
+        playerModel.setValue(widgetPlayerModel = new WidgetPlayerModel(uuid, name, playerSkyblockData.getPlayerProfiles()
                 [idx = playerSkyblockData.getLatestProfileArrayIndex()]));
 
         List<String> stuff = FeatureRegistry.PARTYKICKER_VIEWPLAYER.<List<String>>getParameter("datarenderers").getValue();
@@ -88,12 +90,12 @@ public class WidgetProfileViewerData extends AnnotatedWidget {
 
     @On(functionName = "invite")
     public void invite() {
-        ChatProcessor.INSTANCE.addToChatQueue("/p invite " + gameProfile.getName(), () -> {
+        ChatProcessor.INSTANCE.addToChatQueue("/p invite " + name, () -> {
         }, true);
     }
     @On(functionName = "kick")
     public void kick() {
-        ChatProcessor.INSTANCE.addToChatQueue("/p kick " + gameProfile.getName(), () -> {
+        ChatProcessor.INSTANCE.addToChatQueue("/p kick " + name, () -> {
         }, true);
     }
 

@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget;
 
-import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
@@ -28,6 +27,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
+
+import java.util.UUID;
 
 public class WidgetProfileViewer extends AnnotatedWidget {
 
@@ -39,11 +40,13 @@ public class WidgetProfileViewer extends AnnotatedWidget {
     public final BindableAttribute<Widget> actualPV = new BindableAttribute<>(Widget.class, null);
     @Bind(variableName = "visible")
     public final BindableAttribute<String> visiblePage = new BindableAttribute<>(String.class, "fetching");
-    private GameProfile gameProfile;
+    private UUID uuid;
+    private String name;
     private Runnable close;
-    public WidgetProfileViewer(GameProfile gameProfile, Runnable close) {
+    public WidgetProfileViewer(UUID uuid, String name, Runnable close) {
         super(new ResourceIdentifier("dungeonsguide:gui/features/profileViewer/pv.gui"));
-        this.gameProfile = gameProfile;
+        this.uuid = uuid;
+        this.name = name;
         this.close = close;
         refresh();
     }
@@ -53,15 +56,15 @@ public class WidgetProfileViewer extends AnnotatedWidget {
         actualPV.setValue(null);
 
         visiblePage.setValue("fetching");
-        PlayerManager.INSTANCE.ping(gameProfile.getId());
-        ApiFetcher.fetchMostRecentProfileAsync(gameProfile.getId().toString())
+        PlayerManager.INSTANCE.ping(uuid);
+        ApiFetcher.fetchMostRecentProfileAsync(uuid.toString())
                 .whenComplete((a,e) -> {
                     if (e != null) {
                         e.printStackTrace();
                         visiblePage.setValue("noPlayer");
                     } else {
                         if (a.isPresent()) {
-                            actualPV.setValue(new WidgetProfileViewerData(gameProfile, a.get()));
+                            actualPV.setValue(new WidgetProfileViewerData(uuid, name, a.get()));
                             visiblePage.setValue("pv");
                         } else {
                             visiblePage.setValue("noPlayer");

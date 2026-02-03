@@ -12,7 +12,9 @@ group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide"
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+//    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    sourceCompatibility =  JavaLanguageVersion.of(8)
+    targetCompatibility =  JavaLanguageVersion.of(8)
 }
 
 
@@ -84,11 +86,11 @@ dependencies {
 
     implementation "org.jetbrains:annotations-java5:19.0.0"
 
-    compileOnly "org.projectlombok:lombok:1.18.20"
-    annotationProcessor "org.projectlombok:lombok:1.18.16"
+    compileOnly "org.projectlombok:lombok:1.18.32"
+    annotationProcessor "org.projectlombok:lombok:1.18.32"
 
-    testCompileOnly "org.projectlombok:lombok:1.18.20"
-    testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+    testCompileOnly "org.projectlombok:lombok:1.18.32"
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.32"
 
     shadowImpl project(path: ":modapi")
     shadowImpl project(path: ":mod")
@@ -99,6 +101,7 @@ dependencies {
     modLocalRuntime("me.djtheredstoner:DevAuth-forge-legacy:1.2.2")
 
     implementation("net.kyori:adventure-text-serializer-gson-legacy-impl:4.23.0")
+    implementation("net.kyori:adventure-text-serializer-legacy:4.26.1")
 }
 
 
@@ -110,7 +113,7 @@ loom {
         client {
             ideConfigGenerated = true
             name = "Launch Dungeons Guide 1.8.9"
-            runDir = '../../runtime'
+            runDir = '../../runtime/1.8.9'
             property('devauth.enabled', 'true')
             property('dg.loader', 'devenv')
 
@@ -126,7 +129,7 @@ loom {
 afterEvaluate {
     loom.runs.named("client") {
         programArgs("--mods", configurations.devenvMod.files
-                .collect { file("../../runtime").relativePath(it) }.join(","))
+                .collect { file("../../runtime/1.8.9").relativePath(it) }.join(","))
     }
 }
 

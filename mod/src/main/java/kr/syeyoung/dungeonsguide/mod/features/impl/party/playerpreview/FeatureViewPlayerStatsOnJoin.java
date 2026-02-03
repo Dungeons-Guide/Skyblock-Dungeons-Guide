@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview;
 
-import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessResult;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -38,6 +37,7 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.events.GuiOpenEvent;
 import kr.syeyoung.modapi.event.events.ScreenMouseEvent;
 import kr.syeyoung.modapi.gui.UGuiScreenChat;
 import net.kyori.adventure.key.Key;
@@ -48,10 +48,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.DataComponentValue;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -140,7 +136,8 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         if (widget != null) return;
 
         Component ichatcomponent = ModAPI.getAPI().getHoveredComponent();
-        GameProfile gameProfile = null;
+//        GameProfile gameProfile = null;
+        UUID uuid = null; String name = null;
         if (ichatcomponent ==  null || ichatcomponent.hoverEvent() == null)  return;
         HoverEvent event = ichatcomponent.hoverEvent();
         if (event == null || event.action() != HoverEvent.Action.SHOW_ITEM) return;
@@ -151,10 +148,8 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
             try {
                 CompoundBinaryTag tag = TagStringIO.tagStringIO().asCompound(((BinaryTagHolder) value).string());
 
-                gameProfile = new GameProfile(
-                        UUID.fromString(tag.getString("uuid")),
-                        tag.getString("username")
-                );
+                uuid = UUID.fromString(tag.getString("uuid"));
+                name = tag.getString("username");
             } catch (IOException e) {
                 return;
             }
@@ -164,25 +159,23 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
             try {
                 CompoundBinaryTag tag = TagStringIO.tagStringIO().asCompound(tagHolder.string());
 
-                gameProfile = new GameProfile(
-                        UUID.fromString(tag.getString("uuid")),
-                        tag.getString("username")
-                );
+                uuid = UUID.fromString(tag.getString("uuid"));
+                name = tag.getString("username");
             } catch (IOException e) {
                 return;
             }
         }
 
         if (widget == null) {
-            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+            double factor = ModAPI.getAPI().getScaleFactor();
 
             int mouseX = (int) mouseMoved.getMouseX();
             int mouseY = (int) mouseMoved.getMouseY();
 
-            double width = 220 * scaledResolution.getScaleFactor();
-            double height = 220 * scaledResolution.getScaleFactor();
+            double width = 220 * factor;
+            double height = 220 * factor;
             widget = new OverlayWidget(
-                    new WidgetProfileViewer(gameProfile, () -> {
+                    new WidgetProfileViewer(uuid, name, () -> {
                         if (widget != null) {
                             OverlayManager.getInstance().removeOverlay(widget);
                             widget = null;
@@ -197,7 +190,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
     }
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onGuiClose(GuiOpenEvent event) {
-        if (!(event.gui instanceof GuiChat) && widget != null) {
+        if (!(event.getGui() instanceof UGuiScreenChat) && widget != null) {
             OverlayManager.getInstance().removeOverlay(widget);
             widget = null;
         }

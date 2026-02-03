@@ -30,8 +30,6 @@ import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.gui.UGuiScreenChest;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 
 public class FeatureCustomLeapGui extends SimpleFeature {
     public FeatureCustomLeapGui() {
@@ -63,7 +61,7 @@ public class FeatureCustomLeapGui extends SimpleFeature {
             widgetSpiritLeap = new WidgetSpiritLeap();
 
             Scaler scaler = new Scaler();
-            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+            scaler.scale.setValue(ModAPI.getAPI().getScaleFactor());
             scaler.child.setValue(widgetSpiritLeap);
             int x = (int) (Math.max(0, ModAPI.getAPI().getDisplayWidth() / 2 - 200 * scaler.scale.getValue()));
             int y = (int) (Math.max(0, ModAPI.getAPI().getDisplayHeight() / 2 - 200 * scaler.scale.getValue()) + 100);

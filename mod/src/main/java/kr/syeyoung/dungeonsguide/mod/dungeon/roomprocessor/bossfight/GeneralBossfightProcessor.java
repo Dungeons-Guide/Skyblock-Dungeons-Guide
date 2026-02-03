@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.BossfightRenderSettings;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
@@ -33,8 +34,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Singular;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.GuiScreenEvent;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -63,7 +62,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
                             .fromJson(inputStreamReader, BossfightRenderSettingSettings.class);
                     if (settings.getResources() != null)
                         for (BossfightRenderSettings value : settings.getResources().values()) {
-                            value.setResourceLocation(new ResourceLocation(value.getLocation()));
+                            value.setResourceLocation(new ResourceIdentifier(value.getLocation()));
                         }
 
                 }
@@ -89,7 +88,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
                             .fromJson(inputStreamReader, BossfightRenderSettingSettings.class);
                     if (settings.getResources() != null)
                         for (BossfightRenderSettings value : settings.getResources().values()) {
-                            value.setResourceLocation(new ResourceLocation(value.getLocation()));
+                            value.setResourceLocation(new ResourceIdentifier(value.getLocation()));
                         }
 
                 }
@@ -171,7 +170,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     public void tick() {}
 
     @Override
-    public void drawScreen(float partialTicks) {}
+    public void drawScreen(float partialTicks, RenderingContext context) {}
 
     @Override
     public void drawWorld(float partialTicks) {}
@@ -179,10 +178,6 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     @Override
     public boolean readGlobalChat() {return true;}
 
-    @Override
-    public void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event) {
-
-    }
 
     @Override
     public void onEntityUpdate(LivingEntityTickEvent updateEvent) {

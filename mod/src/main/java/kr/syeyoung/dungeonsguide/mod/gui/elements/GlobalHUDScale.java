@@ -28,9 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
+import kr.syeyoung.modapi.ModAPI;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +44,7 @@ public class GlobalHUDScale extends Widget implements Layouter, Renderer {
 
     private double getScale() {
         boolean useMc = FeatureRegistry.GLOBAL_HUD_SCALE.<Boolean>getParameter("mc").getValue();
-        if (useMc) return (double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        if (useMc) return ModAPI.getAPI().getScaleFactor();
         else return FeatureRegistry.GLOBAL_HUD_SCALE.<Double>getParameter("scale").getValue();
     }
     
@@ -101,8 +99,8 @@ public class GlobalHUDScale extends Widget implements Layouter, Renderer {
         DomElement value = buildContext.getChildren().get(0);
 
         Rect original = value.getRelativeBound();
-        GlStateManager.translate(original.getX(), original.getY(), 0);
-        GlStateManager.scale(scale, scale, 1);
+        context.ctx().translate(original.getX(), original.getY(), 0);
+        context.ctx().scale(scale, scale, 1);
 
         double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
         double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();

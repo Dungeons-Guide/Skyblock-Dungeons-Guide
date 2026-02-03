@@ -31,8 +31,10 @@ import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.paralleluniverse.scoreboard.UObjective;
 import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScore;
 import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
-import net.minecraft.client.Minecraft;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.Title;
 
+import java.time.Duration;
 import java.util.Objects;
 
 /**
@@ -130,7 +132,7 @@ public class FeatureEpicCountdown extends SimpleFeature {
         if (actualSecondsLeft <= 0) {
             if(!Objects.equals(lastSec, GO_TEXT)){
                 lastSec = GO_TEXT;
-                Minecraft.getMinecraft().ingameGUI.displayTitle(lastSec, "", 2, 25, 15);
+                ModAPI.getAPI().getPlayer().showTitle(Title.title(Component.text(lastSec), Component.empty(), Title.Times.times(Duration.ofMillis(50*2), Duration.ofMillis(25*50), Duration.ofMillis(15 * 50))));
             }
             return;
         }
@@ -142,9 +144,9 @@ public class FeatureEpicCountdown extends SimpleFeature {
                 ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("dungeonsguide", "readysetgo"), 1);
             }
             if(actualSecondsLeft > 5){
-                Minecraft.getMinecraft().ingameGUI.displayTitle(string, "", 1, 10, 8);
-            }else{
-                Minecraft.getMinecraft().ingameGUI.displayTitle(string, "", 1, 6, 4);
+                ModAPI.getAPI().getPlayer().showTitle(Title.title(Component.text(string), Component.empty(), Title.Times.times(Duration.ofMillis(50*1), Duration.ofMillis(10*50), Duration.ofMillis(8 * 50))));
+            } else {
+                ModAPI.getAPI().getPlayer().showTitle(Title.title(Component.text(string), Component.empty(), Title.Times.times(Duration.ofMillis(50*1), Duration.ofMillis(6*50), Duration.ofMillis(4 * 50))));
             }
             lastSec = string;
         }

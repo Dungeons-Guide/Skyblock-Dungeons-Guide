@@ -25,9 +25,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.fml.client.config.GuiUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,14 +49,9 @@ public class MinecraftTooltip extends Widget implements Renderer, Layouter {
 
     @Override
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
-        GlStateManager.disableBlend();
-//        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        GlStateManager.disableAlpha();
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableCull();
-//        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GuiUtils.drawHoveringText(tooltip,0,0,
+
+        context.drawHoveringText(tooltip,0,0,
                 (int) buildContext.getRelativeBound().getWidth(),
-                (int) buildContext.getRelativeBound().getHeight(), -1, Minecraft.getMinecraft().fontRendererObj);
+                (int) buildContext.getRelativeBound().getHeight(), -1);
     }
 }

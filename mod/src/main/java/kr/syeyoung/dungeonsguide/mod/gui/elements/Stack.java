@@ -30,7 +30,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.List;
 
@@ -43,8 +42,8 @@ public class Stack extends AnnotatedExportOnlyWidget implements Renderer {
             DomElement value = buildContext.getChildren().get(i);
             Rect original = value.getRelativeBound();
             if (original == null) return;
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(original.getX(), original.getY(), 0);
+            context.ctx().pushMatrix();
+            context.ctx().translate(original.getX(), original.getY(), 0);
 
             double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
             double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();
@@ -57,7 +56,7 @@ public class Stack extends AnnotatedExportOnlyWidget implements Renderer {
             );
             value.setAbsBounds(elementABSBound);
             value.getRenderer().doRender(partialTicks, context, value);
-            GlStateManager.popMatrix();
+            context.ctx().popMatrix();
         }
     }
 

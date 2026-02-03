@@ -28,6 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerato
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
@@ -332,8 +333,8 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawScreen(float partialTicks) {
-        super.drawScreen(partialTicks);
+    public void drawScreen(float partialTicks, RenderingContext context) {
+        super.drawScreen(partialTicks, context);
         if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
         if (FeatureRegistry.SOLVER_BOX.disableText()) return;
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;

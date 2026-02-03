@@ -23,20 +23,15 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.modapi.ModAPI;
-import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import kr.syeyoung.modapi.event.events.GuiOpenEvent;
-import kr.syeyoung.modapi.event.events.ItemTooltipEvent;
-import kr.syeyoung.modapi.event.events.ScreenMouseEvent;
+import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.gui.UContainer;
 import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.gui.UContainerSlot;
 import kr.syeyoung.modapi.gui.UGuiScreenChest;
 import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.util.EnumDyeColor;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.client.event.GuiScreenEvent;
 
 public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     public FeatureChangeAllToSameColorSolver() {
@@ -138,7 +133,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
+    public void onGuiPostRender(ScreenRenderEvent.Post rendered) {
         if (!isCorrectGui) return;
         if (!(ModAPI.getAPI().getCurrentGuiScreen() instanceof UGuiScreenChest)) {
             isCorrectGui = false;
@@ -146,6 +141,8 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
         }
 
         if (solution != null) {
+
+            RenderingContext context = new RenderingContext(rendered.getRenderContext());
             int i = 222;
             int j = i - 108;
 
@@ -154,13 +151,13 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
             UContainerChest cc = (UContainerChest) cc2;
 
             int ySize = j + (cc.getChestContainerSize() / 9) * 18;
-            int left = (rendered.gui.width - 176) / 2;
-            int top = (rendered.gui.height - ySize ) / 2;
-            GlStateManager.pushMatrix();
-            GlStateManager.disableDepth();
-            GlStateManager.disableLighting();
-            GlStateManager.colorMask(true, true, true, false);
-            GlStateManager.translate(left, top, 0);
+            int left = (rendered.getGui().getWidth() - 176) / 2;
+            int top = (rendered.getGui().getHeight() - ySize ) / 2;
+            context.ctx().pushMatrix();
+//            GlStateManager.disableDepth();
+//            GlStateManager.disableLighting();
+//            GlStateManager.colorMask(true, true, true, false);
+            context.ctx().translate(left, top, 0);
 
             for (int y = 0; y < 3; y++) {
                 for (int x = 0; x < 3; x++) {
@@ -169,16 +166,15 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
                     UContainerSlot currSlot = cc.getChestSlotAt(slotId);
                     int rx = currSlot.getX();
                     int ry = currSlot.getY();
-                    Minecraft.getMinecraft().fontRendererObj
-                            .drawString(String.valueOf(clicks), rx, ry, 0xFF00FF00);
+                    context.drawString(String.valueOf(clicks), rx, ry, 0xFF00FF00);
                 }
             }
 
-            GlStateManager.colorMask(true, true, true, true);
-            GlStateManager.popMatrix();
+//            GlStateManager.colorMask(true, true, true, true);
+            context.ctx().popMatrix();
         }
-        GlStateManager.enableBlend();
-        GlStateManager.enableLighting();
+//        GlStateManager.enableBlend();
+//        GlStateManager.enableLighting();
     }
 
     @DGEventHandler

@@ -2,7 +2,9 @@ package kr.syeyoung.modapi.v1_8_9.gui;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.modapi.gui.UCustomGuiScreen;
+import kr.syeyoung.modapi.v1_8_9.render.URenderContextmpl;
 import kr.syeyoung.modapi.v1_8_9.util.KeyboardModernizer;
+import kr.syeyoung.modapi.v1_8_9.util.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -36,9 +38,11 @@ public class UGuiScreenAdapter extends GuiScreen  {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         float deltaTick = partialTicks - partialTickTracker;
         partialTickTracker = partialTicks;
+        RenderUtils.preRenderGui();
         delegate.render(
                 URenderContextmpl.INSTANCE, deltaTick < 0 ? deltaTick + 1 : deltaTick // Yes i'm aware this is not actually partial ticks. $$
         );
+        RenderUtils.postRenderGui();
     }
 
     private int touchValue;

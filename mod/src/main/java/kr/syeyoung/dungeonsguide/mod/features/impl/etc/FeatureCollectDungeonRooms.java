@@ -71,8 +71,6 @@ import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.nbt.ListBinaryTag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -80,8 +78,8 @@ import java.awt.*;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -119,7 +117,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     public void init() {
         if (!this.<Boolean>getParameter("prompted").getValue()) {
             Scaler scaler = new Scaler();
-            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+            scaler.scale.setValue(ModAPI.getAPI().getScaleFactor());
             scaler.child.setValue(new FeatureCollectDungeonRooms.WidgetUserApproval());
             GuiDisplayer.INSTANCE.displayGui(new CustomGuiScreenAdapter(scaler, null, false));
         }
@@ -259,7 +257,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     public void onChat(DGChatReceivedEvent event) {
         if (!event.getOriginalFormattedText().contains(":")) {
             // this is not user message.
-            if (Minecraft.getMinecraft().thePlayer == null) return;
+            if (ModAPI.getAPI().getPlayer() == null) return;
             Vector3D pos = ModAPI.getAPI().getPlayer().getPositionVector();
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

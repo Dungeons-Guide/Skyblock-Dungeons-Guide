@@ -25,9 +25,9 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playe
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.dataclasses.DungeonType;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.dataclasses.FloorSpecificData;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.IDataRenderer;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import kr.syeyoung.modapi.ModAPI;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -42,8 +42,7 @@ public class DataRenderDungeonFloorStat implements IDataRenderer {
     }
 
     @Override
-    public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+    public Dimension renderData(RenderingContext context, PlayerProfile playerProfile) {
         String floorName = (dungeonType == DungeonType.CATACOMBS ? "F" : "M") + floor;
 
         boolean flag = false;
@@ -52,31 +51,30 @@ public class DataRenderDungeonFloorStat implements IDataRenderer {
             FloorSpecificData<DungeonStat.PlayedFloor> playedFloorFloorSpecificData = dungeonStatDungeonSpecificData.getData().getPlays().get(floor);
             if (playedFloorFloorSpecificData != null) {
                 flag = true;
-                fr.drawString("§b" + floorName + " §a" + playedFloorFloorSpecificData.getData().getBestScore() + " §f" + playedFloorFloorSpecificData.getData().getCompletions() + "§7/§f" + playedFloorFloorSpecificData.getData().getWatcherKills() + "§7/§f" + playedFloorFloorSpecificData.getData().getTimes_played() + " §7(" + (int) (playedFloorFloorSpecificData.getData().getCompletions()*100 / (double) playedFloorFloorSpecificData.getData().getWatcherKills()) + "%)", 0, 0, -1);
-                fr.drawString("§6S+ §e" + (playedFloorFloorSpecificData.getData().getFastestTimeSPlus() != -1 ? TextUtils.formatTime(playedFloorFloorSpecificData.getData().getFastestTimeSPlus()) : "§7N/A") + " §6S §e" + (playedFloorFloorSpecificData.getData().getFastestTimeS() != -1 ? TextUtils.formatTime(playedFloorFloorSpecificData.getData().getFastestTimeS()) : "§7N/A"), 0, fr.FONT_HEIGHT, -1);
+                context.drawString("§b" + floorName + " §a" + playedFloorFloorSpecificData.getData().getBestScore() + " §f" + playedFloorFloorSpecificData.getData().getCompletions() + "§7/§f" + playedFloorFloorSpecificData.getData().getWatcherKills() + "§7/§f" + playedFloorFloorSpecificData.getData().getTimes_played() + " §7(" + (int) (playedFloorFloorSpecificData.getData().getCompletions()*100 / (double) playedFloorFloorSpecificData.getData().getWatcherKills()) + "%)", 0, 0, -1);
+                context.drawString("§6S+ §e" + (playedFloorFloorSpecificData.getData().getFastestTimeSPlus() != -1 ? TextUtils.formatTime(playedFloorFloorSpecificData.getData().getFastestTimeSPlus()) : "§7N/A") + " §6S §e" + (playedFloorFloorSpecificData.getData().getFastestTimeS() != -1 ? TextUtils.formatTime(playedFloorFloorSpecificData.getData().getFastestTimeS()) : "§7N/A"), 0, ModAPI.getAPI().getFontCalculator().getFontHeight(), -1);
             }
         }
         if (!flag) {
-            fr.drawString("§cNo Stat for "+floorName, 0,0,-1);
+            context.drawString("§cNo Stat for "+floorName, 0,0,-1);
         }
 
         return getDimension();
     }
 
     @Override
-    public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+    public Dimension renderDummy(RenderingContext context) {
         String floorName = (dungeonType == DungeonType.CATACOMBS ? "F" : "M") + floor;
 
 
-        fr.drawString("§b"+floorName+" §a305 §f10§7/§f35§7/§f50 §7("+(int)(1000.0/35.0)+"%)", 0,0,-1);
-        fr.drawString("§6S+ §e10m 53s §6S §e15m 13s", 0, fr.FONT_HEIGHT, -1);
+        context.drawString("§b"+floorName+" §a305 §f10§7/§f35§7/§f50 §7("+(int)(1000.0/35.0)+"%)", 0,0,-1);
+        context.drawString("§6S+ §e10m 53s §6S §e15m 13s", 0, ModAPI.getAPI().getFontCalculator().getFontHeight(), -1);
         return getDimension();
     }
 
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT*2);
+        return new Dimension(100, ModAPI.getAPI().getFontCalculator().getFontHeight()*2);
     }
 
     @Override

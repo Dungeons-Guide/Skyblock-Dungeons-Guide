@@ -32,7 +32,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import lombok.Getter;
-import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -112,8 +111,8 @@ public class HUDConfigRootWidget extends Widget implements Layouter, Renderer {
             DomElement value = buildContext.getChildren().get(i);
             Rect original = value.getRelativeBound();
             if (original == null) return;
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(original.getX(), original.getY(), 0);
+            context.ctx().pushMatrix();
+            context.ctx().translate(original.getX(), original.getY(), 0);
 
             double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
             double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();
@@ -128,7 +127,7 @@ public class HUDConfigRootWidget extends Widget implements Layouter, Renderer {
 
             value.getRenderer().doRender(
                     partialTicks, context, value);
-            GlStateManager.popMatrix();
+            context.ctx().popMatrix();
         }
         if (xSnap != -1) {
             context.drawRect(xSnap, 0, xSnap+1, buildContext.getSize().getHeight(), 0xFF00FF00);

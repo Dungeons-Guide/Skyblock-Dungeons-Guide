@@ -33,7 +33,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -156,7 +155,7 @@ public class WidgetEditableStyleGroupStyleLineDerivedColor extends AnnotatedImpo
 
             Rect original = value.getRelativeBound();
             if (original == null) return;
-            GlStateManager.translate(original.getX(), original.getY(), 0);
+            context.ctx().translate(original.getX(), original.getY(), 0);
 
             double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
             double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();

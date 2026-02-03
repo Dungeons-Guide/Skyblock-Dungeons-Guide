@@ -37,8 +37,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.GuiDisplayer;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -89,7 +87,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
     public void init() {
         if (!this.<Boolean>getParameter("prompted").getValue()) {
             Scaler scaler = new Scaler();
-            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+            scaler.scale.setValue(ModAPI.getAPI().getScaleFactor());
             scaler.child.setValue(new WidgetUserApproval());
             GuiDisplayer.INSTANCE.displayGui(new CustomGuiScreenAdapter(scaler, null, false));
         }

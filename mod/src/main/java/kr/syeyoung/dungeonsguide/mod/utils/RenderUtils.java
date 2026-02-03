@@ -20,8 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.utils;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonDoor;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
@@ -51,7 +53,7 @@ import java.awt.*;
 import java.util.List;
 
 public class RenderUtils {
-    public static final ResourceLocation icons = new ResourceLocation("textures/gui/icons.png");
+    public static final ResourceIdentifier icons = new ResourceIdentifier("textures/gui/icons.png");
     private static final ResourceLocation beaconBeam = new ResourceLocation("textures/entity/beacon_beam.png");
 
 
@@ -151,88 +153,6 @@ public class RenderUtils {
     }
 
 
-    public static void drawTexturedRect(float x, float y, float width, float height, int filter) {
-        drawTexturedRect(x, y, width, height, 0.0F, 1.0F, 0.0F, 1.0F, filter);
-    }
-    private static float zLevel = 0;
-    public static int scrollY = 0;
-    public static boolean allowScrolling;
-    public static int scrollX = 0;
-
-    public static void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor)
-    {
-        float f = (float)(startColor >> 24 & 255) / 255.0F;
-        float f1 = (float)(startColor >> 16 & 255) / 255.0F;
-        float f2 = (float)(startColor >> 8 & 255) / 255.0F;
-        float f3 = (float)(startColor & 255) / 255.0F;
-        float f4 = (float)(endColor >> 24 & 255) / 255.0F;
-        float f5 = (float)(endColor >> 16 & 255) / 255.0F;
-        float f6 = (float)(endColor >> 8 & 255) / 255.0F;
-        float f7 = (float)(endColor & 255) / 255.0F;
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.shadeModel(7425);
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        worldrenderer.pos((double)right, (double)top, (double)0).color(f1, f2, f3, f).endVertex();
-        worldrenderer.pos((double)left, (double)top, (double)0).color(f1, f2, f3, f).endVertex();
-        worldrenderer.pos((double)left, (double)bottom, (double)0).color(f5, f6, f7, f4).endVertex();
-        worldrenderer.pos((double)right, (double)bottom, (double)0).color(f5, f6, f7, f4).endVertex();
-        tessellator.draw();
-        GlStateManager.shadeModel(7424);
-        GlStateManager.enableAlpha();
-        GlStateManager.enableTexture2D();
-    }
-
-    public static void drawRect(int left, int top, int right, int bottom, AColor color)
-    {
-        if (left < right)
-        {
-            int i = left;
-            left = right;
-            right = i;
-        }
-
-        if (top < bottom)
-        {
-            int j = top;
-            top = bottom;
-            bottom = j;
-        }
-
-        float f3 = (float)(color.getRGB() >> 24 & 255) / 255.0F;
-        float f = (float)(color.getRGB() >> 16 & 255) / 255.0F;
-        float f1 = (float)(color.getRGB() >> 8 & 255) / 255.0F;
-        float f2 = (float)(color.getRGB() & 255) / 255.0F;
-        if (!color.isChroma() && f3 == 0) return;
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        if (!color.isChroma()) {
-            GlStateManager.color(f, f1, f2, f3);
-            worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            worldrenderer.pos(left, bottom, 0.0D).endVertex();
-            worldrenderer.pos(right, bottom, 0.0D).endVertex();
-            worldrenderer.pos(right, top, 0.0D).endVertex();
-            worldrenderer.pos(left, top, 0.0D).endVertex();
-        } else {
-            worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            color(worldrenderer.pos(left, bottom, 0.0D), getColorAt(left, bottom, color)).endVertex();
-            color(worldrenderer.pos(right, bottom, 0.0D), getColorAt(right, bottom, color)).endVertex();
-            color(worldrenderer.pos(right, top, 0.0D), getColorAt(right, top, color)).endVertex();
-            color(worldrenderer.pos(left, top, 0.0D), getColorAt(left, top, color)).endVertex();
-        }
-        tessellator.draw();
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
-    }
-
 
     public static void drawRoundedRectangle(int x, int y, int width, int height, int radius, double delta, int color) {
         GlStateManager.pushMatrix();
@@ -288,146 +208,63 @@ public class RenderUtils {
         return blendTwoColors(origColor, (int)(alphaPerc*255) << 24 | 0xFFFFFF);
     }
 
-    public static void drawTexturedRect(float x, float y, float width, float height, float uMin, float uMax, float vMin, float vMax, int filter) {
-        GlStateManager.enableTexture2D();
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 771);
-        GL11.glTexParameteri(3553, 10241, filter);
-        GL11.glTexParameteri(3553, 10240, filter);
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        worldrenderer.pos(x, y + height, 0.0D).tex(uMin, vMax).endVertex();
-        worldrenderer.pos(x + width, y + height, 0.0D).tex(uMax, vMax).endVertex();
-        worldrenderer.pos(x + width, y, 0.0D).tex(uMax, vMin).endVertex();
-        worldrenderer.pos(x, y, 0.0D).tex(uMin, vMin).endVertex();
-        tessellator.draw();
-        GL11.glTexParameteri(3553, 10241, 9728);
-        GL11.glTexParameteri(3553, 10240, 9728);
-        GlStateManager.disableBlend();
-    }
-    public static void renderBar(float x, float y, float xSize, float completed) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(icons);
+    public static void renderBar(RenderingContext context, float x, float y, float xSize, float completed) {
+//        Minecraft.getMinecraft().getTextureManager().bindTexture(icons);
         completed = (float)Math.round(completed / 0.05F) * 0.05F;
         float notCompleted = 1.0F - completed;
-        int displayNum = 0;
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         float width = 0.0F;
-        if (completed < 0.5F && (displayNum == 1 || displayNum == 0)) {
+        if (completed < 0.5F) {
             width = (0.5F - completed) * xSize;
-            drawTexturedRect(x + xSize * completed, y, width, 5.0F, xSize * completed / 256.0F, xSize / 2.0F / 256.0F, 0.2890625F, 0.30859375F, 9728);
+            context.drawScaledCustomSizeModalRect(icons,
+                     x + xSize * completed, y,
+                    xSize * completed, 74,
+                    (int) (xSize/2.0 - xSize * completed), 5,
+                    width, 5.0F,
+                    256, 256);
+
+//                    xSize * completed / 256.0F, xSize / 2.0F / 256.0F, 0.2890625F, 0.30859375F, 9728);
         }
 
-        if (completed < 1.0F && (displayNum == 2 || displayNum == 0)) {
+        if (completed < 1.0F) {
             width = Math.min(xSize * notCompleted, xSize / 2.0F);
-            drawTexturedRect(x + xSize / 2.0F + Math.max(xSize * (completed - 0.5F), 0.0F), y, width, 5.0F, (182.0F - xSize / 2.0F + Math.max(xSize * (completed - 0.5F), 0.0F)) / 256.0F, 0.7109375F, 0.2890625F, 0.30859375F, 9728);
+            context.drawScaledCustomSizeModalRect(icons,
+                    x + xSize / 2.0F + Math.max(xSize * (completed - 0.5F), 0.0F), y,
+                    (182.0F - xSize / 2.0F + Math.max(xSize * (completed - 0.5F), 0.0F)), 74,
+                    (int) (xSize / 2.0F - Math.max(xSize * (completed - 0.5F), 0.0F)), 5,
+                    width, 5,
+                    256, 256
+            );
+//            );
+//            drawTexturedRect(, width, 5.0F,  / 256.0F, 0.7109375F, 0.2890625F, 0.30859375F, 9728);
         }
 
-        if (completed > 0.0F && (displayNum == 3 || displayNum == 0)) {
+        if (completed > 0.0F) {
             width = Math.min(xSize * completed, xSize / 2.0F);
-            drawTexturedRect(x, y, width, 5.0F, 0.0F, width / 256.0F, 0.30859375F, 0.328125F, 9728);
+            context.drawScaledCustomSizeModalRect(icons,
+                    x, y,
+                    0, 79,
+                    (int) width, 5,
+                    width, 5,
+                    256, 256
+                    );
+//            drawTexturedRect(x, y, width, 5.0F, 0.0F, width / 256.0F, 0.30859375F, 0.328125F, 9728);
         }
 
-        if (completed > 0.5F && (displayNum == 4 || displayNum == 0)) {
+        if (completed > 0.5F) {
             width = Math.min(xSize * (completed - 0.5F), xSize / 2.0F);
-            drawTexturedRect(x + xSize / 2.0F, y, width, 5.0F, (182.0F - xSize / 2.0F) / 256.0F, (182.0F - xSize / 2.0F + width) / 256.0F, 0.30859375F, 0.328125F, 9728);
+            context.drawScaledCustomSizeModalRect(icons,
+                    x + xSize/2.0, y,
+                    (182-xSize/2), 79,
+                    (int) width, 5,
+                    width, 5,
+                    256, 256
+            );
+//            drawTexturedRect(x + xSize / 2.0F, y, width, 5.0F, (182.0F - xSize / 2.0F) / 256.0F, (182.0F - xSize / 2.0F + width) / 256.0F, 0.30859375F, 0.328125F, 9728);
         }
 
     }
 
-    public static void drawUnfilledBox(int left, int top, int right, int bottom, int color, boolean chroma)
-    {
-        if (left < right)
-        {
-            int i = left;
-            left = right;
-            right = i;
-        }
-
-        if (top < bottom)
-        {
-            int j = top;
-            top = bottom;
-            bottom = j;
-        }
-
-        float f3 = (float)(color >> 24 & 255) / 255.0F;
-        float f = (float)(color >> 16 & 255) / 255.0F;
-        float f1 = (float)(color >> 8 & 255) / 255.0F;
-        float f2 = (float)(color & 255) / 255.0F;
-        if (!chroma && f3 == 0) return;
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        if (!chroma) {
-            GlStateManager.color(f, f1, f2, f3);
-            worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
-            worldrenderer.pos(left, bottom, 0.0D).endVertex();
-            worldrenderer.pos(right, bottom, 0.0D).endVertex();
-            worldrenderer.pos(right, top, 0.0D).endVertex();
-            worldrenderer.pos(left, top, 0.0D).endVertex();
-        } else {
-            worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
-            float blah = (System.currentTimeMillis()  / 10) % 360;
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            color(worldrenderer.pos(left, bottom, 0.0D), Color.HSBtoRGB((((blah + 20) % 360) / 360.0f), 1, 1)).endVertex();
-            color(worldrenderer.pos(right, bottom, 0.0D), Color.HSBtoRGB((((blah + 40) % 360)  / 360.0f), 1, 1)).endVertex();
-            color(worldrenderer.pos(right, top, 0.0D), Color.HSBtoRGB((((blah + 20) % 360) / 360.0f), 1, 1)).endVertex();
-            color(worldrenderer.pos(left, top, 0.0D), Color.HSBtoRGB(blah / 360.0f, 1, 1)).endVertex();
-        }
-        tessellator.draw();
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
-    }
-
-
-    public static void drawUnfilledBox(int left, int top, int right, int bottom, AColor color)
-    {
-        if (left < right)
-        {
-            int i = left;
-            left = right;
-            right = i;
-        }
-
-        if (top < bottom)
-        {
-            int j = top;
-            top = bottom;
-            bottom = j;
-        }
-
-        float f3 = (float)(color.getRGB() >> 24 & 255) / 255.0F;
-        float f = (float)(color.getRGB() >> 16 & 255) / 255.0F;
-        float f1 = (float)(color.getRGB() >> 8 & 255) / 255.0F;
-        float f2 = (float)(color.getRGB() & 255) / 255.0F;
-        if (!color.isChroma() && f3 == 0) return;
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        if (!color.isChroma()) {
-            GlStateManager.color(f, f1, f2, f3);
-            worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
-            worldrenderer.pos(left, bottom, 0.0D).endVertex();
-            worldrenderer.pos(right, bottom, 0.0D).endVertex();
-            worldrenderer.pos(right, top, 0.0D).endVertex();
-            worldrenderer.pos(left, top, 0.0D).endVertex();
-        } else {
-            worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            color(worldrenderer.pos(left, bottom, 0.0D), getColorAt(left, bottom, color)).endVertex();
-            color(worldrenderer.pos(right, bottom, 0.0D), getColorAt(right, bottom, color)).endVertex();
-            color(worldrenderer.pos(right, top, 0.0D), getColorAt(right, top, color)).endVertex();
-            color(worldrenderer.pos(left, top, 0.0D), getColorAt(left, top, color)).endVertex();
-        }
-        tessellator.draw();
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
-    }
 
     public static int getChromaColorAt(int x, int y, float speed, float s, float b, float alpha) {
         double blah = ((double)(speed) * (System.currentTimeMillis() / 2)) % 360;

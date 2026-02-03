@@ -19,8 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.impl;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.rendering.UFontCalculator;
 
 import java.awt.*;
 import java.util.Collections;
@@ -48,22 +49,22 @@ public class DataRendererMagicPower extends DataRendererTalismanBase {
     }
 
     @Override
-    public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString(renderMagicPower(playerProfile), 0, 0, -1);
-        return new Dimension(100, fr.FONT_HEIGHT);
+    public Dimension renderData(RenderingContext context, PlayerProfile playerProfile) {
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
+        context.drawString(renderMagicPower(playerProfile), 0, 0, -1);
+        return new Dimension(100, fr.getFontHeight());
     }
 
     @Override
-    public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString(renderMagicPower(699), 0, 0, -1);
-        return new Dimension(100, fr.FONT_HEIGHT);
+    public Dimension renderDummy(RenderingContext context) {
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
+        context.drawString(renderMagicPower(699), 0, 0, -1);
+        return new Dimension(100, fr.getFontHeight());
     }
 
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT);
+        return new Dimension(100, ModAPI.getAPI().getFontCalculator().getFontHeight());
     }
 
     @Override

@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.util.RaycastResult;
@@ -47,7 +48,7 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
 
 
     @Override
-    public void drawScreen(float partialTicks) {
+    public void drawScreen(float partialTicks, RenderingContext context) {
         RaycastResult result = ModAPI.getAPI().getObjectMouseOver();
         if (result.getType() != RaycastResult.HitType.BLOCK) return;
 

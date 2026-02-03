@@ -34,7 +34,6 @@ import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.hud.MessageIndicator;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.input.KeyboardInput;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -45,9 +44,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.crash.CrashException;
-import net.minecraft.util.crash.CrashReport;
-import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -106,7 +102,7 @@ public class EventListener {
             double i = mouse.scaleY(window, mouse.cursorDeltaY);
 
             ModAPI.getAPI().getEventBus().fireEvent(new ScreenMouseEvent.MouseDragged(
-                    f,g,h,i, mouse.activeButton
+                    f,g, (int) h, (int) i, mouse.activeButton
             ));
         }
     }

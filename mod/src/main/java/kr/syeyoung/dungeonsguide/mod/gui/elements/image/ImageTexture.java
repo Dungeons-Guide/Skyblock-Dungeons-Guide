@@ -22,15 +22,12 @@ package kr.syeyoung.dungeonsguide.mod.gui.elements.image;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
+import kr.syeyoung.modapi.rendering.UNativeImageBackedTexture;
+import kr.syeyoung.modapi.rendering.UTextureManager;
 import lombok.Data;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,8 +53,7 @@ import java.util.function.Consumer;
 public class ImageTexture {
     private String url;
     private BufferedImage image;
-    private DynamicTexture previewTexture;
-    private ResourceLocation resourceLocation;
+    private ResourceIdentifier resourceLocation;
 
     private int width;
     private int height;
@@ -69,8 +65,12 @@ public class ImageTexture {
     private int delayTime;
 
     public void buildGLThings() {
-        previewTexture = new DynamicTexture(image);
-        resourceLocation = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("dgurl/"+url, previewTexture);
+
+        UTextureManager textureManager = ModAPI.getAPI().getTextureManager();
+        UNativeImageBackedTexture texture = textureManager.createTexture("ImageTexture: "+url, image.getWidth(), image.getHeight(), false);
+        texture.load(image);
+        texture.upload();
+        resourceLocation = textureManager.registerTexture("dgurl/"+url, texture);
     }
 
     public ImageTexture(String url) throws IOException {
@@ -124,30 +124,19 @@ public class ImageTexture {
         return(node);
     }
 
-    public void drawFrame(double x, double y, double width, double height) {
+    public void drawFrame(RenderingContext context, double x, double y, double width, double height) {
         if (getResourceLocation() == null)
             buildGLThings();
+
         if (startedPlayingAt == -1) startedPlayingAt = System.currentTimeMillis();
 
         int frame = (int) (((System.currentTimeMillis() - startedPlayingAt) / delayTime) % frames);
 
-        TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-        textureManager.bindTexture(getResourceLocation());
 
-        GlStateManager.color(1, 1, 1, 1.0F);
-
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        worldrenderer.pos(x, (y + height), 0.0D)
-                .tex(0,((frame+1) * height)/ ((double)frames * height)).endVertex();
-        worldrenderer.pos((x + width), (y + height), 0.0D)
-                .tex(1, ((frame+1) * height)/ ((double)frames * height)).endVertex();
-        worldrenderer.pos((x + width), y, 0.0D)
-                .tex(1,(frame * height)/ ((double)frames * height)).endVertex();
-        worldrenderer.pos(x, y, 0.0D)
-                .tex(0,  (frame * height) / ((double)frames * height)).endVertex();
-        tessellator.draw();
+        context.drawScaledCustomSizeModalRect(
+                resourceLocation,
+                x, y, 0, frame,1, 1, width, height, 1, frames
+        );
     }
 
     public static final ExecutorService executorService = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newFixedThreadPool(3, new ThreadFactoryBuilder()

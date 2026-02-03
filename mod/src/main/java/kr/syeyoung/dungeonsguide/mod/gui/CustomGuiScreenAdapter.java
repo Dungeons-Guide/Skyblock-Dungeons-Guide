@@ -30,17 +30,11 @@ import kr.syeyoung.modapi.gui.UCustomGuiScreen;
 import kr.syeyoung.modapi.gui.UGuiScreen;
 import kr.syeyoung.modapi.rendering.URenderContext;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Stack;
-
-import static org.lwjgl.opengl.GL11.GL_GREATER;
 
 public class CustomGuiScreenAdapter implements UCustomGuiScreen {
 
@@ -109,6 +103,16 @@ public class CustomGuiScreenAdapter implements UCustomGuiScreen {
     }
 
     @Override
+    public int getWidth() {
+        return (int) (ModAPI.getAPI().getDisplayWidth() / ModAPI.getAPI().getScaleFactor());
+    }
+
+    @Override
+    public int getHeight() {
+        return (int) (ModAPI.getAPI().getDisplayHeight() / ModAPI.getAPI().getScaleFactor());
+    }
+
+    @Override
     public void render(URenderContext context, float deltaTick) {
         try {
             if (view.isRelayoutRequested()) {
@@ -127,20 +131,13 @@ public class CustomGuiScreenAdapter implements UCustomGuiScreen {
             }
 
 
-            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-            GlStateManager.pushMatrix();
-            GlStateManager.disableDepth();
-            GlStateManager.enableBlend();
-            GlStateManager.enableAlpha();
-            GlStateManager.alphaFunc(GL_GREATER, 0);
-            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-            GlStateManager.color(1, 1, 1, 1);
-            GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
+            double factor = ModAPI.getAPI().getScaleFactor();
+
+            context.pushMatrix();
+            context.translate(0,0,50);
+            context.scale(1.0 / factor, 1.0 / factor, 1.0d);
             view.getRenderer().doRender(deltaTick, new RenderingContext(context), view);
-            GlStateManager.alphaFunc(GL_GREATER, 0.1f);
-            GlStateManager.popMatrix();
-            GlStateManager.enableDepth();
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            context.popMatrix();
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
@@ -166,7 +163,7 @@ public class CustomGuiScreenAdapter implements UCustomGuiScreen {
     }
 
     public void closeScreenRequested() {
-        ModAPI.getAPI().displayGuiScreen(null);
+        ModAPI.getAPI().displayGuiScreen(parent);
     }
 
     @Override

@@ -36,18 +36,11 @@ import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectPositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
+import kr.syeyoung.modapi.event.events.GuiOpenEvent;
 import kr.syeyoung.modapi.gui.UGuiScreenChat;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import org.lwjgl.opengl.GL11;
+import kr.syeyoung.modapi.rendering.UNativeImageBackedTexture;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,38 +53,36 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
     }
 
 
-    DynamicTexture dynamicTexture = new DynamicTexture(128, 128);
-    ResourceLocation location = Minecraft.getMinecraft().renderEngine.getDynamicTextureLocation("dungeons/map/", dynamicTexture);
+//    DynamicTexture dynamicTexture = new DynamicTexture(128, 128);
+//    ResourceLocation location = Minecraft.getMinecraft().renderEngine.getDynamicTextureLocation("dungeons/map/", dynamicTexture);
+    UNativeImageBackedTexture texture = ModAPI.getAPI().getTextureManager().createTexture("Dungeon Debug Map", 128, 128, true);
+    ResourceIdentifier identifier = ModAPI.getAPI().getTextureManager().registerTexture("dungeons/map", texture);
+
 
     @Override
-    public void drawHUD(float partialTicks) {
+    public void drawHUD(RenderingContext ctx, float partialTicks) {
 //        if (!skyblockStatus.isOnDungeon()) return;
         if (!FeatureRegistry.DEBUG.isEnabled()) return;
 //        DungeonContext context = skyblockStatus.getContext();
 //        if (context == null) return;
 
-        GlStateManager.pushMatrix();
-        double factor = getFeatureRect().getWidth() / 128;
-        GlStateManager.scale(factor, factor, 1);
-        int[] textureData = dynamicTexture.getTextureData();
-        MapUtils.getImage().getRGB(0, 0, 128, 128, textureData, 0, 128);
-        dynamicTexture.updateDynamicTexture();
-        Minecraft.getMinecraft().getTextureManager().bindTexture(location);
-        GlStateManager.enableAlpha();
-        GuiScreen.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 128, 128, 128, 128);
-        GlStateManager.popMatrix();
+        texture.load(MapUtils.getImage());
+        texture.upload();
 
+        ctx.ctx().pushMatrix();
+        double factor = getFeatureRect().getWidth() / 128;
+        ctx.ctx().scale(factor, factor, 1);
+        ctx.drawScaledCustomSizeModalRect(identifier,
+                0, 0, 0, 0, 1, 1, 128, 128, 128, 128);
 
         if (!(ModAPI.getAPI().getCurrentGuiScreen() instanceof UGuiScreenChat)) return;
     }
 
     @Override
-    public void drawDemo(float partialTicks) {
-        FontRenderer fr = getFontRenderer();
+    public void drawDemo(RenderingContext context, float partialTicks) {
         double width = getFeatureRect().getWidth();
 
-        GL11.glLineWidth(2);
-        RenderUtils.drawUnfilledBox(0,0, (int) width, (int) width, 0xff000000, false);
+        context.drawUnfilledBox(0,0, (int) width, (int) width, 0xff000000, false, 2);
     }
 
     public class WidgetFeatureWrapper extends Widget implements Renderer, Layouter {
@@ -104,7 +95,7 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
 
         @Override
         public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
-            drawScreen(partialTicks);
+            drawScreen(context, partialTicks);
         }
 
         @Override
@@ -138,7 +129,7 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
     }
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onGuiClose(GuiOpenEvent event) {
-        if (!(event.gui instanceof GuiChat) && widgetFeatureWrapper != null) {
+        if (!(event.getGui() instanceof UGuiScreenChat) && widgetFeatureWrapper != null) {
             PopupMgr.getPopupMgr(widgetFeatureWrapper.getDomElement()).closePopup(widgetFeatureWrapper.mouseTooltip, null);
             widgetFeatureWrapper.mouseTooltip = null;
         }

@@ -17,8 +17,10 @@ import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.TeamManager;
+import kr.syeyoung.modapi.v1_8_9.render.URenderContextmpl;
 import kr.syeyoung.modapi.v1_8_9.util.KeyboardModernizer;
 import kr.syeyoung.modapi.v1_8_9.util.MarkedChatComponent;
+import kr.syeyoung.modapi.v1_8_9.util.RenderUtils;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
 import lombok.AllArgsConstructor;
@@ -28,6 +30,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -244,6 +247,39 @@ public class EventListener {
         lastY = j;
     }
 
+    public void onOverlayRender(RenderGameOverlayEvent.Post event, EventPriority priority) {
+        if (!(event.type == RenderGameOverlayEvent.ElementType.ALL))
+            return;
+        if (priority != EventPriority.NORMAL) return;
+        RenderUtils.preRenderGui();
+        ModAPI.getAPI().getEventBus().fireEvent(new OverlayRenderEvent(event.partialTicks, URenderContextmpl.INSTANCE));
+        RenderUtils.postRenderGui();
+    }
+    public void onScreenRenderPre(GuiScreenEvent.DrawScreenEvent.Pre event, EventPriority priority) {
+        if (priority != EventPriority.NORMAL) return;
+        RenderUtils.preRenderGui();
+        ModAPI.getAPI().getEventBus().fireEvent(new ScreenRenderEvent.Pre(
+                event.gui instanceof UGuiScreenAdapter ? ((UGuiScreenAdapter) event.gui).getDelegate() :
+                UNativeGuiScreen.getUScreen(event.gui), event.renderPartialTicks, URenderContextmpl.INSTANCE));
+        RenderUtils.postRenderGui();
+    }
+
+    public void onScreenRenderPost(GuiScreenEvent.DrawScreenEvent.Post event, EventPriority priority) {
+        if (priority != EventPriority.NORMAL) return;
+        RenderUtils.preRenderGui();
+        ModAPI.getAPI().getEventBus().fireEvent(new ScreenRenderEvent.Post(
+                event.gui instanceof UGuiScreenAdapter ? ((UGuiScreenAdapter) event.gui).getDelegate() :
+                UNativeGuiScreen.getUScreen(event.gui),event.renderPartialTicks, URenderContextmpl.INSTANCE));
+        RenderUtils.postRenderGui();
+    }
+    public void onScreenInitPost(GuiScreenEvent.InitGuiEvent.Post event, EventPriority priority) {
+        if (priority != EventPriority.NORMAL) return;
+        ModAPI.getAPI().getEventBus().fireEvent(new ScreenInitEvent(
+                event.gui instanceof UGuiScreenAdapter ? ((UGuiScreenAdapter) event.gui).getDelegate() :
+                        UNativeGuiScreen.getUScreen(event.gui)));
+    }
+
+
     private ListenerPriority mapPriority(EventPriority priority) {
         switch (priority) {
             case HIGHEST: return ListenerPriority.FIRST;
@@ -307,6 +343,10 @@ public class EventListener {
         registerEvents(net.minecraftforge.client.event.GuiOpenEvent.class, this::onGuiOpen);
         registerEvents(GuiScreenEvent.KeyboardInputEvent.class, this::onKeyboardInputEvent);
         registerEvents(GuiScreenEvent.MouseInputEvent.Pre.class, this::onMouseInputEvent);
+        registerEvents(RenderGameOverlayEvent.Post.class, this::onOverlayRender);
+        registerEvents(GuiScreenEvent.DrawScreenEvent.Pre.class, this::onScreenRenderPre);
+        registerEvents(GuiScreenEvent.DrawScreenEvent.Post.class, this::onScreenRenderPost);
+        registerEvents(GuiScreenEvent.InitGuiEvent.Post.class, this::onScreenInitPost);
     }
 
     public void unregister() {

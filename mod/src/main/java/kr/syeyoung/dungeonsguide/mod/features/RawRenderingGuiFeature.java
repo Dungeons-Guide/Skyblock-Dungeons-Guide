@@ -32,8 +32,6 @@ import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectPositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -77,7 +75,7 @@ public abstract class RawRenderingGuiFeature extends AbstractHUDFeature {
 
         @Override
         public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
-            drawScreen(partialTicks);
+            drawScreen(context, partialTicks);
         }
 
         @Override
@@ -97,7 +95,7 @@ public abstract class RawRenderingGuiFeature extends AbstractHUDFeature {
             if (buildContext.getSize().getWidth() <= 0 || buildContext.getSize().getHeight() <= 0)
                 return;
             context.pushClip(buildContext.getAbsBounds(), buildContext.getSize(), 0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight());
-            drawDemo(partialTicks);
+            drawDemo(context, partialTicks);
             context.popClip();
         }
 
@@ -144,18 +142,14 @@ public abstract class RawRenderingGuiFeature extends AbstractHUDFeature {
     public Widget instantiateDemoWidget() {
         return new WidgetFeatureWrapper2();
     }
-    public void drawScreen(float partialTicks) {
-        drawHUD(partialTicks);
+    public void drawScreen(RenderingContext context, float partialTicks) {
+        drawHUD(context, partialTicks);
     }
 
 
-    public abstract void drawHUD(float partialTicks);
+    public abstract void drawHUD(RenderingContext ctx, float partialTicks);
 
-    public void drawDemo(float partialTicks) {
-        drawHUD(partialTicks);
-    }
-    public static FontRenderer getFontRenderer() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        return fr;
+    public void drawDemo(RenderingContext context, float partialTicks) {
+        drawHUD(context, partialTicks);
     }
 }

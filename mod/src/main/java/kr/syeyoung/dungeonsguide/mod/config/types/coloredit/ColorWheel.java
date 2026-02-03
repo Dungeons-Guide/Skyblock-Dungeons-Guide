@@ -27,10 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
-import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
 import kr.syeyoung.modapi.ModAPI;
-import org.lwjgl.opengl.GL20;
 
 import java.awt.*;
 import java.util.Collections;
@@ -60,31 +57,19 @@ public class ColorWheel extends Widget implements Renderer, Layouter {
     @Override
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         double rad = buildContext.getAbsBounds().getWidth() / 2.0;
-        ShaderProgram shaderProgram = ShaderManager.getShader("shaders/chromacircle");
-        shaderProgram.useShader();
-        shaderProgram.uploadUniform("radius", (float) rad);
-        shaderProgram.uploadUniform("value", hsv[2]);
-        shaderProgram.uploadUniform("centerPos",
-                (float) (buildContext.getAbsBounds().getX()+buildContext.getAbsBounds().getWidth()/2),
-                ModAPI.getAPI().getDisplayHeight() - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight()/2));
-        shaderProgram.uploadUniform("smoothness", 0.0f);
-        context.drawRect(0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0xFFFFFFFF);
-        GL20.glUseProgram(0);
+
+        context.drawChromaCircle(0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), rad, hsv[2], (float) (buildContext.getAbsBounds().getX()+buildContext.getAbsBounds().getWidth()/2),
+                ModAPI.getAPI().getDisplayHeight() - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight()/2),
+                0.0f);
+
 
         double angle = (hsv[0] - Math.floor(hsv[0])) * Math.PI * 2;
         double x = Math.sin(angle) * hsv[1] * rad;
         double y = -Math.cos(angle) * hsv[1] * rad;
 
-        shaderProgram = ShaderManager.getShader("shaders/donut");
-        shaderProgram.useShader();
-        shaderProgram.uploadUniform("radius", 5.0f);
-        shaderProgram.uploadUniform("thickness", 1f);
-        shaderProgram.uploadUniform("centerPos",
-                (float) (buildContext.getAbsBounds().getX()+rad+x),
-                ModAPI.getAPI().getDisplayHeight() - (float) (buildContext.getAbsBounds().getY() + rad+y));
-        shaderProgram.uploadUniform("smoothness", 0.0f);
-        context.drawRect(0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0xFFFFFFFF);
-        GL20.glUseProgram(0);
+        context.drawDonut(0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0xFFFFFFFF,
+        5.0f, 1f, (float) (buildContext.getAbsBounds().getX()+rad+x),
+                ModAPI.getAPI().getDisplayHeight() - (float) (buildContext.getAbsBounds().getY() + rad+y), 0.0f);
     }
 
     @Override

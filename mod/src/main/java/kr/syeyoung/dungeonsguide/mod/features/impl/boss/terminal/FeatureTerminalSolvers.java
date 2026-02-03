@@ -23,18 +23,13 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.modapi.ModAPI;
-import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import kr.syeyoung.modapi.event.events.ItemTooltipEvent;
-import kr.syeyoung.modapi.event.events.ScreenMouseEvent;
+import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.gui.UContainer;
 import kr.syeyoung.modapi.gui.UContainerChest;
 import kr.syeyoung.modapi.gui.UContainerSlot;
 import kr.syeyoung.modapi.gui.UGuiScreenChest;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +61,8 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         solution = null;
         solutionProvider = null;
         clicked.clear();
-        if (event.gui instanceof UGuiScreenChest) {
-            UContainerChest cc = ((UGuiScreenChest) event.gui).getContainer();
+        if (event.getGui() instanceof UGuiScreenChest) {
+            UContainerChest cc = ((UGuiScreenChest) event.getGui()).getContainer();
             if (provider.isApplicable(cc)) {
                 solution = provider.provideSolution(cc);
                 this.solutionProvider = provider;
@@ -92,7 +87,7 @@ public class FeatureTerminalSolvers extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
+    public void onGuiPostRender(ScreenRenderEvent.Post rendered) {
         if (solutionProvider == null) return;
         if (!(ModAPI.getAPI().getCurrentGuiScreen() instanceof UGuiScreenChest)) {
             solution = null;
@@ -107,36 +102,38 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         UContainerChest containerChest = (UContainerChest) cc;
 
         if (solution != null) {
+            RenderingContext context = new RenderingContext(rendered.getRenderContext());
+
             int i = 222;
             int j = i - 108;
             int ySize = j + (((UContainerChest) cc).getChestContainerSize() / 9) * 18;
-            int left = (rendered.gui.width - 176) / 2;
-            int top = (rendered.gui.height - ySize ) / 2;
-            GlStateManager.pushMatrix();
-            GlStateManager.disableDepth();
-            GlStateManager.disableLighting();
-            GlStateManager.colorMask(true, true, true, false);
-            GlStateManager.translate(left, top, 0);
+            int left = (rendered.getGui().getWidth() - 176) / 2;
+            int top = (rendered.getGui().getHeight() - ySize ) / 2;
+            context.ctx().pushMatrix();
+//            GlStateManager.disableDepth();
+//            GlStateManager.disableLighting();
+//            GlStateManager.colorMask(true, true, true, false);
+            context.ctx().translate(left, top, 0);
             if (solution.getCurrSlots() != null) {
                 for (Integer currSlot : solution.getCurrSlots()) {
 
                     int x = containerChest.getChestSlotAt(currSlot).getX();
                     int y = containerChest.getChestSlotAt(currSlot).getY();
-                    Gui.drawRect(x, y, x + 16, y + 16, 0x7700FFFF);
+                    context.drawRect(x, y, x + 16, y + 16, 0x7700FFFF);
                 }
             }
             if (solution.getNextSlots() != null) {
                 for (Integer nextSlot : solution.getNextSlots()) {
                     int x = containerChest.getChestSlotAt(nextSlot).getX();
                     int y = containerChest.getChestSlotAt(nextSlot).getY();
-                    Gui.drawRect(x, y, x + 16, y + 16, 0x77FFFF00);
+                    context.drawRect(x, y, x + 16, y + 16, 0x77FFFF00);
                 }
             }
-            GlStateManager.colorMask(true, true, true, true);
-            GlStateManager.popMatrix();
+//            GlStateManager.colorMask(true, true, true, true);
+            context.ctx().popMatrix();
         }
-        GlStateManager.enableBlend();
-        GlStateManager.enableLighting();
+//        GlStateManager.enableBlend();
+//        GlStateManager.enableLighting();
     }
 
     @DGEventHandler

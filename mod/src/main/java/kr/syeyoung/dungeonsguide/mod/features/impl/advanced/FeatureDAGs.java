@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
@@ -32,17 +31,10 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.ArrayDeque;
@@ -135,7 +127,7 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
     }
 
     @Override
-    public void drawHUD(float partialTicks) {
+    public void drawHUD(RenderingContext ctx, float partialTicks) {
         if (!isHUDViewable()) return;
 
         if (!SkyblockStatus.isOnDungeon()) return;
@@ -151,15 +143,13 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
 
         // we got all positions in above tick.
 
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString("Black=Disabled / Pink=Current / Dark Green=Parent Completed / Green=Completed", 0 ,0, 0xFFFFFF00);
-        GL11.glLineWidth(5.0f);
+        ctx.drawString("Black=Disabled / Pink=Current / Dark Green=Parent Completed / Green=Completed", 0 ,0, 0xFFFFFF00);
 
         for (IPathDisplayEngine<?> value2 : roomRouteHandler.getPath().values()) {
 //            if (value.isCalculating()) continue;
             ActionRoute value = value2.getActionRoute();
 
-            WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
+//            WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
             int nodestatus[] = value.getDag().getNodeStatus(value.getDagId());
             for (ActionDAGNode allNode : value.getDag().getAllNodes()) {
                 Point p = locations.get(allNode);
@@ -174,7 +164,7 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
                 int color =
                         value.getCurrentAction() == allNode.getAction() ? 0xFFFF00FF :
                         status == 0 ? 0xFF000000 : status == 1 ? 0xFF00DD00 : status == 2 ? 0xFF007700 : status == 3 ? 0xFF777777 : -1;
-                RenderUtils.drawRect(p.x, p.y, p.x+25, p.y+25, new AColor(color, true));
+                ctx.drawRect(p.x, p.y, p.x+25, p.y+25, color);
 
                 String name = allNode.getAction().toString().split("\n")[0];
                 if (allNode.getAction() instanceof ActionChangeState) {
@@ -185,85 +175,37 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
                         name = state.getMechanicName()+":"+state.getState();
                     }
                 }
-                fr.drawString(name, p.x, p.y, 0xFFFFFFFF);
+                ctx.drawString(name, p.x, p.y, 0xFFFFFFFF);
 
-
-                GlStateManager.color(1,1,1,1);
-                GlStateManager.disableTexture2D();
-                worldRenderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
                 for (ActionDAGNode actionDAGNode : allNode.getRequire()) {
                     Point p2 = locations.get(actionDAGNode);
                     if (p2 == null) continue;
-                    worldRenderer.pos(p.x + 12.5, p.y + 12.5, 0).color(
-                            0.5f,
-                            0.0f,
-                            1.0f,
-                            1.0f
-                    ).endVertex();
-                    worldRenderer.pos(p2.x + 12.5, p2.y + 12.5, 0).color(
-                            0.5f,
-                            0.0f,
-                            1.0f,
-                            1.0f
-                    ).endVertex();
+                    ctx.drawLine(p.x+12.5, p.y+12.5, p2.x + 12.5, p2.y+12.5, 0xFF7F00FF, 5.0f);
                 }
                 for (ActionDAGNode actionDAGNode : allNode.getOr()) {
                     Point p2 = locations.get(actionDAGNode);
                     if (p2 == null) continue;
-                    worldRenderer.pos(p.x + 12.5, p.y + 12.5, 0).color(
-                            0.0f,
-                            0.5f,
-                            1.0f,
-                            1.0f
-                    ).endVertex();
-                    worldRenderer.pos(p2.x + 12.5, p2.y + 12.5, 0).color(
-                            0.0f,
-                            0.5f,
-                            1.0f,
-                            1.0f
-                    ).endVertex();
+                    ctx.drawLine(p.x+12.5, p.y+12.5, p2.x + 12.5, p2.y+12.5, 0xFF007FFF, 5.0f);
                 }
                 for (ActionDAGNode actionDAGNode : allNode.getOptional()) {
                     Point p2 = locations.get(actionDAGNode);
                     if (p2 == null) continue;
-                    worldRenderer.pos(p.x + 12.5, p.y + 12.5, 0).color(
-                            0.0f,
-                            0.0f,
-                            1.0f,
-                            1.0f
-                    ).endVertex();
-                    worldRenderer.pos(p2.x + 12.5, p2.y + 12.5, 0).color(
-                            0.0f,
-                            0.0f,
-                            1.0f,
-                            1.0f
-                    ).endVertex();
+                    ctx.drawLine(p.x+12.5, p.y+12.5, p2.x + 12.5, p2.y+12.5, 0xFF0000FF, 5.0f);
                 }
-                Tessellator.getInstance().draw();
-                GlStateManager.enableTexture2D();
             }
 
             if (!value.isCalculating()) {
-                GlStateManager.color(1, 1, 1, 1);
-                worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
-                GlStateManager.enableTexture2D();
                 int cnt = 0;
+                Point last = null;
                 for (ActionDAGNode actionDAGNode : value.getOrder()) {
                     Point p = locations.get(actionDAGNode);
-                    if (p != null) {
-                        worldRenderer.pos(p.x + 15, p.y + 15, 0).color(
-                                0.0f,
-                                1.0f,
-                                0.0f,
-                                1.0f
-                        ).endVertex();
+                    if (p != null && last != null) {
+                        ctx.drawLine(last.x + 15, last.y + 15, p.x + 15, p.y + 15, 0xFF00FF00, 5.0f);
                         cnt++;
-                        fr.drawString(cnt + "", p.x, p.y + 10, 0xFFFFFFFF);
+                        ctx.drawString(cnt + "", p.x, p.y + 10, 0xFFFFFFFF);
                     }
+                    if (p != null) last = p;
                 }
-                GlStateManager.disableTexture2D();
-                Tessellator.getInstance().draw();
-                GlStateManager.enableTexture2D();
             }
         }
     }
