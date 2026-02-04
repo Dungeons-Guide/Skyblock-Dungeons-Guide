@@ -1,7 +1,6 @@
 package kr.syeyoung.modapi.v1_21_11;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.minecraft.client.texture.NativeImageBackedTexture;
 
 public class TestMod implements ClientModInitializer {
     @Override
@@ -14,8 +13,8 @@ public class TestMod implements ClientModInitializer {
 
 
 //        DynamicTex
-        NativeImageBackedTexture
-
+//        NativeImageBackedTexture
+        SoundMana
 //        HudElementRegistry.
 //        MinecraftClient.getInstance().rende
 //

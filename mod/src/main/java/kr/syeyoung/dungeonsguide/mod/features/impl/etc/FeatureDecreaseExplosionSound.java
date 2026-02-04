@@ -25,8 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import kr.syeyoung.modapi.event.events.PlaySoundEvent;
 
 public class FeatureDecreaseExplosionSound extends SimpleFeature {
     public FeatureDecreaseExplosionSound() {
@@ -39,18 +38,18 @@ public class FeatureDecreaseExplosionSound extends SimpleFeature {
     public void onSound(PlaySoundEvent soundEvent) {
         if (!SkyblockStatus.isOnSkyblock()) return;
 
-        if (soundEvent.name.equalsIgnoreCase("random.explode") && soundEvent.result instanceof PositionedSoundRecord) {
-            PositionedSoundRecord positionedSoundRecord = (PositionedSoundRecord) soundEvent.result;
-            PositionedSoundRecord neweff = new PositionedSoundRecord(
-                    positionedSoundRecord.getSoundLocation(),
+        if (soundEvent.getSound().getSoundName().getLocation().equals("random.explode")) {
+            PlaySoundEvent.Sound positionedSoundRecord = soundEvent.getResult();
+            PlaySoundEvent.Sound neweff = new PlaySoundEvent.Sound(
+                    positionedSoundRecord.getSoundName(),
                     (float) (positionedSoundRecord.getVolume() * (this.<Double>getParameter("sound").getValue() / 100)),
                     positionedSoundRecord.getPitch(),
-                    positionedSoundRecord.getXPosF(),
-                    positionedSoundRecord.getYPosF(),
-                    positionedSoundRecord.getZPosF()
+                    positionedSoundRecord.getXPos(),
+                    positionedSoundRecord.getYPos(),
+                    positionedSoundRecord.getZPos()
             );
 
-            soundEvent.result = neweff;
+            soundEvent.setResult(neweff);
         }
     }
 }

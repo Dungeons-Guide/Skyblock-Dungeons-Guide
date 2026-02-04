@@ -3,6 +3,7 @@ package kr.syeyoung.modapi.v1_8_9;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.EnumFacing;
+import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntityLiving;
@@ -27,8 +28,10 @@ import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -303,6 +306,36 @@ public class EventListener {
         event.setCanceled(canceled);
     }
 
+    public void onPlaySound(net.minecraftforge.client.event.sound.PlaySoundEvent event, EventPriority priority) {
+        PlaySoundEvent event1 = new PlaySoundEvent(new PlaySoundEvent.Sound(
+                new ResourceIdentifier(event.sound.getSoundLocation().getResourceDomain(), event.sound.getSoundLocation().getResourcePath()),
+                event.sound.getXPosF(),
+                event.sound.getYPosF(),
+                event.sound.getZPosF(),
+                event.sound.getPitch(),
+                event.sound.getVolume()
+        ), event.result == null ? null : new PlaySoundEvent.Sound(
+                new ResourceIdentifier(event.result.getSoundLocation().getResourceDomain(), event.result.getSoundLocation().getResourcePath()),
+                event.result.getXPosF(),
+                event.result.getYPosF(),
+                event.result.getZPosF(),
+                event.result.getPitch(),
+                event.result.getVolume()
+        ));
+        ModAPI.getAPI().getEventBus().fireEvent(event1, mapPriority(priority));
+
+        if (event1.getResult() != null) {
+            event.result = new PositionedSoundRecord(
+                    new ResourceLocation(event1.getResult().getSoundName().getMod(), event1.getResult().getSoundName().getLocation()),
+                    event1.getResult().getVolume(),
+                    event1.getResult().getPitch(),
+                    event1.getResult().getXPos(),
+                    event1.getResult().getYPos(),
+                    event1.getResult().getZPos()
+            );
+        }
+    }
+
 
     private ListenerPriority mapPriority(EventPriority priority) {
         switch (priority) {
@@ -372,6 +405,7 @@ public class EventListener {
         registerEvents(GuiScreenEvent.DrawScreenEvent.Post.class, this::onScreenRenderPost);
         registerEvents(GuiScreenEvent.InitGuiEvent.Post.class, this::onScreenInitPost);
         registerEvents(net.minecraftforge.client.event.RenderLivingEvent.Pre.class, this::onRenderLiving);
+        registerEvents(net.minecraftforge.client.event.sound.PlaySoundEvent.class, this::onPlaySound);
     }
 
     public void unregister() {
