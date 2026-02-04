@@ -36,6 +36,32 @@ public class UGuiRenderContextImpl implements UGuiRenderContext {
     }
 
 
+    @Override
+    public void pushMatrix() {
+        GlStateManager.pushMatrix();
+    }
+
+    @Override
+    public void popMatrix() {
+        GlStateManager.popMatrix();
+    }
+
+    @Override
+    public void translate(double x, double y, double z) {
+        GlStateManager.translate(x,y,z);
+    }
+
+    @Override
+    public void scale(double x, double y, double z) {
+        GlStateManager.scale(x,y,z);
+    }
+
+    @Override
+    public void rotate(float angle, int x, int y, int z) {
+        GlStateManager.rotate(angle, x, y, z);
+    }
+
+
     public static int getColorAt(double x, double y, int color, boolean chroma, float chromaSpeed) {
         if (!chroma)
             return color;

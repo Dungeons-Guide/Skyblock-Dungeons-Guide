@@ -32,7 +32,7 @@ import kr.syeyoung.modapi.event.SubscribeEvent;
 import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.gui.UGuiScreenChat;
 import kr.syeyoung.modapi.profiler.UProfiler;
-import kr.syeyoung.modapi.rendering.URenderContext;
+import kr.syeyoung.modapi.rendering.UGuiRenderContext;
 import lombok.Getter;
 
 import java.io.IOException;
@@ -120,7 +120,7 @@ public class OverlayManager {
     }
 
 
-    private void drawScreen( float partialTicks, URenderContext renderCtx) {
+    private void drawScreen( float partialTicks, UGuiRenderContext renderCtx) {
         if (view.isRelayoutRequested()) {
             view.setRelayoutRequested(false);
             UProfiler profiler = ModAPI.getAPI().getProfiler();

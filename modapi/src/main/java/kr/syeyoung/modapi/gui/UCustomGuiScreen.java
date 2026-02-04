@@ -1,10 +1,10 @@
 package kr.syeyoung.modapi.gui;
 
-import kr.syeyoung.modapi.rendering.URenderContext;
+import kr.syeyoung.modapi.rendering.UGuiRenderContext;
 
 public interface UCustomGuiScreen extends UGuiScreen {
     void init();
-    void render(URenderContext context, float deltaTicks);
+    void render(UGuiRenderContext context, float deltaTicks);
 
     default void onDisplayed() {}
     default void onRemoved() {}

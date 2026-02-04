@@ -7,6 +7,4 @@ public interface URenderContext {
     void translate(double x, double y, double z);
     void scale(double x, double y, double z);
     void rotate(float angle, int x, int y, int z);
-
-    UGuiRenderContext getContext();
 }

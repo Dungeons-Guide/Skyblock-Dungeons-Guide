@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.gui.UCustomGuiScreen;
 import kr.syeyoung.modapi.gui.UGuiScreen;
-import kr.syeyoung.modapi.rendering.URenderContext;
+import kr.syeyoung.modapi.rendering.UGuiRenderContext;
 import lombok.Getter;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -113,7 +113,7 @@ public class CustomGuiScreenAdapter implements UCustomGuiScreen {
     }
 
     @Override
-    public void render(URenderContext context, float deltaTick) {
+    public void render(UGuiRenderContext context, float deltaTick) {
         try {
             if (view.isRelayoutRequested()) {
                 view.setRelayoutRequested(false);

@@ -25,7 +25,6 @@ import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.entity.UEntityLiving;
 import kr.syeyoung.modapi.item.UItemStack;
 import kr.syeyoung.modapi.rendering.UGuiRenderContext;
-import kr.syeyoung.modapi.rendering.URenderContext;
 
 import java.awt.*;
 import java.util.List;
@@ -36,14 +35,12 @@ import java.util.List;
  */
 public class RenderingContext {
     public final UGuiRenderContext uGuiRenderContext;
-    private URenderContext renderContext;
-    public RenderingContext(URenderContext context) {
-        this.renderContext = context;
-        uGuiRenderContext = context.getContext();
+    public RenderingContext(UGuiRenderContext context) {
+        uGuiRenderContext = context;
     }
 
-    public URenderContext ctx() {
-        return renderContext;
+    public UGuiRenderContext ctx() {
+        return uGuiRenderContext;
     }
 
     public void drawRect(double left, double top, double right, double bottom, int color) {

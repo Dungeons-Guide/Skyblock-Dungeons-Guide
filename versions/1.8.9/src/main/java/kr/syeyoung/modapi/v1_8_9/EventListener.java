@@ -18,7 +18,7 @@ import kr.syeyoung.modapi.v1_8_9.item.UItemStackImpl;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.teams.TeamManager;
-import kr.syeyoung.modapi.v1_8_9.render.URenderContextmpl;
+import kr.syeyoung.modapi.v1_8_9.render.UGuiRenderContextImpl;
 import kr.syeyoung.modapi.v1_8_9.util.KeyboardModernizer;
 import kr.syeyoung.modapi.v1_8_9.util.MarkedChatComponent;
 import kr.syeyoung.modapi.v1_8_9.util.RenderUtils;
@@ -264,7 +264,7 @@ public class EventListener {
             return;
         if (priority != EventPriority.NORMAL) return;
         RenderUtils.preRenderGui();
-        ModAPI.getAPI().getEventBus().fireEvent(new OverlayRenderEvent(event.partialTicks, URenderContextmpl.INSTANCE));
+        ModAPI.getAPI().getEventBus().fireEvent(new OverlayRenderEvent(event.partialTicks, new UGuiRenderContextImpl()));
         RenderUtils.postRenderGui();
 
         GlStateManager.enableBlend();
@@ -279,7 +279,7 @@ public class EventListener {
         RenderUtils.preRenderGui();
         ModAPI.getAPI().getEventBus().fireEvent(new ScreenRenderEvent.Pre(
                 event.gui instanceof UGuiScreenAdapter ? ((UGuiScreenAdapter) event.gui).getDelegate() :
-                UNativeGuiScreen.getUScreen(event.gui), event.renderPartialTicks, URenderContextmpl.INSTANCE));
+                UNativeGuiScreen.getUScreen(event.gui), event.renderPartialTicks, new UGuiRenderContextImpl()));
         RenderUtils.postRenderGui();
     }
 
@@ -288,7 +288,7 @@ public class EventListener {
         RenderUtils.preRenderGui();
         ModAPI.getAPI().getEventBus().fireEvent(new ScreenRenderEvent.Post(
                 event.gui instanceof UGuiScreenAdapter ? ((UGuiScreenAdapter) event.gui).getDelegate() :
-                UNativeGuiScreen.getUScreen(event.gui),event.renderPartialTicks, URenderContextmpl.INSTANCE));
+                UNativeGuiScreen.getUScreen(event.gui),event.renderPartialTicks, new UGuiRenderContextImpl()));
         RenderUtils.postRenderGui();
     }
     public void onScreenInitPost(GuiScreenEvent.InitGuiEvent.Post event, EventPriority priority) {

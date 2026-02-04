@@ -9,7 +9,7 @@ import kr.syeyoung.modapi.item.UItemStack;
 import java.awt.*;
 import java.util.List;
 
-public interface UGuiRenderContext {
+public interface UGuiRenderContext extends URenderContext {
     void drawRect(double left, double top, double right, double bottom, int color);
 
     void drawUnfilledBox(int left, int top, int right, int bottom, int color, boolean isChroma, float chromaSpeed, float width);
