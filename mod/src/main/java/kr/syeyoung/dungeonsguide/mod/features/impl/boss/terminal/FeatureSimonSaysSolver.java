@@ -25,14 +25,13 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightPr
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorNecron;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.event.events.RenderWorldEvent;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UWorld;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -48,8 +47,8 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
     private final LinkedList<VectorI3D> orderClick = new LinkedList<>();
 
     @DGEventHandler
-    public void drawWorld(RenderWorldLastEvent event) {
-        float partialTicks = event.partialTicks;
+    public void drawWorld(RenderWorldEvent event) {
+        float partialTicks = event.getPartialTicks();
         if (!isEnabled()) return;
         DungeonContext dc = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dc == null) {
@@ -60,9 +59,9 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
 
 
         if (orderClick.size() >= 1)
-            RenderUtils.highlightBlock(orderClick.get(0), new Color(0, 255 ,255, 100), partialTicks, false);
+            event.getContext().highlightBlock(orderClick.get(0), new Color(0, 255 ,255, 100).getRGB(), partialTicks, false);
         if (orderClick.size() >= 2)
-            RenderUtils.highlightBlock(orderClick.get(1), new Color(255, 170, 0, 100), partialTicks, false);
+            event.getContext().highlightBlock(orderClick.get(1), new Color(255, 170, 0, 100).getRGB(), partialTicks, false);
     }
     private boolean wasButton = false;
     @DGEventHandler

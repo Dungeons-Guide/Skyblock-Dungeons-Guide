@@ -30,11 +30,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.world.WorldBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSettingRegistry;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.event.events.RenderWorldEvent;
 import kr.syeyoung.modapi.item.Item;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -88,7 +87,7 @@ public class FeatureStonkDebug extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void renderworldLast(RenderWorldLastEvent event) {
+    public void renderworldLast(RenderWorldEvent event) {
         if (spots == null) return;
         int cnt = spots.size();
         int i = 0;
@@ -97,17 +96,16 @@ public class FeatureStonkDebug extends SimpleFeature {
             Color c = Color.getHSBColor(
                     1.0f * i / cnt , 0.5f, 1.0f
             );
-            Color actual = new Color(c.getRGB(), true);
 
 
             for (OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
-                RenderUtils.highlightBox(
+                event.getContext().highlightBox(
                         new AABB(
                                 offsetVec3.xCoord - 0.025f, offsetVec3.yCoord - 0.025f + 70, offsetVec3.zCoord - 0.025f,
                                 offsetVec3.xCoord + 0.025f, offsetVec3.yCoord + 0.025f + 70, offsetVec3.zCoord + 0.025f
                         ),
-                        actual,
-                        event.partialTicks,
+                        c.getRGB(),
+                        event.getPartialTicks(),
                         false
                 );
             }
@@ -121,10 +119,10 @@ public class FeatureStonkDebug extends SimpleFeature {
             cy /= spot.getOffsetPointSet().size();
             cz /= spot.getOffsetPointSet().size();
             cy += 0.2f;
-            RenderUtils.drawTextAtWorld(
+            event.getContext().drawTextAtWorld(
                     Arrays.stream(spot.getTools())
                             .map(a -> a == null ? "null" : a.getBreakingPower()+":"+a.getHarvestLv()).collect(Collectors.joining(";"))
-                    +":::"+spot.getClusterId()+"/"+spot.isStonkingReq(), (float) cx, (float) cy, (float) cz, actual.getRGB(), 0.01f, false, true, event.partialTicks);
+                    +":::"+spot.getClusterId()+"/"+spot.isStonkingReq(), (float) cx, (float) cy, (float) cz, c.getRGB(), 0.01f, false, true, event.getPartialTicks());
 
 
         }

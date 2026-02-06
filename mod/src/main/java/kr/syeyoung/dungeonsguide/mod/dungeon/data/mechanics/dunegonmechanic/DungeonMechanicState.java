@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 
 import java.awt.*;
 import java.util.Set;
@@ -32,7 +33,7 @@ public interface DungeonMechanicState {
 
 
 
-    void highlight(Color color, String name, float partialTicks);
+    void highlight(Color color, String name, UWorldRenderContext context, float partialTicks);
     String getCurrentState();
     Set<String> getTotalPossibleStates(); // no one cares.
     OffsetPoint getRepresentingPoint();

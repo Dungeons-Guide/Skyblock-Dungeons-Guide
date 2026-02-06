@@ -84,7 +84,7 @@ public class ValueEditRoomDoor extends MPanel implements ValueEdit<DungeonRoomDo
 
     @Override
     public void renderWorld(float partialTicks) {
-        dummyState.highlight(new Color(0, 255, 255, 50), parameter.getName(), partialTicks);
+        dummyState.highlight(new Color(0, 255, 255, 50), parameter.getName(), , partialTicks);
     }
 
     @Override

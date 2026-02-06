@@ -45,6 +45,7 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
@@ -118,7 +119,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
 //        if (FeatureRegistry.DEBUG.isEnabled() && (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit)) { $$ ROOMEDIT
 //            for (Map.Entry<String, DungeonMechanicState> value : dungeonRoom.getMechanics().entrySet()) {
 //                if (value.getValue() == null) continue;

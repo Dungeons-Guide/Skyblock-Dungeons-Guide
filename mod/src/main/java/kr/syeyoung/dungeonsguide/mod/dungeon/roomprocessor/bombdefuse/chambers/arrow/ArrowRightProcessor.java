@@ -23,11 +23,11 @@ import com.google.common.collect.HashBiMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 import java.util.HashMap;
@@ -63,10 +63,10 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
 
-        RenderUtils.drawTextAtWorld(answer == -1 ? "Answer not received yet. Visit left room to obtain solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        context.drawTextAtWorld(answer == -1 ? "Answer not received yet. Visit left room to obtain solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
 
         for (int i = 0; i < 9; i++) {
             VectorI3D pos = grid[i];
@@ -75,8 +75,8 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
             String charac = arrows.get(direction);
             String car2 = arrows.get(direction2);
 
-            RenderUtils.drawTextAtWorld(car2, pos.getX()+ 0.5f, pos.getY()+ 0.6f, pos.getZ()+ 0.5f, direction == direction2 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
-            RenderUtils.drawTextAtWorld(charac, pos.getX()+ 0.5f, pos.getY()+ 0.2f, pos.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, partialTicks);
+            context.drawTextAtWorld(car2, pos.getX()+ 0.5f, pos.getY()+ 0.6f, pos.getZ()+ 0.5f, direction == direction2 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
+            context.drawTextAtWorld(charac, pos.getX()+ 0.5f, pos.getY()+ 0.2f, pos.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, partialTicks);
         }
     }
 

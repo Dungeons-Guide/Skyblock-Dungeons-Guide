@@ -25,13 +25,12 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import kr.syeyoung.modapi.event.events.RenderWorldEvent;
 
 import java.util.List;
 
@@ -45,8 +44,8 @@ public class FeatureBoxBats extends SimpleFeature  {
 
 
     @DGEventHandler
-    public void drawWorld(RenderWorldLastEvent event) {
-        float partialTicks = event.partialTicks;
+    public void drawWorld(RenderWorldEvent event) {
+        float partialTicks = event.getPartialTicks();
         
         if (!SkyblockStatus.isOnDungeon()) return;
 
@@ -60,10 +59,15 @@ public class FeatureBoxBats extends SimpleFeature  {
                 new AABB(player.x - r, player.y - r, player.z - r, player.x + r, player.y + r, player.z + r));
 
         AColor c = this.<AColor>getParameter("color").getValue();
-        for (UEntity entitySkeleton : skeletonList) {
-            if (entitySkeleton.getPositionVector().distanceSq(player) >= sq) continue;
-            if (!entitySkeleton.isInvisible())
-                RenderUtils.highlightBox(entitySkeleton, c, partialTicks, true);
+        for (UEntity entity : skeletonList) {
+            if (entity.getPositionVector().distanceSq(player) >= sq) continue;
+            if (!entity.isInvisible()) {
+                double x = (entity.getPrevPosX() + (entity.getPosX() - entity.getPrevPosX()) * partialTicks);
+                double y =  (entity.getPrevPosY() + (entity.getPosY() - entity.getPrevPosY()) * partialTicks);
+                double z = (entity.getPrevPosZ() + (entity.getPosZ() - entity.getPrevPosZ()) * partialTicks);
+
+                event.getContext().highlightBox(x, y, z, new AABB(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4), c.getRGB(), partialTicks, true);
+            }
         }
     }
 }

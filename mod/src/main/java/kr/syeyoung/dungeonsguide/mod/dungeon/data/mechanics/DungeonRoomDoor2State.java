@@ -30,9 +30,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Dung
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import lombok.Data;
 
 import javax.vecmath.Vector2d;
@@ -65,11 +65,11 @@ public class DungeonRoomDoor2State implements DungeonMechanicState {
     }
 
     @Override
-    public void highlight(Color color, String name, float partialTicks) {
+    public void highlight(Color color, String name, UWorldRenderContext context, float partialTicks) {
         VectorI3D pos = data.pfPoint.getBlockPos(room);
-        RenderUtils.highlightBlock(pos, color, partialTicks);
-        RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.75f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
-        RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0.25f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        context.highlightBlock(pos, color, partialTicks, false);
+        context.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.75f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        context.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0.25f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
 
     @Override

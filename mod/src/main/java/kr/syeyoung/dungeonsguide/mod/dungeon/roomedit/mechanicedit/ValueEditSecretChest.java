@@ -90,7 +90,7 @@ public class ValueEditSecretChest extends MPanel implements ValueEdit<DungeonSec
 
     @Override
     public void renderWorld(float partialTicks) {
-        dummyState.highlight(new Color(0, 255, 0, 50), parameter.getName(), partialTicks);
+        dummyState.highlight(new Color(0, 255, 0, 50), parameter.getName(), , partialTicks);
     }
 
     @Override

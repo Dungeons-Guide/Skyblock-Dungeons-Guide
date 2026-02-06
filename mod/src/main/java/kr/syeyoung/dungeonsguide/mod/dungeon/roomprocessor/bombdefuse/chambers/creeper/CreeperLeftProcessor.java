@@ -23,8 +23,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.BlockType;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 
@@ -68,13 +68,13 @@ public class CreeperLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
         for (int i = 0; i < 9; i++) {
             if (((answer >> i) & 0x01) != 0) {
-                RenderUtils.highlightBlock(poses[i], new Color(255,0,0,100), partialTicks, false);
+                context.highlightBlock(poses[i], new Color(255,0,0,100), partialTicks, false);
             } else {
-                RenderUtils.highlightBlock(poses[i], new Color(0,255,0,100), partialTicks, false);
+                context.highlightBlock(poses[i], new Color(0,255,0,100), partialTicks, false);
             }
         }
     }

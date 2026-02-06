@@ -22,9 +22,9 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.UBlockState;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 
@@ -57,12 +57,12 @@ public class MazeRightProcessor extends GeneralDefuseChamberProcessor {
     private UBlockState latestRequest = null;
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
-        RenderUtils.drawTextAtWorld(latestRequest == null ? "Request not received yet" : "Requested received "+latestRequest.getBlock().getLocalizedName() , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
+        context.drawTextAtWorld(latestRequest == null ? "Request not received yet" : "Requested received "+latestRequest.getBlock().getLocalizedName() , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
         VectorI3D pos = blockToBlockPosMap.get(latestRequest);
         if (pos == null) return;
-        RenderUtils.highlightBlock(pos, new Color(0,255,0,100), partialTicks, false);
+        context.highlightBlock(pos, 0x6400FF00, partialTicks, false);
     }
 
     @Override

@@ -24,11 +24,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 public class NumberLeftProcessor extends GeneralDefuseChamberProcessor {
@@ -72,12 +72,12 @@ public class NumberLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
-            RenderUtils.drawTextAtWorld(d1+"", d1p.getX()+ 0.5f, d1p.getY()+ 0.5f, d1p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-            RenderUtils.drawTextAtWorld(d2+"", d2p.getX()+ 0.5f, d2p.getY()+ 0.5f, d2p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-            RenderUtils.drawTextAtWorld(d3+"", d3p.getX()+ 0.5f, d3p.getY()+ 0.5f, d3p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-            RenderUtils.drawTextAtWorld(d4+"", d4p.getX()+ 0.5f, d4p.getY()+ 0.5f, d4p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
+        context.drawTextAtWorld(d1+"", d1p.getX()+ 0.5f, d1p.getY()+ 0.5f, d1p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        context.drawTextAtWorld(d2+"", d2p.getX()+ 0.5f, d2p.getY()+ 0.5f, d2p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        context.drawTextAtWorld(d3+"", d3p.getX()+ 0.5f, d3p.getY()+ 0.5f, d3p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        context.drawTextAtWorld(d4+"", d4p.getX()+ 0.5f, d4p.getY()+ 0.5f, d4p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
 
     }
 

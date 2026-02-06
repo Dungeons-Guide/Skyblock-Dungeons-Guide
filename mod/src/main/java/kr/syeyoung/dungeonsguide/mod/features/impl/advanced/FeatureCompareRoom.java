@@ -31,21 +31,12 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
+import kr.syeyoung.modapi.event.events.RenderWorldEvent;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.UBlockState;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.BlockPos;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -71,7 +62,7 @@ public class FeatureCompareRoom extends SimpleFeature {
 
 
     @DGEventHandler
-    public void onWorldRenderLast(RenderWorldLastEvent event) {
+    public void onWorldRenderLast(RenderWorldEvent event) {
         if (!FeatureRegistry.DEBUG.isEnabled()) return;
         if (toggleCompareStatus) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
@@ -85,39 +76,22 @@ public class FeatureCompareRoom extends SimpleFeature {
         if (dungeonRoom == null) return;
         if (dungeonRoom.getDungeonRoomInfo() == null) return;
 
+        UWorldRenderContext ctx = event.getContext();
         if ( dungeonRoom.getDungeonRoomInfo().hasSchematic()) {
             OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new VectorI3D(0,0,0));
             for (VectorI3D allInBox : VectorI3D.getAllInBox(dungeonRoom.getRoomBounds().getMin().add(0, -60, 0), dungeonRoom.getRoomBounds().getMax().add(0, 180, 0))) {
                 offsetPoint.setPosInWorld(dungeonRoom, allInBox);
                 UBlockState blockState = dungeonRoom.getDungeonRoomInfo().getBlock(offsetPoint, dungeonRoom.getRoomMatcher().getRotation());
                 if (blockState != dungeonRoom.getRoomWorld().getBlockStateAt(allInBox)) {
-                    RenderUtils.highlightBlock(allInBox, new Color(0x70FF0000,true), event.partialTicks, false);
-                    Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-                    float partialTicks = event.partialTicks;
-                    RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
-                    GlStateManager.translate(allInBox.getX(), allInBox.getY(), allInBox.getZ());
-                    GlStateManager.scale(0.5f, 0.5f, 0.5f);
-                    GlStateManager.translate(0.5f,0.5f,0.5f);
-                    GlStateManager.disableLighting();
-                    GlStateManager.enableAlpha();
-                    GlStateManager.enableDepth();
-                    GlStateManager.depthMask(true);
-//                        GlStateManager.disableDepth();
-//                        GlStateManager.depthMask(false);
-                    GlStateManager.enableBlend();
+                    ctx.highlightBlock(allInBox, 0x70FF0000, event.getPartialTicks(), false);
+                    float partialTicks = event.getPartialTicks();
 
-                    Tessellator tessellator = Tessellator.getInstance();
-                    WorldRenderer vertexBuffer = tessellator.getWorldRenderer();
-                    vertexBuffer.begin(7, DefaultVertexFormats.BLOCK);
-                    BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-//                        GlStateManager.color(1.0f,1.0f,1.0f,0.1f);
-                    blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld,
-                            blockrendererdispatcher.getBlockModelShapes().getModelForState((IBlockState) blockState.getIBlockState()),
-                            (IBlockState) blockState.getIBlockState(), new BlockPos(0,0,0), vertexBuffer, false);
-                    tessellator.draw();
-
-                    GlStateManager.enableLighting();
-                    GlStateManager.popMatrix();
+                    ctx.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
+                    ctx.translate(allInBox.getX(), allInBox.getY(), allInBox.getZ());
+                    ctx.scale(0.5f, 0.5f, 0.5f);
+                    ctx.translate(0.5f,0.5f,0.5f);
+                    ctx.renderBlock(0,0,0, blockState);
+                    ctx.popMatrix();
                 }
             }
         }

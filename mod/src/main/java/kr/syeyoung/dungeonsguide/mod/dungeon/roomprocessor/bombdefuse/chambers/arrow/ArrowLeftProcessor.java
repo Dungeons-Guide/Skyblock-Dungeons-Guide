@@ -24,11 +24,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 import java.util.HashMap;
@@ -72,8 +72,8 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
 
         if (answer == -1) return;
         for (int i = 0; i < 9; i++) {
@@ -81,7 +81,7 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
             int direction = answers[i];
             String charac = arrows.get(direction);
 
-            RenderUtils.drawTextAtWorld(charac, pos.getX()+ 0.5f, pos.getY()+ 0.5f, pos.getZ()+ 0.5f, 0xFFFFFFFF, 0.05F, false, false, partialTicks);
+            context.drawTextAtWorld(charac, pos.getX()+ 0.5f, pos.getY()+ 0.5f, pos.getZ()+ 0.5f, 0xFFFFFFFF, 0.05F, false, false, partialTicks);
         }
     }
 

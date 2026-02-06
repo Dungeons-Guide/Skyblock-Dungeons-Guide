@@ -24,19 +24,20 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
+import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.BlockType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public class RoomProcessorIcePath extends GeneralRoomProcessor {
 
@@ -44,7 +45,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
     private OffsetPoint[][] map2;
     private final Set<OffsetPoint> endNode = new HashSet<OffsetPoint>();
 
-    private final List<VectorI3D> solution = new ArrayList<>();
+    private final List<Vector3D> solution = new ArrayList<>();
 
     private VectorI3D lastSilverfishLoc;
     private int sameTick;
@@ -120,7 +121,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
                 {
                     solution.clear();
                     for (Point point : tempSol) {
-                        solution.add(map2[point.y][point.x].getBlockPos(getDungeonRoom()));
+                        solution.add(new Vector3D(map2[point.y][point.x].getBlockPos(getDungeonRoom())).add(0.5, 0.5, 0.5));
                     }
                 }
 
@@ -134,11 +135,14 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
 
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
         if (!FeatureRegistry.SOLVER_SILVERFISH.isEnabled()) return;
         if (!err)
-        RenderUtils.drawLines(solution, FeatureRegistry.SOLVER_SILVERFISH.getLineColor(), (float) FeatureRegistry.SOLVER_SILVERFISH.getLineWidth(), partialTicks, true);
+        context.drawLinesVec3(solution, FeatureRegistry.SOLVER_SILVERFISH.getLineColor().getRGB(),
+                FeatureRegistry.SOLVER_SILVERFISH.getLineColor().isChroma(),
+                FeatureRegistry.SOLVER_SILVERFISH.getLineColor().getChromaSpeed(),
+                (float) FeatureRegistry.SOLVER_SILVERFISH.getLineWidth(), partialTicks, true);
     }
 
     public Point getPointOfSilverFishOnMap(VectorI3D blockPos) {

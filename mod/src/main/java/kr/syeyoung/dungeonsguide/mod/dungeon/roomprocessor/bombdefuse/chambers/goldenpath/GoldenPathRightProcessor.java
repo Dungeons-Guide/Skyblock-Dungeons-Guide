@@ -18,14 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.goldenpath;
 
-import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 
 import java.awt.*;
 import java.util.LinkedList;
@@ -52,14 +52,14 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
             new Point(1, 0)
     };
 
-    private final LinkedList<VectorI3D> blocksolution = new LinkedList<>();
+    private final LinkedList<Vector3D> blocksolution = new LinkedList<>();
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
-        RenderUtils.drawTextAtWorld(blocksolution.size() == 0 ? "Answer not received yet. Visit left room to obtain solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
+        context.drawTextAtWorld(blocksolution.size() == 0 ? "Answer not received yet. Visit left room to obtain solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
 
-        RenderUtils.drawLines(blocksolution, new AColor(0,0,255,0),1, partialTicks, false);
+        context.drawLinesVec3(blocksolution,0xFF0000FF, false, 0,1, partialTicks, false);
 
     }
 
@@ -72,11 +72,11 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
 
             blocksolution.clear();
             VectorI3D lastLoc = new VectorI3D(4,0,0);
-            blocksolution.addFirst(getChamber().getBlockPos(4,1,0));
+            blocksolution.addFirst(getChamber().getBlockPos(4,1,0).toVector3D().add(0.5, 0.5, 0.5));
             for (Character c:actual.toCharArray()) {
                 int dir = Integer.parseInt(c+"") % 4;
                 lastLoc = lastLoc.add(vectors[dir].x, 0, vectors[dir].y);
-                blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()));
+                blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()).toVector3D().add(0.5, 0.5, 0.5));
             }
 
             // TODO: find better way to show solution

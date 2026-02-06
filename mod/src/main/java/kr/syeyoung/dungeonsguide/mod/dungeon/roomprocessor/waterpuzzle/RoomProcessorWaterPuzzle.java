@@ -30,12 +30,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle.fallback.
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UWorld;
@@ -317,15 +317,15 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
         if (!FeatureRegistry.SOLVER_WATERPUZZLE.isEnabled()) return;
         if (!argumentsFulfilled) return;
         for (int y = 0; y < nodes.length; y++) {
             for (int x = 0; x < nodes[y].length; x++) {
                 Simulator.Node n = nodes[y][x];
                 if (n.getNodeType().isWater()) {
-                    RenderUtils.highlightBlock(ptMapping.get(new Simulator.Pt(x,y)), new Color(0, 255, 0, 50), partialTicks, true);
+                    context.highlightBlock(ptMapping.get(new Simulator.Pt(x,y)), new Color(0, 255, 0, 50), partialTicks, true);
                 }
             }
         }
@@ -346,10 +346,9 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                     // target:
 
                     if (i == idx) {
-                        RenderUtils.drawLine(
-                                ModAPI.getAPI().getPlayer().getPositionEyes(partialTicks),
-                                new Vector3D(pos).add(0.5, 0, 0.5),
-                                Color.green,
+                        context.drawLinesVec3(
+                                Arrays.asList(ModAPI.getAPI().getPlayer().getPositionEyes(partialTicks),  new Vector3D(pos).add(0.5, 0, 0.5)),
+                                Color.green.getRGB(), false, 0, 2.0f,
                                 partialTicks,
                                 false);
                     }
@@ -358,7 +357,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
 
                     double time = (target-System.currentTimeMillis()) / 1000.0 + 0.051;
                     if (time < 0) time = 0;
-                    RenderUtils.drawTextAtWorld(String.format("%.1f", time)+"s", pos.getX()+0.5f, pos.getY()+(i - idx)*0.2f - 0.5f, pos.getZ()+0.5f,
+                    context.drawTextAtWorld(String.format("%.1f", time)+"s", pos.getX()+0.5f, pos.getY()+(i - idx)*0.2f - 0.5f, pos.getZ()+0.5f,
                             (i == idx) && target < System.currentTimeMillis() ? 0xFF00FF00 : 0xFFFF5500, 0.05f, false, false, partialTicks);
                 }
                 culMoves += moves;

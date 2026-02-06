@@ -104,7 +104,7 @@ public class ValueEditArrowTrap extends MPanel implements ValueEdit<DungeonArrow
 
     @Override
     public void renderWorld(float partialTicks) {
-        dummystate.highlight(new Color(0,255,255,50), parameter.getName(), partialTicks);
+        dummystate.highlight(new Color(0,255,255,50), parameter.getName(), , partialTicks);
     }
 
     @Override

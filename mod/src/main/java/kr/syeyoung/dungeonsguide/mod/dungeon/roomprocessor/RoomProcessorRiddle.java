@@ -19,15 +19,16 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UWorld;
@@ -101,11 +102,12 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
     VectorI3D chest;
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
         if (!FeatureRegistry.SOLVER_RIDDLE.isEnabled()) return;
         if (chest != null) {
-            RenderUtils.highlightBoxAColor(new AABB(chest.getX(), chest.getY(), chest.getZ(), chest.getX()+1, chest.getY() + 1, chest.getZ() + 1),  FeatureRegistry.SOLVER_RIDDLE.getTargetColor(), partialTicks, true);
+            AColor color =  FeatureRegistry.SOLVER_RIDDLE.getTargetColor();
+            context.highlightBox(new AABB(chest.getX(), chest.getY(), chest.getZ(), chest.getX()+1, chest.getY() + 1, chest.getZ() + 1), color.getRGB(), color.isChroma(), color.getChromaSpeed(), partialTicks, true);
         }
     }
 

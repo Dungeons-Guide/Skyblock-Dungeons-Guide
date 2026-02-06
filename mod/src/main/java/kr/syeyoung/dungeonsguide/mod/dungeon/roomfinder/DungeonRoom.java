@@ -36,7 +36,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.SerializableBlockPos;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonRoomMatchEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonStateChangeEvent;
-//import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
@@ -58,8 +57,8 @@ import lombok.Setter;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -202,8 +201,11 @@ public class DungeonRoom  {
                 _mechanics.put(stringDungeonMechanicDataEntry.getKey(), stringDungeonMechanicDataEntry.getValue().createState(this));
             }
             int index = 0;
-            for (DungeonDoor door : doors) {
-                if (door.getType().isExist()) _mechanics.put((door.getType().getName())+"-"+(++index), new DungeonRoomDoorState(this, door));
+            if (_mechanics.values().stream().noneMatch(a -> a instanceof DungeonRoomDoor2State)) {
+                for (DungeonDoor door : doors) {
+                    if (door.getType().isExist())
+                        _mechanics.put((door.getType().getName()) + "-" + (++index), new DungeonRoomDoorState(this, door));
+                }
             }
         }
         return _mechanics;
@@ -274,7 +276,6 @@ public class DungeonRoom  {
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,16), new Vector2d(0, -16), new Vector2d(16, 0), new Vector2d(-16 , 0));
 
     private void buildDoors(Set<Pair<Vector2d, EDungeonDoorType>> doorsAndStates) {
-        if (getDungeonRoomInfo().getMechanics().values().stream().noneMatch(a -> a instanceof DungeonRoomDoor2State.DungeonRoomDoor2Data)) {
             Set<Pair<VectorI3D, EDungeonDoorType>> positions = new HashSet<>();
             VectorI3D pos = context.getScaffoldParser().getDungeonMapLayout().roomPointToWorldPoint(minRoomPt).add(16, 0, 16);
             for (Pair<Vector2d, EDungeonDoorType> doorsAndState : doorsAndStates) {
@@ -286,7 +287,6 @@ public class DungeonRoom  {
             for (Pair<VectorI3D, EDungeonDoorType> door : positions) {
                 doors.add(new DungeonDoor(context.getWorld(), door.getFirst(), door.getSecond()));
             }
-        }
     }
 
     private RoomMatcher roomMatcher = null;

@@ -31,7 +31,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
-//import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.ArrayBackedBlockMap;
@@ -49,12 +48,12 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.dungeonsguide.mod.utils.DungeonServerLaunchUtils;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.event.events.RenderWorldEvent;
 import kr.syeyoung.modapi.event.events.WorldUnloadEvent;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.IBlockRegistry;
@@ -62,18 +61,9 @@ import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.input.Keyboard;
 
@@ -387,14 +377,14 @@ public class FeatureRoomEdit  extends SimpleFeature {
         }
     }
     @DGEventHandler()
-    public void showBlockUpdates(RenderWorldLastEvent event) {
+    public void showBlockUpdates(RenderWorldEvent event) {
         if (blockUpdates != null) {
-            GlStateManager.enableDepth();
-            GlStateManager.enableCull();
+//            GlStateManager.enableDepth();
+//            GlStateManager.enableCull();
             for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate blockUpdate : blockUpdates) {
                 for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
                     if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(updatedBlock.getPos()) > 100)
-                        RenderUtils.highlightBlock(updatedBlock.getPos(), new Color(0x33FFFF00, true), event.partialTicks, false);
+                        event.getContext().highlightBlock(updatedBlock.getPos(), 0x33FFFF00, event.getPartialTicks(), false);
                     UBlockState blockstate1 = updatedBlock.getBlock();
                     UBlockState blockstate2 = ModAPI.getAPI().getWorld().getBlockStateAt(updatedBlock.getPos());
 
@@ -403,33 +393,14 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
 //                    GlStateManager.enableCull();
                     if (!updatedBlock.getBlock().isOf(BlockType.AIR, BlockType.BARRIER)) {
-                        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-                        float partialTicks = event.partialTicks;
+                        float partialTicks = event.getPartialTicks();
 
-                        RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
-
-                        GlStateManager.disableLighting();
-                        GlStateManager.enableAlpha();
-//                        GlStateManager.disableDepth();
-//                        GlStateManager.depthMask(false);
-                        GlStateManager.enableBlend();
-
-                        Tessellator tessellator = Tessellator.getInstance();
-                        WorldRenderer vertexBuffer = tessellator.getWorldRenderer();
-                        vertexBuffer.begin(7, DefaultVertexFormats.BLOCK);
-                        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-//                        GlStateManager.color(1.0f,1.0f,1.0f,0.1f);
-                        blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld,
-                                blockrendererdispatcher.getBlockModelShapes().getModelForState((IBlockState) updatedBlock.getBlock().getIBlockState()),
-                                ((IBlockState)updatedBlock.getBlock().getIBlockState()), new BlockPos(updatedBlock.getPos().x, updatedBlock.getPos().y, updatedBlock.getPos().z), vertexBuffer, false);
-                        tessellator.draw();
-
-                        GlStateManager.enableLighting();
-                        GlStateManager.popMatrix();
+                        event.getContext().pushAndTranslateAccordingToRenderViewEntity(partialTicks);
+                        event.getContext().renderBlock(updatedBlock.getPos().x, updatedBlock.getPos().y, updatedBlock.getPos().z, updatedBlock.getBlock());
+                        event.getContext().popMatrix();
                     } else {
-                        RenderUtils.highlightBlock(updatedBlock.getPos(),
-                                updatedBlock.getBlock().isOf(BlockType.AIR) ? new Color(0x50FF00FF, true)
-                                :  new Color(0x500000FF, true), event.partialTicks, true);
+                        event.getContext().highlightBlock(updatedBlock.getPos(),
+                                updatedBlock.getBlock().isOf(BlockType.AIR) ? 0x50FF00FF : 0x500000FF, event.getPartialTicks(), true);
                     }
                 }
             }

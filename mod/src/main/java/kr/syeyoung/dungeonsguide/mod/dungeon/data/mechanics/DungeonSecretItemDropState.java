@@ -34,7 +34,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISec
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
@@ -43,6 +42,7 @@ import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityItem;
 import kr.syeyoung.modapi.item.Item;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -136,11 +136,11 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
     }
 
     @Override
-    public void highlight(Color color, String name, float partialTicks) {
+    public void highlight(Color color, String name, UWorldRenderContext context, float partialTicks) {
         VectorI3D pos = getSecretPoint().getBlockPos(room);
-        RenderUtils.highlightBlock(pos, color, partialTicks);
-        RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
-        RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        context.highlightBlock(pos, color, partialTicks, false);
+        context.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        context.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
 
 
         if (data.moveNearest != null && FeatureRegistry.DEBUG_AIR.isEnabled())

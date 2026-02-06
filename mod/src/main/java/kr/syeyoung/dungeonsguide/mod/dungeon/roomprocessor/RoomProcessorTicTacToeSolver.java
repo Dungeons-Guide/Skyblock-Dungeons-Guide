@@ -18,11 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
@@ -30,6 +30,7 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityItemFrame;
 import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.item.UItemStack;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UMapData;
@@ -183,8 +184,8 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
         if (!FeatureRegistry.SOLVER_TICTACTOE.isEnabled()) return;
         if (chosePos != -1) {
             VectorI3D block = board.getOffsetPointList().get(chosePos).getBlockPos(getDungeonRoom());
@@ -200,9 +201,10 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
                 }
                 whoseturn = ones < negativeones;
             }
-            RenderUtils.highlightBoxAColor(new AABB(block.getX(), block.getY(), block.getZ(), block.getX()+1, block.getY() + 1, block.getZ() + 1),
-                    whoseturn ? FeatureRegistry.SOLVER_TICTACTOE.getTargetColor()
-                            : FeatureRegistry.SOLVER_TICTACTOE.getTargetColor2(), partialTicks, true);
+            AColor color = whoseturn ? FeatureRegistry.SOLVER_TICTACTOE.getTargetColor() : FeatureRegistry.SOLVER_TICTACTOE.getTargetColor2();
+
+            context.highlightBox(new AABB(block.getX(), block.getY(), block.getZ(), block.getX()+1, block.getY() + 1, block.getZ() + 1),
+                    color.getRGB(), color.isChroma(), color.getChromaSpeed(), partialTicks, true);
         }
     }
 

@@ -21,10 +21,10 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.IBlockAccessible;
 import kr.syeyoung.modapi.world.UBlockState;
@@ -32,6 +32,7 @@ import kr.syeyoung.modapi.world.UWorld;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
@@ -119,8 +120,8 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
 
     private static final Color[] colors = new Color[] {Color.red, Color.orange, Color.green, Color.cyan, Color.blue, Color.pink, Color.yellow, Color.darkGray, Color.lightGray};
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
         if (!FeatureRegistry.SOLVER_CREEPER.isEnabled()) return;
         UWorld w = getDungeonRoom().getContext().getWorld();
         for (int i = 0; i < poses.size(); i++) {
@@ -128,15 +129,16 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
             Color color = colors[i % colors.length];
             boolean oneIsConnected = !w.getBlockStateAt(poset[0]).isOf(BlockType.SEA_LANTERN) &&
                     !w.getBlockStateAt(poset[1]).isOf(BlockType.SEA_LANTERN);
-            RenderUtils.drawLine(new Vector3D(poset[0]).add(0.5, 0.5, 0.5),
-                    new Vector3D(poset[1]).add(0.5, 0.5, 0.5), oneIsConnected ? new Color(0,0,0,50) : color, partialTicks, true);
+            context.drawLinesVec3(
+                    Arrays.asList(new Vector3D(poset[0]).add(0.5, 0.5, 0.5), new Vector3D(poset[1]).add(0.5, 0.5, 0.5))
+                    , oneIsConnected ? 0x32000000 : color.getRGB(), false, 0.0f, 1.0f, partialTicks, true);
         }
         final VectorI3D low = getDungeonRoom().getRoomBounds().getMin();
         final AABB axis = new AABB(
                 low.getX() + 17, low.getY() + 5, low.getZ() + 17,
                 low.getX() + 16, low.getY() + 8.5, low.getZ() + 16
         );
-        RenderUtils.highlightBox(axis, new Color(0x4400FF00, true), partialTicks, false);
+        context.highlightBox(axis, 0x4400FF00, partialTicks, false);
     }
 
     public static class Generator implements RoomProcessorGenerator<RoomProcessorCreeperSolver> {

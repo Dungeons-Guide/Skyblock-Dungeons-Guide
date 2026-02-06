@@ -30,9 +30,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Worl
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.WorldMutatingMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Data;
@@ -81,18 +81,18 @@ public class DungeonFloorTrapState implements DungeonMechanicState, WorldMutatin
     }
 
     @Override
-    public void highlight(Color color, String name, float partialTicks) {
+    public void highlight(Color color, String name, UWorldRenderContext context, float partialTicks) {
         if (data.secretPoint.getOffsetPointList().isEmpty()) return;
         OffsetPoint firstPoint = data.secretPoint.getOffsetPointList().get(0);
         VectorI3D pos = firstPoint.getBlockPos(room);
-        RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.75f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
-        RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0.25f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        context.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.75f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        context.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0.25f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
 
         List<VectorI3D> list = new ArrayList<>();
         for (OffsetPoint offsetPoint : data.secretPoint.getOffsetPointList()) {
             list.add(offsetPoint.getBlockPos(room));
         }
-        RenderUtils.highlightBlocksStencil(list, partialTicks, color, false);
+        context.highlightBlocksStencil(list, partialTicks, color, false);
     }
 
     @Override

@@ -8,13 +8,9 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
-import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
-import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
-import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.event.events.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 
 import java.awt.*;
@@ -91,7 +87,7 @@ public class LiveRouteRegistry extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onWorldRenderLast(RenderWorldLastEvent event) {
+    public void onWorldRenderLast(RenderWorldEvent event) {
         RoomRouteHandler roomRouteHandler = getRoomHandler(getRoomIn());
         if (roomRouteHandler == null) return;
         roomRouteHandler.onWorldRenderLast(event);

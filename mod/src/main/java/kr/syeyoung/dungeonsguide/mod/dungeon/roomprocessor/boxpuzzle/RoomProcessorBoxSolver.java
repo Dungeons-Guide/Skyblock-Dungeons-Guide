@@ -33,7 +33,9 @@ import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
+import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UWorld;
 
@@ -190,7 +192,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             List<Point> semi_pathFound = pathfind(currBoard, player, target);
             pathFound = new LinkedList<>();
             for (Point point : semi_pathFound) {
-                pathFound.add(poses[point.y][point.x].add(0,-1,0));
+                pathFound.add(poses[point.y][point.x].toVector3D().add(0.5,-0.5,0.5));
             }
 
             lastPlayer = player;
@@ -214,7 +216,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             List<Point> semi_pathFound = pathfind(currBoard, player, target);
             for (int i1 = semi_pathFound.size() - 1; i1 >= 0; i1--) {
                 Point point = semi_pathFound.get(i1);
-                totalPath.add(poses[point.y][point.x].add(0, -1, 0));
+                totalPath.add(poses[point.y][point.x].toVector3D().add(0.5, -0.5, 0.5));
             }
 
             player = target;
@@ -253,8 +255,8 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     }
 
     private List<BoxPuzzleSolvingThread.BoxMove> solution;
-    private List<VectorI3D> pathFound;
-    private List<VectorI3D> totalPath;
+    private List<Vector3D> pathFound;
+    private List<Vector3D> totalPath;
     private List<VectorI3D> totalPushedBlocks;
     private Point lastPlayer;
 
@@ -340,8 +342,8 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
         if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
         if (bugged) return;
         if (!calcDone) return;
@@ -359,21 +361,21 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
                 VectorI3D highlight = pos2.add(dir);
                 AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(MathUtils.clamp_double(ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(highlight), 100, 255) / 255);
-                RenderUtils.highlightBoxAColor(new AABB(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, partialTicks, false);
+                context.highlightBox(new AABB(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color.getRGB(), color.isChroma(), color.getChromaSpeed(), partialTicks, false);
             }
 
             if (pathFound != null) {
-                RenderUtils.drawLines(pathFound, FeatureRegistry.SOLVER_BOX.getLineColor(), (float) FeatureRegistry.SOLVER_BOX.getLineWidth(), partialTicks, true);
+                context.drawLinesVec3(pathFound, FeatureRegistry.SOLVER_BOX.getLineColor().getRGB(), FeatureRegistry.SOLVER_BOX.getLineColor().isChroma(), FeatureRegistry.SOLVER_BOX.getLineColor().getChromaSpeed(), (float) FeatureRegistry.SOLVER_BOX.getLineWidth(), partialTicks, true);
             }
         } else {
             if (totalPath != null) {
-                RenderUtils.drawLines(totalPath, FeatureRegistry.SOLVER_BOX.getLineColor(), (float) FeatureRegistry.SOLVER_BOX.getLineWidth(), partialTicks, false);
+                context.drawLinesVec3(totalPath, FeatureRegistry.SOLVER_BOX.getLineColor().getRGB(), FeatureRegistry.SOLVER_BOX.getLineColor().isChroma(), FeatureRegistry.SOLVER_BOX.getLineColor().getChromaSpeed(), (float) FeatureRegistry.SOLVER_BOX.getLineWidth(), partialTicks, false);
             }
             if (totalPushedBlocks != null) {
                 for (int i = 0; i < totalPushedBlocks.size(); i++) {
                     VectorI3D pos = totalPushedBlocks.get(i);
-                    RenderUtils.highlightBoxAColor(new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1),  FeatureRegistry.SOLVER_BOX.getTargetColor(), partialTicks, false);
-                    RenderUtils.drawTextAtWorld("#"+i, pos.getX()+0.5f, pos.getY() +0.5f, pos.getZ() + 0.5f, i != step ?
+                    context.highlightBox(new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1),  FeatureRegistry.SOLVER_BOX.getTargetColor().getRGB(), FeatureRegistry.SOLVER_BOX.getTargetColor().isChroma(), FeatureRegistry.SOLVER_BOX.getTargetColor().getChromaSpeed(), partialTicks, false);
+                    context.drawTextAtWorld("#"+i, pos.getX()+0.5f, pos.getY() +0.5f, pos.getZ() + 0.5f, i != step ?
                             RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor2()) : RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor()), 0.1f, false, false, partialTicks);
                 }
             }

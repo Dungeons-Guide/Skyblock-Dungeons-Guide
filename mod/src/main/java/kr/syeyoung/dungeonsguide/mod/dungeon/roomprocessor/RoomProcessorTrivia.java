@@ -20,16 +20,17 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.SkyblockUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONObject;
 
@@ -138,15 +139,16 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
         if (!FeatureRegistry.SOLVER_KAHOOT.isEnabled()) return;
         if (correctAnswer == null) return;
 
         OffsetPoint op = (OffsetPoint) getDungeonRoom().getDungeonRoomInfo().getProperties().get(correctAnswer);
         if (op != null) {
             VectorI3D solution = op.getBlockPos(getDungeonRoom());
-            RenderUtils.highlightBoxAColor(new AABB(solution.getX(), solution.getY(), solution.getZ(), solution.getX()+1, solution.getY() + 1, solution.getZ() + 1),  FeatureRegistry.SOLVER_KAHOOT.getTargetColor(), partialTicks, false);
+            AColor color = FeatureRegistry.SOLVER_KAHOOT.getTargetColor();
+            context.highlightBox(new AABB(solution.getX(), solution.getY(), solution.getZ(), solution.getX()+1, solution.getY() + 1, solution.getZ() + 1), color.getRGB(), color.isChroma(), color.getChromaSpeed(), partialTicks, false);
         }
     }
 

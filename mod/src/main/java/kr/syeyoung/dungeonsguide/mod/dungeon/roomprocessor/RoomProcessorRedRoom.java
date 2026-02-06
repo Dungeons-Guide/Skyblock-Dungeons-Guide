@@ -36,6 +36,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -107,8 +108,8 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
         if (!FeatureRegistry.BOSSFIGHT_WARNING_ON_PORTAL.isEnabled()) return;
 
 
@@ -117,15 +118,15 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
             RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
 
             RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
-            GlStateManager.translate(basePt.x, basePt.y, basePt.z);
+            context.translate(basePt.x, basePt.y, basePt.z);
 
 
             GlStateManager.color(1f, 1f, 1f, 0.5f);
             if (dir == Integer.MIN_VALUE)
-                GlStateManager.rotate(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
+                context.rotate(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
             else
-                GlStateManager.rotate(dir, 0.0f, 1.0f, 0.0f);
-            GlStateManager.scale(-0.05f, -0.05f, 0.05f);
+                context.rotate(dir, 0.0f, 1.0f, 0.0f);
+            context.scale(-0.05f, -0.05f, 0.05f);
             GlStateManager.disableLighting();
             GlStateManager.depthMask(false); GL11.glDisable(GL11.GL_DEPTH_TEST);
             GlStateManager.disableDepth();

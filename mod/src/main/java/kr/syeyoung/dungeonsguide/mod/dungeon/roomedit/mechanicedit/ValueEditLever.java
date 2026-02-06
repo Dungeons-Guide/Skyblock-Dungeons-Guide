@@ -104,7 +104,7 @@ public class ValueEditLever extends MPanel implements ValueEdit<DungeonLeverData
 
     @Override
     public void renderWorld(float partialTicks) {
-        dummyState.highlight(new Color(0, 255, 0, 50), parameter.getName(), partialTicks);
+        dummyState.highlight(new Color(0, 255, 0, 50), parameter.getName(), , partialTicks);
     }
 
     @Override

@@ -22,14 +22,16 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.icefill;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.BlockType;
 
 import java.awt.*;
@@ -41,7 +43,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
-    private final List<List<VectorI3D>> solution = new CopyOnWriteArrayList<List<VectorI3D>>();
+    private final List<List<Vector3D>> solution = new CopyOnWriteArrayList<List<Vector3D>>();
 
 
 
@@ -86,10 +88,10 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
                         return;
                     }
                     hamiltonianPath.add(0,new Point(startX, startY));
-                    List<VectorI3D> poses = new LinkedList<VectorI3D>();
+                    List<Vector3D> poses = new LinkedList<Vector3D>();
                     for (int i = 0; i < hamiltonianPath.size(); i++) {
                         Point p = hamiltonianPath.get(i);
-                        poses.add(map2[p.y][p.x]);
+                        poses.add(map2[p.y][p.x].toVector3D().add(0.5, 0.5, 0.5));
                     }
                     solution.add(poses);
                 });
@@ -107,10 +109,11 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
         if (!FeatureRegistry.SOLVER_ICEPATH.isEnabled()) return;
-        for (List<VectorI3D> solution:this.solution)
-            RenderUtils.drawLines(solution, FeatureRegistry.SOLVER_ICEPATH.getLineColor(), (float) FeatureRegistry.SOLVER_ICEPATH.getLineWidth(), partialTicks, true);
+        AColor color = FeatureRegistry.SOLVER_ICEPATH.getLineColor();
+        for (List<Vector3D> solution:this.solution)
+            context.drawLinesVec3(solution, color.getRGB(), color.isChroma(), color.getChromaSpeed(), (float) FeatureRegistry.SOLVER_ICEPATH.getLineWidth(), partialTicks, true);
     }
 
     public static class Generator implements RoomProcessorGenerator<RoomProcessorIcePath2> {

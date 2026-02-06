@@ -26,8 +26,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Dung
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.DungeonMechanicState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import lombok.Data;
 
 import java.awt.*;
@@ -67,11 +67,11 @@ public class DungeonMushroomState implements DungeonMechanicState {
     }
 
     @Override
-    public void highlight(Color color, String name, float partialTicks) {
+    public void highlight(Color color, String name, UWorldRenderContext context, float partialTicks) {
         VectorI3D pos = data.secretPoint.getBlockPos(room);
-        RenderUtils.highlightBlockStencil(pos, partialTicks, color, false);
-        RenderUtils.drawTextAtWorld("M-" + name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
-        RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        context.highlightBlockStencil(pos, partialTicks, color, false);
+        context.drawTextAtWorld("M-" + name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        context.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
 
 

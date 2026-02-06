@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.rendering.UFontCalculator;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import lombok.Getter;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 
@@ -57,7 +58,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
 
     }
 

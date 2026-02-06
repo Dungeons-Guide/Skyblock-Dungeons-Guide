@@ -30,7 +30,6 @@ import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
-import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
@@ -49,7 +48,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.GuiDisplayer;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.*;
 import kr.syeyoung.modapi.entity.EntityType;
@@ -71,7 +69,6 @@ import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.nbt.ListBinaryTag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
@@ -655,38 +652,42 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
 
     @DGEventHandler
-    public void onRender(RenderWorldLastEvent event) {
+    public void onRender(RenderWorldEvent event) {
         if (!FeatureRegistry.DEBUG.isEnabled()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
+
+        float partialTicks = event.getPartialTicks();
 
         RaycastResult result = ModAPI.getAPI().getObjectMouseOver();
         UEntity hovered = result.getEntityHit();
         if (hovered == null) return;
         EntityData entityData = entityDataMap.get(hovered.getEntityId());
         if (entityData == null) {
-            RenderUtils.drawTextAtWorld("??Unknown??", (float) hovered.getPosX(), (float) hovered.getPosY()+3, (float) hovered.getPosZ(), 0xFF000000, 0.02f, false, true, event.partialTicks);
+            event.getContext().drawTextAtWorld("??Unknown??", (float) hovered.getPosX(), (float) hovered.getPosY()+3, (float) hovered.getPosZ(), 0xFF000000, 0.02f, false, true, partialTicks);
         } else {
             if (entityData.getArmorstand() != null)
-                RenderUtils.drawTextAtWorld(entityData.getArmorstand(), (float) hovered.getPosX(), (float) hovered.getPosY()+3, (float) hovered.getPosZ(), 0xFF000000, 0.02f, false, true, event.partialTicks);
-            RenderUtils.drawTextAtWorld(entityData.getType(), (float) hovered.getPosX(), (float) hovered.getPosY()+3.2f, (float) hovered.getPosZ(), 0xFF00FF00, 0.02f, false, true, event.partialTicks);
+                event.getContext().drawTextAtWorld(entityData.getArmorstand(), (float) hovered.getPosX(), (float) hovered.getPosY()+3, (float) hovered.getPosZ(), 0xFF000000, 0.02f, false, true, partialTicks);
+            event.getContext().drawTextAtWorld(entityData.getType(), (float) hovered.getPosX(), (float) hovered.getPosY()+3.2f, (float) hovered.getPosZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
             Vector3D pos = entityData.getTrajectory().getFirst().getPos();
-            RenderUtils.renderBeaconBeam(
+            event.getContext().renderBeaconBeam(
                     pos.x,
                     pos.y,
                     pos.z,
-                    new AColor(0, 255, 0, 255),
-                    event.partialTicks
+                    0xFF00FF00,
+                    false,
+                    0,
+                    partialTicks
             );
             List<Vector3D> lines = new ArrayList<>();
             for (EntityData.EntityTrajectory entityTrajectory : entityData.getTrajectory()) {
                 if (entityTrajectory.getPos() == null) {
-                    RenderUtils.drawLinesVec3(lines, new AColor(0,255,0,255), 1.0f, event.partialTicks, false);
+                    event.getContext().drawLinesVec3(lines, 0xFF00FF00, false, 0, 1.0f, partialTicks, false);
                     lines.clear();
                     continue;
                 }
                 lines.add(entityTrajectory.getPos());
             }
-            RenderUtils.drawLinesVec3(lines, new AColor(0,255,0,255), 1.0f, event.partialTicks, false);
+            event.getContext().drawLinesVec3(lines, 0xFF00FF00, false, 0, 1.0f, partialTicks, false);
         }
     }
 }

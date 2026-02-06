@@ -21,13 +21,13 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.UBossBar;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UWorld;
@@ -98,14 +98,14 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
         if (!FeatureRegistry.DEBUG.isEnabled()) return;
         try {
             VectorI3D pos = new VectorI3D(205,77, 205);
-            RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, false);
+            context.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, false);
             for (VectorI3D pos2 : progressBar) {
-                RenderUtils.highlightBlock(pos2, w.getBlockStateAt(pos2).isOf(BlockType.SEA_LANTERN) ?
+                context.highlightBlock(pos2, w.getBlockStateAt(pos2).isOf(BlockType.SEA_LANTERN) ?
                             new Color(0, 255, 0, 50) : new Color(255,0,0, 50), partialTicks, false);
             }
         } catch (Exception e) {

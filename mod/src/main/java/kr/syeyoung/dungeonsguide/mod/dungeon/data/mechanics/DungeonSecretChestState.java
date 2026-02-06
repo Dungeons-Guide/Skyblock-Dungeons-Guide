@@ -29,8 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISec
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.tileentities.UTileEntityChest;
@@ -154,11 +154,11 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
     }
 
     @Override
-    public void highlight(Color color, String name, float partialTicks) {
+    public void highlight(Color color, String name, UWorldRenderContext context, float partialTicks) {
         VectorI3D pos = getSecretPoint().getBlockPos(room);
-        RenderUtils.highlightBlockStencil(pos, partialTicks, color, false);
-        RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
-        RenderUtils.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        context.highlightBlockStencil(pos, partialTicks, color, false);
+        context.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        context.drawTextAtWorld(getCurrentState(), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
 
 
         if (data.secretCache != null && FeatureRegistry.DEBUG_ST.isEnabled())

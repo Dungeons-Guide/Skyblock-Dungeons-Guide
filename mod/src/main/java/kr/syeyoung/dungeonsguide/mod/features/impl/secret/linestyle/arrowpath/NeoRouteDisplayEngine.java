@@ -20,6 +20,7 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.util.RaycastResult;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,8 +41,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplayEngineLineProperties> {
@@ -129,7 +130,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
     private NeoRouteDisplayEngineLineProperties settings;
 
     @Override
-    public void renderActionRoute(float partialTicks) {
+    public void renderActionRoute(UWorldRenderContext context, float partialTicks) {
         if (actionRoute.isCalculating()) return;
 
         DungeonRoom dungeonRoom = actionRoute.getDungeonRoom();
@@ -138,64 +139,64 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         if (current -1 >= 0) {
             AbstractAction abstractAction = actions.get(current - 1);
             if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) >= 25))) {
-                drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
+                drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, context, partialTicks);
             }
         }
 
         AbstractAction currentAction = actionRoute.getCurrentAction();
-        renderAction(currentAction, dungeonRoom, partialTicks);
+        renderAction(currentAction, dungeonRoom, context, partialTicks);
     }
 
-    public void renderAction(AbstractAction currentAction, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderAction(AbstractAction currentAction, DungeonRoom dungeonRoom, UWorldRenderContext context, float partialTicks) {
         if (currentAction instanceof AbstractActionMove) {
-            drawActionMove((AbstractActionMove) currentAction, dungeonRoom, partialTicks);
+            drawActionMove((AbstractActionMove) currentAction, dungeonRoom, context, partialTicks);
         } else if (currentAction instanceof ActionClick) {
-            renderActionClick((ActionClick) currentAction, dungeonRoom, partialTicks);
+            renderActionClick((ActionClick) currentAction, dungeonRoom, context, partialTicks);
         } else if (currentAction instanceof ActionClickSet) {
-            renderActionClickSet((ActionClickSet) currentAction, dungeonRoom, partialTicks);
+            renderActionClickSet((ActionClickSet) currentAction, dungeonRoom, context, partialTicks);
         } else if (currentAction instanceof ActionStonkClick) {
-            renderActionStonkClick((ActionStonkClick) currentAction, dungeonRoom, partialTicks);
+            renderActionStonkClick((ActionStonkClick) currentAction, dungeonRoom, context, partialTicks);
         } else if (currentAction instanceof ActionKill) {
-            renderActionKill((ActionKill) currentAction, dungeonRoom, partialTicks);
+            renderActionKill((ActionKill) currentAction, dungeonRoom, context, partialTicks);
         } else if (currentAction instanceof ActionInteract) {
-            renderActionInteract((ActionInteract) currentAction, dungeonRoom ,partialTicks);
+            renderActionInteract((ActionInteract) currentAction, dungeonRoom, context, partialTicks);
         } else if (currentAction instanceof ActionDropItem) {
-            renderActionDropItem((ActionDropItem) currentAction, dungeonRoom, partialTicks);
+            renderActionDropItem((ActionDropItem) currentAction, dungeonRoom, context, partialTicks);
         } else if (currentAction instanceof ActionBreakWithSuperBoom) {
-            renderActionBreakWithSuperboom((ActionBreakWithSuperBoom) currentAction, dungeonRoom, partialTicks);
+            renderActionBreakWithSuperboom((ActionBreakWithSuperBoom) currentAction, dungeonRoom, context, partialTicks);
         } else if (currentAction instanceof AtomicAction) {
             int atomicActionCurrent = ((AtomicAction) currentAction).getCurrent();
             List<AbstractAction> atomicActionActions = ((AtomicAction) currentAction).getActions();
             if (atomicActionCurrent -1 >= 0) {
                 AbstractAction abstractAction = atomicActionActions.get(atomicActionCurrent - 1);
                 if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) >= 25))) {
-                    drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
+                    drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, context, partialTicks);
                 }
             }
-            renderAction(((AtomicAction) currentAction).getCurrentAction(), dungeonRoom, partialTicks);
+            renderAction(((AtomicAction) currentAction).getCurrentAction(), dungeonRoom, context, partialTicks);
         }
     }
 
 
-    public void renderActionKill(ActionKill actionKill, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionKill(ActionKill actionKill, DungeonRoom dungeonRoom, UWorldRenderContext context, float partialTicks) {
         VectorI3D pos = actionKill.getTarget().getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
-        RenderUtils.drawTextAtWorld("Spawn", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
+        context.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
+        context.drawTextAtWorld("Spawn", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionInteract(ActionInteract actionInteract, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionInteract(ActionInteract actionInteract, DungeonRoom dungeonRoom, UWorldRenderContext context, float partialTicks) {
         VectorI3D pos = actionInteract.getTarget().getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
-        RenderUtils.drawTextAtWorld("Interact", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
+        context.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
+        context.drawTextAtWorld("Interact", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionDropItem(ActionDropItem dropItem, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionDropItem(ActionDropItem dropItem, DungeonRoom dungeonRoom, UWorldRenderContext context, float partialTicks) {
         VectorI3D pos = dropItem.getTarget().getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, true);
-        RenderUtils.drawTextAtWorld("Drop Item", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
+        context.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, true);
+        context.drawTextAtWorld("Drop Item", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionClickSet(ActionClickSet actionClickSet, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionClickSet(ActionClickSet actionClickSet, DungeonRoom dungeonRoom, UWorldRenderContext context, float partialTicks) {
         float xAcc = 0;
         float yAcc = 0;
         float zAcc = 0;
@@ -208,15 +209,15 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             zAcc += pos.getZ()+ 0.5f;
             list.add(pos);
         }
-        RenderUtils.highlightBlocksStencil(list, partialTicks, new AColor(0, 255,255,50), true);
+        context.highlightBlocksStencil(list, partialTicks, new AColor(0, 255,255,50), true);
 
-        RenderUtils.drawTextAtWorld("Click", xAcc / size, yAcc / size, zAcc / size, 0xFFFFFF00, 0.02f, false, false, partialTicks);
+        context.drawTextAtWorld("Click", xAcc / size, yAcc / size, zAcc / size, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionClick(ActionClick actionClick, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionClick(ActionClick actionClick, DungeonRoom dungeonRoom, UWorldRenderContext context, float partialTicks) {
         VectorI3D pos = actionClick.getTarget().getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlockStencil(pos, partialTicks,new AColor(0, 255,0,100), false);
-        RenderUtils.drawTextAtWorld("Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
+        context.highlightBlockStencil(pos, partialTicks,new AColor(0, 255,0,100), false);
+        context.drawTextAtWorld("Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
 
         Vector3D from = new Vector3D(pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5);
         Vector3D eyePos = ModAPI.getAPI().getPlayer().getPositionEyes(partialTicks);
@@ -234,7 +235,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                     List<VectorI3D> blocks = offsetPointList.stream().map(a -> a.getBlockPos(dungeonRoom)).collect(Collectors.toList());
                     for (VectorI3D block : blocks) {
                         if (blockPos.equals(block)) {
-                            highlightSuperboom(blocks, partialTicks, new AColor(255, 0, 0, 50));
+                            highlightSuperboom(blocks, context, partialTicks, new AColor(255, 0, 0, 50));
                             break;
                         }
                     }
@@ -244,22 +245,22 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
     }
 
-    public void renderActionStonkClick(ActionStonkClick actionStonkClick, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionStonkClick(ActionStonkClick actionStonkClick, DungeonRoom dungeonRoom, UWorldRenderContext context, float partialTicks) {
         VectorI3D pos = actionStonkClick.getTarget().getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlockStencil(pos, partialTicks,new AColor(0, 255,0,100), false);
-        RenderUtils.drawTextAtWorld("Stonk&Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
+        context.highlightBlockStencil(pos, partialTicks,new AColor(0, 255,0,100), false);
+        context.drawTextAtWorld("Stonk&Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionBreakWithSuperboom(ActionBreakWithSuperBoom superBoom, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionBreakWithSuperboom(ActionBreakWithSuperBoom superBoom, DungeonRoom dungeonRoom, UWorldRenderContext context, float partialTicks) {
         List<VectorI3D> pos = new ArrayList<>();
         for (OffsetPoint offsetPoint : superBoom.getTarget().getOffsetPointList()) {
             pos.add(offsetPoint.getBlockPos(dungeonRoom));
         }
 
-        highlightSuperboom(pos, partialTicks, new AColor(255,0,0,50));
+        highlightSuperboom(pos, context, partialTicks, new AColor(255,0,0,50));
     }
 
-    public void drawActionMove(AbstractActionMove actionMove, DungeonRoom dungeonRoom, float partialTicks) {
+    public void drawActionMove(AbstractActionMove actionMove, DungeonRoom dungeonRoom, UWorldRenderContext ctx, float partialTicks) {
         ActionMoveContext context = executorWeakHashMap.get(actionMove);
 
         VectorI3D target = actionMove.getBeaconTargetPos(dungeonRoom);
@@ -275,13 +276,13 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         scale *= 25.0 / 6.0;
 
         if (getSettings().isEnableBeacon()) {
-            RenderUtils.renderBeaconBeam(target.getX(), target.getY(), target.getZ(), settings.getBeamColor(), partialTicks);
-            RenderUtils.highlightBlock(target, settings.getBeaconColor(), partialTicks);
+            ctx.renderBeaconBeam(target.getX(), target.getY(), target.getZ(), settings.getBeamColor().getRGB(), settings.getBeamColor().isChroma(), settings.getBeamColor().getRGB(), partialTicks);
+            ctx.highlightBlock(target, settings.getBeaconColor(), partialTicks, false);
         }
 
         if (settings.getDestinationSize() != 0) {
-            RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, (float) settings.getDestinationSize(), true, false, partialTicks);
-            RenderUtils.drawTextAtWorld(String.format("%.2f", Math.sqrt(target.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()))) + "m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, (float) settings.getDestinationSize(), true, false, partialTicks);
+            ctx.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, (float) settings.getDestinationSize(), true, false, partialTicks);
+            ctx.drawTextAtWorld(String.format("%.2f", Math.sqrt(target.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()))) + "m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, (float) settings.getDestinationSize(), true, false, partialTicks);
         }
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
@@ -292,9 +293,9 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                 if (settings.isEnableEtherwarpTracer()) {
                     for (PathSegment segment : context.segment) {
                         if (segment.nodeType == PathfindResult.PathfindNode.NodeType.ETHERWARP && segment.from.distanceSq(pos) < settings.getEtherwarpTracerDist()) {
-                            RenderUtils.drawLinesVec3(Arrays.asList(
+                            ctx.drawLinesVec3(Arrays.asList(
                                     ModAPI.getAPI().getPlayer().getLook(partialTicks),
-                                    segment.to.add(0, -0.5, 0)), settings.getEtherwarpTracerColor(), settings.getEtherwarpTracerWidth(), partialTicks, false);
+                                    segment.to.add(0, -0.5, 0)), settings.getEtherwarpTracerColor().getRGB(), settings.getEtherwarpTracerColor().isChroma(), settings.getEtherwarpTracerColor().getChromaSpeed(), settings.getEtherwarpTracerWidth(), partialTicks, false);
                         }
                     }
                 }
@@ -308,7 +309,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                             pose.getType() != PathfindResult.PathfindNode.NodeType.ETHERWARP &&
                             pose.getType() != PathfindResult.PathfindNode.NodeType.SUPERBOOM &&
                             pose.distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()) < 100) {
-                        RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
+                        ctx.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }
                     if (last != null && last.getType() == PathfindResult.PathfindNode.NodeType.SUPERBOOM) {
                         VectorI3D test = new VectorI3D(pose.getX(), pose.getY(), pose.getZ());
@@ -318,7 +319,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                                 List<VectorI3D> blocks = offsetPointList.stream().map(a -> a.getBlockPos(dungeonRoom)).collect(Collectors.toList());
                                 for (VectorI3D block : blocks) {
                                     if (test.distanceSq(block) <= 2) {
-                                        highlightSuperboom(blocks, partialTicks, new AColor(255, 0, 0, 50));
+                                        highlightSuperboom(blocks, ctx, partialTicks, new AColor(255, 0, 0, 50));
                                         break;
                                     }
                                 }
@@ -333,9 +334,9 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         }
 
         if (actionMove instanceof ActionMoveSpot)
-            LineRenderUtils.renderDebug((ActionMoveSpot) actionMove, dungeonRoom, partialTicks);
+            LineRenderUtils.renderDebug((ActionMoveSpot) actionMove, dungeonRoom, ctx, partialTicks);
         else if (actionMove instanceof ActionMove)
-            LineRenderUtils.renderDebug((ActionMove) actionMove, dungeonRoom, partialTicks);
+            LineRenderUtils.renderDebug((ActionMove) actionMove, dungeonRoom, ctx, partialTicks);
     }
 
     @AllArgsConstructor @Data
@@ -486,8 +487,8 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
     }
 
 
-    private static void highlightSuperboom(List<VectorI3D> blockPos, float partialTicks, AColor color) {
-        AABB bb = RenderUtils.highlightBlocksStencil(blockPos, partialTicks, color, true);
+    private static void highlightSuperboom(List<VectorI3D> blockPos, UWorldRenderContext context, float partialTicks, AColor color) {
+        AABB bb = context.highlightBlocksStencil(blockPos, partialTicks, color, true);
 
         GlStateManager.enableDepth();
         RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);

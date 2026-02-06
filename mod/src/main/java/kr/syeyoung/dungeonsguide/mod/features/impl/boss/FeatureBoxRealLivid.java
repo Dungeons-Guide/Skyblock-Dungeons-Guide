@@ -27,10 +27,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightPr
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.entity.UEntityPlayer;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import kr.syeyoung.modapi.event.events.RenderWorldEvent;
 
 
 public class FeatureBoxRealLivid extends SimpleFeature {
@@ -42,15 +41,22 @@ public class FeatureBoxRealLivid extends SimpleFeature {
     AColor color = null;
 
     @DGEventHandler
-    public void drawWorld(RenderWorldLastEvent event) {
-        float partialTicks = event.partialTicks;
+    public void drawWorld(RenderWorldEvent event) {
+        float partialTicks = event.getPartialTicks();
         if (!SkyblockStatus.isOnDungeon()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() == null) return;
         if (!(DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorLivid)) return;
-        UEntityPlayer playerMP = ((BossfightProcessorLivid) DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor()).getRealLivid();
+        UEntityPlayer entity = ((BossfightProcessorLivid) DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor()).getRealLivid();
 
-        if (playerMP != null)
-            RenderUtils.highlightBox(playerMP, new AABB(-0.4,0,-0.4,0.4,1.8,0.4), color, partialTicks, true);
+
+        if (entity != null) {
+           double x = (entity.getPrevPosX() + (entity.getPosX() - entity.getPrevPosX()) * partialTicks);
+           double y =  (entity.getPrevPosY() + (entity.getPosY() - entity.getPrevPosY()) * partialTicks);
+           double z = (entity.getPrevPosZ() + (entity.getPosZ() - entity.getPrevPosZ()) * partialTicks);
+
+
+            event.getContext().highlightBox(x, y, z, new AABB(-0.4, 0, -0.4, 0.4, 1.8, 0.4), color.getRGB(), partialTicks, true);
+        }
     }
 }

@@ -19,21 +19,21 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.goldenpath;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
-import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.BlockType;
 import net.kyori.adventure.text.Component;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     public GoldenPathLeftProcessor(RoomProcessorBombDefuseSolver solver, BDChamber chamber) {
@@ -55,7 +55,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
             new Point(1, 0)
     };
 
-    private final LinkedList<VectorI3D> blocksolution = new LinkedList<>();
+    private final LinkedList<Vector3D> blocksolution = new LinkedList<>();
     private String goldenPathsolution;
     @Override
     public void tick() {
@@ -66,7 +66,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
         Set<VectorI3D> visited = new HashSet<>();
         VectorI3D lastLoc = new VectorI3D(4,0,0);
         visited.add(lastLoc);
-        blocksolution.add(getChamber().getBlockPos(4,1,0));
+        blocksolution.add(getChamber().getBlockPos(4,1,0).toVector3D().add(0.5, 0.5, 0.5));
         VectorI3D target = new VectorI3D(4,0,5);
         while (!lastLoc.equals(target)) {
             boolean solution2 = false;
@@ -79,7 +79,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
                 if (getChamber().getBlock(target2.getX(), 0, target2.getZ()).isOf(BlockType.HARDENED_CLAY, BlockType.STAINED_HARDENED_CLAY)) {
                     lastLoc = target2;
 
-                    blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()));
+                    blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()).toVector3D().add(0.5, 0.5, 0.5));
                     solution.add(i);
                     solution2 = true;
                     break;
@@ -102,9 +102,9 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
-        RenderUtils.drawLines(blocksolution, new AColor(0,0,255,0), 1,partialTicks, false);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
+        context.drawLinesVec3(blocksolution, 0xFF0000FF, false, 0, 1,partialTicks, false);
     }
 
     @Override
@@ -130,11 +130,11 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
 
             blocksolution.clear();
             VectorI3D lastLoc = new VectorI3D(4,0,0);
-            blocksolution.addFirst(getChamber().getBlockPos(4,1,0));
+            blocksolution.addFirst(getChamber().getBlockPos(4,1,0).toVector3D().add(0.5, 0.5, 0.5));
             for (Character c:actual.toCharArray()) {
                 int dir = Integer.parseInt(c+"") % 4;
                 lastLoc = lastLoc.add(vectors[dir].x, 0, vectors[dir].y);
-                blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()));
+                blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()).toVector3D().add(0.5, 0.5, 0.5));
             }
         }
     }

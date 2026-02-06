@@ -21,11 +21,11 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -101,8 +101,8 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
         if (bugged) return;
         if (ModAPI.getAPI().getPlayer().getPositionVector().distanceSq(woods[6]) > 100) return;
 
@@ -112,13 +112,13 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
             VectorI3D pos = woods[i];
 
             if (data == 0) {
-                RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, false);
+                context.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, false);
             } else if (data == -1) {
-                RenderUtils.highlightBlock(pos, new Color(255, 0, 0, 50), partialTicks, false);
+                context.highlightBlock(pos, new Color(255, 0, 0, 50), partialTicks, false);
             } else if (data == 1) {
-                RenderUtils.highlightBlock(pos, new Color(0, 255, 0, 50), partialTicks, false);
+                context.highlightBlock(pos, new Color(0, 255, 0, 50), partialTicks, false);
             } else if (data == 2) {
-                RenderUtils.highlightBlock(pos, new Color(0, 255, 0, 100), partialTicks, false);
+                context.highlightBlock(pos, new Color(0, 255, 0, 100), partialTicks, false);
             }
         }
     }

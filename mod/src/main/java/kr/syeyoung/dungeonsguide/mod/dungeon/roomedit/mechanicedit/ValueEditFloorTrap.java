@@ -144,7 +144,7 @@ public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloor
 
     @Override
     public void renderWorld(float partialTicks) {
-        dummyState.highlight(new Color(0, 255, 255, 50), parameter.getName(), partialTicks);
+        dummyState.highlight(new Color(0, 255, 255, 50), parameter.getName(), , partialTicks);
     }
 
     @Override

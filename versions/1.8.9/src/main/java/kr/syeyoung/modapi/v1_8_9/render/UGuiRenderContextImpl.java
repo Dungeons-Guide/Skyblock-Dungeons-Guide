@@ -57,7 +57,7 @@ public class UGuiRenderContextImpl implements UGuiRenderContext {
     }
 
     @Override
-    public void rotate(float angle, int x, int y, int z) {
+    public void rotate(float angle, float x, float y, float z) {
         GlStateManager.rotate(angle, x, y, z);
     }
 

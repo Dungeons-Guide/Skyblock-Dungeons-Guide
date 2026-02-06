@@ -43,10 +43,9 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.event.events.GuiOpenEvent;
+import kr.syeyoung.modapi.event.events.RenderWorldEvent;
 import kr.syeyoung.modapi.gui.UGuiScreenChat;
 import kr.syeyoung.modapi.rendering.UFontCalculator;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
 import java.util.List;
@@ -83,7 +82,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
     @Override
     public void drawDemo(RenderingContext context, float partialTicks) {
         double scale = FeatureMechanicBrowse.this.<Double>getParameter("scale").getValue();
-        GlStateManager.scale(scale, scale, 1.0);
+        context.ctx().scale(scale, scale, 1.0);
 
         GUIPosition bigDim = getFeatureRect();
         Dimension effectiveDim = new Dimension((int) (bigDim.getWidth() / scale),(int)( bigDim.getHeight() / scale));
@@ -113,7 +112,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         if (roomRouteHandler == null) return;
 
         double scale = FeatureMechanicBrowse.this.<Double>getParameter("scale").getValue();
-        GlStateManager.scale(scale, scale, 1.0);
+        ctx.ctx().scale(scale, scale, 1.0);
 
         GUIPosition bigDim = getFeatureRect();
         Dimension effectiveDim = new Dimension((int) (bigDim.getWidth() / scale),(int)( bigDim.getHeight() / scale));
@@ -136,8 +135,8 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
 
 
     @DGEventHandler
-    public void drawWorld(RenderWorldLastEvent event) {
-        float partialTicks = event.partialTicks;
+    public void drawWorld(RenderWorldEvent event) {
+        float partialTicks = event.getPartialTicks();
         
         if (!SkyblockStatus.isOnDungeon()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null || DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser() == null) return;
@@ -156,7 +155,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
                         a.highlight(new Color(0,255,255,50), id +" ("+(
                                 dungeonRoom.getMechanics().get(id).getRepresentingPoint() != null ?
                                 String.format("%.1f", Math.sqrt((dungeonRoom.getMechanics().get(id)).getRepresentingPoint().getBlockPos(dungeonRoom).distanceSq(ModAPI.getAPI().getPlayer().getPositionVector()))) : "")
-                                +"m)", partialTicks);
+                                +"m)", event.getContext(), partialTicks);
                     });
         }
     }

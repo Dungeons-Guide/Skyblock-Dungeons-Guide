@@ -27,7 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightPr
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
@@ -36,9 +35,9 @@ import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityItemFrame;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
+import kr.syeyoung.modapi.event.events.RenderWorldEvent;
 import kr.syeyoung.modapi.item.Item;
 import kr.syeyoung.modapi.util.EnumDyeColor;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
 import java.util.LinkedList;
@@ -59,7 +58,7 @@ public class FeatureArrowPathSolver extends SimpleFeature {
     private int[][] pendingClicks = new int[5][5];
 
     @DGEventHandler
-    public void drawWorld(RenderWorldLastEvent event) {
+    public void drawWorld(RenderWorldEvent event) {
         if (!isEnabled()) return;
         DungeonContext dc = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dc == null) {
@@ -73,10 +72,7 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         for (int y = 0; y < 5; y++){
             for (int x = 0; x < 5; x++) {
                 if (solution[y][x] == -1) continue;
-                if (depth)
-                    RenderUtils.drawTextAtWorldDepth((solution[y][x]-pendingClicks[y][x]) + "", -1.7f, 120.5f + y, 75.5f + x, 0xFF00FF00, 0.03f, false, false, event.partialTicks);
-                else
-                    RenderUtils.drawTextAtWorld((solution[y][x]-pendingClicks[y][x]) + "", -1.7f, 120.5f + y, 75.5f + x, 0xFF00FF00, 0.03f, false, false, event.partialTicks);
+                event.getContext().drawTextAtWorld((solution[y][x]-pendingClicks[y][x]) + "", -1.7f, 120.5f + y, 75.5f + x, 0xFF00FF00, 0.03f, false, false, event.getPartialTicks(), depth);
             }
         }
     }

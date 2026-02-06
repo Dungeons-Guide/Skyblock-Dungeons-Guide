@@ -146,7 +146,7 @@ public class ValueEditTomb extends MPanel implements ValueEdit<DungeonTombData> 
 
     @Override
     public void renderWorld(float partialTicks) {
-        dummyState.highlight(new Color(0, 255, 255, 50), parameter.getName(), partialTicks);
+        dummyState.highlight(new Color(0, 255, 255, 50), parameter.getName(), , partialTicks);
     }
 
     @Override

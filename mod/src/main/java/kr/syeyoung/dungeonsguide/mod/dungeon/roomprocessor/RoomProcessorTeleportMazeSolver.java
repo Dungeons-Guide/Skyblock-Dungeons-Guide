@@ -19,14 +19,15 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 
+import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.world.BlockType;
 import kr.syeyoung.modapi.world.UBlockState;
 import kr.syeyoung.modapi.world.UWorld;
@@ -128,15 +129,17 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
         if (!FeatureRegistry.SOLVER_TELEPORT.isEnabled()) return;
         for (VectorI3D bpos:visitedPortals) {
-            RenderUtils.highlightBoxAColor( new AABB(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX()+1, bpos.getY() + 1, bpos.getZ() + 1),  FeatureRegistry.SOLVER_TELEPORT.getTargetColor2(), partialTicks, true);
+            AColor color = FeatureRegistry.SOLVER_TELEPORT.getTargetColor2();
+            context.highlightBox( new AABB(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX()+1, bpos.getY() + 1, bpos.getZ() + 1),  color.getRGB(), color.isChroma(), color.getChromaSpeed(), partialTicks, true);
         }
 
         if (intersection != null) {
-            RenderUtils.highlightBoxAColor( new AABB(intersection.getX(), intersection.getY(), intersection.getZ(), intersection.getX()+1, intersection.getY() + 1, intersection.getZ() + 1),   FeatureRegistry.SOLVER_TELEPORT.getTargetColor(), partialTicks, false);
+            AColor color = FeatureRegistry.SOLVER_TELEPORT.getTargetColor();
+            context.highlightBox( new AABB(intersection.getX(), intersection.getY(), intersection.getZ(), intersection.getX()+1, intersection.getY() + 1, intersection.getZ() + 1),  color.getRGB(), color.isChroma(), color.getChromaSpeed(), partialTicks, false);
         }
     }
     public static class Generator implements RoomProcessorGenerator<RoomProcessorTeleportMazeSolver> {

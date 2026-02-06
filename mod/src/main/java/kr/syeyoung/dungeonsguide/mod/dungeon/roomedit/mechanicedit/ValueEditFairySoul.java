@@ -89,7 +89,7 @@ public class ValueEditFairySoul extends MPanel implements ValueEdit<DungeonFairy
 
     @Override
     public void renderWorld(float partialTicks) {
-        dummyState.highlight(new Color(0, 255, 0, 50), parameter.getName(), partialTicks);
+        dummyState.highlight(new Color(0, 255, 0, 50), parameter.getName(), , partialTicks);
     }
 
     @Override

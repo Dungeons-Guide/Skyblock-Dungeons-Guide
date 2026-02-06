@@ -9,8 +9,8 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.modapi.event.events.LivingEntityDeathEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.event.events.RenderWorldEvent;
 import lombok.Getter;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.util.*;
 import java.util.function.Function;
@@ -40,9 +40,9 @@ public class RoomRouteHandler {
         toRemove.forEach(path::remove);
     }
 
-    public void onWorldRenderLast(RenderWorldLastEvent event) {
+    public void onWorldRenderLast(RenderWorldEvent event) {
         path.values().forEach(a -> {
-            a.renderActionRoute(event.partialTicks);
+            a.renderActionRoute(event.getContext(), event.getPartialTicks());
         });
     }
 

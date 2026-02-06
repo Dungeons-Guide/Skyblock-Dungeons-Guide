@@ -41,7 +41,6 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
@@ -49,6 +48,7 @@ import kr.syeyoung.modapi.event.events.ActionBarReceivedEvent;
 import kr.syeyoung.modapi.event.events.LivingEntityTickEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEntityEvent;
 import kr.syeyoung.modapi.event.events.PlayerInteractEvent;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -266,8 +266,8 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
         if (bugged) return;
 
         VectorI3D playerPos = ModAPI.getAPI().getPlayer().getPosition();
@@ -277,28 +277,28 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
                 if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     found = true;
-                    ch.getLeft().getProcessor().drawWorld(partialTicks);
+                    ch.getLeft().getProcessor().drawWorld(context, partialTicks);
                 }
             }
             if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
                 if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     found = true;
-                    ch.getRight().getProcessor().drawWorld(partialTicks);
+                    ch.getRight().getProcessor().drawWorld(context, partialTicks);
                 }
             }
         }
 
         if ((maze || impossible) && warning != null && !found) {
             if (impossible) {
-                RenderUtils.drawTextAtWorld("Warning: This Bomb Defuse is bugged and Impossible" , warning.getX()+ 0.5f, warning.getY(), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
+                context.drawTextAtWorld("Warning: This Bomb Defuse is bugged and Impossible" , warning.getX()+ 0.5f, warning.getY(), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
             } else {
-                RenderUtils.drawTextAtWorld("Warning: This Bomb Defuse must be done with 2 people (maze)" , warning.getX()+ 0.5f, warning.getY(), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
+                context.drawTextAtWorld("Warning: This Bomb Defuse must be done with 2 people (maze)" , warning.getX()+ 0.5f, warning.getY(), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
             }
         }
         if (warning != null && !found) {
             for (int i = 0; i < 4; i++) {
                 BombDefuseChamberGenerator bdcg = chambers.get(i).getChamberGen();
-                RenderUtils.drawTextAtWorld((i + 1) + ". " + (bdcg == null ? "null" : bdcg.getName()), warning.getX() + 0.5f, warning.getY() - ((i + 1) * 0.3f), warning.getZ() + 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
+                context.drawTextAtWorld((i + 1) + ". " + (bdcg == null ? "null" : bdcg.getName()), warning.getX() + 0.5f, warning.getY() - ((i + 1) * 0.3f), warning.getZ() + 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
             }
         }
     }

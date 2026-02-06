@@ -29,6 +29,7 @@ import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityLiving;
 import kr.syeyoung.modapi.event.events.*;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.resources.UResource;
 import lombok.Builder;
 import lombok.Data;
@@ -173,7 +174,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     public void drawScreen(float partialTicks, RenderingContext context) {}
 
     @Override
-    public void drawWorld(float partialTicks) {}
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {}
 
     @Override
     public boolean readGlobalChat() {return true;}

@@ -31,6 +31,7 @@ import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
+import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
@@ -99,16 +100,16 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
 
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(UWorldRenderContext context, float partialTicks) {
+        super.drawWorld(context, partialTicks);
         if (!FeatureRegistry.SOLVER_BLAZE.isEnabled()) return;
         if (next == null) return;
         Vector3D pos = next.getPositionEyes(partialTicks);
-        RenderUtils.drawTextAtWorld("NEXT", (float)pos.x, (float)pos.y, (float)pos.z, 0xFFFF0000, 0.5f, true, false, partialTicks);
+        context.drawTextAtWorld("NEXT", (float)pos.x, (float)pos.y, (float)pos.z, 0xFFFF0000, 0.5f, true, false, partialTicks);
 
 
         for (UEntity entity : blazeList) {
-            GlStateManager.pushMatrix();
+            GlStateManager.pushMatrix(); // $$ FIGURE OUT HIGHLIGHT BLAZE.
             float f = entity.getPrevRotationYaw() + (entity.getRotationYaw() - entity.getPrevRotationYaw()) * partialTicks;
             double x = entity.getPrevPosX() + (entity.getPosX() - entity.getPrevPosX()) * partialTicks;
             double y = entity.getPrevPosY() + (entity.getPosY() - entity.getPrevPosY()) * partialTicks;

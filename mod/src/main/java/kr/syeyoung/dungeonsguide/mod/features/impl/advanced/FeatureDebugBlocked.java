@@ -10,13 +10,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.world.PearlCalculatingCoordinateMap
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import kr.syeyoung.modapi.event.events.RenderWorldEvent;
 
 import java.awt.*;
 
@@ -26,7 +25,7 @@ public class FeatureDebugBlocked extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onWorldRenderLast(RenderWorldLastEvent event) {
+    public void onWorldRenderLast(RenderWorldEvent event) {
         if (!FeatureRegistry.DEBUG.isEnabled()) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return;
@@ -46,14 +45,14 @@ public class FeatureDebugBlocked extends SimpleFeature {
 
             for (VectorI3D allInBox : VectorI3D.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
                 CollisionStateCalculatingCoordinateMap.CollisionState blocked = roomProcessor.getPathfinderWorld().getBlock(allInBox.getX(), allInBox.getY(), allInBox.getZ());
-                RenderUtils.highlightBox(
+                event.getContext().highlightBox(
                         new AABB(
                                 allInBox.getX() / 2.0 - 0.1, allInBox.getY() / 2.0 - 0.1, allInBox.getZ() / 2.0 - 0.1,
                                 allInBox.getX() / 2.0 + 0.1, allInBox.getY() / 2.0 + 0.1, allInBox.getZ() / 2.0 + 0.1
-                        ), blocked.getColor(), event.partialTicks, false);
+                        ), blocked.getColor().getRGB(), event.getPartialTicks(), false);
                 PearlCalculatingCoordinateMap.PearlLandType type = roomProcessor.getPathfinderWorld().getPearl(allInBox.getX(), allInBox.getY(), allInBox.getZ());
-                RenderUtils.drawTextAtWorld(type.name(), (float) (allInBox.getX() / 2.0 - 0.1), (float) (allInBox.getY() / 2.0 - 0.1), (float) (allInBox.getZ() / 2.0 - 0.1),
-                        0xFFFFFFFF,0.01f, false, true, event.partialTicks);
+                event.getContext().drawTextAtWorld(type.name(), (float) (allInBox.getX() / 2.0 - 0.1), (float) (allInBox.getY() / 2.0 - 0.1), (float) (allInBox.getZ() / 2.0 - 0.1),
+                        0xFFFFFFFF,0.01f, false, true, event.getPartialTicks());
             }
         } catch (Exception ignored) {}
 

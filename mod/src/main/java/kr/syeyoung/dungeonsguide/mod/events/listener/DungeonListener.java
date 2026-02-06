@@ -40,12 +40,11 @@ import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.ListenerPriority;
+import kr.syeyoung.modapi.event.SubscribeEvent;
 import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.profiler.UProfiler;
 import kr.syeyoung.modapi.rendering.UFontCalculator;
 import kr.syeyoung.modapi.world.UChunk;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.awt.*;
 import java.lang.ref.WeakReference;
@@ -306,7 +305,7 @@ public class DungeonListener {
 
 
     @SubscribeEvent
-    public void onWorldRender(RenderWorldLastEvent renderWorldLastEvent) {
+    public void onWorldRender(RenderWorldEvent renderWorldLastEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
         try {
 
@@ -323,7 +322,7 @@ public class DungeonListener {
                 if (context.getScaffoldParser() != null) {
                     for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
                         for (DungeonDoor door : dungeonRoom.getDoors()) {
-                            RenderUtils.renderDoor(door, renderWorldLastEvent.partialTicks);
+                            RenderUtils.renderDoor(door, renderWorldLastEvent.getContext(), renderWorldLastEvent.getPartialTicks());
                         }
                     }
                 }
@@ -334,7 +333,7 @@ public class DungeonListener {
 
             profiler.startSection("Dungeons Guide - RenderWorldLast :: Bossfight Processor");
             if (context.getBossfightProcessor() != null) {
-                context.getBossfightProcessor().drawWorld(renderWorldLastEvent.partialTicks);
+                context.getBossfightProcessor().drawWorld(renderWorldLastEvent.getContext(), renderWorldLastEvent.getPartialTicks());
             }
 
             profiler.endStartSection("Dungeons Guide - RenderWorldLast :: Room Processor");
@@ -345,7 +344,7 @@ public class DungeonListener {
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 if (dungeonRoom != null) {
                     if (dungeonRoom.getRoomProcessor() != null) {
-                        dungeonRoom.getRoomProcessor().drawWorld(renderWorldLastEvent.partialTicks);
+                        dungeonRoom.getRoomProcessor().drawWorld(renderWorldLastEvent.getContext(), renderWorldLastEvent.getPartialTicks());
                     }
                 }
             }
