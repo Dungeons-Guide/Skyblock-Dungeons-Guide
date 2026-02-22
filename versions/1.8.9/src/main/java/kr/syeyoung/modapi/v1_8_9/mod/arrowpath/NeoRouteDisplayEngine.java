@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.arrowpath;
+package kr.syeyoung.modapi.v1_8_9.mod.arrowpath;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
@@ -22,6 +22,7 @@ import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.rendering.UWorldRenderContext;
 import kr.syeyoung.modapi.util.RaycastResult;
+import kr.syeyoung.modapi.v1_8_9.mod.TextureLoader;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -586,7 +587,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
             ShaderProgram shaderProgram = ShaderManager.getShader("shaders/repeat");
             shaderProgram.useShader();
-            TextureAtlasSprite sprite = FeatureRegistry.SECRET_ROUTE_REGISTRY.sprite;
+            TextureAtlasSprite sprite = TextureLoader.INSTANCE.sprite;
             shaderProgram.uploadUniform("position", sprite.getMinU(), sprite.getMinV());
             shaderProgram.uploadUniform("size", sprite.getMaxU() - sprite.getMinU(), sprite.getMaxV() - sprite.getMinV());
 
@@ -689,7 +690,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         ShaderProgram shaderProgram = ShaderManager.getShader("shaders/repeat");
         shaderProgram.useShader();
-        TextureAtlasSprite sprite = FeatureRegistry.SECRET_ROUTE_REGISTRY.sprite;
+        TextureAtlasSprite sprite = TextureLoader.INSTANCE.sprite;
         shaderProgram.uploadUniform("position", sprite.getMinU(), sprite.getMinV());
         shaderProgram.uploadUniform("size", sprite.getMaxU() - sprite.getMinU(), sprite.getMaxV() - sprite.getMinV());
 

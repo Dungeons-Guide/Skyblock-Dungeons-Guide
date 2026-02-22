@@ -569,4 +569,72 @@ public class UGuiRenderContextImpl implements UGuiRenderContext {
         drawRect(x, y, width, height, color);
         GL20.glUseProgram(0);
     }
+
+    @Override
+    public void drawEtherwarpPreviewBackground(double halfWidth, double offset, double leeway, double radius, double centerX, double centerY) {
+        kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram shaderProgram = kr.syeyoung.dungeonsguide.mod.shader.ShaderManager.getShader("shaders/etherwarppreview");
+        shaderProgram.useShader();
+        shaderProgram.uploadUniform("radius", (float) radius);
+        shaderProgram.uploadUniform("centerPos", (float) centerX, (float) centerY);
+        shaderProgram.uploadUniform("smoothness", 0.0f);
+
+        GlStateManager.color(1.0f, 0f, 0f, 0.3f);
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableCull();
+
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+        worldRenderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION);
+        worldRenderer.pos(0,offset * 16, 0).endVertex();
+        worldRenderer.pos(-halfWidth, -offset/0.5 * halfWidth + offset* 16, 0).endVertex();
+        worldRenderer.pos(-halfWidth, offset * 16, 0).endVertex();
+        tessellator.draw();
+        worldRenderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION);
+        worldRenderer.pos(0,offset * 16, 0).endVertex();
+        worldRenderer.pos(halfWidth, -offset/0.5 * halfWidth + offset* 16, 0).endVertex();
+        worldRenderer.pos(halfWidth, offset * 16, 0).endVertex();
+        tessellator.draw();
+        drawRect(-halfWidth, offset* 16, halfWidth, 40, 0x4DFF0000);
+
+
+        // leeway...
+        // sample block is 2 right, 5 up
+        // top left: 1.5, -5 =>
+        // bottom right: 2.5, -4
+
+        {
+            double slope1 = (5+offset) / (1.5 - leeway);
+            double slope2 = (4+offset) / (2.5 + leeway);
+
+
+            GlStateManager.color(0.0f, 1f, 0f, 0.3f);
+            worldRenderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION);
+            worldRenderer.pos(0,offset * 16, 0).endVertex();
+            worldRenderer.pos(-halfWidth, -offset/0.5 * halfWidth + offset* 16, 0).endVertex();
+            worldRenderer.pos(halfWidth, -slope1 * halfWidth + offset* 16, 0).endVertex();
+            worldRenderer.pos(24-leeway*16, -80, 0).endVertex();
+            worldRenderer.pos(24, -80, 0).endVertex();
+            worldRenderer.pos(24, -64, 0).endVertex();
+            worldRenderer.pos(40+leeway*16, -64, 0).endVertex();
+            worldRenderer.pos(halfWidth, -slope2 * halfWidth + offset* 16, 0).endVertex();
+            worldRenderer.pos(halfWidth, -offset/0.5 * halfWidth + offset* 16, 0).endVertex();
+
+            tessellator.draw();
+
+            GlStateManager.color(1.0f, 0f, 0f, 0.3f);
+            worldRenderer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION);
+            worldRenderer.pos(24-leeway*16, -80, 0).endVertex();
+            worldRenderer.pos(40, -80, 0).endVertex();
+            worldRenderer.pos(halfWidth, -slope1 * halfWidth + offset* 16, 0).endVertex();
+            worldRenderer.pos(40, -64, 0).endVertex();
+            worldRenderer.pos(halfWidth, -slope2 * halfWidth + offset* 16, 0).endVertex();
+            worldRenderer.pos(40+leeway*16, -64, 0).endVertex();
+//            worldRenderer.pos(halfWidth, -slope1 * halfWidth + offset* 16, 0).endVertex();
+//            worldRenderer.pos(halfWidth, -slope2 * halfWidth + offset* 16, 0).endVertex();
+
+            tessellator.draw();
+        }
+
+        GL20.glUseProgram(0);
+    }
 }

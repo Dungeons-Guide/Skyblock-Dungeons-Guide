@@ -102,15 +102,15 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
         super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/abilityedit/abilitycreate.gui"));
 
         pickaxeSettings.addOnUpdate((old ,neu) -> {
-            pickaxeIndex.setValue(neu == null ? 3 : neu.getTool().getToolMaterial().ordinal() * 8);
+            pickaxeIndex.setValue(neu == null ? 3 : 3);
             pickaxeEfficiency.setValue(neu == null ? "" : "Efficiency Level: "+neu.getEfficiency());
         });
         shovelSettings.addOnUpdate((old ,neu) -> {
-            shovelIndex.setValue(neu == null ? 4 : neu.getTool().getToolMaterial().ordinal() * 8 + 1);
+            shovelIndex.setValue(neu == null ? 4 : 4);
             shovelEfficiency.setValue(neu == null ? "" : "Efficiency Level: "+neu.getEfficiency());
         });
         axeSettings.addOnUpdate((old ,neu) -> {
-            axeIndex.setValue(neu == null ? 5 : neu.getTool().getToolMaterial().ordinal() * 8 + 2);
+            axeIndex.setValue(neu == null ? 5 : 5);
             axeEfficiency.setValue(neu == null ? "" : "Efficiency Level: "+neu.getEfficiency());
         });
 
@@ -157,32 +157,32 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
     @On(functionName = "pickaxeEdit")
     public void pickaxeEdit() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        Rect rect = pickaxeButton.getValue().getAbsBounds();
-        AbsLocationPopup absLocationPopup = new AbsLocationPopup(
-                rect.getX(), rect.getY()+rect.getHeight(), new WidgetToolEdit(WidgetToolEdit.ToolType.PICKAXE, pickaxeSettings), true
-        );
-        absLocationPopup.cursorPassthrough = true;
-        PopupMgr.getPopupMgr(getDomElement()).openPopup(absLocationPopup, null);
+//        Rect rect = pickaxeButton.getValue().getAbsBounds();
+//        AbsLocationPopup absLocationPopup = new AbsLocationPopup(
+//                rect.getX(), rect.getY()+rect.getHeight(), new WidgetToolEdit(WidgetToolEdit.ToolType.PICKAXE, pickaxeSettings), true
+//        );
+//        absLocationPopup.cursorPassthrough = true;
+//        PopupMgr.getPopupMgr(getDomElement()).openPopup(absLocationPopup, null);
     }
     @On(functionName = "shovelEdit")
     public void shovelEdit() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        Rect rect = shovelButton.getValue().getAbsBounds();
-        AbsLocationPopup absLocationPopup = new AbsLocationPopup(
-                rect.getX(), rect.getY()+rect.getHeight(), new WidgetToolEdit(WidgetToolEdit.ToolType.SHOVEL, shovelSettings), true
-        );
-        absLocationPopup.cursorPassthrough = true;
-        PopupMgr.getPopupMgr(getDomElement()).openPopup(absLocationPopup, null);
+//        Rect rect = shovelButton.getValue().getAbsBounds();
+//        AbsLocationPopup absLocationPopup = new AbsLocationPopup(
+//                rect.getX(), rect.getY()+rect.getHeight(), new WidgetToolEdit(WidgetToolEdit.ToolType.SHOVEL, shovelSettings), true
+//        );
+//        absLocationPopup.cursorPassthrough = true;
+//        PopupMgr.getPopupMgr(getDomElement()).openPopup(absLocationPopup, null);
     }
     @On(functionName = "axeEdit")
     public void axeEdit() {
         ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-        Rect rect = axeButton.getValue().getAbsBounds();
-        AbsLocationPopup absLocationPopup = new AbsLocationPopup(
-                rect.getX(), rect.getY()+rect.getHeight(), new WidgetToolEdit(WidgetToolEdit.ToolType.AXE, axeSettings), true
-        );
-        absLocationPopup.cursorPassthrough = true;
-        PopupMgr.getPopupMgr(getDomElement()).openPopup(absLocationPopup, null);
+//        Rect rect = axeButton.getValue().getAbsBounds();
+//        AbsLocationPopup absLocationPopup = new AbsLocationPopup(
+//                rect.getX(), rect.getY()+rect.getHeight(), new WidgetToolEdit(WidgetToolEdit.ToolType.AXE, axeSettings), true
+//        );
+//        absLocationPopup.cursorPassthrough = true;
+//        PopupMgr.getPopupMgr(getDomElement()).openPopup(absLocationPopup, null);
     }
 
     @On(functionName = "hasteEdit")

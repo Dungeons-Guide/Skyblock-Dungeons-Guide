@@ -61,9 +61,6 @@ import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.minecraft.client.Minecraft;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.input.Keyboard;
 
@@ -411,9 +408,10 @@ public class FeatureRoomEdit  extends SimpleFeature {
     public void onWorldLoad(ClientTickEvent event) {
         if (flag && !setup) {
             setup = true;
-            System.out.println(Minecraft.getMinecraft().theWorld);
-            Minecraft.getMinecraft().thePlayer.setPosition(0, 70, 0);
-            Minecraft.getMinecraft().thePlayer.inventory.mainInventory[0] = new ItemStack(Items.stick);
+
+//            System.out.println(Minecraft.getMinecraft().theWorld); $$ welp set pos and give stick
+//            Minecraft.getMinecraft().thePlayer.setPosition(0, 70, 0);
+//            Minecraft.getMinecraft().thePlayer.inventory.mainInventory[0] = new ItemStack(Items.stick);
 
             DungeonContext fakeContext = new DungeonContext("TEST DG", ModAPI.getAPI().getWorld());
             DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(fakeContext);

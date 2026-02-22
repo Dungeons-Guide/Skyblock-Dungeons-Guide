@@ -5,7 +5,6 @@ import kr.syeyoung.modapi.data.URect;
 import kr.syeyoung.modapi.data.USize;
 import kr.syeyoung.modapi.entity.UEntityLiving;
 import kr.syeyoung.modapi.item.UItemStack;
-
 import java.awt.*;
 import java.util.List;
 
@@ -55,4 +54,6 @@ public interface UGuiRenderContext extends URenderContext {
     void drawChromaCircle(int x, int y, double width, double height, double rad, float value, float centerX, float centerY, float smoothness);
 
     void drawDonut(int x, int y, double width, double height, int color, float rad, float thickness, float centerX, float centerY, float smoothness);
+
+    void drawEtherwarpPreviewBackground(double halfWidth, double offset, double leeway, double radius, double centerX, double centerY);
 }

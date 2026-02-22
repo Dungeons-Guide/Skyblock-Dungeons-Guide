@@ -2,6 +2,7 @@ package kr.syeyoung.modapi.v1_8_9;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.PathDisplayEngineSettingRegistry;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.Platform;
 import kr.syeyoung.modapi.audio.USoundHandler;
@@ -40,6 +41,9 @@ import kr.syeyoung.modapi.v1_8_9.gui.UGuiScreenAdapter;
 import kr.syeyoung.modapi.v1_8_9.gui.UNativeGuiScreen;
 import kr.syeyoung.modapi.v1_8_9.item.IItemStackRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.map.MapDataManager;
+import kr.syeyoung.modapi.v1_8_9.mod.TextureLoader;
+import kr.syeyoung.modapi.v1_8_9.mod.arrowpath.NeoRouteDisplayEngineRegistration;
+import kr.syeyoung.modapi.v1_8_9.mod.classic.ClassicPathDisplayEngineRegistration;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
 import kr.syeyoung.modapi.v1_8_9.profiler.UProfilerImpl;
@@ -81,6 +85,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -222,11 +227,14 @@ public class ModAPIImpl implements ModAPI {
 
     private PacketInjector packetInjector = new PacketInjector();
     private EventListener eventListener = new EventListener();
+    private Keybinds keybinds = new Keybinds();
 
     @Override
     public void init() {
         MinecraftForge.EVENT_BUS.register(packetInjector);
         MinecraftForge.EVENT_BUS.register(PassthroughManager.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(keybinds);
+        MinecraftForge.EVENT_BUS.register(TextureLoader.INSTANCE);
         eventListener.register();
         registry.init();
 
@@ -270,6 +278,12 @@ public class ModAPIImpl implements ModAPI {
     public void unload() {
         MinecraftForge.EVENT_BUS.unregister(packetInjector);
         MinecraftForge.EVENT_BUS.unregister(PassthroughManager.INSTANCE);
+        MinecraftForge.EVENT_BUS.unregister(keybinds);
+        MinecraftForge.EVENT_BUS.unregister(TextureLoader.INSTANCE);
+
+
+        PathDisplayEngineSettingRegistry.register(ClassicPathDisplayEngineRegistration.INSTANCE);
+        PathDisplayEngineSettingRegistry.register(NeoRouteDisplayEngineRegistration.INSTANCE);
         CustomNetworkPlayerInfoUnloader.unload();
         eventListener.unregister();
 
@@ -434,5 +448,10 @@ public class ModAPIImpl implements ModAPI {
     @Override
     public void refreshResources() {
         Minecraft.getMinecraft().refreshResources();
+    }
+
+    @Override
+    public void exit(int code, boolean hardexit) {
+        FMLCommonHandler.instance().exitJava(code, hardexit);
     }
 }

@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.arrowpath;
+package kr.syeyoung.modapi.v1_8_9.mod.arrowpath;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import lombok.Builder;

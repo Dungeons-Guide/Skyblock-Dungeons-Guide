@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic;
+package kr.syeyoung.modapi.v1_8_9.mod.classic;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;

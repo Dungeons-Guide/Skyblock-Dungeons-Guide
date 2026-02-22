@@ -112,4 +112,6 @@ public interface ModAPI {
     List<UBossBar> getBossBars();
 
     void refreshResources();
+
+    void exit(int code, boolean hardexit);
 }

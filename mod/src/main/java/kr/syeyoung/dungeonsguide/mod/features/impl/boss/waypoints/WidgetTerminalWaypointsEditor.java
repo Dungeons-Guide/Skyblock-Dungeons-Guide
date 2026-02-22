@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss.waypoints;
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.FeatureF7TerminalWaypoints;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.Placeholder;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
@@ -34,6 +35,7 @@ public class WidgetTerminalWaypointsEditor extends AnnotatedImportOnlyWidget {
     public WidgetTerminalWaypointsEditor(FeatureF7TerminalWaypoints lineProperties) {
         super(new ResourceIdentifier("dungeonsguide:gui/features/f7waypoints/editor.gui"));
         this.config.setValue(new WidgetTerminalWaypointEdit(lineProperties));
-        this.preview.setValue(new WidgetPreview(lineProperties));
+//        this.preview.setValue(new WidgetPreview(lineProperties)); $$ PREVIEW
+        this.preview.setValue(new Placeholder());
     }
 }

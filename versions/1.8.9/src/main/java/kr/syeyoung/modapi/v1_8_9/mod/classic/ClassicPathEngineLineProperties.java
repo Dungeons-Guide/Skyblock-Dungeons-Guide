@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic;
+package kr.syeyoung.modapi.v1_8_9.mod.classic;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import lombok.Builder;

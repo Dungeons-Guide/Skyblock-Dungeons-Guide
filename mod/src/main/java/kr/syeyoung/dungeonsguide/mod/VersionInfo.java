@@ -28,7 +28,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
 import kr.syeyoung.dungeonsguide.mod.utils.GuiDisplayer;
 import kr.syeyoung.modapi.ModAPI;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -115,7 +114,7 @@ public class VersionInfo {
                                     "Join our discord at <a href=\"https://discord.gg/vuGsXhY5Bv\">https://discord.gg/vuGsXhY5Bv</a><br/>" +
                                     "Github at <a href=\"https://github.com/Dungeons-Guide/Skyblock-Dungeons-Guide\">https://github.com/Dungeons-Guide/Skyblock-Dungeons-Guide</a>")
                             , "Dungeons Guide Mandatory Update!", JOptionPane.WARNING_MESSAGE);
-                    FMLCommonHandler.instance().exitJava(9999, false);
+                    ModAPI.getAPI().exit(9999, false);
                 }
 
                 if (latestUpdate.getName().equals(VersionInfo.VERSION)) return;

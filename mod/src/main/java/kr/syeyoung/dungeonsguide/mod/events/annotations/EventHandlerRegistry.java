@@ -29,18 +29,11 @@ import kr.syeyoung.modapi.event.UEvent;
 import kr.syeyoung.modapi.profiler.UProfiler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.IEventListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -61,17 +54,6 @@ public class EventHandlerRegistry {
         private final String targetName;
         private final Supplier<Boolean> condition;
         private final MethodHandle invokeSite;
-    }
-
-    private static final int busID;
-    static {
-        try {
-            Field f = EventBus.class.getDeclaredField("busID");
-            f.setAccessible(true);
-            busID = (int) f.get(MinecraftForge.EVENT_BUS);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static void registerEvents(IFeature feature) {
@@ -113,45 +95,14 @@ public class EventHandlerRegistry {
         registerActualListeners();
     }
 
-    private static Map<Class<? extends Event>, IEventListener> registeredHandlers = new HashMap<>();
     private static Map<Class<? extends UEvent>, ListenerRegistration> registrations = new HashMap<>();
 
     public static synchronized void registerActualListeners() {
         for (Class aClass : targets.keySet()) {
-            if (registeredHandlers.containsKey(aClass)) continue;
             if (registrations.containsKey(aClass)) continue;
 
             try {
-                if (Event.class.isAssignableFrom(aClass)) {
-                    Event ev = (Event) aClass.getConstructor().newInstance();
-                    List<InvocationTarget> targetList = targets.get(aClass);
-                    UProfiler profiler = ModAPI.getAPI().getProfiler();
-                    IEventListener registered;
-                    ev.getListenerList().register(busID, EventPriority.NORMAL, registered = (event) -> {
-                        if (ModAPI.getAPI().isCallingFromMinecraftThread())
-                            profiler.startSection("Dungeons Guide UEvent Handling");
-                        for (InvocationTarget target : targetList) {
-                            if (ModAPI.getAPI().isCallingFromMinecraftThread())
-                                profiler.startSection(target.getTargetName());
-                            try {
-                                if (target.condition == null || (target.condition.get() == Boolean.TRUE)) { // it is safe to use this here.
-                                    target.invokeSite.invoke(event);
-                                }
-                            } catch (Exception e) {
-                                FeatureCollectDiagnostics.queueSendLogAsync(e);
-                                logger.error("An error occurred while handling event: \nFeature = " + target.getFeature().getClass().getName(), e);
-                            } catch (Throwable t) {
-                                FeatureCollectDiagnostics.queueSendLogAsync(t);
-                                throw new RuntimeException("An catastrophic error occured while handling event: ", t);
-                            }
-                            if (ModAPI.getAPI().isCallingFromMinecraftThread())
-                                profiler.endSection();
-                        }
-                        if (ModAPI.getAPI().isCallingFromMinecraftThread())
-                            profiler.endSection();
-                    });
-                    registeredHandlers.put(aClass, registered);
-                } else if (UEvent.class.isAssignableFrom(aClass)) {
+                if (UEvent.class.isAssignableFrom(aClass)) {
                     List<InvocationTarget> targetList = targets.get(aClass);
                     UProfiler profiler = ModAPI.getAPI().getProfiler();
                     ListenerRegistration registration = ModAPI.getAPI().getEventBus().registerListener(
@@ -191,17 +142,6 @@ public class EventHandlerRegistry {
     }
 
     public static void unregisterListeners() {
-        for (Map.Entry<Class<? extends Event>, IEventListener> eventIEventListenerEntry : registeredHandlers.entrySet()) {
-            try {
-                Event ev = eventIEventListenerEntry.getKey().getConstructor().newInstance();
-                ev.getListenerList().unregister(busID, eventIEventListenerEntry.getValue());
-            } catch (InstantiationException | NoSuchMethodException | InvocationTargetException |
-                     IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        registeredHandlers.clear();
-
         for (Map.Entry<Class<? extends UEvent>, ListenerRegistration> classListenerRegistrationEntry : registrations.entrySet()) {
             ModAPI.getAPI().getEventBus().unregisterListener(classListenerRegistrationEntry.getValue());
         }

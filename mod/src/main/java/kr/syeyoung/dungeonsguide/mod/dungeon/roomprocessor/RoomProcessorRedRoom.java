@@ -22,25 +22,15 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonDoor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.boss.FeatureWarningOnPortal;
-import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.BreakWord;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.RichText;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.styles.ParentDelegatingTextStyle;
-import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
-import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.rendering.UWorldRenderContext;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.RenderManager;
-import org.lwjgl.opengl.GL11;
 
 public class RoomProcessorRedRoom extends GeneralRoomProcessor {
     public RoomProcessorRedRoom(DungeonRoom dungeonRoom) {
@@ -113,46 +103,46 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
         if (!FeatureRegistry.BOSSFIGHT_WARNING_ON_PORTAL.isEnabled()) return;
 
 
-        FeatureWarningOnPortal featureWarningOnPortal = FeatureRegistry.BOSSFIGHT_WARNING_ON_PORTAL;
-        {
-            RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
-
-            RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
-            context.translate(basePt.x, basePt.y, basePt.z);
-
-
-            GlStateManager.color(1f, 1f, 1f, 0.5f);
-            if (dir == Integer.MIN_VALUE)
-                context.rotate(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
-            else
-                context.rotate(dir, 0.0f, 1.0f, 0.0f);
-            context.scale(-0.05f, -0.05f, 0.05f);
-            GlStateManager.disableLighting();
-            GlStateManager.depthMask(false); GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GlStateManager.disableDepth();
-            GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-
-            richText.setRootSpan(featureWarningOnPortal.getText());
-            richText.layout(null, new ConstraintBox(0, Double.POSITIVE_INFINITY, 0, Double.POSITIVE_INFINITY));
-            richText.doRender(partialTicks, null, new DomElement() {
-                @Override
-                public Size getSize() {
-                    return new Size(999,999);
-                }
-
-                @Override
-                public Rect getAbsBounds() {
-                    return new Rect(0,0,999,999);
-                }
-            });
-
-            GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-            GlStateManager.depthMask(true);
-            GlStateManager.enableDepth();
-            GlStateManager.popMatrix();
-        }
+//        FeatureWarningOnPortal featureWarningOnPortal = FeatureRegistry.BOSSFIGHT_WARNING_ON_PORTAL; $$ TODO REDROOM
+//        {
+//            RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+//
+//            RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
+//            context.translate(basePt.x, basePt.y, basePt.z);
+//
+//
+//            GlStateManager.color(1f, 1f, 1f, 0.5f);
+//            if (dir == Integer.MIN_VALUE)
+//                context.rotate(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
+//            else
+//                context.rotate(dir, 0.0f, 1.0f, 0.0f);
+//            context.scale(-0.05f, -0.05f, 0.05f);
+//            GlStateManager.disableLighting();
+//            GlStateManager.depthMask(false); GL11.glDisable(GL11.GL_DEPTH_TEST);
+//            GlStateManager.disableDepth();
+//            GlStateManager.enableBlend();
+//            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//
+//
+//            richText.setRootSpan(featureWarningOnPortal.getText());
+//            richText.layout(null, new ConstraintBox(0, Double.POSITIVE_INFINITY, 0, Double.POSITIVE_INFINITY));
+//            richText.doRender(partialTicks, null, new DomElement() {
+//                @Override
+//                public Size getSize() {
+//                    return new Size(999,999);
+//                }
+//
+//                @Override
+//                public Rect getAbsBounds() {
+//                    return new Rect(0,0,999,999);
+//                }
+//            });
+//
+//            GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+//            GlStateManager.depthMask(true);
+//            GlStateManager.enableDepth();
+//            GlStateManager.popMatrix();
+//        }
     }
 
 

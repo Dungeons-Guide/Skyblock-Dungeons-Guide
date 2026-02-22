@@ -19,21 +19,15 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 
-import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
-import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.EntityType;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityArmorStand;
 import kr.syeyoung.modapi.rendering.UWorldRenderContext;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -104,79 +98,79 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
         super.drawWorld(context, partialTicks);
         if (!FeatureRegistry.SOLVER_BLAZE.isEnabled()) return;
         if (next == null) return;
-        Vector3D pos = next.getPositionEyes(partialTicks);
-        context.drawTextAtWorld("NEXT", (float)pos.x, (float)pos.y, (float)pos.z, 0xFFFF0000, 0.5f, true, false, partialTicks);
-
-
-        for (UEntity entity : blazeList) {
-            GlStateManager.pushMatrix(); // $$ FIGURE OUT HIGHLIGHT BLAZE.
-            float f = entity.getPrevRotationYaw() + (entity.getRotationYaw() - entity.getPrevRotationYaw()) * partialTicks;
-            double x = entity.getPrevPosX() + (entity.getPosX() - entity.getPrevPosX()) * partialTicks;
-            double y = entity.getPrevPosY() + (entity.getPosY() - entity.getPrevPosY()) * partialTicks;
-            double z = entity.getPrevPosZ() + (entity.getPosZ() - entity.getPrevPosZ()) * partialTicks;
-
-
-            GL11.glEnable(GL11.GL_STENCIL_TEST);
-            GL11.glClearStencil(0);
-            GlStateManager.disableDepth();
-            GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-
-            GL11.glStencilMask(0xFF);
-            GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
-            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
-
-
-            RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
-
-            GlStateManager.colorMask(false, false, false, false);
-            ModAPI.getAPI().getRenderManager().doRenderEntity(entity, x,y,z,f,partialTicks, true);
-            GlStateManager.colorMask(true, true, true, true);
-
-            GlStateManager.popMatrix();
-
-
-            GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
-            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-
-//            Gui.drawRect(-9999,-9999, 9999, 9999, 0xFFFFFFFF);
-
-            boolean border = true;
-
-            RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getBlazeColor(), partialTicks, false);
-            if (entity == nextBlaze) {
-                RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextUpBlazeColor(), partialTicks, false);
-            } else if (entity == currentBlaze)
-                RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextBlazeColor(), partialTicks, false);
-
-            GlStateManager.color(1,1,1,1);
-
-
-            if (FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue().getAlpha() > 0x10) {
-                GL11.glStencilFunc(GL11.GL_NOTEQUAL, 3, 0x01);
-                GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
-                RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
-                GlStateManager.translate(x, y + 0.7, z);
-                GlStateManager.scale(1.1f, 1.1f, 1.1f);
-
-                GlStateManager.colorMask(false, false, false, false);
-                ModAPI.getAPI().getRenderManager().doRenderEntity(entity, 0, -0.7, 0, f, partialTicks, true);
-                GlStateManager.colorMask(true, true, true, true);
-
-                GlStateManager.popMatrix();
-
-
-
-                GL11.glStencilFunc(GL11.GL_EQUAL, 3, 0xFF);
-                GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-
-                RenderUtils.highlightBox(entity, new AABB(-1, 0, -1, 1, 2, 1), FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue(), partialTicks, false);
-
-
-            }
-            GL11.glDisable(GL11.GL_STENCIL_TEST);
-            GlStateManager.enableDepth();
-            GlStateManager.popMatrix();
-        }
+//        Vector3D pos = next.getPositionEyes(partialTicks); $$ TODO BLAZE
+//        context.drawTextAtWorld("NEXT", (float)pos.x, (float)pos.y, (float)pos.z, 0xFFFF0000, 0.5f, true, false, partialTicks);
+//
+//
+//        for (UEntity entity : blazeList) {
+//            GlStateManager.pushMatrix(); // $$ FIGURE OUT HIGHLIGHT BLAZE.
+//            float f = entity.getPrevRotationYaw() + (entity.getRotationYaw() - entity.getPrevRotationYaw()) * partialTicks;
+//            double x = entity.getPrevPosX() + (entity.getPosX() - entity.getPrevPosX()) * partialTicks;
+//            double y = entity.getPrevPosY() + (entity.getPosY() - entity.getPrevPosY()) * partialTicks;
+//            double z = entity.getPrevPosZ() + (entity.getPosZ() - entity.getPrevPosZ()) * partialTicks;
+//
+//
+//            GL11.glEnable(GL11.GL_STENCIL_TEST);
+//            GL11.glClearStencil(0);
+//            GlStateManager.disableDepth();
+//            GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
+//
+//            GL11.glStencilMask(0xFF);
+//            GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
+//            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
+//
+//
+//            RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
+//
+//            GlStateManager.colorMask(false, false, false, false);
+//            ModAPI.getAPI().getRenderManager().doRenderEntity(entity, x,y,z,f,partialTicks, true);
+//            GlStateManager.colorMask(true, true, true, true);
+//
+//            GlStateManager.popMatrix();
+//
+//
+//            GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
+//            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+//
+////            Gui.drawRect(-9999,-9999, 9999, 9999, 0xFFFFFFFF);
+//
+//            boolean border = true;
+//
+//            RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getBlazeColor(), partialTicks, false);
+//            if (entity == nextBlaze) {
+//                RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextUpBlazeColor(), partialTicks, false);
+//            } else if (entity == currentBlaze)
+//                RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextBlazeColor(), partialTicks, false);
+//
+//            GlStateManager.color(1,1,1,1);
+//
+//
+//            if (FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue().getAlpha() > 0x10) {
+//                GL11.glStencilFunc(GL11.GL_NOTEQUAL, 3, 0x01);
+//                GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
+//                RenderUtils.pushAndTranslateAccordingToRenderViewEntity(partialTicks);
+//                GlStateManager.translate(x, y + 0.7, z);
+//                GlStateManager.scale(1.1f, 1.1f, 1.1f);
+//
+//                GlStateManager.colorMask(false, false, false, false);
+//                ModAPI.getAPI().getRenderManager().doRenderEntity(entity, 0, -0.7, 0, f, partialTicks, true);
+//                GlStateManager.colorMask(true, true, true, true);
+//
+//                GlStateManager.popMatrix();
+//
+//
+//
+//                GL11.glStencilFunc(GL11.GL_EQUAL, 3, 0xFF);
+//                GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+//
+//                RenderUtils.highlightBox(entity, new AABB(-1, 0, -1, 1, 2, 1), FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue(), partialTicks, false);
+//
+//
+//            }
+//            GL11.glDisable(GL11.GL_STENCIL_TEST);
+//            GlStateManager.enableDepth();
+//            GlStateManager.popMatrix();
+//        }
     }
 
 

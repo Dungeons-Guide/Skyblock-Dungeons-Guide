@@ -11,18 +11,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
-import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
-import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
+import kr.syeyoung.modapi.rendering.UFontCalculator;
 
 import java.util.Collections;
 import java.util.List;
@@ -61,135 +52,44 @@ public class WidgetEtherwarpPreview extends AnnotatedExportOnlyWidget implements
 
         double scaleFactor = buildContext.getAbsBounds().getWidth() / size.getWidth();
 
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(halfWidth, size.getHeight() - 24, 0);
+        context.ctx().pushMatrix();
+        context.ctx().translate(halfWidth, size.getHeight() - 24, 0);
 
         context.drawScaledCustomSizeModalRect(sampleBlock, -8, 0, 0, 0, 16, 16,
                 16, 16, 16, 16);
 
-        ShaderProgram shaderProgram = ShaderManager.getShader("shaders/etherwarppreview");
-        shaderProgram.useShader();
-        shaderProgram.uploadUniform("radius", (float) buildContext.getAbsBounds().getWidth() * 1/3);
-        shaderProgram.uploadUniform("centerPos",
+        context.drawEtherwarpPreviewBackground(halfWidth, offset, leeway, (float) buildContext.getAbsBounds().getWidth() * 1/3,  (float) (buildContext.getAbsBounds().getX()+buildContext.getAbsBounds().getWidth()/2), ModAPI.getAPI().getDisplayHeight() - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight() - 16*scaleFactor));
+
+
+        context.drawLine(0, 8, 2*halfWidth/3, 8, 0xFFFFFFFF, 1.0f);
+        context.drawLine(0, 0, offset*16, 0, 0xFFFFFFFF, 1.0f);
+        context.drawLine(24-leeway*16, -80, 24, -80, 0xFFFFFFFF, 1.0f);
+        context.drawLine(40, -64, 40+leeway*16, -64, 0xFFFFFFFF, 1.0f);
+        context.drawLine(24-leeway*8, -83, 50, -90, 0xFFFFFFFF, 1.0f);
+        context.drawLine(50, -90, 40+leeway*8, -67, 0xFFFFFFFF, 1.0f);
+        context.drawLine(-8, 0, 8, 0, 0xFFFFFF00, 1.0f);
+
+        UFontCalculator fr = ModAPI.getAPI().getFontCalculator();
+        context.drawString(maxEtherwarp.getValue()+" Blocks", (int) (halfWidth/3) - fr.getStringWidth(maxEtherwarp.getValue()+" Blocks")/2, 10, 0xFFFFFFFF);
+        context.drawString(String.format("%.2f Blocks", offset), -fr.getStringWidth(String.format("%.2f Blocks", offset))-3, 0, 0xFFFFFFFF);
+        context.drawString(String.format("%.4f Blocks", leeway), 52, -94, 0xFFFFFFFF);
+        context.drawString("Can etherwarp to", (int) (-halfWidth/3), (int) -(halfWidth/3), 0xFFFFFFFF);
+        context.drawString("Yellow Face", (int) (-halfWidth/3), (int) -(halfWidth/3)+8, 0xFFFFFFFF);
+        context.drawString("Can't etherwarp", 30, (int) -10, 0xFFFFFFFF);
+
+        context.drawDonut(
+                (int) -halfWidth, (int) -size.getHeight(),
+                halfWidth, 40, 0xFFFFFFFF,
+                (float) buildContext.getAbsBounds().getWidth() * 1/3,
+                1.0f,
                 (float) (buildContext.getAbsBounds().getX()+buildContext.getAbsBounds().getWidth()/2),
-                ModAPI.getAPI().getDisplayHeight() - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight() - 16*scaleFactor));
-        shaderProgram.uploadUniform("smoothness", 0.0f);
-
-        GlStateManager.color(1.0f, 0f, 0f, 0.3f);
-        GlStateManager.disableTexture2D();
-        GlStateManager.disableCull();
-
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-        worldRenderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION);
-        worldRenderer.pos(0,offset * 16, 0).endVertex();
-        worldRenderer.pos(-halfWidth, -offset/0.5 * halfWidth + offset* 16, 0).endVertex();
-        worldRenderer.pos(-halfWidth, offset * 16, 0).endVertex();
-        tessellator.draw();
-        worldRenderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION);
-        worldRenderer.pos(0,offset * 16, 0).endVertex();
-        worldRenderer.pos(halfWidth, -offset/0.5 * halfWidth + offset* 16, 0).endVertex();
-        worldRenderer.pos(halfWidth, offset * 16, 0).endVertex();
-        tessellator.draw();
-        context.drawRect(-halfWidth, offset* 16, halfWidth, 40, 0x4DFF0000);
-
-
-        // leeway...
-        // sample block is 2 right, 5 up
-        // top left: 1.5, -5 =>
-        // bottom right: 2.5, -4
-
-        {
-            double slope1 = (5+offset) / (1.5 - leeway);
-            double slope2 = (4+offset) / (2.5 + leeway);
-
-
-            GlStateManager.color(0.0f, 1f, 0f, 0.3f);
-            worldRenderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION);
-            worldRenderer.pos(0,offset * 16, 0).endVertex();
-            worldRenderer.pos(-halfWidth, -offset/0.5 * halfWidth + offset* 16, 0).endVertex();
-            worldRenderer.pos(halfWidth, -slope1 * halfWidth + offset* 16, 0).endVertex();
-            worldRenderer.pos(24-leeway*16, -80, 0).endVertex();
-            worldRenderer.pos(24, -80, 0).endVertex();
-            worldRenderer.pos(24, -64, 0).endVertex();
-            worldRenderer.pos(40+leeway*16, -64, 0).endVertex();
-            worldRenderer.pos(halfWidth, -slope2 * halfWidth + offset* 16, 0).endVertex();
-            worldRenderer.pos(halfWidth, -offset/0.5 * halfWidth + offset* 16, 0).endVertex();
-
-            tessellator.draw();
-
-            GlStateManager.color(1.0f, 0f, 0f, 0.3f);
-            worldRenderer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION);
-            worldRenderer.pos(24-leeway*16, -80, 0).endVertex();
-            worldRenderer.pos(40, -80, 0).endVertex();
-            worldRenderer.pos(halfWidth, -slope1 * halfWidth + offset* 16, 0).endVertex();
-            worldRenderer.pos(40, -64, 0).endVertex();
-            worldRenderer.pos(halfWidth, -slope2 * halfWidth + offset* 16, 0).endVertex();
-            worldRenderer.pos(40+leeway*16, -64, 0).endVertex();
-//            worldRenderer.pos(halfWidth, -slope1 * halfWidth + offset* 16, 0).endVertex();
-//            worldRenderer.pos(halfWidth, -slope2 * halfWidth + offset* 16, 0).endVertex();
-
-            tessellator.draw();
-        }
-
-        GL20.glUseProgram(0);
-        GlStateManager.disableTexture2D();
-
-        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-        worldRenderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
-        worldRenderer.pos(0, 8, 0).endVertex();
-        worldRenderer.pos(2*halfWidth/3, 8, 0).endVertex();
-        worldRenderer.pos(0, 0, 0).endVertex();
-        worldRenderer.pos(0, offset* 16, 0).endVertex();
-        worldRenderer.pos(24-leeway*16, -80, 0).endVertex();
-        worldRenderer.pos(24, -80, 0).endVertex();
-        worldRenderer.pos(40, -64, 0).endVertex();
-        worldRenderer.pos(40+leeway*16, -64, 0).endVertex();
-
-        worldRenderer.pos(24-leeway*8, -83, 0).endVertex();
-        worldRenderer.pos(50, -90, 0).endVertex();
-        worldRenderer.pos(50, -90, 0).endVertex();
-        worldRenderer.pos(40+leeway*8, -67, 0).endVertex();
-
-        tessellator.draw();
-
-        GlStateManager.color(1.0f, 1.0f, 0f, 1.0f);
-        worldRenderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
-        worldRenderer.pos(-8,0,0).endVertex();
-        worldRenderer.pos(8,0,0).endVertex();
-        tessellator.draw();
-
-
-        GlStateManager.enableTexture2D();
-
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString(maxEtherwarp.getValue()+" Blocks", (int) (halfWidth/3) - fr.getStringWidth(maxEtherwarp.getValue()+" Blocks")/2, 10, 0xFFFFFFFF);
-        fr.drawString(String.format("%.2f Blocks", offset), -fr.getStringWidth(String.format("%.2f Blocks", offset))-3, 0, 0xFFFFFFFF);
-        fr.drawString(String.format("%.4f Blocks", leeway), 52, -94, 0xFFFFFFFF);
-
-        fr.drawString("Can etherwarp to", (int) (-halfWidth/3), (int) -(halfWidth/3), 0xFFFFFFFF);
-        fr.drawString("Yellow Face", (int) (-halfWidth/3), (int) -(halfWidth/3)+8, 0xFFFFFFFF);
-
-
-        fr.drawString("Can't etherwarp", 30, (int) -10, 0xFFFFFFFF);
-
-        shaderProgram = ShaderManager.getShader("shaders/donut");
-        shaderProgram.useShader();
-        shaderProgram.uploadUniform("radius", (float) buildContext.getAbsBounds().getWidth() * 1/3);
-        shaderProgram.uploadUniform("centerPos",
-                (float) (buildContext.getAbsBounds().getX()+buildContext.getAbsBounds().getWidth()/2),
-                ModAPI.getAPI().getDisplayHeight() - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight() - 16*scaleFactor));
-        shaderProgram.uploadUniform("smoothness", 0.0f);
-        shaderProgram.uploadUniform("thickness", 1.0f);
-        context.drawRect(-halfWidth,-size.getHeight(),halfWidth, 40, 0xFFFFFFFF);
-        GL20.glUseProgram(0);
+                ModAPI.getAPI().getDisplayHeight() - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight() - 16*scaleFactor),
+                0.0f);
 
         context.drawScaledCustomSizeModalRect(sampleBlock, 24, -80, 0, 0, 16, 16,
                 16, 16, 16, 16);
 
-        GlStateManager.enableCull();
 
-
-        GlStateManager.popMatrix();
+        context.ctx().popMatrix();
     }
 }

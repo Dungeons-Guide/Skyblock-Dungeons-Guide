@@ -156,4 +156,9 @@ public class RenderingContext {
     public void drawDonut(int x, int y, double width, double height, int color, float rad, float thickness, float centerX, float centerY, float smoothness) {
         uGuiRenderContext.drawDonut(x, y, width, height, color, rad, thickness, centerX, centerY, smoothness);
     }
+
+    public void drawEtherwarpPreviewBackground(double halfWidth, double offset, double leeway, double radius, double centerX, double centerY) {
+        uGuiRenderContext.drawEtherwarpPreviewBackground(halfWidth, offset, leeway, radius, centerX, centerY);
+    }
+
 }

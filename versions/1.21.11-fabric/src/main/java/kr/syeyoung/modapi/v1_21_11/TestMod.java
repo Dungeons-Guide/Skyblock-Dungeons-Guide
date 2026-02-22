@@ -10,11 +10,10 @@ public class TestMod implements ClientModInitializer {
 //        Screen
 //        SpecialR
 
-
-
+//        ClientSpri
 //        DynamicTex
 //        NativeImageBackedTexture
-        SoundMana
+
 //        HudElementRegistry.
 //        MinecraftClient.getInstance().rende
 //

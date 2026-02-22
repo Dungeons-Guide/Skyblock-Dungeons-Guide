@@ -57,8 +57,8 @@ import kr.syeyoung.modapi.event.ListenerRegistration;
 import kr.syeyoung.modapi.event.SubscribeEvent;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
 import kr.syeyoung.modapi.event.events.RegisterCommandEvent;
+import kr.syeyoung.modapi.event.events.ResourceReloadEvent;
 import lombok.Getter;
-import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -133,13 +133,9 @@ public class DungeonsGuide implements DGInterface {
     }
 
 
-    private List<Object> registeredListeners = new ArrayList<>();
     private List<ListenerRegistration> registeredMODAPIListeners = new ArrayList<>();
     public void registerEventsForge(Object object) {
-        registeredListeners.add(object);
-        MinecraftForge.EVENT_BUS.register(object);
         registeredMODAPIListeners.addAll(AnnotatedListenerHelper.registerListeners(ModAPI.getAPI().getEventBus(), object));
-
     }
     private List<ExecutorService> executorServices = new ArrayList<>();
 
@@ -196,7 +192,6 @@ public class DungeonsGuide implements DGInterface {
         this.dungeonFacade = new DungeonFacade();
 
         dungeonFacade.init();
-        registerEventsForge(new Keybinds());
 
         registerEventsForge(PartyManager.INSTANCE);
         registerEventsForge(ChatProcessor.INSTANCE);
@@ -252,10 +247,6 @@ public class DungeonsGuide implements DGInterface {
         // have FUN!
 
 
-        for (Object registeredListener : registeredListeners) {
-            MinecraftForge.EVENT_BUS.unregister(registeredListener);
-        }
-
         for (ListenerRegistration registeredMODAPIListener : registeredMODAPIListeners) {
             ModAPI.getAPI().getEventBus().unregisterListener(registeredMODAPIListener);
         }
@@ -297,6 +288,7 @@ public class DungeonsGuide implements DGInterface {
         ShaderManager.onResourceReload();
         DomElementRegistry.onResourceManagerReload();
 
+        ModAPI.getAPI().getEventBus().fireEvent(new ResourceReloadEvent());
     }
 
 

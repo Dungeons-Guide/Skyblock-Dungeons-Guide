@@ -21,13 +21,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarend
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FeatureViewPlayerStatsOnJoin;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.HashSet;

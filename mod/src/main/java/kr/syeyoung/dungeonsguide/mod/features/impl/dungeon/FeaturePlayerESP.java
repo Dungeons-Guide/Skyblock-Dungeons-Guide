@@ -19,17 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon;
 
 
-import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import org.lwjgl.opengl.GL11;
 
 
 public class FeaturePlayerESP extends SimpleFeature {
@@ -40,66 +30,66 @@ public class FeaturePlayerESP extends SimpleFeature {
 
 
     private boolean preCalled = false;
-    @DGEventHandler
-    public void onEntityRenderPre(RenderPlayerEvent.Pre renderPlayerEvent) {
+//    @DGEventHandler
+//    public void onEntityRenderPre(RenderPlayerEvent.Pre renderPlayerEvent) {
 
+// $$ TODO ESP
+//        if (preCalled) return;
+//
+//
+//
+//        DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+//        if (dungeonContext == null) return;
+//        if (!dungeonContext.getPlayers().contains(renderPlayerEvent.entityPlayer.getName())) {
+//            return;
+//        }
+//
+//        preCalled = true;
+//
+//        GL11.glEnable(GL11.GL_STENCIL_TEST);
+//        GL11.glClearStencil(0);
+//        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
+//
+//        GL11.glStencilMask(0xFF);
+//        GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
+//        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
+//
+//        EntityPlayer entity = renderPlayerEvent.entityPlayer;
+//        InventoryPlayer inv = entity.inventory;
+//        ItemStack[] armor = inv.armorInventory;
+//        inv.armorInventory = new ItemStack[4];
+//        ItemStack[] hand = inv.mainInventory;
+//        inv.mainInventory = new ItemStack[36];
+//
+//        float f = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * renderPlayerEvent.partialRenderTick;
+//        try {
+//            renderPlayerEvent.renderer.doRender((AbstractClientPlayer) renderPlayerEvent.entityPlayer, renderPlayerEvent.x, renderPlayerEvent.y, renderPlayerEvent.z, f, renderPlayerEvent.partialRenderTick);
+//        } catch (Exception t) {}
+//
+//        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+//        GL11.glStencilFunc(GL11.GL_NOTEQUAL, 1, 0xff);
+//        GL11.glDepthMask(false);
+//        GL11.glDepthFunc(GL11.GL_GEQUAL);
+//
+//        GlStateManager.pushMatrix();
+//        GlStateManager.translate(renderPlayerEvent.x, renderPlayerEvent.y + 0.9, renderPlayerEvent.z);
+//        GlStateManager.scale(1.2f, 1.1f, 1.2f);
+//        renderPlayerEvent.renderer.setRenderOutlines(true);
+//        try {
+//            renderPlayerEvent.renderer.doRender((AbstractClientPlayer) renderPlayerEvent.entityPlayer, 0,-0.9,0, f, renderPlayerEvent.partialRenderTick);
+//        } catch (Exception t) {}
+//
+//        renderPlayerEvent.renderer.setRenderOutlines(false);
+//        GL11.glDepthFunc(GL11.GL_LEQUAL);
+//        GlStateManager.popMatrix();
+//
+//        GL11.glDisable(GL11.GL_STENCIL_TEST); // Turn this shit off!
+//
+//        inv.armorInventory = armor;
+//        inv.mainInventory = hand;
+//
+//        preCalled = false;
 
-        if (preCalled) return;
-        
-
-
-        DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        if (dungeonContext == null) return;
-        if (!dungeonContext.getPlayers().contains(renderPlayerEvent.entityPlayer.getName())) {
-            return;
-        }
-
-        preCalled = true;
-
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
-        GL11.glClearStencil(0);
-        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-
-        GL11.glStencilMask(0xFF);
-        GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
-
-        EntityPlayer entity = renderPlayerEvent.entityPlayer;
-        InventoryPlayer inv = entity.inventory;
-        ItemStack[] armor = inv.armorInventory;
-        inv.armorInventory = new ItemStack[4];
-        ItemStack[] hand = inv.mainInventory;
-        inv.mainInventory = new ItemStack[36];
-
-        float f = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * renderPlayerEvent.partialRenderTick;
-        try {
-            renderPlayerEvent.renderer.doRender((AbstractClientPlayer) renderPlayerEvent.entityPlayer, renderPlayerEvent.x, renderPlayerEvent.y, renderPlayerEvent.z, f, renderPlayerEvent.partialRenderTick);
-        } catch (Exception t) {}
-
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-        GL11.glStencilFunc(GL11.GL_NOTEQUAL, 1, 0xff);
-        GL11.glDepthMask(false);
-        GL11.glDepthFunc(GL11.GL_GEQUAL);
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(renderPlayerEvent.x, renderPlayerEvent.y + 0.9, renderPlayerEvent.z);
-        GlStateManager.scale(1.2f, 1.1f, 1.2f);
-        renderPlayerEvent.renderer.setRenderOutlines(true);
-        try {
-            renderPlayerEvent.renderer.doRender((AbstractClientPlayer) renderPlayerEvent.entityPlayer, 0,-0.9,0, f, renderPlayerEvent.partialRenderTick);
-        } catch (Exception t) {}
-
-        renderPlayerEvent.renderer.setRenderOutlines(false);
-        GL11.glDepthFunc(GL11.GL_LEQUAL);
-        GlStateManager.popMatrix();
-
-        GL11.glDisable(GL11.GL_STENCIL_TEST); // Turn this shit off!
-
-        inv.armorInventory = armor;
-        inv.mainInventory = hand;
-
-        preCalled = false;
-
-    }
+//    }
 
 }

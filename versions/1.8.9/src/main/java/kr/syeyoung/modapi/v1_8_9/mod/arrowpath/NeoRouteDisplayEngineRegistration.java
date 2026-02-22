@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.arrowpath;
+package kr.syeyoung.modapi.v1_8_9.mod.arrowpath;
 
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
@@ -12,6 +12,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplay
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.PathDisplayEngineSetting;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.PathDisplayEngineSettingRegistration;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.Placeholder;
 
 public class NeoRouteDisplayEngineRegistration implements PathDisplayEngineSettingRegistration<NeoRouteDisplayEngineLineProperties> {
     public static final NeoRouteDisplayEngineRegistration INSTANCE = new NeoRouteDisplayEngineRegistration();
@@ -141,7 +142,8 @@ public class NeoRouteDisplayEngineRegistration implements PathDisplayEngineSetti
 
         @Override
         public Widget createPreviewWidget() {
-            return new WidgetPreview(this);
+            return new Placeholder();
+//            return new WidgetPreview(this);
         }
     }
 }

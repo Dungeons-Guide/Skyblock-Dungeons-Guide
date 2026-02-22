@@ -6,8 +6,6 @@ import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.ByteBinaryTag;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemTool;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -19,13 +17,14 @@ import java.io.IOException;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AlgorithmSetting implements Cloneable {
     @Data @AllArgsConstructor
-    public static class ToolSettings {
-        private final ItemTool tool;
+    public static class ToolSettings { // $$ QUICK HAX
+        private final String level;
+//        private final ItemTool tool;
         private final int efficiency;
 
         public CompoundBinaryTag serialize() {
             return CompoundBinaryTag.builder()
-                    .putString("level", tool.getRegistryName())
+                    .putString("level", level)
                     .putInt("efficiency", efficiency).build();
         }
 
@@ -33,7 +32,7 @@ public class AlgorithmSetting implements Cloneable {
             if (base instanceof ByteBinaryTag) return null;
             else if (base instanceof CompoundBinaryTag) {
                 return new ToolSettings(
-                        (ItemTool) Item.getByNameOrId(((CompoundBinaryTag) base).getString("level")),
+                        ((CompoundBinaryTag) base).getString("level"),
                         ((CompoundBinaryTag) base).getInt("efficiency"));
             }
             throw new IllegalArgumentException("Invalid tool settings: "+base);
@@ -41,15 +40,17 @@ public class AlgorithmSetting implements Cloneable {
 
         public double getSpeed(int haste) {
             int val2 = efficiency;
-            Item.ToolMaterial toolMaterial = tool.getToolMaterial();
-            double efficiency2 = toolMaterial.getEfficiencyOnProperMaterial();
+//            Item.ToolMaterial toolMaterial = tool.getToolMaterial();
+//            double efficiency2 = toolMaterial.getEfficiencyOnProperMaterial();
+            double efficiency2 = 8.0;
             efficiency2 += val2 * val2 + 1;
             efficiency2 *= haste * 0.2 + 1;
             return efficiency2;
         }
 
         public boolean canHarvest(UBlock b) {
-            return tool.canHarvestBlock(null);
+//            return tool.canHarvestBlock(null);
+            return true;
         }
     }
 

@@ -9,9 +9,6 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.events.*;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.TextureStitchEvent;
 
 import java.awt.*;
 import java.util.Map;
@@ -111,13 +108,6 @@ public class LiveRouteRegistry extends SimpleFeature {
         RoomRouteHandler roomRouteHandler = getRoomHandler(getRoomIn());
         if (roomRouteHandler == null) return;
         roomRouteHandler.onEntityDeath(event);
-    }
-
-    public TextureAtlasSprite sprite;
-
-    @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onTextureStitch(TextureStitchEvent.Pre event) {
-         sprite = event.map.registerSprite(new ResourceLocation("dungeonsguide", "arrow"));
     }
 
     @Override
