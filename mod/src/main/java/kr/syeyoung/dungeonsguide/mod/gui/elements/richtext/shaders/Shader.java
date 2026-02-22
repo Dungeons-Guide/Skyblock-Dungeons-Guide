@@ -19,6 +19,4 @@
 package kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.shaders;
 
 public interface Shader {
-    public void useShader();
-    public void freeShader();
 }

@@ -19,6 +19,7 @@ import kr.syeyoung.modapi.rendering.UTextureManager;
 import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.resources.UResourcePackRepository;
 import kr.syeyoung.modapi.settings.UGameSettings;
+import kr.syeyoung.modapi.util.EnumCursor;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.world.IBlockRegistry;
@@ -114,4 +115,8 @@ public interface ModAPI {
     void refreshResources();
 
     void exit(int code, boolean hardexit);
+
+    void setMouseCursor(EnumCursor enumCursor);
+
+    void setCursorPosition(int cursorX, int cursorY);
 }

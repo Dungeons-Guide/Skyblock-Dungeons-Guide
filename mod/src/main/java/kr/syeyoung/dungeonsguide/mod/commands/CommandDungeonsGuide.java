@@ -34,7 +34,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.image.ImageTexture;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
-import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
@@ -198,7 +197,6 @@ public class CommandDungeonsGuide  {
     @DGCommand("dg purge")
     public void purgeCommand() {
         ApiFetcher.purgeCache();
-        ShaderManager.onResourceReload();
         CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
         cosmeticsManager.requestPerms();
         cosmeticsManager.requestCosmeticsList();

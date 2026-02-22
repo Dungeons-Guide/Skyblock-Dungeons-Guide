@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.gui;
 
 import kr.syeyoung.dungeonsguide.mod.gui.layouter.SingleChildPassingLayouter;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.SingleChildRenderer;
-import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
+import kr.syeyoung.modapi.util.EnumCursor;
 import lombok.Getter;
 import lombok.Setter;
 

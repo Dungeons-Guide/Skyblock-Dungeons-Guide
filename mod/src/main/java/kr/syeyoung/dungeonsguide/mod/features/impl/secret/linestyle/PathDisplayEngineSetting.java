@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 
-public interface PathDisplayEngineSetting<T> {
+public interface PathDisplayEngineSetting<T extends IPathDisplayEngineConfiguration> {
     IPathDisplayEngine<T> createPathDisplayEngine(ActionRoute route);
     PathDisplayEngineSettingRegistration getRegistration();
 

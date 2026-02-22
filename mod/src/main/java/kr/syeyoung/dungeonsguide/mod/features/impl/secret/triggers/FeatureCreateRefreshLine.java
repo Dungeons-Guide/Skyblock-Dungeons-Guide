@@ -28,19 +28,17 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplayEngine;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic.ClassicPathEngineLineProperties;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.Vector3D;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
-import org.lwjgl.input.Keyboard;
+import kr.syeyoung.modapi.event.events.KeyBindPressedEvent;
 
 import java.awt.*;
 import java.util.LinkedHashMap;
@@ -49,7 +47,7 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
     public FeatureCreateRefreshLine() {
         super("Pathfinding & Secrets", "Refresh pathfind line or Trigger pathfind", "A keybind for creating or refresh pathfind lines for pathfind contexts that doesn't have line, or contexts that has refresh rate set to -1.\nPress settings to edit the key", "secret.refreshPathfind", true);
         this.parameters = new LinkedHashMap<>();
-        addParameter("key", new FeatureParameter<Integer>("key", "Key","Press to refresh or create pathfind line", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
+        addParameter("key", new FeatureParameter<Integer>("key", "Key","Press to refresh or create pathfind line", 0, TCKeybind.INSTANCE));
         addParameter("pathfind", new FeatureParameter<Boolean>("pathfind", "Enable Pathfinding", "Force Enable pathfind for future actions when used", false, TCBoolean.INSTANCE));
         addParameter("refreshrate", new FeatureParameter<Integer>("refreshrate", "Line Refreshrate", "Ticks to wait per line refresh, to be overriden. If the line already has pathfind enabled, this value does nothing. Specify it to -1 to don't refresh line at all", 10, TCInteger.INSTANCE));
     }
@@ -85,8 +83,8 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
             else continue;
 
 
-            if (((ClassicPathEngineLineProperties) value2.getSettings()).getLineRefreshRate() != -1 &&
-                    ((ClassicPathEngineLineProperties) value2.getSettings()).isPathfind() && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled()) continue;
+            if ((value2.getSettings()).getRefreshRate() != -1 &&
+                    (value2.getSettings()).isPathfind() && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled()) continue;
 
 
             double vectorV = VectorUtils.distSquared(
@@ -136,9 +134,9 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
                 ((ActionMoveNearestAir) actionRoute.getActions().get(actionRoute.getCurrent() - 1)).forceRefresh(currentRoom);
             }
 
-            if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isPathfind() && !((ClassicPathEngineLineProperties) engine.getSettings()).isPathfind()) {
-                ((ClassicPathEngineLineProperties) engine.getSettings()).setPathfind(true);
-                ((ClassicPathEngineLineProperties) engine.getSettings()).setLineRefreshRate(FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getRefreshRate());
+            if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isPathfind() && !(engine.getSettings()).isPathfind()) {
+                (engine.getSettings()).setPathfind(true);
+                (engine.getSettings()).setRefreshRate(FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getRefreshRate());
             }
         }
     }

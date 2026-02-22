@@ -27,6 +27,7 @@ import kr.syeyoung.modapi.rendering.UTextureManager;
 import kr.syeyoung.modapi.resources.UResourceManager;
 import kr.syeyoung.modapi.resources.UResourcePackRepository;
 import kr.syeyoung.modapi.settings.UGameSettings;
+import kr.syeyoung.modapi.util.EnumCursor;
 import kr.syeyoung.modapi.util.RaycastResult;
 import kr.syeyoung.modapi.util.USession;
 import kr.syeyoung.modapi.v1_8_9.audio.USoundHandlerImpl;
@@ -47,6 +48,7 @@ import kr.syeyoung.modapi.v1_8_9.mod.classic.ClassicPathDisplayEngineRegistratio
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.modapi.v1_8_9.paralleluniverse.tab.TabList;
 import kr.syeyoung.modapi.v1_8_9.profiler.UProfilerImpl;
+import kr.syeyoung.modapi.v1_8_9.render.DefaultFontRendererImpl;
 import kr.syeyoung.modapi.v1_8_9.render.PassthroughManager;
 import kr.syeyoung.modapi.v1_8_9.render.UFontCalculatorImpl;
 import kr.syeyoung.modapi.v1_8_9.render.UTextureManagerImpl;
@@ -57,6 +59,7 @@ import kr.syeyoung.modapi.v1_8_9.settings.UGameSettingsImpl;
 import kr.syeyoung.modapi.v1_8_9.shader.ShaderManager;
 import kr.syeyoung.modapi.v1_8_9.util.CustomNetworkPlayerInfoUnloader;
 import kr.syeyoung.modapi.v1_8_9.util.USessionImpl;
+import kr.syeyoung.modapi.v1_8_9.util.cursor.GLCursors;
 import kr.syeyoung.modapi.v1_8_9.world.BlockStateRegistryImpl;
 import kr.syeyoung.modapi.v1_8_9.world.UWorldImpl;
 import kr.syeyoung.modapi.world.IBlockAccessible;
@@ -91,6 +94,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.simple.SimpleLogger;
+import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
@@ -253,6 +257,9 @@ public class ModAPIImpl implements ModAPI {
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(a -> {
             ShaderManager.onResourceReload();
 
+            DefaultFontRendererImpl.getInstance().onResourceReload();
+            GLCursors.setupCursors();
+
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj; // $$
             byte[] glypthWidths = ReflectionHelper.getPrivateValue(FontRenderer.class, fontRenderer, "glyphWidth", "field_78287_e", "field_2819", "e");
             for (int i = 0; i < 255; i++) {
@@ -290,6 +297,8 @@ public class ModAPIImpl implements ModAPI {
         commandManager.unregisterCommands();
         packetInjector.cleanup();
         ShaderManager.unload();
+
+        GLCursors.cleanup();
 
         try {
             List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
@@ -453,5 +462,19 @@ public class ModAPIImpl implements ModAPI {
     @Override
     public void exit(int code, boolean hardexit) {
         FMLCommonHandler.instance().exitJava(code, hardexit);
+    }
+
+    @Override
+    public void setMouseCursor(EnumCursor enumCursor) {
+        try {
+            Mouse.setNativeCursor(GLCursors.getCursor(enumCursor));
+        } catch (LWJGLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void setCursorPosition(int cursorX, int cursorY) {
+        Mouse.setCursorPosition(cursorX, cursorY);
     }
 }

@@ -36,7 +36,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISec
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonRoomEnterEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
@@ -44,7 +43,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRoute
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
-import org.lwjgl.input.Keyboard;
+import kr.syeyoung.modapi.event.events.KeyBindPressedEvent;
 
 import java.awt.*;
 import java.util.Map;
@@ -54,7 +53,7 @@ import java.util.WeakHashMap;
 public class FeatureSmartRoute extends SimpleFeature {
     public FeatureSmartRoute() {
         super("Pathfinding & Secrets.Smart Route", "Auto pathfind to new secret", "Generate smart route going through all secrets upon entering the room.", "secret.smartroute", false);
-        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to navigate to next best secret", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
+        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to navigate to next best secret", 0, TCKeybind.INSTANCE));
     }
 
     private final Set<DungeonRoom> triggered = Sets.newSetFromMap(new WeakHashMap<>());

@@ -50,7 +50,7 @@ public class WidgetAbilitySettings extends Widget implements Renderer {
 
         int pickX = 5;
         if (algorithmSetting.getPickaxe() != null) {
-            renderIndex(context, pickX, 1, algorithmSetting.getPickaxe().getTool().getToolMaterial().ordinal() * 8, 16, 16, 0);
+            renderIndex(context, pickX, 1, 3 * 8, 16, 16, 0);
             String toDraw = algorithmSetting.getPickaxe().getEfficiency() + "";
             context.drawStringWithShadow(toDraw, pickX + 17 - fr.getStringWidth(toDraw), 10, 0xFF979797);
         } else {
@@ -60,7 +60,7 @@ public class WidgetAbilitySettings extends Widget implements Renderer {
 
         int shovelX = 24;
         if (algorithmSetting.getShovel() != null) {
-            renderIndex(context, shovelX, 1, algorithmSetting.getShovel().getTool().getToolMaterial().ordinal() * 8 + 1, 16, 16, 0);
+            renderIndex(context, shovelX, 1, 3 * 8 + 1, 16, 16, 0);
             String toDraw = algorithmSetting.getShovel().getEfficiency() + "";
             context.drawStringWithShadow(toDraw, shovelX + 17 - fr.getStringWidth(toDraw), 10, 0xFF979797);
         } else {
@@ -70,7 +70,7 @@ public class WidgetAbilitySettings extends Widget implements Renderer {
 
         int axeX = 43;
         if (algorithmSetting.getAxe() != null) {
-            renderIndex(context, axeX, 1, algorithmSetting.getAxe().getTool().getToolMaterial().ordinal() * 8 + 2, 16, 16, 0);
+            renderIndex(context, axeX, 1, 3 * 8 + 2, 16, 16, 0);
             String toDraw = algorithmSetting.getAxe().getEfficiency() + "";
             context.drawStringWithShadow(toDraw, axeX + 17 - fr.getStringWidth(toDraw), 10, 0xFF979797);
         } else {

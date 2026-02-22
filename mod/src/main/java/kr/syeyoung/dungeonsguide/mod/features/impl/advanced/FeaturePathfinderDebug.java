@@ -26,7 +26,6 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandDgDebug;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandParam;
 import kr.syeyoung.dungeonsguide.mod.commands.DGCommand;
-import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedStonk;
@@ -38,7 +37,6 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic.ClassicPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.IPathfinder;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
@@ -169,8 +167,8 @@ public class FeaturePathfinderDebug extends SimpleFeature {
                 cnt++;
                 Color c = Color.getHSBColor(cnt / ((float)precalcs.size() * pfDebugPts.size()), 1.0f, 1.0f);
 
-                ClassicPathDisplayEngine.drawLinesPathfindNode(res.getNodeList(),
-                        new AColor(c.getRGB(),true), 3.0f, event.getPartialTicks(), true);
+//                ClassicPathDisplayEngine.drawLinesPathfindNode(res.getNodeList(), $$ TODO:
+//                        new AColor(c.getRGB(),true), 3.0f, event.getPartialTicks(), true);
 
                 PathfindResult.PathfindNode n = res.getNodeList().get(0);
 

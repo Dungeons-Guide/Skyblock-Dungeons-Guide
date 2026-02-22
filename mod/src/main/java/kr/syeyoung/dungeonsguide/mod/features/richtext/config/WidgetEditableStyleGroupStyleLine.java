@@ -35,7 +35,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import org.lwjgl.input.Keyboard;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -234,7 +233,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
         @On(functionName = "inc")
         public void inc() {
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-            double newT = truth.getValue() + (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
+            double newT = truth.getValue() + (lctrl ? 1 : 0.1);
             if (newT > max) newT = max;
             truth.setValue(newT);
             value.setValue(String.format("%f", truth.getValue()));
@@ -243,10 +242,23 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
         @On(functionName = "dec")
         public void dec() {
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-            double newT = truth.getValue() - (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
+            double newT = truth.getValue() - (lctrl ? 1 : 0.1);
             if (newT < min) newT = min;
             truth.setValue(newT);
             value.setValue(String.format("%f", truth.getValue()));
+        }
+
+        private boolean lctrl = false;
+        @Override
+        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+            if (keyCode == 29) lctrl = true;
+            return super.keyPressed(keyCode, scanCode, modifiers);
+        }
+
+        @Override
+        public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+            if (keyCode == 29) lctrl = false;
+            return super.keyReleased(keyCode, scanCode, modifiers);
         }
     }
 

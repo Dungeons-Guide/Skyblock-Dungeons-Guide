@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Passthrough;
-import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
+import kr.syeyoung.modapi.util.EnumCursor;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 @Passthrough(exportName = "_on", bindName = "wgtOn", type = Widget.class)

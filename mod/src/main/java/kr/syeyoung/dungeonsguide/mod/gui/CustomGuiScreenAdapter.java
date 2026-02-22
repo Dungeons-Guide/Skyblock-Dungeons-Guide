@@ -23,16 +23,12 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
-import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
+import kr.syeyoung.modapi.util.EnumCursor;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.gui.UCustomGuiScreen;
 import kr.syeyoung.modapi.gui.UGuiScreen;
 import kr.syeyoung.modapi.rendering.UGuiRenderContext;
 import lombok.Getter;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 import java.util.Stack;
 
@@ -60,7 +56,7 @@ public class CustomGuiScreenAdapter implements UCustomGuiScreen {
         view.getContext().CONTEXT.put("screenAdapter", this);
 
         try {
-            Mouse.setNativeCursor(GLCursors.getCursor(EnumCursor.DEFAULT));
+            ModAPI.getAPI().setMouseCursor(EnumCursor.DEFAULT);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -204,15 +200,10 @@ public class CustomGuiScreenAdapter implements UCustomGuiScreen {
 
     @Override
     public void onRemoved() {
-        Keyboard.enableRepeatEvents(false);
         isOpen = false;
 
-        try {
-            Mouse.setNativeCursor(null);
-            view.setCursor(EnumCursor.DEFAULT);
-        } catch (LWJGLException e) {
-            e.printStackTrace();
-        }
+        ModAPI.getAPI().setMouseCursor(null);
+        view.setCursor(EnumCursor.DEFAULT);
     }
 
     @Override
@@ -253,7 +244,7 @@ public class CustomGuiScreenAdapter implements UCustomGuiScreen {
 
                 EnumCursor newCursor = view.getCurrentCursor();
                 try {
-                    if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
+                    if (prevCursor != newCursor) ModAPI.getAPI().setMouseCursor(newCursor);
                 } catch (Throwable e) {
 
                     e.printStackTrace();

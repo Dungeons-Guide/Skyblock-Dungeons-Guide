@@ -29,7 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import org.lwjgl.input.Keyboard;
 
 public class TCInteger implements FeatureTypeHandler<Integer> {
     public static final TCInteger INSTANCE = new TCInteger();
@@ -70,14 +69,27 @@ public class TCInteger implements FeatureTypeHandler<Integer> {
         @On(functionName = "inc")
         public void inc() {
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-            truth +=(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 5 : 1);
+            truth +=(lctrl ? 5 : 1);
             value.setValue(String.valueOf(truth));
         }
         @On(functionName = "dec")
         public void dec() {
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-            truth -=(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 5 : 1);
+            truth -=(lctrl ? 5 : 1);
             value.setValue(String.valueOf(truth));
+        }
+
+        private boolean lctrl = false;
+        @Override
+        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+            if (keyCode == 29) lctrl = true;
+            return super.keyPressed(keyCode, scanCode, modifiers);
+        }
+
+        @Override
+        public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+            if (keyCode == 29) lctrl = false;
+            return super.keyReleased(keyCode, scanCode, modifiers);
         }
     }
 }

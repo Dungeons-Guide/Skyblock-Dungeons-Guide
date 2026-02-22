@@ -20,11 +20,12 @@ package kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.fonts;
 
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.FlatTextSpan;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.styles.ITextStyle;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 
 public interface FontRenderer {
     double getWidth(char text, ITextStyle textStyle);
     // from y 0 going downward
     double getBaselineHeight(ITextStyle textStyle);
 
-    void render(FlatTextSpan lineElement, double x, double v, double currentScale);
+    void render(RenderingContext context, FlatTextSpan lineElement, double x, double v, double currentScale);
 }

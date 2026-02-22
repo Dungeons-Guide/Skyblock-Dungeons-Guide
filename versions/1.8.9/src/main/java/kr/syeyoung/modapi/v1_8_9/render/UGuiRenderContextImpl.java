@@ -572,7 +572,7 @@ public class UGuiRenderContextImpl implements UGuiRenderContext {
 
     @Override
     public void drawEtherwarpPreviewBackground(double halfWidth, double offset, double leeway, double radius, double centerX, double centerY) {
-        kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram shaderProgram = kr.syeyoung.dungeonsguide.mod.shader.ShaderManager.getShader("shaders/etherwarppreview");
+        ShaderProgram shaderProgram = ShaderManager.getShader("shaders/etherwarppreview");
         shaderProgram.useShader();
         shaderProgram.uploadUniform("radius", (float) radius);
         shaderProgram.uploadUniform("centerPos", (float) centerX, (float) centerY);
@@ -636,5 +636,12 @@ public class UGuiRenderContextImpl implements UGuiRenderContext {
         }
 
         GL20.glUseProgram(0);
+    }
+
+    @Override
+    public void drawStringWithStyle(String text, double x, double y, kr.syeyoung.modapi.rendering.TextStyleConfig style) {
+        if (text == null || text.isEmpty()) return;
+
+        DefaultFontRendererImpl.getInstance().renderString(text, x, y, style);
     }
 }

@@ -36,7 +36,6 @@ public class ConfigCustomGuiScreenAdapter extends CustomGuiScreenAdapter {
     @Override
     public void onRemoved() {
         super.onRemoved();
-
         Config.scheduleConfigSave();
     }
 }

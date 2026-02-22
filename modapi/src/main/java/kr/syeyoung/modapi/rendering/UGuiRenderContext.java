@@ -56,4 +56,6 @@ public interface UGuiRenderContext extends URenderContext {
     void drawDonut(int x, int y, double width, double height, int color, float rad, float thickness, float centerX, float centerY, float smoothness);
 
     void drawEtherwarpPreviewBackground(double halfWidth, double offset, double leeway, double radius, double centerX, double centerY);
+
+    void drawStringWithStyle(String text, double x, double y, TextStyleConfig style);
 }

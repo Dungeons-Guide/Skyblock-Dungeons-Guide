@@ -35,7 +35,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.ArrayBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
@@ -53,6 +52,7 @@ import kr.syeyoung.modapi.data.EnumFacing;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
+import kr.syeyoung.modapi.event.events.KeyBindPressedEvent;
 import kr.syeyoung.modapi.event.events.RenderWorldEvent;
 import kr.syeyoung.modapi.event.events.WorldUnloadEvent;
 import kr.syeyoung.modapi.world.BlockType;
@@ -62,7 +62,6 @@ import lombok.Getter;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.apache.commons.io.IOUtils;
-import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.io.ByteArrayInputStream;
@@ -80,7 +79,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
     public FeatureRoomEdit() {
         super("Debug", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is for DEVELOPERS WHO KNOW WHAT THEY ARE DOING only", "advanced.roomedit", false);
 
-        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to edit room", Keyboard.KEY_R, TCKeybind.INSTANCE));
+        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to edit room", 0x13, TCKeybind.INSTANCE)); // R
     }
 
     @Override

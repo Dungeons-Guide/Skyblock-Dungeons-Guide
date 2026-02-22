@@ -32,7 +32,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.ISec
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonRoomEnterEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
@@ -41,7 +40,7 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
 import kr.syeyoung.modapi.event.events.ClientTickEvent;
-import org.lwjgl.input.Keyboard;
+import kr.syeyoung.modapi.event.events.KeyBindPressedEvent;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -52,7 +51,7 @@ import java.util.WeakHashMap;
 public class FeatureSingleTargetPathfind extends SimpleFeature {
     public FeatureSingleTargetPathfind() {
         super("Pathfinding & Secrets.Display One", "Auto pathfind to new secret", "Auto browse best secret upon entering the room. if enabled. (click configure to see more options)", "secret.autouponenter", false);
-        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to navigate to next best secret", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
+        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to navigate to next best secret", 0, TCKeybind.INSTANCE));
         addParameter("nextAuto", new FeatureParameter<Boolean>("nextAuto", "Auto Pathfind to next secret", "Auto browse best next secret after current one completes.\nthe first pathfinding of first secret needs to be triggered first in order for this option to work", false, TCBoolean.INSTANCE));
     }
 

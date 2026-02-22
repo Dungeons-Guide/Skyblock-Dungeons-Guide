@@ -20,26 +20,22 @@ package kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.shaders;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.client.renderer.GlStateManager;
 
 public class ChromaShader implements Shader {
     private AColor aColor;
+
     public ChromaShader(AColor aColor) {
         this.aColor = aColor;
     }
 
-
-    // argb=
-    @Override
-    public void useShader() {
-        int color = RenderUtils.getColorAt(0,0,aColor);
-        float r = ((color >> 16) & 0xFF) / 255.0f;
-        float g = ((color >> 8) & 0xFF) / 255.0f;
-        float b = ((color) & 0xFF) / 255.0f;
-        float a = ((color >> 24) & 0xFF) / 255.0f;
-        GlStateManager.color(r,g,b,a);
+    public AColor getAColor() {
+        return aColor;
     }
 
-    @Override
-    public void freeShader() {}
+    /**
+     * Get the current chroma color based on time
+     */
+    public int getColor() {
+        return RenderUtils.getColorAt(0, 0, aColor);
+    }
 }

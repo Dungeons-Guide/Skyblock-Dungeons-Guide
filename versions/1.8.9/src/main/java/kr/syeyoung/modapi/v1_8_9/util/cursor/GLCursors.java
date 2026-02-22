@@ -16,14 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.utils.cursor;
+package kr.syeyoung.modapi.v1_8_9.util.cursor;
 
 
 import com.google.common.base.Throwables;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.launcher.util.cursor.XCursor;
-import kr.syeyoung.dungeonsguide.mod.jvminternal.UnsafeWrapper;
 import kr.syeyoung.dungeonsguide.mod.utils.MathUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.modapi.ModAPI;
@@ -34,6 +33,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.input.Cursor;
+import sun.misc.Unsafe;
 
 import java.awt.image.BufferedImage;
 import java.lang.reflect.*;
@@ -63,8 +63,20 @@ public class GLCursors {
     private static Method linuxDisplayGetDisplay;
 
 
-    private static Map<EnumCursor, Cursor> enumCursorCursorMap = new HashMap<>();
+    private static Map<kr.syeyoung.modapi.util.EnumCursor, Cursor> enumCursorCursorMap = new HashMap<>();
 
+
+    private static Unsafe unsafe;
+
+    static {
+        try {
+            Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            unsafe = (Unsafe) f.get(null);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     static {
         try {
@@ -85,7 +97,7 @@ public class GLCursors {
     public static void setupCursors() {
         if (enumCursorCursorMap.size() != 0) return;
         int platform = LWJGLUtil.getPlatform();
-        for (EnumCursor value : EnumCursor.values()) {
+        for (kr.syeyoung.modapi.util.EnumCursor value : kr.syeyoung.modapi.util.EnumCursor.values()) {
             Cursor c = null;
             try {
                 switch(platform) {
@@ -180,7 +192,7 @@ public class GLCursors {
         }
     }
 
-    public static Cursor getCursor(EnumCursor enumCursor) {
+    public static Cursor getCursor(kr.syeyoung.modapi.util.EnumCursor enumCursor) {
         return enumCursorCursorMap.get(enumCursor);
     }
 
@@ -245,7 +257,7 @@ public class GLCursors {
 
     private static Cursor createCursor(Object handle) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         // Yes. I had no way.
-        Cursor ADANGEROUSOBJECT = (Cursor) UnsafeWrapper.allocateInstance(Cursor.class);
+        Cursor ADANGEROUSOBJECT = (Cursor) unsafe.allocateInstance(Cursor.class);
         Object cursorElement = constructor.newInstance(handle, 0, LWJGLUtil.getPlatform() == LWJGLUtil.PLATFORM_LINUX ? -1 : System.currentTimeMillis());
         Object array = Array.newInstance(GLCursors.cursorElement, 1);
         Array.set(array, 0, cursorElement);

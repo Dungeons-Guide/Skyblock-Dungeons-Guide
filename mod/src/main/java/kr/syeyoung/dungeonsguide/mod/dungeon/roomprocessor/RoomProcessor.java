@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGChatReceivedEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.modapi.event.events.*;
 import kr.syeyoung.modapi.rendering.UWorldRenderContext;

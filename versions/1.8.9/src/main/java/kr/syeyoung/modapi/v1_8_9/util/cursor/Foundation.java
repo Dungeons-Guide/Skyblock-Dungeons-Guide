@@ -16,13 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.utils.cursor;
+package kr.syeyoung.modapi.v1_8_9.util.cursor;
 
 import com.sun.jna.Library;
 import com.sun.jna.Pointer;
 
-public interface X11 extends Library {
-    public Pointer XCreateFontCursor(Pointer display,
-                               int shape);
 
+public interface Foundation extends Library {
+    Pointer objc_getClass(String className);
+    Pointer sel_registerName(String selectorName);
+    Pointer objc_msgSend(Pointer receiver, Pointer selector, Object... args);
 }

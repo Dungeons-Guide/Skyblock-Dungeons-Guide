@@ -22,7 +22,6 @@ import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.gui.UContainer;
 import kr.syeyoung.modapi.gui.UContainerChest;
 import lombok.Getter;
-import org.lwjgl.input.Mouse;
 
 public class CustomGuiScreenAdapterChestOverride extends CustomGuiScreenAdapter {
 
@@ -48,7 +47,7 @@ public class CustomGuiScreenAdapterChestOverride extends CustomGuiScreenAdapter 
         super.init();
         ModAPI.getAPI().getPlayer().setOpenContainer(guiChest);
         if (repositionCursor) {
-            Mouse.setCursorPosition(cursorX, cursorY);
+            ModAPI.getAPI().setCursorPosition(cursorX, cursorY);
         }
     }
 

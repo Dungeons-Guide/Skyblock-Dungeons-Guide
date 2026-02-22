@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2021  cyoung06
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,14 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.utils.cursor;
+package kr.syeyoung.modapi.rendering;
 
-import com.sun.jna.Library;
-import com.sun.jna.Pointer;
+public interface FontMetrics {
+    double getCharWidth(char character, TextStyleConfig style);
 
+    double getBaselineHeight(TextStyleConfig style);
 
-public interface Foundation extends Library {
-    Pointer objc_getClass(String className);
-    Pointer sel_registerName(String selectorName);
-    Pointer objc_msgSend(Pointer receiver, Pointer selector, Object... args);
+    double getStringWidth(String text, TextStyleConfig style);
 }
+

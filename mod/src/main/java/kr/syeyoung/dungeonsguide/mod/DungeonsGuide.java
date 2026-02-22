@@ -39,16 +39,13 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.fonts.DefaultFontRenderer;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
-import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.utils.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.mod.utils.TimeScoreUtil;
-import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.command.UCommandContext;
@@ -253,10 +250,6 @@ public class DungeonsGuide implements DGInterface {
         EventHandlerRegistry.unregisterListeners();
 
 
-
-
-        ShaderManager.unload();
-        GLCursors.cleanup();
         DiscordIntegrationManager.INSTANCE.cleanup();
 
         for (ExecutorService executorService : executorServices) {
@@ -283,9 +276,6 @@ public class DungeonsGuide implements DGInterface {
 
     @Override
     public void onResourceReload() {
-        GLCursors.setupCursors();
-        DefaultFontRenderer.DEFAULT_RENDERER.onResourceManagerReload();
-        ShaderManager.onResourceReload();
         DomElementRegistry.onResourceManagerReload();
 
         ModAPI.getAPI().getEventBus().fireEvent(new ResourceReloadEvent());

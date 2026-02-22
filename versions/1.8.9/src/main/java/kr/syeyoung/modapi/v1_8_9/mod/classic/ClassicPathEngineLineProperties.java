@@ -19,11 +19,12 @@
 package kr.syeyoung.modapi.v1_8_9.mod.classic;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplayEngineConfiguration;
 import lombok.Builder;
 import lombok.Data;
 
 @Data @Builder(toBuilder = true)
-public class ClassicPathEngineLineProperties {
+public class ClassicPathEngineLineProperties implements IPathDisplayEngineConfiguration {
     private boolean pathfind;
     private int lineRefreshRate;
     private AColor lineColor;
@@ -32,4 +33,14 @@ public class ClassicPathEngineLineProperties {
     private boolean beacon;
     private AColor beaconColor;
     private AColor beaconBeamColor;
+
+    @Override
+    public double getRefreshRate() {
+        return lineRefreshRate;
+    }
+
+    @Override
+    public void setRefreshRate(int refreshRate) {
+        this.lineRefreshRate = refreshRate;
+    }
 }

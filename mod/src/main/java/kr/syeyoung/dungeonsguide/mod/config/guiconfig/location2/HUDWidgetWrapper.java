@@ -32,9 +32,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.OnlyChildrenRenderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectPositioner;
-import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
+import kr.syeyoung.modapi.util.EnumCursor;
 import lombok.Getter;
-import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -143,11 +142,13 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
     }
 
     private boolean isHover = false;
+    private boolean drag = false;
+
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
         if (childHandled) return false;
         if (!enable) return false;
-        if (Mouse.isButtonDown(0))
+        if (drag)
             getDomElement().setCursor(EnumCursor.CLOSED_HAND);
         else
             getDomElement().setCursor(EnumCursor.OPEN_HAND);
@@ -162,6 +163,7 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
 
     @Override
     public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+        drag = true;
         if (childHandled) return false;
         if (mouseButton == 0) return false;
         if (!enable) return false;
@@ -173,6 +175,11 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
         ), null);
 
         return true;
+    }
+
+    @Override
+    public void mouseReleased(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int state) {
+        drag = false;
     }
 
     public class WidthWidget extends Widget implements Layouter, Renderer {

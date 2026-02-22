@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.utils.cursor;
+package kr.syeyoung.modapi.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

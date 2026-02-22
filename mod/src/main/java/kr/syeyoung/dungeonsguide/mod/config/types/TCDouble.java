@@ -29,7 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import org.lwjgl.input.Keyboard;
 
 public class TCDouble implements FeatureTypeHandler<Double> {
     public static final TCDouble INSTANCE = new TCDouble();
@@ -82,7 +81,7 @@ public class TCDouble implements FeatureTypeHandler<Double> {
         @On(functionName = "inc")
         public void inc() {
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-            truth += (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
+            truth += (lctrl ? 1 : 0.1);
             if (truth > max) truth = max;
             value.setValue(String.format("%f", truth));
         }
@@ -90,9 +89,22 @@ public class TCDouble implements FeatureTypeHandler<Double> {
         @On(functionName = "dec")
         public void dec() {
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);
-            truth -= (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
+            truth -= (lctrl ? 1 : 0.1);
             if (truth < min) truth = min;
             value.setValue(String.format("%f", truth));
+        }
+
+        private boolean lctrl = false;
+        @Override
+        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+            if (keyCode == 29) lctrl = true;
+            return super.keyPressed(keyCode, scanCode, modifiers);
+        }
+
+        @Override
+        public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+            if (keyCode == 29) lctrl = false;
+            return super.keyReleased(keyCode, scanCode, modifiers);
         }
     }
 }

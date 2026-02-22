@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractPathDisplayEngineSetting<T> implements PathDisplayEngineSetting<T> {
+public abstract class AbstractPathDisplayEngineSetting<T extends IPathDisplayEngineConfiguration> implements PathDisplayEngineSetting<T> {
 
     protected Map<String, FeatureParameter> parameters = new HashMap<String, FeatureParameter>();
 

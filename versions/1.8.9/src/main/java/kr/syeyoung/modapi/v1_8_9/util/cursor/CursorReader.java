@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.utils.cursor;
+package kr.syeyoung.modapi.v1_8_9.util.cursor;
 
 import com.google.common.io.LittleEndianDataInputStream;
 import com.twelvemonkeys.imageio.plugins.bmp.CURImageReader;

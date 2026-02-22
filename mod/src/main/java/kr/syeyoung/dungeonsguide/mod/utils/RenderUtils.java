@@ -21,23 +21,16 @@ package kr.syeyoung.dungeonsguide.mod.utils;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonDoor;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
-import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import kr.syeyoung.modapi.data.Vector3D;
-import kr.syeyoung.modapi.data.VectorI3D;
-import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.rendering.UWorldRenderContext;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.Arrays;
 
 public class RenderUtils {
     public static final ResourceIdentifier icons = new ResourceIdentifier("textures/gui/icons.png");
-    private static final ResourceLocation beaconBeam = new ResourceLocation("textures/entity/beacon_beam.png");
 
     /**
      * Taken from NotEnoughUpdates under Creative Commons Attribution-NonCommercial 3.0
@@ -149,7 +142,7 @@ public class RenderUtils {
 //        Minecraft.getMinecraft().getTextureManager().bindTexture(icons);
         completed = (float)Math.round(completed / 0.05F) * 0.05F;
         float notCompleted = 1.0F - completed;
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+//        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         float width = 0.0F;
         if (completed < 0.5F) {
             width = (0.5F - completed) * xSize;
@@ -279,71 +272,6 @@ public class RenderUtils {
     }
 
 
-    public static void _highlightBlock(VectorI3D blockpos, Color c, float partialTicks, boolean depth) {
-
-        GlStateManager.disableLighting();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.disableTexture2D();
-
-        if (!depth) {
-            GlStateManager.disableDepth(); GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GlStateManager.depthMask(false);
-        }
-        GlStateManager.color(c.getRed() /255.0f, c.getGreen() / 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);
-
-        GlStateManager.translate(blockpos.getX(), blockpos.getY(), blockpos.getZ());
-
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glVertex3d(0, 0, 0);
-        GL11.glVertex3d(0, 0, 1);
-        GL11.glVertex3d(0, 1, 1);
-        GL11.glVertex3d(0, 1, 0); // TOP LEFT / BOTTOM LEFT / TOP RIGHT/ BOTTOM RIGHT
-
-        GL11.glVertex3d(1, 0, 1);
-        GL11.glVertex3d(1, 0, 0);
-        GL11.glVertex3d(1, 1, 0);
-        GL11.glVertex3d(1, 1, 1);
-
-        GL11.glVertex3d(0, 1, 1);
-        GL11.glVertex3d(0, 0, 1);
-        GL11.glVertex3d(1, 0, 1);
-        GL11.glVertex3d(1, 1, 1); // TOP LEFT / BOTTOM LEFT / TOP RIGHT/ BOTTOM RIGHT
-
-        GL11.glVertex3d(0, 0, 0);
-        GL11.glVertex3d(0, 1, 0);
-        GL11.glVertex3d(1, 1, 0);
-        GL11.glVertex3d(1, 0, 0);
-
-        GL11.glVertex3d(0,1,0);
-        GL11.glVertex3d(0,1,1);
-        GL11.glVertex3d(1,1,1);
-        GL11.glVertex3d(1,1,0);
-
-        GL11.glVertex3d(0,0,1);
-        GL11.glVertex3d(0,0,0);
-        GL11.glVertex3d(1,0,0);
-        GL11.glVertex3d(1,0,1);
-
-
-
-        GL11.glEnd();
-
-
-        if (!depth) {
-            GlStateManager.enableDepth();
-            GlStateManager.depthMask(true);
-        }
-        GlStateManager.enableTexture2D();
-        GlStateManager.enableLighting();
-
-
-
-//...
-
-    }
-
-
 
 //    public static void highlightBox(UEntity entity, AABB  axisAlignedBB, AColor c, float partialTicks, boolean depth) {
 //        pushAndTranslateAccordingToRenderViewEntity(partialTicks);
@@ -425,14 +353,4 @@ public class RenderUtils {
 //
 //    }
 
-    public static void pushAndTranslateAccordingToRenderViewEntity(float partialTicks) {
-        UEntity viewing_from = ModAPI.getAPI().getRenderViewEntity();
-
-        double x_fix = viewing_from.getPrevPosX() + ((viewing_from.getPosX() - viewing_from.getPrevPosX()) * partialTicks);
-        double y_fix = viewing_from.getPrevPosY() + ((viewing_from.getPosY() - viewing_from.getPrevPosY()) * partialTicks);
-        double z_fix = viewing_from.getPrevPosZ() + ((viewing_from.getPosZ() - viewing_from.getPrevPosZ()) * partialTicks);
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
-    }
 }

@@ -16,16 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.events.impl;
+package kr.syeyoung.modapi.v1_8_9.util.cursor;
 
-import kr.syeyoung.modapi.event.UEvent;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import com.sun.jna.Library;
+import com.sun.jna.Pointer;
 
-@Data
-@EqualsAndHashCode(callSuper=false)
-@AllArgsConstructor
-public class KeyBindPressedEvent extends UEvent {
-    private int key;
+public interface X11 extends Library {
+    public Pointer XCreateFontCursor(Pointer display,
+                               int shape);
+
 }

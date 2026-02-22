@@ -7,6 +7,13 @@ public class TestMod implements ClientModInitializer {
     public void onInitializeClient() {
         System.out.println("HELLO!!");
 
+//        MinecraftClient.getInstance().keyboard.
+//        MinecraftClient.getInstance().
+//        MinecraftClient.getInstance().inpu
+//        MinecraftClient.getInstance().s
+//        KeyboardIn
+//        MinecraftClient.getInstance().mouse.
+//        MinecraftClient.getInstance
 //        Screen
 //        SpecialR
 

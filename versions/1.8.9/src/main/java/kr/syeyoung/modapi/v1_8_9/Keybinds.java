@@ -18,8 +18,8 @@
 
 package kr.syeyoung.modapi.v1_8_9;
 
-import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.modapi.ModAPI;
+import kr.syeyoung.modapi.event.events.KeyBindPressedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.input.Keyboard;
@@ -40,7 +40,7 @@ public class Keybinds
     public void onMousePressed(InputEvent.MouseInputEvent mouseInputEvent) {
         if (Mouse.getEventButtonState()) {
             int key = Mouse.getEventButton() - 100;
-            KeyBindPressedEvent keyBindPressedEvent = new KeyBindPressedEvent(key);
+            KeyBindPressedEvent keyBindPressedEvent = new  KeyBindPressedEvent(key);
             ModAPI.getAPI().getEventBus().fireEvent(keyBindPressedEvent);
         }
     }
