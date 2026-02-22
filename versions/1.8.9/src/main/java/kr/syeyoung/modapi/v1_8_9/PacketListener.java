@@ -369,21 +369,29 @@ public class PacketListener {
             if (action == S38PacketPlayerListItem.Action.ADD_PLAYER || action == S38PacketPlayerListItem.Action.REMOVE_PLAYER) {
                 List<TabListEntry> entries = new ArrayList<>();
                 for (S38PacketPlayerListItem.AddPlayerData entry : ((S38PacketPlayerListItem) packet).getEntries()) {
-                    GameMode gameMode;
-                    switch (entry.getGameMode()) {
-                        case CREATIVE:
-                            gameMode = GameMode.CREATIVE;
-                        case SPECTATOR:
-                            gameMode = GameMode.SPECTATOR;
-                        case SURVIVAL:
-                            gameMode =  GameMode.SURVIVAL;
-                        case ADVENTURE:
-                            gameMode =  GameMode.ADVENTURE;
-                        default:
-                            gameMode = null;
+                    GameMode gameMode = null;
+                    if (entry.getGameMode()  != null) {
+                        switch (entry.getGameMode()) {
+                            case CREATIVE:
+                                gameMode = GameMode.CREATIVE;
+                                break;
+                            case SPECTATOR:
+                                gameMode = GameMode.SPECTATOR;
+                                break;
+                            case SURVIVAL:
+                                gameMode = GameMode.SURVIVAL;
+                                break;
+                            case ADVENTURE:
+                                gameMode = GameMode.ADVENTURE;
+                                break;
+                            default:
+                                gameMode = null;
+                                break;
+                        }
                     }
                     entries.add(new TabListEntry(entry.getProfile(), gameMode));
                 }
+
 
 
                 TabListUpdateEvent updateEvent = new TabListUpdateEvent(

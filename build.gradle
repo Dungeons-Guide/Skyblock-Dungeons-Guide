@@ -37,8 +37,8 @@ configurations {
 dependencies {
     loaderOnly(project(path: ":1.8.9-loader", configuration: "remappedMod"))
     loaderOnlyDev(project(path: ":1.8.9-loader", configuration: "unmappedMod"))
-    modOnly(project(path: ":mod", configuration: "remappedMod"))
-    modOnlyDev(project(path: ":mod", configuration: "unmappedMod"))
+    modOnly(project(path: ":1.8.9", configuration: "remappedMod"))
+    modOnlyDev(project(path: ":1.8.9", configuration: "unmappedMod"))
 }
 
 task standaloneJar(type: Zip) {

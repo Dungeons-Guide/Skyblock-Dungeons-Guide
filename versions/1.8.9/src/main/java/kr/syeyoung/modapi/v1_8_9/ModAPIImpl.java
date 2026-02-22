@@ -233,6 +233,8 @@ public class ModAPIImpl implements ModAPI {
     private EventListener eventListener = new EventListener();
     private Keybinds keybinds = new Keybinds();
 
+
+    private boolean wait = false;
     @Override
     public void init() {
         MinecraftForge.EVENT_BUS.register(packetInjector);
@@ -241,6 +243,9 @@ public class ModAPIImpl implements ModAPI {
         MinecraftForge.EVENT_BUS.register(TextureLoader.INSTANCE);
         eventListener.register();
         registry.init();
+
+        PathDisplayEngineSettingRegistry.register(ClassicPathDisplayEngineRegistration.INSTANCE);
+        PathDisplayEngineSettingRegistry.register(NeoRouteDisplayEngineRegistration.INSTANCE);
 
         Minecraft.getMinecraft().getFramebuffer().enableStencil();
 
@@ -258,7 +263,8 @@ public class ModAPIImpl implements ModAPI {
             ShaderManager.onResourceReload();
 
             DefaultFontRendererImpl.getInstance().onResourceReload();
-            GLCursors.setupCursors();
+            if (wait)
+                GLCursors.setupCursors();
 
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj; // $$
             byte[] glypthWidths = ReflectionHelper.getPrivateValue(FontRenderer.class, fontRenderer, "glyphWidth", "field_78287_e", "field_2819", "e");
@@ -267,14 +273,15 @@ public class ModAPIImpl implements ModAPI {
             }
             glypthWidths[0xed02] = 1;
         });
-
         try {
             List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
             resourcePackList.add(new DGTexturePack());
+            wait =true;
             Minecraft.getMinecraft().refreshResources();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
         if (Minecraft.getMinecraft().getNetHandler() != null)
             Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler_2", packetInjector);
@@ -283,14 +290,13 @@ public class ModAPIImpl implements ModAPI {
 
     @Override
     public void unload() {
+        wait = false;
         MinecraftForge.EVENT_BUS.unregister(packetInjector);
         MinecraftForge.EVENT_BUS.unregister(PassthroughManager.INSTANCE);
         MinecraftForge.EVENT_BUS.unregister(keybinds);
         MinecraftForge.EVENT_BUS.unregister(TextureLoader.INSTANCE);
 
 
-        PathDisplayEngineSettingRegistry.register(ClassicPathDisplayEngineRegistration.INSTANCE);
-        PathDisplayEngineSettingRegistry.register(NeoRouteDisplayEngineRegistration.INSTANCE);
         CustomNetworkPlayerInfoUnloader.unload();
         eventListener.unregister();
 

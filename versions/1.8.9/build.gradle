@@ -12,7 +12,7 @@ group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide"
 
 java {
-//    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
     sourceCompatibility =  JavaLanguageVersion.of(8)
     targetCompatibility =  JavaLanguageVersion.of(8)
 }

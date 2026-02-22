@@ -18,8 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod;
 
-import com.sun.jna.Platform;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,7 +52,11 @@ public class NativeLoader {
 
         if (isAarch64) {
             dir = "aarch64";
-        } else if (Platform.is64Bit()) {
+        } else if ("x86_64".equals(osArch)
+                || "ia64".equals(osArch)
+                || "ppc64".equals(osArch)
+                || "sparcv9".equals(osArch)
+                || "amd64".equals(osArch)) {
             dir = "x86_64";
         } else {
             dir = "x86";
@@ -64,7 +66,7 @@ public class NativeLoader {
         String resourceLoc = "/native/"+dir+"/"+libName;
 
         System.out.println("Extracting "+name+" from "+resourceLoc);
-        System.out.println("Arch: "+dir +" | OS: "+Platform.getOSType());
+        System.out.println("Arch: "+dir +" | OS: "+osName);
 
         File targetExtractionPath = new File("native/"+libName);
         targetExtractionPath.getParentFile().mkdirs();
