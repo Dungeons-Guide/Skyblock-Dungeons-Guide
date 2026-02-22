@@ -27,8 +27,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.VectorI3D;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -114,13 +114,13 @@ public class ActionUtils {
                 stonkReq.put(spot.getClusterId(), false);
             }
         }
-        for (Map.Entry<ImmutablePair<Integer, Boolean>, List<PossibleClickingSpot>> integerListEntry :
+        for (Map.Entry<Pair<Integer, Boolean>, List<PossibleClickingSpot>> integerListEntry :
                 spots.stream()
                         .filter(a -> {
                             if (stonkReq.containsKey(a.getClusterId()) && !a.isStonkingReq()) return true;
                             return !stonkReq.containsKey(a.getClusterId());
                         })
-                        .collect(Collectors.groupingBy(a -> new ImmutablePair<>(a.getClusterId(), a.isStonkingReq()))).entrySet()) {
+                        .collect(Collectors.groupingBy(a -> new Pair<>(a.getClusterId(), a.isStonkingReq()))).entrySet()) {
             ActionDAGBuilder builder1 = builder;
 //            if (guard)
 //                builder1 = builder.or(new ActionStupidGuard());
@@ -128,9 +128,9 @@ public class ActionUtils {
 
             AtomicAction.Builder builder2 = new AtomicAction.Builder();
             for (OffsetPoint offsetPoint : target) {
-                builder2.requires(integerListEntry.getKey().right ? new ActionStonkClick(offsetPoint) : new ActionClick(offsetPoint));
+                builder2.requires(integerListEntry.getKey().getSecond() ? new ActionStonkClick(offsetPoint) : new ActionClick(offsetPoint));
             }
-            if (integerListEntry.getKey().right) {
+            if (integerListEntry.getKey().getSecond()) {
                 builder1 = builder1.or(builder2
                         .requires(new ActionMove(integerListEntry.getValue(), dungeonRoom))
                         .build("MoveAndStonkClick"), settings);

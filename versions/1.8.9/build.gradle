@@ -93,7 +93,7 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:1.18.32"
 
     shadowImpl project(path: ":modapi")
-    shadowImpl project(path: ":mod")
+    shadowImpl project(path: ":mod", configuration: "mod")
     shadowImpl "com.mojang:brigadier:1.0.18"
     shadowImpl "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
     compileOnly project(path: ":1.8.9-loader")

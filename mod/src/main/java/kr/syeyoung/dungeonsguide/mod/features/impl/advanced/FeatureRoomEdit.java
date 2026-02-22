@@ -61,7 +61,6 @@ import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import org.apache.commons.io.IOUtils;
 
 import java.awt.*;
 import java.io.ByteArrayInputStream;
@@ -167,7 +166,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
         Gson gson = new Gson();
         JsonObject jsonObject;
         try {
-            jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
+            jsonObject = gson.fromJson(new String(Files.readAllBytes(f.toPath())), JsonObject.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

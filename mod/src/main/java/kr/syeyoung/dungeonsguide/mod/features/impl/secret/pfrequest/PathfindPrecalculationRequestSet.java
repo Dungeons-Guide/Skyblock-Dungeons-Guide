@@ -15,11 +15,10 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.s
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.remotereq.RemoteCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.data.Pair;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -149,8 +148,7 @@ public class PathfindPrecalculationRequestSet {
                     connection.getOutputStream().flush();
 
                     InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                    String servers = IOUtils.toString(inputStreamReader);
-                    JsonObject key = new Gson().fromJson(servers, JsonObject.class);
+                    JsonObject key = new Gson().fromJson(inputStreamReader, JsonObject.class);
                     uploadUrl = key.get("uploadUrl").getAsString();
                     requestId = key.get("request").getAsJsonObject().get("requestId").getAsString();
                 } finally {
@@ -158,7 +156,7 @@ public class PathfindPrecalculationRequestSet {
                     progressForGui.removeProgress(progress);
                 }
 
-                WidgetNotificationProgress.Progress progress1 = new WidgetNotificationProgress.Progress("Uploading... ("+ FileUtils.byteCountToDisplaySize(Files.size(zipFile.toPath()))+")", new AtomicLong(), new AtomicLong(Files.size(zipFile.toPath())), true);
+                WidgetNotificationProgress.Progress progress1 = new WidgetNotificationProgress.Progress("Uploading... ("+ TextUtils.formatByte(Files.size(zipFile.toPath()))+")", new AtomicLong(), new AtomicLong(Files.size(zipFile.toPath())), true);
                 progressForTopRight.addProgress(progress1);
                 progressForGui.addProgress(progress1);
                 try {
@@ -240,7 +238,7 @@ public class PathfindPrecalculationRequestSet {
 
 
 
-                int totalRoomAndState = requests.stream().map(a -> new ImmutablePair(a.getDungeonRoomInfo().getUuid(),a.getOpenMech().stream().sorted(String::compareTo).collect(Collectors.joining(",")))).collect(Collectors.toSet()).size();
+                int totalRoomAndState = requests.stream().map(a -> new Pair<>(a.getDungeonRoomInfo().getUuid(),a.getOpenMech().stream().sorted(String::compareTo).collect(Collectors.joining(",")))).collect(Collectors.toSet()).size();
                 WidgetNotificationProgress.Progress roomProgress = new WidgetNotificationProgress.Progress ("Room&States 0/"+totalRoomAndState, new AtomicLong(), new AtomicLong(totalRoomAndState), true);
                 WidgetNotificationProgress.Progress requestProgress = new WidgetNotificationProgress.Progress ("Requests 0/"+requests.size(), new AtomicLong(), new AtomicLong(requests.size()), true);
 
@@ -256,7 +254,7 @@ public class PathfindPrecalculationRequestSet {
                     outdir = new File(DungeonsGuide.getDungeonsGuide().getTempDir(), "dg-pfrequest-gen-"+System.currentTimeMillis()); outdir.mkdirs();
                     System.out.println("Writing to " + outdir);
                     files = requests.stream().collect(Collectors.groupingBy(a ->
-                            new ImmutablePair<>(a.getDungeonRoomInfo().getUuid(), a.getOpenMech().stream().sorted(String::compareTo).collect(Collectors.joining(",")))
+                            new Pair<>(a.getDungeonRoomInfo().getUuid(), a.getOpenMech().stream().sorted(String::compareTo).collect(Collectors.joining(",")))
                     )).entrySet().parallelStream().flatMap(stuff -> {
                         PathfindRequest begin = stuff.getValue().get(0);
 

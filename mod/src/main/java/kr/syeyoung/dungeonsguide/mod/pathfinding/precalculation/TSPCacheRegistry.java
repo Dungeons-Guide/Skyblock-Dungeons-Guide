@@ -22,19 +22,19 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.Additional
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPresetRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.data.VectorI3D;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.codec.binary.Hex;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -173,7 +173,7 @@ public class TSPCacheRegistry {
                         .collect(Collectors.joining(";"));
 
                 MessageDigest md = MessageDigest.getInstance("MD5");
-                String hash = Hex.encodeHexString(md.digest(hashIn.getBytes()));
+                String hash = TextUtils.toHex(md.digest(hashIn.getBytes()));
 
                 if (getTSPCache(hash) != null) return;
 

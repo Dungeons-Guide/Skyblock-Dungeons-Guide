@@ -18,9 +18,9 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalcu
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculationRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPresetRegistry;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import org.apache.commons.io.FileUtils;
 
 import java.awt.*;
 import java.io.File;
@@ -163,7 +163,7 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
 
                 long usablespace = Files.getFileStore(importTarget.toPath()).getUsableSpace();
                 if (usablespace < totalSize) {
-                    throw new IllegalStateException(FileUtils.byteCountToDisplaySize(totalSize) + " of storage required but only " + FileUtils.byteCountToDisplaySize(usablespace) + " available");
+                    throw new IllegalStateException(TextUtils.formatByte(totalSize) + " of storage required but only " + TextUtils.formatByte(usablespace) + " available");
                 }
 
                 List<File> extractions = new ArrayList<>();

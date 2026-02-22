@@ -15,9 +15,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -50,7 +50,7 @@ public class WidgetPrecalcStep1 extends AnnotatedImportOnlyWidget {
 
             long usablespace = Files.getFileStore(DungeonsGuide.getDungeonsGuide().getConfigDir().toPath()).getUsableSpace();
             if (usablespace < totalSize) {
-                throw new IllegalStateException(FileUtils.byteCountToDisplaySize(totalSize) + " of storage required but only " + FileUtils.byteCountToDisplaySize(usablespace) + " available");
+                throw new IllegalStateException(TextUtils.formatByte(totalSize) + " of storage required but only " + TextUtils.formatByte(usablespace) + " available");
             }
 
         } catch (Exception e) {

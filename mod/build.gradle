@@ -45,13 +45,13 @@ repositories {
 }
 
 configurations {
-    implementation.extendsFrom shadowImpl
+    compileOnly.extendsFrom shadowImpl
 }
 
 configurations {
-    devenvMod {
-        transitive = false
-        visible = false
+    mod {
+        canBeConsumed = true
+        canBeResolved = false
     }
 }
 
@@ -74,12 +74,18 @@ def platform = net.fabricmc.loom.util.CurrentPlatform.INSTANCE
 dependencies {
     implementation "org.jetbrains:annotations-java5:19.0.0"
 
-//    shadowImpl "org.json:json:20240303"
 //    shadowImpl 'net.java.dev.jna:jna:5.12.1' // sorry minecraft... i had to
     shadowImpl("org.java-websocket:Java-WebSocket:1.5.1") {
         exclude group: "org.json", module: "json"
     }
+
+    shadowImpl "org.json:json:20240303"
+    shadowImpl "javax.vecmath:vecmath:1.5.2"
     shadowImpl 'com.github.Dungeons-Guide:DiscordIPC:d403df89'
+    shadowImpl "org.apache.commons:commons-compress:1.25.0"
+    shadowImpl 'com.google.guava:guava:32.0.1-jre'
+
+
     shadowImpl('com.fasterxml.jackson.core:jackson-databind:2.18.2')
     shadowImpl 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.18.1'
 
@@ -89,12 +95,22 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:1.18.32"
     testAnnotationProcessor "org.projectlombok:lombok:1.18.32"
 
-    compileOnly "org.apache.logging.log4j:log4j-core:2.0"
+    compileOnly 'org.apache.logging.log4j:log4j-core:2.25.3'
     compileOnly project(path: ":modapi")
     compileOnly project(path: ":1.8.9-loader")
 
     implementation("net.kyori:adventure-text-serializer-legacy:4.23.0")
 }
+
+ext.genOutputDir = file("$buildDir/generated-resources")
+task generateVersionInfo {
+    ext.outputFile = file("$genOutputDir/versionMeta.properties")
+    outputs.file(outputFile)
+    doLast {
+        outputFile.text = "VERSION=${project.version}\nMANDATORY_VERSION=0"
+    }
+}
+sourceSets.main.output.dir genOutputDir, builtBy: generateVersionInfo
 
 
 
@@ -126,6 +142,7 @@ tasks.named("compileJava21Java", JavaCompile) {
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
+    options.compilerArgs += ["-parameters"]
 }
 
 tasks.withType(Jar) {
@@ -163,16 +180,19 @@ tasks.shadowJar {
 
 
     enableRelocation = true
-    relocationPrefix = "kr.syeyoung.dungeonsguide.libs"
+    relocationPrefix = "kr.syeyoung.dungeonsguide.mod.libs"
 
     dependencies {
-        exclude(dependency("org.json:json")) // provided via loader
+//        exclude(dependency("org.json:json")) // provided via loader
     }
 
     dependsOn tasks.classes, tasks.java8Classes, tasks.java21Classes
 
 }
 
+tasks.build {
+    dependsOn tasks.shadowJar
+}
 
 signing {
     required(project.findProperty("dg.dosign") == "true")
@@ -180,5 +200,6 @@ signing {
     sign tasks.shadowJar
 }
 
-
-
+artifacts {
+    mod tasks.shadowJar
+}

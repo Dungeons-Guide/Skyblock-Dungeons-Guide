@@ -25,15 +25,12 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.modapi.ModAPI;
 import lombok.Getter;
-import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -130,15 +127,18 @@ public class DungeonRoomInfoRegistry {
         uuidMap.clear();
         CBORMapper objectMapper = new CBORMapper();
         try {
-            List<String> lines = IOUtils.readLines(DungeonsGuide.class.getResourceAsStream("/roomdata/datas.txt"));
-            for (String name : lines) {
-                if (!name.endsWith(".roomdata.cbor")) continue;
-                try (InputStream is = DungeonsGuide.class.getResourceAsStream("/"+name)){
-                    DungeonRoomInfo dri = objectMapper.readValue(is, DungeonRoomInfo.class);
-                    register(dri);
-                } catch (Exception e) {
-                    System.out.println(name);
-                    e.printStackTrace();
+            try (InputStream i = DungeonsGuide.class.getResourceAsStream("/roomdata/datas.txt");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(i))) {
+                String name;
+                while ((name = reader.readLine()) != null) {
+                    if (!name.endsWith(".roomdata.cbor")) continue;
+                    try (InputStream is = DungeonsGuide.class.getResourceAsStream("/"+name)){
+                        DungeonRoomInfo dri = objectMapper.readValue(is, DungeonRoomInfo.class);
+                        register(dri);
+                    } catch (Exception e) {
+                        System.out.println(name);
+                        e.printStackTrace();
+                    }
                 }
             }
         } catch (Exception e) {

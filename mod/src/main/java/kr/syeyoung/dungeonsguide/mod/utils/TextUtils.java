@@ -21,6 +21,10 @@ package kr.syeyoung.dungeonsguide.mod.utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -109,6 +113,16 @@ public class TextUtils {
 
         return stringBuilder.toString();
     }
+
+    public static String formatByte(long bytes) {
+        // generate if elses. show up to 2 decimal places to PB
+        if (bytes < 1024) return bytes+" B";
+        else if (bytes < 1024L * 1024) return String.format("%.2f", bytes / 1024.0) + " KB";
+        else if (bytes < 1024L * 1024 * 1024) return String.format("%.2f", bytes / (1024.0 * 1024)) + " MB";
+        else if (bytes < 1024L * 1024 * 1024 * 1024) return String.format("%.2f", bytes / (1024.0 * 1024 * 1024)) + " GB";
+        return String.format("%.2f", bytes / (1024.0 * 1024 * 1024 * 1024)) + " TB";
+    }
+
     public static String insertDashUUID(String uuid) {
         StringBuilder sb = new StringBuilder(uuid);
         sb.insert(8, "-");
@@ -157,5 +171,41 @@ public class TextUtils {
             return true;
         }
         return false;
+    }
+
+    public static boolean isInteger(String s) {
+        if (s == null || s.isEmpty()) return false;
+        int i = 0;
+        if (s.charAt(0) == '-' || s.charAt(0) == '+') {
+            if (s.length() == 1) return false;
+            i = 1;
+        }
+        for (; i < s.length(); i++) {
+            if (!Character.isDigit(s.charAt(i))) return false;
+        }
+        return true;
+    }
+
+    public static String toHex(byte[] bytes) {
+        char[] hexArray = "0123456789abcdef".toCharArray();
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
+    public static String toString(InputStream input) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
+            char[] buffer = new char[4096];
+            int n;
+            while ((n = reader.read(buffer)) != -1) {
+                sb.append(buffer, 0, n);
+            }
+        }
+        return sb.toString();
     }
 }

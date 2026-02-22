@@ -12,7 +12,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalcu
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.TSPCacheRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPresetRegistry;
-import org.apache.commons.io.FileUtils;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -83,7 +83,7 @@ public class FeatureDefaultPresetLoader extends SimpleFeature {
 
                             long contentLength = Long.parseLong(connection.getHeaderField("Content-Length"));
                             progressForTopRight.removeProgress(progress);
-                            progress = new WidgetNotificationProgress.Progress("Downloading (" + FileUtils.byteCountToDisplaySize(contentLength) + ")", new AtomicLong(), new AtomicLong(contentLength), true);
+                            progress = new WidgetNotificationProgress.Progress("Downloading (" + TextUtils.formatByte(contentLength) + ")", new AtomicLong(), new AtomicLong(contentLength), true);
                             progressForTopRight.addProgress(progress);
                             long startTime = System.currentTimeMillis();
 
@@ -102,7 +102,7 @@ public class FeatureDefaultPresetLoader extends SimpleFeature {
                                     long remainingBytes = contentLength - progress.getCurrent().get();
                                     long etaMillis = (long) ((remainingBytes / 1024.0 / 1024.0) / (speed + 0.1) * 1000);
 
-                                    progress.setMessage("Downloading (" + FileUtils.byteCountToDisplaySize(contentLength) + ") " + String.format("%.2f", speed) + "MB/s" + " ETA: " + (etaMillis / 1000) + " Seconds");
+                                    progress.setMessage("Downloading (" + TextUtils.formatByte(contentLength) + ") " + String.format("%.2f", speed) + "MB/s" + " ETA: " + (etaMillis / 1000) + " Seconds");
                                 }
                             }
                         } finally {
@@ -191,7 +191,7 @@ public class FeatureDefaultPresetLoader extends SimpleFeature {
 
                     long usablespace = Files.getFileStore(importTarget.toPath()).getUsableSpace();
                     if (usablespace < totalSize) {
-                        throw new IllegalStateException(FileUtils.byteCountToDisplaySize(totalSize) + " of storage required but only " + FileUtils.byteCountToDisplaySize(usablespace) + " available");
+                        throw new IllegalStateException(TextUtils.formatByte(totalSize) + " of storage required but only " + TextUtils.formatByte(usablespace) + " available");
                     }
 
                     List<File> extractions = new ArrayList<>();

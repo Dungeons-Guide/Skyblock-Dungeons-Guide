@@ -21,11 +21,11 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalcu
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPresetRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import org.apache.commons.io.FileUtils;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
@@ -159,7 +159,7 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
 
                     long contentLength = Long.parseLong(connection.getHeaderField("Content-Length"));
                     progressForTopRight.removeProgress(progress);
-                    progress = new WidgetNotificationProgress.Progress("Downloading ("+FileUtils.byteCountToDisplaySize(contentLength)+")", new AtomicLong(), new AtomicLong(contentLength), true);
+                    progress = new WidgetNotificationProgress.Progress("Downloading ("+ TextUtils.formatByte(contentLength)+")", new AtomicLong(), new AtomicLong(contentLength), true);
                     progressForTopRight.addProgress(progress);
 
                     try (BufferedInputStream in = new BufferedInputStream(connection.getInputStream());

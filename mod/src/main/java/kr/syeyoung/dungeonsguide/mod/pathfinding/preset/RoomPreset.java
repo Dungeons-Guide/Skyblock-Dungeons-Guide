@@ -7,9 +7,9 @@ import com.google.gson.JsonPrimitive;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.TSPCacheRegistry;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
 import net.kyori.adventure.nbt.BinaryTagIO;
-import org.apache.commons.codec.binary.Hex;
 
 import java.io.*;
 import java.security.MessageDigest;
@@ -57,7 +57,7 @@ public class RoomPreset implements Cloneable {
 
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            String hash = Hex.encodeHexString(md.digest(hashIn.getBytes()));
+            String hash = TextUtils.toHex(md.digest(hashIn.getBytes()));
             return this.tspCache = hash;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);

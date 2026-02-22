@@ -22,11 +22,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIBackedBlockMap;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.world.UBlockState;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.nbt.BinaryTagIO;
-import org.apache.commons.codec.binary.Hex;
 
 import java.io.DataOutput;
 import java.io.DataOutputStream;
@@ -75,7 +75,7 @@ public class PathfindRequest { // TODO: fix data flow.
         if (this.hash != null) return hash;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            String hash = Hex.encodeHexString(md.digest(getId().getBytes()));
+            String hash = TextUtils.toHex(md.digest(getId().getBytes()));
             return this.hash = hash;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);

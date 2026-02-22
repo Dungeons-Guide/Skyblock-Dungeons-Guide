@@ -62,8 +62,6 @@ import kr.syeyoung.modapi.paralleluniverse.tablist.UTabListEntry;
 import kr.syeyoung.modapi.world.BlockType;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -352,14 +350,13 @@ public class CommandDgDebug {
         File outdir = new File(fileRoot, "grouped3");
 
 
-        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
+        Iterator<File> fileIter = Files.walk(dir.toPath()).map(a -> a.toFile()).iterator();
 
         while (fileIter.hasNext()) {
-
             try {
                 File f = fileIter.next();
                 Gson gson = new Gson();
-                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
+                JsonObject jsonObject = gson.fromJson(new String(Files.readAllBytes(f.toPath())), JsonObject.class);
 
 
                 CompoundBinaryTag compound = BinaryTagIO.reader(10_000_000).readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
@@ -495,7 +492,7 @@ public class CommandDgDebug {
         File outdir = new File(fileRoot, "schematics");
 
 
-//        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
+//        Iterator<File> fileIter = Files.walk(dir.toPath()).filter(a -> a.getFileName().endsWith(".dgrun")).map(a -> a.toFile()).iterator();
 
         File f = new File(dir, file);
             try (FileInputStream fis = new FileInputStream(f)){
@@ -628,13 +625,15 @@ public class CommandDgDebug {
         File dir = new File(fileRoot, "grouped");
         File outdir = new File(fileRoot, "grouped2");
 
-        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
+        Iterator<File> fileIter = Files.walk(dir.toPath())
+                .filter(a -> a.getFileName().endsWith("dgrun"))
+                .map(a -> a.toFile()).iterator();
 
         while (fileIter.hasNext()) {
             try {
                 File f = fileIter.next();
                 Gson gson = new Gson();
-                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
+                JsonObject jsonObject = gson.fromJson(new String(Files.readAllBytes(f.toPath())), JsonObject.class);
 
 
                 CompoundBinaryTag compound = BinaryTagIO.reader(10_000_000).readNamed(new ByteArrayInputStream(Base64.getDecoder().decode(
@@ -687,14 +686,17 @@ public class CommandDgDebug {
         File fileRoot = DungeonsGuide.getDungeonsGuide().getConfigDir();
         File dir = new File(fileRoot, "compressed");
         File outdir = new File(fileRoot, "unk_grouped");
-        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
+
+        Iterator<File> fileIter = Files.walk(dir.toPath())
+                .filter(a -> a.endsWith(".dgrun"))
+                .map(a -> a.toFile()).iterator();
 
         while (fileIter.hasNext()) {
             try {
                 File f = fileIter.next();
                 if (!f.getParentFile().getName().startsWith("The")) continue;
                 Gson gson = new Gson();
-                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
+                JsonObject jsonObject = gson.fromJson(new String(Files.readAllBytes(f.toPath())), JsonObject.class);
                 if (jsonObject == null) continue;
                 if (!jsonObject.get("uuid").getAsString().equalsIgnoreCase(jsonObject.get("name").getAsString())) {
                     continue;
@@ -778,7 +780,10 @@ public class CommandDgDebug {
         File fileRoot = DungeonsGuide.getDungeonsGuide().getConfigDir();
         File dir = new File(fileRoot, "compressed");
         File outdir = new File(fileRoot, "grouped");
-        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
+
+        Iterator<File> fileIter = Files.walk(dir.toPath())
+                .filter(a -> a.getFileName().endsWith(".dgrun"))
+                .map(a -> a.toFile()).iterator();
 
         Map<String, JsonObject> roomMapping = new HashMap<>();
 
@@ -786,7 +791,7 @@ public class CommandDgDebug {
             try {
                 File f = fileIter.next();
                 Gson gson = new Gson();
-                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
+                JsonObject jsonObject = gson.fromJson(new String(Files.readAllBytes(f.toPath())), JsonObject.class);
                 if (jsonObject == null) continue;
                 System.out.println("Processing: " + f.getCanonicalPath());
                 if (jsonObject.get("uuid").getAsString().equalsIgnoreCase(jsonObject.get("name").getAsString())) {

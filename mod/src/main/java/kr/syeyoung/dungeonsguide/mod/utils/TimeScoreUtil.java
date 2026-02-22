@@ -19,10 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.utils;
 
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -50,7 +47,7 @@ public class TimeScoreUtil {
 
     private static void load(String name, TreeMap<Integer, Integer> minutes) throws IOException {
         minutes.clear();
-        List<String> lines = IOUtils.readLines(TimeScoreUtil.class.getResourceAsStream("/timescore/"+name));
+        String[] lines = TextUtils.toString(TimeScoreUtil.class.getResourceAsStream("/timescore/"+name)).split("\n");
         for (String line:lines) {
             String[] split = line.split(",");
             minutes.put(Integer.parseInt(split[0]), Integer.parseInt(split[1]));

@@ -26,8 +26,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Passthrough;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Passthroughs;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.ParserElement;
+import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
@@ -78,7 +78,7 @@ public abstract class AnnotatedWidget extends Widget implements ImportingWidget,
 
 
     protected static Pair<Map<String, BindableAttribute>, Map<String, BindableAttribute>> createPassthroughs(Class clazz) {
-        if (clazz.getAnnotation(Passthroughs.class) == null && clazz.getAnnotation(Passthrough.class) == null) return Pair.of(Collections.EMPTY_MAP, Collections.EMPTY_MAP);
+        if (clazz.getAnnotation(Passthroughs.class) == null && clazz.getAnnotation(Passthrough.class) == null) return new Pair(Collections.EMPTY_MAP, Collections.EMPTY_MAP);
         Map<String, BindableAttribute> attributeMap1 = new HashMap<>();
         Map<String, BindableAttribute> attributeMap2 = new HashMap<>();
         if (clazz.getAnnotation(Passthroughs.class) != null) {
@@ -95,7 +95,7 @@ public abstract class AnnotatedWidget extends Widget implements ImportingWidget,
             attributeMap1.put(through.exportName(), attribute);
             attributeMap2.put(through.bindName(), attribute);
         }
-        return Pair.of(attributeMap1, attributeMap2);
+        return new Pair(attributeMap1, attributeMap2);
     }
 
 
@@ -105,8 +105,8 @@ public abstract class AnnotatedWidget extends Widget implements ImportingWidget,
             importedAttributes = AnnotatedImportOnlyWidget.getImportedAttributes(getClass(), this);
 
             Pair<Map<String, BindableAttribute>, Map<String, BindableAttribute>> stuff = createPassthroughs(getClass());
-            exportedAttributes.putAll(stuff.getLeft());
-            importedAttributes.putAll(stuff.getRight());
+            exportedAttributes.putAll(stuff.getFirst());
+            importedAttributes.putAll(stuff.getSecond());
         }
         return exportedAttributes;
     }
@@ -122,8 +122,8 @@ public abstract class AnnotatedWidget extends Widget implements ImportingWidget,
             importedAttributes = AnnotatedImportOnlyWidget.getImportedAttributes(getClass(), this);
 
             Pair<Map<String, BindableAttribute>, Map<String, BindableAttribute>> stuff = createPassthroughs(getClass());
-            exportedAttributes.putAll(stuff.getLeft());
-            importedAttributes.putAll(stuff.getRight());
+            exportedAttributes.putAll(stuff.getFirst());
+            importedAttributes.putAll(stuff.getSecond());
         }
         return importedAttributes;
     }

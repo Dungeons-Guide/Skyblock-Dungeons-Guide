@@ -31,7 +31,6 @@ import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import kr.syeyoung.modapi.data.AABB;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.rendering.UWorldRenderContext;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -129,7 +128,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     }
     private boolean match(String[] match, String match2) {
         for (String s : match) {
-            if (NumberUtils.isNumber(s)) {
+            if (TextUtils.isInteger(s)) {
                 if (match2.toLowerCase().contains(s)) return true;
             } else {
                 if (match2.equalsIgnoreCase(s)) return true;

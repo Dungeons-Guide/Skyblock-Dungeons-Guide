@@ -22,7 +22,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
-import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -51,12 +50,23 @@ public abstract class AnnotatedExportOnlyWidget extends Widget implements Export
 
     private static Map<Class, List<Field>> reflectionCache = new HashMap<>();
 
+    protected static List<Field> getAllFields(Class<?> cls) {
+         List<Field> fields = new ArrayList<>();
+         while (cls != null && cls != Object.class) {
+             for (Field f : cls.getDeclaredFields()) {
+                 fields.add(f);
+             }
+             cls = cls.getSuperclass();
+         }
+         return fields;
+    }
+
     protected static Map<String, BindableAttribute> getExportedAttributes(Class clazz, Object inst) {
         Map<String, BindableAttribute> attributeMap = new HashMap<>();
         if (!reflectionCache.containsKey(clazz)) {
             List<Field> fields = new ArrayList<>();
             reflectionCache.put(clazz, fields);
-            for (Field declaredField : FieldUtils.getAllFields(clazz)) {
+            for (Field declaredField : getAllFields(clazz)) {
                 if (declaredField.getAnnotation(Export.class) != null) {
                     Export export = declaredField.getAnnotation(Export.class);
 

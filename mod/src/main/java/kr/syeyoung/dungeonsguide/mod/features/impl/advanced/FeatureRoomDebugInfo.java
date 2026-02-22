@@ -31,7 +31,6 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.entity.UPlayerSelf;
-import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
 
@@ -77,8 +76,8 @@ public class FeatureRoomDebugInfo extends TextHUDFeature {
                 str += "You're prob in bossfight\n";
                 str += "processor: "+context.getBossfightProcessor()+"\n";
                 str += "phase: "+context.getBossfightProcessor().getCurrentPhase()+"\n";
-                str += "nextPhase: "+ StringUtils.join(context.getBossfightProcessor().getNextPhases(), ",")+"\n";
-                str += "phases: "+ StringUtils.join(context.getBossfightProcessor().getPhases(), ",");
+                str += "nextPhase: "+ String.join(",", context.getBossfightProcessor().getNextPhases())+"\n";
+                str += "phases: "+ String.join(",", context.getBossfightProcessor().getPhases());
             }
         } else {
             str +="you're in the room... color/shape/rot " + dungeonRoom.getColor() + " / " + dungeonRoom.getRoomBounds().getShape() + " / "+(dungeonRoom.getRoomMatcher() == null ? "idk" : dungeonRoom.getRoomMatcher().getRotation())+"\n";

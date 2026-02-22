@@ -5,7 +5,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.IPathfinder;
 import lombok.Data;
 import lombok.Getter;
-import org.apache.commons.io.input.CountingInputStream;
 
 import java.io.*;
 import java.lang.ref.SoftReference;
@@ -75,12 +74,76 @@ public class PathfindPrecalculation {
 
     private int xStart, yStart, zStart, xLen, yLen, zLen;
 
+
+    private static class FullCountingInputStream extends InputStream {
+        private final InputStream in;
+        private long count = 0;
+        private long markCount = -1;
+
+        public FullCountingInputStream(InputStream in) {
+            this.in = in;
+        }
+
+        @Override
+        public int read() throws IOException {
+            int b = in.read();
+            if (b != -1) count++;
+            return b;
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            int n = in.read(b, off, len);
+            if (n > 0) count += n;
+            return n;
+        }
+
+        @Override
+        public long skip(long n) throws IOException {
+            long skipped = in.skip(n);
+            count += skipped;
+            return skipped;
+        }
+
+        @Override
+        public int available() throws IOException {
+            return in.available();
+        }
+
+        @Override
+        public void close() throws IOException {
+            in.close();
+        }
+
+        @Override
+        public synchronized void mark(int readlimit) {
+            in.mark(readlimit);
+            markCount = count;
+        }
+
+        @Override
+        public synchronized void reset() throws IOException {
+            in.reset();
+            if (markCount != -1) {
+                count = markCount;
+            }
+        }
+
+        @Override
+        public boolean markSupported() {
+            return in.markSupported();
+        }
+
+        public long getByteCount() {
+            return count;
+        }
+    }
+
     private void parsePathfindV2Header(File f) throws IOException {
         try (FileInputStream fis = new FileInputStream(f)) {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fis);
-            CountingInputStream countingInputStream = new CountingInputStream(bufferedInputStream);
+            FullCountingInputStream countingInputStream = new FullCountingInputStream(bufferedInputStream);
             DataInputStream dis = new DataInputStream(countingInputStream);
-
 
             expectMagicValue(dis, "DGPFRES2");
             this.version = dis.readInt();
@@ -106,7 +169,7 @@ public class PathfindPrecalculation {
 
             expectMagicValue(dis, "NODE");
             this.compressed = dis.readBoolean();
-            this.start = countingInputStream.getCount();
+            this.start = (int) countingInputStream.getByteCount();
 
             DataInputStream dataInputStream;
             if (compressed) {

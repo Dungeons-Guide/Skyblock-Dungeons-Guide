@@ -26,7 +26,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.ParserElement;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
@@ -68,7 +67,7 @@ public abstract class AnnotatedImportOnlyWidget extends Widget implements Import
         if (!reflectionCache.containsKey(clazz)) {
             List<Field> fields = new ArrayList<>();
             reflectionCache.put(clazz, fields);
-            for (Field declaredField : FieldUtils.getAllFields(clazz)) {
+            for (Field declaredField : AnnotatedExportOnlyWidget.getAllFields(clazz)) {
                 if (declaredField.getAnnotation(Bind.class) != null) {
                     Bind bind = declaredField.getAnnotation(Bind.class);
 

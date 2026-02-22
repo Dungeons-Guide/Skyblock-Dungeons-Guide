@@ -30,7 +30,6 @@ import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfileParser;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -81,9 +80,7 @@ public class ApiFetcher {
         connection.setRequestProperty("User-Agent", "DungeonsGuide/"+ VersionInfo.VERSION);
         connection.setConnectTimeout(10000);
         connection.setReadTimeout(10000);
-        InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-        String servers = IOUtils.toString(inputStreamReader);
-        return gson.fromJson(servers, JsonObject.class);
+        return gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonObject.class);
     }
     public static JsonObject getJsonWithAuth(String url, String token) throws IOException {
         URLConnection connection = new URL(url).openConnection();
@@ -91,9 +88,7 @@ public class ApiFetcher {
         connection.addRequestProperty("Authorization", "Bearer "+token);
         connection.setConnectTimeout(10000);
         connection.setReadTimeout(10000);
-        InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-        String servers = IOUtils.toString(inputStreamReader);
-        return gson.fromJson(servers, JsonObject.class);
+        return gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonObject.class);
     }
 
     public static JsonArray getJsonArr(String url) throws IOException {

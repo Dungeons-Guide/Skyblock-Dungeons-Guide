@@ -19,10 +19,10 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalcu
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculationRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.Pair;
 import kr.syeyoung.modapi.data.ResourceIdentifier;
-import org.apache.commons.io.FileUtils;
 
 import java.awt.*;
 import java.io.*;
@@ -77,7 +77,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
                 long usablespace = Files.getFileStore(target.toPath()).getUsableSpace();
                 if (usablespace < totalSize) {
-                    throw new IllegalStateException(FileUtils.byteCountToDisplaySize(totalSize) + " of storage required but only " + FileUtils.byteCountToDisplaySize(usablespace) + " available");
+                    throw new IllegalStateException(TextUtils.formatByte(totalSize) + " of storage required but only " + TextUtils.formatByte(usablespace) + " available");
                 }
 
             } catch (Exception e) {
