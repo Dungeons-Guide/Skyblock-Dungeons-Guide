@@ -17,7 +17,6 @@ public interface AuthService {
      *
      * 2. Using client generated random value solely
      * *** THIS IS COMMON IMPLEMENTATION ON MANY MODS. IF YOU CARE ABOUT CLIENT LEGITIMACY, PLEASE DO NOT DO THIS ***
-     * *** ESPECIALLY IF THERE IS ONLINE PURCHASE INVOLVED ***
      * -> Server has no way of telling if the client to it is really the user
      * -> Which makes attacks like
      *    User -> Any malicious minecraft server -> Any other auth server (2)

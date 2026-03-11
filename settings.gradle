@@ -2,12 +2,12 @@ pluginManagement {
     repositories {
         mavenCentral()
         gradlePluginPortal()
-        maven{ url "https://oss.sonatype.org/content/repositories/snapshots"}
-        maven{ url "https://maven.architectury.dev/"}
-        maven{ url "https://maven.fabricmc.net"}
-        maven{ url "https://maven.minecraftforge.net/"}
-        maven{ url "https://repo.spongepowered.org/maven/"}
-        maven{ url "https://repo.essential.gg/repository/maven-public"}
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        maven { url "https://maven.architectury.dev/" }
+        maven { url "https://maven.fabricmc.net" }
+        maven { url "https://maven.minecraftforge.net/" }
+        maven { url "https://repo.spongepowered.org/maven/" }
+        maven { url "https://repo.essential.gg/repository/maven-public" }
     }
     resolutionStrategy {
         eachPlugin {
@@ -26,13 +26,14 @@ plugins {
 include 'mod'
 include '1.8.9-loader'
 include 'modapi'
+include 'authapi'
 
 rootProject.name = "Dungeons Guide"
 
 var versions = ["1.8.9", "1.21.5-fabric", "1.21.11-fabric"]
 for (final def ver in versions) {
-    include(":"+ver)
-    var p = project(":"+ver)
+    include(":" + ver)
+    var p = project(":" + ver)
     p.projectDir = file("versions/${ver}")
 }
 gradle.beforeProject { project ->
