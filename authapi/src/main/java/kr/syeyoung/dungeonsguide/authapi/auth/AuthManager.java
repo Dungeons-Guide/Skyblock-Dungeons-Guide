@@ -24,23 +24,19 @@ import kr.syeyoung.dungeonsguide.authapi.auth.token.*;
 import kr.syeyoung.dungeonsguide.authapi.exceptions.auth.AuthFailedException;
 import kr.syeyoung.dungeonsguide.authapi.exceptions.auth.AuthenticationUnavailableException;
 import kr.syeyoung.dungeonsguide.authapi.exceptions.auth.PrivacyPolicyRequiredException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.util.Throwables;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
-public class AuthManager {
-    Logger logger = LogManager.getLogger("AuthManger");
-
-    private boolean shouldAuthNotif = true;
+public class AuthManager implements AutoCloseable {
     private AuthToken currentToken = new NullToken();
+    private final Thread authThread;
 
-    private List<AuthEventListener> listenerList;
+    private final List<AuthEventListener> listenerList = new ArrayList<>();
     private final AuthService authService;
-    private final String baseUrl;
-    private final String userAgent;
     private final AuthAPI authAPI;
 
     public AuthManager(AuthService service, String userAgent) {
@@ -48,17 +44,29 @@ public class AuthManager {
     }
 
     public AuthManager(String baseUrl, AuthService minecraft, String userAgent) {
-        this.baseUrl = baseUrl;
         this.authService = minecraft;
-        this.userAgent = userAgent;
         this.authAPI = new AuthAPI(baseUrl, userAgent);
+        this.authThread = new Thread(this::authLoop);
+        this.authThread.start();
     }
 
+    public void registerListener(AuthEventListener listener) {
+        listenerList.add(listener);
+    }
+    public void unregisterListener(AuthEventListener listener) {
+        listenerList.remove(listener);
+    }
 
-    public AuthToken getToken() {
-        return currentToken;
+    public AuthToken getCurrentToken() {
+        tokenLock.readLock().lock();
+        try {
+            return currentToken;
+        } finally {
+            tokenLock.readLock().unlock();
+        }
     }
     public String getWorkingTokenOrNull() {
+        AuthToken currentToken = getCurrentToken();
         if (currentToken instanceof DGAuthToken) return currentToken.getToken();
         else return null;
     }
@@ -68,68 +76,130 @@ public class AuthManager {
      * @return actual dg token
      */
     public String getWorkingTokenOrThrow() {
-        if (currentToken instanceof DGAuthToken) return currentToken.getToken();
-        else if (currentToken instanceof FailedAuthToken) throw new AuthFailedException(((FailedAuthToken) currentToken).getException());
-        else if (currentToken instanceof NullToken) throw new AuthenticationUnavailableException("Null Token");
-        else if (currentToken instanceof PrivacyPolicyRequiredToken) throw new PrivacyPolicyRequiredException();
-        throw new IllegalStateException("weird token: "+currentToken);
+        tokenLock.readLock().lock();
+        try {
+            if (currentToken instanceof DGAuthToken) return currentToken.getToken();
+            else if (currentToken instanceof FailedAuthToken)
+                throw new AuthFailedException(((FailedAuthToken) currentToken).getException());
+            else if (currentToken instanceof NullToken) throw new AuthenticationUnavailableException("Null Token");
+            else if (currentToken instanceof PrivacyPolicyRequiredToken) throw new PrivacyPolicyRequiredException();
+            throw new IllegalStateException("weird token: " + currentToken);
+        } finally {
+            tokenLock.readLock().unlock();
+        }
     }
 
-    private volatile boolean reauthLock = false;
 
-    AuthToken reAuth() {
-        if (reauthLock) {
-            while (reauthLock) ;
-            return currentToken;
+    private ReentrantReadWriteLock tokenLock = new ReentrantReadWriteLock();
+    private Condition tokenValid = tokenLock.writeLock().newCondition();
+
+    public AuthToken waitForWorkingToken() throws InterruptedException {
+        tokenLock.writeLock().lock();
+        try {
+            while (true) {
+                tokenValid.await();
+                if (currentToken instanceof DGAuthToken) {
+                    return currentToken;
+                }
+            }
+        } finally {
+            tokenLock.writeLock().unlock();
         }
+    }
 
-        reauthLock = true;
 
+    private boolean retryAuth = false;
+    public void retryAuth() {
+        synchronized (this) {
+            retryAuth = true;
+            this.notifyAll();
+        }
+    }
+
+    private void authLoop() {
+        try {
+            while (!Thread.interrupted()) {
+                if (!currentToken.isAuthenticated() || retryAuth) {
+                    retryAuth = false;
+                    authenticate();
+                    if (this.currentToken instanceof FailedAuthToken) {
+                        Thread.sleep(10000); // retry after 10s.
+                    } else {
+                        synchronized (this) {
+                            this.notifyAll();
+                            this.wait();
+                        }
+                    }
+                } else if (!currentToken.getUUID().equals(authService.getCurrentPlayerUUID().toString())) {
+                    invalidateToken();
+                    authenticate();
+                }
+            }
+        } catch (InterruptedException ignored) {}
+    }
+
+    private void invalidateToken() {
+        this.currentToken = new NullToken();
+        listenerList.forEach(a -> a.onNewAuthToken(currentToken));
+    }
+
+    private AuthToken authenticate() {
+        tokenLock.writeLock().lock();
         try {
             String token = authAPI.requestAuth(authService.getCurrentPlayerUUID(), authService.getCurrentPlayerUsername());
             byte[] encSecret = AuthAPI.checkSessionAuthenticityAndReturnEncryptedSecret(authService, token);
             currentToken = authAPI.verifyAuth(token, encSecret);
+
+            if (currentToken instanceof DGAuthToken)
+                tokenValid.signalAll();
+
             listenerList.forEach(a -> a.onNewAuthToken(currentToken));
         } catch (Exception e) {
             currentToken = new FailedAuthToken(e);
             listenerList.forEach(a -> a.onNewAuthToken(currentToken));
-
-            logger.error("Re-auth failed with message {}, trying again in a 2 seconds", String.valueOf(Throwables.getRootCause(e)));
             throw new AuthFailedException(e);
         } finally {
-            reauthLock = false;
+            tokenLock.writeLock().unlock();
         }
         return currentToken;
     }
 
-    private volatile boolean accepting = false;
-    public synchronized void acceptPrivacyPolicy(long version) {
-        if (accepting) return;
-        accepting = true;
-        acceptPrivacyPolicy0(version);
-        accepting = false;
-    }
 
-    private AuthToken acceptPrivacyPolicy0(long version) {
-        if (reauthLock) {
-            while(reauthLock);
-            return currentToken;
-        }
-
-        if (currentToken instanceof PrivacyPolicyRequiredToken) {
-            reauthLock = true;
-            try {
-                currentToken = authAPI.acceptNewPrivacyPolicy(currentToken.getToken(), version);
-                listenerList.forEach(a -> a.onNewAuthToken(currentToken));
-            } catch (Exception e) {
-                currentToken = new FailedAuthToken(e);
-                listenerList.forEach(a -> a.onNewAuthToken(currentToken));
-                logger.error("Accepting the Privacy Policy failed with message {}, trying again in a 2 seconds", String.valueOf(Throwables.getRootCause(e)));
-                throw new AuthFailedException(e);
-            } finally {
-                reauthLock = false;
+    /**
+     * Accept privacy policy
+     *
+     * @param version version of privacy policy to accept.
+     * @throws IllegalStateException if current token is not PrivacyPolicyRequiredToken
+     * @throws AuthFailedException if accepting privacy policy failed
+     * @return new Auth token
+     */
+    public AuthToken acceptPrivacyPolicy(long version) throws InterruptedException {
+        tokenLock.writeLock().lock();
+        try {
+            if (!(this.currentToken instanceof PrivacyPolicyRequiredToken)) {
+                throw new IllegalStateException("Current token is not PrivacyPolicyRequiredToken");
             }
+
+            try {
+                this.currentToken = authAPI.acceptNewPrivacyPolicy(this.currentToken.getToken(), version);
+                listenerList.forEach(a -> a.onNewAuthToken(this.currentToken));
+
+                if (currentToken instanceof DGAuthToken)
+                    tokenValid.signalAll();
+
+            } catch (Exception e) {
+                this.currentToken = new FailedAuthToken(e);
+                listenerList.forEach(a -> a.onNewAuthToken(this.currentToken));
+                throw new AuthFailedException(e);
+            }
+            return this.currentToken;
+        } finally {
+            tokenLock.writeLock().unlock();
         }
-        return currentToken;
+    }
+
+    @Override
+    public void close() throws Exception {
+        this.authThread.interrupt();
     }
 }

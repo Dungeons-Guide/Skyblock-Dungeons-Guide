@@ -61,19 +61,6 @@ public class UpdatesAPI {
                 .collect(Collectors.joining("\n"));
     }
 
-    public static int read(final InputStream input, final byte[] buffer) throws IOException {
-        int remaining = buffer.length;
-        while (remaining > 0) {
-            final int location = buffer.length - remaining;
-            final int count = input.read(buffer, location, remaining);
-            if (count == -1) { // EOF
-                break;
-            }
-            remaining -= count;
-        }
-        return buffer.length - remaining;
-    }
-
     public  List<UpdateBranch> getUpdateBranches() throws IOException {
         HttpsURLConnection connection = (HttpsURLConnection) new URL(baseUrl + "/updates/").openConnection();
         connection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
