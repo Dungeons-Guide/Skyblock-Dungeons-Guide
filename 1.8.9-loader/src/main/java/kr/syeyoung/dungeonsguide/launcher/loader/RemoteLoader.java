@@ -101,6 +101,10 @@ public class RemoteLoader implements IDGLoader {
                 if (target.getMetadata().has("loaderVersion") && target.getMetadata().getInt("loaderVersion") > LoaderMeta.LOADER_VERSION) {
                     throw new DungeonsGuideLoadingException("This version of Dungeons Guide requires loader version: " + target.getMetadata().getInt("loaderVersion") +" But current loader version: "+ LoaderMeta.LOADER_VERSION);
                 }
+                if (target.getMetadata().has("loaderVersion") && target.getMetadata().getInt("loaderVersion") <= 7) {
+                    throw new DungeonsGuideLoadingException("This version of Dungeons Guide requires loader version between: " + target.getMetadata().getInt("loaderVersion") +" ~ 7 But current loader version: "+ LoaderMeta.LOADER_VERSION);
+                }
+
 
             } catch (Exception e) {
                 throw new NoVersionFoundException(friendlyBranchName, friendlyVersionName, branchId+"@"+updateId, e);

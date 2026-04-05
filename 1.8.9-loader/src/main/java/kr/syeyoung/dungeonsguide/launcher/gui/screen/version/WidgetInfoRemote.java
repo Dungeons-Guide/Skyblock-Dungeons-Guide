@@ -41,9 +41,13 @@ public class WidgetInfoRemote extends WidgetInfo {
 
 
         int reqVersion = update.getMetadata().has("loaderVersion") ? update.getMetadata().getInt("loaderVersion") : 0;
+        if (reqVersion <= 7) {
+            setNotLoadable("This version of Dungeons Guide is too old (Loader version: "+reqVersion+") to be loaded by current loader version: "+ LoaderMeta.LOADER_VERSION);
+        }
         if (reqVersion > LoaderMeta.LOADER_VERSION) {
             setNotLoadable("This version of Dungeons Guide requires loader version: " + reqVersion +" But current loader version: "+ LoaderMeta.LOADER_VERSION);
         }
+
     }
 
     @Override
