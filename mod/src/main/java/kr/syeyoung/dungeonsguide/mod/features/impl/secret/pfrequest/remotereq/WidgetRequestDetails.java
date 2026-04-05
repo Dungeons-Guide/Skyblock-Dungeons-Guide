@@ -88,7 +88,7 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
         complete.setValue("false");
         this.err.setValue("");
         try {
-            JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/requests/"+requestId, ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow());
+            JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/requests/"+requestId, DungeonsGuide.getDungeonsGuide().getAuthManager().getWorkingTokenOrThrow());
 
             if (jsonObject.has("execution"))
                 widgetBindableAttribute.setValue(new WidgetCalculationProcess(jsonObject.getAsJsonObject("execution"), jsonObject.getAsJsonObject("request")));

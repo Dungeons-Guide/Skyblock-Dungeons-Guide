@@ -85,7 +85,7 @@ public class StompManager {
         ex.schedule(() -> {
             if (exponentialBackoffCoefficient < 5)
                 exponentialBackoffCoefficient++;
-            if (ModAPI.getAPI().getAuthManager().getCurrentToken() == null) return;
+            if (DungeonsGuide.getDungeonsGuide().getAuthManager().getCurrentToken() == null) return;
             try {
                 try {
                     if (stompConnection != null
@@ -95,7 +95,7 @@ public class StompManager {
                 } catch (Exception e) {
                     logger.error("Failed to reconnect (disconnection) to Stomp with message: {}", String.valueOf(Throwables.getRootCause(e)));
                 }
-                stompConnection = new StompClient(new URI(StompManager.STOMP_URL), ModAPI.getAPI().getAuthManager().getWorkingTokenOrNull());
+                stompConnection = new StompClient(new URI(StompManager.STOMP_URL), DungeonsGuide.getDungeonsGuide().getAuthManager().getWorkingTokenOrNull());
                 ModAPI.getAPI().getEventBus().fireEvent(new StompConnectedEvent(stompConnection));
             } catch (Exception e) {
                 logger.error("Failed to connect to Stomp with message: {}", String.valueOf(Throwables.getRootCause(e)));

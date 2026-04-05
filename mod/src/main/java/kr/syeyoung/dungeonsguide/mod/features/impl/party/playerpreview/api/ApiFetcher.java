@@ -234,7 +234,7 @@ public class ApiFetcher {
     }
 
     public static Optional<PlayerSkyblockData> fetchPlayerProfiles(String uid) throws IOException {
-        String dgAPIToken = ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow();
+        String dgAPIToken = DungeonsGuide.getDungeonsGuide().getAuthManager().getWorkingTokenOrThrow();
 
         System.out.println("Fetching player profiles");
         JsonObject json = getJsonWithAuth(DungeonsGuide.DOMAIN+"/skyblock/player/v2/"+uid, dgAPIToken);

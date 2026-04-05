@@ -106,7 +106,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
 
     private void sendLogActually(Throwable t) throws IOException {
         if (!isEnabled()) return;
-        String token = ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow(); // this require privacy policy.
+        String token = DungeonsGuide.getDungeonsGuide().getAuthManager().getWorkingTokenOrThrow(); // this require privacy policy.
 
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);

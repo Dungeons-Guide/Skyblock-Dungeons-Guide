@@ -60,7 +60,7 @@ public class VersionInfo {
 //        try {
 //            if (VersionInfo.getCurrentLoader() instanceof DevEnvLoader) return;
 //
-//            AuthManager authManager = ModAPI.getAPI().getAuthManager();
+//            AuthManager authManager = DungeonsGuide.getDungeonsGuide().getAuthManager();
 //            UpdatesAPI updatesAPI = new UpdatesAPI(DungeonsGuide.DOMAIN, "DungeonsGuide/"+VersionInfo.VERSION, authManager);
 //            if (VersionInfo.getCurrentLoader() instanceof RemoteLoader) {
 //                RemoteLoader loader = (RemoteLoader) VersionInfo.getCurrentLoader();

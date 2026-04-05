@@ -30,7 +30,7 @@ public class WidgetRemoteRequestList extends AnnotatedImportOnlyWidget {
 
     private void doReload() {
         try {
-            JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/info", ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow());
+            JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/info", DungeonsGuide.getDungeonsGuide().getAuthManager().getWorkingTokenOrThrow());
             requestsApi.getValue().removeAllWidget();
             for (JsonElement requestId : jsonObject.getAsJsonArray("requests")) {
                 String reqId = requestId.getAsString();

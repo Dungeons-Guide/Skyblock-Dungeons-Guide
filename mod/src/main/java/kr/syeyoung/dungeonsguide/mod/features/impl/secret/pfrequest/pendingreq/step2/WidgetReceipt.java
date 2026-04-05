@@ -51,7 +51,7 @@ public class WidgetReceipt extends AnnotatedImportOnlyWidget {
 
     public void doReload() {
         try {
-            JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN + "/info", ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow());
+            JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN + "/info", DungeonsGuide.getDungeonsGuide().getAuthManager().getWorkingTokenOrThrow());
 
             long calc = reqCredits;
 

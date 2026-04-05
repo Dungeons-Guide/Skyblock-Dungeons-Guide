@@ -144,7 +144,7 @@ public class WidgetPrecalcStep1 extends AnnotatedImportOnlyWidget {
 
             private void doReload() {
                 try {
-                    JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/info", ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow());
+                    JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/info", DungeonsGuide.getDungeonsGuide().getAuthManager().getWorkingTokenOrThrow());
                     int tokens = jsonObject.get("credit").getAsInt();
 
                     this.currCredit.setValue(tokens+"");

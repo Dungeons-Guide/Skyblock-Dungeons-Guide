@@ -563,7 +563,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
     private void sendLogActually(String t) throws IOException {
         if (!isEnabled()) return;
-        String token = ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow(); // this require privacy policy.
+        String token = DungeonsGuide.getDungeonsGuide().getAuthManager().getWorkingTokenOrThrow(); // this require privacy policy.
 
         HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(DungeonsGuide.DOMAIN+"/logging/dgrun").openConnection();
         urlConnection.setRequestMethod("POST");

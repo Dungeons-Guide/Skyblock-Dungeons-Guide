@@ -31,7 +31,7 @@ public class WidgetPathfindCredits extends AnnotatedImportOnlyWidget {
 
     private void doReload() {
         try {
-            JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/info", ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow());
+            JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/info", DungeonsGuide.getDungeonsGuide().getAuthManager().getWorkingTokenOrThrow());
             credits.setValue(jsonObject.get("credit").getAsInt()+" credits");
         } catch (IOException e) {
             this.err.setValue(e.getMessage());

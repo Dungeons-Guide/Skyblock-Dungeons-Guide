@@ -1,6 +1,7 @@
 package kr.syeyoung.modapi.v1_8_9;
 
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.authapi.api.AuthService;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.PathDisplayEngineSettingRegistry;
 import kr.syeyoung.modapi.ModAPI;
@@ -482,5 +483,10 @@ public class ModAPIImpl implements ModAPI {
     @Override
     public void setCursorPosition(int cursorX, int cursorY) {
         Mouse.setCursorPosition(cursorX, cursorY);
+    }
+
+    @Override
+    public AuthService getAuthService() {
+        return AuthServiceImpl.INSTANCE;
     }
 }

@@ -136,7 +136,7 @@ public class PathfindPrecalculationRequestSet {
                     HttpsURLConnection connection = (HttpsURLConnection) new URL(FeatureRequestCalculation.DOMAIN + "/requests").openConnection();
                     connection.setRequestProperty("User-Agent", "DungeonsGuide/" + VersionInfo.VERSION);
                     connection.setRequestMethod("POST");
-                    connection.addRequestProperty("Authorization", "Bearer " + ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow());
+                    connection.addRequestProperty("Authorization", "Bearer " + DungeonsGuide.getDungeonsGuide().getAuthManager().getWorkingTokenOrThrow());
                     connection.setConnectTimeout(10000);
                     connection.setReadTimeout(10000);
                     connection.setDoInput(true);

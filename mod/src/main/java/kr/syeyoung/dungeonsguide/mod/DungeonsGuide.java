@@ -22,6 +22,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import kr.syeyoung.dungeonguide.loader.DGInterface;
 import kr.syeyoung.dungeonguide.loader.LoaderAPI;
+import kr.syeyoung.dungeonsguide.authapi.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandDgDebug;
@@ -147,10 +148,16 @@ public class DungeonsGuide implements DGInterface {
     @Getter
     private LoaderAPI loaderAPI;
 
+    @Getter
+    private AuthManager authManager;
+
     public void init(File f, LoaderAPI loaderAPI) {
 //        ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 5); $$ PROGRESS
         this.loaderAPI = loaderAPI;
         this.configDir = f;
+
+        this.authManager = new AuthManager(DOMAIN, ModAPI.getAPI().getAuthService(), "DungeonsGuide/"+VersionInfo.VERSION);
+        this.authManager.init();
         ModAPI.getAPI().init();
 
 
@@ -267,6 +274,11 @@ public class DungeonsGuide implements DGInterface {
 //            throw new RuntimeException(e);
 //        }
 
+        try {
+            this.authManager.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         THREAD_GROUP.interrupt();
         THREAD_GROUP.stop();
 
