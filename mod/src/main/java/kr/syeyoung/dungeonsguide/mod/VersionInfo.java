@@ -18,10 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod;
 
+import kr.syeyoung.dungeonsguide.authapi.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.authapi.branch.Update;
+import kr.syeyoung.dungeonsguide.authapi.branch.UpdateBranch;
+import kr.syeyoung.dungeonsguide.authapi.branch.UpdatesAPI;
 import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.launcher.branch.Update;
-import kr.syeyoung.dungeonsguide.launcher.branch.UpdateBranch;
-import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
 import kr.syeyoung.dungeonsguide.launcher.loader.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
@@ -72,9 +73,11 @@ public class VersionInfo {
         try {
             if (VersionInfo.getCurrentLoader() instanceof DevEnvLoader) return;
 
+            AuthManager authManager = ModAPI.getAPI().getAuthManager();
+            UpdatesAPI updatesAPI = new UpdatesAPI(DungeonsGuide.DOMAIN, "DungeonsGuide/"+VersionInfo.VERSION, authManager);
             if (VersionInfo.getCurrentLoader() instanceof RemoteLoader) {
                 RemoteLoader loader = (RemoteLoader) VersionInfo.getCurrentLoader();
-                Update latestUpdate = UpdateRetrieverUtil.getLatestUpdates(loader.getBranchId(), 0).get(0);
+                Update latestUpdate = updatesAPI.getLatestUpdates(loader.getBranchId(), 0).get(0);
                 if (latestUpdate.getId() == loader.getUpdateId()) return;
 
                 Scaler scaler = new Scaler();
@@ -86,7 +89,7 @@ public class VersionInfo {
 
                 logger.info("Update Required!!");
             } else if (VersionInfo.getCurrentLoader() instanceof JarLoader || VersionInfo.getCurrentLoader() instanceof LocalLoader) {
-                List<UpdateBranch> availableBranches = UpdateRetrieverUtil.getUpdateBranches();
+                List<UpdateBranch> availableBranches = updatesAPI.getUpdateBranches();
                 UpdateBranch requiredUpdateBranch = availableBranches.stream().filter(a ->
                         Optional.ofNullable(a.getMetadata())
                                 .filter(b -> b.has("additionalMeta"))
@@ -106,7 +109,7 @@ public class VersionInfo {
                     logger.error("No update branch found: ???");
                     return;
                 }
-                Update latestUpdate = UpdateRetrieverUtil.getLatestUpdates(requiredUpdateBranch.getId(), 0).get(0);
+                Update latestUpdate = updatesAPI.getLatestUpdates(requiredUpdateBranch.getId(), 0).get(0);
 
                 if (latestUpdate.getMetadata().optInt("mandatory_version",0 ) > (VersionInfo.MANDATORY_VERSION)) {
                     JOptionPane.showMessageDialog(null,

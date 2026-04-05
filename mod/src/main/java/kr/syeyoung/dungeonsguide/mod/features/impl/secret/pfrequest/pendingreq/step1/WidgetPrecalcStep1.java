@@ -1,7 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.pendingreq.step1;
 
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.FeatureRequestCalculation;
@@ -145,7 +144,7 @@ public class WidgetPrecalcStep1 extends AnnotatedImportOnlyWidget {
 
             private void doReload() {
                 try {
-                    JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/info", AuthManager.getInstance().getWorkingTokenOrThrow());
+                    JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/info", ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow());
                     int tokens = jsonObject.get("credit").getAsInt();
 
                     this.currCredit.setValue(tokens+"");

@@ -21,9 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
-import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.authapi.util.LetsEncrypt;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
@@ -108,7 +106,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
 
     private void sendLogActually(Throwable t) throws IOException {
         if (!isEnabled()) return;
-        String token = AuthManager.getInstance().getWorkingTokenOrThrow(); // this require privacy policy.
+        String token = ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow(); // this require privacy policy.
 
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -122,7 +120,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
         }
         lastSent.put(trace, System.currentTimeMillis());
 
-        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.DOMAIN+"/logging/stacktrace").openConnection();
+        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(DungeonsGuide.DOMAIN+"/logging/stacktrace").openConnection();
         urlConnection.setRequestMethod("POST");
         urlConnection.setDoOutput(true);
         urlConnection.setDoInput(true);

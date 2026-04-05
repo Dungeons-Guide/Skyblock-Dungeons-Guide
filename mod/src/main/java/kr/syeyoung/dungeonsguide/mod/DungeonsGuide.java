@@ -71,6 +71,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DungeonsGuide implements DGInterface {
+    public static final String DOMAIN = "https://v2.dungeons.guide/api";
 
     @Getter
     private static boolean firstTimeUsingDG = false;

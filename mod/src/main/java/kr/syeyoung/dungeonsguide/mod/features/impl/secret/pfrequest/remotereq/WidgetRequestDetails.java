@@ -2,7 +2,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.remotereq;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -89,7 +88,7 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
         complete.setValue("false");
         this.err.setValue("");
         try {
-            JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/requests/"+requestId, AuthManager.getInstance().getWorkingTokenOrThrow());
+            JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/requests/"+requestId, ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow());
 
             if (jsonObject.has("execution"))
                 widgetBindableAttribute.setValue(new WidgetCalculationProcess(jsonObject.getAsJsonObject("execution"), jsonObject.getAsJsonObject("request")));

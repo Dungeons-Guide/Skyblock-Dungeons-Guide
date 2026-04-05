@@ -23,13 +23,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfileParser;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -235,10 +234,10 @@ public class ApiFetcher {
     }
 
     public static Optional<PlayerSkyblockData> fetchPlayerProfiles(String uid) throws IOException {
-        String dgAPIToken = AuthManager.getInstance().getWorkingTokenOrThrow();
+        String dgAPIToken = ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow();
 
         System.out.println("Fetching player profiles");
-        JsonObject json = getJsonWithAuth(Main.DOMAIN+"/skyblock/player/v2/"+uid, dgAPIToken);
+        JsonObject json = getJsonWithAuth(DungeonsGuide.DOMAIN+"/skyblock/player/v2/"+uid, dgAPIToken);
 
 
         System.out.println("Downloaded data from api");

@@ -1,7 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.frontpage;
 
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.FeatureRequestCalculation;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
@@ -32,7 +31,7 @@ public class WidgetPathfindCredits extends AnnotatedImportOnlyWidget {
 
     private void doReload() {
         try {
-            JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/info", AuthManager.getInstance().getWorkingTokenOrThrow());
+            JsonObject jsonObject = ApiFetcher.getJsonWithAuth(FeatureRequestCalculation.DOMAIN+"/info", ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow());
             credits.setValue(jsonObject.get("credit").getAsInt()+" credits");
         } catch (IOException e) {
             this.err.setValue(e.getMessage());

@@ -1,5 +1,6 @@
 package kr.syeyoung.modapi;
 
+import kr.syeyoung.dungeonsguide.authapi.auth.AuthManager;
 import kr.syeyoung.modapi.audio.USoundHandler;
 import kr.syeyoung.modapi.command.UCommandManager;
 import kr.syeyoung.modapi.data.UBossBar;
@@ -119,4 +120,6 @@ public interface ModAPI {
     void setMouseCursor(EnumCursor enumCursor);
 
     void setCursorPosition(int cursorX, int cursorY);
+
+    AuthManager getAuthManager();
 }

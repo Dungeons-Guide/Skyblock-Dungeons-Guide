@@ -25,9 +25,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
-import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.authapi.util.LetsEncrypt;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
@@ -565,9 +563,9 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
     private void sendLogActually(String t) throws IOException {
         if (!isEnabled()) return;
-        String token = AuthManager.getInstance().getWorkingTokenOrThrow(); // this require privacy policy.
+        String token = ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow(); // this require privacy policy.
 
-        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.DOMAIN+"/logging/dgrun").openConnection();
+        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(DungeonsGuide.DOMAIN+"/logging/dgrun").openConnection();
         urlConnection.setRequestMethod("POST");
         urlConnection.setDoOutput(true);
         urlConnection.setDoInput(true);

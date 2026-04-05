@@ -2,7 +2,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -16,6 +15,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.remotereq.Re
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.data.Pair;
 import lombok.Getter;
 import lombok.Setter;
@@ -136,7 +136,7 @@ public class PathfindPrecalculationRequestSet {
                     HttpsURLConnection connection = (HttpsURLConnection) new URL(FeatureRequestCalculation.DOMAIN + "/requests").openConnection();
                     connection.setRequestProperty("User-Agent", "DungeonsGuide/" + VersionInfo.VERSION);
                     connection.setRequestMethod("POST");
-                    connection.addRequestProperty("Authorization", "Bearer " + AuthManager.getInstance().getWorkingTokenOrThrow());
+                    connection.addRequestProperty("Authorization", "Bearer " + ModAPI.getAPI().getAuthManager().getWorkingTokenOrThrow());
                     connection.setConnectTimeout(10000);
                     connection.setReadTimeout(10000);
                     connection.setDoInput(true);

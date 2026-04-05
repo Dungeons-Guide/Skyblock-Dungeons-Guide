@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.stomp;
 
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.modapi.ModAPI;
@@ -86,7 +85,7 @@ public class StompManager {
         ex.schedule(() -> {
             if (exponentialBackoffCoefficient < 5)
                 exponentialBackoffCoefficient++;
-            if (AuthManager.getInstance().getToken() == null) return;
+            if (ModAPI.getAPI().getAuthManager().getCurrentToken() == null) return;
             try {
                 try {
                     if (stompConnection != null
@@ -96,7 +95,7 @@ public class StompManager {
                 } catch (Exception e) {
                     logger.error("Failed to reconnect (disconnection) to Stomp with message: {}", String.valueOf(Throwables.getRootCause(e)));
                 }
-                stompConnection = new StompClient(new URI(StompManager.STOMP_URL), AuthManager.getInstance().getWorkingTokenOrNull());
+                stompConnection = new StompClient(new URI(StompManager.STOMP_URL), ModAPI.getAPI().getAuthManager().getWorkingTokenOrNull());
                 ModAPI.getAPI().getEventBus().fireEvent(new StompConnectedEvent(stompConnection));
             } catch (Exception e) {
                 logger.error("Failed to connect to Stomp with message: {}", String.valueOf(Throwables.getRootCause(e)));
