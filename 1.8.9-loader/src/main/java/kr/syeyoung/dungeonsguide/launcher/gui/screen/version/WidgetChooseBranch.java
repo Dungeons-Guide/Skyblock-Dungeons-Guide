@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.launcher.gui.screen.version;
 
-import kr.syeyoung.dungeonsguide.launcher.branch.UpdateBranch;
-import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
+import kr.syeyoung.dungeonsguide.authapi.branch.UpdateBranch;
+import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetPrivacyPolicy;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.Widget;
@@ -31,11 +31,9 @@ import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -87,7 +85,7 @@ public class WidgetChooseBranch extends AnnotatedImportOnlyWidget {
                     }));
 
                 try {
-                    List<UpdateBranch> branches = UpdateRetrieverUtil.getUpdateBranches().stream()
+                    List<UpdateBranch> branches = Main.getMain().getUpdatesAPI().getUpdateBranches().stream()
                             .filter(updateBranch ->
                                     Optional.ofNullable(updateBranch.getMetadata())
                                             .filter(a -> a.has("additionalMeta"))

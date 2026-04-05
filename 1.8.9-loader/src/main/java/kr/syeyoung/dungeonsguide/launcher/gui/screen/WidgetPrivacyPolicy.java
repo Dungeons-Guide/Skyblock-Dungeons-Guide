@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.launcher.gui.screen;
 import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
 import kr.syeyoung.dungeonsguide.launcher.LoaderMeta;
 import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.AnnotatedImportOnlyWidget;
@@ -29,19 +28,14 @@ import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.ParsedWidgetConverter;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.annotations.On;
-import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.data.ParserElement;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.data.W3CBackedParser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.io.IOUtils;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -63,7 +57,12 @@ public class WidgetPrivacyPolicy extends AnnotatedImportOnlyWidget {
     @On(functionName = "accept")
     public void accept() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-        AuthManager.getInstance().acceptPrivacyPolicy(version.getValue());
+        Main.getMain().clearNotifications();
+        try {
+            Main.getMain().getAuthManager().acceptPrivacyPolicy(version.getValue());
+        } catch (InterruptedException e) {
+            e.printStackTrace(); // TOOO: error handling?
+        }
         Minecraft.getMinecraft().displayGuiScreen(null);
     }
     @On(functionName = "deny")

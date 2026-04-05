@@ -18,17 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.launcher.loader;
 
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.events.DGAwareEventSubscriptionTransformer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -121,7 +118,7 @@ public abstract class DGClassLoader extends ClassLoader implements ByteStreamURL
         }
         if (res != null) {
             res = eventSubscriptionTransformer.transform(name, name, res);
-            return defineClass(name, res, 0, res.length, Main.class.getProtectionDomain());
+            return defineClass(name, res, 0, res.length, DGClassLoader.class.getProtectionDomain());
         } else {
             throw new ClassNotFoundException(name);
         }

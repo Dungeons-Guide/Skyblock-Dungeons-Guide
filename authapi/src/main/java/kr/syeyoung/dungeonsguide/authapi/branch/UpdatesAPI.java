@@ -216,9 +216,11 @@ public class UpdatesAPI {
     }
 
     @Data @Builder
-    public  class VersionInfo {
+    public static class VersionInfo {
+        @Builder.Default
         String friendlyBranchName = "";
         long branchId;
+        @Builder.Default
         String friendlyVersionName = "";
         long updateId;
     }

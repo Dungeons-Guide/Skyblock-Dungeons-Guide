@@ -18,8 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.launcher.gui.screen.version;
 
-import kr.syeyoung.dungeonsguide.launcher.branch.Update;
-import kr.syeyoung.dungeonsguide.launcher.branch.UpdateBranch;
 import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.LocalLoader;
 import net.minecraftforge.common.config.Configuration;

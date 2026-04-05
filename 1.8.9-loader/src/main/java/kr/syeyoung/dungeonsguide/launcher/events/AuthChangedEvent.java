@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.launcher.events;
 
 
-import kr.syeyoung.dungeonsguide.launcher.auth.token.AuthToken;
+import kr.syeyoung.dungeonsguide.authapi.auth.token.AuthToken;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraftforge.fml.common.eventhandler.Event;

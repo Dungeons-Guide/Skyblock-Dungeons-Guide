@@ -53,10 +53,10 @@ loom {
     }
 }
 
-//
-//sourceSets.main {
-//    output.setResourcesDir(file("$buildDir/classes/java/main"))
-//}
+
+sourceSets.main {
+    output.setResourcesDir(file("$buildDir/classes/java/main"))
+}
 
 
 repositories {
@@ -104,15 +104,15 @@ dependencies {
     shadowImpl 'io.nayuki:qrcodegen:1.4.0'
     shadowImpl 'org.bouncycastle:bcpg-jdk15on:1.70'
     shadowImpl "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
+    shadowImpl project(":authapi")
 
-    compileOnly "org.projectlombok:lombok:1.18.20"
-    annotationProcessor "org.projectlombok:lombok:1.18.16"
+    compileOnly("org.projectlombok:lombok:1.18.32")
+    annotationProcessor("org.projectlombok:lombok:1.18.32")
 
-    testCompileOnly "org.projectlombok:lombok:1.18.20"
-    testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+    testCompileOnly("org.projectlombok:lombok:1.18.32")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.32")
 
-
-    modLocalRuntime("me.djtheredstoner:DevAuth-forge-legacy:1.1.0") {}
+    modLocalRuntime("me.djtheredstoner:DevAuth-forge-legacy:1.2.2") {}
 }
 
 

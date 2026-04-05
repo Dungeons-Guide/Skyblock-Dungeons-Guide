@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.launcher.gui.screen.version;
 
-import kr.syeyoung.dungeonsguide.launcher.branch.Update;
-import kr.syeyoung.dungeonsguide.launcher.branch.UpdateBranch;
+import kr.syeyoung.dungeonsguide.authapi.branch.Update;
+import kr.syeyoung.dungeonsguide.authapi.branch.UpdateBranch;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.AnnotatedImportOnlyWidget;

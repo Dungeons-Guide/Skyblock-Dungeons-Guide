@@ -18,10 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.launcher.gui.screen;
 
-import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
-import kr.syeyoung.dungeonsguide.launcher.LoaderMeta;
 import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.AnnotatedImportOnlyWidget;
@@ -35,8 +32,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -58,7 +53,11 @@ public class WidgetPrivacyPolicyLocal extends AnnotatedImportOnlyWidget {
     @On(functionName = "accept")
     public void accept() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-        AuthManager.getInstance().acceptPrivacyPolicy(version.getValue());
+        try {
+            Main.getMain().getAuthManager().acceptPrivacyPolicy(version.getValue());
+        } catch (InterruptedException e) {
+            e.printStackTrace(); // TOOD: handle this better
+        }
         Minecraft.getMinecraft().displayGuiScreen(null);
     }
     @On(functionName = "deny")

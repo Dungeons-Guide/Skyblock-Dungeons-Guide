@@ -18,13 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.launcher.loader;
 
+import kr.syeyoung.dungeonsguide.authapi.branch.SignatureValidator;
+import kr.syeyoung.dungeonsguide.authapi.exceptions.NoVersionFoundException;
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.LoaderMeta;
-import kr.syeyoung.dungeonsguide.launcher.branch.Update;
-import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
+import kr.syeyoung.dungeonsguide.authapi.branch.Update;
+import kr.syeyoung.dungeonsguide.authapi.branch.UpdatesAPI;
+import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.NoVersionFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 import kr.syeyoung.dungeonsguide.launcher.util.ProgressStateHolder;
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -46,10 +48,13 @@ public class RemoteLoader implements IDGLoader {
     private ReferenceQueue<ClassLoader> refQueue = new ReferenceQueue<>();
     private PhantomReference<ClassLoader> phantomReference;
 
+    private UpdatesAPI api;
+
     public RemoteLoader(String friendlyBranchName, long branchId, long updateId) {
         this.friendlyBranchName = friendlyBranchName;
         this.branchId = branchId;
         this.updateId = updateId;
+//        api = new UpdatesAPI()
     }
 
 
@@ -89,7 +94,7 @@ public class RemoteLoader implements IDGLoader {
         try {
             Update target;
             try {
-                target = UpdateRetrieverUtil.getUpdate(branchId, updateId);
+                target = Main.getMain().getUpdatesAPI().getUpdate(branchId, updateId);
                 ProgressStateHolder.step("Getting Update Meta");
                 friendlyVersionName = target.getName();
 
@@ -104,10 +109,10 @@ public class RemoteLoader implements IDGLoader {
             InputStream in;
 
             ProgressStateHolder.step("Downloading Mod");
-            byte[] mod = IOUtils.toByteArray(in = UpdateRetrieverUtil.downloadFile(target, "mod.jar"));
+            byte[] mod = IOUtils.toByteArray(in = Main.getMain().getUpdatesAPI().downloadFile(target, "mod.jar"));
             in.close();
             ProgressStateHolder.step("Downloading Signature");
-            byte[] signature = IOUtils.toByteArray(in = UpdateRetrieverUtil.downloadFile(target, "mod.jar.asc"));
+            byte[] signature = IOUtils.toByteArray(in = Main.getMain().getUpdatesAPI().downloadFile(target, "mod.jar.asc"));
             in.close();
 
             SignatureValidator.validateVersion1Signature(target, mod, signature);

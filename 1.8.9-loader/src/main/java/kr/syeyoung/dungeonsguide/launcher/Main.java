@@ -18,11 +18,23 @@
 
 package kr.syeyoung.dungeonsguide.launcher;
 
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
-import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.*;
+import com.mojang.authlib.exceptions.AuthenticationException;
+import kr.syeyoung.dungeonsguide.authapi.api.AuthEventListener;
+import kr.syeyoung.dungeonsguide.authapi.api.AuthService;
+import kr.syeyoung.dungeonsguide.authapi.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.authapi.auth.token.AuthToken;
+import kr.syeyoung.dungeonsguide.authapi.auth.token.DGAuthToken;
+import kr.syeyoung.dungeonsguide.authapi.auth.token.FailedAuthToken;
+import kr.syeyoung.dungeonsguide.authapi.auth.token.PrivacyPolicyRequiredToken;
+import kr.syeyoung.dungeonsguide.authapi.branch.UpdatesAPI;
+import kr.syeyoung.dungeonsguide.authapi.exceptions.NoVersionFoundException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.NoSuitableLoaderFoundException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetError;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetPrivacyPolicy;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.version.WidgetChooseVersion;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
@@ -59,7 +71,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Mod(modid = Main.MOD_ID, version = Main.VERSION, clientSideOnly = true, guiFactory = "kr.syeyoung.dungeonsguide.launcher.DGLoaderGuiFactory")
-public class Main
+public class Main implements AuthService, AuthEventListener
 {
     public static final String MOD_ID = "dungeons_guide_loader";
     public static final String VERSION = "4.0.0";
@@ -72,6 +84,12 @@ public class Main
     private static File configDir;
 
     private DGInterface dgInterface;
+
+    @Getter
+    private AuthManager authManager = new AuthManager(DOMAIN, this,  "DungeonsGuideLoader/"+ LoaderMeta.LOADER_VERSION);
+    @Getter
+    private UpdatesAPI updatesAPI = new UpdatesAPI(DOMAIN, "DungeonsGuideLoader/"+ LoaderMeta.LOADER_VERSION, authManager);
+
 
     private final List<DungeonsGuideReloadListener> listeners = new ArrayList<>();
 
@@ -288,7 +306,7 @@ public class Main
             String branch =  System.getProperty("branch") == null ? configuration.get("loader", "remoteBranch", "$default").getString() : System.getProperty("branch");
             String version = System.getProperty("version") == null ? configuration.get("loader", "remoteVersion", "latest").getString() : System.getProperty("version");
             try {
-                UpdateRetrieverUtil.VersionInfo versionInfo = UpdateRetrieverUtil.getIds(
+                UpdatesAPI.VersionInfo versionInfo = updatesAPI.getIds(
                        branch,
                         version
                 );
@@ -321,8 +339,9 @@ public class Main
         // Try authenticate
         bar.step("Authenticating...");
 
+        authManager.registerListener(this);
         try {
-            AuthManager.getInstance().init();
+            authManager.init();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -348,5 +367,69 @@ public class Main
 
     public static Main getMain() {
         return main;
+    }
+
+    @Override
+    public void mojangAuth(String serverId) {
+        try {
+            Minecraft.getMinecraft().getSessionService().joinServer(
+                    Minecraft.getMinecraft().getSession().getProfile(),
+                    Minecraft.getMinecraft().getSession().getToken(),
+                    serverId);
+        } catch (AuthenticationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public UUID getCurrentPlayerUUID() {
+        return Minecraft.getMinecraft().getSession().getProfile().getId();
+    }
+
+    @Override
+    public String getCurrentPlayerUsername() {
+        return Minecraft.getMinecraft().getSession().getUsername();
+    }
+
+
+    private boolean shouldAuthNotif = true;
+    private static final UUID authenticationFailure = UUID.randomUUID();
+    private static final UUID privacyPolicyRequired = UUID.randomUUID();
+    @Override
+    public void onNewAuthToken(AuthToken token) {
+        if (token instanceof PrivacyPolicyRequiredToken) {
+            clearNotifications();
+            NotificationManager.getInstance().updateNotification(privacyPolicyRequired, new WidgetNotification(privacyPolicyRequired, Notification.builder()
+                    .title("Privacy Policy")
+                    .description("Please accept the Dungeons Guide\nPrivacy Policy to enjoy server based\nfeatures of Dungeons Guide\n\n(Including Auto-Update/Remote-Jar)")
+                    .titleColor(0xFFFF0000)
+                    .onClick(() -> {
+                        GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetPrivacyPolicy())));
+                    })
+                    .build()));
+        } else if (token instanceof FailedAuthToken){
+            if(shouldAuthNotif) {
+                clearNotifications();
+                Throwable e = ((FailedAuthToken) token).getException();
+                NotificationManager.getInstance().updateNotification(authenticationFailure, new WidgetNotification(authenticationFailure, Notification.builder()
+                        .title("Auth Error")
+                        .description("Authentication Error Occurred\n" + e.getMessage())
+                        .titleColor(0xFFFF0000)
+                        .onClick(() -> {
+                            shouldAuthNotif = false;
+                            NotificationManager.getInstance().removeNotification(authenticationFailure);
+                            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
+                        })
+                        .build()));
+            }
+        } else if (token instanceof DGAuthToken) {
+//            if (NotificationManager.getInstance().)
+            clearNotifications();
+        }
+    }
+
+    public void clearNotifications() {
+        NotificationManager.getInstance().removeNotification(authenticationFailure);
+        NotificationManager.getInstance().removeNotification(privacyPolicyRequired);
     }
 }

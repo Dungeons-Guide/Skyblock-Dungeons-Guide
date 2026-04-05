@@ -5,6 +5,12 @@ plugins {
 group = "kr.syeyoung.dungeonsguide"
 version = "1.0.0"
 
+java {
+//    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_1_8
+}
+
 repositories {
     mavenCentral()
 }
@@ -19,12 +25,19 @@ dependencies {
     implementation("io.nayuki:qrcodegen:1.4.0")
     implementation("org.bouncycastle:bcpg-jdk15on:1.70")
 
-    compileOnly("org.projectlombok:lombok:1.18.20")
-    annotationProcessor("org.projectlombok:lombok:1.18.16")
+    compileOnly("org.projectlombok:lombok:1.18.32")
+    annotationProcessor("org.projectlombok:lombok:1.18.32")
 
-    testCompileOnly("org.projectlombok:lombok:1.18.20")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.20")
+    testCompileOnly("org.projectlombok:lombok:1.18.32")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.32")
 }
+
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+    options.compilerArgs.add("-parameters")
+}
+
 
 tasks.test {
     useJUnitPlatform()

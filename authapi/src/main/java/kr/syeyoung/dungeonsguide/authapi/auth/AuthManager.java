@@ -47,6 +47,9 @@ public class AuthManager implements AutoCloseable {
         this.authService = minecraft;
         this.authAPI = new AuthAPI(baseUrl, userAgent);
         this.authThread = new Thread(this::authLoop);
+    }
+
+    public void init() {
         this.authThread.start();
     }
 
@@ -92,15 +95,31 @@ public class AuthManager implements AutoCloseable {
 
     private ReentrantReadWriteLock tokenLock = new ReentrantReadWriteLock();
     private Condition tokenValid = tokenLock.writeLock().newCondition();
+    private Condition newToken = tokenLock.writeLock().newCondition();
 
     public AuthToken waitForWorkingToken() throws InterruptedException {
         tokenLock.writeLock().lock();
         try {
+            if (currentToken instanceof DGAuthToken) return currentToken;
+            retryAuth();
             while (true) {
                 tokenValid.await();
                 if (currentToken instanceof DGAuthToken) {
                     return currentToken;
                 }
+            }
+        } finally {
+            tokenLock.writeLock().unlock();
+        }
+    }
+    public AuthToken waitForNextToken() throws InterruptedException {
+        tokenLock.writeLock().lock();
+        try {
+            retryAuth();
+            while (true) {
+                newToken.await();
+                if (!(currentToken instanceof NullToken))
+                    return currentToken;
             }
         } finally {
             tokenLock.writeLock().unlock();
@@ -152,10 +171,12 @@ public class AuthManager implements AutoCloseable {
 
             if (currentToken instanceof DGAuthToken)
                 tokenValid.signalAll();
+            newToken.signalAll();
 
             listenerList.forEach(a -> a.onNewAuthToken(currentToken));
         } catch (Exception e) {
             currentToken = new FailedAuthToken(e);
+            newToken.signalAll();
             listenerList.forEach(a -> a.onNewAuthToken(currentToken));
             throw new AuthFailedException(e);
         } finally {
@@ -186,9 +207,11 @@ public class AuthManager implements AutoCloseable {
 
                 if (currentToken instanceof DGAuthToken)
                     tokenValid.signalAll();
+                newToken.signalAll();
 
             } catch (Exception e) {
                 this.currentToken = new FailedAuthToken(e);
+                newToken.signalAll();
                 listenerList.forEach(a -> a.onNewAuthToken(this.currentToken));
                 throw new AuthFailedException(e);
             }

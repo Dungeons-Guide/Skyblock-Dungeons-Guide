@@ -18,9 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.launcher.gui.screen.version;
 
-import kr.syeyoung.dungeonsguide.launcher.branch.Update;
-import kr.syeyoung.dungeonsguide.launcher.branch.UpdateBranch;
-import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
+import kr.syeyoung.dungeonsguide.authapi.branch.Update;
+import kr.syeyoung.dungeonsguide.authapi.branch.UpdateBranch;
+import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetPrivacyPolicy;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.Widget;
@@ -36,10 +36,6 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class WidgetChooseBranchVersion extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "versionListVisibility")
@@ -84,7 +80,7 @@ public class WidgetChooseBranchVersion extends AnnotatedImportOnlyWidget {
             try {
                 List<Widget> widgets = new ArrayList<>();
                 try {
-                    List<Update> branches = UpdateRetrieverUtil.getLatestUpdates(branch.getId(), 0);
+                    List<Update> branches = Main.getMain().getUpdatesAPI().getLatestUpdates(branch.getId(), 0);
                     if (!branches.isEmpty()) {
                         widgets.add(new BranchButton("Latest", () -> {
                             onVersionChoose.accept(branch, branches.get(0), true);
