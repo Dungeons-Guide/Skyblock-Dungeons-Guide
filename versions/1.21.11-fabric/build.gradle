@@ -66,7 +66,7 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:1.18.36"
     testAnnotationProcessor "org.projectlombok:lombok:1.18.36"
 
-    shadowImpl project(path: ":platformapi")
+    shadowImpl project(path: ":platform-api")
 //    shadowImpl project(path: ":mod")
 
 //    devenvMod(project(path: ":1.8.9-loader", configuration: "unmappedMod"))

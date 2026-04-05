@@ -19,6 +19,8 @@
 package kr.syeyoung.dungeonsguide.launcher;
 
 import com.mojang.authlib.exceptions.AuthenticationException;
+import kr.syeyoung.dungeonguide.loader.DGInterface;
+import kr.syeyoung.dungeonguide.loader.LoaderAPI;
 import kr.syeyoung.dungeonsguide.authapi.api.AuthEventListener;
 import kr.syeyoung.dungeonsguide.authapi.api.AuthService;
 import kr.syeyoung.dungeonsguide.authapi.auth.AuthManager;
@@ -71,7 +73,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Mod(modid = Main.MOD_ID, version = Main.VERSION, clientSideOnly = true, guiFactory = "kr.syeyoung.dungeonsguide.launcher.DGLoaderGuiFactory")
-public class Main implements AuthService, AuthEventListener
+public class Main implements AuthService, AuthEventListener, LoaderAPI
 {
     public static final String MOD_ID = "dungeons_guide_loader";
     public static final String VERSION = "4.0.0";
@@ -104,6 +106,11 @@ public class Main implements AuthService, AuthEventListener
         listeners.remove(dungeonsGuideReloadListener);
     }
 
+
+    @Override
+    public void requestUnload() {
+        this.unloadWithoutStacktraceReference();
+    }
 
     @Getter
     private IDGLoader currentLoader;
@@ -214,7 +221,7 @@ public class Main implements AuthService, AuthEventListener
         dgInterface = newLoader.loadDungeonsGuide();
         currentLoader = newLoader;
         try {
-            dgInterface.init(configDir);
+            dgInterface.init(configDir, this);
         } catch (Throwable e) {
             throw new DungeonsGuideLoadingException("Exception occurred while calling init\nInfo: "+currentLoader.toString(), e);
         }

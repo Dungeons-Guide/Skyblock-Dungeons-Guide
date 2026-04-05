@@ -104,7 +104,8 @@ dependencies {
     shadowImpl 'io.nayuki:qrcodegen:1.4.0'
     shadowImpl 'org.bouncycastle:bcpg-jdk15on:1.70'
     shadowImpl "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
-    shadowImpl project(":authapi")
+    shadowImpl project(":auth-api")
+    shadowImpl project(":loader-api")
 
     compileOnly("org.projectlombok:lombok:1.18.32")
     annotationProcessor("org.projectlombok:lombok:1.18.32")

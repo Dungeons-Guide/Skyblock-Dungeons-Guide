@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.commands;
 
 import com.mojang.brigadier.context.CommandContext;
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ConfigCustomGuiScreenAdapter;
@@ -244,6 +243,6 @@ public class CommandDungeonsGuide  {
 
     @DGCommand("dg unload")
     public void unloadCommand() {
-        Main.getMain().unloadWithoutStacktraceReference();
+        DungeonsGuide.getDungeonsGuide().getLoaderAPI().requestUnload();
     }
 }

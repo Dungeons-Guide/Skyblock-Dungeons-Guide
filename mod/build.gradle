@@ -96,9 +96,10 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:1.18.32"
 
     compileOnly 'org.apache.logging.log4j:log4j-core:2.25.3'
-    compileOnly project(path: ":platformapi")
-    compileOnly project(path: ":1.8.9-loader")
-    shadowImpl project(path: ":authapi")
+
+    compileOnly project(path: ":platform-api")
+    compileOnly project(path: ":loader-api")
+    shadowImpl project(path: ":auth-api")
 
     implementation("net.kyori:adventure-text-serializer-legacy:4.23.0")
 }

@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod;
 
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
@@ -49,6 +48,6 @@ public class WidgetUpdateLog extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "unload")
     public void unload() {
-        Main.getMain().unloadWithoutStacktraceReference();
+        DungeonsGuide.getDungeonsGuide().getLoaderAPI().requestUnload();
     }
 }

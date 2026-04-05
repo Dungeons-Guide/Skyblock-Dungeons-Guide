@@ -16,12 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher;
+package kr.syeyoung.dungeonguide.loader;
 
 import java.io.File;
 
 public interface DGInterface {
-    void init(File resourceDir);
+    void init(File resourceDir, LoaderAPI api);
     void unload();
     void onResourceReload();
 

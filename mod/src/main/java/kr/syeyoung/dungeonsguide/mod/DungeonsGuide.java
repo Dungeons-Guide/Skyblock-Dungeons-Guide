@@ -20,8 +20,8 @@ package kr.syeyoung.dungeonsguide.mod;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
-import kr.syeyoung.dungeonsguide.launcher.DGInterface;
-import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonguide.loader.DGInterface;
+import kr.syeyoung.dungeonguide.loader.LoaderAPI;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandDgDebug;
@@ -80,12 +80,9 @@ public class DungeonsGuide implements DGInterface {
     public boolean verbose = false;
     private SkyblockStatus skyblockStatus;
 
+    private File configDir;
     @Getter
-    private File tempDir = new File(Main.getConfigDir(), "tmp");
-
-    @Getter
-    private File configDir = Main.getConfigDir();
-
+    private File tempDir;
     @Getter
     public static final ThreadGroup THREAD_GROUP = new ThreadGroup("Dungeons Guide");
 
@@ -147,21 +144,26 @@ public class DungeonsGuide implements DGInterface {
         return executorService;
     }
 
-    public void init(File f) {
-//        ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 5); $$ PROGRESS
+    @Getter
+    private LoaderAPI loaderAPI;
 
+    public void init(File f, LoaderAPI loaderAPI) {
+//        ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 5); $$ PROGRESS
+        this.loaderAPI = loaderAPI;
+        this.configDir = f;
         ModAPI.getAPI().init();
 
 
 //        progressbar.step("Creating Configuration");
 
-        tempDir.mkdirs();
-
-        File configFile = new File(Main.getConfigDir(), "config.json");
+        File configFile = new File(configDir, "config.json");
         if (!configFile.exists()) {
-            Main.getConfigDir().mkdirs();
+            f.mkdirs();
             firstTimeUsingDG = true;
         }
+        tempDir = new File(configDir, "tmp");
+        tempDir.mkdirs();
+
 
         Config.f = configFile;
 

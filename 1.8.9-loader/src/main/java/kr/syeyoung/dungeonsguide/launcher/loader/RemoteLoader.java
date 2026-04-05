@@ -18,9 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.launcher.loader;
 
+import kr.syeyoung.dungeonguide.loader.DGInterface;
 import kr.syeyoung.dungeonsguide.authapi.branch.SignatureValidator;
 import kr.syeyoung.dungeonsguide.authapi.exceptions.NoVersionFoundException;
-import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.LoaderMeta;
 import kr.syeyoung.dungeonsguide.authapi.branch.Update;
 import kr.syeyoung.dungeonsguide.authapi.branch.UpdatesAPI;

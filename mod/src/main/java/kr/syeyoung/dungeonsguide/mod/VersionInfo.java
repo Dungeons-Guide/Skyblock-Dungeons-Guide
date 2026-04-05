@@ -18,23 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod;
 
-import kr.syeyoung.dungeonsguide.authapi.auth.AuthManager;
-import kr.syeyoung.dungeonsguide.authapi.branch.Update;
-import kr.syeyoung.dungeonsguide.authapi.branch.UpdateBranch;
-import kr.syeyoung.dungeonsguide.authapi.branch.UpdatesAPI;
-import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.launcher.loader.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
-import kr.syeyoung.dungeonsguide.mod.gui.CustomGuiScreenAdapter;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
-import kr.syeyoung.dungeonsguide.mod.utils.GuiDisplayer;
-import kr.syeyoung.modapi.ModAPI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.*;
-import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
 
 public class VersionInfo {
@@ -59,83 +46,83 @@ public class VersionInfo {
         VERSION = VERSION1;
     }
 
-    public static IDGLoader getCurrentLoader() {
-        return Main.getMain().getCurrentLoader();
-    }
-
-    public static String getLoaderInfo() {
-        return getCurrentLoader().loaderName();
-    }
+//    public static IDGLoader getCurrentLoader() {
+//        return Main.getMain().getCurrentLoader();
+//    }
+//
+//    public static String getLoaderInfo() {
+//        return getCurrentLoader().loaderName();
+//    }
 
 
     private static final Logger logger = LogManager.getLogger("OutdatedVersionWarning");
     public static void checkAndOpen() {
-        try {
-            if (VersionInfo.getCurrentLoader() instanceof DevEnvLoader) return;
-
-            AuthManager authManager = ModAPI.getAPI().getAuthManager();
-            UpdatesAPI updatesAPI = new UpdatesAPI(DungeonsGuide.DOMAIN, "DungeonsGuide/"+VersionInfo.VERSION, authManager);
-            if (VersionInfo.getCurrentLoader() instanceof RemoteLoader) {
-                RemoteLoader loader = (RemoteLoader) VersionInfo.getCurrentLoader();
-                Update latestUpdate = updatesAPI.getLatestUpdates(loader.getBranchId(), 0).get(0);
-                if (latestUpdate.getId() == loader.getUpdateId()) return;
-
-                Scaler scaler = new Scaler();
-                scaler.scale.setValue(ModAPI.getAPI().getScaleFactor());
-                scaler.child.setValue(new WidgetUpdateLog(
-                        latestUpdate.getName(), latestUpdate.getUpdateLog(), true
-                ));
-                GuiDisplayer.INSTANCE.displayGui(new CustomGuiScreenAdapter(scaler));
-
-                logger.info("Update Required!!");
-            } else if (VersionInfo.getCurrentLoader() instanceof JarLoader || VersionInfo.getCurrentLoader() instanceof LocalLoader) {
-                List<UpdateBranch> availableBranches = updatesAPI.getUpdateBranches();
-                UpdateBranch requiredUpdateBranch = availableBranches.stream().filter(a ->
-                        Optional.ofNullable(a.getMetadata())
-                                .filter(b -> b.has("additionalMeta"))
-                                .map(b -> b.getJSONObject("additionalMeta"))
-                                .filter(b -> b.has("type"))
-                                .map(b -> b.getString("type"))
-                                .filter(b -> b.equals("update-alarm-github"))
-                                .isPresent()).findFirst().orElse(null);
-                boolean autoupdate = availableBranches.stream().anyMatch(a ->
-                        Optional.ofNullable(a.getMetadata())
-                                .filter(b -> b.has("additionalMeta"))
-                                .map(b -> b.getJSONObject("additionalMeta"))
-                                .filter(b -> b.has("type"))
-                                .map(b -> b.getString("type"))
-                                .filter(b -> b.equals("mod")).isPresent());
-                if (requiredUpdateBranch == null) {
-                    logger.error("No update branch found: ???");
-                    return;
-                }
-                Update latestUpdate = updatesAPI.getLatestUpdates(requiredUpdateBranch.getId(), 0).get(0);
-
-                if (latestUpdate.getMetadata().optInt("mandatory_version",0 ) > (VersionInfo.MANDATORY_VERSION)) {
-                    JOptionPane.showMessageDialog(null,
-                            new MessageWithLink("Your version of Dungeons Guide requires a mandatory update!<br/><br/>" +
-                                    "Join our discord at <a href=\"https://discord.gg/vuGsXhY5Bv\">https://discord.gg/vuGsXhY5Bv</a><br/>" +
-                                    "Github at <a href=\"https://github.com/Dungeons-Guide/Skyblock-Dungeons-Guide\">https://github.com/Dungeons-Guide/Skyblock-Dungeons-Guide</a>")
-                            , "Dungeons Guide Mandatory Update!", JOptionPane.WARNING_MESSAGE);
-                    ModAPI.getAPI().exit(9999, false);
-                }
-
-                if (latestUpdate.getName().equals(VersionInfo.VERSION)) return;
-                logger.info("Update Required!!");
-
-                Scaler scaler = new Scaler();
-                scaler.scale.setValue(ModAPI.getAPI().getScaleFactor());
-                scaler.child.setValue(new WidgetUpdateLog(
-                        latestUpdate.getName(), latestUpdate.getUpdateLog(), autoupdate
-                ));
-                GuiDisplayer.INSTANCE.displayGui(new CustomGuiScreenAdapter(scaler));
-            } else {
-                logger.error("Failed to check version: Unknown Loader: " + VersionInfo.getLoaderInfo() + " / " + VersionInfo.getCurrentLoader().getClass().getName());
-            }
-        } catch (Exception e) {
-            FeatureCollectDiagnostics.queueSendLogAsync(e);
-            logger.error("Error while checking for updates: ",e);
-        }
+//        try {
+//            if (VersionInfo.getCurrentLoader() instanceof DevEnvLoader) return;
+//
+//            AuthManager authManager = ModAPI.getAPI().getAuthManager();
+//            UpdatesAPI updatesAPI = new UpdatesAPI(DungeonsGuide.DOMAIN, "DungeonsGuide/"+VersionInfo.VERSION, authManager);
+//            if (VersionInfo.getCurrentLoader() instanceof RemoteLoader) {
+//                RemoteLoader loader = (RemoteLoader) VersionInfo.getCurrentLoader();
+//                Update latestUpdate = updatesAPI.getLatestUpdates(loader.getBranchId(), 0).get(0);
+//                if (latestUpdate.getId() == loader.getUpdateId()) return;
+//
+//                Scaler scaler = new Scaler();
+//                scaler.scale.setValue(ModAPI.getAPI().getScaleFactor());
+//                scaler.child.setValue(new WidgetUpdateLog(
+//                        latestUpdate.getName(), latestUpdate.getUpdateLog(), true
+//                ));
+//                GuiDisplayer.INSTANCE.displayGui(new CustomGuiScreenAdapter(scaler));
+//
+//                logger.info("Update Required!!");
+//            } else if (VersionInfo.getCurrentLoader() instanceof JarLoader || VersionInfo.getCurrentLoader() instanceof LocalLoader) {
+//                List<UpdateBranch> availableBranches = updatesAPI.getUpdateBranches();
+//                UpdateBranch requiredUpdateBranch = availableBranches.stream().filter(a ->
+//                        Optional.ofNullable(a.getMetadata())
+//                                .filter(b -> b.has("additionalMeta"))
+//                                .map(b -> b.getJSONObject("additionalMeta"))
+//                                .filter(b -> b.has("type"))
+//                                .map(b -> b.getString("type"))
+//                                .filter(b -> b.equals("update-alarm-github"))
+//                                .isPresent()).findFirst().orElse(null);
+//                boolean autoupdate = availableBranches.stream().anyMatch(a ->
+//                        Optional.ofNullable(a.getMetadata())
+//                                .filter(b -> b.has("additionalMeta"))
+//                                .map(b -> b.getJSONObject("additionalMeta"))
+//                                .filter(b -> b.has("type"))
+//                                .map(b -> b.getString("type"))
+//                                .filter(b -> b.equals("mod")).isPresent());
+//                if (requiredUpdateBranch == null) {
+//                    logger.error("No update branch found: ???");
+//                    return;
+//                }
+//                Update latestUpdate = updatesAPI.getLatestUpdates(requiredUpdateBranch.getId(), 0).get(0);
+//
+//                if (latestUpdate.getMetadata().optInt("mandatory_version",0 ) > (VersionInfo.MANDATORY_VERSION)) {
+//                    JOptionPane.showMessageDialog(null,
+//                            new MessageWithLink("Your version of Dungeons Guide requires a mandatory update!<br/><br/>" +
+//                                    "Join our discord at <a href=\"https://discord.gg/vuGsXhY5Bv\">https://discord.gg/vuGsXhY5Bv</a><br/>" +
+//                                    "Github at <a href=\"https://github.com/Dungeons-Guide/Skyblock-Dungeons-Guide\">https://github.com/Dungeons-Guide/Skyblock-Dungeons-Guide</a>")
+//                            , "Dungeons Guide Mandatory Update!", JOptionPane.WARNING_MESSAGE);
+//                    ModAPI.getAPI().exit(9999, false);
+//                }
+//
+//                if (latestUpdate.getName().equals(VersionInfo.VERSION)) return;
+//                logger.info("Update Required!!");
+//
+//                Scaler scaler = new Scaler();
+//                scaler.scale.setValue(ModAPI.getAPI().getScaleFactor());
+//                scaler.child.setValue(new WidgetUpdateLog(
+//                        latestUpdate.getName(), latestUpdate.getUpdateLog(), autoupdate
+//                ));
+//                GuiDisplayer.INSTANCE.displayGui(new CustomGuiScreenAdapter(scaler));
+//            } else {
+//                logger.error("Failed to check version: Unknown Loader: " + VersionInfo.getLoaderInfo() + " / " + VersionInfo.getCurrentLoader().getClass().getName());
+//            }
+//        } catch (Exception e) {
+//            FeatureCollectDiagnostics.queueSendLogAsync(e);
+//            logger.error("Error while checking for updates: ",e);
+//        }
     }
 
 }
