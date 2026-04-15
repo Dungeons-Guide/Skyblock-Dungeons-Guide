@@ -20,8 +20,9 @@ package kr.syeyoung.dungeonsguide.mod;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
-import kr.syeyoung.dungeonguide.loader.DGInterface;
-import kr.syeyoung.dungeonguide.loader.LoaderAPI;
+import kr.syeyoung.dungeonsguide.authapi.api.AuthService;
+import kr.syeyoung.dungeonsguide.loader.DGInterface;
+import kr.syeyoung.dungeonsguide.loader.LoaderAPI;
 import kr.syeyoung.dungeonsguide.authapi.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -65,6 +66,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
@@ -81,6 +83,7 @@ public class DungeonsGuide implements DGInterface {
     public boolean verbose = false;
     private SkyblockStatus skyblockStatus;
 
+    @Getter
     private File configDir;
     @Getter
     private File tempDir;
@@ -156,7 +159,22 @@ public class DungeonsGuide implements DGInterface {
         this.loaderAPI = loaderAPI;
         this.configDir = f;
 
-        this.authManager = new AuthManager(DOMAIN, ModAPI.getAPI().getAuthService(), "DungeonsGuide/"+VersionInfo.VERSION);
+        this.authManager = new AuthManager(DOMAIN, new AuthService() {
+            @Override
+            public void mojangAuth(String serverId) {
+                ModAPI.getAPI().getAuthService().mojangAuth(serverId);
+            }
+
+            @Override
+            public UUID getCurrentPlayerUUID() {
+                return ModAPI.getAPI().getAuthService().getCurrentPlayerUUID();
+            }
+
+            @Override
+            public String getCurrentPlayerUsername() {
+                return ModAPI.getAPI().getAuthService().getCurrentPlayerUsername();
+            }
+        }, "DungeonsGuide/" + VersionInfo.VERSION);
         this.authManager.init();
         ModAPI.getAPI().init();
 

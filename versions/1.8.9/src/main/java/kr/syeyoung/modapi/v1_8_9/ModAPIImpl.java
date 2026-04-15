@@ -1,7 +1,6 @@
 package kr.syeyoung.modapi.v1_8_9;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.authapi.api.AuthService;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.PathDisplayEngineSettingRegistry;
 import kr.syeyoung.modapi.ModAPI;
@@ -9,6 +8,7 @@ import kr.syeyoung.modapi.Platform;
 import kr.syeyoung.modapi.audio.USoundHandler;
 import kr.syeyoung.modapi.data.UBossBar;
 import kr.syeyoung.modapi.data.Vector3D;
+import kr.syeyoung.modapi.AuthService;
 import kr.syeyoung.modapi.data.VectorI3D;
 import kr.syeyoung.modapi.entity.UEntity;
 import kr.syeyoung.modapi.entity.UEntityPlayerFake;

@@ -26,7 +26,6 @@ dependencies {
     api("net.kyori:adventure-api:4.23.0")
     api("net.kyori:adventure-nbt:4.23.0")
     api("net.kyori:adventure-text-serializer-gson:4.23.0")
-    api(project(":auth-api"))
 
     compileOnly("org.projectlombok:lombok:1.18.32")
     annotationProcessor("org.projectlombok:lombok:1.18.32")

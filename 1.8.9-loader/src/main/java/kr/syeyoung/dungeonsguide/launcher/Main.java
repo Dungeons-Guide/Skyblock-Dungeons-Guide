@@ -19,8 +19,8 @@
 package kr.syeyoung.dungeonsguide.launcher;
 
 import com.mojang.authlib.exceptions.AuthenticationException;
-import kr.syeyoung.dungeonguide.loader.DGInterface;
-import kr.syeyoung.dungeonguide.loader.LoaderAPI;
+import kr.syeyoung.dungeonsguide.loader.DGInterface;
+import kr.syeyoung.dungeonsguide.loader.LoaderAPI;
 import kr.syeyoung.dungeonsguide.authapi.api.AuthEventListener;
 import kr.syeyoung.dungeonsguide.authapi.api.AuthService;
 import kr.syeyoung.dungeonsguide.authapi.auth.AuthManager;

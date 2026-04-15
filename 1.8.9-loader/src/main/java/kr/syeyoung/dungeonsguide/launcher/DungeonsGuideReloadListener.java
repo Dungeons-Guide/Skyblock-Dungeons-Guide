@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.launcher;
 
-import kr.syeyoung.dungeonguide.loader.DGInterface;
+import kr.syeyoung.dungeonsguide.loader.DGInterface;
 
 public interface DungeonsGuideReloadListener {
     /**

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonguide.loader;
+package kr.syeyoung.dungeonsguide.loader;
 
 import java.io.File;
 

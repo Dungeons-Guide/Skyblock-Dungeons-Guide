@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.frontpage;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.FeatureRequestCalculation;

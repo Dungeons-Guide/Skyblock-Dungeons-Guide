@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonguide.loader;
+package kr.syeyoung.dungeonsguide.loader;
 
 public interface LoaderAPI {
     default void requestUnload() {

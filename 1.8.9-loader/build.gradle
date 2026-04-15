@@ -2,7 +2,7 @@ plugins {
     id "idea"
     id "signing"
     id "java"
-    id "com.gradleup.shadow" version "8.3.6"
+    id "com.gradleup.shadow" version "9.4.1"
     id "dev.architectury.architectury-pack200"
     id "gg.essential.loom"
 }
@@ -133,8 +133,13 @@ tasks.shadowJar {
     exclude "META-INF/versions/**"
     configurations = [project.configurations.shadowImpl, project.configurations.shadowApi]
 
-    enableRelocation = true
+//    enableRelocation = true
+//    relocationPrefix = "kr.syeyoung.dungeonsguide.libs"
+
+    enableAutoRelocation = true
     relocationPrefix = "kr.syeyoung.dungeonsguide.libs"
+
+    relocate("kr.syeyoung.dungeonsguide.loader", "kr.syeyoung.dungeonsguide.loader")
 }
 
 

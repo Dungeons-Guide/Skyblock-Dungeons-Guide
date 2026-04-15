@@ -1,12 +1,12 @@
 package kr.syeyoung.modapi.v1_8_9;
 
 import com.mojang.authlib.exceptions.AuthenticationException;
-import kr.syeyoung.dungeonsguide.authapi.api.AuthService;
+import kr.syeyoung.modapi.AuthService;
 import net.minecraft.client.Minecraft;
 
 import java.util.UUID;
 
-public class AuthServiceImpl implements AuthService  {
+public class AuthServiceImpl implements AuthService {
     public static final AuthServiceImpl INSTANCE = new AuthServiceImpl();
 
 
