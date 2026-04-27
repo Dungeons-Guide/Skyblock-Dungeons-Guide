@@ -3,6 +3,9 @@ package kr.syeyoung.modapi.v1_21_9;
 import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.JsonOps;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplayEngineConfiguration;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.PathDisplayEngineSettingRegistration;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.PathDisplayEngineSettingRegistry;
 import kr.syeyoung.modapi.AuthService;
 import kr.syeyoung.modapi.ModAPI;
 import kr.syeyoung.modapi.Platform;
@@ -42,6 +45,8 @@ import kr.syeyoung.modapi.v1_21_9.gui.UGuiScreenAdapter;
 import kr.syeyoung.modapi.v1_21_9.gui.UNativeGuiScreen;
 import kr.syeyoung.modapi.v1_21_9.item.IItemStackRegistryImpl;
 import kr.syeyoung.modapi.v1_21_9.map.MapDataManager;
+import kr.syeyoung.modapi.v1_21_9.mod.arrowpath.NeoRouteDisplayEngineRegistration;
+import kr.syeyoung.modapi.v1_21_9.mod.classic.ClassicPathDisplayEngineRegistration;
 import kr.syeyoung.modapi.v1_21_9.paralleluniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.modapi.v1_21_9.paralleluniverse.tab.TabList;
 import kr.syeyoung.modapi.v1_21_9.profiler.UProfilerImpl;
@@ -239,6 +244,8 @@ public class ModAPIImpl implements ModAPI {
         registry.init();
         commandManager.init();
 
+        PathDisplayEngineSettingRegistry.register(ClassicPathDisplayEngineRegistration.INSTANCE);
+        PathDisplayEngineSettingRegistry.register(NeoRouteDisplayEngineRegistration.INSTANCE);
 
 //        try {
 //            Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) Main.class.getClassLoader(), "invalidClasses");

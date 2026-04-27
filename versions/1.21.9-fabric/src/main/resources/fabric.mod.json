@@ -1,16 +1,21 @@
 {
   "schemaVersion": 1,
-  "version": "${version}",
-  "id": "skyhanni",
-  "name": "SkyHanni",
-  "description": "SkyHanni is a Minecraft Mod for Hypixel SkyBlock.",
+  "version": "4.0.0",
+  "id": "dungeonsguide",
+  "name": "Dungeons Guide",
+  "description": "Dungeons Guide is a Minecraft Mod for Hypixel SkyBlock.",
   "icon": "assets/skyhanni/logo.png",
   "authors": [],
   "depends": {
-    "minecraft": "1.8.9"
+    "minecraft": "1.21.9"
   },
   "mixins": [
     "mixins.dungeonsguide.json"
   ],
+  "entrypoints": {
+    "client": [
+      "kr.syeyoung.modapi.v1_21_9.TestMod"
+    ]
+  },
   "accessWidener": "dungeonsguide.accesswidener"
 }

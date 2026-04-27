@@ -41,7 +41,7 @@ public class WidgetCategory extends AnnotatedWidget {
     @Bind(variableName = "children")
     public final BindableAttribute children = new BindableAttribute<>(WidgetList.class);
     public WidgetCategory(String s, DungeonRoom dungeonRoom, Map<String, DungeonMechanicState> dungeonMechanics, Consumer<String> onSelect) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/mechanicBrowser/category.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/mechanic_browser/category.gui"));
         categoryName.setValue(s);
 
         List<Widget> widgets = new ArrayList<>();

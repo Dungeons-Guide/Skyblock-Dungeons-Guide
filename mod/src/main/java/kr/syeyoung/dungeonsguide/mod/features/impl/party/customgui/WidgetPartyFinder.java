@@ -53,7 +53,7 @@ import java.util.stream.Stream;
 
 public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     public WidgetPartyFinder() {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/partyFinder/custom_party_finder.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/party_finder/custom_party_finder.gui"));
         filterUnjoinable.addOnUpdate(this::updateUnjoinable);
         filterUnjoinable.addOnUpdate((old,neu) -> {
             ModAPI.getAPI().getSoundHandler().playSoundAtPlayer(new ResourceIdentifier("gui.button.press"), 1.0F);

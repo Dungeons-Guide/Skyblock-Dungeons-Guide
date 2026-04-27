@@ -36,7 +36,7 @@ public class WidgetScalebar extends AnnotatedImportOnlyWidget {
 
 
     public WidgetScalebar(FeatureParameter<Double> featureParameter, double min, double max) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/map/scaleScrollbar.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/map/scale_scrollbar.gui"));
         this.max.setValue(max);
         this.min.setValue(min);
         this.current.setValue(featureParameter.getValue());
@@ -44,7 +44,7 @@ public class WidgetScalebar extends AnnotatedImportOnlyWidget {
     }
 
     public WidgetScalebar(double curr, Consumer<Double> onUpdate, double min, double max) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/map/scaleScrollbar.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/map/scale_scrollbar.gui"));
         this.max.setValue(max);
         this.min.setValue(min);
         this.current.setValue(curr);

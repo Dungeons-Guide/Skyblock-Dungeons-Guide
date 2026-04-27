@@ -66,7 +66,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
     private PartyFinderParty party;
 
     public WidgetPartyElement(WidgetPartyFinder widgetPartyFinder, int slot) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/partyFinder/party_element.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/party_finder/party_element.gui"));
         this.slot = slot;
         this.widgetPartyFinder = widgetPartyFinder;
         WidgetHoverTooltip hoverTooltip;

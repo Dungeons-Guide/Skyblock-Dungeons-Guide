@@ -1,5 +1,5 @@
 {
-  "package": "kr.syeyoung.modapi.v1_21_5.mixins",
+  "package": "kr.syeyoung.modapi.v1_21_9.mixins",
   "refmap": "mixins.dungeonsguide.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "injectors": {

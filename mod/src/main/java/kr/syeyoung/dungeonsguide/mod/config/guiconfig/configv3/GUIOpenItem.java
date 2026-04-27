@@ -47,7 +47,7 @@ public class GUIOpenItem extends AnnotatedImportOnlyWidget {
 
         image.setValue("dungeonsguide:textures/dglogox128.png");
         try {
-            String target = "dungeonsguide:textures/config/categoryIcon/"+category.toLowerCase()
+            String target = "dungeonsguide:textures/config/category_icon/"+category.toLowerCase()
                     .replace("&","").replace(" ","_")+".png";
             if (ModAPI.getAPI().getResourceManager().getResource(new ResourceIdentifier(target)) != null)
                 image.setValue(target);

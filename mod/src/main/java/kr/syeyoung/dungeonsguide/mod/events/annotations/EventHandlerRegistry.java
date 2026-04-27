@@ -60,13 +60,13 @@ public class EventHandlerRegistry {
         Class clazz = feature.getClass();
         while (clazz != null) {
             for (Method declaredMethod : clazz.getDeclaredMethods()) {
-                declaredMethod.setAccessible(true);
                 DGEventHandler dgEventHandler = declaredMethod.getAnnotation(DGEventHandler.class);
                 if (dgEventHandler == null) continue;
                 if (declaredMethod.getParameterTypes().length != 1)
                     throw new RuntimeException("Too many or too few parameters: "+declaredMethod.getName()+" on "+clazz.getName());
                 Class eventType = declaredMethod.getParameterTypes()[0];
                 if (!targets.containsKey(eventType)) targets.put(eventType, new LinkedList<>());
+                declaredMethod.setAccessible(true);
 
                 boolean force = dgEventHandler.ignoreDisabled();
                 boolean sb = dgEventHandler.triggerOutOfSkyblock();

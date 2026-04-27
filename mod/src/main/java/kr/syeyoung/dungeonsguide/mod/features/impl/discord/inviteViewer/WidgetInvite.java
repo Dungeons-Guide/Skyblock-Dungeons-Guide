@@ -45,7 +45,7 @@ public class WidgetInvite extends AnnotatedWidget implements TTL {
 
     private boolean actionDone = false;
     public WidgetInvite(WidgetPartyInviteViewer parent, DiscordUserInvitedEvent invitedEvent) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/discordParty/invite.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/discord_party/invite.gui"));
         this.inviteViewer = parent;
         this.event = invitedEvent;
         this.start = System.currentTimeMillis();

@@ -38,7 +38,7 @@ public class WidgetState extends AnnotatedWidget {
     private String s;
 
     public WidgetState(DungeonRoom dungeonRoom, String mechanic, String s) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/mechanicBrowser/state.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/mechanic_browser/state.gui"));
         state.setValue(s);
         this.dungeonRoom = dungeonRoom;
         this.mechanic = mechanic;

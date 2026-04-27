@@ -58,7 +58,7 @@ public class WidgetLineParamEditParent extends AnnotatedImportOnlyWidget {
 
     private WidgetLinePropertiesEditor editor;
     public WidgetLineParamEditParent(WidgetLinePropertiesEditor editor, PathfindLineProperties lineProperties) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/lineProperties/paramEditor.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/line_properties/param_editor.gui"));
         this.editor = editor;
 
         if (lineProperties.getParent() == null || !lineProperties.isGlobal()) {
@@ -108,7 +108,7 @@ public class WidgetLineParamEditParent extends AnnotatedImportOnlyWidget {
         private int idx;
         private Consumer<PathDisplayEngineSettingRegistration<?>> onUpdate;
         public CycleWidget(List<PathDisplayEngineSettingRegistration<?>> values, int defaultIndex, Consumer<PathDisplayEngineSettingRegistration<?>> onUpdate) {
-            super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/stringChoice.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/string_choice.gui"));
             this.idx = defaultIndex;
             this.values = values;
             this.onUpdate = onUpdate;

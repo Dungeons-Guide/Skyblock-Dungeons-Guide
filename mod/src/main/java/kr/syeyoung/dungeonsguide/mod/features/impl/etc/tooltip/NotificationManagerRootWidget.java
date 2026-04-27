@@ -38,7 +38,7 @@ public class NotificationManagerRootWidget extends AnnotatedImportOnlyWidget imp
     public final BindableAttribute<Column> api = new BindableAttribute<>(Column.class);
 
     public NotificationManagerRootWidget() {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/notifications/tooltipHolder.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/notifications/tooltip_holder.gui"));
     }
 
     private final Map<UUID, Widget> tooltipList = new HashMap<>();

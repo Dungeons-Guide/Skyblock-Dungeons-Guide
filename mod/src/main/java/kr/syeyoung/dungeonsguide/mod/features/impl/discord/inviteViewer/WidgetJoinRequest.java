@@ -43,7 +43,7 @@ public class WidgetJoinRequest extends AnnotatedWidget implements TTL{
     private long start;
     private boolean actionDone = false;
     public WidgetJoinRequest(WidgetPartyInviteViewer parent, DiscordUserJoinRequestEvent joinRequestEvent) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/discordParty/joinRequest.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/discord_party/join_request.gui"));
         this.inviteViewer = parent;
         this.event = joinRequestEvent;
         start = System.currentTimeMillis();

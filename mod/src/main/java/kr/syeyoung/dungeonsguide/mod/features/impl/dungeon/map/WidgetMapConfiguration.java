@@ -420,7 +420,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         private int idx;
         private Consumer<T> onUpdate;
         public EnumEditWidget(T[] values, T defaultValue, Consumer<T> onUpdate) {
-            super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/stringChoice.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/string_choice.gui"));
             this.idx = defaultValue.ordinal();
             this.values = values;
             this.onUpdate = onUpdate;

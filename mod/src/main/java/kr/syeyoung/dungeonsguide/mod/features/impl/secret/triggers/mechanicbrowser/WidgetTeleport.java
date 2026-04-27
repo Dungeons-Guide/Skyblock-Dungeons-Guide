@@ -36,7 +36,7 @@ public class WidgetTeleport extends AnnotatedWidget {
     private String  mechanic;
 
     public WidgetTeleport(DungeonRoom dungeonRoom, String mechanic) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/mechanicBrowser/state.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/mechanic_browser/state.gui"));
         state.setValue("§eTeleport To");
         this.dungeonRoom = dungeonRoom;
         this.mechanic = mechanic;

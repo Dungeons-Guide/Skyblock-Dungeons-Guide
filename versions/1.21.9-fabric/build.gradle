@@ -67,7 +67,9 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:1.18.36"
 
     shadowImpl project(path: ":platform-api")
-//    shadowImpl project(path: ":mod")
+    shadowImpl project(path: ":loader-api")
+    shadowImpl project(path: ":auth-api")
+    shadowImpl project(path: ":mod")
 
 //    devenvMod(project(path: ":1.8.9-loader", configuration: "unmappedMod"))
     modLocalRuntime("me.djtheredstoner:DevAuth-fabric:1.2.2")
@@ -110,6 +112,12 @@ tasks.withType(JavaCompile) {
 tasks.withType(Jar) {
     archivesBaseName = "dungeonsguide"
     manifest {}
+}
+evaluationDependsOn(":mod")
+tasks.processResources {
+    from(project(":mod").sourceSets.main.resources) {
+        include("assets/**")
+    }
 }
 
 

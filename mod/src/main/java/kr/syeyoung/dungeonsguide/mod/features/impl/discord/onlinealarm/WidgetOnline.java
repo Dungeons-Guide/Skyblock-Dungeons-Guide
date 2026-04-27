@@ -37,7 +37,7 @@ public class WidgetOnline extends AnnotatedWidget implements TTL {
     private JDiscordRelation relation;
     private long start;
     public WidgetOnline(WidgetOnlinePeopleViewer parent, JDiscordRelation relation) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/discordOnline/discordOnline.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/discord_online/discord_online.gui"));
         this.viewer = parent;
         this.relation = relation;
         start = System.currentTimeMillis();

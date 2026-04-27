@@ -35,7 +35,7 @@ public class WidgetPartyInviteViewer extends AnnotatedWidget {
     public final BindableAttribute<Column> columnApi = new BindableAttribute<>(Column.class);
 
     public WidgetPartyInviteViewer() {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/discordParty/partyInviteList.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/discord_party/party_invite_list.gui"));
     }
 
     private final Set<String> joinReqUid = Collections.synchronizedSet( new HashSet<>());

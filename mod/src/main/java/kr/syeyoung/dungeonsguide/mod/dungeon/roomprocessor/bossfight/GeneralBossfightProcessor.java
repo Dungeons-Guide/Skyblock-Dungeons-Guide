@@ -54,7 +54,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     @Override
     public BossfightRenderSettings getMapRenderSettings() {
         try {
-            UResource resource = ModAPI.getAPI().getResourceManager().getResource(new ResourceIdentifier("dungeonsguide:map/bossfight/"+name+".json"));
+            UResource resource = ModAPI.getAPI().getResourceManager().getResource(new ResourceIdentifier("dungeonsguide:map/bossfight/"+name.toLowerCase()+".json"));
             if (resource != null) {
                 resource.getInputStream();
                 try (InputStreamReader inputStreamReader = new InputStreamReader(resource.getInputStream())) {

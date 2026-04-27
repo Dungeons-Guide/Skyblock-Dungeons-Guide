@@ -85,7 +85,7 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
 
     private DungeonRoom dungeonRoom;
     public WidgetMechanicBrowser(DungeonRoom dungeonRoom) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/mechanicBrowser/browser.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/mechanic_browser/browser.gui"));
         scale.setValue(FeatureRegistry.SECRET_BROWSE.getScale());
         RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
 

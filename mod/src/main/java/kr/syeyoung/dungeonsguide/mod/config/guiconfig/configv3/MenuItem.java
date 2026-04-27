@@ -44,7 +44,7 @@ public class MenuItem extends AnnotatedImportOnlyWidget {
 
         bindableAttribute.setValue(category);
         try {
-            String target = "dungeonsguide:textures/config/categoryIcon/"+category.toLowerCase()
+            String target = "dungeonsguide:textures/config/category_icon/"+category.toLowerCase()
                     .replace("&","").replace(" ","_")+".png";
             if (ModAPI.getAPI().getResourceManager().getResource(new ResourceIdentifier(target)) != null)
                 image.setValue(target);

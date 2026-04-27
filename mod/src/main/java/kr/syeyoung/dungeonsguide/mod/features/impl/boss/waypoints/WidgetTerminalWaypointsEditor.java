@@ -35,7 +35,7 @@ public class WidgetTerminalWaypointsEditor extends AnnotatedImportOnlyWidget {
     public WidgetTerminalWaypointsEditor(FeatureF7TerminalWaypoints lineProperties) {
         super(new ResourceIdentifier("dungeonsguide:gui/features/f7waypoints/editor.gui"));
         this.config.setValue(new WidgetTerminalWaypointEdit(lineProperties));
-//        this.preview.setValue(new WidgetPreview(lineProperties)); $$ PREVIEW
+//        this.preview.setValue(new WidgetPreview(line_properties)); $$ PREVIEW
         this.preview.setValue(new Placeholder());
     }
 }

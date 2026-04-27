@@ -60,7 +60,7 @@ public class WidgetProfileViewerData extends AnnotatedWidget {
     private List<WidgetDataRendererWrapper> dataRendererWrapperList = new ArrayList<>();
 
     public WidgetProfileViewerData(UUID uuid, String name, PlayerSkyblockData playerSkyblockData) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/profileViewer/data.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/profile_viewer/data.gui"));
 
         this.playerSkyblockData = playerSkyblockData;
         this.uuid = uuid;

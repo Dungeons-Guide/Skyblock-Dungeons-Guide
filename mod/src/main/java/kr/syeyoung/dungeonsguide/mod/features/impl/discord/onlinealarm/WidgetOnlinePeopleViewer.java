@@ -35,7 +35,7 @@ public class WidgetOnlinePeopleViewer extends AnnotatedWidget {
     public final BindableAttribute<Column> columnApi = new BindableAttribute<>(Column.class);
 
     public WidgetOnlinePeopleViewer() {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/discordOnline/discordOnlineList.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/discord_online/discord_online_list.gui"));
     }
 
     private final Set<String> onlineUid = Collections.synchronizedSet( new HashSet<>());

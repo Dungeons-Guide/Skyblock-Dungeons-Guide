@@ -35,7 +35,7 @@ public class WidgetIconButton extends AnnotatedWidget {
     public final BindableAttribute<Integer> iconOffset = new BindableAttribute<>(Integer.class, 0);
 
     public WidgetIconButton() {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/abilityedit/iconButton.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/precalclist/abilityedit/icon_button.gui"));
         iconIdx.addOnUpdate((a,b) -> onUpdate());
         selected.addOnUpdate((a,b) -> onUpdate());
         iconOffset.addOnUpdate((a,b) -> onUpdate());

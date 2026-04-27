@@ -49,7 +49,7 @@ public class WidgetPlayerModel extends AnnotatedImportOnlyWidget {
     private CosmeticData currentSelected;
 
     public WidgetPlayerModel() {
-        super(new ResourceIdentifier("dungeonsguide:gui/config/cosmetics/playerModel.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/cosmetics/player_model.gui"));
 
 
         ArrayList<Widget> list = new ArrayList<>();

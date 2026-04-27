@@ -44,7 +44,7 @@ public class WidgetPlayerModel extends AnnotatedWidget {
     private UEntityPlayerFake fakePlayer;
     private final PlayerModelRenderer renderer;
     public WidgetPlayerModel(UUID uuid, String name, PlayerProfile sbProfile) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/profileViewer/player.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/profile_viewer/player.gui"));
         this.uuid = uuid;
         this.name = name;
         this.sbProfile = sbProfile;

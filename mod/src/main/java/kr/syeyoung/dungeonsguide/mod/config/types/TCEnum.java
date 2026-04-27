@@ -67,7 +67,7 @@ public class TCEnum<T extends Enum<T>> implements FeatureTypeHandler<T> {
         private int idx;
         private FeatureParameter<T> featureParameter;
         public EnumEditWidget(T[] values, FeatureParameter<T> featureParameter) {
-            super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/stringChoice.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/config/parameter/string_choice.gui"));
             this.idx = featureParameter.getValue().ordinal();
             this.values = values;
             this.featureParameter = featureParameter;

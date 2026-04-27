@@ -27,7 +27,7 @@ import kr.syeyoung.modapi.data.ResourceIdentifier;
 
 public class WidgetEnableAskToJoin extends AnnotatedImportOnlyWidget {
     public WidgetEnableAskToJoin() {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/discordInvite/enable_ask_to_join.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/discord_invite/enable_ask_to_join.gui"));
     }
 
     @On(functionName = "enable")

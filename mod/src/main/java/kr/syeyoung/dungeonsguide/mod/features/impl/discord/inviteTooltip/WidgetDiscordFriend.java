@@ -41,7 +41,7 @@ public class WidgetDiscordFriend extends AnnotatedImportOnlyWidget {
     private Consumer<String> invite;
 
     public WidgetDiscordFriend(JDiscordRelation relation, boolean invited, Consumer<String> invite) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/discordInvite/friend.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/discord_invite/friend.gui"));
         this.avatarUrl.setValue(relation.getDiscordUser().getEffectiveAvatarUrl());
         if (relation.getDiscordUser().getDiscriminator().equalsIgnoreCase("0")) {
             this.username.setValue(relation.getDiscordUser().getName());

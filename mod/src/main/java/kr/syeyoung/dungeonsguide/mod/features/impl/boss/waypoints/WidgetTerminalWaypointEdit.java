@@ -64,7 +64,7 @@ public class WidgetTerminalWaypointEdit extends AnnotatedImportOnlyWidget {
     }
 
     public WidgetTerminalWaypointEdit(FeatureF7TerminalWaypoints waypoints) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/f7waypoints/paramEditor.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/f7waypoints/param_editor.gui"));
 
         allEnable.setValue(this.generateConfigWidget(waypoints, "all",  TCBoolean.BooleanEditWidget::new));
         statusEnable.setValue(this.generateConfigWidget(waypoints, "status", TCBoolean.BooleanEditWidget::new));

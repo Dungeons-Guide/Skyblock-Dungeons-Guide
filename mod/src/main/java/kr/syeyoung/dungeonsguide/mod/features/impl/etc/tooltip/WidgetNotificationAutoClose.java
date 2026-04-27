@@ -52,7 +52,7 @@ public class WidgetNotificationAutoClose extends AnnotatedImportOnlyWidget imple
     private long delay;
     private long now = -1;
     public WidgetNotificationAutoClose(UUID uuid, Notification notification, long delay) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/notifications/tooltipClosing.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/notifications/tooltip_closing.gui"));
         this.notification =notification;
         title.setValue(notification.getTitle());
         color.setValue(notification.getTitleColor());

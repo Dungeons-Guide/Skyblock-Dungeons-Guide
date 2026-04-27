@@ -45,7 +45,7 @@ public class WidgetNotificationProgress extends AnnotatedImportOnlyWidget implem
     public final BindableAttribute<String> progressTitle = new BindableAttribute<>(String.class);
     private UUID uuid;
     public WidgetNotificationProgress(UUID uuid, String title) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/notifications/tooltipProgress.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/notifications/tooltip_progress.gui"));
         this.uuid = uuid;
 
         this.progressTitle.setValue(title);

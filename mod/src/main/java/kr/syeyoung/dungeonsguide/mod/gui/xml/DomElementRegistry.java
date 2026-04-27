@@ -109,15 +109,15 @@ public class DomElementRegistry {
         register("InvertStencil", new ExportedWidgetConverter(NegativeStencil::new));
         register("WrapGrid", new ExportedWidgetConverter(Wrap::new));
 
-        register("ColorButton", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/simpleButton.gui")));
-        register("RoundButton", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/dgButton.gui")));
-        register("IconButton", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/iconButton.gui")));
-        register("SimpleToggleButton", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/simpleToggleButton.gui")));
-        register("SimpleHorizontalScrollBar", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/simpleHorizontalScrollBar.gui")));
-        register("SimpleVerticalScrollBar", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/simpleVerticalScrollBar.gui")));
+        register("ColorButton", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/simple_button.gui")));
+        register("RoundButton", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/dg_button.gui")));
+        register("IconButton", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/icon_button.gui")));
+        register("SimpleToggleButton", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/simple_toggle_button.gui")));
+        register("SimpleHorizontalScrollBar", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/simple_horizontal_scroll_bar.gui")));
+        register("SimpleVerticalScrollBar", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/simple_vertical_scroll_bar.gui")));
         register("SlowList", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/slowlist.gui")));
         register("size", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/size.gui")));
-        register("ResourceImage", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/ratioResourceImage.gui")));
+        register("ResourceImage", new DelegatingWidgetConverter(new ResourceIdentifier("dungeonsguide:gui/elements/ratio_resource_image.gui")));
         register("UrlImage", new ExportedWidgetConverter(URLImage::new));
         register("SelectiveContainer", new ExportedWidgetConverter(SelectiveContainer::new));
         register("ItemStack", new ExportedWidgetConverter(ItemStackRender::new));

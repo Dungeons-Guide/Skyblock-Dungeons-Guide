@@ -58,7 +58,7 @@ public class WidgetEditableStyleGroupStyleLineDerivedColor extends AnnotatedImpo
     public WidgetEditableStyleGroupStyleLineDerivedColor(boolean disableable, String name, boolean isEnabled,
                                                          Supplier<Optional<AColor>> defaultValueSup,
                                                          Supplier<AColor> derivedColorSup, Consumer<Object> setter) {
-        super(new ResourceIdentifier("dungeonsguide:gui/config/text/editableStyleline.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/config/text/editable_styleline.gui"));
 
         this.disableable.setValue(disableable ? "show" : "hide");
 
@@ -108,7 +108,7 @@ public class WidgetEditableStyleGroupStyleLineDerivedColor extends AnnotatedImpo
         private final Supplier<AColor> derived;
 
         public ColorEditWidget(BindableAttribute<AColor> color, Supplier<AColor> derivedColor) {
-            super(new ResourceIdentifier("dungeonsguide:gui/config/text/editableDerivedColor.gui"));
+            super(new ResourceIdentifier("dungeonsguide:gui/config/text/editable_derived_color.gui"));
 
             enabled.addOnUpdate((o, n) -> {
                 enabled2.setValue(n ? "enabled" : "disabled");

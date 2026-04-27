@@ -44,7 +44,7 @@ public class WidgetProfileViewer extends AnnotatedWidget {
     private String name;
     private Runnable close;
     public WidgetProfileViewer(UUID uuid, String name, Runnable close) {
-        super(new ResourceIdentifier("dungeonsguide:gui/features/profileViewer/pv.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/features/profile_viewer/pv.gui"));
         this.uuid = uuid;
         this.name = name;
         this.close = close;
