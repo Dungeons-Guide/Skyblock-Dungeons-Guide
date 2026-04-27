@@ -6,6 +6,6 @@
     "maxShiftBy": 2
   },
   "client": [
-    "ChatMessageMixins"
+    "kr.syeyoung.modapi.v1_21_9.mixins.ChatMessageMixins"
   ]
 }

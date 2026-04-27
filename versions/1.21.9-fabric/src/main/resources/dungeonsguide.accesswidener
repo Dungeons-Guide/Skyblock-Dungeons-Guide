@@ -1,8 +1,9 @@
 accessWidener v2 named
 
 accessible method net/minecraft/client/gui/hud/ChatHud logChatMessage (Lnet/minecraft/client/gui/hud/ChatHudLine;)V
-accessible field net/minecraft/client/Mouse activeButton I
+accessible field net/minecraft/client/Mouse activeButton Lnet/minecraft/client/input/MouseInput;
 accessible field net/minecraft/client/Mouse glfwTime D
 accessible field net/minecraft/client/Mouse cursorDeltaX D
 accessible field net/minecraft/client/Mouse cursorDeltaY D
 accessible field net/minecraft/client/gui/screen/ingame/HandledScreen focusedSlot Lnet/minecraft/screen/slot/Slot;
+accessible field net/minecraft/client/gui/hud/BossBarHud bossBars Ljava/util/Map;

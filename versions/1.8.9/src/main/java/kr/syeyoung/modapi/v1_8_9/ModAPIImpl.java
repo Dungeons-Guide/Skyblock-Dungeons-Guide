@@ -102,7 +102,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class ModAPIImpl implements ModAPI {
-    Minecraft delegate; // dummy to trick. TODO
+    Minecraft delegate; // dummy to trick. pODO
 
     public ModAPIImpl() {
     }
