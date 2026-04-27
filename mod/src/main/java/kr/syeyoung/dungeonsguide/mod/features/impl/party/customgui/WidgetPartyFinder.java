@@ -408,7 +408,7 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 63) {
+        if (keyCode == 294) {
             refresh();
             return true;
         }

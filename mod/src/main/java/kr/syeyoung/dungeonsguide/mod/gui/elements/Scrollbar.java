@@ -68,7 +68,7 @@ public class Scrollbar extends AnnotatedWidget {
     }
 
     public Scrollbar() {
-        super(new ResourceIdentifier("dungeonsguide:gui/elements/scrollBar.gui"));
+        super(new ResourceIdentifier("dungeonsguide:gui/elements/scroll_bar.gui"));
 
         thumbValue.addOnUpdate(this::updateStuff);
         min.addOnUpdate(this::updateStuff);

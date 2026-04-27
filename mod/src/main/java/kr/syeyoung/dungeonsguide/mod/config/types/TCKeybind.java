@@ -74,7 +74,7 @@ public class TCKeybind implements FeatureTypeHandler<Integer> {
         @Override
         public boolean keyPressed(int keyCode, int scanCode, int meta) {
             if (!listen) return false;
-            if (keyCode == 1) {
+            if (keyCode == 256) {
                 currentKey = 0;
             } else if (keyCode != 0) {
                 currentKey = keyCode;

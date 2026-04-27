@@ -78,7 +78,7 @@ public class CommandManagerImpl implements UCommandManager {
         if (fabricCommand != null) fabricCommand.addChild(migrated);
         mapping.put(command, migrated);
 
-        if (command.getChildren().isEmpty() && !migrated.getChildren().isEmpty()) {
+        if (!command.getChildren().isEmpty() && migrated.getChildren().isEmpty()) {
             for (CommandNode<UCommandContext> child : command.getChildren()) {
                 migrate(migrated, child, mapping);
             }

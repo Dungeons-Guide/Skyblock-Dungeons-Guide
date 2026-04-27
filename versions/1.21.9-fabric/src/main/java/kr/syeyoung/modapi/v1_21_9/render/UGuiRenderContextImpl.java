@@ -282,14 +282,15 @@ public class UGuiRenderContextImpl implements UGuiRenderContext {
     @Override
     public void drawGradientRoundRect(float radius, float halfWidth, float halfHeight, float centerX, float centerY, float smoothness, int x, int y, double width, double height, int startColor, int endColor) {
 
-        context.fillGradient((int) (centerX - halfWidth), (int) (centerY - halfHeight), (int) (centerX + halfWidth), (int) (centerY + halfHeight), startColor, endColor);
+        context.fillGradient(x,y, (int) width, (int) height, startColor, endColor);
         // TODO: ROND RECT $$
     }
 
     @Override
     public void drawRoundRect(float radius, float halfWidth, float halfHeight, float centerX, float centerY, float smoothness, int x, int y, double width, double height, int color) {
-        drawRect(centerX - halfWidth, centerY - halfHeight, centerX + halfWidth, centerY+halfHeight, color);
-//        ShaderProgram shaderProgram = ShaderManager.getShader("shaders/roundrect");
+        context.fill(x,y, (int) width, (int) height, color);
+        // TODO: ROND RECT $$
+
 //        shaderProgram.useShader();
 //        shaderProgram.uploadUniform("radius", radius);
 //        shaderProgram.uploadUniform("halfSize", halfWidth, halfHeight);
@@ -321,13 +322,13 @@ public class UGuiRenderContextImpl implements UGuiRenderContext {
 
     @Override
     public void drawChromaGradientRoundRect(float radius, float halfWidth, float halfHeight, float centerX, float centerY, float smoothness, int x, int y, double width, double height, int startColor, int endColor) {
-        context.fillGradient((int) (centerX - halfWidth), (int) (centerY - halfHeight), (int) (centerX + halfWidth), (int) (centerY + halfHeight), startColor, endColor);
+        context.fillGradient(x,y, (int) width, (int) height, startColor, endColor);
 
     }
 
     @Override
     public void drawChromaRoundRect(float radius, float halfWidth, float halfHeight, float centerX, float centerY, float smoothness, int x, int y, double width, double height, int color) {
-        drawRect(centerX - halfWidth, centerY - halfHeight, centerX + halfWidth, centerY+halfHeight, color);
+        context.fill(x,y, (int) width, (int) height, color);
 
     }
 

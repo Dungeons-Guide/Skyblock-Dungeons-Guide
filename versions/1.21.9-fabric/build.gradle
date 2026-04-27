@@ -11,7 +11,7 @@ group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide"
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
     sourceCompatibility = JavaLanguageVersion.of(21)
     targetCompatibility = JavaLanguageVersion.of(21)
 }
@@ -69,7 +69,7 @@ dependencies {
     shadowImpl project(path: ":platform-api")
     shadowImpl project(path: ":loader-api")
     shadowImpl project(path: ":auth-api")
-    shadowImpl project(path: ":mod")
+    shadowImpl project(path: ":mod", configuration: "mod")
 
 //    devenvMod(project(path: ":1.8.9-loader", configuration: "unmappedMod"))
     modLocalRuntime("me.djtheredstoner:DevAuth-fabric:1.2.2")
@@ -152,5 +152,6 @@ artifacts {
     remappedMod(tasks.remapJar)
     unmappedMod(tasks.shadowJar)
 }
+
 
 

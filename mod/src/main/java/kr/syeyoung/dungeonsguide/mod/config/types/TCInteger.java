@@ -82,13 +82,13 @@ public class TCInteger implements FeatureTypeHandler<Integer> {
         private boolean lctrl = false;
         @Override
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            if (keyCode == 29) lctrl = true;
+            if (keyCode == 341 || keyCode == 345) lctrl = true;
             return super.keyPressed(keyCode, scanCode, modifiers);
         }
 
         @Override
         public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-            if (keyCode == 29) lctrl = false;
+            if (keyCode == 341 || keyCode == 345) lctrl = false;
             return super.keyReleased(keyCode, scanCode, modifiers);
         }
     }

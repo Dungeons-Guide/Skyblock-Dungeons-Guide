@@ -151,7 +151,7 @@ public class CustomGuiScreenAdapter implements UCustomGuiScreen {
                 e.printStackTrace();
         }
 
-        if (keyCode == 1 && allowEsc) {
+        if (keyCode == 256 && allowEsc) {
             closeScreenRequested();
             return true;
         }
