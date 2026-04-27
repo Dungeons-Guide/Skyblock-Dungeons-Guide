@@ -31,7 +31,7 @@ include 'loader-api'
 
 rootProject.name = "Dungeons Guide"
 
-var versions = ["1.8.9", "1.21.5-fabric", "1.21.11-fabric"]
+var versions = ["1.8.9", "1.21.5-fabric", "1.21.11-fabric", "1.21.9-fabric"]
 for (final def ver in versions) {
     include(":" + ver)
     var p = project(":" + ver)
