@@ -3,6 +3,7 @@ package kr.syeyoung.modapi.v1_21_9.gui;
 import kr.syeyoung.modapi.gui.UCustomGuiScreen;
 import kr.syeyoung.modapi.v1_21_9.render.UGuiRenderContextImpl;
 import lombok.Getter;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -44,7 +45,7 @@ public class UGuiScreenAdapter extends Screen {
 
     @Override
     public boolean keyPressed(KeyInput input) {
-        return delegate.keyReleased(input.key(), input.scancode(), input.modifiers());
+        return delegate.keyPressed(input.key(), input.scancode(), input.modifiers());
     }
 
     @Override
@@ -59,26 +60,31 @@ public class UGuiScreenAdapter extends Screen {
 
     @Override
     public boolean mouseClicked(Click input, boolean doubled) {
-        return delegate.mouseClicked(input.x(), input.y(), input.button());
+        double sc = MinecraftClient.getInstance().getWindow().getScaleFactor();
+        return delegate.mouseClicked(input.x() * sc, input.y() * sc, input.button());
     }
 
     @Override
     public boolean mouseReleased(Click input) {
-        return delegate.mouseReleased(input.x(), input.y(), input.button());
+        double sc = MinecraftClient.getInstance().getWindow().getScaleFactor();
+        return delegate.mouseReleased(input.x() * sc, input.y() * sc, input.button());
     }
 
     @Override
     public boolean mouseDragged(Click input, double deltaX, double deltaY) {
-        return delegate.mouseDragged(input.x(), input.y(), input.button(), deltaX, deltaY);
+        double sc = MinecraftClient.getInstance().getWindow().getScaleFactor();
+        return delegate.mouseDragged(input.x() * sc, input.y() * sc, input.button(), deltaX, deltaY);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        return delegate.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+        double sc = MinecraftClient.getInstance().getWindow().getScaleFactor();
+        return delegate.mouseScrolled(mouseX * sc, mouseY * sc, horizontalAmount, verticalAmount);
     }
 
     @Override
     public void mouseMoved(double mouseX, double mouseY) {
-        delegate.mouseMoved(mouseX, mouseY);
+        double sc = MinecraftClient.getInstance().getWindow().getScaleFactor();
+        delegate.mouseMoved(mouseX * sc, mouseY * sc);
     }
 }

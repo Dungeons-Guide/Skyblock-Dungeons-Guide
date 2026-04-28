@@ -3,8 +3,6 @@ package kr.syeyoung.modapi.v1_21_9;
 import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.JsonOps;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplayEngineConfiguration;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.PathDisplayEngineSettingRegistration;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.PathDisplayEngineSettingRegistry;
 import kr.syeyoung.modapi.AuthService;
 import kr.syeyoung.modapi.ModAPI;
@@ -372,7 +370,7 @@ public class ModAPIImpl implements ModAPI {
 
     @Override
     public double getScaleFactor() {
-        return 1;
+        return MinecraftClient.getInstance().getWindow().getScaleFactor();
     }
 
     @Override

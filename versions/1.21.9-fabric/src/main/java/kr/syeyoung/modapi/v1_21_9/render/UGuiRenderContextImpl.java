@@ -183,6 +183,7 @@ public class UGuiRenderContextImpl implements UGuiRenderContext {
 
         clips.push(newClip);
 
+        context.enableScissor((int) x, (int) y, (int) (x+width), (int) (y+height));
         if (newClip.width <= 0 || newClip.height <= 0)
             GL11.glColorMask(false, false, false, false);
         else
@@ -194,6 +195,7 @@ public class UGuiRenderContextImpl implements UGuiRenderContext {
         Rectangle currentClip = clips.pop();
 
         GL11.glColorMask(true, true, true, true);
+        context.disableScissor();
         if (clips.size() == 0)
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
         else {
