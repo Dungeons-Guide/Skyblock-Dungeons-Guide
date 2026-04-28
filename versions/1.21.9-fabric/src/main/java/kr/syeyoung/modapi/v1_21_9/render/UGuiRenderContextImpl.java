@@ -31,33 +31,39 @@ public class UGuiRenderContextImpl implements UGuiRenderContext {
     private Matrix3x2fStack stack;
     public UGuiRenderContextImpl(DrawContext context) {
         this.context = context;
-        this.stack = context.getMatrices();
+        this.stack = new Matrix3x2fStack(64);
+        this.stack.set(context.getMatrices());
     }
 
 
     @Override
     public void pushMatrix() {
         stack = stack.pushMatrix();
+        context.getMatrices().set(stack);
     }
 
     @Override
     public void popMatrix() {
         stack = stack.popMatrix();
+        context.getMatrices().set(stack);
     }
 
     @Override
     public void translate(double x, double y, double z) {
         stack.translate((float) x, (float) y);
+        context.getMatrices().set(stack);
     }
 
     @Override
     public void scale(double x, double y, double z) {
         stack.scale((float)x, (float)y);
+        context.getMatrices().set(stack);
     }
 
     @Override
     public void rotate(float angle, float x, float y, float z) {
         stack.rotate(angle);
+        context.getMatrices().set(stack);
     }
 
 
@@ -438,7 +444,19 @@ public class UGuiRenderContextImpl implements UGuiRenderContext {
     @Override
     public void drawStringWithStyle(String text, double x, double y, kr.syeyoung.modapi.rendering.TextStyleConfig style) {
         if (text == null || text.isEmpty()) return;
-        context.drawText(MinecraftClient.getInstance().textRenderer, text, (int)x,  (int)y, style.getTextColor(), style.isShadow());
+
+//        MinecraftClient.getInstance().textRenderer.
+        pushMatrix();
+        translate(x, y + style.getTopAscent(),0);
+        scale(style.getSize() / 8.0, style.getSize() / 8.0, 1);
+        context.drawText(MinecraftClient.getInstance().textRenderer,
+                Text.literal(text).styled(a -> a.withColor(style.getTextColor())
+                                .withShadowColor(style.getShadowColor())
+                                .withBold(style.isBold())
+                                .withItalic(style.isItalic())
+                                .withUnderline(style.isUnderline())
+                                .withStrikethrough(style.isStrikethrough())), 0, 0, style.getTextColor(), style.isShadow());
+        popMatrix();
 //        DefaultFontRendererImpl.getInstance().renderString(text, x, y, style);
         // TODO: proper styled drawing $$
     }

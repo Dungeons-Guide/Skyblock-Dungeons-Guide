@@ -208,11 +208,11 @@ public class ModAPIImpl implements ModAPI {
     }
 
     public int getDisplayWidth() {
-        return MinecraftClient.getInstance().getWindow().getWidth();
+        return MinecraftClient.getInstance().getWindow().getFramebufferWidth();
     }
 
     public int getDisplayHeight() {
-        return MinecraftClient.getInstance().getWindow().getHeight();
+        return MinecraftClient.getInstance().getWindow().getFramebufferHeight();
     }
 
     public UPlayerSelf getPlayer() {
