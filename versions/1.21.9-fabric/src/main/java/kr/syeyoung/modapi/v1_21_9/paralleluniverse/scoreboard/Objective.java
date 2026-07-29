@@ -33,7 +33,7 @@ public class Objective implements UObjective {
     @Getter
     private final String objectiveName;
     @Setter
-    private String displayName;
+    private Component displayName;
     @Getter @Setter
     private ScoreboardCriterion.RenderType displayType;
     private SortedSet<Score> scores = new TreeSet<>(Comparator.comparingInt(Score::getScore).reversed());
@@ -41,7 +41,7 @@ public class Objective implements UObjective {
 
     @Override
     public Component getDisplayName() {
-        return Component.text(displayName);
+        return displayName;
     }
 
     public SortedSet<? extends UScore> getScores() {
@@ -53,9 +53,9 @@ public class Objective implements UObjective {
         return displayType == ScoreboardCriterion.RenderType.HEARTS ? "hearts" : "integer";
     }
 
-    public void updateScore(String playerName, int score) {
+    public void updateScore(String playerName, Component display, int score) {
         removeScore(playerName);
-        addScore(playerName, score);
+        addScore(playerName, display, score);
     }
 
     public void removeScore(String playerName) {
@@ -64,9 +64,9 @@ public class Objective implements UObjective {
             scores.remove(scoreObj);
         }
     }
-    public void addScore(String playerName, int score) {
+    public void addScore(String playerName, Component display, int score) {
         if (!currentObjects.containsKey(playerName)) {
-            Score scoreObj = new Score(playerName, score);
+            Score scoreObj = new Score(playerName, display, score);
             currentObjects.put(playerName, scoreObj);
             scores.add(scoreObj);
         }

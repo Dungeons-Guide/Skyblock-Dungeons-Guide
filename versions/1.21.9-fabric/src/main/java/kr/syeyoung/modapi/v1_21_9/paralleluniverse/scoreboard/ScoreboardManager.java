@@ -19,6 +19,7 @@
 package kr.syeyoung.modapi.v1_21_9.paralleluniverse.scoreboard;
 
 import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScoreboardManager;
+import net.minecraft.scoreboard.ScoreboardDisplaySlot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,10 +34,10 @@ public class ScoreboardManager implements UScoreboardManager {
     private String tablistObjective;
     private String belowNameObjective;
 
-    public void displayScoreboard(int slot, String objectiveName) {
-        if (slot == 0) tablistObjective = objectiveName;
-        else if (slot == 1) sidebarObjective = objectiveName;
-        else if (slot == 2) belowNameObjective = objectiveName;
+    public void displayScoreboard(ScoreboardDisplaySlot slot, String objectiveName) {
+        if (slot == ScoreboardDisplaySlot.LIST) tablistObjective = objectiveName;
+        else if (slot == ScoreboardDisplaySlot.SIDEBAR) sidebarObjective = objectiveName;
+        else if (slot == ScoreboardDisplaySlot.BELOW_NAME) belowNameObjective = objectiveName;
     }
 
     public Objective getSidebarObjective() {

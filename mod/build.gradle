@@ -101,7 +101,7 @@ dependencies {
     compileOnly project(path: ":loader-api")
     shadowImpl project(path: ":auth-api")
 
-    implementation("net.kyori:adventure-text-serializer-legacy:4.23.0")
+    shadowImpl("net.kyori:adventure-text-serializer-legacy:4.23.0")
 }
 
 ext.genOutputDir = file("$buildDir/generated-resources")
@@ -184,9 +184,10 @@ tasks.shadowJar {
     enableRelocation = true
     relocationPrefix = "kr.syeyoung.dungeonsguide.mod.libs"
 
-//    dependencies {
-////        exclude(dependency("org.json:json")) // provided via loader
-//    }
+    dependencies {
+        exclude(dependency("net.kyori:adventure-api:4.23.0"))
+//        exclude(dependency("org.json:json")) // provided via loader
+    }
 
     dependsOn tasks.classes, tasks.java8Classes, tasks.java21Classes
 

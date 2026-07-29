@@ -22,13 +22,16 @@ import kr.syeyoung.modapi.paralleluniverse.scoreboard.UScore;
 import kr.syeyoung.modapi.v1_21_9.paralleluniverse.teams.Team;
 import kr.syeyoung.modapi.v1_21_9.paralleluniverse.teams.TeamManager;
 import lombok.Data;
+import net.kyori.adventure.text.Component;
 
 @Data
 public class Score implements UScore {
     private final String playerName;
+    private final Component display;
     private final int score;
 
     public String getVisibleName() {
+        if (display != null) return display.toString();
         Team team =  TeamManager.INSTANCE.getPlayerTeam(playerName);
         if (team != null) {
             return team.getPrefix() + playerName + team.getSuffix();

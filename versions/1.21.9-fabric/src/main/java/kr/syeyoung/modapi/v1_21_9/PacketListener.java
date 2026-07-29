@@ -18,8 +18,92 @@
 
 package kr.syeyoung.modapi.v1_21_9;
 
-public class PacketListener {
+import kr.syeyoung.modapi.v1_21_9.paralleluniverse.scoreboard.Objective;
+import kr.syeyoung.modapi.v1_21_9.paralleluniverse.scoreboard.ScoreboardManager;
+import kr.syeyoung.modapi.v1_21_9.util.TextUtils;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.ScoreboardDisplayS2CPacket;
+import net.minecraft.network.packet.s2c.play.ScoreboardObjectiveUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.ScoreboardScoreUpdateS2CPacket;
 
+public class PacketListener {
+    public static final PacketListener INSTANCE = new PacketListener();
+
+    public void init() {
+
+    }
+
+    public void onPacketReceive(Packet packet) {
+        if (packet instanceof ScoreboardObjectiveUpdateS2CPacket objectivePkt) {
+            if (objectivePkt.getMode() == 2) {
+                Objective objective = ScoreboardManager.INSTANCE.getObjective(objectivePkt.getName());
+                if (objective != null) {
+                    objective.setDisplayName(TextUtils.fromText(objectivePkt.getDisplayName()));
+                    objective.setDisplayType(objectivePkt.getType());
+                }
+            } else if (objectivePkt.getMode() == 1) {
+                ScoreboardManager.INSTANCE.removeObjective(objectivePkt.getName());
+            } else if (objectivePkt.getMode() == 0) {
+                Objective objective = new Objective(objectivePkt.getName());
+                objective.setDisplayName(TextUtils.fromText(objectivePkt.getDisplayName()));
+                objective.setDisplayType(objectivePkt.getType());
+                ScoreboardManager.INSTANCE.addObjective(objective);
+            }
+        } else if (packet instanceof ScoreboardScoreUpdateS2CPacket score) {
+            Objective objective = ScoreboardManager.INSTANCE.getObjective(score.objectiveName());
+            if (objective != null) {
+                objective.updateScore(score.scoreHolderName(), score.display().map(TextUtils::fromText).orElse(null), score.score());
+            }
+        } else if (packet instanceof ScoreboardDisplayS2CPacket board) {
+            ScoreboardManager.INSTANCE.displayScoreboard(board.getSlot(), board.getName());
+        }
+//        else if (packet instanceof TeamS2CPacket pkt) {
+//            if (pkt.getTeamOperation() == TeamS2CPacket.Operation.ADD) {
+//                // CREATE
+//                Team team = new Team(pkt.getTeamName());
+//                team.setDisplayName(pkt.getTeamName());
+//                team.setPrefix(pkt.getPrefix());
+//                team.setSuffix(pkt.getSuffix());
+//                team.setNameTagVisibility(NameTagVisibility.of(pkt.getNameTagVisibility()));
+//                team.setColor(EnumChatFormatting.func_175744_a(pkt.getColor()));
+//
+//                for (String player : pkt.getPlayers()) {
+//                    team.addTeamMember(player);
+//                }
+//
+//                TeamManager.INSTANCE.createTeam(team);
+//            } else if (pkt.getTeamOperation() == TeamS2CPacket.Operation.REMOVE) {
+//                // REMOVE
+//                TeamManager.INSTANCE.removeTeam(pkt.getName());
+//            } else if (pkt.getPlayerListOperation() == TeamS2CPacket.Operation.ADD) {
+//                // UPDATE
+//                Team team = TeamManager.INSTANCE.getTeamByName(pkt.getName());
+//                if (team != null) {
+//                    for (String player : pkt.getPlayers()) {
+//                        team.addTeamMember(player);
+//                    }
+//                }
+//            } else if (pkt.getPlayerListOperation() == TeamS2CPacket.Operation.REMOVE) {
+//                // PLAYER UPDATE
+//                Team team = TeamManager.INSTANCE.getTeamByName(pkt.getName());
+//                if (team != null) {
+//                    for (String player : pkt.getPlayers()) {
+//                        team.removeTeamMember(player);
+//                    }
+//                }
+//            } else if (pkt.getTeamOperation() == null) {
+//                // UOADTE
+//                Team team = TeamManager.INSTANCE.getTeamByName(pkt.getName());
+//                if (team != null) {
+//                    team.setDisplayName(pkt.getDisplayName());
+//                    team.setPrefix(pkt.getPrefix());
+//                    team.setSuffix(pkt.getSuffix());
+//                    team.setNameTagVisibility(NameTagVisibility.of(pkt.getNameTagVisibility()));
+//                    team.setColor(EnumChatFormatting.func_175744_a(pkt.getColor()));
+//                }
+//            }
+//        }
+    }
 //    public Packet onPacketReceive(Packet packet) { // this runs async.
 //        return packet;
 //    }
