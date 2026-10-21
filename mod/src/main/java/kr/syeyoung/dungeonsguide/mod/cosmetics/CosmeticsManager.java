@@ -456,6 +456,7 @@ public class CosmeticsManager {
 
         String formatted = "";
         if (dg) {
+            // TODO: \ued00-\ued02 were dg icon glyphs from the 1.8.9 unicode font page hack, not needed on 26.1. replaced later
             formatted += "\ued01";
         }
 

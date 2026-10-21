@@ -85,6 +85,7 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
 
 
         activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(actualName.toLowerCase());
+        // TODO: \ued00-\ued02 were dg icon glyphs from the 1.8.9 unicode font page hack, not needed on 26.1. replaced later
         if (activeCosmetics == null && dg) return new MarkedChatComponent(formatted == null ? rawPlayerString : displayName.getUnformattedText(), "\ued00" + rawPlayerString);
         else if (activeCosmetics == null) return displayName;
 

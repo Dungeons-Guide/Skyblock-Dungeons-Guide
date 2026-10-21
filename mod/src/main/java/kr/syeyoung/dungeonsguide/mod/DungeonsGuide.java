@@ -58,7 +58,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -271,13 +270,6 @@ public class DungeonsGuide {
         DefaultFontRenderer.DEFAULT_RENDERER.onResourceManagerReload();
         ShaderManager.onResourceReload();
         DomElementRegistry.onResourceManagerReload();
-
-        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-        byte[] glypthWidths = ReflectionHelper.getPrivateValue(FontRenderer.class, fontRenderer, "glyphWidth", "field_78287_e", "field_2819", "e");
-        for (int i = 0; i < 255; i++) {
-            glypthWidths[0xed00 + i] = 14;
-        }
-        glypthWidths[0xed02] = 1;
     }
 
 
