@@ -72,7 +72,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -259,9 +259,7 @@ public class DungeonListener {
     }
 
     @SubscribeEvent
-    public void onRender(RenderGameOverlayEvent.Post postRender) {
-        if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
-            return;
+    public void onRender(RenderHUDEvent.Post postRender) {
 
         if (!SkyblockStatus.isOnDungeon()) return;
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;

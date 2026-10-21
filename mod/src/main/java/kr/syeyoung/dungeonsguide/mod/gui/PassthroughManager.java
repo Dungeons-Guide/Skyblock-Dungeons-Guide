@@ -24,7 +24,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.profiler.Profiler;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
@@ -49,8 +49,7 @@ public class PassthroughManager {
 
 
     @SubscribeEvent(priority = ListenerPriority.FIRST)
-    public void onGameRenderOverlay(RenderGameOverlayEvent.Pre event) {
-        if (event.type != RenderGameOverlayEvent.ElementType.ALL) return;
+    public void onGameRenderOverlay(RenderHUDEvent.Pre event) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("Dungeons Guide - RenderGameOverlayEvent :: Passthrough");
 

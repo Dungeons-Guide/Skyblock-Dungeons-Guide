@@ -22,11 +22,14 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ClientTickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 
 // turns fabric callbacks and mixin hooks into dg events
 public class FabricEventBridge {
@@ -55,6 +58,11 @@ public class FabricEventBridge {
             fire(new RenderWorldEvent(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false), context));
             context.bufferSource().endBatch();
         });
+
+        HudElementRegistry.addFirst(Identifier.fromNamespaceAndPath("dungeonsguide", "hud_pre"), (graphics, deltaTracker) ->
+                fire(new RenderHUDEvent.Pre(deltaTracker.getGameTimeDeltaPartialTick(false), graphics)));
+        HudElementRegistry.addLast(Identifier.fromNamespaceAndPath("dungeonsguide", "hud_post"), (graphics, deltaTracker) ->
+                fire(new RenderHUDEvent.Post(deltaTracker.getGameTimeDeltaPartialTick(false), graphics)));
     }
 
     public static boolean fire(DGEvent event) {

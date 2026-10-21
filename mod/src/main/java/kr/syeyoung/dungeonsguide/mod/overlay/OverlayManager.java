@@ -35,7 +35,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.profiler.Profiler;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
@@ -100,9 +100,7 @@ public class OverlayManager {
     }
 
     @SubscribeEvent
-    public void renderOverlay(RenderGameOverlayEvent.Post postRender) {
-        if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
-            return;
+    public void renderOverlay(RenderHUDEvent.Post postRender) {
 
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("Dungeons Guide - RenderGameOverlayEvent.Post :: Overlay");
