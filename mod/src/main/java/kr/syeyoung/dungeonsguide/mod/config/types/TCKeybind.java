@@ -32,6 +32,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
 public class TCKeybind implements FeatureTypeHandler<InputConstants.Key> {
@@ -144,14 +145,14 @@ public class TCKeybind implements FeatureTypeHandler<InputConstants.Key> {
         }
 
         @Override
-        public boolean keyPressed(char typedChar, int keyCode) {
+        public boolean keyPressed(KeyEvent keyEvent) {
             if (!listen) return false;
-            if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            if (keyEvent.isEscape()) {
                 currentKey = InputConstants.UNKNOWN;
-            } else if (keyCode != GLFW.GLFW_KEY_UNKNOWN) {
-                currentKey = InputConstants.Type.KEYSYM.getOrCreate(keyCode);
+            } else {
+                // keys glfw has no key code for come back as scancodes
+                currentKey = InputConstants.getKey(keyEvent);
             }
-            // TODO: 1.8.9 bound keys lwjgl2 didn't know as typed char + 256. on 26.1 those are scancodes, which keyPressed doesn't receive
             listen = false;
             parameter.setValue(currentKey);
             value.setValue(currentKey.getDisplayName().getString());

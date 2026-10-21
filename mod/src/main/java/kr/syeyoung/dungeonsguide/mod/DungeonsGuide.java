@@ -50,7 +50,6 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.etc.tooltip.WidgetNotificatio
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.PassthroughManager;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.fonts.DefaultFontRenderer;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
@@ -282,7 +281,6 @@ public class DungeonsGuide {
     // TODO: nothing calls this on 26.1 yet, used to be called by the loader on resource reload
     public void onResourceReload(ResourceManager a) {
         GLCursors.setupCursors();
-        DefaultFontRenderer.DEFAULT_RENDERER.onResourceManagerReload();
         ShaderManager.onResourceReload();
         DomElementRegistry.onResourceManagerReload();
     }

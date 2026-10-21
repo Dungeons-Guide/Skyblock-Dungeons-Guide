@@ -29,7 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 
@@ -62,7 +61,7 @@ public class OverlayWidget extends Widget implements Renderer, Layouter {
 
         ProfilerFiller profiler = Profiler.get();
         profiler.push("Dungeons Guide Overlay Render :: "+name);
-        GlStateManager.translate(original.getX(), original.getY(), 0);
+        context.pose().translate((float) (original.getX()), (float) (original.getY()));
 
         double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
         double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();

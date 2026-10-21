@@ -18,16 +18,19 @@
 
 package kr.syeyoung.dungeonsguide.mod.gui;
 
+import com.mojang.blaze3d.platform.Window;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.network.play.client.C0DPacketCloseWindow;
-import org.lwjgl.input.Mouse;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
+import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.item.ItemStack;
+import org.lwjgl.glfw.GLFW;
 
 public class GuiScreenAdapterChestOverride extends GuiScreenAdapter {
 
     @Getter
-    protected GuiChest guiChest;
+    protected ContainerScreen guiChest;
 
     private boolean repositionCursor = false;
     private int cursorX;
@@ -36,6 +39,7 @@ public class GuiScreenAdapterChestOverride extends GuiScreenAdapter {
     public GuiScreenAdapterChestOverride(Widget widget) {
         super(widget);
     }
+    // framebuffer pixels from the bottom left, like 1.8.9's Mouse.setCursorPosition
     public GuiScreenAdapterChestOverride(Widget widget, int cursorX, int cursorY) {
         super(widget);
         this.cursorX = cursorX;
@@ -43,20 +47,11 @@ public class GuiScreenAdapterChestOverride extends GuiScreenAdapter {
         this.repositionCursor = true;
     }
 
-    @Override
-    public void setWorldAndResolution(Minecraft mc, int width, int height) {
-        super.setWorldAndResolution(mc, width, height);
-        if (repositionCursor) {
-            Mouse.setCursorPosition(cursorX, cursorY);
-        }
-    }
-
-    public void setGuiChest(GuiChest guiChest) {
+    public void setGuiChest(ContainerScreen guiChest) {
         this.guiChest = guiChest;
         this.view.getContext().CONTEXT.put("chest", guiChest);
 
-        guiChest.setWorldAndResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
-        guiChest.initGui();
+        guiChest.init(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight());
     }
 
     public static GuiScreenAdapterChestOverride getAdapter(DomElement domElement) {
@@ -64,15 +59,23 @@ public class GuiScreenAdapterChestOverride extends GuiScreenAdapter {
     }
 
 
+    // mode is 1.8.9's click mode, the same ids as ContainerInput
     public void emulateClick(int slotId, int mouseButtonClicked, int mode) {
-        Minecraft.getMinecraft().playerController.windowClick(guiChest.inventorySlots.windowId, slotId, mouseButtonClicked, mode, Minecraft.getMinecraft().thePlayer);
+        Minecraft.getInstance().gameMode.handleContainerInput(guiChest.getMenu().containerId, slotId, mouseButtonClicked, ContainerInput.values()[mode], Minecraft.getInstance().player);
     }
 
     private boolean flag = false;
 
+    // 1.8.9 did the cursor in setWorldAndResolution and the rest in initGui, both run on open and resize
     @Override
-    public void initGui() {
-        super.initGui();
+    protected void init() {
+        super.init();
+        if (repositionCursor) {
+            Window window = Minecraft.getInstance().getWindow();
+            GLFW.glfwSetCursorPos(window.handle(),
+                    cursorX * (double) window.getScreenWidth() / window.getWidth(),
+                    (window.getHeight() - cursorY) * (double) window.getScreenHeight() / window.getHeight());
+        }
         setCanExitWithoutClosing(false);
     }
 
@@ -80,15 +83,16 @@ public class GuiScreenAdapterChestOverride extends GuiScreenAdapter {
         this.flag =flag;
     }
     @Override
-    public void onGuiClosed() {
-        if (!flag && Minecraft.getMinecraft().thePlayer.openContainer.windowId != Minecraft.getMinecraft().thePlayer.inventoryContainer.windowId) {
-            Minecraft.getMinecraft().getNetHandler().addToSendQueue(new C0DPacketCloseWindow(this.guiChest.inventorySlots.windowId));
-            Minecraft.getMinecraft().thePlayer.inventory.setItemStack(null);
-            Minecraft.getMinecraft().thePlayer.openContainer = Minecraft.getMinecraft().thePlayer.inventoryContainer;
+    public void removed() {
+        Minecraft mc = Minecraft.getInstance();
+        if (!flag && mc.player.containerMenu.containerId != mc.player.inventoryMenu.containerId) {
+            mc.getConnection().send(new ServerboundContainerClosePacket(this.guiChest.getMenu().containerId));
+            mc.player.containerMenu.setCarried(ItemStack.EMPTY);
+            mc.player.containerMenu = mc.player.inventoryMenu;
         }
         if (guiChest != null)
-            guiChest.onGuiClosed();
+            guiChest.removed();
         guiChest = null;
-        super.onGuiClosed();
+        super.removed();
     }
 }

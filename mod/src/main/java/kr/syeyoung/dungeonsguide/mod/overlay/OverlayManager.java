@@ -23,31 +23,33 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenMouseEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenKeyboardEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenInitEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.RootDom;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.DGGuiRenderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.StencilImage;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.profiler.Profiler;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.util.Util;
+import net.minecraft.util.profiling.Profiler;
+import net.minecraft.util.profiling.ProfilerFiller;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
-
-import static org.lwjgl.opengl.GL11.GL_GREATER;
+import java.util.HashSet;
+import java.util.Set;
 
 public class OverlayManager {
     private final RootDom view;
@@ -56,6 +58,12 @@ public class OverlayManager {
     private static final OverlayManager INSTANCE = new OverlayManager();
     @Getter
     private final OverlayManagerRootWidget root = new OverlayManagerRootWidget();
+
+    // under the hud and over screens are drawn in the same frame, each needs its own image (D76)
+    private final StencilImage hudImage = new StencilImage("Dungeons Guide hud");
+    private final StencilImage screenImage = new StencilImage("Dungeons Guide overlay");
+    // glfw doesn't tell screens whether a key press is a repeat
+    private final Set<Integer> pressedKeys = new HashSet<>();
 
 
     public static OverlayManager getEventHandler() {
@@ -69,7 +77,7 @@ public class OverlayManager {
     public static final String OVERLAY_TYPE_KEY = "OVERLAY_TYPE";
 
     private OverlayManager() {
-        this.mc = Minecraft.getMinecraft();
+        this.mc = Minecraft.getInstance();
 
         PopupMgr popupMgr = new PopupMgr();
         popupMgr.child.setValue(root);
@@ -83,94 +91,91 @@ public class OverlayManager {
 
     @SubscribeEvent()
     public void guiResize(ScreenInitEvent.Post post){
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-        profiler.startSection("Dungeons Guide Overlay Lauout");
+        ProfilerFiller profiler = Profiler.get();
+        profiler.push("Dungeons Guide Overlay Lauout");
         try {
-            view.setRelativeBound(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
-            view.setAbsBounds(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
-            view.setSize(new Size(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+            int displayWidth = Minecraft.getInstance().getWindow().getWidth();
+            int displayHeight = Minecraft.getInstance().getWindow().getHeight();
+            view.setRelativeBound(new Rect(0,0, displayWidth, displayHeight));
+            view.setAbsBounds(new Rect(0,0, displayWidth, displayHeight));
+            view.setSize(new Size(displayWidth, displayHeight));
             view.getLayouter().layout(view, new ConstraintBox(
-                    Minecraft.getMinecraft().displayWidth,
-                    Minecraft.getMinecraft().displayWidth,
-                    Minecraft.getMinecraft().displayHeight,
-                    Minecraft.getMinecraft().displayHeight
+                    displayWidth,
+                    displayWidth,
+                    displayHeight,
+                    displayHeight
             ));
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
-        profiler.endSection();
+        profiler.pop();
     }
 
     @SubscribeEvent
     public void renderOverlay(RenderHUDEvent.Post postRender) {
 
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-        profiler.startSection("Dungeons Guide - RenderGameOverlayEvent.Post :: Overlay");
+        ProfilerFiller profiler = Profiler.get();
+        profiler.push("Dungeons Guide - RenderGameOverlayEvent.Post :: Overlay");
         try {
             view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.UNDER_CHAT);
-            drawScreen(postRender.partialTicks);
+            drawScreen(postRender.partialTicks, hudImage, postRender.graphics);
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
-        profiler.endSection();
+        profiler.pop();
     }
 
     @SubscribeEvent
     public void renderGui(ScreenRenderEvent.Post postRender) {
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-        profiler.startSection("Dungeons Guide - DrawScreenEvent.Post :: Overlay");
+        ProfilerFiller profiler = Profiler.get();
+        profiler.push("Dungeons Guide - DrawScreenEvent.Post :: Overlay");
         try {
-            if (postRender.gui instanceof GuiChat)
+            if (postRender.gui instanceof ChatScreen)
                 view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_CHAT);
             else
                 view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_ANY);
-            drawScreen(postRender.renderPartialTicks);
+            drawScreen(postRender.renderPartialTicks, screenImage, postRender.graphics);
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
-        profiler.endSection();
+        profiler.pop();
     }
 
 
-    private void drawScreen( float partialTicks) {
-        int i = Mouse.getEventX();
-        int j = this.mc.displayHeight - Mouse.getEventY();
+    private void drawScreen(float partialTicks, StencilImage image, GuiGraphicsExtractor graphics) {
+        int displayWidth = Minecraft.getInstance().getWindow().getWidth();
+        int displayHeight = Minecraft.getInstance().getWindow().getHeight();
 
         if (view.isRelayoutRequested()) {
             view.setRelayoutRequested(false);
-            Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-            profiler.startSection("Dungeons Guide Overlay Lauout");
+            ProfilerFiller profiler = Profiler.get();
+            profiler.push("Dungeons Guide Overlay Lauout");
             view.getLayouter().layout(view, new ConstraintBox(
-                    Minecraft.getMinecraft().displayWidth,
-                    Minecraft.getMinecraft().displayWidth,
-                    Minecraft.getMinecraft().displayHeight,
-                    Minecraft.getMinecraft().displayHeight
+                    displayWidth,
+                    displayWidth,
+                    displayHeight,
+                    displayHeight
             ));
-            profiler.endSection();
+            profiler.pop();
         }
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(0,0,50);
-        GlStateManager.disableDepth();
-        GlStateManager.enableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.alphaFunc(GL_GREATER, 0);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
-        view.getRenderer().doRender(partialTicks, new RenderingContext(), view);
-        GlStateManager.alphaFunc(GL_GREATER, 0.1f);
-        GlStateManager.popMatrix();
-        GlStateManager.enableDepth();
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        // DG draws in framebuffer pixels into its own image (D74/D76), which goes back as one gui element
+        RenderingContext context = new RenderingContext(displayHeight);
+        view.getRenderer().doRender(partialTicks, context, view);
+        image.ensureSize(displayWidth, displayHeight);
+        DGGuiRenderer.INSTANCE.submit(image, context.getStates());
+        image.extractComposite(graphics);
+
+        // 1.8.9 only set the native cursor when the overlay changed it, so vanilla's own cursor stays otherwise
+        if (view.getCurrentCursor() != EnumCursor.DEFAULT)
+            graphics.requestCursor(GLCursors.getCursor(view.getCurrentCursor()));
     }
 
-    private void keyTyped(char typedChar, int keyCode) throws IOException {
+    private void keyTyped(KeyEvent keyEvent) {
         try {
-            view.keyPressed0(typedChar, keyCode);
+            view.keyPressed0(keyEvent);
         } catch (Exception e) {
 
             FeatureCollectDiagnostics.queueSendLogAsync(e);
@@ -178,9 +183,9 @@ public class OverlayManager {
         }
     }
 
-    private void keyHeld(int keyCode, char typedChar) throws IOException {
+    private void charTyped(CharacterEvent characterEvent) {
         try {
-            view.keyHeld0(typedChar, keyCode);
+            view.charTyped0(characterEvent);
         } catch (Exception e) {
 
             FeatureCollectDiagnostics.queueSendLogAsync(e);
@@ -188,9 +193,9 @@ public class OverlayManager {
         }
     }
 
-    private void keyReleased(int keyCode, char typedChar) throws IOException {
+    private void keyHeld(KeyEvent keyEvent) {
         try {
-            view.keyReleased0(typedChar, keyCode);
+            view.keyHeld0(keyEvent);
         } catch (Exception e) {
 
             FeatureCollectDiagnostics.queueSendLogAsync(e);
@@ -198,7 +203,17 @@ public class OverlayManager {
         }
     }
 
-    private boolean mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    private void keyReleased(KeyEvent keyEvent) {
+        try {
+            view.keyReleased0(keyEvent);
+        } catch (Exception e) {
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
+                e.printStackTrace();
+        }
+    }
+
+    private boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
         try {
             return view.mouseClicked0(mouseX, mouseY
                     , mouseX, mouseY, mouseButton);
@@ -253,68 +268,75 @@ public class OverlayManager {
 
 
     @SubscribeEvent(priority = ListenerPriority.FIRST)
-    public void handleMouseInput(ScreenMouseEvent.Pre mouseInputEvent) throws IOException {
-            int i = Mouse.getEventX();
-            int j = this.mc.displayHeight - Mouse.getEventY();
-            int k = Mouse.getEventButton();
+    public void handleMouseInput(ScreenMouseEvent.Pre mouseInputEvent) {
+            int i = GuiScreenAdapter.getMouseX();
+            int j = GuiScreenAdapter.getMouseY();
 
-            if (Mouse.getEventButtonState()) {
-                if (this.mc.gameSettings.touchscreen && this.touchValue++ > 0) {
-                    return;
-                }
+            switch (mouseInputEvent.action) {
+                case CLICK:
+                    if (this.mc.options.touchscreen().get() && this.touchValue++ > 0) {
+                        return;
+                    }
 
-                this.eventButton = k;
-                this.lastMouseEvent = Minecraft.getSystemTime();
-                if (this.mouseClicked(i, j, this.eventButton))
-                    mouseInputEvent.setCanceled(true);
-            } else if (k != -1) {
-                if (this.mc.gameSettings.touchscreen && --this.touchValue > 0) {
-                    return;
-                }
+                    this.eventButton = mouseInputEvent.buttonEvent.button();
+                    this.lastMouseEvent = Util.getMillis();
+                    if (this.mouseClicked(i, j, this.eventButton))
+                        mouseInputEvent.setCanceled(true);
+                    break;
+                case RELEASE:
+                    if (this.mc.options.touchscreen().get() && --this.touchValue > 0) {
+                        return;
+                    }
 
-                this.eventButton = -1;
-                this.mouseReleased(i, j, k);
-            } else if (this.eventButton != -1 && this.lastMouseEvent > 0L) {
-                long l = Minecraft.getSystemTime() - this.lastMouseEvent;
-                this.mouseClickMove(i, j, this.eventButton, l);
-            }
-            if (lastX != i || lastY != j) {
-                    EnumCursor prevCursor = view.getCurrentCursor();
-                    view.setCursor(EnumCursor.DEFAULT);
-                    this.mouseMove(i, j);
-                    EnumCursor newCursor = view.getCurrentCursor();
-                try {
-                    if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
-                } catch (Throwable e) {
-                   
-                        e.printStackTrace();
-                }
-            }
-
-
-            int wheel = Mouse.getEventDWheel();
-            if (wheel != 0) {
-                try {
-                    boolean cancel = view.mouseScrolled0(i, j, i, j, wheel);
-                    if (cancel) mouseInputEvent.setCanceled(true);
-                } catch (Exception e) {
-                    FeatureCollectDiagnostics.queueSendLogAsync(e);
-                    e.printStackTrace();
-                }
+                    this.eventButton = -1;
+                    this.mouseReleased(i, j, mouseInputEvent.buttonEvent.button());
+                    break;
+                case DRAG:
+                    if (this.eventButton != -1 && this.lastMouseEvent > 0L) {
+                        long l = Util.getMillis() - this.lastMouseEvent;
+                        this.mouseClickMove(i, j, this.eventButton, l);
+                    }
+                    break;
+                case MOVE:
+                    if (lastX != i || lastY != j) {
+                        view.setCursor(EnumCursor.DEFAULT);
+                        this.mouseMove(i, j);
+                    }
+                    break;
+                case SCROLL:
+                    // D97: lwjgl2's dwheel was 120 per notch
+                    int wheel = (int) (mouseInputEvent.scrollY * 120);
+                    if (wheel != 0) {
+                        try {
+                            boolean cancel = view.mouseScrolled0(i, j, i, j, wheel);
+                            if (cancel) mouseInputEvent.setCanceled(true);
+                        } catch (Exception e) {
+                            FeatureCollectDiagnostics.queueSendLogAsync(e);
+                            e.printStackTrace();
+                        }
+                    }
+                    break;
             }
             lastX = i;
             lastY = j;
     }
 
     @SubscribeEvent(priority = ListenerPriority.FIRST)
-    public void handleKeyboardInput(ScreenKeyboardEvent.Pre keyboardInputEvent) throws IOException {
-        if (Keyboard.getEventKeyState()) {
-            if (Keyboard.isRepeatEvent())
-                this.keyHeld(Keyboard.getEventKey(), Keyboard.getEventCharacter());
-            else
-                this.keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
-        } else {
-            this.keyReleased(Keyboard.getEventKey(), Keyboard.getEventCharacter());
+    public void handleKeyboardInput(ScreenKeyboardEvent.Pre keyboardInputEvent) {
+        switch (keyboardInputEvent.action) {
+            case PRESS:
+                if (pressedKeys.add(keyboardInputEvent.keyEvent.key()))
+                    this.keyTyped(keyboardInputEvent.keyEvent);
+                else
+                    this.keyHeld(keyboardInputEvent.keyEvent);
+                break;
+            case RELEASE:
+                pressedKeys.remove(keyboardInputEvent.keyEvent.key());
+                this.keyReleased(keyboardInputEvent.keyEvent);
+                break;
+            case CHAR:
+                this.charTyped(keyboardInputEvent.characterEvent);
+                break;
         }
     }
 }

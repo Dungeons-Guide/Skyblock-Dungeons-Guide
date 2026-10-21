@@ -29,12 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.shader.Framebuffer;
 
 import java.util.Collections;
 import java.util.List;
@@ -61,41 +55,18 @@ public class Passthrough extends AnnotatedExportOnlyWidget implements Layouter, 
         double w = buildContext.getSize().getWidth();
         double h = buildContext.getSize().getHeight();
 
-        int screenHeight = Minecraft.getMinecraft().displayHeight;
-        int screenWidth = Minecraft.getMinecraft().displayWidth;
-
-        Framebuffer framebuffer = PassthroughManager.INSTANCE.getFramebuffer();
-
-        framebuffer.bindFramebufferTexture();
-        GlStateManager.color(1f, 1f, 1f, 1f);
+        int screenHeight = Minecraft.getInstance().getWindow().getHeight();
+        int screenWidth = Minecraft.getInstance().getWindow().getWidth();
 
         double sx = rect.getX() / screenWidth;
-        double sy = (Minecraft.getMinecraft().displayHeight - rect.getY()) / screenHeight;
+        double sy = (screenHeight - rect.getY()) / screenHeight;
         double ex = (rect.getX() + rect.getWidth())/ screenWidth;
-        double ey = (Minecraft.getMinecraft().displayHeight - rect.getY() - rect.getHeight()) / screenHeight;
+        double ey = (screenHeight - rect.getY() - rect.getHeight()) / screenHeight;
 
-        Gui.drawRect(0,0, (int) w, (int) h, PassthroughManager.INSTANCE.getFogColor());
+        context.drawRect(0,0, (int) w, (int) h, PassthroughManager.INSTANCE.getFogColor());
 
-        GlStateManager.color(1,1,1,1);
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        worldrenderer
-                .pos(0, h, 0.0D)
-                .tex(sx, ey).endVertex();
-        worldrenderer
-                .pos(w,h, 0.0D)
-                .tex(ex, ey).endVertex();
-        worldrenderer
-                .pos(w,0, 0.0D)
-                .tex(ex, sy).endVertex();
-        worldrenderer
-                .pos(0,0, 0.0D)
-                .tex(sx, sy).endVertex();
-        tessellator.draw();
-
-
-        framebuffer.unbindFramebufferTexture();
-
+        if (PassthroughManager.INSTANCE.getTextureView() == null) return;
+        context.drawTexture(() -> PassthroughManager.INSTANCE.getTextureView(), RenderingContext.nearestSampler(),
+                0, 0, w, h, sx, ex, sy, ey, 0xFFFFFFFF);
     }
 }

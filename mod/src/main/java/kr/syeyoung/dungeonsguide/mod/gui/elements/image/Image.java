@@ -23,7 +23,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import lombok.AllArgsConstructor;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 
 import java.util.Collections;
@@ -46,8 +45,7 @@ public class Image extends Widget implements Renderer {
 
     @Override
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(location);
-        context.drawScaledCustomSizeModalRect(0, 0, 
+        context.drawScaledCustomSizeModalRect(location, 0, 0, 
                 uvX, 
                 uvY, 
                 uvWidth, 

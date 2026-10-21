@@ -22,25 +22,26 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.DGGuiRenderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.StencilImage;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Util;
 
-import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
-import static org.lwjgl.opengl.GL11.GL_GREATER;
-
-public class GuiScreenAdapter extends GuiScreen {
+public class GuiScreenAdapter extends Screen {
 
     @Getter
     protected RootDom view;
@@ -49,37 +50,51 @@ public class GuiScreenAdapter extends GuiScreen {
     protected Stack<RootDom> domStack = new Stack<>();
     @Getter
 
-    protected GuiScreen parent;
+    protected Screen parent;
     protected boolean allowEsc;
+    // 1.8.9 screens had no background, 26.1 draws the menu blur and darkening (D98)
+    protected boolean vanillaBackground;
+
+    private final StencilImage image = new StencilImage("Dungeons Guide screen");
+    // glfw doesn't tell screens whether a key press is a repeat
+    private final Set<Integer> pressedKeys = new HashSet<>();
+
     public GuiScreenAdapter(Widget widget) {
         this(widget, null, true);
     }
-    public GuiScreenAdapter(Widget widget, GuiScreen parent) {
+    public GuiScreenAdapter(Widget widget, Screen parent) {
         this(widget, parent, true);
     }
-    public GuiScreenAdapter(Widget widget, GuiScreen parent, boolean allowEsc) {
+    public GuiScreenAdapter(Widget widget, Screen parent, boolean allowEsc) {
+        this(widget, parent, allowEsc, false);
+    }
+    public GuiScreenAdapter(Widget widget, Screen parent, boolean allowEsc, boolean vanillaBackground) {
+        super(Component.empty());
         this.parent = parent;
         this.allowEsc = allowEsc;
+        this.vanillaBackground = vanillaBackground;
         view = new RootDom(widget);
         view.getContext().CONTEXT.put("screenAdapter", this);
+    }
 
-        try {
-            Mouse.setNativeCursor(GLCursors.getCursor(EnumCursor.DEFAULT));
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+    // mouse in framebuffer pixels from the top left, what 1.8.9's Mouse.getEventX / displayHeight - getEventY gave
+    public static int getMouseX() {
+        return (int) (Minecraft.getInstance().mouseHandler.xpos() * Minecraft.getInstance().getWindow().getWidth() / Minecraft.getInstance().getWindow().getScreenWidth());
+    }
+    public static int getMouseY() {
+        return (int) (Minecraft.getInstance().mouseHandler.ypos() * Minecraft.getInstance().getWindow().getHeight() / Minecraft.getInstance().getWindow().getScreenHeight());
     }
 
     public void open(Widget newRoot) {
         domStack.push(view);
         view = new RootDom(newRoot);
         view.getContext().CONTEXT.put("screenAdapter", this);
-        initGui();
+        init();
     }
     public void goBack() {
         view = domStack.pop();
         view.getContext().CONTEXT.put("screenAdapter", this);
-        initGui();
+        init();
     }
 
     public static GuiScreenAdapter getAdapter(DomElement domElement) {
@@ -87,19 +102,20 @@ public class GuiScreenAdapter extends GuiScreen {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
-        Keyboard.enableRepeatEvents(true);
+    protected void init() {
+        super.init();
         isOpen = true;
         try {
-            view.setRelativeBound(new Rect(0, 0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
-            view.setAbsBounds(new Rect(0, 0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
-            view.setSize(new Size(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+            int displayWidth = Minecraft.getInstance().getWindow().getWidth();
+            int displayHeight = Minecraft.getInstance().getWindow().getHeight();
+            view.setRelativeBound(new Rect(0, 0, displayWidth, displayHeight));
+            view.setAbsBounds(new Rect(0, 0, displayWidth, displayHeight));
+            view.setSize(new Size(displayWidth, displayHeight));
             view.getLayouter().layout(view, new ConstraintBox(
-                    Minecraft.getMinecraft().displayWidth,
-                    Minecraft.getMinecraft().displayWidth,
-                    Minecraft.getMinecraft().displayHeight,
-                    Minecraft.getMinecraft().displayHeight
+                    displayWidth,
+                    displayWidth,
+                    displayHeight,
+                    displayHeight
             ));
             view.setMounted(true);
         }catch (Exception e) {
@@ -109,19 +125,23 @@ public class GuiScreenAdapter extends GuiScreen {
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        int i = Mouse.getEventX();
-        int j = this.mc.displayHeight - Mouse.getEventY();
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        if (vanillaBackground) super.extractBackground(graphics, mouseX, mouseY, a);
+    }
 
+    @Override
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         try {
+            int displayWidth = Minecraft.getInstance().getWindow().getWidth();
+            int displayHeight = Minecraft.getInstance().getWindow().getHeight();
             if (view.isRelayoutRequested()) {
                 view.setRelayoutRequested(false);
                 try {
                     view.getLayouter().layout(view, new ConstraintBox(
-                            Minecraft.getMinecraft().displayWidth,
-                            Minecraft.getMinecraft().displayWidth,
-                            Minecraft.getMinecraft().displayHeight,
-                            Minecraft.getMinecraft().displayHeight
+                            displayWidth,
+                            displayWidth,
+                            displayHeight,
+                            displayHeight
                     ));
                 } catch (Exception e) {
                     view.setRelayoutRequested(true);
@@ -129,21 +149,14 @@ public class GuiScreenAdapter extends GuiScreen {
                 }
             }
 
+            // DG draws in framebuffer pixels into its own image (D74/D76), which goes back as one gui element
+            RenderingContext context = new RenderingContext(displayHeight);
+            view.getRenderer().doRender(partialTicks, context, view);
+            image.ensureSize(displayWidth, displayHeight);
+            DGGuiRenderer.INSTANCE.submit(image, context.getStates());
+            image.extractComposite(graphics);
 
-            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-            GlStateManager.pushMatrix();
-            GlStateManager.disableDepth();
-            GlStateManager.enableBlend();
-            GlStateManager.enableAlpha();
-            GlStateManager.alphaFunc(GL_GREATER, 0);
-            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-            GlStateManager.color(1, 1, 1, 1);
-            GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
-            view.getRenderer().doRender(partialTicks, new RenderingContext(), view);
-            GlStateManager.alphaFunc(GL_GREATER, 0.1f);
-            GlStateManager.popMatrix();
-            GlStateManager.enableDepth();
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            graphics.requestCursor(GLCursors.getCursor(view.getCurrentCursor()));
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
@@ -151,38 +164,43 @@ public class GuiScreenAdapter extends GuiScreen {
     }
 
     @Override
-    public void keyTyped(char typedChar, int keyCode) throws IOException {
+    public boolean keyPressed(KeyEvent keyEvent) {
+        boolean repeat = !pressedKeys.add(keyEvent.key());
+        if (repeat) {
+            keyHeld(keyEvent);
+            return true;
+        }
 
         try {
-            if (view.keyPressed0(typedChar, keyCode)) return;
+            if (view.keyPressed0(keyEvent)) return true;
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
 
                 e.printStackTrace();
         }
 
-        if (keyCode == 1 && allowEsc) {
-            this.mc.displayGuiScreen((GuiScreen)parent);
-            if (this.mc.currentScreen == null) {
-                this.mc.setIngameFocus();
-            }
-            return;
+        if (keyEvent.isEscape() && allowEsc) {
+            this.minecraft.setScreen(parent);
+            return true;
         }
+        // unhandled keys go on to vanilla, like 1.8.9's dispatchKeypresses
+        return false;
     }
 
-    public void keyHeld(int keyCode, char typedChar) throws IOException {
+    @Override
+    public boolean charTyped(CharacterEvent characterEvent) {
         try {
-            view.keyHeld0(typedChar, keyCode);
+            view.charTyped0(characterEvent);
         } catch (Exception e) {
-
             FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
+        return true;
     }
 
-    public void keyReleased(int keyCode, char typedChar) throws IOException {
+    public void keyHeld(KeyEvent keyEvent) {
         try {
-            view.keyReleased0(typedChar, keyCode);
+            view.keyHeld0(keyEvent);
         } catch (Exception e) {
 
             FeatureCollectDiagnostics.queueSendLogAsync(e);
@@ -191,56 +209,87 @@ public class GuiScreenAdapter extends GuiScreen {
     }
 
     @Override
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    public boolean keyReleased(KeyEvent keyEvent) {
+        pressedKeys.remove(keyEvent.key());
         try {
-            super.mouseClicked(mouseX, mouseY, mouseButton);
+            view.keyReleased0(keyEvent);
+        } catch (Exception e) {
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
+                e.printStackTrace();
+        }
+        return true;
+    }
+
+    private long lastMouseEvent;
+
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        int mouseX = getMouseX(), mouseY = getMouseY();
+        if (this.minecraft.options.touchscreen().get() && this.touchValue++ > 0) {
+            return true;
+        }
+        this.lastMouseEvent = Util.getMillis();
+        try {
+            super.mouseClicked(event, doubleClick);
             view.mouseClicked0(mouseX, mouseY
-                    , mouseX, mouseY, mouseButton);
+                    , mouseX, mouseY, event.button());
         } catch (Exception e) {
 
             FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
+        return true;
     }
 
     @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
-        Keyboard.enableRepeatEvents(false);
+    public void removed() {
+        super.removed();
         isOpen = false;
-
-        try {
-            Mouse.setNativeCursor(null);
-            view.setCursor(EnumCursor.DEFAULT);
-        } catch (LWJGLException e) {
-            e.printStackTrace();
-        }
+        pressedKeys.clear();
+        view.setCursor(EnumCursor.DEFAULT);
+        image.close();
     }
 
     @Override
-    public void mouseReleased(int mouseX, int mouseY, int state) {
+    public boolean mouseReleased(MouseButtonEvent event) {
+        int mouseX = getMouseX(), mouseY = getMouseY();
+        if (this.minecraft.options.touchscreen().get() && --this.touchValue > 0) {
+            return true;
+        }
         try {
             view.mouseReleased0(mouseX, mouseY
-                    , mouseX, mouseY, state);
+                    , mouseX, mouseY, event.button());
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
+        return true;
     }
 
     @Override
-    public void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
+        int mouseX = getMouseX(), mouseY = getMouseY();
+        if (this.lastMouseEvent <= 0L) return true;
         try {
             view.mouseClickMove0(mouseX, mouseY
-                    , mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+                    , mouseX, mouseY, event.button(), Util.getMillis() - this.lastMouseEvent);
         } catch (Exception e) {
 
             FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
+        return true;
     }
 
-    public void mouseMove(int mouseX, int mouseY) {
+    @Override
+    public void mouseMoved(double x, double y) {
+        int mouseX = getMouseX(), mouseY = getMouseY();
+        if (lastX == mouseX && lastY == mouseY) return;
+        lastX = mouseX;
+        lastY = mouseY;
+
+        view.setCursor(EnumCursor.DEFAULT);
         try {
             view.mouseMoved0(mouseX, mouseY
                     , mouseX, mouseY, true);
@@ -251,86 +300,25 @@ public class GuiScreenAdapter extends GuiScreen {
         }
     }
 
+    @Override
+    public boolean mouseScrolled(double x, double y, double scrollX, double scrollY) {
+        int mouseX = getMouseX(), mouseY = getMouseY();
+        // D97: lwjgl2's dwheel was 120 per notch
+        int wheel = (int) (scrollY * 120);
+        if (wheel != 0) {
+            try {
+                view.mouseScrolled0(mouseX, mouseY, mouseX, mouseY, wheel);
+            } catch (Exception e) {
+                FeatureCollectDiagnostics.queueSendLogAsync(e);
+                e.printStackTrace();
+            }
+        }
+        return true;
+    }
+
 
     private int touchValue;
-    private int eventButton;
-    private long lastMouseEvent;
 
 
     private int lastX, lastY;
-
-
-    @Override
-    public void handleMouseInput() throws IOException {
-        if (!isOpen) return;
-            int i = Mouse.getEventX();
-            int j = this.mc.displayHeight - Mouse.getEventY();
-            int k = Mouse.getEventButton();
-
-            if (Mouse.getEventButtonState()) {
-                if (this.mc.gameSettings.touchscreen && this.touchValue++ > 0) {
-                    return;
-                }
-
-                this.eventButton = k;
-                this.lastMouseEvent = Minecraft.getSystemTime();
-                this.mouseClicked(i, j, this.eventButton);
-            } else if (k != -1) {
-                if (this.mc.gameSettings.touchscreen && --this.touchValue > 0) {
-                    return;
-                }
-
-                this.eventButton = -1;
-                this.mouseReleased(i, j, k);
-            } else if (this.eventButton != -1 && this.lastMouseEvent > 0L) {
-                long l = Minecraft.getSystemTime() - this.lastMouseEvent;
-                this.mouseClickMove(i, j, this.eventButton, l);
-            }
-            if (lastX != i || lastY != j) {
-                    EnumCursor prevCursor = view.getCurrentCursor();
-                    view.setCursor(EnumCursor.DEFAULT);
-                    this.mouseMove(i, j);
-                    EnumCursor newCursor = view.getCurrentCursor();
-                try {
-                    if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
-                } catch (Throwable e) {
-                    if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
-                        e.printStackTrace();
-                }
-            }
-
-
-            int wheel = Mouse.getEventDWheel();
-            if (wheel != 0) {
-                try {
-                    view.mouseScrolled0(i, j, i, j, wheel);
-                } catch (Exception e) {
-                    FeatureCollectDiagnostics.queueSendLogAsync(e);
-                    e.printStackTrace();
-                }
-            }
-            lastX = i;
-            lastY = j;
-    }
-
-    public void handleKeyboardInput() throws IOException {
-        if (!isOpen) return;
-
-        if (Keyboard.getEventKeyState()) {
-            if (Keyboard.isRepeatEvent())
-                this.keyHeld(Keyboard.getEventKey(), Keyboard.getEventCharacter());
-            else
-                this.keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
-        } else {
-            this.keyReleased(Keyboard.getEventKey(), Keyboard.getEventCharacter());
-        }
-
-        this.mc.dispatchKeypresses();
-    }
-
-    @Override
-    public void handleInput() throws IOException {
-        Keyboard.enableRepeatEvents(true); // I hope it's a temporary solution NEU Incompat. ?
-        super.handleInput();
-    }
 }

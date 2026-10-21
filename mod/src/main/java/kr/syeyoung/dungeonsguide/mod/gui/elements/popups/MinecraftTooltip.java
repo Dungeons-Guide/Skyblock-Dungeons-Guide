@@ -26,12 +26,17 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.fml.client.config.GuiUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.FormattedText;
+import org.joml.Vector2ic;
 
 public class MinecraftTooltip extends Widget implements Renderer, Layouter {
     public List<String> tooltip = new ArrayList<>();
@@ -50,16 +55,38 @@ public class MinecraftTooltip extends Widget implements Renderer, Layouter {
         return new Size(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
     }
 
+    // vanilla's GuiGraphicsExtractor.tooltip, with this element's size as the screen like 1.8.9's drawHoveringText call (D101)
     @Override
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
-        GlStateManager.disableBlend();
-//        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        GlStateManager.disableAlpha();
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableCull();
-//        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GuiUtils.drawHoveringText(tooltip,0,0,
+        Font font = Minecraft.getInstance().font;
+        List<ClientTooltipComponent> lines = new ArrayList<>();
+        for (String line : tooltip) {
+            lines.add(ClientTooltipComponent.create(Language.getInstance().getVisualOrder(FormattedText.of(line))));
+        }
+        if (lines.isEmpty()) return;
+
+        int textWidth = 0;
+        int tempHeight = lines.size() == 1 ? -2 : 0;
+        for (ClientTooltipComponent line : lines) {
+            textWidth = Math.max(textWidth, line.getWidth(font));
+            tempHeight += line.getHeight(font);
+        }
+        int w = textWidth;
+        int h = tempHeight;
+        Vector2ic positioned = DefaultTooltipPositioner.INSTANCE.positionTooltip(
                 (int) buildContext.getRelativeBound().getWidth(),
-                (int) buildContext.getRelativeBound().getHeight(), -1, Minecraft.getMinecraft().fontRendererObj);
+                (int) buildContext.getRelativeBound().getHeight(), 0, 0, w, h);
+        int x = positioned.x();
+        int y = positioned.y();
+
+        context.drawVanilla(graphics -> {
+            TooltipRenderUtil.extractTooltipBackground(graphics, x, y, w, h, null);
+            int localY = y;
+            for (int i = 0; i < lines.size(); i++) {
+                ClientTooltipComponent line = lines.get(i);
+                line.extractText(graphics, font, x, localY);
+                localY += line.getHeight(font) + (i == 0 ? 2 : 0);
+            }
+        });
     }
 }

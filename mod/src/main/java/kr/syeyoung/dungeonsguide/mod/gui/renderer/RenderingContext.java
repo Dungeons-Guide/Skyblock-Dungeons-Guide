@@ -18,23 +18,62 @@
 
 package kr.syeyoung.dungeonsguide.mod.gui.renderer;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.FilterMode;
+import com.mojang.blaze3d.textures.GpuSampler;
+import com.mojang.blaze3d.textures.GpuTextureView;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.DGRenderState;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.GlyphRunState;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.ItemState;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.RectState;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.StencilState;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.TexturedRectState;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.VanillaElementState;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.state.gui.GuiRenderState;
+import net.minecraft.client.gui.font.TextRenderable;
+import net.minecraft.client.renderer.item.TrackingItemStackRenderState;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix3x2f;
+import org.joml.Matrix3x2fStack;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
- * Why are render methods here not static?
- * Well, might put them all into one gigantic array and only do 1 call.
+ * Records what DG draws as render states (D71/D94). Transforms live on the pose stack (D93).
  */
 public class RenderingContext {
+    private final Matrix3x2fStack pose = new Matrix3x2fStack(64);
+    @Getter
+    private final List<DGRenderState> states = new ArrayList<>();
+    @Getter
+    private final int imageHeight;
+    private boolean writingStencilMask = false;
+
+    public RenderingContext() {
+        this(Minecraft.getInstance().getWindow().getHeight());
+    }
+
+    public RenderingContext(int imageHeight) {
+        this.imageHeight = imageHeight;
+    }
+
+    public Matrix3x2fStack pose() {
+        return pose;
+    }
+
     public void drawRect(double left, double top, double right, double bottom, int color) {
         double i;
         if (left < right) {
@@ -49,45 +88,156 @@ public class RenderingContext {
             bottom = i;
         }
 
-        float f = (float)(color >> 24 & 255) / 255.0F;
-        float g = (float)(color >> 16 & 255) / 255.0F;
-        float h = (float)(color >> 8 & 255) / 255.0F;
-        float j = (float)(color & 255) / 255.0F;
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.color(g, h, j, f);
-        worldRenderer.begin(7, DefaultVertexFormats.POSITION);
-        worldRenderer.pos(left, bottom, 0.0).endVertex();
-        worldRenderer.pos(right, bottom, 0.0).endVertex();
-        worldRenderer.pos(right, top, 0.0).endVertex();
-        worldRenderer.pos(left, top, 0.0).endVertex();
-        tessellator.draw();
-        GlStateManager.enableTexture2D();
+        drawQuad((float) left, (float) bottom, (float) right, (float) bottom, (float) right, (float) top, (float) left, (float) top, color);
     }
-    public void drawScaledCustomSizeModalRect(double x, double y, float u, float v, int uWidth, int vHeight, double width, double height, float tileWidth, float tileHeight) {
-        double f = 1.0F / tileWidth;
-        double g = 1.0F / tileHeight;
-        GlStateManager.enableTexture2D();
-        GlStateManager.enableBlend();
-        GlStateManager.color(1,1,1,1);
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-        worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        worldRenderer.pos(x, (y + height), 0.0).tex((u * f), ((v + vHeight) * g)).endVertex();
-        worldRenderer.pos((x + width), (y + height), 0.0).tex(((u + uWidth) * f), ((v + vHeight) * g)).endVertex();
-        worldRenderer.pos((x + width), y, 0.0).tex(((u + uWidth) * f), (v * g)).endVertex();
-        worldRenderer.pos(x, y, 0.0).tex((u * f), (v * g)).endVertex();
-        tessellator.draw();
+
+    // corners in order
+    public void drawQuad(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, int color) {
+        if (isClipEmpty()) return;
+        states.add(new RectState(new Matrix3x2f(pose), new float[] {x0, y0, x1, y1, x2, y2, x3, y3}, color, currentClip(), writingStencilMask));
+    }
+
+    // core profile has no wide lines, a line is a quad of the given width (in local units)
+    public void drawLine(double x0, double y0, double x1, double y1, double width, int color) {
+        double dx = x1 - x0, dy = y1 - y0;
+        double len = Math.sqrt(dx * dx + dy * dy);
+        if (len == 0) return;
+        double nx = -dy / len * width / 2, ny = dx / len * width / 2;
+        drawQuad((float) (x0 + nx), (float) (y0 + ny), (float) (x0 - nx), (float) (y0 - ny),
+                (float) (x1 - nx), (float) (y1 - ny), (float) (x1 + nx), (float) (y1 + ny), color);
+    }
+
+    public void drawScaledCustomSizeModalRect(Identifier texture, double x, double y, float u, float v, int uWidth, int vHeight, double width, double height, float tileWidth, float tileHeight) {
+        drawScaledCustomSizeModalRect(texture, x, y, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight, 0xFFFFFFFF);
+    }
+
+    public void drawScaledCustomSizeModalRect(Identifier texture, double x, double y, float u, float v, int uWidth, int vHeight, double width, double height, float tileWidth, float tileHeight, int color) {
+        drawScaledCustomSizeModalRect(
+                () -> Minecraft.getInstance().getTextureManager().getTexture(texture).getTextureView(),
+                () -> Minecraft.getInstance().getTextureManager().getTexture(texture).getSampler(),
+                x, y, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight, color);
+    }
+
+    public void drawScaledCustomSizeModalRect(Supplier<GpuTextureView> texture, Supplier<GpuSampler> sampler, double x, double y, float u, float v, int uWidth, int vHeight, double width, double height, float tileWidth, float tileHeight, int color) {
+        if (isClipEmpty()) return;
+        float f = 1.0F / tileWidth;
+        float g = 1.0F / tileHeight;
+        states.add(new TexturedRectState(new Matrix3x2f(pose),
+                (float) x, (float) y, (float) (x + width), (float) (y + height),
+                u * f, (u + uWidth) * f, v * g, (v + vHeight) * g,
+                color, texture, sampler, currentClip(), writingStencilMask));
+    }
+
+    // textured quad with normalized uvs
+    public void drawTexture(Supplier<GpuTextureView> texture, Supplier<GpuSampler> sampler, double x0, double y0, double x1, double y1, double u0, double u1, double v0, double v1, int color) {
+        if (isClipEmpty()) return;
+        states.add(new TexturedRectState(new Matrix3x2f(pose),
+                (float) x0, (float) y0, (float) x1, (float) y1,
+                (float) u0, (float) u1, (float) v0, (float) v1,
+                color, texture, sampler, currentClip(), writingStencilMask));
+    }
+
+    public static Supplier<GpuSampler> nearestSampler() {
+        return () -> RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST);
+    }
+
+    // glyphs from vanilla Font (D79), consecutive glyphs on the same pipeline and texture become one run
+    public void drawGlyphs(List<TextRenderable> glyphs) {
+        if (isClipEmpty() || glyphs.isEmpty()) return;
+        List<TextRenderable> run = new ArrayList<>();
+        for (TextRenderable glyph : glyphs) {
+            if (!run.isEmpty() && (run.get(0).guiPipeline() != glyph.guiPipeline() || run.get(0).textureView() != glyph.textureView())) {
+                states.add(new GlyphRunState(new Matrix3x2f(pose), run, currentClip(), writingStencilMask));
+                run = new ArrayList<>();
+            }
+            run.add(glyph);
+        }
+        states.add(new GlyphRunState(new Matrix3x2f(pose), run, currentClip(), writingStencilMask));
+    }
+
+    // plain vanilla text, what 1.8.9's FontRenderer.drawString did (formatting codes included)
+    public void drawString(String text, float x, float y, int color, boolean shadow) {
+        // 1.8.9's font renderer made colors without alpha opaque
+        if ((color & 0xFC000000) == 0) color |= 0xFF000000;
+        List<TextRenderable> glyphs = new ArrayList<>();
+        Minecraft.getInstance().font.prepareText(text, x, y, color, shadow, 0).visit(new Font.GlyphVisitor() {
+            @Override
+            public void acceptGlyph(TextRenderable.Styled glyph) {
+                glyphs.add(glyph);
+            }
+
+            @Override
+            public void acceptEffect(TextRenderable effect) {
+                glyphs.add(effect);
+            }
+        });
+        drawGlyphs(glyphs);
+    }
+
+    // 16x16 gui item at x, y, like 1.8.9's renderItemAndEffectIntoGUI (D100)
+    public void drawItem(ItemStack itemStack, float x, float y) {
+        if (isClipEmpty() || itemStack.isEmpty()) return;
+        Minecraft mc = Minecraft.getInstance();
+        TrackingItemStackRenderState item = new TrackingItemStackRenderState();
+        mc.getItemModelResolver().updateForTopItem(item, itemStack, ItemDisplayContext.GUI, mc.level, mc.player, 0);
+        states.add(new ItemState(new Matrix3x2f(pose), item, x, y, currentClip(), writingStencilMask));
+    }
+
+    // runs vanilla extraction code at DG's pose and records what it extracted (D102)
+    public void drawVanilla(Consumer<GuiGraphicsExtractor> extraction) {
+        if (isClipEmpty()) return;
+        Minecraft mc = Minecraft.getInstance();
+        GuiRenderState renderState = new GuiRenderState();
+        GuiGraphicsExtractor graphics = new GuiGraphicsExtractor(mc, renderState, -1, -1);
+        graphics.pose().set(pose);
+        extraction.accept(graphics);
+
+        renderState.forEachElement(element -> states.add(new VanillaElementState(element, currentClip(), writingStencilMask)), GuiRenderState.TraverseRange.ALL);
+        renderState.forEachText(text -> {
+            List<TextRenderable> glyphs = new ArrayList<>();
+            text.ensurePrepared().visit(new Font.GlyphVisitor() {
+                @Override
+                public void acceptGlyph(TextRenderable.Styled glyph) {
+                    glyphs.add(glyph);
+                }
+
+                @Override
+                public void acceptEffect(TextRenderable effect) {
+                    glyphs.add(effect);
+                }
+            });
+            if (!glyphs.isEmpty())
+                states.add(new GlyphRunState(new Matrix3x2f(text.pose), glyphs, currentClip(), writingStencilMask));
+        });
+        renderState.forEachItem(item -> states.add(new ItemState(new Matrix3x2f(item.pose()), item.itemStackRenderState(), item.x(), item.y(), currentClip(), writingStencilMask)));
+    }
+
+    // what Stencil / NegativeStencil did with raw gl in 1.8.9, now recorded (D74/D75)
+    public void beginStencilMask() {
+        states.add(new StencilState(StencilState.Action.BEGIN_MASK, 1, currentClip()));
+        writingStencilMask = true;
+    }
+
+    public void beginStencilMasked(int ref) {
+        states.add(new StencilState(StencilState.Action.BEGIN_MASKED, ref, currentClip()));
+        writingStencilMask = false;
+    }
+
+    public void endStencil() {
+        states.add(new StencilState(StencilState.Action.END, 0, currentClip()));
+        writingStencilMask = false;
     }
 
     public Stack<Rectangle> clips = new Stack<>();
 
     public Rectangle currentClip() {
         return clips.empty() ? null : clips.peek();
+    }
+
+    // 1.8.9 turned off the color mask for an empty clip
+    private boolean isClipEmpty() {
+        Rectangle clip = currentClip();
+        return clip != null && (clip.width <= 0 || clip.height <= 0);
     }
 
 
@@ -99,7 +249,7 @@ public class RenderingContext {
             return false;
         }
         double x0 = clip.x;
-        double y0 = Minecraft.getMinecraft().displayHeight - clip.y - clip.height;
+        double y0 = imageHeight - clip.y - clip.height;
         return (bounds.getX() + bounds.getWidth() > x0 &&
                 bounds.getY() + bounds.getHeight() > y0 &&
                 bounds.getX() < x0 + clip.width &&
@@ -127,32 +277,13 @@ public class RenderingContext {
         int resY = (int) (absBounds.getY() + y * yScale);
 
 
-        Rectangle newClip = new Rectangle(resX, Minecraft.getMinecraft().displayHeight - (resY+resHeight), resWidth, resHeight);
+        Rectangle newClip = new Rectangle(resX, imageHeight - (resY+resHeight), resWidth, resHeight);
         newClip = previousClip.intersection(newClip);
 
-        if (clips.size() == 0)
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
-
         clips.push(newClip);
-
-        if (newClip.width <= 0 || newClip.height <= 0)
-            GL11.glColorMask(false, false ,false ,false);
-        else
-            GL11.glScissor(newClip.x, newClip.y, newClip.width, newClip.height);
     }
 
     public void popClip() {
-        Rectangle currentClip = clips.pop();
-
-        GL11.glColorMask(true, true ,true ,true);
-        if (clips.size() == 0)
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        else {
-            Rectangle newClip = clips.peek();
-            if (newClip.width <= 0 || newClip.height <= 0)
-                GL11.glColorMask(false, false ,false ,false);
-            else
-                GL11.glScissor(newClip.x, newClip.y, newClip.width, newClip.height);
-        }
+        clips.pop();
     }
 }

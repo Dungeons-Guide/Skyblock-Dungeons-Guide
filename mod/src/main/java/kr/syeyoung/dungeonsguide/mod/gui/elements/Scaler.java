@@ -30,7 +30,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
-import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -92,8 +91,8 @@ public class Scaler extends AnnotatedExportOnlyWidget implements Layouter, Rende
         DomElement value = buildContext.getChildren().get(0);
 
         Rect original = value.getRelativeBound();
-        GlStateManager.translate(original.getX(), original.getY(), 0);
-        GlStateManager.scale(scale.getValue(), scale.getValue(), 1);
+        context.pose().translate((float) (original.getX()), (float) (original.getY()));
+        context.pose().scale((float) (scale.getValue()), (float) (scale.getValue()));
 
         double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
         double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();

@@ -32,12 +32,12 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,15 +61,10 @@ public class ItemStackRender extends AnnotatedExportOnlyWidget implements Render
                 getDomElement().getSize().getHeight());
 
 
-        RenderItem renderItem=  Minecraft.getMinecraft().getRenderItem();
-        GlStateManager.pushMatrix();
-        RenderHelper.disableStandardItemLighting();
-        RenderHelper.enableGUIStandardItemLighting();
-        GlStateManager.scale(min/18.0, min/18.0, 1.0);
-        GlStateManager.enableDepth();
-        renderItem.renderItemAndEffectIntoGUI(itemstack.getValue(), 0,0);
-        GlStateManager.popMatrix();
-        GlStateManager.disableDepth();
+        context.pose().pushMatrix();
+        context.pose().scale((float) (min/18.0), (float) (min/18.0));
+        context.drawItem(itemstack.getValue(), 0,0);
+        context.pose().popMatrix();
     }
 
     @Override
@@ -104,13 +99,14 @@ public class ItemStackRender extends AnnotatedExportOnlyWidget implements Render
             ItemStack toHoverStack = itemstack.getValue();
 
             if (toHoverStack != null) {
-                List<String> list = toHoverStack.getTooltip(Minecraft.getMinecraft().thePlayer,
-                        Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
-                for (int i = 0; i < list.size(); ++i) {
+                // TODO: D5, the lines lose their own formatting until DG's text model is decided
+                List<Component> lines = Screen.getTooltipFromItem(Minecraft.getInstance(), toHoverStack);
+                List<String> list = new ArrayList<>();
+                for (int i = 0; i < lines.size(); ++i) {
                     if (i == 0) {
-                        list.set(i, toHoverStack.getRarity().rarityColor + list.get(i));
+                        list.add(toHoverStack.getRarity().color() + lines.get(i).getString());
                     } else {
-                        list.set(i, EnumChatFormatting.GRAY + list.get(i));
+                        list.add(ChatFormatting.GRAY + lines.get(i).getString());
                     }
                 }
                 toHover= list;

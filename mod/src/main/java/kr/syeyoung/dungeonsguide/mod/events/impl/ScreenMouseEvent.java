@@ -28,7 +28,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 public abstract class ScreenMouseEvent extends DGEvent implements Cancelable {
     public final Screen gui;
     public final Action action;
-    // null for SCROLL
+    // null for SCROLL and MOVE
     public final MouseButtonEvent buttonEvent;
     public final double mouseX;
     public final double mouseY;
@@ -40,9 +40,9 @@ public abstract class ScreenMouseEvent extends DGEvent implements Cancelable {
     @Getter @Setter
     private boolean canceled;
 
-    // TODO: no MOVE yet, 26.1 has no fabric event for mouse moves inside screens. decided when porting input
+    // MOVE comes from MouseHandlerMixin, fabric has no event for mouse moves inside screens
     public enum Action {
-        CLICK, RELEASE, DRAG, SCROLL
+        CLICK, RELEASE, DRAG, SCROLL, MOVE
     }
 
     protected ScreenMouseEvent(Screen gui, Action action, MouseButtonEvent buttonEvent, double mouseX, double mouseY, double dragX, double dragY, double scrollX, double scrollY) {

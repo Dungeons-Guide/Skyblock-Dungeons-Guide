@@ -25,6 +25,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.SingleChildRenderer;
 import lombok.Getter;
 
 import java.util.List;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 
 public abstract class Widget {
 
@@ -80,9 +82,10 @@ public abstract class Widget {
     public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
         return false;
     }
-    public void keyReleased(char typedChar, int keyCode) {}
-    public void keyHeld(char typedChar, int keyCode) {}
-    public boolean keyPressed(char typedChar, int keyCode) { return false; }
+    public void keyReleased(KeyEvent keyEvent) {}
+    public void keyHeld(KeyEvent keyEvent) {}
+    public boolean keyPressed(KeyEvent keyEvent) { return false; }
+    public boolean charTyped(CharacterEvent characterEvent) { return false; }
     public void mouseExited(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {}
     public void mouseEntered(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {}
 

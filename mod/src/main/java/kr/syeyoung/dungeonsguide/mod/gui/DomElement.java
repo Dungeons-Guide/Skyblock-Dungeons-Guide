@@ -34,6 +34,8 @@ import lombok.Setter;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 
 public class DomElement {
     @Getter
@@ -147,33 +149,43 @@ public class DomElement {
         requestRelayout();
     }
 
-    public boolean keyPressed0(char typedChar, int keyCode) {
+    public boolean keyPressed0(KeyEvent keyEvent) {
         boolean handled = false;
         for (DomElement childComponent  : children) {
-            handled |= childComponent.keyPressed0(typedChar, keyCode);
+            handled |= childComponent.keyPressed0(keyEvent);
             if (widget instanceof Stack) break;
         }
 
 //        if (isFocused())
-        handled |= widget.keyPressed(typedChar, keyCode);
+        handled |= widget.keyPressed(keyEvent);
         return handled;
     }
-    public void keyHeld0(char typedChar, int keyCode) {
+    public boolean charTyped0(CharacterEvent characterEvent) {
+        boolean handled = false;
         for (DomElement childComponent  : children) {
-            childComponent.keyHeld0(typedChar, keyCode);
+            handled |= childComponent.charTyped0(characterEvent);
+            if (widget instanceof Stack) break;
+        }
+
+        handled |= widget.charTyped(characterEvent);
+        return handled;
+    }
+    public void keyHeld0(KeyEvent keyEvent) {
+        for (DomElement childComponent  : children) {
+            childComponent.keyHeld0(keyEvent);
             if (widget instanceof Stack) break;
         }
 
 //        if (isFocused())
-            widget.keyHeld(typedChar, keyCode);
+            widget.keyHeld(keyEvent);
     }
-    public void keyReleased0(char typedChar, int keyCode) {
+    public void keyReleased0(KeyEvent keyEvent) {
         for (DomElement childComponent  : children) {
-            childComponent.keyReleased0(typedChar, keyCode);
+            childComponent.keyReleased0(keyEvent);
             if (widget instanceof Stack) break;
         }
 //        if (isFocused())
-            widget.keyReleased(typedChar, keyCode);
+            widget.keyReleased(keyEvent);
     }
 
     public void obtainFocus() {

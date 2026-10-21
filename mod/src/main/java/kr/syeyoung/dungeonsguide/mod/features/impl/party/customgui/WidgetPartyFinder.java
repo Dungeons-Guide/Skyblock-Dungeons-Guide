@@ -57,6 +57,8 @@ import java.util.*;
 import java.util.stream.Stream;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.client.input.KeyEvent;
+import org.lwjgl.glfw.GLFW;
 
 public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     public WidgetPartyFinder() {
@@ -475,8 +477,8 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     }
 
     @Override
-    public boolean keyPressed(char typedChar, int keyCode) {
-        if (keyCode == 63) {
+    public boolean keyPressed(KeyEvent keyEvent) {
+        if (keyEvent.key() == GLFW.GLFW_KEY_F5) {
             refresh();
             return true;
         }
