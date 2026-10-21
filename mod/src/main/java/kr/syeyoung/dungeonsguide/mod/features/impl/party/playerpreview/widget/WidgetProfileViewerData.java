@@ -59,7 +59,7 @@ public class WidgetProfileViewerData extends AnnotatedWidget {
     private List<WidgetDataRendererWrapper> dataRendererWrapperList = new ArrayList<>();
 
     public WidgetProfileViewerData(GameProfile gameProfile, PlayerSkyblockData playerSkyblockData) {
-        super(new ResourceLocation("dungeonsguide:gui/features/profileViewer/data.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/features/profile_viewer/data.gui"));
 
         this.playerSkyblockData = playerSkyblockData;
         this.gameProfile = gameProfile;

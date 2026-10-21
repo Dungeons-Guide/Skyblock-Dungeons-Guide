@@ -42,7 +42,7 @@ public class WidgetPlayerModel extends AnnotatedWidget {
     private volatile FakePlayer fakePlayer;
     private final PlayerModelRenderer renderer;
     public WidgetPlayerModel(GameProfile mcProfile, PlayerProfile sbProfile) {
-        super(new ResourceLocation("dungeonsguide:gui/features/profileViewer/player.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/features/profile_viewer/player.gui"));
         this.mcProfile = mcProfile;
         this.sbProfile = sbProfile;
         this.renderer = new PlayerModelRenderer(null);

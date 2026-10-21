@@ -49,7 +49,7 @@ public class CategoryItem extends AnnotatedImportOnlyWidget {
         this.name.setValue(category);
         this.description.setValue(description);
         try {
-            String target = "dungeonsguide:textures/config/categoryIcon/"+category.toLowerCase()
+            String target = "dungeonsguide:textures/config/category_icon/"+category.toLowerCase()
                     .replace("&","").replace(" ","_")+".png";
             if (Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(target)) != null)
                 icon.setValue(target);

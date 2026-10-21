@@ -57,7 +57,7 @@ public class ToggleButton extends AnnotatedWidget implements Renderer {
 
 
     public ToggleButton() {
-        super(new ResourceLocation("dungeonsguide:gui/elements/toggleButton.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/elements/toggle_button.gui"));
 
         enabled.addOnUpdate((old, neu) -> {
             txtEnabled.setValue(String.valueOf(neu));

@@ -60,7 +60,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
     public final BindableAttribute<String> disableable = new BindableAttribute<>(String.class);
 
     public WidgetEditableStyleGroupStyleLine(boolean disableable, String name, boolean isEnabled, Supplier<Object> defaultValueSup, Consumer<Object> setter) {
-        super(new ResourceLocation("dungeonsguide:gui/config/text/editableStyleline.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/config/text/editable_styleline.gui"));
 
         this.disableable.setValue(disableable ? "show" : "hide");
 
@@ -145,7 +145,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
         public final BindableAttribute<AColor> aColorBindableAttribute = new BindableAttribute<>(AColor.class);
 
         public ColorEditWidget(BindableAttribute<AColor> color) {
-            super(new ResourceLocation("dungeonsguide:gui/config/text/editableColor.gui"));
+            super(new ResourceLocation("dungeonsguide:gui/config/text/editable_color.gui"));
 
             aColorBindableAttribute.exportTo(color);
         }
@@ -216,7 +216,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
         }
 
         public DoubleEditWidget(BindableAttribute<Double> featureParameter, double min, double max) {
-            super(new ResourceLocation("dungeonsguide:gui/config/text/editableNumber.gui"));
+            super(new ResourceLocation("dungeonsguide:gui/config/text/editable_number.gui"));
             this.min = min;
             this.max = max;
             truth.exportTo(featureParameter);
@@ -258,7 +258,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
         @Bind(variableName = "enabled")
         public final BindableAttribute<Boolean> isEnabled = new BindableAttribute<>(Boolean.class);
         public BooleanEditWidget(BindableAttribute<Boolean> featureParameter) {
-            super(new ResourceLocation("dungeonsguide:gui/config/text/editableCheckmark.gui"));
+            super(new ResourceLocation("dungeonsguide:gui/config/text/editable_checkmark.gui"));
             isEnabled.exportTo(featureParameter);
             isEnabled.addOnUpdate((old,neu) -> {
                 Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));

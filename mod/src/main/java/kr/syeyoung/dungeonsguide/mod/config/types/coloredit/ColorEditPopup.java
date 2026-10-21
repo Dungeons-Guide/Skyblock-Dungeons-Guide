@@ -42,7 +42,7 @@ public class ColorEditPopup extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<AColor> aColorBindableAttribute = new BindableAttribute<>(AColor.class);
 
     public ColorEditPopup(BindableAttribute<AColor> colorBindableAttribute) {
-        super(new ResourceLocation("dungeonsguide:gui/config/parameter/colorSet.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/config/parameter/color_set.gui"));
 
         aColorBindableAttribute.addOnUpdate((old, neu) ->{
             color.setValue("#" + StringUtils.leftPad(Integer.toHexString(neu.getRGB()).toUpperCase(), 8, '0'));

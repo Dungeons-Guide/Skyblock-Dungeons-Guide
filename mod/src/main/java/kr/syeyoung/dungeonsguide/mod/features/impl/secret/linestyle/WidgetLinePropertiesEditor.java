@@ -33,7 +33,7 @@ public class WidgetLinePropertiesEditor extends AnnotatedImportOnlyWidget {
 
     private PathfindLineProperties parent;
     public WidgetLinePropertiesEditor(PathfindLineProperties parent) {
-        super(new ResourceLocation("dungeonsguide:gui/features/lineProperties/editor.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/features/line_properties/editor.gui"));
         this.config.setValue(new WidgetLineParamEditParent(this, parent));
         this.preview.setValue(parent.getSetting().createPreviewWidget());
         this.parent = parent;

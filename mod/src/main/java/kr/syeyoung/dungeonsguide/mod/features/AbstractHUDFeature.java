@@ -137,7 +137,7 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
         )
         public final BindableAttribute<Boolean> enabled = new BindableAttribute<Boolean>(Boolean.class);
         public QuickEnable(AbstractHUDFeature abstractHUDFeature) {
-            super(new ResourceLocation("dungeonsguide:gui/config/popup/quickEnable.gui"));
+            super(new ResourceLocation("dungeonsguide:gui/config/popup/quick_enable.gui"));
             enabled.setValue(abstractHUDFeature.isEnabled());
             enabled.addOnUpdate((old, neu) -> {
                 Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
@@ -148,7 +148,7 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
     public static class QuickConfigure extends AnnotatedImportOnlyWidget {
         private AbstractHUDFeature abstractHUDFeature;
         public QuickConfigure(AbstractHUDFeature abstractHUDFeature) {
-            super(new ResourceLocation("dungeonsguide:gui/config/popup/quickEdit.gui"));
+            super(new ResourceLocation("dungeonsguide:gui/config/popup/quick_edit.gui"));
             this.abstractHUDFeature = abstractHUDFeature;
         }
 

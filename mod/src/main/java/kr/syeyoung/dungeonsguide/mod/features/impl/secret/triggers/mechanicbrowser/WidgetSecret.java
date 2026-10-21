@@ -43,7 +43,7 @@ public class WidgetSecret extends AnnotatedWidget {
     private DungeonMechanicState mechanic;
     private Consumer<String> onSelect;
     public WidgetSecret(String name, DungeonRoom room, DungeonMechanicState dungeonMechanicState, Consumer<String> selectedId) {
-        super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/secret.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/features/mechanic_browser/secret.gui"));
         secretName.setValue(name+" §7("+ dungeonMechanicState.getCurrentState() +", "+
                 (dungeonMechanicState.getRepresentingPoint() != null ?
                         String.format("%.1f", MathHelper.sqrt_double(dungeonMechanicState.getRepresentingPoint().getBlockPos(room).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")

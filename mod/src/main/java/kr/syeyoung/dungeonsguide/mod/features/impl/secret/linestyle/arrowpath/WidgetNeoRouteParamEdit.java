@@ -78,7 +78,7 @@ public class WidgetNeoRouteParamEdit extends AnnotatedImportOnlyWidget {
     }
 
     public WidgetNeoRouteParamEdit(NeoRouteDisplayEngineRegistration.ArrowPathDisplayEngineSetting lineProperties) {
-        super(new ResourceLocation("dungeonsguide:gui/features/lineProperties/styles/neoroute.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/features/line_properties/styles/neoroute.gui"));
 
 
         linecolor.setValue(this.generateConfigWidget(lineProperties, "lineColor", TCAColor.ColorEditWidget::new));

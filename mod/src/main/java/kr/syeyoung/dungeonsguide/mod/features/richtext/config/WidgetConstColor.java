@@ -38,7 +38,7 @@ public class WidgetConstColor extends AnnotatedImportOnlyWidget implements Rende
     private AColor realColor;
 
     public WidgetConstColor(boolean show, AColor derivedColor) {
-        super(new ResourceLocation("dungeonsguide:gui/config/text/constColor.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/config/text/const_color.gui"));
         isEmpty.setValue(show ? "show" : "hide");
         this.realColor = derivedColor;
     }

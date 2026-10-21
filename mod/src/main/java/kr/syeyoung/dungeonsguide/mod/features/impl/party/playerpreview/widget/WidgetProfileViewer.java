@@ -42,7 +42,7 @@ public class WidgetProfileViewer extends AnnotatedWidget {
     private GameProfile gameProfile;
     private Runnable close;
     public WidgetProfileViewer(GameProfile gameProfile, Runnable close) {
-        super(new ResourceLocation("dungeonsguide:gui/features/profileViewer/pv.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/features/profile_viewer/pv.gui"));
         this.gameProfile = gameProfile;
         this.close = close;
         refresh();

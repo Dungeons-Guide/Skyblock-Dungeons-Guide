@@ -51,7 +51,7 @@ public class WidgetInvite extends AnnotatedImportOnlyWidget {
     }
 
     public WidgetInvite() {
-        super(new ResourceLocation("dungeonsguide:gui/features/discordInvite/invite_discord.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/features/discord_invite/invite_discord.gui"));
         List<Widget> widgets = new ArrayList<>();
         for (JDiscordRelation value : DiscordIntegrationManager.INSTANCE.getRelationMap().values()) {
             if (value.getRelationType() == JDiscordRelation.DiscordRelationType.Blocked) continue;

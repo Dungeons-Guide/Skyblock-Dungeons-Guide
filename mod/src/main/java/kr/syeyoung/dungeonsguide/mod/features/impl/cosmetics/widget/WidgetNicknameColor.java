@@ -52,7 +52,7 @@ public class WidgetNicknameColor extends AnnotatedImportOnlyWidget {
     private CosmeticData currentSelected;
 
     public WidgetNicknameColor() {
-        super(new ResourceLocation("dungeonsguide:gui/config/cosmetics/nicknameColor.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/config/cosmetics/nickname_color.gui"));
 
 
         ArrayList<Widget> list = new ArrayList<>();

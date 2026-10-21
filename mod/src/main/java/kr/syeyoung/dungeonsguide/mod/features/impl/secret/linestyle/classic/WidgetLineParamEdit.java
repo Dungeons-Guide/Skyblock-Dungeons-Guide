@@ -59,7 +59,7 @@ public class WidgetLineParamEdit extends AnnotatedImportOnlyWidget {
     }
 
     public WidgetLineParamEdit(ClassicPathDisplayEngineRegistration.ClassicPathDisplayEngineSetting lineProperties) {
-        super(new ResourceLocation("dungeonsguide:gui/features/lineProperties/styles/classic.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/features/line_properties/styles/classic.gui"));
 
         pathfindToggle.setValue(lineProperties.isPathfind() ? "true" : "false");
         beaconToggle.setValue(lineProperties.isBeacon() ? "true": "false");

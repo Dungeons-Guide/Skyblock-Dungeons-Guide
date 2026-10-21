@@ -55,7 +55,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     @Override
     public BossfightRenderSettings getMapRenderSettings() {
         try {
-            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("dungeonsguide:map/bossfight/"+name+".json"));
+            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("dungeonsguide:map/bossfight/"+name.toLowerCase()+".json"));
             if (resource != null) {
                 resource.getInputStream();
                 try (InputStreamReader inputStreamReader = new InputStreamReader(resource.getInputStream())) {
@@ -81,7 +81,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
         this.name = name;
 
         try {
-            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("dungeonsguide:map/bossfight/"+name+".json"));
+            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("dungeonsguide:map/bossfight/"+name.toLowerCase()+".json"));
             if (resource != null) {
                 resource.getInputStream();
                 try (InputStreamReader inputStreamReader = new InputStreamReader(resource.getInputStream())) {
