@@ -2,22 +2,19 @@ plugins {
     id "signing"
     id "idea"
     id "java"
-    id "com.gradleup.shadow" version "8.3.6"
-    id "dev.architectury.architectury-pack200"
-    id "gg.essential.loom"
+    id "dev.architectury.loom-no-remap"
 }
 
 version =  "4.0.0-beta13.2"
 group = "kr.syeyoung.dungeonsguide"
-archivesBaseName = "dungeonsguide"
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+base {
+    archivesName = "dungeonsguide"
 }
 
-//sourceSets.main {
-//    output.setResourcesDir(file("$buildDir/classes/java/main"))
-//}
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+}
 
 repositories {
     mavenCentral()
@@ -31,8 +28,10 @@ repositories {
 }
 
 configurations {
-    implementation.extendsFrom shadowImpl
-    
+    // libraries shipped inside the mod jar (jar-in-jar), see afterEvaluate below
+    bundled
+    implementation.extendsFrom bundled
+
     remappedMod {
         canBeConsumed = true
         canBeResolved = false
@@ -43,120 +42,61 @@ configurations {
     }
 }
 
-configurations {
-    devenvMod {
-        transitive = false
-        visible = false
-    }
-}
-
-
-def urlFile = { url, name ->
-    File file = new File("$buildDir/download/${name}.jar")
-    file.parentFile.mkdirs()
-    if (!file.exists()) {
-        new URL(url).withInputStream { downloadStream ->
-            file.withOutputStream { fileOut ->
-                fileOut << downloadStream
-            }
-        }
-    }
-    return file.absolutePath
-}
-
-def platform = net.fabricmc.loom.util.CurrentPlatform.INSTANCE
-
 dependencies {
-    minecraft("com.mojang:minecraft:1.8.9")
-    mappings("de.oceanlabs.mcp:mcp_stable:22-1.8.9")
-    forge("net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9")
-
-    def os = platform.getOperatingSystem();
-    if (platform.getArchitecture().isArm()) {
-        if (os.isLinux() && platform.getArchitecture().is64Bit()) {
-            minecraftNatives(files(urlFile("https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-2.9.4/lwjgl-platform-2.9.4-nightly-20150209-natives-linux.jar", "lwjgl-platform-2.9.4-nightly-20150209-natives-linux-arm64.jar"),
-                    urlFile("https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-2.9.4/jinput-platform-2.0.5-natives-linux.jar", "jinput-platform-2.0.5-natives-linux-arm64.jar")))
-        } else if (os.isLinux() && !platform.getArchitecture().is64Bit()) {
-            minecraftNatives(files(urlFile("https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-2.9.4/lwjgl-platform-2.9.4-nightly-20150209-natives-linux.jar", "lwjgl-platform-2.9.4-nightly-20150209-natives-linux-arm32.jar"),
-                    urlFile("https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-2.9.4/jinput-platform-2.0.5-natives-linux.jar", "jinput-platform-2.0.5-natives-linux-arm32.jar")))
-        } else if (os.isMacOS()) {
-            minecraftNatives(files(urlFile("https://github.com/Dungeons-Guide/lwjgl/releases/download/2.9.4-20150209-mmachina.2-syeyoung.1/lwjgl-platform-2.9.4-nightly-20150209-natives-osx-arm64.jar", "lwjgl-platform-2.9.4-nightly-20150209-natives-osx-arm64.jar"),
-                    urlFile("https://github.com/r58Playz/jinput-m1/raw/main/plugins/OSX/bin/jinput-platform-2.0.5.jar", "jinput-platform-2.0.5-natives-osx-arm64.jar")))
-        }
-    }
+    minecraft "com.mojang:minecraft:26.1.2"
+    implementation "net.fabricmc:fabric-loader:0.19.5"
+    implementation "net.fabricmc.fabric-api:fabric-api:0.155.3+26.1.2"
 
     implementation "org.jetbrains:annotations-java5:19.0.0"
 
-//    shadowImpl "org.json:json:20240303"
-//    shadowImpl 'net.java.dev.jna:jna:5.12.1' // sorry minecraft... i had to
-    shadowImpl("org.java-websocket:Java-WebSocket:1.5.1") {
+    bundled("org.java-websocket:Java-WebSocket:1.5.1") {
         exclude group: "org.json", module: "json"
+        exclude group: "org.slf4j" // provided by minecraft
     }
-    shadowImpl 'com.github.Dungeons-Guide:DiscordIPC:d403df89'
-    shadowImpl "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
-    shadowImpl('com.fasterxml.jackson.core:jackson-databind:2.18.2')
-    shadowImpl 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.18.1'
+    bundled 'com.github.Dungeons-Guide:DiscordIPC:d403df89'
+    bundled "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
+    bundled 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+    bundled 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.18.1'
+    bundled "org.json:json:20240303" // used to be provided via loader
 
-    compileOnly "org.projectlombok:lombok:1.18.20"
-    annotationProcessor "org.projectlombok:lombok:1.18.16"
+    compileOnly "org.projectlombok:lombok:1.18.48"
+    annotationProcessor "org.projectlombok:lombok:1.18.48"
 
-    testCompileOnly "org.projectlombok:lombok:1.18.20"
-    testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+    testCompileOnly "org.projectlombok:lombok:1.18.48"
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.48"
 
-
-    compileOnly project(path: ":loader")
-
-    devenvMod(project(path: ":loader", configuration: "unmappedMod"))
-    modLocalRuntime("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
+    localRuntime "me.djtheredstoner:DevAuth-fabric:1.2.2"
 }
 
+// include is not transitive, so every resolved library of `bundled` gets nested
+afterEvaluate {
+    configurations.bundled.resolvedConfiguration.resolvedArtifacts.each {
+        def id = it.moduleVersion.id
+        if (id.group == "org.slf4j") return // provided by minecraft
+        dependencies.add("include", "${id.group}:${id.name}:${id.version}")
+    }
+}
+
+// room editor is not part of the first 26.1 build
+sourceSets.main.java {
+    exclude "kr/syeyoung/dungeonsguide/mod/dungeon/roomedit/**"
+    exclude "kr/syeyoung/dungeonsguide/mod/fakeserver/**"
+    exclude "kr/syeyoung/dungeonsguide/mod/features/impl/advanced/FeatureRoomEdit.java"
+}
 
 loom {
-    if (platform.getArchitecture().isArm()) {
-        loom.customMinecraftManifest = "https://gist.githubusercontent.com/cyoung06/76a8208bd4575c17bdb138a0771c0886/raw/beb9ef6cc3c26abf5014d810133d21bedbffa9bb/1.8.9.json"
-    }
     runs {
         client {
             ideConfigGenerated = true
             name = "Launch Dungeons Guide"
             runDir = '../runtime'
             property('devauth.enabled', 'true')
-            property('dg.loader', 'devenv')
             client()
-//            vmArgs.remove("-XstartOnFirstThread")
         }
     }
-    forge {
-        pack200Provider.set(new dev.architectury.pack200.java.Pack200Adapter())
-    }
 }
 
-import net.fabricmc.loom.configuration.providers.minecraft.library.MinecraftLibraryHelper;
-afterEvaluate {
-    loom.runs.named("client") {
-        programArgs("--mods", configurations.devenvMod.files
-                .collect { file("../runtime").relativePath(it) }.join(","))
-    }
-
-    println(loom.minecraftProvider)
-    var versionInfo = loom.minecraftProvider.getVersionInfo()
-//    var platform = net.fabricmc.loom.util.CurrentPlatform.INSTANCE
-    var libs = versionInfo.libraries()
-
-    def field = net.fabricmc.loom.configuration.providers.minecraft.MinecraftProvider.getDeclaredField('metadataProvider')
-    field.setAccessible(true)
-
-    var wtf = field.get(loom.minecraftProvider)
-    var res = MinecraftLibraryHelper.getLibrariesForPlatform(versionInfo, platform)
-    println(res);
-    println(libs)
-    println(wtf)
-
-
-}
-
-
-ext.genOutputDir = file("$buildDir/generated-resources")
+ext.genOutputDir = layout.buildDirectory.dir("generated-resources").get().asFile
 task generateVersionInfo {
     ext.outputFile = file("$genOutputDir/versionMeta.properties")
     outputs.file(outputFile)
@@ -166,46 +106,24 @@ task generateVersionInfo {
 }
 sourceSets.main.output.dir genOutputDir, builtBy: generateVersionInfo
 
+processResources {
+    inputs.property "version", project.version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 
-tasks.withType(Jar) {
-    archivesBaseName = "dungeonsguide"
-    manifest {}
-}
-
-
-tasks.shadowJar {
-    archiveFileName = jar.archiveFileName
-
-    configurations = [project.configurations.shadowImpl]
-
-    enableRelocation = true
-    relocationPrefix = "kr.syeyoung.dungeonsguide.libs"
-
-    dependencies {
-        exclude(dependency("org.json:json")) // provided via loader
-    }
-}
-
-tasks.named("remapJar") {
-    archiveClassifier = "mapped"
-    dependsOn tasks.shadowJar
-    inputFile = tasks.shadowJar.archiveFile
-}
-
-
-
 signing {
     required(project.findProperty("dg.dosign") == "true")
     useGpgCmd()
-    sign tasks.remapJar, tasks.shadowJar
+    sign tasks.jar
 }
 
 artifacts {
-    remappedMod(tasks.remapJar)
-    unmappedMod(tasks.shadowJar)
+    remappedMod(tasks.jar)
+    unmappedMod(tasks.jar)
 }
-
-

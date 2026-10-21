@@ -9,21 +9,12 @@ pluginManagement {
         maven{ url "https://repo.spongepowered.org/maven/"}
         maven{ url "https://repo.essential.gg/repository/maven-public"}
     }
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.id == "gg.essential.loom") {
-                useModule("gg.essential:architectury-loom:${requested.version}")
-            }
-        }
-    }
 }
 
 plugins {
-    id "gg.essential.loom" version "1.9.+" apply false
-    id "dev.architectury.architectury-pack200" version "0.1.3" apply false
+    id "dev.architectury.loom-no-remap" version "1.17.493" apply false
 }
 
 include 'mod'
-include 'loader'
 
 rootProject.name = "Dungeons Guide"
