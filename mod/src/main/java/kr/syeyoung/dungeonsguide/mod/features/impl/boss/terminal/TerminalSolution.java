@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 import lombok.Data;
-import net.minecraft.inventory.Slot;
+import net.minecraft.world.inventory.Slot;
 
 import java.util.List;
 

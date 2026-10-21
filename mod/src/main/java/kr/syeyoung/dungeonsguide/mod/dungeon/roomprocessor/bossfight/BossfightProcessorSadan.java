@@ -20,12 +20,12 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntityGiantZombie;
-import net.minecraft.entity.monster.EntityIronGolem;
+import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.world.entity.monster.Giant;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.entity.passive.*;
 
 import java.util.ArrayList;
@@ -130,25 +130,25 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
         return "Sadan";
     }
 
-    private EntityArmorStand sadanStand;
-    private EntityArmorStand diamondGiant;
-    private EntityArmorStand laserGiant;
-    private EntityArmorStand bigfootGiant;
-    private EntityArmorStand boulderGiant;
+    private ArmorStand sadanStand;
+    private ArmorStand diamondGiant;
+    private ArmorStand laserGiant;
+    private ArmorStand bigfootGiant;
+    private ArmorStand boulderGiant;
     @Override
     public void onEntityUpdate(LivingTickEvent updateEvent) {
-        if (updateEvent.entityLiving instanceof EntityArmorStand) {
+        if (updateEvent.entityLiving instanceof ArmorStand) {
             if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lSadan§r"))
-                sadanStand = (EntityArmorStand) updateEvent.entityLiving;
+                sadanStand = (ArmorStand) updateEvent.entityLiving;
             else if (updateEvent.entityLiving.getName().startsWith("§c§d§lJolly Pink Giant"))
-                boulderGiant = (EntityArmorStand) updateEvent.entityLiving;
+                boulderGiant = (ArmorStand) updateEvent.entityLiving;
             else if (updateEvent.entityLiving.getName().startsWith("§c§4§lL.A.S.R."))
-                laserGiant = (EntityArmorStand) updateEvent.entityLiving;
+                laserGiant = (ArmorStand) updateEvent.entityLiving;
             else if (updateEvent.entityLiving.getName().startsWith("§c§3§lThe Diamond Giant"))
-                diamondGiant = (EntityArmorStand) updateEvent.entityLiving;
+                diamondGiant = (ArmorStand) updateEvent.entityLiving;
             else if (updateEvent.entityLiving.getName().startsWith("§c§c§lBigfoot"))
-                bigfootGiant = (EntityArmorStand) updateEvent.entityLiving;
-        } else if (updateEvent.entityLiving instanceof EntityGiantZombie) {
+                bigfootGiant = (ArmorStand) updateEvent.entityLiving;
+        } else if (updateEvent.entityLiving instanceof Giant) {
 
             if (updateEvent.entityLiving.posY < 55) {
                 mapping.put(updateEvent.entityLiving.getEntityId(), 50);
@@ -185,13 +185,13 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
 
     @Override
     public MarkerData convertToMarker(Entity entity) {
-        if (entity instanceof EntityIronGolem) {
+        if (entity instanceof IronGolem) {
             return MarkerData.fromEntity(entity, MarkerData.MobType.GOLEM, Math.abs(entity.rotationPitch - 59.0625) < 0.01 ? 42 : 49);
-        } else if (entity instanceof EntityGiantZombie) {
+        } else if (entity instanceof Giant) {
             Integer map = mapping.get(entity.getEntityId());
             if (map == null) return null;
             return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, map);
-        } else if (entity instanceof EntityOtherPlayerMP) {
+        } else if (entity instanceof RemotePlayer) {
             String name = entity.getName();
             if ("Terracotta ".equals(name)) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.TERRACOTA, 41);

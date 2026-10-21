@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.predicates;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
@@ -32,7 +32,7 @@ public class PredicateArmorStand implements Predicate<Entity> {
 
     @Override
     public boolean test(@Nullable Entity input) {
-        return input instanceof EntityArmorStand;
+        return input instanceof ArmorStand;
     }
 
     @Override

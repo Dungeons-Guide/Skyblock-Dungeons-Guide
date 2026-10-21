@@ -32,7 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 
 import java.awt.*;
@@ -59,7 +59,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return false;
 
-        EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+        LocalPlayer thePlayer = Minecraft.getInstance().player;
         if (context.getScaffoldParser() == null) return false;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
@@ -75,7 +75,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return new TextSpan(new NullTextStyle(), "");
 
-        EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+        LocalPlayer thePlayer = Minecraft.getInstance().player;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) {

@@ -31,18 +31,18 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.Identifier;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderPlayerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -150,7 +150,7 @@ public class FeaturePenguins extends SimpleFeature {
         GlStateManager.popMatrix();
 
 
-        EntityPlayer entityPlayer = renderPlayerEvent.entityPlayer;
+        Player entityPlayer = renderPlayerEvent.entityPlayer;
         {
             ItemStack itemstack = entityPlayer.getHeldItem();
 
@@ -180,18 +180,18 @@ public class FeaturePenguins extends SimpleFeature {
                     GlStateManager.translate(0.05,0,0);
                     GlStateManager.rotate(90, 0.0f, 0.0f, 1.0f);
                     GlStateManager.rotate(-45, 1.0f, 0.0f, 0.0f);
-                } else if (item instanceof ItemBow) {
+                } else if (item instanceof BowItem) {
                     GlStateManager.translate(0,0.1, -0);
                     GlStateManager.rotate(90, 0.0f, 1.0f, 0.0f);
                     GlStateManager.rotate(-90, 0.0f, 0.0f, 1.0f);
-                } else if (item instanceof ItemBlock && Block.getBlockFromItem(item).getRenderType() == 2) {
+                } else if (item instanceof BlockItem && Block.getBlockFromItem(item).getRenderType() == 2) {
                     GlStateManager.translate(0,-0.20,0.1);
                     GlStateManager.translate(0.0F, 0.1875F, -0.3125F);
                     GlStateManager.rotate(-25.0F, 1.0F, 0.0F, 0.0F);
                     GlStateManager.rotate(45.0F, 0.0F, 1.0F, 0.0F);
                     f1 = 0.375F;
                     GlStateManager.scale(-f1, -f1, f1);
-                } else if (item instanceof ItemBlock) {
+                } else if (item instanceof BlockItem) {
                     GlStateManager.translate(0.0F, 0.05, 0.1);
                     GlStateManager.rotate(-25.0F, 1.0F, 0.0F, 0.0F);
                 } else {

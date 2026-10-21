@@ -9,7 +9,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.Items;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemTool;
 import net.minecraft.resources.Identifier;
 

@@ -19,17 +19,17 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
     @Override
-    public TerminalSolution provideSolution(ContainerChest chest, List<Slot> clicked) {
+    public TerminalSolution provideSolution(ChestMenu chest, List<Slot> clicked) {
         TerminalSolution ts = new TerminalSolution();
         ts.setCurrSlots(new ArrayList<Slot>());
         Slot solution = null;
@@ -37,7 +37,7 @@ public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
             if (inventorySlot.inventory != chest.getLowerChestInventory()) continue;
             if (inventorySlot.getHasStack() && inventorySlot.getStack() != null) {
                 if (inventorySlot.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        inventorySlot.getStack().getItemDamage() == EnumDyeColor.WHITE.getMetadata()) {
+                        inventorySlot.getStack().getItemDamage() == DyeColor.WHITE.getMetadata()) {
                     int x = inventorySlot.slotNumber % 9;
                     int y = inventorySlot.slotNumber / 9;
 
@@ -46,7 +46,7 @@ public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
 
                         if (toChk.getHasStack() && toChk.getStack() != null &&
                                 toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                                toChk.getStack().getItemDamage() == EnumDyeColor.LIME.getMetadata()) {
+                                toChk.getStack().getItemDamage() == DyeColor.LIME.getMetadata()) {
                             solution = inventorySlot;
                             break;
                         }
@@ -56,7 +56,7 @@ public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
 
                         if (toChk.getHasStack() && toChk.getStack() != null &&
                                 toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                                toChk.getStack().getItemDamage() == EnumDyeColor.LIME.getMetadata()) {
+                                toChk.getStack().getItemDamage() == DyeColor.LIME.getMetadata()) {
                             solution = inventorySlot;
                             break;
                         }
@@ -66,7 +66,7 @@ public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
 
                         if (toChk.getHasStack() && toChk.getStack() != null &&
                                 toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                                toChk.getStack().getItemDamage() == EnumDyeColor.LIME.getMetadata()) {
+                                toChk.getStack().getItemDamage() == DyeColor.LIME.getMetadata()) {
                             solution = inventorySlot;
                             break;
                         }
@@ -76,7 +76,7 @@ public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
 
                         if (toChk.getHasStack() && toChk.getStack() != null &&
                                 toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                                toChk.getStack().getItemDamage() == EnumDyeColor.LIME.getMetadata()) {
+                                toChk.getStack().getItemDamage() == DyeColor.LIME.getMetadata()) {
                             solution = inventorySlot;
                             break;
                         }
@@ -97,7 +97,7 @@ public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
 
                 if (toChk.getHasStack() && toChk.getStack() != null &&
                         toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        toChk.getStack().getItemDamage() == EnumDyeColor.WHITE.getMetadata()) {
+                        toChk.getStack().getItemDamage() == DyeColor.WHITE.getMetadata()) {
                     ts.getNextSlots().add(toChk);
                     return ts;
                 }
@@ -107,7 +107,7 @@ public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
 
                 if (toChk.getHasStack() && toChk.getStack() != null &&
                         toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        toChk.getStack().getItemDamage() == EnumDyeColor.WHITE.getMetadata()) {
+                        toChk.getStack().getItemDamage() == DyeColor.WHITE.getMetadata()) {
                     ts.getNextSlots().add(toChk);
                     return ts;
                 }
@@ -117,7 +117,7 @@ public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
 
                 if (toChk.getHasStack() && toChk.getStack() != null &&
                         toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        toChk.getStack().getItemDamage() == EnumDyeColor.WHITE.getMetadata()) {
+                        toChk.getStack().getItemDamage() == DyeColor.WHITE.getMetadata()) {
                     ts.getNextSlots().add(toChk);
                     return ts;
                 }
@@ -127,7 +127,7 @@ public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
 
                 if (toChk.getHasStack() && toChk.getStack() != null &&
                         toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        toChk.getStack().getItemDamage() == EnumDyeColor.WHITE.getMetadata()) {
+                        toChk.getStack().getItemDamage() == DyeColor.WHITE.getMetadata()) {
                     ts.getNextSlots().add(toChk);
                     return ts;
                 }
@@ -138,7 +138,7 @@ public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
     }
 
     @Override
-    public boolean isApplicable(ContainerChest chest) {
+    public boolean isApplicable(ChestMenu chest) {
         return chest.getLowerChestInventory().getName().equals("Navigate the maze!");
     }
 }

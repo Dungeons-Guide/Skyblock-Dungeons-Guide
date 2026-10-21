@@ -29,10 +29,10 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFe
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.dataclasses.*;
 import kr.syeyoung.dungeonsguide.mod.utils.XPUtils;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -116,11 +116,11 @@ public class PlayerProfileParser {
         return current;
     }
 
-    public static NBTTagCompound parseBase64NBT(String nbt) throws IOException {
-        return CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(nbt)));
+    public static CompoundTag parseBase64NBT(String nbt) throws IOException {
+        return NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(nbt)));
     }
 
-    public static ItemStack deserializeNBT(NBTTagCompound nbtTagCompound) {
+    public static ItemStack deserializeNBT(CompoundTag nbtTagCompound) {
         if (nbtTagCompound.hasNoTags()) return null;
         ItemStack itemStack = new ItemStack(Blocks.stone);
         itemStack.deserializeNBT(nbtTagCompound);
@@ -131,13 +131,13 @@ public class PlayerProfileParser {
         String nbt = getOrDefault(object, path, null);
         if (nbt == null) return null;
 
-        NBTTagCompound armor = parseBase64NBT(nbt);
-        NBTTagList array = armor.getTagList("i", 10);
+        CompoundTag armor = parseBase64NBT(nbt);
+        ListTag array = armor.getTagList("i", 10);
         if (itemStacks == null || array.tagCount() > itemStacks.length)
             itemStacks = new ItemStack[array.tagCount()];
 
         for (int i = 0; i < array.tagCount(); i++) {
-            NBTTagCompound item = array.getCompoundTagAt(i);
+            CompoundTag item = array.getCompoundTagAt(i);
             itemStacks[i] = deserializeNBT(item);
         }
         return itemStacks;
@@ -168,11 +168,11 @@ public class PlayerProfileParser {
             // migrated til here.
 
             if (inventory.has("wardrobe_contents")) {
-                NBTTagCompound armor = parseBase64NBT(getOrDefault(inventory, "wardrobe_contents.data", null));
-                NBTTagList array = armor.getTagList("i", 10);
+                CompoundTag armor = parseBase64NBT(getOrDefault(inventory, "wardrobe_contents.data", null));
+                ListTag array = armor.getTagList("i", 10);
                 for (int i = 0; i < array.tagCount(); i++) {
                     if (i % 4 == 0) playerProfile.getWardrobe().add(new PlayerProfile.Armor());
-                    NBTTagCompound item = array.getCompoundTagAt(i);
+                    CompoundTag item = array.getCompoundTagAt(i);
                     playerProfile.getWardrobe().get(i / 4).getArmorSlots()[i % 4] = deserializeNBT(item);
                 }
             }

@@ -21,9 +21,9 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playe
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.IDataRenderer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 import java.util.Optional;
 
@@ -52,9 +52,9 @@ public abstract class DataRendererTalismanBase implements IDataRenderer {
     }
 
     private static DataRendererTalismans.Rarity getRarity(ItemStack itemStack) {
-        NBTTagCompound display = itemStack.getTagCompound().getCompoundTag("display");
+        CompoundTag display = itemStack.getTagCompound().getCompoundTag("display");
         if (display == null) return null;
-        NBTTagList lore = display.getTagList("Lore", 8);
+        ListTag lore = display.getTagList("Lore", 8);
         if (lore == null) return null;
         for (int i = 0; i < lore.tagCount(); i++) {
             String line = lore.getStringTagAt(i);

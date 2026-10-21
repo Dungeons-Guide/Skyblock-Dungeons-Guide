@@ -21,9 +21,9 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 import com.mojang.authlib.properties.Property;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 
 import java.util.*;
 
@@ -117,34 +117,34 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
         return "Scarf";
     }
 
-    private EntityArmorStand scarfStand;
-    private EntityArmorStand priestStand;
-    private EntityArmorStand mageStand;
-    private EntityArmorStand berserkStand;
-    private EntityArmorStand archerStand;
+    private ArmorStand scarfStand;
+    private ArmorStand priestStand;
+    private ArmorStand mageStand;
+    private ArmorStand berserkStand;
+    private ArmorStand archerStand;
     @Override
     public void onEntityUpdate(LivingTickEvent updateEvent) {
-        if (updateEvent.entityLiving instanceof EntityArmorStand) {
+        if (updateEvent.entityLiving instanceof ArmorStand) {
             if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lScarf§r"))
-                scarfStand = (EntityArmorStand) updateEvent.entityLiving;
+                scarfStand = (ArmorStand) updateEvent.entityLiving;
             else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Archer"))
-                archerStand = (EntityArmorStand) updateEvent.entityLiving;
+                archerStand = (ArmorStand) updateEvent.entityLiving;
             else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Mage"))
-                mageStand = (EntityArmorStand) updateEvent.entityLiving;
+                mageStand = (ArmorStand) updateEvent.entityLiving;
             else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Priest"))
-                priestStand = (EntityArmorStand) updateEvent.entityLiving;
+                priestStand = (ArmorStand) updateEvent.entityLiving;
             else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Warrior"))
-                berserkStand = (EntityArmorStand) updateEvent.entityLiving;
+                berserkStand = (ArmorStand) updateEvent.entityLiving;
         }
     }
 
     @Override
     public MarkerData convertToMarker(Entity entity) {
-        if (entity instanceof EntityOtherPlayerMP) {
+        if (entity instanceof RemotePlayer) {
             if ("Scarf ".equals(entity.getName())) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, 8);
             }
-            Collection<Property> obj = ((EntityOtherPlayerMP) entity).getGameProfile().getProperties().get("textures");
+            Collection<Property> obj = ((RemotePlayer) entity).getGameProfile().getProperties().get("textures");
             String texture = obj.stream().findFirst().map(Property::getValue).orElse(null);
             if (texture.equals("ewogICJ0aW1lc3RhbXAiIDogMTU4OTk5NDg1NjMyMCwKICAicHJvZmlsZUlkIiA6ICJkYTQ5OGFjNGU5Mzc0ZTVjYjYxMjdiMzgwODU1Nzk4MyIsCiAgInByb2ZpbGVOYW1lIiA6ICJOaXRyb2hvbGljXzIiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWFlZjU2Y2QwNGQwMzlhMzRjZDZmMTZlMDIzYjZlNjNmY2M3MmYzN2Y3NTk1YTJjOWU0YTE5Zjk0ZTI3M2I0MiIKICAgIH0KICB9Cn0=")) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, 9); // priest

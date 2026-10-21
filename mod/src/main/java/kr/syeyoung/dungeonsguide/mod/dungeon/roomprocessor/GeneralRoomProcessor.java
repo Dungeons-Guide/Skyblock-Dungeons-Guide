@@ -52,9 +52,9 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.Items;
 import net.minecraft.util.*;
@@ -241,7 +241,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onEntityUpdate(LivingTickEvent updateEvent) {
-        if (updateEvent.entityLiving instanceof EntityArmorStand &&
+        if (updateEvent.entityLiving instanceof ArmorStand &&
                 updateEvent.entityLiving.getName() != null &&
                 updateEvent.entityLiving.getName().contains("Mimic") &&
                 !dungeonRoom.getContext().isGotMimic()) {
@@ -320,7 +320,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void onEntityDeath(LivingDeathEvent deathEvent) {
         // TODO: room editor is not in the first 26.1 build
 //        if (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getRoom() == getDungeonRoom()) {
-//            if (deathEvent.entity instanceof EntityBat) {
+//            if (deathEvent.entity instanceof Bat) {
 //                for (GuiScreen screen : EditingContext.getEditingContext().getGuiStack()) {
 //                    if (screen instanceof GuiDungeonRoomEdit) {
 //                        DungeonSecretBatState.DungeonSecretBatData secret = new DungeonSecretBatState.DungeonSecretBatData();

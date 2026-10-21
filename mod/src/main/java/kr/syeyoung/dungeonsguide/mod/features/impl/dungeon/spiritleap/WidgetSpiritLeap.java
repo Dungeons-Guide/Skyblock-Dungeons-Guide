@@ -18,10 +18,10 @@ import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
             if (name == null) continue;
 
-            EntityPlayer entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
+            Player entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
 
             overlays.add(new MapOverlayPlayerClickable(playerInfo, entityplayer == Minecraft.getInstance().player ? mapConfiguration.getSelfSettings() : mapConfiguration.getTeammateSettings(), nameMap.get(name)));
         }

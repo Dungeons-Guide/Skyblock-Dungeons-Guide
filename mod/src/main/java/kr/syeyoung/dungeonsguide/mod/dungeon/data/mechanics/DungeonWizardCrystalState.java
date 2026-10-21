@@ -34,7 +34,7 @@ import lombok.Data;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.Items;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 
 import java.awt.*;

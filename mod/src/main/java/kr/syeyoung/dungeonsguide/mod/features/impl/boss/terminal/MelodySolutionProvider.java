@@ -19,17 +19,17 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MelodySolutionProvider implements TerminalSolutionProvider {
     @Override
-    public TerminalSolution provideSolution(ContainerChest chest, List<Slot> clicked) {
+    public TerminalSolution provideSolution(ChestMenu chest, List<Slot> clicked) {
         TerminalSolution ts = new TerminalSolution();
         ts.setCurrSlots(new ArrayList<Slot>());
 
@@ -38,7 +38,7 @@ public class MelodySolutionProvider implements TerminalSolutionProvider {
             Slot toChk = chest.getSlot(1 + i);
             if (toChk.getHasStack() && toChk.getStack() != null &&
                     toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                    toChk.getStack().getItemDamage() == EnumDyeColor.MAGENTA.getMetadata()) {
+                    toChk.getStack().getItemDamage() == DyeColor.MAGENTA.getMetadata()) {
                 target = i;
                 break;
             }
@@ -50,7 +50,7 @@ public class MelodySolutionProvider implements TerminalSolutionProvider {
 
             if (toChk.getHasStack() && toChk.getStack() != null &&
                     toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_hardened_clay) &&
-                    toChk.getStack().getItemDamage() == EnumDyeColor.LIME.getMetadata()) {
+                    toChk.getStack().getItemDamage() == DyeColor.LIME.getMetadata()) {
                 row = i;
                 break;
             }
@@ -58,7 +58,7 @@ public class MelodySolutionProvider implements TerminalSolutionProvider {
         Slot toChk = chest.getSlot(10 + target + 9 * row);
         if (toChk.getHasStack() && toChk.getStack() != null &&
                 toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                toChk.getStack().getItemDamage() == EnumDyeColor.LIME.getMetadata()) {
+                toChk.getStack().getItemDamage() == DyeColor.LIME.getMetadata()) {
             ts.getCurrSlots().add(chest.getSlot(16 + 9 * row));
         }
 
@@ -66,7 +66,7 @@ public class MelodySolutionProvider implements TerminalSolutionProvider {
     }
 
     @Override
-    public boolean isApplicable(ContainerChest chest) {
+    public boolean isApplicable(ChestMenu chest) {
         return chest.getLowerChestInventory().getName().equals("Click the button on time!");
     }
 }

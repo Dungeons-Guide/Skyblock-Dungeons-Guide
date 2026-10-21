@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.catacombs;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonSpecificDataProvider;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.World;
@@ -35,8 +35,8 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1 , 0));
 
     @Nullable
-    static Vector2d getVector2d(World w, Collection<EntityArmorStand> armorStand, Set<Vector2d> directions) {
-        EntityArmorStand mort = armorStand.iterator().next();
+    static Vector2d getVector2d(World w, Collection<ArmorStand> armorStand, Set<Vector2d> directions) {
+        ArmorStand mort = armorStand.iterator().next();
         BlockPos pos = mort.getPosition();
         pos = pos.add(0, 3, 0);
         for (int i = 0; i < 5; i++) {
@@ -50,8 +50,8 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
         return null;
     }
 
-    public static Collection<EntityArmorStand> getMorts(World w){
-        return w.getEntities(EntityArmorStand.class, input -> input.getName().equals("§bMort"));
+    public static Collection<ArmorStand> getMorts(World w){
+        return w.getEntities(ArmorStand.class, input -> input.getName().equals("§bMort"));
     }
 
     /**
@@ -64,10 +64,10 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
      * @return Block pos of the dungeon entrance
      */
     public BlockPos findDoor(World w, String dungeonName) {
-        Collection<EntityArmorStand> armorStand = getMorts(w);
+        Collection<ArmorStand> armorStand = getMorts(w);
 
         if (!armorStand.isEmpty()) {
-            EntityArmorStand mort = armorStand.iterator().next();
+            ArmorStand mort = armorStand.iterator().next();
             BlockPos pos = mort.getPosition();
             pos = pos.add(0, 3, 0);
             for (int i = 0; i < 5; i++) {
@@ -83,7 +83,7 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
     }
 
     public Vector2d findDoorOffset(World w, String dungeonName) {
-        Collection<EntityArmorStand> armorStand = getMorts(w);
+        Collection<ArmorStand> armorStand = getMorts(w);
 
         if (!armorStand.isEmpty()) {
             return getVector2d(w, armorStand, directions);

@@ -29,8 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.BossfightRenderSe
 import lombok.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.World;
@@ -109,8 +109,8 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     public List<MarkerData> getMarkers() {
         List<MarkerData> markerData = new ArrayList<>();
         for (Entity entity : Minecraft.getInstance().level.getLoadedEntityList()) {
-            if (!(entity instanceof EntityLivingBase)) continue;
-            if (((EntityLivingBase) entity).getHealth() <= 0) continue;
+            if (!(entity instanceof LivingEntity)) continue;
+            if (((LivingEntity) entity).getHealth() <= 0) continue;
             MarkerData markerData1 = convertToMarker(entity);
             if (markerData1 != null) markerData.add(markerData1);
         }

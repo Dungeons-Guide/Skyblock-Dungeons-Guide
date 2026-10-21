@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 

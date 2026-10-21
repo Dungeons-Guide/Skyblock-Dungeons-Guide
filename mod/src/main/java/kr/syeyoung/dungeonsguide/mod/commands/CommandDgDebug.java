@@ -62,11 +62,11 @@ import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.io.FileUtils;
@@ -412,7 +412,7 @@ public class CommandDgDebug {
                 JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
 
 
-                NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
                 )));
                 byte[] blocks = compound.getByteArray("Blocks");
@@ -547,7 +547,7 @@ public class CommandDgDebug {
 
         File f = new File(dir, file);
             try (FileInputStream fis = new FileInputStream(f)){
-                NBTTagCompound compound = CompressedStreamTools.readCompressed(fis);
+                CompoundTag compound = NbtIo.readCompressed(fis);
                 byte[] blocks = compound.getByteArray("Blocks");
                 byte[] meta = compound.getByteArray("Data");
                 int shape = 1;
@@ -655,7 +655,7 @@ public class CommandDgDebug {
 
                 OutputStream outputStream = Files.newOutputStream(new File(outdir, "fixed-"+f.getName()).toPath());
 
-                CompressedStreamTools.writeCompressed(compound, outputStream);
+                NbtIo.writeCompressed(compound, outputStream);
 
                 outputStream.flush();
                 outputStream.close();
@@ -683,7 +683,7 @@ public class CommandDgDebug {
                 JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
 
 
-                NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
                 )));
                 byte[] blocks = compound.getByteArray("Blocks");
@@ -768,7 +768,7 @@ public class CommandDgDebug {
                     // smth i haven't visited yeet
                     // check
 
-                    NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                    CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                             jsonObject.get("schematic").getAsString()
                     )));
                     byte[] blocks = compound.getByteArray("Blocks");
@@ -839,7 +839,7 @@ public class CommandDgDebug {
                 }
 
 
-                NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
                 )));
                 byte[] blocks = compound.getByteArray("Blocks");
@@ -912,7 +912,7 @@ public class CommandDgDebug {
                     int thisRot = jsonObject.get("rot").getAsInt();
 
 
-                    NBTTagCompound compound2 = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                    CompoundTag compound2 = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                             originalRoomMapping.get("schematic").getAsString()
                     )));
                     byte[] blocks2 = compound2.getByteArray("Blocks");
@@ -1057,7 +1057,7 @@ public class CommandDgDebug {
     public static class MechanicNameSuggestor implements SuggestionProvider<FabricClientCommandSource> {
         public CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> commandContext, SuggestionsBuilder suggestionsBuilder) {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return suggestionsBuilder.buildFuture();
             }
@@ -1074,7 +1074,7 @@ public class CommandDgDebug {
     public static class StateSuggestor implements SuggestionProvider<FabricClientCommandSource> {
         public CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> commandContext, SuggestionsBuilder suggestionsBuilder) {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return suggestionsBuilder.buildFuture();
             }
@@ -1098,7 +1098,7 @@ public class CommandDgDebug {
                                 @CommandParam(value = "state", suggestionProvider = StateSuggestor.class) String state) {
         try {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return;
             }
@@ -1467,7 +1467,7 @@ public class CommandDgDebug {
     public void pFallCommand() {
         try {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return;
             }

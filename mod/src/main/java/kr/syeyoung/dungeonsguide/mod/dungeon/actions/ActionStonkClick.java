@@ -27,7 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 @Data

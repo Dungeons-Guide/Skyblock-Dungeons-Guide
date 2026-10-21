@@ -32,8 +32,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.Slot;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.Slot;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ItemTooltipEvent;
 import org.lwjgl.input.Mouse;
 
@@ -68,7 +68,7 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         solutionProvider = null;
         clicked.clear();
         if (event.gui instanceof GuiChest) {
-            ContainerChest cc = (ContainerChest) ((GuiChest) event.gui).inventorySlots;
+            ChestMenu cc = (ChestMenu) ((GuiChest) event.gui).inventorySlots;
             if (provider.isApplicable(cc)) {
                 solution = provider.provideSolution(cc, clicked);
                 this.solutionProvider = provider;
@@ -86,7 +86,7 @@ public class FeatureTerminalSolvers extends SimpleFeature {
             clicked.clear();
             return;
         }
-        ContainerChest cc = (ContainerChest) ((GuiChest) Minecraft.getInstance().screen).inventorySlots;
+        ChestMenu cc = (ChestMenu) ((GuiChest) Minecraft.getInstance().screen).inventorySlots;
 
         solution = solutionProvider.provideSolution(cc, clicked);
     }
@@ -104,7 +104,7 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         if (solution != null) {
             int i = 222;
             int j = i - 108;
-            int ySize = j + (((ContainerChest)(((GuiChest) Minecraft.getInstance().screen).inventorySlots)).getLowerChestInventory().getSizeInventory() / 9) * 18;
+            int ySize = j + (((ChestMenu)(((GuiChest) Minecraft.getInstance().screen).inventorySlots)).getLowerChestInventory().getSizeInventory() / 9) * 18;
             int left = (rendered.gui.width - 176) / 2;
             int top = (rendered.gui.height - ySize ) / 2;
             GlStateManager.pushMatrix();

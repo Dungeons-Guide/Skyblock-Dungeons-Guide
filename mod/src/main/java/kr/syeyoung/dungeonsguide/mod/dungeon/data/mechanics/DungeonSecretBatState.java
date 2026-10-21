@@ -37,8 +37,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
@@ -90,7 +90,7 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
             if (integerVec3Entry.getValue().squareDistanceTo(pos) < 100) {
                 Entity e = Minecraft.getInstance().level.getEntityByID(integerVec3Entry.getKey());
                 if (e == null) continue;
-                if (!(e instanceof EntityBat)) continue;
+                if (!(e instanceof Bat)) continue;
                 if (e.isDead) continue;
                 return; // bat is not dead.
             }

@@ -21,10 +21,10 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 import com.mojang.authlib.properties.Property;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.monster.EntityGuardian;
+import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
@@ -128,26 +128,26 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
         return "The Professor";
     }
 
-    private EntityArmorStand profStand;
-    private EntityArmorStand laserGuard;
-    private EntityArmorStand chaosGuard;
-    private EntityArmorStand reinforcedGuard;
-    private EntityArmorStand healthyGuard;
+    private ArmorStand profStand;
+    private ArmorStand laserGuard;
+    private ArmorStand chaosGuard;
+    private ArmorStand reinforcedGuard;
+    private ArmorStand healthyGuard;
     @Override
     public void onEntityUpdate(LivingTickEvent updateEvent) {
-        if (updateEvent.entityLiving instanceof EntityArmorStand) {
+        if (updateEvent.entityLiving instanceof ArmorStand) {
             if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lThe Professor§r"))
-                profStand = (EntityArmorStand) updateEvent.entityLiving;
+                profStand = (ArmorStand) updateEvent.entityLiving;
             else if (updateEvent.entityLiving.getName().startsWith("§cHealthy Guardian"))
-                healthyGuard = (EntityArmorStand) updateEvent.entityLiving;
+                healthyGuard = (ArmorStand) updateEvent.entityLiving;
             else if (updateEvent.entityLiving.getName().startsWith("§cChaos Guardian"))
-                chaosGuard = (EntityArmorStand) updateEvent.entityLiving;
+                chaosGuard = (ArmorStand) updateEvent.entityLiving;
             else if (updateEvent.entityLiving.getName().startsWith("§cLaser Guardian"))
-                laserGuard = (EntityArmorStand) updateEvent.entityLiving;
+                laserGuard = (ArmorStand) updateEvent.entityLiving;
             else if (updateEvent.entityLiving.getName().startsWith("§cReinforced Guardian"))
-                reinforcedGuard = (EntityArmorStand) updateEvent.entityLiving;
+                reinforcedGuard = (ArmorStand) updateEvent.entityLiving;
         }
-        if (updateEvent.entityLiving instanceof EntityGuardian) {
+        if (updateEvent.entityLiving instanceof Guardian) {
             boolean xB = Math.abs(updateEvent.entityLiving.posX - 14.5) < 0.01;
             boolean xS = Math.abs(updateEvent.entityLiving.posX - -11.5) < 0.01;
             boolean zB = Math.abs(updateEvent.entityLiving.posZ - 14.5) < 0.01;
@@ -169,7 +169,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
             } else if (yE && xS && zS) {
                 mapping.put(updateEvent.entityLiving.getEntityId(), 20);
             } else if (!mapping.containsKey(updateEvent.entityLiving.getEntityId())) {
-                mapping.put(updateEvent.entityLiving.getEntityId(), ((EntityGuardian) updateEvent.entityLiving).isElder() ? 21 : 22);
+                mapping.put(updateEvent.entityLiving.getEntityId(), ((Guardian) updateEvent.entityLiving).isElder() ? 21 : 22);
             }
         }
     }
@@ -179,11 +179,11 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
 
     @Override
     public MarkerData convertToMarker(Entity entity) {
-        if (entity instanceof EntityOtherPlayerMP) {
+        if (entity instanceof RemotePlayer) {
             if ("The Professor".equals(entity.getName())) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, 16);
             }
-        } else if (entity instanceof EntityGuardian) {
+        } else if (entity instanceof Guardian) {
             if (entity.isInvisible()) return null;
             Integer val = mapping.get(entity.getEntityId());
             if (val == null) return null;

@@ -22,8 +22,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ItemTooltipEvent;
 
 public class FeatureTooltipDungeonStat extends SimpleFeature {
@@ -36,12 +36,12 @@ public class FeatureTooltipDungeonStat extends SimpleFeature {
         
 
         ItemStack hoveredItem = event.itemStack;
-        NBTTagCompound compound = hoveredItem.getTagCompound();
+        CompoundTag compound = hoveredItem.getTagCompound();
         if (compound == null)
             return;
         if (!compound.hasKey("ExtraAttributes"))
             return;
-        NBTTagCompound nbtTagCompound = compound.getCompoundTag("ExtraAttributes");
+        CompoundTag nbtTagCompound = compound.getCompoundTag("ExtraAttributes");
 
         int floor = nbtTagCompound.getInteger("item_tier");
         int percentage = nbtTagCompound.getInteger("baseStatBoostPercentage");

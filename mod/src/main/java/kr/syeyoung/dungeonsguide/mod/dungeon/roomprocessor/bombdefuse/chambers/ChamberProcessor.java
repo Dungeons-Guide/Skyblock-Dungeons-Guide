@@ -19,9 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 
 public interface ChamberProcessor extends RoomProcessor {
-    void onDataReceive(NBTTagCompound compound);
+    void onDataReceive(CompoundTag compound);
     String getName();
 }

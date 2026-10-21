@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import lombok.Getter;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.storage.MapData;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -45,7 +45,7 @@ public class DungeonRoomScaffoldParser {
     private DungeonContext context;
 
     @Getter
-    private MapData latestMapData;
+    private MapItemSavedData latestMapData;
 
     @Getter
     private final Map<Point, DungeonRoom> roomMap = new HashMap<>();
@@ -77,7 +77,7 @@ public class DungeonRoomScaffoldParser {
         DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DungeonRoomDiscoveredEvent(dungeonRoom));
     }
 
-    public void processMap(MapData mapData2) {
+    public void processMap(MapItemSavedData mapData2) {
         int roomHeight = (int) ((128.0 - dungeonMapLayout.getOriginPoint().y) / (dungeonMapLayout.getUnitRoomSize().height + dungeonMapLayout.getMapRoomGap()));
         int roomWidth = (int) ((128.0 - dungeonMapLayout.getOriginPoint().x) / (dungeonMapLayout.getUnitRoomSize().width + dungeonMapLayout.getMapRoomGap()));
         latestMapData = mapData2;

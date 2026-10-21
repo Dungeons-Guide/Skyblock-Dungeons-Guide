@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.core.BlockPos;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import org.jetbrains.annotations.Nullable;
@@ -55,16 +55,16 @@ public class FeatureBoxSkelemaster extends SimpleFeature  {
         int val = this.<Integer>getParameter("radius").getValue();
         final int sq = val * val;
 
-        List<EntityArmorStand> skeletonList = Minecraft.getInstance().level.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
+        List<ArmorStand> skeletonList = Minecraft.getInstance().level.getEntities(ArmorStand.class, new Predicate<ArmorStand>() {
             @Override
-            public boolean apply(@Nullable EntityArmorStand input) {
+            public boolean apply(@Nullable ArmorStand input) {
                 if (player.distanceSq(input.getPosition()) > sq) return false;
                 if (!input.getAlwaysRenderNameTag()) return false;
                 return input.getName().contains("Skeleton Master");
             }
         });
         AColor c = this.<AColor>getParameter("color").getValue();
-        for (EntityArmorStand entitySkeleton : skeletonList) {
+        for (ArmorStand entitySkeleton : skeletonList) {
             RenderUtils.highlightBox(entitySkeleton, c, partialTicks, true);
         }
     }

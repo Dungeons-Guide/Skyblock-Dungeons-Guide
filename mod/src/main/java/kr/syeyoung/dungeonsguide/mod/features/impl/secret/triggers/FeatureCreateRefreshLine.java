@@ -37,8 +37,8 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplay
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
@@ -106,7 +106,7 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
     public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (!SkyblockStatus.isOnDungeon() || context == null) return;
-        EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+        LocalPlayer thePlayer = Minecraft.getInstance().player;
         if (thePlayer == null) return;
         if (context.getScaffoldParser() == null) return;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());

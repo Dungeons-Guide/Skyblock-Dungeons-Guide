@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
@@ -62,7 +62,7 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
 
 
         World w = getDungeonRoom().getContext().getWorld();
-        EntityPlayerSP entityPlayerSP = Minecraft.getInstance().player;
+        LocalPlayer entityPlayerSP = Minecraft.getInstance().player;
         BlockPos pos2 = new BlockPos(Math.floor(entityPlayerSP.posX), Math.floor(entityPlayerSP.posY), Math.floor(entityPlayerSP.posZ));
         Block b = w.getChunkFromBlockCoords(pos2).getBlock(pos2);
         Vec3 lookVec = entityPlayerSP.getLookVec();

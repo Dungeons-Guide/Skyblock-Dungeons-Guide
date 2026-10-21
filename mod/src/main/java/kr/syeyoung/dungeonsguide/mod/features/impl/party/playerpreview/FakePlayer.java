@@ -26,18 +26,18 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.World;
 
-public class FakePlayer extends EntityOtherPlayerMP {
+public class FakePlayer extends RemotePlayer {
     @Setter
     @Getter
     private PlayerProfile skyblockProfile;
@@ -57,9 +57,9 @@ public class FakePlayer extends EntityOtherPlayerMP {
             ItemStack highestItem = null;
             for (ItemStack itemStack : skyblockProfile.getInventory()) {
                 if (itemStack == null) continue;
-                NBTTagCompound display = itemStack.getTagCompound().getCompoundTag("display");
+                CompoundTag display = itemStack.getTagCompound().getCompoundTag("display");
                 if (display == null) continue;
-                NBTTagList nbtTagList = display.getTagList("Lore", 8);
+                ListTag nbtTagList = display.getTagList("Lore", 8);
                 if (nbtTagList == null) continue;
                 for (int i = 0; i < nbtTagList.tagCount(); i++) {
                     String str = nbtTagList.getStringTagAt(i);
@@ -98,9 +98,9 @@ public class FakePlayer extends EntityOtherPlayerMP {
             ItemStack highestItem = null;
             for (ItemStack itemStack : skyblockProfile.getInventory()) {
                 if (itemStack == null) continue;
-                NBTTagCompound display = itemStack.getTagCompound().getCompoundTag("display");
+                CompoundTag display = itemStack.getTagCompound().getCompoundTag("display");
                 if (display == null) continue;
-                NBTTagList nbtTagList = display.getTagList("Lore", 8);
+                ListTag nbtTagList = display.getTagList("Lore", 8);
                 if (nbtTagList == null) continue;
                 for (int i = 0; i < nbtTagList.tagCount(); i++) {
                     String str = nbtTagList.getStringTagAt(i);
@@ -137,7 +137,7 @@ public class FakePlayer extends EntityOtherPlayerMP {
     }
 
     @Override
-    public boolean isInvisibleToPlayer(EntityPlayer player) {
+    public boolean isInvisibleToPlayer(Player player) {
         return true;
     }
 

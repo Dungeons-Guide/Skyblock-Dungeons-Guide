@@ -43,6 +43,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.level.block.StairBlock;
 
 public class RaytraceHelper {
 
@@ -503,7 +504,7 @@ public class RaytraceHelper {
                         for (int xp = Mth.floor_double(x - 0.3); xp < Mth.floor_double(x + 0.3) + 1; xp++) {
                             for (int zp = Mth.floor_double(z - 0.3); zp < Mth.floor_double(z + 0.3) + 1; zp++) {
                                 isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord, zp)).getBlock() instanceof BlockSlab;
-                                isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord, zp)).getBlock() instanceof BlockStairs;
+                                isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord, zp)).getBlock() instanceof StairBlock;
                             }
                         }
                     }

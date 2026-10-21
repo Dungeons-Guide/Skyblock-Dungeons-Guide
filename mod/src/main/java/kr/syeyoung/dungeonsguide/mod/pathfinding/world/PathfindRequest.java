@@ -25,8 +25,8 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import org.apache.commons.codec.binary.Hex;
 
@@ -153,8 +153,8 @@ public class PathfindRequest { // TODO: fix data flow.
 
         // export algorithm settings
         dataOutputStream.writeBytes("ALGO");
-        NBTTagCompound tagCompound = algorithmSetting.serializeToNBT();
-        CompressedStreamTools.write(tagCompound, dataOutputStream);
+        CompoundTag tagCompound = algorithmSetting.serializeToNBT();
+        NbtIo.write(tagCompound, dataOutputStream);
 
         // export targets
         dataOutputStream.writeBytes("TRGT");

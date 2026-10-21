@@ -29,7 +29,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 import org.lwjgl.opengl.GL11;
@@ -73,7 +73,7 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
         BlockPos block = pos.getBlockPos();
         Block b = getChamber().getRoom().getContext().getWorld().getBlockState(block).getBlock();
 
-        NBTTagCompound nbt = new NBTTagCompound();
+        CompoundTag nbt = new CompoundTag();
         nbt.setByte("a", (byte) 5);
         nbt.setInteger("b", Block.getIdFromBlock(b));
         getSolver().communicate(nbt);

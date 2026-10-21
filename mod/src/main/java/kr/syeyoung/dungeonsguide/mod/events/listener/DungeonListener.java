@@ -54,7 +54,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
@@ -65,9 +65,9 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.network.play.server.S21PacketChunkData;
 import net.minecraft.network.play.server.S26PacketMapChunkBulk;
 import net.minecraft.util.profiling.Profiler;
@@ -123,7 +123,7 @@ public class DungeonListener {
 
         if (context != null) {
 
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return;
             }
@@ -157,7 +157,7 @@ public class DungeonListener {
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context != null) {
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) return;
             if (context.getBossfightProcessor() != null) context.getBossfightProcessor().onEntityUpdate(e);
             if (context.getScaffoldParser() != null) {
@@ -218,7 +218,7 @@ public class DungeonListener {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (SkyblockStatus.isOnDungeon() && context != null) {
 
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return;
             }
@@ -250,7 +250,7 @@ public class DungeonListener {
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (!SkyblockStatus.isOnDungeon() || context == null) return;
-        EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+        LocalPlayer thePlayer = Minecraft.getInstance().player;
         if (thePlayer == null) return;
         if (context.getScaffoldParser() == null) return;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
@@ -277,7 +277,7 @@ public class DungeonListener {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context != null) {
 
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
 
             profiler.push("Dungeons Guide - RenderGameOverlay.Post :: Bossfight Processor");
             if (context.getBossfightProcessor() != null)
@@ -346,7 +346,7 @@ public class DungeonListener {
 
         if (context != null) {
 
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
             context.onChat(clientChatReceivedEvent);
 
             if (context.getBossfightProcessor() != null) {
@@ -421,7 +421,7 @@ public class DungeonListener {
 
             profiler.popPush("Dungeons Guide - RenderWorldLast :: Room Processor");
             if (context.getScaffoldParser() != null) {
-                EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+                LocalPlayer thePlayer = Minecraft.getInstance().player;
                 Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
 
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
@@ -532,7 +532,7 @@ public class DungeonListener {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null) {
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onKeybindPress(keyInputEvent);
@@ -556,7 +556,7 @@ public class DungeonListener {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null) {
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onInteract(interact);
@@ -582,7 +582,7 @@ public class DungeonListener {
 
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null) {
 
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onBlockUpdate(postInteract);
@@ -611,7 +611,7 @@ public class DungeonListener {
 //                    ChatTransmitter.addToQueue(Component.literal("Not in dungeons"));
 //                    return;
 //                }
-//                EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+//                LocalPlayer thePlayer = Minecraft.getInstance().player;
 //                if (context.getScaffoldParser() != null) {
 //                    Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
 //                    DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
@@ -641,7 +641,7 @@ public class DungeonListener {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         if (context != null) {
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onInteractBlock(keyInputEvent);
@@ -664,7 +664,7 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onEntitySpawn(EntityEnterWorldEvent spawn) {
-//        if (spawn.entity instanceof EntityBat)
+//        if (spawn.entity instanceof Bat)
 //            System.out.println(spawn.entity +" Spawned!! dist: "+spawn.entity.getDistanceToEntity(Minecraft.getInstance().player));
 
         DungeonActionContext.getSpawnLocation().put(spawn.entity.getEntityId(), new Vec3(spawn.entity.posX, spawn.entity.posY, spawn.entity.posZ));
@@ -672,7 +672,7 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onItemPickup(ItemPickupEvent event) {
-        if (Minecraft.getInstance().level.getEntityByID(event.getItemId()) instanceof EntityItem)
+        if (Minecraft.getInstance().level.getEntityByID(event.getItemId()) instanceof ItemEntity)
             DungeonActionContext.getPickedups().add(event.getItemId());
     }
 
@@ -680,7 +680,7 @@ public class DungeonListener {
     public void onEntityDespawn2(EntityExitWorldEvent worldEvent) {
         for (int entityId : worldEvent.getEntityIds()) {
             Entity en = Minecraft.getInstance().level.getEntityByID(entityId);
-            if (en instanceof EntityBat && en.getDistanceSqToEntity(Minecraft.getInstance().player) < 3025)
+            if (en instanceof Bat && en.getDistanceSqToEntity(Minecraft.getInstance().player) < 3025)
                 DungeonActionContext.getKilleds().add(entityId);
         }
     }
@@ -714,7 +714,7 @@ public class DungeonListener {
     }
     @SubscribeEvent
     public void onEntityDeSpawn(LivingDeathEvent deathEvent) {
-        if (deathEvent.entityLiving instanceof EntityBat)
+        if (deathEvent.entityLiving instanceof Bat)
             DungeonActionContext.getKilleds().add(deathEvent.entity.getEntityId());
 
         if (!SkyblockStatus.isOnDungeon()) return;
@@ -722,7 +722,7 @@ public class DungeonListener {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         if (context != null) {
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onEntityDeath(deathEvent);
@@ -738,7 +738,7 @@ public class DungeonListener {
             }
         }
 
-        if (!(deathEvent.entityLiving instanceof EntityBat))
+        if (!(deathEvent.entityLiving instanceof Bat))
             DungeonActionContext.getSpawnLocation().remove(deathEvent.entity.getEntityId());
     }
 

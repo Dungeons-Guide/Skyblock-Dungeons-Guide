@@ -54,7 +54,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.world.level.GameType;
 
@@ -276,7 +276,7 @@ public class FeatureDungeonMap2 extends AbstractHUDFeature {
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
             if (name == null) continue;
 
-            EntityPlayer entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
+            Player entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
 
             overlays.add(new MapOverlayPlayer(playerInfo,
                     entityplayer == Minecraft.getInstance().player ? mapConfiguration.getSelfSettings() : mapConfiguration.getTeammateSettings()));

@@ -25,13 +25,13 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemMap;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.MapItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.Vec4b;
-import net.minecraft.world.storage.MapData;
+import net.minecraft.world.level.saveddata.maps.MapDecoration;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -65,11 +65,11 @@ public class MapPlayerProcessor {
         }
         ItemStack stack = mc.player.inventory.getStackInSlot(8);
 
-        if (stack == null || !(stack.getItem() instanceof ItemMap)) {
+        if (stack == null || !(stack.getItem() instanceof MapItem)) {
             return;
         }
 
-        MapData mapData = ((ItemMap) stack.getItem()).getMapData(stack, mc.level);
+        MapItemSavedData mapData = ((MapItem) stack.getItem()).getMapData(stack, mc.level);
 
         if (mapData != null && mapIconToPlayerMap.size() < context.getPlayers().size()) {
             getPlayersFromMap(mapData);
@@ -78,14 +78,14 @@ public class MapPlayerProcessor {
     }
 
 
-    private void getPlayersFromMap(MapData mapdata) {
+    private void getPlayersFromMap(MapItemSavedData mapdata) {
         int lim = Minecraft.getInstance().options.renderDistanceChunks * 16;
         lim = lim * lim;
 
         if (context.getScaffoldParser() == null) return;
-        for (Map.Entry<String, Vec4b> stringVec4bEntry : mapdata.mapDecorations.entrySet()) {
+        for (Map.Entry<String, MapDecoration> stringVec4bEntry : mapdata.mapDecorations.entrySet()) {
             String mapDecString = stringVec4bEntry.getKey();
-            Vec4b vec4 = stringVec4bEntry.getValue();
+            MapDecoration vec4 = stringVec4bEntry.getValue();
             if (vec4.func_176110_a() == 1) continue;
 
             if (!mapIconToPlayerMap.containsValue(mapDecString)) {
@@ -113,7 +113,7 @@ public class MapPlayerProcessor {
     }
 
     private boolean isPlayerNear(String player, BlockPos mapPos) {
-        EntityPlayer entityPlayer = mc.level.getPlayerEntityByName(player);
+        Player entityPlayer = mc.level.getPlayerEntityByName(player);
 
         if (entityPlayer != null && !entityPlayer.isInvisible()) {
             BlockPos pos = entityPlayer.getPosition();

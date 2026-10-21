@@ -32,7 +32,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 import org.lwjgl.opengl.GL11;
@@ -51,7 +51,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
 
 
     @Override
-    public void onDataReceive(NBTTagCompound compound) {
+    public void onDataReceive(CompoundTag compound) {
 
     }
 

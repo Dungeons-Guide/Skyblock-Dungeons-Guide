@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderLivingEvent;
 
 
@@ -39,8 +39,8 @@ public class FeatureHideNameTags extends SimpleFeature  {
         
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        if (renderPlayerEvent.entity instanceof EntityArmorStand) {
-            EntityArmorStand armorStand = (EntityArmorStand) renderPlayerEvent.entity;
+        if (renderPlayerEvent.entity instanceof ArmorStand) {
+            ArmorStand armorStand = (ArmorStand) renderPlayerEvent.entity;
             if (armorStand.getAlwaysRenderNameTag() && armorStand.getName().contains("❤"))
                 renderPlayerEvent.setCanceled(true);
         }

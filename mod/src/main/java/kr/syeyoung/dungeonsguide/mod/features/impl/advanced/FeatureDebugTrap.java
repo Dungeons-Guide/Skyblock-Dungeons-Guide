@@ -27,8 +27,8 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ambient.Bat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +73,7 @@ public class FeatureDebugTrap extends TextHUDFeature {
     @Override
     public TextSpan getText() {
 
-        List<Entity> bats = Minecraft.getInstance().level.getEntities(EntityBat.class, e -> true);
+        List<Entity> bats = Minecraft.getInstance().level.getEntities(Bat.class, e -> true);
 
 
         TextSpan actualBit = new TextSpan(new NullTextStyle(), "");

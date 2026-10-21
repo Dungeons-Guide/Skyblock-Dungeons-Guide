@@ -45,11 +45,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.Items;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.ChatFormatting;
 import net.minecraft.resources.Identifier;
 
@@ -352,13 +352,13 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
         addItems();
     }
     public void extractPage(ItemStack itemStack) {
-        NBTTagCompound stackTagCompound = itemStack.getTagCompound();
+        CompoundTag stackTagCompound = itemStack.getTagCompound();
         int page = -1;
         if (stackTagCompound.hasKey("display", 10)) {
-            NBTTagCompound nbtTagCompound = stackTagCompound.getCompoundTag("display");
+            CompoundTag nbtTagCompound = stackTagCompound.getCompoundTag("display");
 
             if (nbtTagCompound.getTagId("Lore") == 9) {
-                NBTTagList nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
+                ListTag nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
 
                 for (int i = 0; i < nbtTagList1.tagCount(); i++) {
                     String str = nbtTagList1.getStringTagAt(i);
@@ -393,12 +393,12 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     public void extractSearch(ItemStack itemStack) {
         String dungeon="", floor="", text="", classLv="", dungeonLv="", sort="";
         {
-            NBTTagCompound stackTagCompound = itemStack.getTagCompound();
+            CompoundTag stackTagCompound = itemStack.getTagCompound();
             if (stackTagCompound.hasKey("display", 10)) {
-                NBTTagCompound nbtTagCompound = stackTagCompound.getCompoundTag("display");
+                CompoundTag nbtTagCompound = stackTagCompound.getCompoundTag("display");
 
                 if (nbtTagCompound.getTagId("Lore") == 9) {
-                    NBTTagList nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
+                    ListTag nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
 
                     for (int i = 0; i < nbtTagList1.tagCount(); i++) {
                         String str = nbtTagList1.getStringTagAt(i);

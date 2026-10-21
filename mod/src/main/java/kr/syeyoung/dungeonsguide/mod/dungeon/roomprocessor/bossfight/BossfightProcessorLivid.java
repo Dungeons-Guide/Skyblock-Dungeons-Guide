@@ -25,11 +25,11 @@ import lombok.Getter;
 import net.minecraft.block.BlockColored;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
 
@@ -41,8 +41,8 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     private String prefix = "§c";
 
 
-    private EntityOtherPlayerMP realLivid;
-    private EntityArmorStand lividStand;
+    private RemotePlayer realLivid;
+    private ArmorStand lividStand;
 
     private final boolean isMasterMode;
 
@@ -82,10 +82,10 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
         correctLivid = Minecraft.getInstance().level.getChunkFromBlockCoords(new BlockPos(5, 108, 42)).getBlockMetadata(new BlockPos(5, 108, 42));
         realLividName = lividMetadata.get(correctLivid);
         prefix = lividColorPrefix.get(realLividName);
-        if (updateEvent.entityLiving.getName().startsWith(realLividName) && updateEvent.entityLiving instanceof EntityOtherPlayerMP) {
-            realLivid = (EntityOtherPlayerMP) updateEvent.entityLiving;
-        } else if (updateEvent.entityLiving.getName().startsWith(prefix+"﴾ ") && updateEvent.entityLiving instanceof EntityArmorStand) {
-            lividStand = (EntityArmorStand) updateEvent.entityLiving;
+        if (updateEvent.entityLiving.getName().startsWith(realLividName) && updateEvent.entityLiving instanceof RemotePlayer) {
+            realLivid = (RemotePlayer) updateEvent.entityLiving;
+        } else if (updateEvent.entityLiving.getName().startsWith(prefix+"﴾ ") && updateEvent.entityLiving instanceof ArmorStand) {
+            lividStand = (ArmorStand) updateEvent.entityLiving;
         }
     }
 
@@ -118,7 +118,7 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
 
     @Override
     public MarkerData convertToMarker(Entity entity) {
-        if (entity instanceof EntityOtherPlayerMP) {
+        if (entity instanceof RemotePlayer) {
             String name = entity.getName();
             int idx = 0;
             if (name.equals("Livid ")) {

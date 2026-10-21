@@ -34,11 +34,11 @@ import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ItemTooltipEvent;
 import org.lwjgl.input.Mouse;
 
@@ -65,7 +65,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
         if (!isEnabled()) return;
         isCorrectGui = false;
         if (event.gui instanceof GuiChest) {
-            ContainerChest cc = (ContainerChest) ((GuiChest) event.gui).inventorySlots;
+            ChestMenu cc = (ChestMenu) ((GuiChest) event.gui).inventorySlots;
             if (cc.getLowerChestInventory().getName().equals("Change all to same color!")) {
                 isCorrectGui = true;
             }
@@ -80,7 +80,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
             isCorrectGui = false;
             return;
         }
-        ContainerChest cc = (ContainerChest) ((GuiChest) Minecraft.getInstance().screen).inventorySlots;
+        ChestMenu cc = (ChestMenu) ((GuiChest) Minecraft.getInstance().screen).inventorySlots;
         int[] currSlot = new int[9];
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
@@ -89,15 +89,15 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
                         toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane)) {
                     int meta = toChk.getStack().getItemDamage();
                     int idx = y * 3 + x;
-                    if (meta == EnumDyeColor.RED.getMetadata()) {
+                    if (meta == DyeColor.RED.getMetadata()) {
                         currSlot[idx] = 0;
-                    } else if (meta == EnumDyeColor.ORANGE.getMetadata()) {
+                    } else if (meta == DyeColor.ORANGE.getMetadata()) {
                         currSlot[idx] = 1;
-                    } else if (meta == EnumDyeColor.YELLOW.getMetadata()) {
+                    } else if (meta == DyeColor.YELLOW.getMetadata()) {
                         currSlot[idx] = 2;
-                    } else if (meta == EnumDyeColor.GREEN.getMetadata()) {
+                    } else if (meta == DyeColor.GREEN.getMetadata()) {
                         currSlot[idx] = 3;
-                    } else if (meta == EnumDyeColor.BLUE.getMetadata()) {
+                    } else if (meta == DyeColor.BLUE.getMetadata()) {
                         currSlot[idx] = 4;
                     }
                 }
@@ -154,8 +154,8 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
         if (solution != null) {
             int i = 222;
             int j = i - 108;
-            ContainerChest container = (ContainerChest) (((GuiChest) Minecraft.getInstance().screen).inventorySlots);
-            IInventory inventory  = container.getLowerChestInventory();
+            ChestMenu container = (ChestMenu) (((GuiChest) Minecraft.getInstance().screen).inventorySlots);
+            Container inventory  = container.getLowerChestInventory();
             int ySize = j + (inventory.getSizeInventory() / 9) * 18;
             int left = (rendered.gui.width - 176) / 2;
             int top = (rendered.gui.height - ySize ) / 2;

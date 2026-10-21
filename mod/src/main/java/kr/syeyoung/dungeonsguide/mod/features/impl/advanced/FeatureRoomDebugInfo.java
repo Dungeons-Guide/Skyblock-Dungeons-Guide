@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.gui.FontRenderer;
 import org.apache.commons.lang3.StringUtils;
 
@@ -64,7 +64,7 @@ public class FeatureRoomDebugInfo extends TextHUDFeature {
         if (!FeatureRegistry.DEBUG.isEnabled()) return new TextSpan(new NullTextStyle(), "");
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return new TextSpan(new NullTextStyle(), "");
-        EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+        LocalPlayer thePlayer = Minecraft.getInstance().player;
         if (context.getScaffoldParser() == null) return new TextSpan(new NullTextStyle(), "");
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);

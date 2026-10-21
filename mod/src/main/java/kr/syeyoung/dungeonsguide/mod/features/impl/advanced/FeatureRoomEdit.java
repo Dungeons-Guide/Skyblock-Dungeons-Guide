@@ -62,12 +62,12 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -118,7 +118,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
         OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new BlockPos(0,0,0));
 
-        NBTTagCompound compound = schematic;
+        CompoundTag compound = schematic;
         int w = compound.getShort("Width");
         int l = compound.getShort("Length");
         if (dungeonRoom.getRoomMatcher().getRotation() % 2 == 1) {
@@ -171,7 +171,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
 
         if (Minecraft.getInstance().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
-            NBTTagCompound compound = schematic;
+            CompoundTag compound = schematic;
             for (int x = 0; x < compound.getShort("Width") + 16; x+= 1) {
                 for (int y = 0; y < compound.getShort("Height"); y++) {
                     for (int z = 0; z < compound.getShort("Length") + 16; z+=1) {
@@ -277,7 +277,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
         }
 
         if (Minecraft.getInstance().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
-            NBTTagCompound compound = schematic;
+            CompoundTag compound = schematic;
             for (int x = 0; x < compound.getShort("Width") + 16; x+= 1) {
                 for (int y = 0; y < compound.getShort("Height"); y++) {
                     for (int z = 0; z < compound.getShort("Length") + 16; z+=1) {
@@ -346,9 +346,9 @@ public class FeatureRoomEdit  extends SimpleFeature {
         shape = jsonObject.get("shape").getAsShort();
         color = jsonObject.get("color").getAsByte();
 
-        NBTTagCompound compound;
+        CompoundTag compound;
         try {
-            compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+            compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                     jsonObject.get("schematic").getAsString()
             )));
         } catch (IOException e) {
@@ -400,7 +400,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
 
         if (Minecraft.getInstance().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
-            NBTTagCompound compound = schematic;
+            CompoundTag compound = schematic;
             for (int x = 0; x < compound.getShort("Width") + 16; x+= 1) {
                 for (int y = 0; y < compound.getShort("Height"); y++) {
                     for (int z = 0; z < compound.getShort("Length") + 16; z+=1) {
@@ -453,9 +453,9 @@ public class FeatureRoomEdit  extends SimpleFeature {
         shape = 1;
         color = 63;
 
-        NBTTagCompound compound;
+        CompoundTag compound;
         try (FileInputStream fis = new FileInputStream(f)){
-            compound =  CompressedStreamTools.readCompressed(fis);
+            compound =  NbtIo.readCompressed(fis);
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -616,7 +616,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
     private byte color;
     private int xWid, zWid;
     private boolean setup = false;
-    private NBTTagCompound schematic;
+    private CompoundTag schematic;
 
     @Getter
     private List<FeatureCollectDungeonRooms.RoomInfo.BlockUpdate> blockUpdates;

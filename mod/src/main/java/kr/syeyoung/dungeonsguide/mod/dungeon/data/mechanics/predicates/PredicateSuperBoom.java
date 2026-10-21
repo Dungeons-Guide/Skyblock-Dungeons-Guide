@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.predicates;
 
 import com.google.common.base.Predicate;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public class PredicateSuperBoom implements Predicate<ItemStack> {

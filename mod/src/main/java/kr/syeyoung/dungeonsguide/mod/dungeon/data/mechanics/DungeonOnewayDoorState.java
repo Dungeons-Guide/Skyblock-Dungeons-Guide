@@ -34,7 +34,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.item.EntityFallingBlock;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
@@ -100,7 +100,7 @@ public class DungeonOnewayDoorState implements DungeonMechanicState, WorldMutati
         for (OffsetPoint offsetPoint : data.secretPoint.getOffsetPointList()) {
             if (offsetPoint.getBlock(dungeonRoom) != Blocks.air) {
                 BlockPos blockPos = offsetPoint.getBlockPos(dungeonRoom);
-                if (Minecraft.getInstance().level != null && !Minecraft.getInstance().level.getEntitiesWithinAABB(EntityFallingBlock.class, new AABB(
+                if (Minecraft.getInstance().level != null && !Minecraft.getInstance().level.getEntitiesWithinAABB(FallingBlockEntity.class, new AABB(
                             blockPos.getX(), blockPos.getY() - 4, blockPos.getZ(),
                             blockPos.getX() + 1, blockPos.getY() + 1, blockPos.getZ() + 1
                 )).isEmpty()) return false;

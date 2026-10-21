@@ -22,7 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonDoor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -30,9 +30,9 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
@@ -1198,9 +1198,9 @@ public class RenderUtils {
         int rgb = RenderUtils.getColorAt(entity.posX * 10,entity.posY * 10,c);
         GlStateManager.color(((rgb >> 16) &0XFF)/ 255.0f, ((rgb>>8) &0XFF)/ 255.0f, (rgb & 0xff)/ 255.0f, ((rgb >> 24) & 0xFF) / 255.0f);
         if (axisAlignedBB == null) {
-            if (entity instanceof EntityArmorStand) {
+            if (entity instanceof ArmorStand) {
                 axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
-            } else if (entity instanceof EntityBat) {
+            } else if (entity instanceof Bat) {
                 axisAlignedBB = AABB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
             } else {
                 axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
@@ -1285,9 +1285,9 @@ public class RenderUtils {
         }
         GlStateManager.color(c.getRed()/ 255.0f, c.getGreen()/ 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);
         if (axisAlignedBB == null) {
-            if (entity instanceof EntityArmorStand) {
+            if (entity instanceof ArmorStand) {
                 axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
-            } else if (entity instanceof EntityBat) {
+            } else if (entity instanceof Bat) {
                 axisAlignedBB = AABB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
             } else {
                 axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
@@ -1373,9 +1373,9 @@ public class RenderUtils {
         }
         GlStateManager.color(c.getRed()/ 255.0f, c.getGreen()/ 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);
         AABB axisAlignedBB;
-        if (entity instanceof EntityArmorStand) {
+        if (entity instanceof ArmorStand) {
             axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
-        } else if (entity instanceof EntityBat) {
+        } else if (entity instanceof Bat) {
             axisAlignedBB = AABB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
         } else {
             axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
@@ -1467,9 +1467,9 @@ public class RenderUtils {
         GlStateManager.color(((rgb >> 16) &0XFF)/ 255.0f, ((rgb>>8) &0XFF)/ 255.0f, (rgb & 0xff)/ 255.0f, ((rgb >> 24) & 0xFF) / 255.0f);
 
         AABB axisAlignedBB;
-        if (entity instanceof EntityArmorStand) {
+        if (entity instanceof ArmorStand) {
             axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
-        } else if (entity instanceof EntityBat) {
+        } else if (entity instanceof Bat) {
             axisAlignedBB = AABB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
         } else {
             axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
@@ -1638,7 +1638,7 @@ public class RenderUtils {
     }
 
     public static Vector3f getRenderPos(float x, float y, float z, float partialTicks) {
-        EntityPlayerSP sp = Minecraft.getInstance().player;
+        LocalPlayer sp = Minecraft.getInstance().player;
         return new Vector3f(
                 x - (float) (sp.lastTickPosX + (sp.posX - sp.lastTickPosX) * partialTicks),
                 y - (float) (sp.lastTickPosY + (sp.posY - sp.lastTickPosY) * partialTicks),

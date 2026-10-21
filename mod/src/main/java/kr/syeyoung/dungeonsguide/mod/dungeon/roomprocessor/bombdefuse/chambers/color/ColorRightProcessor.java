@@ -26,10 +26,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.G
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
 
 import java.util.HashMap;
@@ -61,9 +61,9 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void tick() {
         super.tick();
-        c1b = match(getChamber().getEntityAt(EntityArmorStand.class,b1.add(0, -1, 0)));
-        c2b = match(getChamber().getEntityAt(EntityArmorStand.class,b2.add(0, -1, 0)));
-        c3b = match(getChamber().getEntityAt(EntityArmorStand.class,b3.add(0, -1, 0)));
+        c1b = match(getChamber().getEntityAt(ArmorStand.class,b1.add(0, -1, 0)));
+        c2b = match(getChamber().getEntityAt(ArmorStand.class,b2.add(0, -1, 0)));
+        c3b = match(getChamber().getEntityAt(ArmorStand.class,b3.add(0, -1, 0)));
     }
 
     @Override
@@ -82,7 +82,7 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void onSendData() {
         super.onSendData();
-        NBTTagCompound nbt = new NBTTagCompound();
+        CompoundTag nbt = new CompoundTag();
         nbt.setByte("a", (byte) 6);
         nbt.setByte("f", (byte) Block.getIdFromBlock(getChamber().getBlock(0,3,3).getBlock()));
         nbt.setByte("s", (byte) Block.getIdFromBlock(getChamber().getBlock(0,3,2).getBlock()));
@@ -91,7 +91,7 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void onDataReceive(NBTTagCompound compound) {
+    public void onDataReceive(CompoundTag compound) {
         if (7 == compound.getByte("a")) {
             answer = compound.getInteger("b");
             b3b = (byte) (answer / 10000);
@@ -101,13 +101,13 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
         }
     }
 
-    private byte match(EntityArmorStand armorStand) {
+    private byte match(ArmorStand armorStand) {
         if (armorStand == null) {
             return 0;
         }
         ItemStack item = armorStand.getInventory()[4];
-        NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
-        String str = ((NBTTagCompound)list.get(0)).getString("Value");
+        ListTag list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
+        String str = ((CompoundTag)list.get(0)).getString("Value");
         return (byte) (!integers.containsKey(str) ? 0 : integers.get(str));
     }
 

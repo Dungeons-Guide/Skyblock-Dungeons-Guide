@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 @Data

@@ -32,14 +32,14 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.World;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
@@ -103,7 +103,7 @@ public class FeatureArrowPathSolver extends SimpleFeature {
 
         if (System.currentTimeMillis() < nextUpdate) return;
         World w = dc.getWorld();
-        List<EntityItemFrame> frames = w.getEntities(EntityItemFrame.class, filter -> {
+        List<ItemFrame> frames = w.getEntities(ItemFrame.class, filter -> {
             BlockPos pos = filter.getPosition();
             if (pos.getX() != -2) return false;
             if (pos.getZ() < 75 || pos.getZ() > 79) return false;
@@ -118,14 +118,14 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         int[][] bfsAble = new int[5][5];
         int[][] solution = new int[5][5];
         Queue<Point> begin = new LinkedList<>();
-        for (EntityItemFrame frame : frames) {
+        for (ItemFrame frame : frames) {
             int x = frame.getPosition().getZ() - 75;
             int y = frame.getPosition().getY() - 121;
 
             if (frame.getDisplayedItem().getItem() == Items.arrow) {
                 mapping[y][x] = frame.getRotation()+1;
                 bfsAble[y][x] = 9999;
-            } else if (frame.getDisplayedItem().getMetadata() == EnumDyeColor.LIME.getMetadata()) {
+            } else if (frame.getDisplayedItem().getMetadata() == DyeColor.LIME.getMetadata()) {
                 mapping[y][x] = 10; // starting
                 bfsAble[y][x] = 99999;
             } else {
@@ -210,8 +210,8 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         if (event.isInteractAt()) return;
 
         Entity e = event.getEntity();
-        if (!(e instanceof EntityItemFrame)) return;
-        EntityItemFrame itemFrame = (EntityItemFrame) e;
+        if (!(e instanceof ItemFrame)) return;
+        ItemFrame itemFrame = (ItemFrame) e;
         BlockPos pos = itemFrame.getPosition();
         if (pos.getX() != -2) return;
         if (pos.getZ() < 75 || pos.getZ() > 79) return;

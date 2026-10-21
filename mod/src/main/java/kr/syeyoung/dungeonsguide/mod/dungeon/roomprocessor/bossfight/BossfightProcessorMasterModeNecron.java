@@ -19,11 +19,11 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.boss.BossStatus;
-import net.minecraft.entity.boss.EntityWither;
-import net.minecraft.entity.item.EntityEnderCrystal;
-import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
+import net.minecraft.world.entity.monster.skeleton.Skeleton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -234,13 +234,13 @@ public class BossfightProcessorMasterModeNecron extends GeneralBossfightProcesso
 
     @Override
     public MarkerData convertToMarker(Entity entity) {
-        if (entity instanceof EntityEnderCrystal) {
+        if (entity instanceof EndCrystal) {
             return MarkerData.fromEntity(entity, MarkerData.MobType.CRYSTALS, 53);
-        } else if (entity instanceof EntitySkeleton) {
-            if (((EntitySkeleton) entity).getSkeletonType() == 1) {
+        } else if (entity instanceof Skeleton) {
+            if (((Skeleton) entity).getSkeletonType() == 1) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.ENEMIES, 56);
             }
-        } else if (entity instanceof EntityWither) {
+        } else if (entity instanceof WitherBoss) {
             int idx = -1;
             if (Arrays.asList("maxor-fight").contains(getCurrentPhase())) {
                 idx = 58;

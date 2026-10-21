@@ -12,11 +12,11 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.Vec4b;
+import net.minecraft.world.level.saveddata.maps.MapDecoration;
 
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
@@ -49,7 +49,7 @@ public class MapOverlayPlayerClickable implements MapOverlay {
     }
 
     public Vector3d getLocation(float partialTicks) {
-        EntityPlayer entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
+        Player entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
 
         Vector2d pt2 = null;
         double yaw2 = 0;
@@ -66,7 +66,7 @@ public class MapOverlayPlayerClickable implements MapOverlay {
             // getting player location from map
             String iconName = context.getMapPlayerMarkerProcessor().getMapIconToPlayerMap().get(name);
             if (iconName != null) {
-                Vec4b vec = context.getScaffoldParser().getLatestMapData().mapDecorations.get(iconName);
+                MapDecoration vec = context.getScaffoldParser().getLatestMapData().mapDecorations.get(iconName);
                 if (vec != null) {
                     BlockPos worldPt = context.getScaffoldParser().getDungeonMapLayout().mapPointToWorldPoint(new Point(vec.func_176112_b() / 2 + 64, vec.func_176113_c()/2 + 64));
                     return new Vector3d(worldPt.getX(), worldPt.getZ(), vec.func_176111_d() * 360 / 16.0f);

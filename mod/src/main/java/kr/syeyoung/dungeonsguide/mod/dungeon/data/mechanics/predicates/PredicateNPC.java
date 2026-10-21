@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.predicates;
 
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
@@ -31,7 +31,7 @@ public class PredicateNPC implements Predicate<Entity> {
 
     @Override
     public boolean test(@Nullable Entity input) {
-        return input instanceof EntityOtherPlayerMP;
+        return input instanceof RemotePlayer;
     }
 
     @Override

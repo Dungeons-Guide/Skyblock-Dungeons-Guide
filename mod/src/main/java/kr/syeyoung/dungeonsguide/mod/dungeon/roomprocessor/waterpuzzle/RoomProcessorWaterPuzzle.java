@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.block.BlockLever;
+import net.minecraft.world.level.block.LeverBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.level.block.Blocks;
@@ -107,7 +107,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
             if (offsetPoint.getBlock(getDungeonRoom()) == Blocks.lever){
                 BlockPos pos = offsetPoint.getBlockPos(getDungeonRoom());
                 World w=  getDungeonRoom().getContext().getWorld();
-                BlockLever.EnumOrientation enumOrientation = w.getBlockState(pos).getValue(BlockLever.FACING);
+                LeverBlock.EnumOrientation enumOrientation = w.getBlockState(pos).getValue(LeverBlock.FACING);
                 Direction enumFacing = enumOrientation.getFacing();
                 BlockPos newPos = pos.add(-enumFacing.getDirectionVec().getX(),0,-enumFacing.getDirectionVec().getZ());
 

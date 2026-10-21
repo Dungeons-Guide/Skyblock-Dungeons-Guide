@@ -31,9 +31,9 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.item.Items;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.Slot;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.nbt.CompoundTag;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -47,14 +47,14 @@ public class FeatureGoodParties extends SimpleFeature {
         
         if (!(Minecraft.getInstance().screen instanceof GuiChest)) return;
         GuiChest chest = (GuiChest) Minecraft.getInstance().screen;
-        ContainerChest cont = (ContainerChest) chest.inventorySlots;
+        ChestMenu cont = (ChestMenu) chest.inventorySlots;
         String name = cont.getLowerChestInventory().getName();
         if (!"Party Finder".equals(name)) return;
 
 
         int i = 222;
         int j = i - 108;
-        int ySize = j + (((ContainerChest)(((GuiChest) Minecraft.getInstance().screen).inventorySlots)).getLowerChestInventory().getSizeInventory() / 9) * 18;
+        int ySize = j + (((ChestMenu)(((GuiChest) Minecraft.getInstance().screen).inventorySlots)).getLowerChestInventory().getSizeInventory() / 9) * 18;
         int left = (rendered.gui.width - 176) / 2;
         int top = (rendered.gui.height - ySize ) / 2;
         GlStateManager.pushMatrix();
@@ -69,9 +69,9 @@ public class FeatureGoodParties extends SimpleFeature {
                 Slot s = cont.inventorySlots.get(i1);
                 if (s.getStack() == null) continue;
                 if (s.getStack().getItem() != Items.skull) continue;
-                NBTTagCompound nbt = s.getStack().getTagCompound();
+                CompoundTag nbt = s.getStack().getTagCompound();
                 if (nbt == null || nbt.hasNoTags()) continue;
-                NBTTagCompound display = nbt.getCompoundTag("display");
+                CompoundTag display = nbt.getCompoundTag("display");
                 if (display.hasNoTags()) return;
 
                 PartyFinderParty party = PartyFinderParty.fromItemStack(s.getStack());

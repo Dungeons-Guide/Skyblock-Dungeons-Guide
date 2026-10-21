@@ -29,9 +29,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.block.BlockFence;
-import net.minecraft.block.BlockSkull;
-import net.minecraft.block.BlockWall;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.AbstractSkullBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.Blocks;
@@ -118,7 +118,7 @@ public class FineGridStonkingBFS implements IPathfinder {
 
     private boolean emptyFor(BlockState blockState) {
         if (blockState.getBlock() == Blocks.carpet) return true;
-        if (blockState.getBlock() instanceof BlockSkull) return true;
+        if (blockState.getBlock() instanceof AbstractSkullBlock) return true;
         if (blockState.getBlock() == Blocks.standing_sign) return false;
         if (blockState.getBlock() == Blocks.wall_sign) return false;
         if (blockState.getBlock() == Blocks.air) return true;
@@ -151,7 +151,7 @@ public class FineGridStonkingBFS implements IPathfinder {
                 && n.coordinate.x % 2 != 0 && n.coordinate.z % 2 != 0 && n.coordinate.y % 2 == 0) {
             BlockState b = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2, n.coordinate.y / 2 - 1, (n.coordinate.z-1) / 2);
             BlockState b2 = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2, n.coordinate.y / 2, (n.coordinate.z-1) / 2);
-            if (b.getBlock() instanceof BlockFence || b.getBlock() instanceof BlockWall) {
+            if (b.getBlock() instanceof FenceBlock || b.getBlock() instanceof WallBlock) {
                 if (b2.getBlock() == Blocks.air) {
                     Node neighbor = openNode(n.coordinate.x, n.coordinate.y + 1, n.coordinate.z);
                     CollisionStateCalculatingCoordinateMap.CollisionState neighborState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);

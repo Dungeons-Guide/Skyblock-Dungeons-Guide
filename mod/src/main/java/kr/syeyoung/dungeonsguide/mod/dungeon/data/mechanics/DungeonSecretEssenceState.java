@@ -37,13 +37,13 @@ import lombok.Data;
 import lombok.Getter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.phys.AABB;
@@ -71,7 +71,7 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
         BlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
         if (blockState.getBlock() == Blocks.skull) {
             essenceWasThere = true;
-            List<EntityArmorStand> entities = Minecraft.getInstance().level.getEntitiesWithinAABB(EntityArmorStand.class, AABB.fromBounds(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
+            List<ArmorStand> entities = Minecraft.getInstance().level.getEntitiesWithinAABB(ArmorStand.class, AABB.fromBounds(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
             BlockEntity tileEntity = dungeonRoom.getCachedWorld().getTileEntity(pos);
 
             if (Minecraft.getInstance().player.getDistanceSq(pos) < 25) {
@@ -83,16 +83,16 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
                             .map(a -> a.getValue()).orElse(null);
 
                     if (texture == null) return;
-                    for (EntityArmorStand entity : entities) {
+                    for (ArmorStand entity : entities) {
                         ItemStack itemStackIn = entity.getEquipmentInSlot(4);
                         System.out.println(itemStackIn);
                         if (itemStackIn == null) continue;
                         if (itemStackIn.getItem() != Items.skull) continue;
 
                         if (itemStackIn.hasTagCompound()) {
-                            NBTTagCompound nbttagcompound = itemStackIn.getTagCompound();
+                            CompoundTag nbttagcompound = itemStackIn.getTagCompound();
                             if (nbttagcompound.hasKey("SkullOwner", 10)) {
-                                GameProfile gameprofile = NBTUtil.readGameProfileFromNBT(nbttagcompound.getCompoundTag("SkullOwner"));
+                                GameProfile gameprofile = NbtUtils.readGameProfileFromNBT(nbttagcompound.getCompoundTag("SkullOwner"));
 
                                 if (texture.equals(gameprofile.getProperties().get("textures").stream().findFirst().map(a -> a.getValue()).orElse(null))) {
                                     found = true;

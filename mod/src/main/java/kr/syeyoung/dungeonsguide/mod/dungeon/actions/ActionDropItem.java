@@ -27,7 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 
@@ -37,7 +37,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class ActionDropItem extends AbstractAction {
     private OffsetPoint target;
-    private Predicate<EntityItem> predicate = Predicates.alwaysTrue();
+    private Predicate<ItemEntity> predicate = Predicates.alwaysTrue();
 
     public ActionDropItem(OffsetPoint target) {
         this.target = target;
@@ -46,7 +46,7 @@ public class ActionDropItem extends AbstractAction {
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
         BlockPos secretLocation = target.getBlockPos(dungeonRoom);
-        List<EntityItem> item = dungeonRoom.getContext().getWorld().getEntitiesWithinAABB(EntityItem.class,
+        List<ItemEntity> item = dungeonRoom.getContext().getWorld().getEntitiesWithinAABB(ItemEntity.class,
                 AABB.fromBounds(
                         secretLocation.getX(),
                         secretLocation.getY(),

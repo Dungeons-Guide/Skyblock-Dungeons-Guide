@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.predicates;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ambient.Bat;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
@@ -31,7 +31,7 @@ public class PredicateBat implements Predicate<Entity> {
 
     @Override
     public boolean test(@Nullable Entity input) {
-        return input instanceof EntityBat;
+        return input instanceof Bat;
     }
 
     @Override

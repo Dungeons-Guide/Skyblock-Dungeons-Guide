@@ -24,10 +24,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
 
 import java.util.HashMap;
@@ -56,7 +56,7 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
         super.tick();
         if (answer != -1) return;
         for (int i = 0; i < 9; i++)
-            answers[i] = match(getChamber().getEntityAt(EntityArmorStand.class, grid[i].add(0, -1, 0)));
+            answers[i] = match(getChamber().getEntityAt(ArmorStand.class, grid[i].add(0, -1, 0)));
 
         answer = 0;
         for (int i =0; i < 9; i++) {
@@ -87,14 +87,14 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void onSendData() {
         if (answer == -1) return;
-        NBTTagCompound nbt = new NBTTagCompound();
+        CompoundTag nbt = new CompoundTag();
         nbt.setByte("a", (byte) 3);
         nbt.setInteger("b", answer);
         getSolver().communicate(nbt);
     }
 
     @Override
-    public void onDataReceive(NBTTagCompound compound) {
+    public void onDataReceive(CompoundTag compound) {
         if (3 == compound.getByte("a")) {
             answer = compound.getInteger("b");
             for (int i = 8; i >= 0; i--) {
@@ -105,11 +105,11 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
         }
     }
 
-    private int match(EntityArmorStand armorStand) {
+    private int match(ArmorStand armorStand) {
         if (armorStand == null) return -1;
         ItemStack item = armorStand.getInventory()[4];
-        NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
-        String str = ((NBTTagCompound)list.get(0)).getString("Value");
+        ListTag list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
+        String str = ((CompoundTag)list.get(0)).getString("Value");
         return !integers.containsKey(str) ? -1 : integers.get(str);
     }
 

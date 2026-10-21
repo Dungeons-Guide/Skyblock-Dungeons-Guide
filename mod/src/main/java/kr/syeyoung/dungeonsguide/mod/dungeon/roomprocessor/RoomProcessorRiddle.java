@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
@@ -75,9 +75,9 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
             final BlockPos low = getDungeonRoom().getRoomBounds().getMin();
             final BlockPos high = getDungeonRoom().getRoomBounds().getMax();
             World w = getDungeonRoom().getContext().getWorld();
-            List<EntityArmorStand> armor = w.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
+            List<ArmorStand> armor = w.getEntities(ArmorStand.class, new Predicate<ArmorStand>() {
                 @Override
-                public boolean apply(@Nullable EntityArmorStand input) {
+                public boolean apply(@Nullable ArmorStand input) {
                     BlockPos pos = input.getPosition();
                     return low.getX() < pos.getX() && pos.getX() < high.getX()
                             && low.getZ() < pos.getZ() && pos.getZ() < high.getZ() && TextUtils.stripColor(input.getName()).equalsIgnoreCase(name);

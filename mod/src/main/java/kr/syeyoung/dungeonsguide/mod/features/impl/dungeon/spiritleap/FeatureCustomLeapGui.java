@@ -32,8 +32,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.Container;
 
 public class FeatureCustomLeapGui extends SimpleFeature {
     public FeatureCustomLeapGui() {
@@ -49,9 +49,9 @@ public class FeatureCustomLeapGui extends SimpleFeature {
     private String conditionCheck(GuiScreen guiScreen) {
         if (!(guiScreen instanceof GuiChest)) return null;
         GuiChest chest = (GuiChest) guiScreen;
-        if (!(chest.inventorySlots instanceof ContainerChest)) return null;
-        ContainerChest containerChest = (ContainerChest) chest.inventorySlots;
-        IInventory lower = containerChest.getLowerChestInventory();
+        if (!(chest.inventorySlots instanceof ChestMenu)) return null;
+        ChestMenu containerChest = (ChestMenu) chest.inventorySlots;
+        Container lower = containerChest.getLowerChestInventory();
         if (lower == null) return null;
         return lower.getName();
     }
