@@ -4,7 +4,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculation;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalculationRegistry;
-import kr.syeyoung.dungeonsguide.mod.fakeserver.DungeonServerLaunchUtils;
+// import kr.syeyoung.dungeonsguide.mod.fakeserver.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.AdditionalInfoCaculatedDungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.WidgetAbilitySettings;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.modal.WidgetModalChooseAbilitySettings;
@@ -208,7 +208,8 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         try {
-            DungeonServerLaunchUtils.launchDungeonServerAndJoin(roomInfo.getDungeonRoomInfo(), roomInfo.getRoomPreset().getParent());
+            // TODO: fakeserver is not in the first 26.1 build
+//            DungeonServerLaunchUtils.launchDungeonServerAndJoin(roomInfo.getDungeonRoomInfo(), roomInfo.getRoomPreset().getParent());
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);

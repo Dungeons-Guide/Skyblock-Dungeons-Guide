@@ -112,15 +112,16 @@ public class CommandDgDebug {
         FeatureRegistry.DEBUG_PFRES.onCommand(new String[] {"pfresdebug", action, arg});
     }
 
-    @DGCommand("dgdebug re")
-    public void openRoomedit() {
-        MainConfigWidget mainConfigWidget = new MainConfigWidget();
-        GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(
-                FeatureRegistry.ADVANCED_ROOMEDIT.getConfigureWidget()
-        ));
+    // TODO: room editor is not in the first 26.1 build
+//    @DGCommand("dgdebug re")
+//    public void openRoomedit() {
+//        MainConfigWidget mainConfigWidget = new MainConfigWidget();
+//        GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(
+//                FeatureRegistry.ADVANCED_ROOMEDIT.getConfigureWidget()
+//        ));
 
-        DungeonsGuide.getDungeonsGuide().getCommandDungeonsGuide().setTarget(adapter);
-    }
+//        DungeonsGuide.getDungeonsGuide().getCommandDungeonsGuide().setTarget(adapter);
+//    }
 
     @DGCommand("dgdebug reloadshader")
     public void reloadShader() {
@@ -137,10 +138,11 @@ public class CommandDgDebug {
         mockDungeonStartCommand(0);
     }
 
-    @DGCommand("dgdebug transferschematic")
-    public void transferSchematic() {
-        transferSchematic(true);
-    }
+    // TODO: room editor is not in the first 26.1 build
+//    @DGCommand("dgdebug transferschematic")
+//    public void transferSchematic() {
+//        transferSchematic(true);
+//    }
 
     @DGCommand("dgdebug fullbright")
     @DGCommand("dgdebug gimmebright")
@@ -1305,11 +1307,12 @@ public class CommandDgDebug {
         });
     }
 
-    @DGCommand("dgdebug transferschematic {ignoreAir}")
-    public void transferSchematic(boolean ignoreAir) {
-        FeatureRegistry.ADVANCED_ROOMEDIT.overwrite(ignoreAir);
-        ChatTransmitter.sendDebugChat("TRANSFERRED SCHEMATIC");
-    }
+    // TODO: room editor is not in the first 26.1 build
+//    @DGCommand("dgdebug transferschematic {ignoreAir}")
+//    public void transferSchematic(boolean ignoreAir) {
+//        FeatureRegistry.ADVANCED_ROOMEDIT.overwrite(ignoreAir);
+//        ChatTransmitter.sendDebugChat("TRANSFERRED SCHEMATIC");
+//    }
 
     @DGCommand("dgdebug closecontext")
     public void closeContextCommand() {
