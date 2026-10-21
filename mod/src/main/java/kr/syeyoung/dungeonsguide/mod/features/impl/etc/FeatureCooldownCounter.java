@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenOpenEvent;
 
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
@@ -29,7 +30,6 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
-import net.minecraftforge.client.event.GuiOpenEvent;
 
 public class FeatureCooldownCounter extends TextHUDFeature {
     public FeatureCooldownCounter() {
@@ -71,7 +71,7 @@ public class FeatureCooldownCounter extends TextHUDFeature {
     }
 
     @DGEventHandler
-    public void onGuiOpen(GuiOpenEvent rendered) {
+    public void onGuiOpen(ScreenOpenEvent rendered) {
         if (!(rendered.gui instanceof GuiChest)) return;
         ContainerChest chest = (ContainerChest) ((GuiChest) rendered.gui).inventorySlots;
         if (chest.getLowerChestInventory().getName().contains("On cooldown!")) {

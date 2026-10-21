@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.listener;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
@@ -71,7 +72,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -104,7 +104,7 @@ public class DungeonListener {
     }
 
     @SubscribeEvent
-    public void onPostDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
+    public void onPostDraw(ScreenRenderEvent.Post e) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
 

@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.*;
@@ -55,7 +56,6 @@ import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.util.*;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -228,7 +228,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
 
     @Override
-    public void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event) {
+    public void onPostGuiRender(ScreenRenderEvent.Post event) {
 
     }
 

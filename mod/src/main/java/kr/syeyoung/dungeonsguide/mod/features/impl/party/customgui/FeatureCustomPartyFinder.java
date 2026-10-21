@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenOpenEvent;
 
 
 import com.google.gson.JsonObject;
@@ -37,7 +38,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.client.event.GuiOpenEvent;
 
 public class FeatureCustomPartyFinder extends SimpleFeature {
     public FeatureCustomPartyFinder() {
@@ -87,7 +87,7 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onGuiOpen(GuiOpenEvent event) {
+    public void onGuiOpen(ScreenOpenEvent event) {
         String name = conditionCheck(event.gui);
         if (name == null) {
             widgetPartyFinder = null;

@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 import com.google.gson.Gson;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
@@ -31,7 +32,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -182,7 +182,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     public boolean readGlobalChat() {return true;}
 
     @Override
-    public void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event) {
+    public void onPostGuiRender(ScreenRenderEvent.Post event) {
 
     }
 

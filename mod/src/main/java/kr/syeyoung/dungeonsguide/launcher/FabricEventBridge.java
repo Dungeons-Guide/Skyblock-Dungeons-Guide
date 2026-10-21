@@ -24,10 +24,17 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenInitEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenKeyboardEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenMouseEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 
@@ -63,9 +70,41 @@ public class FabricEventBridge {
                 fire(new RenderHUDEvent.Pre(deltaTracker.getGameTimeDeltaPartialTick(false), graphics)));
         HudElementRegistry.addLast(Identifier.fromNamespaceAndPath("dungeonsguide", "hud_post"), (graphics, deltaTracker) ->
                 fire(new RenderHUDEvent.Post(deltaTracker.getGameTimeDeltaPartialTick(false), graphics)));
+
+        // fabric resets per screen events on every init, so they are registered here
+        ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
+            fire(new ScreenInitEvent.Post(screen, scaledWidth, scaledHeight));
+
+            ScreenEvents.afterExtract(screen).register((s, graphics, mouseX, mouseY, tickProgress) ->
+                    fire(new ScreenRenderEvent.Post(s, graphics, mouseX, mouseY, tickProgress)));
+
+            ScreenMouseEvents.allowMouseClick(screen).register((s, event) ->
+                    !fire(new ScreenMouseEvent.Pre(s, ScreenMouseEvent.Action.CLICK, event, event.x(), event.y(), 0, 0, 0, 0)));
+            ScreenMouseEvents.allowMouseRelease(screen).register((s, event) ->
+                    !fire(new ScreenMouseEvent.Pre(s, ScreenMouseEvent.Action.RELEASE, event, event.x(), event.y(), 0, 0, 0, 0)));
+            ScreenMouseEvents.allowMouseDrag(screen).register((s, event, dragX, dragY) ->
+                    !fire(new ScreenMouseEvent.Pre(s, ScreenMouseEvent.Action.DRAG, event, event.x(), event.y(), dragX, dragY, 0, 0)));
+            ScreenMouseEvents.allowMouseScroll(screen).register((s, mouseX, mouseY, scrollX, scrollY) ->
+                    !fire(new ScreenMouseEvent.Pre(s, ScreenMouseEvent.Action.SCROLL, null, mouseX, mouseY, 0, 0, scrollX, scrollY)));
+
+            ScreenKeyboardEvents.allowKeyPress(screen).register((s, event) ->
+                    !fire(new ScreenKeyboardEvent.Pre(s, ScreenKeyboardEvent.Action.PRESS, event, null)));
+            ScreenKeyboardEvents.afterKeyPress(screen).register((s, event) ->
+                    fire(new ScreenKeyboardEvent.Post(s, ScreenKeyboardEvent.Action.PRESS, event, null)));
+            ScreenKeyboardEvents.allowKeyRelease(screen).register((s, event) ->
+                    !fire(new ScreenKeyboardEvent.Pre(s, ScreenKeyboardEvent.Action.RELEASE, event, null)));
+            ScreenKeyboardEvents.afterKeyRelease(screen).register((s, event) ->
+                    fire(new ScreenKeyboardEvent.Post(s, ScreenKeyboardEvent.Action.RELEASE, event, null)));
+            ScreenKeyboardEvents.allowCharType(screen).register((s, event) ->
+                    !fire(new ScreenKeyboardEvent.Pre(s, ScreenKeyboardEvent.Action.CHAR, null, event)));
+            ScreenKeyboardEvents.afterCharType(screen).register((s, event) ->
+                    fire(new ScreenKeyboardEvent.Post(s, ScreenKeyboardEvent.Action.CHAR, null, event)));
+        });
     }
 
+    // minecraft can call into the bridge (mixins) before dungeons guide is created
     public static boolean fire(DGEvent event) {
+        if (DungeonsGuide.getDungeonsGuide() == null) return false;
         return DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(event);
     }
 }

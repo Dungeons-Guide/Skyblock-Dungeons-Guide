@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.spiritleap;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenOpenEvent;
 
 
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
@@ -33,7 +34,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
-import net.minecraftforge.client.event.GuiOpenEvent;
 
 public class FeatureCustomLeapGui extends SimpleFeature {
     public FeatureCustomLeapGui() {
@@ -57,7 +57,7 @@ public class FeatureCustomLeapGui extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onGuiOpen(GuiOpenEvent event) {
+    public void onGuiOpen(ScreenOpenEvent event) {
         String name = conditionCheck(event.gui);
         if (name == null) {
             widgetSpiritLeap = null;
