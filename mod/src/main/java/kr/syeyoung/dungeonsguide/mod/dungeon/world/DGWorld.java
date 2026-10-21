@@ -22,7 +22,11 @@ import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Every world DG reads blocks from: the client level or one of DG's own (D108).
@@ -39,6 +43,15 @@ public interface DGWorld extends ICoordinateMap<BlockState> {
     default boolean isAir(BlockPos pos) {
         BlockState blockState = getBlockState(pos);
         return blockState == null || blockState.isAir();
+    }
+
+    // 1.8.9's Block.addCollisionBoxesToList: the block's collision boxes in world space that touch mask
+    default void addCollisionBoxes(BlockPos pos, BlockState state, AABB mask, List<AABB> list) {
+        VoxelShape shape = state.getCollisionShape(asVanilla(), pos);
+        for (AABB box : shape.toAabbs()) {
+            AABB moved = box.move(pos);
+            if (moved.intersects(mask)) list.add(moved);
+        }
     }
 
     // for vanilla's collision / hardness / raytrace / block model calls

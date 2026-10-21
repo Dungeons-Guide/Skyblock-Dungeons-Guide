@@ -2,7 +2,6 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import lombok.Getter;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
@@ -41,16 +40,16 @@ public class PearlCalculatingCoordinateMap implements ICoordinateMap<PearlCalcul
 
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
 
-        AABB pearlTest = AABB.fromBounds(
+        AABB pearlTest = new AABB(
                 wX-0.3, wY-0.3, wZ-0.3, wX+ 0.3, wY+ 0.3, wZ + 0.3
         );
 
-        int minX = Mth.floor_double(pearlTest.minX);
-        int maxX = Mth.floor_double(pearlTest.maxX + 1.0D);
-        int minY = Mth.floor_double(pearlTest.minY);
-        int maxY = Mth.floor_double(pearlTest.maxY + 1.0D);
-        int minZ = Mth.floor_double(pearlTest.minZ);
-        int maxZ = Mth.floor_double(pearlTest.maxZ + 1.0D);
+        int minX = Mth.floor(pearlTest.minX);
+        int maxX = Mth.floor(pearlTest.maxX + 1.0D);
+        int minY = Mth.floor(pearlTest.minY);
+        int maxY = Mth.floor(pearlTest.maxY + 1.0D);
+        int minZ = Mth.floor(pearlTest.minZ);
+        int maxZ = Mth.floor(pearlTest.maxZ + 1.0D);
 
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
         List<AABB> pearlList = new ArrayList<>();
@@ -61,10 +60,7 @@ public class PearlCalculatingCoordinateMap implements ICoordinateMap<PearlCalcul
 
 
                     BlockState state = map.getBlock(k1, i2, l1);
-                    Block block = state.getBlock();
-                    block.addCollisionBoxesToList(
-                            world, blockPos, state, pearlTest, pearlList, null
-                    );
+                    world.addCollisionBoxes(blockPos, state, pearlTest, pearlList);
                 }
             }
         }

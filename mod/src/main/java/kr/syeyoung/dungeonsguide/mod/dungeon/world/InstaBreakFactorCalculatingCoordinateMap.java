@@ -3,11 +3,11 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.ChunkCache;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.item.ItemStack;
 
 public class InstaBreakFactorCalculatingCoordinateMap implements ICoordinateMap<InstaBreakFactorCalculatingCoordinateMap.BreakFactor> {
     private ICoordinateMap<BlockState> map;
@@ -35,19 +35,22 @@ public class InstaBreakFactorCalculatingCoordinateMap implements ICoordinateMap<
         BlockState iBlockState = map.getBlock(x, y, z);
         BlockPos.MutableBlockPos pos = blockPosThreadLocal.get();
         pos.set(x, y, z);
-        Block b = iBlockState.getBlock();
-        if (b == Blocks.air) return BreakFactor.INSTABREAK;
-        if (b.getBlockHardness(world, pos) < 0) {
+        // 1.8.9 only had one air
+        if (iBlockState.isAir()) return BreakFactor.INSTABREAK;
+        BlockAndTintGetter getter = world.asVanilla();
+        float hardness = iBlockState.getDestroySpeed(getter, pos);
+        if (hardness < 0) {
             return BreakFactor.NO;
         } else if (algorithmSetting.getPickaxeSpeed() > 0 &&
-                (((algorithmSetting.getPickaxe().getTool().canHarvestBlock(b)) &&
-                        b.getBlockHardness(world, pos) <= algorithmSetting.getPickaxeSpeed() / 30.0) ||
-                        (b.getBlockHardness(world, pos) <= algorithmSetting.getPickaxeSpeed() / 100.0))
+                (((new ItemStack(algorithmSetting.getPickaxe().getTool()).isCorrectToolForDrops(iBlockState)) &&
+                        hardness <= algorithmSetting.getPickaxeSpeed() / 30.0) ||
+                        (hardness <= algorithmSetting.getPickaxeSpeed() / 100.0))
         ) {
         } else if (algorithmSetting.getShovelSpeed() > 0
-                && b.isToolEffective("shovel", iBlockState)
-                && b.getBlockHardness(world, pos) <= algorithmSetting.getShovelSpeed()) {
-        } else if (algorithmSetting.getAxeSpeed() > 0 && b.isToolEffective("axe", iBlockState) && b.getBlockHardness(world, pos) <= algorithmSetting.getAxeSpeed()) {
+                // forge's isToolEffective("shovel") / ("axe") is vanilla's mineable tags on 26.1
+                && iBlockState.is(BlockTags.MINEABLE_WITH_SHOVEL)
+                && hardness <= algorithmSetting.getShovelSpeed()) {
+        } else if (algorithmSetting.getAxeSpeed() > 0 && iBlockState.is(BlockTags.MINEABLE_WITH_AXE) && hardness <= algorithmSetting.getAxeSpeed()) {
         } else {
             if (!algorithmSetting.isAllowSlowStonkPath())
                 return BreakFactor.NO;
