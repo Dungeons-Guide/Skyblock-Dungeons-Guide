@@ -9,7 +9,8 @@
     "LivingEntityMixin",
     "MinecraftMixin",
     "MouseHandlerMixin",
-    "PlayerMixin"
+    "PlayerMixin",
+    "SoundManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
