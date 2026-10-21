@@ -19,7 +19,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPresetRegistry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.resources.Identifier;
 import org.apache.commons.io.FileUtils;
 

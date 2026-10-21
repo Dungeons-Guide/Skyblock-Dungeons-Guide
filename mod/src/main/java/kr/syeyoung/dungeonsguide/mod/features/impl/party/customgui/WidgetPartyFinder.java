@@ -42,7 +42,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;

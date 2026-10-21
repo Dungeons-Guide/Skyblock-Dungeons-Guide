@@ -34,7 +34,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.input.Keyboard;

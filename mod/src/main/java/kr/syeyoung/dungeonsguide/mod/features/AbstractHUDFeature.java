@@ -33,7 +33,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.resources.Identifier;
 
 import java.util.List;

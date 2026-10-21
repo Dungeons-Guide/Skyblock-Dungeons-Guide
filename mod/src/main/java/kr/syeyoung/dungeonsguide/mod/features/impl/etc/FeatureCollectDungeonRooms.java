@@ -60,7 +60,6 @@ import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;

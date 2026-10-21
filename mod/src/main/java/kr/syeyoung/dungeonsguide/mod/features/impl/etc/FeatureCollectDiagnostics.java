@@ -36,7 +36,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.resources.Identifier;
 
