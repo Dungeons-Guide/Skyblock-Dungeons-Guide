@@ -118,7 +118,6 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
         if (prefix != null) toDraw = prefix + " " + toDraw;
 
         if (FeatureRegistry.DG_INDICATOR.isEnabled() && PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(fakePlayer.getGameProfile().getId(), false)) {
-            // TODO: \ued00-\ued02 were dg icon glyphs from the 1.8.9 unicode font page hack, not needed on 26.1. replaced later
             toDraw = "\ued00\ued02"+ toDraw;
         }
         GlStateManager.enableBlend();
