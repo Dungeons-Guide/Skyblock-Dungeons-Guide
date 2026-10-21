@@ -150,7 +150,7 @@ public class CommandDgDebug {
                         .executes(ctx -> run("transferschematic", word(ctx, "ignoreAir")))));
         root.then(literal("readmap").then(argument("arg1", StringArgumentType.word()).then(argument("arg2", StringArgumentType.word())
                 .then(argument("arg3", StringArgumentType.word()).then(argument("arg4", StringArgumentType.word())
-                        .executes(ctx -> run("readmap", word(ctx, "arg1"), word(ctx, "arg2"), word(ctx, "arg3"), word(ctx, "arg4")))))))));
+                        .executes(ctx -> run("readmap", word(ctx, "arg1"), word(ctx, "arg2"), word(ctx, "arg3"), word(ctx, "arg4"))))))));
         for (String sub : new String[] {"fullbright", "gimmebright"})
             root.then(literal(sub)
                     .executes(ctx -> run(sub))

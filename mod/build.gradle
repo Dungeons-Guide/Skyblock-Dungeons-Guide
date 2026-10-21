@@ -117,6 +117,8 @@ processResources {
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
+    // the port is compile error driven, show all of them
+    options.compilerArgs += ["-Xmaxerrs", "100000"]
 }
 
 signing {
