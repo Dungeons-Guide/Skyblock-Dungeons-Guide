@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 @Data
 @EqualsAndHashCode(callSuper=false)

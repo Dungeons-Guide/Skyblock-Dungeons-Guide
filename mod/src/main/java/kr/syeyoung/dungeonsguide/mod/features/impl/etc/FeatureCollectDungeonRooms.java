@@ -76,7 +76,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import javax.net.ssl.HttpsURLConnection;

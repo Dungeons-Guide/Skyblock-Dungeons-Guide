@@ -53,7 +53,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayInputStream;

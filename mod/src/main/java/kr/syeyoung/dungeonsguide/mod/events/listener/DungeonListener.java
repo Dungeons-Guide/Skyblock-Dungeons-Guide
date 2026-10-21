@@ -78,7 +78,7 @@ import net.minecraft.util.Vec3;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import org.lwjgl.opengl.GL11;

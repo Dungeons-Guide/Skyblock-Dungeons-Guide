@@ -43,7 +43,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 import scala.actors.threadpool.Arrays;
 
 import java.awt.*;

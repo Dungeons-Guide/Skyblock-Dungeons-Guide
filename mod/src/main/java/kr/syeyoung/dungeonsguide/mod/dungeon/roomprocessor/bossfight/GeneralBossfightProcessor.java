@@ -34,7 +34,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

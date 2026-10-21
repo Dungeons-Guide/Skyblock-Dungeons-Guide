@@ -9,7 +9,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplay
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import lombok.Getter;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 import java.util.*;
 import java.util.function.Function;

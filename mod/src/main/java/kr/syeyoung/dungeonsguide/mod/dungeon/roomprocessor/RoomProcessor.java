@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 public interface RoomProcessor {
     void tick();

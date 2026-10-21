@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import lombok.Getter;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.List;

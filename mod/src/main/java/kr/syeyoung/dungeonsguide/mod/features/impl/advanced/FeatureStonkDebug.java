@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.init.Items;
 import net.minecraft.util.AxisAlignedBB;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.Arrays;

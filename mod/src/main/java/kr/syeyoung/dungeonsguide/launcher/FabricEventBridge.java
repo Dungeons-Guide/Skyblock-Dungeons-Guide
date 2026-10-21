@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.EntityEnterWorldEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenInitEvent;
@@ -39,8 +40,13 @@ import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 
 // turns fabric callbacks and mixin hooks into dg events
 public class FabricEventBridge {
@@ -53,6 +59,23 @@ public class FabricEventBridge {
 
         ClientLevelEvents.AFTER_CLIENT_LEVEL_CHANGE.register((client, level) -> fire(new WorldLoadEvent(level)));
         ClientEntityEvents.ENTITY_LOAD.register((entity, level) -> fire(new EntityEnterWorldEvent(entity, level)));
+
+        // these also run on the integrated server, and per hand. 1.8.9 only had the client main hand
+        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
+            if (!level.isClientSide() || hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
+            return fire(new PlayerInteractEvent(PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, hitResult.getBlockPos(), hitResult.getDirection(), level, player))
+                    ? InteractionResult.FAIL : InteractionResult.PASS;
+        });
+        UseItemCallback.EVENT.register((player, level, hand) -> {
+            if (!level.isClientSide() || hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
+            return fire(new PlayerInteractEvent(PlayerInteractEvent.Action.RIGHT_CLICK_AIR, null, null, level, player))
+                    ? InteractionResult.FAIL : InteractionResult.PASS;
+        });
+        AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) -> {
+            if (!level.isClientSide() || hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
+            return fire(new PlayerInteractEvent(PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, pos, direction, level, player))
+                    ? InteractionResult.FAIL : InteractionResult.PASS;
+        });
 
         ClientReceiveMessageEvents.ALLOW_GAME.register((message, overlay) -> {
             lastGameMessage = new ChatReceivedEvent(overlay ? (byte) 2 : (byte) 1, message);
