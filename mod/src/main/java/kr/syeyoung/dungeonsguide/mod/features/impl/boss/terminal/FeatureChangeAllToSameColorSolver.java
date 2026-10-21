@@ -39,7 +39,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ItemTooltipEvent;
 import org.lwjgl.input.Mouse;
 
 import java.awt.event.MouseEvent;

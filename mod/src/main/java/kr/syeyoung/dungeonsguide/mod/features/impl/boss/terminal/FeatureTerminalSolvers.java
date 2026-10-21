@@ -34,7 +34,7 @@ import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.Slot;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ItemTooltipEvent;
 import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
