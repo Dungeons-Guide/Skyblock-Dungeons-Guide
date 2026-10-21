@@ -36,12 +36,13 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.input.Keyboard;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
+import com.mojang.blaze3d.platform.InputConstants;
+import org.lwjgl.glfw.GLFW;
 
 public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "enabled")
@@ -237,7 +238,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
         @On(functionName = "inc")
         public void inc() {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-            double newT = truth.getValue() + (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
+            double newT = truth.getValue() + (InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) ? 1 : 0.1);
             if (newT > max) newT = max;
             truth.setValue(newT);
             value.setValue(String.format("%f", truth.getValue()));
@@ -246,7 +247,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
         @On(functionName = "dec")
         public void dec() {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-            double newT = truth.getValue() - (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
+            double newT = truth.getValue() - (InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) ? 1 : 0.1);
             if (newT < min) newT = min;
             truth.setValue(newT);
             value.setValue(String.format("%f", truth.getValue()));

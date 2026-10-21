@@ -29,9 +29,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.input.Keyboard;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
+import com.mojang.blaze3d.platform.InputConstants;
+import org.lwjgl.glfw.GLFW;
 
 public class TCDouble implements FeatureTypeHandler<Double> {
     public static final TCDouble INSTANCE = new TCDouble();
@@ -84,7 +85,7 @@ public class TCDouble implements FeatureTypeHandler<Double> {
         @On(functionName = "inc")
         public void inc() {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-            truth += (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
+            truth += (InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) ? 1 : 0.1);
             if (truth > max) truth = max;
             value.setValue(String.format("%f", truth));
         }
@@ -92,7 +93,7 @@ public class TCDouble implements FeatureTypeHandler<Double> {
         @On(functionName = "dec")
         public void dec() {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-            truth -= (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
+            truth -= (InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) ? 1 : 0.1);
             if (truth < min) truth = min;
             value.setValue(String.format("%f", truth));
         }

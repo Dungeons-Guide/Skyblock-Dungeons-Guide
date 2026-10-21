@@ -29,9 +29,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.input.Keyboard;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
+import com.mojang.blaze3d.platform.InputConstants;
+import org.lwjgl.glfw.GLFW;
 
 public class TCInteger implements FeatureTypeHandler<Integer> {
     public static final TCInteger INSTANCE = new TCInteger();
@@ -72,13 +73,13 @@ public class TCInteger implements FeatureTypeHandler<Integer> {
         @On(functionName = "inc")
         public void inc() {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-            truth +=(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 5 : 1);
+            truth +=(InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) ? 5 : 1);
             value.setValue(String.valueOf(truth));
         }
         @On(functionName = "dec")
         public void dec() {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-            truth -=(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 5 : 1);
+            truth -=(InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) ? 5 : 1);
             value.setValue(String.valueOf(truth));
         }
     }
