@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.chat;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -26,7 +27,6 @@ import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -70,8 +70,8 @@ public class ChatTransmitter {
 
 
     @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent clientTickEvent) {
-        if(clientTickEvent.phase != TickEvent.Phase.START && Minecraft.getMinecraft().thePlayer == null) return;
+    public void onTick(ClientTickEvent clientTickEvent) {
+        if(clientTickEvent.phase != ClientTickEvent.Phase.START && Minecraft.getMinecraft().thePlayer == null) return;
 
         while (!receiveQueue.isEmpty() && Minecraft.getMinecraft().thePlayer != null) {
             ClientChatReceivedEvent event = new ClientChatReceivedEvent((byte) 1, receiveQueue.poll());

@@ -81,8 +81,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -177,8 +175,8 @@ public class DungeonListener {
 
 
     @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent ev) {
-        if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
+    public void onTick(ClientTickEvent ev) {
+        if (ev.phase != ClientTickEvent.Phase.START) return;
         DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DGTickEvent());
 
         if (SkyblockStatus.isOnSkyblock() || SkyblockStatus.isOnDungeon()) {
@@ -236,8 +234,8 @@ public class DungeonListener {
     private WeakReference<DungeonRoom> lastRoom = null;
 
     @SubscribeEvent
-    public void onTickDetectRoomTransfer(TickEvent.ClientTickEvent ev) {
-        if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
+    public void onTickDetectRoomTransfer(ClientTickEvent ev) {
+        if (ev.phase != ClientTickEvent.Phase.START) return;
 
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

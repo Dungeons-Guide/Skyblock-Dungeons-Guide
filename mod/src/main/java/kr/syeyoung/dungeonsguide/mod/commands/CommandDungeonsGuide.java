@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.commands;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ClientTickEvent;
 import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -48,7 +49,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -212,9 +212,9 @@ public class CommandDungeonsGuide extends CommandBase {
     private GuiScreen target;
 
     @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent e) {
+    public void onTick(ClientTickEvent e) {
         try {
-            if (target != null && e.phase == TickEvent.Phase.START) {
+            if (target != null && e.phase == ClientTickEvent.Phase.START) {
                 Minecraft.getMinecraft().displayGuiScreen(target);
                 target = null;
             }
