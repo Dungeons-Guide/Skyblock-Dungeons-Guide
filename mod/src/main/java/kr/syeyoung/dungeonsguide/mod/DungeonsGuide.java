@@ -61,7 +61,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraftforge.fml.common.ProgressManager;
+import kr.syeyoung.dungeonsguide.mod.utils.ProgressManager;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
