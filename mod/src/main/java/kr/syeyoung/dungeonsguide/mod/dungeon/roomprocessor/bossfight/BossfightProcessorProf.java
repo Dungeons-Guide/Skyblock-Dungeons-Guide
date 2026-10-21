@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 import com.mojang.authlib.properties.Property;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
@@ -25,7 +26,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityGuardian;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.*;
 
@@ -134,7 +134,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
     private EntityArmorStand reinforcedGuard;
     private EntityArmorStand healthyGuard;
     @Override
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
+    public void onEntityUpdate(LivingTickEvent updateEvent) {
         if (updateEvent.entityLiving instanceof EntityArmorStand) {
             if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lThe Professor§r"))
                 profStand = (EntityArmorStand) updateEvent.entityLiving;

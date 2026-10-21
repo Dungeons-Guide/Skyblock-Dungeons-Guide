@@ -18,6 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.WorldUnloadEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingDeathEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.EntityEnterWorldEvent;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -72,11 +76,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -198,7 +198,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onEntitySpawn(EntityJoinWorldEvent event) {
+    public void onEntitySpawn(EntityEnterWorldEvent event) {
         if (event.entity instanceof EntityArmorStand) {
             return;
         }
@@ -312,7 +312,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onEntityAttributeUpdate(LivingEvent.LivingUpdateEvent event) {
+    public void onEntityAttributeUpdate(LivingTickEvent event) {
         if (event.entityLiving instanceof EntityArmorStand) {
             return;
         }
@@ -471,7 +471,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onWorldLoad(WorldEvent.Unload event) {
+    public void onWorldLoad(WorldUnloadEvent event) {
         try {
             Gson gson = new GsonBuilder()
                     .disableHtmlEscaping()

@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingDeathEvent;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
@@ -26,7 +27,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
 import java.util.function.Predicate;
 

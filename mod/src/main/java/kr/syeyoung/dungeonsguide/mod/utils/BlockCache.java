@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.utils;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.WorldLoadEvent;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -25,7 +26,6 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.event.world.WorldEvent;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +56,7 @@ public class BlockCache {
 
 
     @SubscribeEvent @SuppressWarnings("UnstableApiUsage")
-    public void onWorldLoad(WorldEvent.Load e){
+    public void onWorldLoad(WorldLoadEvent e){
         cache.invalidateAll();
     }
 

@@ -18,6 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.listener;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.WorldUnloadEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingDeathEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.EntityEnterWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -74,11 +78,7 @@ import net.minecraft.util.Vec3;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
@@ -94,7 +94,7 @@ public class DungeonListener {
 
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Unload event) {
+    public void onWorldLoad(WorldUnloadEvent event) {
         TabList.INSTANCE.clear();
         TeamManager.INSTANCE.clear();
         ScoreboardManager.INSTANCE.clear();
@@ -143,7 +143,7 @@ public class DungeonListener {
     }
 
     @SubscribeEvent
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent e) {
+    public void onEntityUpdate(LivingTickEvent e) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
@@ -651,7 +651,7 @@ public class DungeonListener {
     private final Map<Integer, Vec3> entityIdToPosMap = new HashMap<>();
 
     @SubscribeEvent
-    public void onEntitySpawn(EntityJoinWorldEvent spawn) {
+    public void onEntitySpawn(EntityEnterWorldEvent spawn) {
 //        if (spawn.entity instanceof EntityBat)
 //            System.out.println(spawn.entity +" Spawned!! dist: "+spawn.entity.getDistanceToEntity(Minecraft.getMinecraft().thePlayer));
 

@@ -18,12 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 import com.mojang.authlib.properties.Property;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.*;
 
@@ -123,7 +123,7 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
     private EntityArmorStand berserkStand;
     private EntityArmorStand archerStand;
     @Override
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
+    public void onEntityUpdate(LivingTickEvent updateEvent) {
         if (updateEvent.entityLiving instanceof EntityArmorStand) {
             if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lScarf§r"))
                 scarfStand = (EntityArmorStand) updateEvent.entityLiving;

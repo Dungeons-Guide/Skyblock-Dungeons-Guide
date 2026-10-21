@@ -22,12 +22,16 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ClientTickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.EntityEnterWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenInitEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenKeyboardEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenMouseEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.WorldLoadEvent;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -46,6 +50,9 @@ public class FabricEventBridge {
     public static void register() {
         ClientTickEvents.START_CLIENT_TICK.register(client -> fire(new ClientTickEvent(ClientTickEvent.Phase.START)));
         ClientTickEvents.END_CLIENT_TICK.register(client -> fire(new ClientTickEvent(ClientTickEvent.Phase.END)));
+
+        ClientLevelEvents.AFTER_CLIENT_LEVEL_CHANGE.register((client, level) -> fire(new WorldLoadEvent(level)));
+        ClientEntityEvents.ENTITY_LOAD.register((entity, level) -> fire(new EntityEnterWorldEvent(entity, level)));
 
         ClientReceiveMessageEvents.ALLOW_GAME.register((message, overlay) -> {
             lastGameMessage = new ChatReceivedEvent(overlay ? (byte) 2 : (byte) 1, message);
