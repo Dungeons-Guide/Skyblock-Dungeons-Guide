@@ -35,9 +35,9 @@ public class FeatureAutoAcceptReparty extends SimpleFeature {
 
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
-        if (clientChatReceivedEvent.message.getFormattedText().endsWith("§ehas disbanded the party!§r")) {
+        if (TextUtils.getFormattedText(clientChatReceivedEvent.message).endsWith("§ehas disbanded the party!§r")) {
             lastDisband = null;
-            String[] texts = TextUtils.stripColor(clientChatReceivedEvent.message.getFormattedText()).split(" ");
+            String[] texts = TextUtils.stripColor(TextUtils.getFormattedText(clientChatReceivedEvent.message)).split(" ");
             for (String s : texts) {
                 if (s.isEmpty()) continue;
                 if (s.startsWith("[")) continue;
@@ -45,8 +45,8 @@ public class FeatureAutoAcceptReparty extends SimpleFeature {
                 lastDisband = s;
                 break;
             }
-        } else if (clientChatReceivedEvent.message.getFormattedText().contains("§ehas invited you to join their party!")) {
-            String[] texts = TextUtils.stripColor(clientChatReceivedEvent.message.getFormattedText()).split(" ");
+        } else if (TextUtils.getFormattedText(clientChatReceivedEvent.message).contains("§ehas invited you to join their party!")) {
+            String[] texts = TextUtils.stripColor(TextUtils.getFormattedText(clientChatReceivedEvent.message)).split(" ");
             boolean equals = false;
             for (String s : texts) {
                 if (s.isEmpty()) continue;

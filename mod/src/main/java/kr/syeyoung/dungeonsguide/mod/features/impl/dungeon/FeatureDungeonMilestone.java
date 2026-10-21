@@ -35,12 +35,13 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.chat.MutableComponent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import net.minecraft.network.chat.Component;
 
 public class FeatureDungeonMilestone extends TextHUDFeature {
     public FeatureDungeonMilestone() {
@@ -98,13 +99,13 @@ public class FeatureDungeonMilestone extends TextHUDFeature {
         if (!SkyblockStatus.isOnDungeon()) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return;
-        String txt = clientChatReceivedEvent.message.getFormattedText();
+        String txt = TextUtils.getFormattedText(clientChatReceivedEvent.message);
         if (milestone_pattern.matcher(txt).matches()) {
             milestoneReached.add(new String[] {
                     TextUtils.formatTime(FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed()),
                     TextUtils.formatTime(FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
             });
-            ChatTransmitter.sendDebugChat(new ChatComponentText("Reached Milestone At " +  TextUtils.formatTime(FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed()) + " / "+TextUtils.formatTime(FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())));
+            ChatTransmitter.sendDebugChat(Component.literal("Reached Milestone At " +  TextUtils.formatTime(FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed()) + " / "+TextUtils.formatTime(FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())));
         }
     }
 }

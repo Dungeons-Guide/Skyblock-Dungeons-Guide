@@ -56,7 +56,7 @@ public class FeatureEpicCountdown extends SimpleFeature {
 
     @DGEventHandler
     public void processChat(ChatReceivedEvent receivedEvent) {
-        String txt = receivedEvent.message.getFormattedText();
+        String txt = TextUtils.getFormattedText(receivedEvent.message);
 
         // TODO: make a good chat remover with configurable chats, search chats recieved and stuff, but not for now
         if(cleanChat){

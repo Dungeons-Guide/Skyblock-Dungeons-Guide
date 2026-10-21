@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonRoomDiscoveredEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import lombok.Getter;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.storage.MapData;
 
@@ -37,6 +37,7 @@ import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import net.minecraft.network.chat.Component;
 
 public class DungeonRoomScaffoldParser {
     @Getter
@@ -125,8 +126,8 @@ public class DungeonRoomScaffoldParser {
                     context.getRecorder().createEvent(new DungeonRoomDiscoverEvent(room.getUnitPoints().iterator().next(),
                             new SerializableBlockPos(room.getRoomBounds().getMin()), new SerializableBlockPos(room.getRoomBounds().getMax()),
                             room.getRoomBounds().getShape(), room.getColor()));
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("New Map discovered! shape: " + room.getRoomBounds().getShape() + " color: " + room.getColor() + " unitPos: " + x + "," + y));
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: " + room.getRoomBounds().getMin() + " mapMx: " + room.getRoomBounds().getMax()));
+                    ChatTransmitter.sendDebugChat(Component.literal("New Map discovered! shape: " + room.getRoomBounds().getShape() + " color: " + room.getColor() + " unitPos: " + x + "," + y));
+                    ChatTransmitter.sendDebugChat(Component.literal("New Map discovered! mapMin: " + room.getRoomBounds().getMin() + " mapMx: " + room.getRoomBounds().getMax()));
                     StringBuilder builder = new StringBuilder();
                     for (int dy = 0; dy < 4; dy++) {
                         builder.append("\n");
@@ -135,7 +136,7 @@ public class DungeonRoomScaffoldParser {
                             builder.append(isSet ? "O" : "X");
                         }
                     }
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("Shape visual: " + builder));
+                    ChatTransmitter.sendDebugChat(Component.literal("Shape visual: " + builder));
                     // END
 
 

@@ -35,7 +35,7 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.*;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.ChatFormatting;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldProviderSurface;
@@ -151,7 +151,7 @@ public class PacketListener {
                 team.setPrefix(pkt.getPrefix());
                 team.setSuffix(pkt.getSuffix());
                 team.setNameTagVisibility(NameTagVisibility.of(pkt.getNameTagVisibility()));
-                team.setColor(EnumChatFormatting.func_175744_a(pkt.getColor()));
+                team.setColor(ChatFormatting.getById(pkt.getColor()));
 
                 for (String player : pkt.getPlayers()) {
                     team.addTeamMember(player);
@@ -169,7 +169,7 @@ public class PacketListener {
                     team.setPrefix(pkt.getPrefix());
                     team.setSuffix(pkt.getSuffix());
                     team.setNameTagVisibility(NameTagVisibility.of(pkt.getNameTagVisibility()));
-                    team.setColor(EnumChatFormatting.func_175744_a(pkt.getColor()));
+                    team.setColor(ChatFormatting.getById(pkt.getColor()));
                 }
             } else if (pkt.getAction() == 3) {
                 // PLAYER UPDATE

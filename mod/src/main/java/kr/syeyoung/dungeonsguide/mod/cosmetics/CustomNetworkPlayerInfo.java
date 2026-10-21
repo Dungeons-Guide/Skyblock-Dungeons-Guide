@@ -27,8 +27,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 import java.util.UUID;
@@ -45,27 +45,27 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
     }
 
 
-    private IChatComponent displayName;
+    private Component displayName;
 
     private String formatted;
 
-    public IChatComponent getOriginalDisplayName() {
+    public Component getOriginalDisplayName() {
         return displayName;
     }
 
     @Override
-    public void setDisplayName(IChatComponent displayNameIn) {
+    public void setDisplayName(Component displayNameIn) {
         displayName = displayNameIn;
         if (displayName == null) {
             formatted = null;
             return;
         }
 
-        formatted = displayName.getFormattedText();
+        formatted = TextUtils.getFormattedText(displayName);
     }
 
 
-    public IChatComponent getDisplayName()
+    public Component getDisplayName()
     {
         String rawPlayerString = formatted != null ? formatted : ScorePlayerTeam.formatPlayerName(super.getPlayerTeam(), super.getGameProfile().getName());
 
@@ -85,7 +85,7 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
 
 
         activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(actualName.toLowerCase());
-        if (activeCosmetics == null && dg) return new MarkedChatComponent(formatted == null ? rawPlayerString : displayName.getUnformattedText(), "\ued00" + rawPlayerString);
+        if (activeCosmetics == null && dg) return new MarkedChatComponent(formatted == null ? rawPlayerString : displayName.getString(), "\ued00" + rawPlayerString);
         else if (activeCosmetics == null) return displayName;
 
         CosmeticData color=null;
@@ -99,13 +99,13 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
         if (color != null) { // ᨠ
             String coloredName = color.getData() + actualName;
             if (dg) {
-                return new MarkedChatComponent(formatted == null ? rawPlayerString : displayName.getUnformattedText(), "\ued00" + rawPlayerString.replace(actualName, coloredName));
+                return new MarkedChatComponent(formatted == null ? rawPlayerString : displayName.getString(), "\ued00" + rawPlayerString.replace(actualName, coloredName));
             } else {
-                return new ChatComponentText(rawPlayerString.replace(actualName, coloredName));
+                return Component.literal(rawPlayerString.replace(actualName, coloredName));
             }
         } else {
             if (dg) {
-                return new MarkedChatComponent(formatted == null ? rawPlayerString : displayName.getUnformattedText(), "\ued00" + rawPlayerString);
+                return new MarkedChatComponent(formatted == null ? rawPlayerString : displayName.getString(), "\ued00" + rawPlayerString);
             } else {
                 return displayName;
             }

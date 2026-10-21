@@ -27,12 +27,13 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 
 public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     public GoldenPathLeftProcessor(RoomProcessorBombDefuseSolver solver, BDChamber chamber) {
@@ -110,9 +111,9 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void onSendData() {
         if (goldenPathsolution == null) return;
-        Minecraft.getInstance().player.sendChatMessage("/pc $DG-BDGP "+goldenPathsolution);
+        ChatProcessor.sendChatMessage("/pc $DG-BDGP "+goldenPathsolution);
 
-        ChatComponentText text = new ChatComponentText("$DG-BDGP "+goldenPathsolution);
+        MutableComponent text = Component.literal("$DG-BDGP "+goldenPathsolution);
         for (RoomProcessorBombDefuseSolver.ChamberSet ch: getSolver().getChambers()) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
                 ch.getLeft().getProcessor().chatReceived(text);
@@ -122,10 +123,10 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(Component chat) {
         super.chatReceived(chat);
-        if (chat.getFormattedText().contains("$DG-BDGP ")) {
-            String data = chat.getFormattedText().substring(chat.getFormattedText().indexOf("$DG-BDGP "));
+        if (TextUtils.getFormattedText(chat).contains("$DG-BDGP ")) {
+            String data = TextUtils.getFormattedText(chat).substring(TextUtils.getFormattedText(chat).indexOf("$DG-BDGP "));
             String actual = TextUtils.stripColor(data).trim().split(" ")[1].trim();
 
             blocksolution.clear();

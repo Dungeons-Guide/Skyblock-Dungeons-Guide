@@ -25,7 +25,8 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 
 public class FeatureUpdateAlarm extends SimpleFeature  {
     public FeatureUpdateAlarm() {
@@ -37,7 +38,7 @@ public class FeatureUpdateAlarm extends SimpleFeature  {
     @DGEventHandler
     public void onTick(DGTickEvent event) {
         if (stompPayload != null) {
-            ChatTransmitter.addToQueue(new ChatComponentText(stompPayload));
+            ChatTransmitter.addToQueue(Component.literal(stompPayload));
             stompPayload = null;
             Minecraft.getInstance().player.playSound("random.successful_hit", 1f,1f);
         }

@@ -34,7 +34,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.chat.MutableComponent;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
@@ -47,6 +47,7 @@ import java.security.SecureRandom;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import net.minecraft.network.chat.Component;
 
 public class PartyManager {
     public static final PartyManager INSTANCE = new PartyManager();
@@ -568,7 +569,7 @@ public class PartyManager {
                 FeatureTestPeople.handlePartyBroadCast(broadCastPlayload);
             }else {
                 try {
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload).getString("payload")));
+                    ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload).getString("payload")));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

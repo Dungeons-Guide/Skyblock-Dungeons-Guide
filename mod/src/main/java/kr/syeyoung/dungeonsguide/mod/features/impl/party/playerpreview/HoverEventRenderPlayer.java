@@ -20,20 +20,20 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview;
 
 import com.mojang.authlib.GameProfile;
 import lombok.Getter;
-import net.minecraft.event.HoverEvent;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 
 import java.util.Objects;
 
 public class HoverEventRenderPlayer extends HoverEvent {
     @Getter
     private final GameProfile gameProfile;
-    private IChatComponent cached;
+    private Component cached;
 
     public HoverEventRenderPlayer(GameProfile gameProfile) {
-        super(Action.SHOW_TEXT, new ChatComponentText(""));
+        super(Action.SHOW_TEXT, Component.literal(""));
         this.gameProfile = Objects.requireNonNull(gameProfile);
     }
 
@@ -52,15 +52,15 @@ public class HoverEventRenderPlayer extends HoverEvent {
     }
 
     @Override
-    public IChatComponent getValue() {
+    public Component getValue() {
         if (cached == null) {
-            cached = new ChatComponentText("")
-                    .setChatStyle(
-                            new ChatStyle()
-                                    .setChatHoverEvent(
+            cached = Component.literal("")
+                    .setStyle(
+                            Style.EMPTY
+                                    .withHoverEvent(
                                             new HoverEvent(
                                                     Action.SHOW_TEXT,
-                                                    new ChatComponentText(gameProfile.getId().toString())
+                                                    Component.literal(gameProfile.getId().toString())
                                             )
                                     )
                     );

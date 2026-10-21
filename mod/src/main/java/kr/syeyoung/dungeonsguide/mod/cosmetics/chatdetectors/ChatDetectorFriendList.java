@@ -20,19 +20,19 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors;
 
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChatDetectorFriendList implements IChatDetector {
     @Override
-    public List<ReplacementContext> getReplacementContext(IChatComponent chatComponent) {
+    public List<ReplacementContext> getReplacementContext(Component chatComponent) {
         boolean friend = false;
         int idx = 0;
-        for (IChatComponent iChatComponent : chatComponent) {
+        for (Component iChatComponent : chatComponent) {
             idx++;
-            if (iChatComponent.getUnformattedText().startsWith(" §6Friends ")) {
+            if (iChatComponent.getString().startsWith(" §6Friends ")) {
                 friend = true;
             }
             if (idx > 5 && !friend) return null;
@@ -40,7 +40,7 @@ public class ChatDetectorFriendList implements IChatDetector {
 
         if (!friend) return null;
 
-        String formatted = chatComponent.getFormattedText();
+        String formatted = TextUtils.getFormattedText(chatComponent);
         String strip = TextUtils.stripColor(formatted);
         int len = 0;
         List<ReplacementContext> replacementContexts = new ArrayList<>();

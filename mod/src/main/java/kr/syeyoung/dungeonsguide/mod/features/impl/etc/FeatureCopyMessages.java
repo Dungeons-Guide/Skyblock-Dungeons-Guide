@@ -23,11 +23,12 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.event.ClickEvent;
-import net.minecraft.event.HoverEvent;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
+import net.minecraft.network.chat.Component;
 
 public class FeatureCopyMessages extends SimpleFeature {
     public FeatureCopyMessages() {
@@ -39,6 +40,6 @@ public class FeatureCopyMessages extends SimpleFeature {
         
         if (clientChatReceivedEvent.type == 2) return;
 
-        clientChatReceivedEvent.message.appendSibling(new ChatComponentText("   §7[Copy]").setChatStyle(new ChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, TextUtils.stripColor(clientChatReceivedEvent.message.getFormattedText()))).setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText("§eCopy Message")))));
+        clientChatReceivedEvent.message.append(Component.literal("   §7[Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.SuggestCommand(TextUtils.stripColor(TextUtils.getFormattedText(clientChatReceivedEvent.message)))).withHoverEvent(new HoverEvent.ShowText(Component.literal("§eCopy Message")))));
     }
 }

@@ -29,7 +29,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Vec4b;
 import net.minecraft.world.storage.MapData;
 import org.apache.logging.log4j.LogManager;
@@ -37,6 +37,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.util.Map;
+import net.minecraft.network.chat.Component;
 
 public class MapPlayerProcessor {
 
@@ -52,7 +53,7 @@ public class MapPlayerProcessor {
     }
 
     private static void error(String prefix) {
-        ChatTransmitter.addToQueue(new ChatComponentText(ChatTransmitter.prefix + prefix));
+        ChatTransmitter.addToQueue(Component.literal(ChatTransmitter.prefix + prefix));
     }
 
 

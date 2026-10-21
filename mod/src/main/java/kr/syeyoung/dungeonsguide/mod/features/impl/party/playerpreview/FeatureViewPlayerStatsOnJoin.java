@@ -42,9 +42,9 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Mouse;
 
@@ -78,7 +78,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
                 if (username.equalsIgnoreCase(mc.getSession().getUsername())) {
                     PartyManager.INSTANCE.requestPartyList(context -> {
                         if (context == null) {
-                            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cBugged Dungeon Party "));
+                            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cBugged Dungeon Party "));
                         } else {
                             processPartyMembers(context);
                         }
@@ -101,18 +101,18 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         ApiFetcher.fetchUUIDAsync(username)
                 .thenAccept(a -> {
                     if (a == null) {
-                        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + username + "§f's Profile §cCouldn't fetch uuid"));
+                        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §e" + username + "§f's Profile §cCouldn't fetch uuid"));
                         return;
                     }
 
 
                     ApiFetcher.fetchMostRecentProfileAsync(a.get());
 
-                    IChatComponent comp = new ChatComponentText("§eDungeons Guide §7:: §e" + username + "§f's Profile ")
-                            .appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new HoverEventRenderPlayer(
+                    Component comp = Component.literal("§eDungeons Guide §7:: §e" + username + "§f's Profile ")
+                            .append(Component.literal("§7view").setStyle(Style.EMPTY.withHoverEvent(new HoverEventRenderPlayer(
                                     new GameProfile(fromString(a.get()), username)))));
 
-                    ChatTransmitter.addToQueue((ChatComponentText) comp);
+                    ChatTransmitter.addToQueue((MutableComponent) comp);
                 });
     }
 
@@ -125,10 +125,10 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         }
         ScaledResolution scaledResolution = new ScaledResolution(mc);
 
-        IChatComponent ichatcomponent = getHoveredComponent(scaledResolution);
+        Component ichatcomponent = getHoveredComponent(scaledResolution);
         GameProfile gameProfile = null;
-        if (ichatcomponent !=  null && ichatcomponent.getChatStyle().getChatHoverEvent() instanceof HoverEventRenderPlayer) {
-            gameProfile = ((HoverEventRenderPlayer) ichatcomponent.getChatStyle().getChatHoverEvent()).getGameProfile();
+        if (ichatcomponent !=  null && ichatcomponent.getStyle().getHoverEvent() instanceof HoverEventRenderPlayer) {
+            gameProfile = ((HoverEventRenderPlayer) ichatcomponent.getStyle().getHoverEvent()).getGameProfile();
         }
         if (gameProfile != null && widget == null) {
             int mouseX = Mouse.getX();
@@ -159,8 +159,8 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
     }
 
 
-    public IChatComponent getHoveredComponent(ScaledResolution scaledResolution) {
-        IChatComponent ichatcomponent = null;
+    public Component getHoveredComponent(ScaledResolution scaledResolution) {
+        Component ichatcomponent = null;
 //        if (Loader.isModLoaded("hychat")) {
 //            try {
 //                ChatManager chatManager = HyChat.getInstance().getChatManager();

@@ -34,7 +34,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.ChatFormatting;
 
 import java.util.Collections;
 import java.util.List;
@@ -108,7 +108,7 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
                     if (i == 0) {
                         list.set(i, toHoverStack.getRarity().rarityColor + list.get(i));
                     } else {
-                        list.set(i, EnumChatFormatting.GRAY + list.get(i));
+                        list.set(i, ChatFormatting.GRAY + list.get(i));
                     }
                 }
                 toHover= list;

@@ -18,8 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.mod.utils;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
@@ -29,6 +33,42 @@ public class TextUtils {
     private static final Pattern SCOREBOARD_CHARACTERS = Pattern.compile("[^a-z A-Z:0-9/'.]");
 
     private static final Pattern INTEGER_CHARACTERS = Pattern.compile("[^0-9]");
+
+    // TODO: D5 stopgap until chat reading moves to styled component matching.
+    // what 1.8.9's IChatComponent.getFormattedText() returned: for every component, its style's codes, its text, then §r
+    public static String getFormattedText(Component component) {
+        StringBuilder sb = new StringBuilder();
+        appendFormattedText(sb, component, Style.EMPTY);
+        return sb.toString();
+    }
+
+    private static void appendFormattedText(StringBuilder sb, Component component, Style parentStyle) {
+        Style style = component.getStyle().applyTo(parentStyle);
+        sb.append(getFormattingCode(style));
+        component.getContents().visit(text -> {
+            sb.append(text);
+            return Optional.empty();
+        });
+        sb.append(ChatFormatting.RESET);
+        for (Component sibling : component.getSiblings()) {
+            appendFormattedText(sb, sibling, style);
+        }
+    }
+
+    // 1.8.9's ChatStyle.getFormattingCode order
+    private static String getFormattingCode(Style style) {
+        StringBuilder sb = new StringBuilder();
+        if (style.getColor() != null) {
+            ChatFormatting color = ChatFormatting.getByName(style.getColor().serialize());
+            if (color != null) sb.append(color);
+        }
+        if (style.isBold()) sb.append(ChatFormatting.BOLD);
+        if (style.isItalic()) sb.append(ChatFormatting.ITALIC);
+        if (style.isUnderlined()) sb.append(ChatFormatting.UNDERLINE);
+        if (style.isObfuscated()) sb.append(ChatFormatting.OBFUSCATED);
+        if (style.isStrikethrough()) sb.append(ChatFormatting.STRIKETHROUGH);
+        return sb.toString();
+    }
 
     public static String stripColor(String input) {
         return STRIP_COLOR_PATTERN.matcher(input).replaceAll("");

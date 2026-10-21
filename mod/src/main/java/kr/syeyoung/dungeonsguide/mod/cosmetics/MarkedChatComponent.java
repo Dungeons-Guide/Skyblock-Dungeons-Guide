@@ -3,9 +3,9 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics;
 import com.google.common.collect.Iterators;
 import lombok.Setter;
 import net.minecraft.util.ChatComponentStyle;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-public class MarkedChatComponent implements IChatComponent {
+public class MarkedChatComponent implements Component {
     @Setter
     private String unformatted;
     @Setter
@@ -27,22 +27,22 @@ public class MarkedChatComponent implements IChatComponent {
 
 
     @Override
-    public IChatComponent setChatStyle(ChatStyle style) {
+    public Component setChatStyle(Style style) {
         return this;
     }
 
     @Override
-    public ChatStyle getChatStyle() {
-        return new ChatStyle();
+    public Style getChatStyle() {
+        return Style.EMPTY;
     }
 
     @Override
-    public IChatComponent appendText(String text) {
+    public Component appendText(String text) {
         return this;
     }
 
     @Override
-    public IChatComponent appendSibling(IChatComponent component) {
+    public Component appendSibling(Component component) {
         return this;
     }
 
@@ -62,17 +62,17 @@ public class MarkedChatComponent implements IChatComponent {
     }
 
     @Override
-    public List<IChatComponent> getSiblings() {
+    public List<Component> getSiblings() {
         return Collections.emptyList();
     }
 
     @Override
-    public IChatComponent createCopy() {
+    public Component createCopy() {
         return new MarkedChatComponent(formatted, unformatted);
     }
 
     @Override
-    public @NotNull Iterator<IChatComponent> iterator() {
+    public @NotNull Iterator<Component> iterator() {
         return Iterators.forArray(this);
     }
 }

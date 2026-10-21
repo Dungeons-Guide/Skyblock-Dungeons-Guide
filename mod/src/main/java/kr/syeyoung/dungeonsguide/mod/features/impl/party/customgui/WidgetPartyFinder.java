@@ -50,7 +50,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.ChatFormatting;
 import net.minecraft.resources.Identifier;
 
 import java.util.*;
@@ -384,7 +384,7 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
             if (i == 0) {
                 list.set(i, itemStack.getRarity().rarityColor + list.get(i));
             } else {
-                list.set(i, EnumChatFormatting.GRAY + list.get(i));
+                list.set(i, ChatFormatting.GRAY + list.get(i));
             }
         }
         party.setValue(String.join("\n", list));

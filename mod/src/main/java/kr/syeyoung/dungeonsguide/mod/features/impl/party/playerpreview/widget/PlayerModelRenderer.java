@@ -41,7 +41,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.ChatFormatting;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -161,7 +161,7 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
                 if (i == 0) {
                     list.set(i, toHover.getRarity().rarityColor + list.get(i));
                 } else {
-                    list.set(i, EnumChatFormatting.GRAY + list.get(i));
+                    list.set(i, ChatFormatting.GRAY + list.get(i));
                 }
             }
             actualTooltip.setTooltip(list);

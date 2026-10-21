@@ -297,7 +297,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
     @DGEventHandler()
     public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) {
-            Matcher m = thePattern.matcher(clientChatReceivedEvent.message.getFormattedText());
+            Matcher m = thePattern.matcher(TextUtils.getFormattedText(clientChatReceivedEvent.message));
             if (m.find()) {
                 String name = m.group(2);
                 if (!name.equalsIgnoreCase(lastActionbarAbility)) {
@@ -308,7 +308,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
                 lastActionbarAbility = null;
             }
         } else {
-            String message = clientChatReceivedEvent.message.getFormattedText();
+            String message = TextUtils.getFormattedText(clientChatReceivedEvent.message);
             if (message.equals("§r§aYour §r§9Bonzo's Mask §r§asaved your life!§r")) {
                 used("Clownin' Around");
             } else {

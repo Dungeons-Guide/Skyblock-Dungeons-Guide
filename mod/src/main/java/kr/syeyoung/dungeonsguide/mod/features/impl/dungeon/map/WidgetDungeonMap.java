@@ -765,24 +765,24 @@ public class WidgetDungeonMap extends Widget implements Renderer {
 
             Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation);
             for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : dungeonRoom.getDoorsAndStates()) {
-                double x = doorsAndState.getFirst().x;
-                double y = doorsAndState.getFirst().y;
-                if (doorsAndState.getSecond() == EDungeonDoorType.NONE) continue;
+                double x = doorsAndState.getA().x;
+                double y = doorsAndState.getA().y;
+                if (doorsAndState.getB() == EDungeonDoorType.NONE) continue;
 
                 int offsetXX = offsetX;
                 int offsetYY = offsetY;
 
-                if (doorsAndState.getSecond() == EDungeonDoorType.WITHER) {
+                if (doorsAndState.getB() == EDungeonDoorType.WITHER) {
                     offsetXX = 48;
                     offsetYY = 24;
                 }
 
-                if (doorsAndState.getSecond() == EDungeonDoorType.BLOOD) {
+                if (doorsAndState.getB() == EDungeonDoorType.BLOOD) {
                     offsetXX = 48;
                     offsetYY = 0;
                 }
 
-                if (doorsAndState.getSecond() == EDungeonDoorType.UNOPEN) {
+                if (doorsAndState.getB() == EDungeonDoorType.UNOPEN) {
                     offsetXX = 24;
                     offsetYY = 24 * 3;
                 }

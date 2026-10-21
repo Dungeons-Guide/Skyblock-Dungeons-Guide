@@ -93,6 +93,8 @@ import java.util.zip.GZIPOutputStream;
 import net.minecraft.resources.Identifier;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.network.chat.Component;
 
 public class FeatureCollectDungeonRooms extends SimpleFeature {
     public FeatureCollectDungeonRooms() {
@@ -142,7 +144,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         private int id;
         public String name;
         private String playerSkin;
-        private IChatComponent armorstand;
+        private Component armorstand;
         private transient ItemStack[] armoritems = new ItemStack[5];
         private Map<String, Double> attributes = new HashMap<>();
 
@@ -190,7 +192,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         @Data @AllArgsConstructor
         public static class ChatMessage {
             private long time;
-            private IChatComponent chat;
+            private Component chat;
         }
 
 
@@ -263,7 +265,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     @DGEventHandler(ignoreDisabled = true)
     public void onChat(ChatReceivedEvent event) {
         if (event.type == 2) return;
-        if (!event.message.getFormattedText().contains(":")) {
+        if (!TextUtils.getFormattedText(event.message).contains(":")) {
             // this is not user message.
             if (Minecraft.getInstance().player == null) return;
             Vec3 pos = Minecraft.getInstance().player.getPositionVector();
@@ -298,7 +300,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
             if (roomInfo == null) return;
 
-            roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), new ChatComponentText("SECRET UPDATE: "+secret+"/"+total)));
+            roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), Component.literal("SECRET UPDATE: "+secret+"/"+total)));
         }
 
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
@@ -436,11 +438,11 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
         Map<DungeonRoom, List<Tuple<BlockPos, IBlockState>>> updatePerRoom = blockUpdateEvent.getUpdatedBlocks().stream()
                 .filter(a -> {
-                    Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(a.getFirst());
+                    Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(a.getA());
                     return dungeonContext.getScaffoldParser().getRoomMap().get(roompt) != null;
                 })
                 .collect(Collectors.groupingBy(a -> {
-                            Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(a.getFirst());
+                            Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(a.getA());
                             return dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
                         }));
 
@@ -450,7 +452,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             }
             RoomInfo roomInfo = roomInfoMap.get(dungeonRoomListEntry.getKey());
             if (roomInfo  == null) continue;
-            roomInfo.blockUpdates.add(new RoomInfo.BlockUpdate(dungeonRoomListEntry.getValue().stream().map(it -> new RoomInfo.BlockUpdate.BlockUpdateData(it.getFirst(), it.getSecond())).collect(Collectors.toList()), System.currentTimeMillis()));
+            roomInfo.blockUpdates.add(new RoomInfo.BlockUpdate(dungeonRoomListEntry.getValue().stream().map(it -> new RoomInfo.BlockUpdate.BlockUpdateData(it.getA(), it.getB())).collect(Collectors.toList()), System.currentTimeMillis()));
             roomInfo.minX = dungeonRoomListEntry.getKey().getRoomBounds().getMin().getX();
             roomInfo.minZ = dungeonRoomListEntry.getKey().getRoomBounds().getMin().getZ();
 
@@ -532,7 +534,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                             return null;
                         }
                     })
-                    .registerTypeAdapter(IChatComponent.class, new IChatComponent.Serializer())
+                    .registerTypeAdapter(Component.class, new Component.Serializer())
                     .create();
             String correlationId = Optional.ofNullable(PartyManager.INSTANCE.getPartyContext())
                     .map(PartyContext::getPartyID)
@@ -730,7 +732,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             RenderUtils.drawTextAtWorld("??Unknown??", (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
         } else {
             if (entityData.getArmorstand() != null)
-                RenderUtils.drawTextAtWorld(entityData.getArmorstand().getFormattedText(), (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
+                RenderUtils.drawTextAtWorld(TextUtils.getFormattedText(entityData.getArmorstand()), (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
             RenderUtils.drawTextAtWorld(entityData.getType(), (float) hovered.posX, (float) hovered.posY+3.2f, (float) hovered.posZ, 0xFF00FF00, 0.02f, false, true, event.partialTicks);
             Vec3 pos = entityData.getTrajectory().getFirst().getPos();
             RenderUtils.renderBeaconBeam(

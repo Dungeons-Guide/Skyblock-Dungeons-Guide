@@ -188,7 +188,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
     @DGEventHandler
     public void onMessage(ChatReceivedEvent event) {
-        String txt = event.message.getFormattedText();
+        String txt = TextUtils.getFormattedText(event.message);
         String player = TextUtils.stripColor(txt.split(" ")[0]);
         if (txt.contains("§r§a completed a device! (§r§c")) {
             EntityPlayer player1 = Minecraft.getInstance().level.getPlayerEntityByName(player);

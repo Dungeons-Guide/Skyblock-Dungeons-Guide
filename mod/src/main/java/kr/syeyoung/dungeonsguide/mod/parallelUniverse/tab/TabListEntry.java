@@ -29,9 +29,10 @@ import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.WorldSettings.GameType;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 @RequiredArgsConstructor
 public class TabListEntry {
@@ -43,14 +44,14 @@ public class TabListEntry {
     @Getter @Setter
     private int ping;
     @Getter
-    private IChatComponent displayName;
+    private Component displayName;
 
     @Getter
     private String formatted;
 
-    public void setDisplayName(IChatComponent displayName) {
+    public void setDisplayName(Component displayName) {
         this.displayName = displayName;
-        formatted = displayName == null ? null : displayName.getFormattedText();
+        formatted = displayName == null ? null : TextUtils.getFormattedText(displayName);
     }
 
     public String getEffectiveName() {

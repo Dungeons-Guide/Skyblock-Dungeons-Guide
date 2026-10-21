@@ -30,6 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import lombok.Getter;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
     public FeatureDungeonCurrentRoomSecrets() {
@@ -81,7 +82,7 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
     @DGEventHandler
     public void onChat(ChatReceivedEvent chat) {
         if (chat.type != 2) return;
-        String text = chat.message.getFormattedText();
+        String text = TextUtils.getFormattedText(chat.message);
         if (!text.contains("/")) return;
 
         int secretsIndex = text.indexOf("Secrets");

@@ -51,8 +51,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 import org.apache.commons.codec.binary.Base64;
 
@@ -62,6 +62,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 
 public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
 
@@ -168,7 +169,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             w.flush();
             byte[] bytes = baos.toByteArray();
             String str = Base64.encodeBase64String(bytes);
-            Minecraft.getInstance().player.sendChatMessage("/pc $DG-BD " +str);
+            ChatProcessor.sendChatMessage("/pc $DG-BD " +str);
 
             for (ChamberSet ch:chambers) {
                 if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
@@ -178,12 +179,12 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             }
         } catch (IOException e2) {
             e2.printStackTrace();
-            ChatTransmitter.sendDebugChat(new ChatComponentText("Failed to send Bomb Defuse Chat"));
+            ChatTransmitter.sendDebugChat(Component.literal("Failed to send Bomb Defuse Chat"));
         }
     }
 
     @Override
-    public void chatReceived(IChatComponent component) {
+    public void chatReceived(Component component) {
         super.chatReceived(component);
         if (bugged) return;
         for (ChamberSet ch:chambers) {
@@ -193,9 +194,9 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                 ch.getRight().getProcessor().chatReceived(component);
         }
 
-        if (component.getFormattedText().contains("$DG-BD ")) {
+        if (TextUtils.getFormattedText(component).contains("$DG-BD ")) {
             try {
-                String data = component.getFormattedText().substring(component.getFormattedText().indexOf("$DG-BD"));
+                String data = TextUtils.getFormattedText(component).substring(TextUtils.getFormattedText(component).indexOf("$DG-BD"));
                 String actual = TextUtils.stripColor(data).trim().split(" ")[1];
                 byte[] data2 = Base64.decodeBase64(actual);
                 NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(data2));
@@ -209,7 +210,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             } catch (Exception t) {
                 FeatureCollectDiagnostics.queueSendLogAsync(t);
                 t.printStackTrace();
-                ChatTransmitter.sendDebugChat(new ChatComponentText("Failed to analyze Bomb Defuse Chat"));
+                ChatTransmitter.sendDebugChat(Component.literal("Failed to analyze Bomb Defuse Chat"));
             }
         }
     }
@@ -306,7 +307,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void actionbarReceived(IChatComponent chat) {
+    public void actionbarReceived(Component chat) {
         super.actionbarReceived(chat);
         if (bugged) return;
 

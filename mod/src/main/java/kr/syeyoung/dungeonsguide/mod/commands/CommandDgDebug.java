@@ -68,7 +68,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -84,17 +84,20 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import net.minecraft.network.chat.Component;
+import kr.syeyoung.dungeonsguide.mod.chat.ChatCapture;
+import java.io.IOException;
 
 public class CommandDgDebug {
     @DGCommand("dgdebug")
     @DGCommand("dgdebug help")
     public void showHelp() {
-        ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand."));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
+        ChatTransmitter.addToQueue(Component.literal("ain't gonna find much anything here"));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand."));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
     }
 
     @DGCommand("dgdebug freeze")
@@ -305,7 +308,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug saverooms")
     public void saveRoomsCommand() {
         DungeonRoomInfoRegistry.saveAll(new File(Main.getConfigDir(), "roomdatas"));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata"));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata"));
     }
 
     @DGCommand("dgdebug process2")
@@ -372,20 +375,20 @@ public class CommandDgDebug {
     public void loadRoomsCommand() {
         try {
             DungeonRoomInfoRegistry.loadAll(new File(Main.getConfigDir(), "roomdatas"));
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully loaded roomdatas"));
+            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fSuccessfully loaded roomdatas"));
             return;
         } catch (BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException |
                  NoSuchAlgorithmException | IOException | IllegalBlockSizeException |
                  NoSuchPaddingException e) {
             e.printStackTrace();
         }
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cAn error has occurred while loading roomdata"));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cAn error has occurred while loading roomdata"));
     }
 
     @DGCommand("dgdebug brand")
     public void brandCommand() {
         String serverBrand = Minecraft.getInstance().player.getClientBrand();
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §e" + serverBrand));
     }
 
     @DGCommand("dgdebug removedoors")
@@ -1260,12 +1263,12 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug partyid")
     public void partyIdCommand() {
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: " + Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(null)));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fInternal Party id: " + Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(null)));
     }
 
     @DGCommand("dgdebug loc")
     public void locCommand() {
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fYou're in " + SkyblockStatus.getLocationName()));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fYou're in " + SkyblockStatus.getLocationName()));
     }
 
     @DGCommand("dgdebug saverun")
@@ -1279,7 +1282,7 @@ public class CommandDgDebug {
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null) {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't find dungeon to save!"));
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cCouldn't find dungeon to save!"));
                 return;
             }
             DungeonEventHolder dungeonEventHolder = new DungeonEventHolder();
@@ -1292,9 +1295,9 @@ public class CommandDgDebug {
             oos.writeObject(dungeonEventHolder);
             oos.flush();
             oos.close();
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved dungeon run to " + runFile.getAbsolutePath()));
+            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fSuccessfully saved dungeon run to " + runFile.getAbsolutePath()));
         } catch (Exception e) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cAn error occured while writing rundata " + e.getMessage()));
+            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cAn error occured while writing rundata " + e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -1303,7 +1306,7 @@ public class CommandDgDebug {
     public void requestStaticResource(String uuid) {
         UUID uid = UUID.fromString(uuid);
         StaticResourceCache.INSTANCE.getResource(uid).thenAccept(a -> {
-            ChatTransmitter.addToQueue(new ChatComponentText(a.getResourceID() + ": " + a.getValue() + ": " + a.isExists()));
+            ChatTransmitter.addToQueue(Component.literal(a.getResourceID() + ": " + a.getValue() + ": " + a.isExists()));
         });
     }
 
@@ -1380,7 +1383,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug readmap {fromX} {fromY}")
     public void readMapCommand(int fromX, int fromY) {
         try {
-            ChatTransmitter.addToQueue(new ChatComponentText(MapUtils.readDigit(MapUtils.getColors(), fromX, fromY) + "-"));
+            ChatTransmitter.addToQueue(Component.literal(MapUtils.readDigit(MapUtils.getColors(), fromX, fromY) + "-"));
 /*                int cntY = Integer.parseInt(args[3]);
                 int target = Integer.parseInt(args[4]);
                 StringBuilder sb = new StringBuilder("{");
@@ -1409,6 +1412,22 @@ public class CommandDgDebug {
                 Minecraft.getInstance().setScreen(adapter);
             });
         }).start();
+    }
+
+    // D104: records what the server sends as chat / action bar / titles
+    @DGCommand("dgdebug chatcapture")
+    public void chatCaptureCommand() {
+        try {
+            if (ChatCapture.INSTANCE.isCapturing()) {
+                ChatCapture.INSTANCE.stop();
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fChat capture stopped: " + ChatCapture.INSTANCE.getFile().getAbsolutePath()));
+            } else {
+                ChatCapture.INSTANCE.start();
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fCapturing chat to " + ChatCapture.INSTANCE.getFile().getAbsolutePath()));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @DGCommand("dgdebug clearprofile")

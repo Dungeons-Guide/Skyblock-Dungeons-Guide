@@ -21,15 +21,15 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChatDetectorPartyMessages implements IChatDetector {
     @Override
-    public List<ReplacementContext> getReplacementContext(IChatComponent chatComponent) {
-        String str = chatComponent.getFormattedText();
+    public List<ReplacementContext> getReplacementContext(Component chatComponent) {
+        String str = TextUtils.getFormattedText(chatComponent);
         String strip = TextUtils.stripColor(str);
 
         List<ReplacementContext> detectors = new ArrayList<>();

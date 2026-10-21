@@ -76,6 +76,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
+import kr.syeyoung.dungeonsguide.mod.chat.ChatCapture;
 
 public class DungeonsGuide {
 
@@ -208,6 +209,7 @@ public class DungeonsGuide {
 
         registerEventsForge(skyblockStatus);
         registerEventsForge(ChatTransmitter.INSTANCE);
+        registerEventsForge(ChatCapture.INSTANCE);
         registerEventsForge(new BlockCache());
         registerEventsForge(PassthroughManager.INSTANCE);
         registerEventsForge(GuiDisplayer.INSTANCE); // was registered by the 1.8.9 loader

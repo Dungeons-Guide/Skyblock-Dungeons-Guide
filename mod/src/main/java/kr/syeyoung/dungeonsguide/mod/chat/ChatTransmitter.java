@@ -23,8 +23,8 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 
@@ -40,16 +40,16 @@ public class ChatTransmitter {
     public static ChatTransmitter INSTANCE = new ChatTransmitter();
 
     @Getter
-    static Queue<ChatComponentText> receiveQueue = new ConcurrentLinkedQueue<>();
+    static Queue<MutableComponent> receiveQueue = new ConcurrentLinkedQueue<>();
 
     public static void addToQueue(String chat, boolean noDupe) {
-        addToQueue(new ChatComponentText(chat), noDupe);
+        addToQueue(Component.literal(chat), noDupe);
     }
 
-    public static void addToQueue(ChatComponentText chat) {
+    public static void addToQueue(MutableComponent chat) {
         addToQueue(chat, false);
     }
-    public static void addToQueue(ChatComponentText chat, boolean noDupe) {
+    public static void addToQueue(MutableComponent chat, boolean noDupe) {
         if(noDupe && receiveQueue.stream().anyMatch(a -> a.equals(chat))) return;
         receiveQueue.add(chat);
     }
@@ -58,14 +58,14 @@ public class ChatTransmitter {
         addToQueue(s, false);
     }
 
-    public static void sendDebugChat(IChatComponent iChatComponent) {
+    public static void sendDebugChat(Component iChatComponent) {
         if(FeatureRegistry.DEBUG == null) return;
         if (FeatureRegistry.DEBUG.isEnabled())
-            addToQueue((ChatComponentText) iChatComponent);
+            addToQueue((MutableComponent) iChatComponent);
     }
 
     public static void sendDebugChat(String text) {
-        sendDebugChat(new ChatComponentText(text));
+        sendDebugChat(Component.literal(text));
     }
 
 
@@ -77,7 +77,7 @@ public class ChatTransmitter {
             ChatReceivedEvent event = new ChatReceivedEvent((byte) 1, receiveQueue.poll());
             DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(event);
             if (!event.isCanceled()) {
-                Minecraft.getInstance().player.addChatMessage(event.message);
+                Minecraft.getInstance().gui.getChat().addMessage(event.message);
             }
         }
     }

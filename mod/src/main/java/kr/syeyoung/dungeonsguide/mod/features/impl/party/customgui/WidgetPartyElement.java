@@ -32,7 +32,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.ChatFormatting;
 import net.minecraft.resources.Identifier;
 
 import java.util.List;
@@ -155,7 +155,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
             if (i == 0) {
                 toHover.set(i, party.itemStack.getRarity().rarityColor + toHover.get(i));
             } else {
-                toHover.set(i, EnumChatFormatting.GRAY + toHover.get(i));
+                toHover.set(i, ChatFormatting.GRAY + toHover.get(i));
             }
         }
 

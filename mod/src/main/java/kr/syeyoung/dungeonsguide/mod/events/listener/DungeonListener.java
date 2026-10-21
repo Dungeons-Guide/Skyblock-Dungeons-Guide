@@ -74,7 +74,7 @@ import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Vec3;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
@@ -91,6 +91,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import com.mojang.blaze3d.platform.InputConstants;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.network.chat.Component;
 
 public class DungeonListener {
 
@@ -331,7 +333,7 @@ public class DungeonListener {
     public void onChatReceived(ChatReceivedEvent clientChatReceivedEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        if (clientChatReceivedEvent.type != 2 && clientChatReceivedEvent.message.getFormattedText().contains("§6> §e§lEXTRA STATS §6<")) {
+        if (clientChatReceivedEvent.type != 2 && TextUtils.getFormattedText(clientChatReceivedEvent.message).contains("§6> §e§lEXTRA STATS §6<")) {
             DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DungeonEndedEvent());
         }
 
@@ -601,7 +603,7 @@ public class DungeonListener {
 //            if (ec == null) {
 //                DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 //                if (context == null) {
-//                    ChatTransmitter.addToQueue(new ChatComponentText("Not in dungeons"));
+//                    ChatTransmitter.addToQueue(Component.literal("Not in dungeons"));
 //                    return;
 //                }
 //                EntityPlayerSP thePlayer = Minecraft.getInstance().player;
@@ -610,12 +612,12 @@ public class DungeonListener {
 //                    DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
 
 //                    if (dungeonRoom == null) {
-//                        ChatTransmitter.addToQueue(new ChatComponentText("Can't determine the dungeon room you're in"));
+//                        ChatTransmitter.addToQueue(Component.literal("Can't determine the dungeon room you're in"));
 //                        return;
 //                    }
 
 //                    if (EditingContext.getEditingContext() != null) {
-//                        ChatTransmitter.addToQueue(new ChatComponentText("There is an editing session currently open."));
+//                        ChatTransmitter.addToQueue(Component.literal("There is an editing session currently open."));
 //                        return;
 //                    }
 

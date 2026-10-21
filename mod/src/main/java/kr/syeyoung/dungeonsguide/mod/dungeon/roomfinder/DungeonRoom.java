@@ -62,6 +62,7 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
+import net.minecraft.network.chat.Component;
 
 @Getter
 public class DungeonRoom  {
@@ -286,13 +287,13 @@ public class DungeonRoom  {
             Set<Tuple<BlockPos, EDungeonDoorType>> positions = new HashSet<>();
             BlockPos pos = context.getScaffoldParser().getDungeonMapLayout().roomPointToWorldPoint(minRoomPt).add(16, 0, 16);
             for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : doorsAndStates) {
-                Vector2d vector2d = doorsAndState.getFirst();
+                Vector2d vector2d = doorsAndState.getA();
                 BlockPos neu = pos.add(vector2d.x * 32, 0, vector2d.y * 32);
-                positions.add(new Tuple<>(neu, doorsAndState.getSecond()));
+                positions.add(new Tuple<>(neu, doorsAndState.getB()));
             }
 
             for (Tuple<BlockPos, EDungeonDoorType> door : positions) {
-                doors.add(new DungeonDoor(context.getWorld(), door.getFirst(), door.getSecond()));
+                doors.add(new DungeonDoor(context.getWorld(), door.getA(), door.getB()));
             }
         }
     }
@@ -313,9 +314,9 @@ public class DungeonRoom  {
                     dungeonRoomInfo.getName(),
                     dungeonRoomInfo.getProcessorId()));
         }
-        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! shape: " + getRoomBounds().getShape() + " color: " +getColor() + " unitPos: " + unitPoints.iterator().next().x + "," + unitPoints.iterator().next().y));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! mapMin: " + roomBounds.getMin() + " mapMx: " + roomBounds.getMax()));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! id: " + dungeonRoomInfo.getUuid() + " name: " + dungeonRoomInfo.getName() +" proc: "+dungeonRoomInfo.getProcessorId()));
+        ChatTransmitter.sendDebugChat(Component.literal("New Map matched! shape: " + getRoomBounds().getShape() + " color: " +getColor() + " unitPos: " + unitPoints.iterator().next().x + "," + unitPoints.iterator().next().y));
+        ChatTransmitter.sendDebugChat(Component.literal("New Map matched! mapMin: " + roomBounds.getMin() + " mapMx: " + roomBounds.getMax()));
+        ChatTransmitter.sendDebugChat(Component.literal("New Map matched! id: " + dungeonRoomInfo.getUuid() + " name: " + dungeonRoomInfo.getName() +" proc: "+dungeonRoomInfo.getProcessorId()));
 
 
         this.dungeonRoomInfo = dungeonRoomInfo;

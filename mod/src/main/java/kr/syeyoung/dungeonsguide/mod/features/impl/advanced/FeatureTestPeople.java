@@ -240,7 +240,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 
     @DGEventHandler()
     public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
-        String txt = clientChatReceivedEvent.message.getFormattedText();
+        String txt = TextUtils.getFormattedText(clientChatReceivedEvent.message);
         if (!txt.startsWith("§r§9Party §8>")) return;
 
         String chat = TextUtils.stripColor(txt.substring(txt.indexOf(":") + 1)).trim().toLowerCase();

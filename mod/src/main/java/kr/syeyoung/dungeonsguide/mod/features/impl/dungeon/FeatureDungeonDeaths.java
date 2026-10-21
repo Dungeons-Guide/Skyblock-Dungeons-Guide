@@ -37,13 +37,14 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.chat.MutableComponent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.network.chat.Component;
 
 public class FeatureDungeonDeaths extends TextHUDFeature {
     public FeatureDungeonDeaths() {
@@ -144,14 +145,14 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return;
 
-        String txt = clientChatReceivedEvent.message.getFormattedText();
+        String txt = TextUtils.getFormattedText(clientChatReceivedEvent.message);
         Matcher m = deathPattern.matcher(txt);
         if (m.matches()) {
             String nickname = TextUtils.stripColor(m.group(1));
             int deaths = getDeaths().getOrDefault(nickname, 0);
             getDeaths().put(nickname, deaths + 1);
             context.getRecorder().createEvent(new DungeonDeathEvent(nickname, txt, deaths));
-            ChatTransmitter.sendDebugChat(new ChatComponentText("Death verified :: "+nickname+" / "+(deaths + 1)));
+            ChatTransmitter.sendDebugChat(Component.literal("Death verified :: "+nickname+" / "+(deaths + 1)));
         }
         Matcher m2 = meDeathPattern.matcher(txt);
         if (m2.matches()) {
@@ -159,7 +160,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
             int deaths = getDeaths().getOrDefault(nickname, 0);
             getDeaths().put(nickname, deaths + 1);
             context.getRecorder().createEvent(new DungeonDeathEvent(Minecraft.getInstance().player.getName(), txt, deaths));
-            ChatTransmitter.sendDebugChat(new ChatComponentText("Death verified :: me / "+(deaths + 1)));
+            ChatTransmitter.sendDebugChat(Component.literal("Death verified :: me / "+(deaths + 1)));
         }
     }
 }

@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.World;
 
 import java.awt.*;
@@ -66,10 +66,10 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(Component chat) {
         super.chatReceived(chat);
-        if (chat.getFormattedText().contains("$DG-BDGP ")) {
-            String data = chat.getFormattedText().substring(chat.getFormattedText().indexOf("$DG-BDGP"));
+        if (TextUtils.getFormattedText(chat).contains("$DG-BDGP ")) {
+            String data = TextUtils.getFormattedText(chat).substring(TextUtils.getFormattedText(chat).indexOf("$DG-BDGP"));
             String actual = TextUtils.stripColor(data).trim().split(" ")[1].trim();
 
             blocksolution.clear();

@@ -33,6 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 import java.util.UUID;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 public class FeatureWatcherWarning extends TextHUDFeature {
 
@@ -58,7 +59,7 @@ public class FeatureWatcherWarning extends TextHUDFeature {
 
     @DGEventHandler()
     public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
-        if (clientChatReceivedEvent.message.getFormattedText().equals("§r§c[BOSS] The Watcher§r§f: That will be enough for now.§r"))  {
+        if (TextUtils.getFormattedText(clientChatReceivedEvent.message).equals("§r§c[BOSS] The Watcher§r§f: That will be enough for now.§r"))  {
             warning = System.currentTimeMillis() + 2500;
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (context ==null) return;
