@@ -42,7 +42,7 @@ import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerNameFormatEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -435,7 +435,7 @@ public class CosmeticsManager {
 
 
     @SubscribeEvent(priority = ListenerPriority.LAST)
-    public void nameFormat(PlayerEvent.NameFormat nameFormat) {
+    public void nameFormat(PlayerNameFormatEvent nameFormat) {
         List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.get(nameFormat.entityPlayer.getGameProfile().getId());
         boolean dg =
                 FeatureRegistry.DG_INDICATOR.isEnabled() &&
