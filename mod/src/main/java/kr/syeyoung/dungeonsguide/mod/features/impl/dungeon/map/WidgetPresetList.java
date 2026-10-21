@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.client.resources.ResourcePackRepository;
 import net.minecraft.resources.Identifier;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -58,13 +58,13 @@ public class WidgetPresetList extends AnnotatedImportOnlyWidget {
 
         List<Preset> foundPresets = new ArrayList<>();
         try {
-            for (IResource allResource : Minecraft.getMinecraft().getResourceManager().getAllResources(Identifier.parse("dungeonsguide:map/presets.json"))) {
-                try (InputStream inputStream = allResource.getInputStream();
+            for (Resource allResource : Minecraft.getInstance().getResourceManager().getResourceStack(Identifier.parse("dungeonsguide:map/presets.json"))) {
+                try (InputStream inputStream = allResource.open();
                      JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream))) {
 
                         Preset[] preset = new Gson().fromJson(jsonReader, Preset[].class);
                         for (Preset preset1 : preset) {
-                            preset1.setTexturePack(allResource.getResourcePackName());
+                            preset1.setTexturePack(allResource.sourcePackId());
                             foundPresets.add(preset1);
                         }
                 } catch (Exception e) {

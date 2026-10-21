@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.ParserException;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.W3CBackedParser;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.resources.Identifier;
 
 import java.lang.invoke.MethodHandle;
@@ -134,8 +134,8 @@ public class DomElementRegistry {
     public static Parser obtainParser(Identifier resourceLocation) {
         if (cache.containsKey(resourceLocation)) return cache.get(resourceLocation);
         try {
-            IResource iResource = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation);
-            W3CBackedParser parser = new W3CBackedParser(iResource.getInputStream());
+            Resource iResource = Minecraft.getInstance().getResourceManager().getResourceOrThrow(resourceLocation);
+            W3CBackedParser parser = new W3CBackedParser(iResource.open());
             cache.put(resourceLocation, parser);
             return parser;
         } catch (Exception e) {

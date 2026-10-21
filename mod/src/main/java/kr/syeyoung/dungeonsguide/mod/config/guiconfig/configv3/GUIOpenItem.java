@@ -51,7 +51,7 @@ public class GUIOpenItem extends AnnotatedImportOnlyWidget {
         try {
             String target = "dungeonsguide:textures/config/category_icon/"+category.toLowerCase()
                     .replace("&","").replace(" ","_")+".png";
-            if (Minecraft.getMinecraft().getResourceManager().getResource(Identifier.parse(target)) != null)
+            if (Minecraft.getInstance().getResourceManager().getResourceOrThrow(Identifier.parse(target)) != null)
                 image.setValue(target);
         } catch (IOException e) {}
     }
