@@ -20,23 +20,30 @@ package kr.syeyoung.dungeonsguide.mod.render.world;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.framegraph.FrameGraphBuilder;
 import com.mojang.blaze3d.framegraph.FramePass;
+import com.mojang.blaze3d.pipeline.DepthStencilState;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.resource.ResourceHandle;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import kr.syeyoung.dungeonsguide.mod.render.world.state.BlockModelState;
 import kr.syeyoung.dungeonsguide.mod.render.world.state.DGWorldRenderState;
+import kr.syeyoung.dungeonsguide.mod.render.world.state.ShaderQuadState;
 import kr.syeyoung.dungeonsguide.mod.render.world.state.WorldImageState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.fog.FogRenderer;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * DG world rendering on vanilla's frame graph (D123). RenderWorldEvent fires during level extraction and only records
@@ -61,6 +68,41 @@ public class DGWorldRenderer {
 
     public static void record(BlockModelState state) {
         blockModels.add(state);
+    }
+
+    private static final Map<RenderPipeline, RenderPipeline> seeThroughPipelines = new HashMap<>();
+
+    // the same DG shader pipeline without the depth test, for draws 1.8.9 made with depth off
+    private static RenderPipeline seeThroughVariant(RenderPipeline base) {
+        return seeThroughPipelines.computeIfAbsent(base, pipeline -> {
+            RenderPipeline.Builder builder = RenderPipeline.builder()
+                    .withLocation(Identifier.fromNamespaceAndPath("dungeonsguide", "pipeline/see_through/" + pipeline.getLocation().getNamespace() + "/" + pipeline.getLocation().getPath()))
+                    .withVertexShader(pipeline.getVertexShader())
+                    .withFragmentShader(pipeline.getFragmentShader())
+                    .withVertexFormat(pipeline.getVertexFormat(), pipeline.getVertexFormatMode())
+                    .withCull(pipeline.isCull())
+                    .withPolygonMode(pipeline.getPolygonMode())
+                    .withColorTargetState(pipeline.getColorTargetState())
+                    .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false));
+            for (String sampler : pipeline.getSamplers()) {
+                builder.withSampler(sampler);
+            }
+            for (RenderPipeline.UniformDescription uniform : pipeline.getUniforms()) {
+                if (uniform.textureFormat() == null) builder.withUniform(uniform.name(), uniform.type());
+                else builder.withUniform(uniform.name(), uniform.type(), uniform.textureFormat());
+            }
+            for (String flag : pipeline.getShaderDefines().flags()) {
+                builder.withShaderDefine(flag);
+            }
+            for (Map.Entry<String, String> define : pipeline.getShaderDefines().values().entrySet()) {
+                try {
+                    builder.withShaderDefine(define.getKey(), Integer.parseInt(define.getValue()));
+                } catch (NumberFormatException e) {
+                    builder.withShaderDefine(define.getKey(), Float.parseFloat(define.getValue()));
+                }
+            }
+            return builder.build();
+        });
     }
 
     public static void addPasses(FrameGraphBuilder frame, LevelTargetBundle targets) {
@@ -114,7 +156,15 @@ public class DGWorldRenderer {
             PoseStack poseStack = new PoseStack();
             MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
             for (DGWorldRenderState state : frameStates) {
-                state.submit(poseStack, bufferSource, frameCamera);
+                if (state instanceof ShaderQuadState) {
+                    // its own render pass, after what's buffered so far
+                    bufferSource.endBatch();
+                    ShaderQuadState shaderQuad = (ShaderQuadState) state;
+                    RenderPipeline pipeline = shaderQuad.getShader().getPipeline();
+                    shaderQuad.draw(worldTarget.get(), shaderQuad.isDepth() ? pipeline : seeThroughVariant(pipeline), frameCamera);
+                } else {
+                    state.submit(poseStack, bufferSource, frameCamera);
+                }
             }
             bufferSource.endBatch();
             RenderSystem.outputColorTextureOverride = null;

@@ -25,27 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
-import org.lwjgl.util.glu.Project;
 
-import javax.vecmath.Vector3f;
 import java.util.Collections;
 import java.util.List;
 
@@ -67,6 +47,8 @@ public class WidgetPreview extends Widget implements Renderer {
     }
 
     public static void drawTextAtWorld(String text, float x, float y, float z, int color, float scale, boolean increase, boolean renderBlackBox, float partialTicks) {
+        // TODO: 3D previews are built later (D124), the 1.8.9 preview drawing is kept below
+/*
         float lScale = scale;
 
         RenderManager renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
@@ -117,11 +99,14 @@ public class WidgetPreview extends Widget implements Renderer {
         GlStateManager.depthMask(true);
         GlStateManager.enableDepth();
         GlStateManager.popMatrix();
+    */
     }
 
 
     @Override
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
+        // TODO: 3D previews are built later (D124), the 1.8.9 preview drawing is kept below
+/*
         GL11.glViewport(
                 (int) buildContext.getAbsBounds().getX(),
                 (int) (Minecraft.getInstance().getWindow().getHeight() - buildContext.getAbsBounds().getY() - buildContext.getAbsBounds().getHeight()),
@@ -281,5 +266,6 @@ public class WidgetPreview extends Widget implements Renderer {
 
         GL11.glViewport(0,0,Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight());
 
+    */
     }
 }
