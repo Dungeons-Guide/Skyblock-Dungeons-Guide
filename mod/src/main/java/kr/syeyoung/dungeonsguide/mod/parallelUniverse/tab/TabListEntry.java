@@ -18,9 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab;
 
-import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.Team;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
 import lombok.Getter;
@@ -28,10 +26,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.client.resources.SkinManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.WorldSettings.GameType;
+import net.minecraft.world.entity.player.PlayerModelType;
+import net.minecraft.world.entity.player.PlayerSkin;
+import net.minecraft.world.level.GameType;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 @RequiredArgsConstructor
@@ -57,76 +56,59 @@ public class TabListEntry {
     public String getEffectiveName() {
         if (formatted != null) return formatted;
 
-        Team team = TeamManager.INSTANCE.getPlayerTeam(gameProfile.getName());
+        Team team = TeamManager.INSTANCE.getPlayerTeam(gameProfile.name());
         if (team != null) {
-            return team.getPrefix() + gameProfile.getName() + team.getSuffix();
+            return TextUtils.getFormattedText(team.getPrefix()) + gameProfile.name() + TextUtils.getFormattedText(team.getSuffix());
         }
-        return gameProfile.getName();
+        return gameProfile.name();
     }
     public String getEffectiveWithoutName() {
         if (formatted != null) return formatted;
 
-        Team team = TeamManager.INSTANCE.getPlayerTeam(gameProfile.getName());
+        Team team = TeamManager.INSTANCE.getPlayerTeam(gameProfile.name());
         if (team != null) {
-            return team.getPrefix() + team.getSuffix();
+            return TextUtils.getFormattedText(team.getPrefix()) + TextUtils.getFormattedText(team.getSuffix());
         }
-        return gameProfile.getName();
+        return gameProfile.name();
     }
 
 
     private boolean playerTexturesLoaded = false;
-    private Identifier locationSkin;
-    private Identifier locationCape;
-    private String skinType;
-
+    // 1.8.9 kept the skin / cape locations and the model from SkinManager's callback, 26.1 gives one PlayerSkin
+    private PlayerSkin skin;
 
     public boolean hasLocationSkin() {
-        return this.locationSkin != null;
+        return this.skin != null;
+    }
+
+    private static String skinType(PlayerSkin skin) {
+        return skin.model() == PlayerModelType.SLIM ? "slim" : "default";
     }
 
     public String getSkinType() {
-        return this.skinType == null ? DefaultPlayerSkin.getSkinType(this.gameProfile.getId()) : this.skinType;
+        return skinType(this.skin == null ? DefaultPlayerSkin.get(this.gameProfile) : this.skin);
     }
 
     public Identifier getLocationSkin() {
-        if (this.locationSkin == null) {
+        if (this.skin == null) {
             this.loadPlayerTextures();
         }
-
-        return (Identifier) Objects.firstNonNull(this.locationSkin, DefaultPlayerSkin.getDefaultSkin(this.gameProfile.getId()));
+        return (this.skin == null ? DefaultPlayerSkin.get(this.gameProfile) : this.skin).body().texturePath();
     }
 
     public Identifier getLocationCape() {
-        if (this.locationCape == null) {
+        if (this.skin == null) {
             this.loadPlayerTextures();
         }
-
-        return this.locationCape;
+        return this.skin == null || this.skin.cape() == null ? null : this.skin.cape().texturePath();
     }
+
     protected void loadPlayerTextures() {
         synchronized(this) {
             if (!this.playerTexturesLoaded) {
                 this.playerTexturesLoaded = true;
-                Minecraft.getInstance().getSkinManager().loadProfileTextures(this.gameProfile, new SkinManager.SkinAvailableCallback() {
-                    public void skinAvailable(MinecraftProfileTexture.Type type, Identifier location, MinecraftProfileTexture profileTexture) {
-                        switch (type) {
-                            case SKIN:
-                                TabListEntry.this.locationSkin = location;
-                                TabListEntry.this.skinType = profileTexture.getMetadata("model");
-                                if (TabListEntry.this.skinType == null) {
-                                    TabListEntry.this.skinType = "default";
-                                }
-                                break;
-                            case CAPE:
-                                TabListEntry.this.locationCape = location;
-                        }
-
-                    }
-                }, true);
+                Minecraft.getInstance().getSkinManager().get(this.gameProfile).thenAccept(loaded -> loaded.ifPresent(skin -> TabListEntry.this.skin = skin));
             }
-
         }
     }
-
-
 }

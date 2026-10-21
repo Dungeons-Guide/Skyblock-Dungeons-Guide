@@ -20,6 +20,9 @@ package kr.syeyoung.dungeonsguide.mod.utils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.chat.Style;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +36,23 @@ public class TextUtils {
     private static final Pattern SCOREBOARD_CHARACTERS = Pattern.compile("[^a-z A-Z:0-9/'.]");
 
     private static final Pattern INTEGER_CHARACTERS = Pattern.compile("[^0-9]");
+
+    // a copy that shares no mutable component with the original (Component.copy() shares the siblings). D106
+    public static MutableComponent copyComponent(Component component) {
+        ComponentContents contents = component.getContents();
+        if (contents instanceof TranslatableContents translatable) {
+            Object[] args = translatable.getArgs().clone();
+            for (int i = 0; i < args.length; i++) {
+                if (args[i] instanceof Component arg) args[i] = copyComponent(arg);
+            }
+            contents = new TranslatableContents(translatable.getKey(), translatable.getFallback(), args);
+        }
+        MutableComponent copy = MutableComponent.create(contents).setStyle(component.getStyle());
+        for (Component sibling : component.getSiblings()) {
+            copy.append(copyComponent(sibling));
+        }
+        return copy;
+    }
 
     // TODO: D5 stopgap until chat reading moves to styled component matching.
     // what 1.8.9's IChatComponent.getFormattedText() returned: for every component, its style's codes, its text, then §r

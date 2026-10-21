@@ -366,71 +366,73 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         }
     }
 
-    @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onChunkLoad(ChunkUpdateEvent chunkUpdateEvent) {
-        Set<Tuple<BlockPos, IBlockState>> updates = new HashSet<>();
-        for (Chunk updatedChunk : chunkUpdateEvent.getUpdatedChunks()) {
-            if (updatedChunk.isEmpty()) continue;
-            if (initialChunkDataMap.containsKey(updatedChunk.getChunkCoordIntPair())) {
-                // that's block update!
+    // TODO: chunk resends come as BlockUpdateEvent now (D105), this diffed them itself and also kept each chunk's first loaded blocks
+    //  as the room's initial state for the schematic export. the initial state part is decided with the feature port
+//    @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
+//    public void onChunkLoad(ChunkUpdateEvent chunkUpdateEvent) {
+//        Set<Tuple<BlockPos, IBlockState>> updates = new HashSet<>();
+//        for (Chunk updatedChunk : chunkUpdateEvent.getUpdatedChunks()) {
+//            if (updatedChunk.isEmpty()) continue;
+//            if (initialChunkDataMap.containsKey(updatedChunk.getChunkCoordIntPair())) {
+//                // that's block update!
 
-                ChunkData prevChunk = initialChunkDataMap.get(updatedChunk.getChunkCoordIntPair());
-                ExtendedBlockStorage[] prev = prevChunk.getInitialBlockStorages();
-                ExtendedBlockStorage[] neu = updatedChunk.getBlockStorageArray();
-                for (int i = 0; i < prev.length; i++) {
-                    ExtendedBlockStorage prevSt = prev[i];
-                    ExtendedBlockStorage neuSt = neu[i];
-                    if (prevSt == null && neuSt != null) {
-                        for (int x = 0; x < 16; x++) {
-                            for (int y = 0; y < 16; y++) {
-                                for (int z = 0; z < 16; z++) {
-                                    IBlockState blockState = neuSt.get(x,y,z);
-                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x,  i * 16 + y, prevChunk.z * 16 + z);
-                                    updates.add(new Tuple<>(pos, blockState));
-                                }
-                            }
-                        }
-                    } else if (prevSt != null && neuSt == null) {
-                        IBlockState air = Blocks.air.getDefaultState();
-                        for (int x = 0; x < 16; x++) {
-                            for (int y = 0; y < 16; y++) {
-                                for (int z = 0; z < 16; z++) {
-                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
-                                    updates.add(new Tuple<>(pos, air));
-                                }
-                            }
-                        }
-                    } else if (prevSt == null && neuSt == null) {
-                    } else {
-                        for (int x = 0; x < 16; x++) {
-                            for (int y = 0; y < 16; y++) {
-                                for (int z = 0; z < 16; z++) {
-                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
-                                    IBlockState prevState = prevSt.get(x,y,z);
-                                    IBlockState neuState = neuSt.get(x,y,z);
-                                    if (!neuState.equals(prevState)) {
-                                        updates.add(new Tuple<>(pos, neuState));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+//                ChunkData prevChunk = initialChunkDataMap.get(updatedChunk.getChunkCoordIntPair());
+//                ExtendedBlockStorage[] prev = prevChunk.getInitialBlockStorages();
+//                ExtendedBlockStorage[] neu = updatedChunk.getBlockStorageArray();
+//                for (int i = 0; i < prev.length; i++) {
+//                    ExtendedBlockStorage prevSt = prev[i];
+//                    ExtendedBlockStorage neuSt = neu[i];
+//                    if (prevSt == null && neuSt != null) {
+//                        for (int x = 0; x < 16; x++) {
+//                            for (int y = 0; y < 16; y++) {
+//                                for (int z = 0; z < 16; z++) {
+//                                    IBlockState blockState = neuSt.get(x,y,z);
+//                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x,  i * 16 + y, prevChunk.z * 16 + z);
+//                                    updates.add(new Tuple<>(pos, blockState));
+//                                }
+//                            }
+//                        }
+//                    } else if (prevSt != null && neuSt == null) {
+//                        IBlockState air = Blocks.air.getDefaultState();
+//                        for (int x = 0; x < 16; x++) {
+//                            for (int y = 0; y < 16; y++) {
+//                                for (int z = 0; z < 16; z++) {
+//                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
+//                                    updates.add(new Tuple<>(pos, air));
+//                                }
+//                            }
+//                        }
+//                    } else if (prevSt == null && neuSt == null) {
+//                    } else {
+//                        for (int x = 0; x < 16; x++) {
+//                            for (int y = 0; y < 16; y++) {
+//                                for (int z = 0; z < 16; z++) {
+//                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
+//                                    IBlockState prevState = prevSt.get(x,y,z);
+//                                    IBlockState neuState = neuSt.get(x,y,z);
+//                                    if (!neuState.equals(prevState)) {
+//                                        updates.add(new Tuple<>(pos, neuState));
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
 
-                continue;
-            }
-            ChunkData chunkData = new ChunkData();
-            chunkData.x = updatedChunk.xPosition;
-            chunkData.z = updatedChunk.zPosition;
-            chunkData.initialBlockStorages = updatedChunk.getBlockStorageArray();
-            initialChunkDataMap.put(new ChunkCoordIntPair(chunkData.x, chunkData.z), chunkData);
-        }
-        if (!updates.isEmpty()) {
-            BlockUpdateEvent.Pre pre = new BlockUpdateEvent.Pre();
-            pre.setUpdatedBlocks(updates);
-            onBlockUpdate(pre);
-        }
-    }
+//                continue;
+//            }
+//            ChunkData chunkData = new ChunkData();
+//            chunkData.x = updatedChunk.xPosition;
+//            chunkData.z = updatedChunk.zPosition;
+//            chunkData.initialBlockStorages = updatedChunk.getBlockStorageArray();
+//            initialChunkDataMap.put(new ChunkCoordIntPair(chunkData.x, chunkData.z), chunkData);
+//        }
+//        if (!updates.isEmpty()) {
+//            BlockUpdateEvent.Pre pre = new BlockUpdateEvent.Pre();
+//            pre.setUpdatedBlocks(updates);
+//            onBlockUpdate(pre);
+//        }
+//    }
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onBlockUpdate(BlockUpdateEvent.Pre blockUpdateEvent) {

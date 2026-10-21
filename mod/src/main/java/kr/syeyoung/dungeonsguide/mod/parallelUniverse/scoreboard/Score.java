@@ -20,24 +20,30 @@ package kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard;
 
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.Team;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Data;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.numbers.NumberFormat;
 
 @Data
 public class Score {
     private final String playerName;
     private final int score;
+    // 26.1: the per score display name and number format, deep copied (D106)
+    private final Component display;
+    private final NumberFormat numberFormat;
 
     public String getVisibleName() {
         Team team =  TeamManager.INSTANCE.getPlayerTeam(playerName);
         if (team != null) {
-            return team.getPrefix() + playerName + team.getSuffix();
+            return TextUtils.getFormattedText(team.getPrefix()) + playerName + TextUtils.getFormattedText(team.getSuffix());
         }
         return playerName;
     }
     public String getJustTeam() {
         Team team =  TeamManager.INSTANCE.getPlayerTeam(playerName);
         if (team != null) {
-            return team.getPrefix()+ team.getSuffix();
+            return TextUtils.getFormattedText(team.getPrefix())+ TextUtils.getFormattedText(team.getSuffix());
         }
         return playerName;
     }

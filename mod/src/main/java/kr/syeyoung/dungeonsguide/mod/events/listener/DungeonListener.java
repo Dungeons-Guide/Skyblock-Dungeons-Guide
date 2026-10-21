@@ -93,6 +93,12 @@ import java.util.UUID;
 import com.mojang.blaze3d.platform.InputConstants;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Tuple;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DungeonListener {
 
@@ -680,42 +686,27 @@ public class DungeonListener {
         }
     }
 
+    // 1.8.9 refreshed the rooms on chunk packets to see block changes, chunk resends now arrive as block updates (D105)
     @SubscribeEvent
-    public void onChunkUpdate(PacketProcessedEvent.Post post) {
+    public void onChunkUpdate(BlockUpdateEvent.Post post) {
         if (!SkyblockStatus.isOnDungeon()) return;
-        if (post.packet instanceof S21PacketChunkData) {
-            S21PacketChunkData p = (S21PacketChunkData) post.packet;
-            if (p.func_149274_i() && p.getExtractedSize() == 0) return; // IGNORE unloading chunks. :D
 
-            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+        Set<ChunkPos> updatedChunks = new HashSet<>();
+        for (Tuple<BlockPos, BlockState> updatedBlock : post.getUpdatedBlocks()) {
+            updatedChunks.add(ChunkPos.containing(updatedBlock.getA()));
+        }
 
-            if (context != null) {
-                if (context.getScaffoldParser() != null) {
-                    for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
-                        dungeonRoom.chunkUpdate(p.getChunkX(), p.getChunkZ());
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+
+        if (context != null) {
+            if (context.getScaffoldParser() != null) {
+                for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
+                    for (ChunkPos chunk : updatedChunks) {
+                        dungeonRoom.chunkUpdate(chunk.x(), chunk.z());
 
                         RoomProcessor roomProcessor = dungeonRoom.getRoomProcessor();
                         if (roomProcessor != null) {
-                            roomProcessor.chunkUpdate(p.getChunkX(), p.getChunkZ());
-                        }
-                    }
-                }
-            }
-        } else if (post.packet instanceof S26PacketMapChunkBulk) {
-            S26PacketMapChunkBulk p = (S26PacketMapChunkBulk) post.packet;
-
-            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-
-            if (context != null) {
-                if (context.getScaffoldParser() != null) {
-                    for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
-                        for (int i = 0; i < p.getChunkCount(); i++) {
-                            dungeonRoom.chunkUpdate(p.getChunkX(i), p.getChunkZ(i));
-
-                            RoomProcessor roomProcessor = dungeonRoom.getRoomProcessor();
-                            if (roomProcessor != null) {
-                                roomProcessor.chunkUpdate(p.getChunkX(i), p.getChunkZ(i));
-                            }
+                            roomProcessor.chunkUpdate(chunk.x(), chunk.z());
                         }
                     }
                 }

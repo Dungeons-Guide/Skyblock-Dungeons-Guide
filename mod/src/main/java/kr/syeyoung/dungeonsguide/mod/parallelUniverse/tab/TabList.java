@@ -24,7 +24,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Ordering;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.Team;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
-import net.minecraft.world.WorldSettings;
+import net.minecraft.world.level.GameType;
 
 import java.util.*;
 
@@ -32,14 +32,14 @@ public class TabList {
     public static final TabList INSTANCE = new TabList();
 
     private final SortedSet<TabListEntry> tabListEntries = new TreeSet<>(Ordering.from((compare1, compare2) -> {
-        Team scorePlayerTeam = TeamManager.INSTANCE.getPlayerTeam(compare1.getGameProfile().getName());
-        Team scorePlayerTeam1 = TeamManager.INSTANCE.getPlayerTeam(compare2.getGameProfile().getName());
+        Team scorePlayerTeam = TeamManager.INSTANCE.getPlayerTeam(compare1.getGameProfile().name());
+        Team scorePlayerTeam1 = TeamManager.INSTANCE.getPlayerTeam(compare2.getGameProfile().name());
         return ComparisonChain.start()
-                .compareTrueFirst(compare1.getGameMode() != WorldSettings.GameType.SPECTATOR,
-                        compare2.getGameMode() != WorldSettings.GameType.SPECTATOR)
+                .compareTrueFirst(compare1.getGameMode() != GameType.SPECTATOR,
+                        compare2.getGameMode() != GameType.SPECTATOR)
                 .compare(scorePlayerTeam != null ? scorePlayerTeam.getTeamName() : "",
                         scorePlayerTeam1 != null ? scorePlayerTeam1.getTeamName() : "")
-                .compare(compare1.getGameProfile().getName(), compare2.getGameProfile().getName()).result();
+                .compare(compare1.getGameProfile().name(), compare2.getGameProfile().name()).result();
     }));
     private final Map<UUID, TabListEntry> registered = new HashMap<>();
     private final BiMap<String, UUID> playerMap = HashBiMap.create();
@@ -59,7 +59,7 @@ public class TabList {
     }
 
     public void updateEntry(TabListEntry tabListEntry) {
-        removeEntry(tabListEntry.getGameProfile().getId());
+        removeEntry(tabListEntry.getGameProfile().id());
         addEntry(tabListEntry);
     }
 
@@ -75,9 +75,9 @@ public class TabList {
         }
     }
     public void addEntry(TabListEntry tabListEntry) {
-        if (!registered.containsKey(tabListEntry.getGameProfile().getId())) {
-            registered.put(tabListEntry.getGameProfile().getId(), tabListEntry);
-            playerMap.put(tabListEntry.getGameProfile().getName(), tabListEntry.getGameProfile().getId());
+        if (!registered.containsKey(tabListEntry.getGameProfile().id())) {
+            registered.put(tabListEntry.getGameProfile().id(), tabListEntry);
+            playerMap.put(tabListEntry.getGameProfile().name(), tabListEntry.getGameProfile().id());
             tabListEntries.add(tabListEntry);
         }
     }
