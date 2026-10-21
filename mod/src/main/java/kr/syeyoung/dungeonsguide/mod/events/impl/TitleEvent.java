@@ -21,12 +21,14 @@ package kr.syeyoung.dungeonsguide.mod.events.impl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.network.play.server.S45PacketTitle;
+import net.minecraft.network.protocol.Packet;
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 public class TitleEvent extends DGEvent {
-    S45PacketTitle packetTitle;
+    // 1.8.9: S45PacketTitle. on 26.1 one of ClientboundSetTitleTextPacket, ClientboundSetSubtitleTextPacket,
+    // ClientboundSetTitlesAnimationPacket, ClientboundClearTitlesPacket
+    Packet<?> packetTitle;
 }

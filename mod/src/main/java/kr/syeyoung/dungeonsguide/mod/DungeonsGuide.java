@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod;
 
-import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.events.AuthChangedEvent;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
@@ -64,12 +63,10 @@ import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.server.packs.resources.ResourceManager;
 import kr.syeyoung.dungeonsguide.mod.utils.ProgressManager;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -214,18 +211,13 @@ public class DungeonsGuide {
         registerEventsForge(ChatTransmitter.INSTANCE);
         registerEventsForge(new BlockCache());
         registerEventsForge(PassthroughManager.INSTANCE);
+        registerEventsForge(GuiDisplayer.INSTANCE); // was registered by the 1.8.9 loader
 
         FeatureRegistry.getFeatureList();
 
 
 
-        try {
-            Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) Main.class.getClassLoader(), "invalidClasses");
-            ((LaunchClassLoader) Main.class.getClassLoader()).clearNegativeEntries(Sets.newHashSet("org.slf4j.LoggerFactory"));
-            invalid.clear();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // TODO: 1.8.9 cleared LaunchClassLoader's negative cache (invalidClasses, org.slf4j.LoggerFactory) here. there is no launchwrapper on fabric
 
 
         this.blockCache = new BlockCache();
@@ -288,7 +280,7 @@ public class DungeonsGuide {
 
 
     // TODO: nothing calls this on 26.1 yet, used to be called by the loader on resource reload
-    public void onResourceReload(IResourceManager a) {
+    public void onResourceReload(ResourceManager a) {
         GLCursors.setupCursors();
         DefaultFontRenderer.DEFAULT_RENDERER.onResourceManagerReload();
         ShaderManager.onResourceReload();
@@ -313,7 +305,7 @@ public class DungeonsGuide {
                 .build(), 10000));
     }
 
-    public Class<? extends GuiScreen> getModConfigGUI() {
+    public Class<? extends Screen> getModConfigGUI() {
         return ConfigGuiScreenAdapter.class;
     }
 }

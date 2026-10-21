@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
 import lombok.*;
-import net.minecraft.world.chunk.Chunk;
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 import java.util.ArrayList;

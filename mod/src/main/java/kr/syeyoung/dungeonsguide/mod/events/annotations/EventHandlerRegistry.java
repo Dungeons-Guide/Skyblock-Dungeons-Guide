@@ -29,7 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.profiler.Profiler;
+import net.minecraft.util.profiling.Profiler;
+import net.minecraft.util.profiling.ProfilerFiller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -104,13 +105,13 @@ public class EventHandlerRegistry {
             if (!DGEvent.class.isAssignableFrom(aClass)) continue;
             try {
                 List<InvocationTarget> targetList = targets.get(aClass);
-                Profiler profiler = Minecraft.getMinecraft().mcProfiler;
                 ListenerRegistration registered = DungeonsGuide.getDungeonsGuide().getEventBus().registerListener(aClass, ListenerPriority.THIRD, (event) -> {
-                    if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
-                    profiler.startSection("Dungeons Guide Event Handling");
+                    ProfilerFiller profiler = Profiler.get();
+                    if (Minecraft.getInstance().isSameThread())
+                    profiler.push("Dungeons Guide Event Handling");
                     for (InvocationTarget target : targetList) {
-                        if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
-                        profiler.startSection(target.getTargetName());
+                        if (Minecraft.getInstance().isSameThread())
+                        profiler.push(target.getTargetName());
                         try {
                             if (target.condition == null || (target.condition.get() == Boolean.TRUE)) { // it is safe to use this here.
                                 target.invokeSite.invoke(event);
@@ -122,11 +123,11 @@ public class EventHandlerRegistry {
                             FeatureCollectDiagnostics.queueSendLogAsync(t);
                             throw new RuntimeException("An catastrophic error occured while handling event: ", t);
                         }
-                        if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
-                        profiler.endSection();
+                        if (Minecraft.getInstance().isSameThread())
+                        profiler.pop();
                     }
-                    if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
-                    profiler.endSection();
+                    if (Minecraft.getInstance().isSameThread())
+                    profiler.pop();
                     return EventProcessResult.COMPLETE;
                 });
                 registeredHandlers.put(aClass, registered);
