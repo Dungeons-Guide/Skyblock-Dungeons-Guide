@@ -18,14 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.mod.chat;
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.common.MinecraftForge;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 
 import java.util.Queue;
@@ -74,8 +74,8 @@ public class ChatTransmitter {
         if(clientTickEvent.phase != ClientTickEvent.Phase.START && Minecraft.getMinecraft().thePlayer == null) return;
 
         while (!receiveQueue.isEmpty() && Minecraft.getMinecraft().thePlayer != null) {
-            ClientChatReceivedEvent event = new ClientChatReceivedEvent((byte) 1, receiveQueue.poll());
-            MinecraftForge.EVENT_BUS.post(event);
+            ChatReceivedEvent event = new ChatReceivedEvent((byte) 1, receiveQueue.poll());
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(event);
             if (!event.isCanceled()) {
                 Minecraft.getMinecraft().thePlayer.addChatMessage(event.message);
             }

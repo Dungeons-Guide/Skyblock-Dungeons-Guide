@@ -37,7 +37,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -295,7 +295,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
     private String lastActionbarAbility;
 
     @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+    public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) {
             Matcher m = thePattern.matcher(clientChatReceivedEvent.message.getFormattedText());
             if (m.find()) {

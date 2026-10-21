@@ -24,8 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import org.apache.logging.log4j.Level;
@@ -89,7 +88,7 @@ public class ChatProcessor {
 
 
     @SubscribeEvent(priority = ListenerPriority.FIRST, receiveCanceled = true)
-    public void onMessage(ClientChatReceivedEvent chatReceivedEvent) {
+    public void onMessage(ChatReceivedEvent chatReceivedEvent) {
         if (chatReceivedEvent.type == 2) return;
         String txt = chatReceivedEvent.message.getFormattedText();
         logger.info("[CHAT] {}", txt);
@@ -107,7 +106,8 @@ public class ChatProcessor {
                 if (chatProcessResult.isRemoveChat()) processed++;
                 if (chatProcessResult.isRemoveListener()) listened++;
 
-                if (chatProcessResult.isRemoveChat()) chatReceivedEvent.setResult(Event.Result.DENY);
+                // TODO: this used forge's Event.Result (DENY here, cancel at LAST) because of 1.8.9 limitations. decide later, chat processors can not remove messages until then
+                // if (chatProcessResult.isRemoveChat()) chatReceivedEvent.setResult(Event.Result.DENY);
                 if (chatProcessResult.isRemoveListener()) it.remove();
             } catch (Exception e) {
                 FeatureCollectDiagnostics.queueSendLogAsync(e);
@@ -117,9 +117,10 @@ public class ChatProcessor {
     }
 
 
+    // TODO: see onMessage, the DENY -> cancel handshake is decided later
     @SubscribeEvent(priority = ListenerPriority.LAST)
-    public void cancelMessage(ClientChatReceivedEvent chatReceivedEvent) {
-        if (chatReceivedEvent.getResult() == Event.Result.DENY)
-            chatReceivedEvent.setCanceled(true);
+    public void cancelMessage(ChatReceivedEvent chatReceivedEvent) {
+//        if (chatReceivedEvent.getResult() == Event.Result.DENY)
+//            chatReceivedEvent.setCanceled(true);
     }
 }

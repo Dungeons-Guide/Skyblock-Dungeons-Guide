@@ -41,7 +41,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
@@ -244,7 +244,7 @@ public class CosmeticsManager {
 
     private final ThreadLocal<Stack<List<ReplacementContext>>> contextThreadLocal = new ThreadLocal<>();
     @SubscribeEvent(priority = ListenerPriority.FIRST, receiveCanceled = true)
-    public void onChatDetect(ClientChatReceivedEvent clientChatReceivedEvent) {
+    public void onChatDetect(ChatReceivedEvent clientChatReceivedEvent) {
         try {
             if (clientChatReceivedEvent.type == 2) return;
             List<ReplacementContext> total = new ArrayList<>();
@@ -265,7 +265,7 @@ public class CosmeticsManager {
     }
 
     @SubscribeEvent(priority = ListenerPriority.LAST, receiveCanceled = true)
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+    public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
         try {
             Stack<List<ReplacementContext>> threadCtx = contextThreadLocal.get();
             if (threadCtx == null) return;

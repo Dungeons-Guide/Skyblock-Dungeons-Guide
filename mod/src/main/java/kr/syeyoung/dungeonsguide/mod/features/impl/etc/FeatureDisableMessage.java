@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 import java.util.regex.Pattern;
 
@@ -65,7 +65,7 @@ public class FeatureDisableMessage extends SimpleFeature {
 
 
     @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+    public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) return;
         
         if (!SkyblockStatus.isOnSkyblock()) return;

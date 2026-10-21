@@ -48,7 +48,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.util.*;
@@ -187,7 +187,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onMessage(ClientChatReceivedEvent event) {
+    public void onMessage(ChatReceivedEvent event) {
         String txt = event.message.getFormattedText();
         String player = TextUtils.stripColor(txt.split(" ")[0]);
         if (txt.contains("§r§a completed a device! (§r§c")) {

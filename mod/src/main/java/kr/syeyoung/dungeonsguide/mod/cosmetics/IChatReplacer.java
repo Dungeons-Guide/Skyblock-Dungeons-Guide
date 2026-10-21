@@ -18,9 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.cosmetics;
 
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 public interface IChatReplacer {
-    boolean isAcceptable(ClientChatReceivedEvent event);
-    void translate(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager);
+    boolean isAcceptable(ChatReceivedEvent event);
+    void translate(ChatReceivedEvent event, CosmeticsManager cosmeticsManager);
 }

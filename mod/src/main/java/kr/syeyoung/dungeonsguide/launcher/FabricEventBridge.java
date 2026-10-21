@@ -20,14 +20,32 @@ package kr.syeyoung.dungeonsguide.launcher;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ClientTickEvent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 
 // turns fabric callbacks and mixin hooks into dg events
 public class FabricEventBridge {
+    // fabric calls MODIFY_GAME right after ALLOW_GAME for the same message
+    private static ChatReceivedEvent lastGameMessage;
+
     public static void register() {
         ClientTickEvents.START_CLIENT_TICK.register(client -> fire(new ClientTickEvent(ClientTickEvent.Phase.START)));
         ClientTickEvents.END_CLIENT_TICK.register(client -> fire(new ClientTickEvent(ClientTickEvent.Phase.END)));
+
+        ClientReceiveMessageEvents.ALLOW_GAME.register((message, overlay) -> {
+            lastGameMessage = new ChatReceivedEvent(overlay ? (byte) 2 : (byte) 1, message);
+            return !fire(lastGameMessage);
+        });
+        ClientReceiveMessageEvents.MODIFY_GAME.register((message, overlay) -> {
+            ChatReceivedEvent event = lastGameMessage;
+            lastGameMessage = null;
+            return event == null ? message : event.message;
+        });
+        // TODO: there is no MODIFY for player chat on 26.1, so replacing the message does nothing here
+        ClientReceiveMessageEvents.ALLOW_CHAT.register((message, playerChatMessage, sender, boundChatType, timestamp) ->
+                !fire(new ChatReceivedEvent((byte) 0, message)));
     }
 
     public static boolean fire(DGEvent event) {

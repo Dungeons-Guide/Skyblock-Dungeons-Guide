@@ -27,7 +27,7 @@ import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 public class FeatureCopyMessages extends SimpleFeature {
     public FeatureCopyMessages() {
@@ -35,7 +35,7 @@ public class FeatureCopyMessages extends SimpleFeature {
         setEnabled(false);
     }
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+    public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
         
         if (clientChatReceivedEvent.type == 2) return;
 
