@@ -70,7 +70,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.network.play.server.S21PacketChunkData;
 import net.minecraft.network.play.server.S26PacketMapChunkBulk;
-import net.minecraft.profiler.Profiler;
+import net.minecraft.util.profiling.Profiler;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -109,7 +110,7 @@ public class DungeonListener {
         if (!SkyblockStatus.isOnDungeon()) return;
 
 
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        ProfilerFiller profiler = Profiler.get();
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
@@ -119,11 +120,11 @@ public class DungeonListener {
             if (thePlayer == null) {
                 return;
             }
-            profiler.startSection("Dungeons Guide - DrawScreen.Post: Bossfight Processor");
+            profiler.push("Dungeons Guide - DrawScreen.Post: Bossfight Processor");
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onPostGuiRender(e);
             }
-            profiler.endStartSection("Dungeons Guide - DrawScreen.Post: Room Processor");
+            profiler.popPush("Dungeons Guide - DrawScreen.Post: Room Processor");
 
             if (context.getScaffoldParser() != null) {
                 Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
@@ -133,7 +134,7 @@ public class DungeonListener {
                     dungeonRoom.getRoomProcessor().onPostGuiRender(e);
                 }
             }
-            profiler.endSection();
+            profiler.pop();
         }
 
         GlStateManager.enableBlend();
@@ -264,18 +265,18 @@ public class DungeonListener {
     public void onRender(RenderHUDEvent.Post postRender) {
 
         if (!SkyblockStatus.isOnDungeon()) return;
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        ProfilerFiller profiler = Profiler.get();
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context != null) {
 
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
 
-            profiler.startSection("Dungeons Guide - RenderGameOverlay.Post :: Bossfight Processor");
+            profiler.push("Dungeons Guide - RenderGameOverlay.Post :: Bossfight Processor");
             if (context.getBossfightProcessor() != null)
                 context.getBossfightProcessor().drawScreen(postRender.partialTicks);
 
-            profiler.endStartSection("Dungeons Guide - RenderGameOverlay.Post :: Room Processor");
+            profiler.popPush("Dungeons Guide - RenderGameOverlay.Post :: Room Processor");
             if (context.getScaffoldParser() != null) {
                 Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
@@ -285,7 +286,7 @@ public class DungeonListener {
                     }
                 }
             }
-            profiler.endSection();
+            profiler.pop();
 
             if (context.getDungeonName().equals("TEST DG")) {
                 FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
@@ -384,7 +385,7 @@ public class DungeonListener {
         if (!SkyblockStatus.isOnDungeon()) return;
         try {
 
-            Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+            ProfilerFiller profiler = Profiler.get();
 
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (context == null) {
@@ -393,7 +394,7 @@ public class DungeonListener {
 
 
             if (FeatureRegistry.DEBUG.isEnabled()) {
-                profiler.startSection("Dungeons Guide - Door Rendering");
+                profiler.push("Dungeons Guide - Door Rendering");
                 if (context.getScaffoldParser() != null) {
                     for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
                         for (DungeonDoor door : dungeonRoom.getDoors()) {
@@ -401,17 +402,17 @@ public class DungeonListener {
                         }
                     }
                 }
-                profiler.endSection();
+                profiler.pop();
             }
 
 
 
-            profiler.startSection("Dungeons Guide - RenderWorldLast :: Bossfight Processor");
+            profiler.push("Dungeons Guide - RenderWorldLast :: Bossfight Processor");
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().drawWorld(renderWorldLastEvent.partialTicks);
             }
 
-            profiler.endStartSection("Dungeons Guide - RenderWorldLast :: Room Processor");
+            profiler.popPush("Dungeons Guide - RenderWorldLast :: Room Processor");
             if (context.getScaffoldParser() != null) {
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
                 Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
@@ -492,7 +493,7 @@ public class DungeonListener {
             }
 
 
-            profiler.endStartSection("Dungeons Guide - RenderWorldLast :: Room Edit");
+            profiler.popPush("Dungeons Guide - RenderWorldLast :: Room Edit");
             // TODO: room editor is not in the first 26.1 build
 //            if (EditingContext.getEditingContext() != null) {
 //                GuiScreen guiScreen = EditingContext.getEditingContext().getCurrent();
@@ -510,7 +511,7 @@ public class DungeonListener {
 //                    ((GuiDungeonAddSet) guiScreen).onWorldRender(renderWorldLastEvent.partialTicks);
 //                }
 //            }
-            profiler.endSection();
+            profiler.pop();
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();

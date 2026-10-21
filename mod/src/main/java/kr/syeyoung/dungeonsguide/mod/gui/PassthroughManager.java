@@ -22,7 +22,8 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.profiler.Profiler;
+import net.minecraft.util.profiling.Profiler;
+import net.minecraft.util.profiling.ProfilerFiller;
 import kr.syeyoung.dungeonsguide.mod.events.impl.FogColorsEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
@@ -50,8 +51,8 @@ public class PassthroughManager {
 
     @SubscribeEvent(priority = ListenerPriority.FIRST)
     public void onGameRenderOverlay(RenderHUDEvent.Pre event) {
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-        profiler.startSection("Dungeons Guide - RenderGameOverlayEvent :: Passthrough");
+        ProfilerFiller profiler = Profiler.get();
+        profiler.push("Dungeons Guide - RenderGameOverlayEvent :: Passthrough");
 
         int width = Minecraft.getMinecraft().displayWidth;
         int height = Minecraft.getMinecraft().displayHeight;
@@ -86,6 +87,6 @@ public class PassthroughManager {
 
         Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(false);
 
-        profiler.endSection();
+        profiler.pop();
     }
 }
