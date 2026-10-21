@@ -22,6 +22,8 @@ import net.minecraft.util.Vec4b;
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 import java.awt.*;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class MapOverlayPlayerClickable implements MapOverlay {
     private TabListEntry entry;
@@ -160,7 +162,7 @@ public class MapOverlayPlayerClickable implements MapOverlay {
     public boolean onClick(double relMouseX, double relMouseY, DomElement domElement) {
         if (target == null) return false;
         if (relMouseX < -4 * settings.getIconSize() || relMouseX > 4 * settings.getIconSize() || relMouseY < -4 * settings.getIconSize() || relMouseY > 4 * settings.getIconSize()) return false;
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         GuiScreenAdapterChestOverride.getAdapter(domElement).emulateClick(this.target.getSlotId(), 0, 0);
         return true;
     }

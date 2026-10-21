@@ -16,6 +16,8 @@ import net.minecraft.resources.Identifier;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetPathfindResultDetails extends AnnotatedImportOnlyWidget {
 
@@ -63,14 +65,14 @@ public class WidgetPathfindResultDetails extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "unlink")
     public void unlink() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         if (this.onDelete != null)
             this.onDelete.run();
     }
 
     @On(functionName = "copyId")
     public void copyId() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         StringSelection selection = new StringSelection(linked.getTargetId());
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(selection, selection);

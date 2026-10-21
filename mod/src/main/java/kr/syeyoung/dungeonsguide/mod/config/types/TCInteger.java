@@ -31,6 +31,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.input.Keyboard;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class TCInteger implements FeatureTypeHandler<Integer> {
     public static final TCInteger INSTANCE = new TCInteger();
@@ -70,13 +72,13 @@ public class TCInteger implements FeatureTypeHandler<Integer> {
 
         @On(functionName = "inc")
         public void inc() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             truth +=(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 5 : 1);
             value.setValue(String.valueOf(truth));
         }
         @On(functionName = "dec")
         public void dec() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             truth -=(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 5 : 1);
             value.setValue(String.valueOf(truth));
         }

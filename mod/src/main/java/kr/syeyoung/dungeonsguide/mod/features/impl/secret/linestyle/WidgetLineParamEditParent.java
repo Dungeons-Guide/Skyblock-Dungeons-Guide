@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetLineParamEditParent extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "parentToggle")
@@ -122,14 +124,14 @@ public class WidgetLineParamEditParent extends AnnotatedImportOnlyWidget {
 
         @On(functionName = "inc")
         public void inc() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             idx = (idx + 1) % values.size();
             value.setValue(values.get(idx).getName());
             onUpdate.accept(values.get(idx));
         }
         @On(functionName = "dec")
         public void dec() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             idx = (values.size() + idx - 1) % values.size();
             value.setValue(values.get(idx).getName());
             onUpdate.accept(values.get(idx));

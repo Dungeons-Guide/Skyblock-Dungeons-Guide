@@ -37,6 +37,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.resources.Identifier;
 
 import java.util.List;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
     private final int slot;
@@ -165,7 +167,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "click")
     public void onClick() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(slot, 0, 0);
     }
 

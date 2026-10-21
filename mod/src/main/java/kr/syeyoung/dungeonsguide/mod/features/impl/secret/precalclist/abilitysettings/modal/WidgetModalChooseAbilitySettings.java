@@ -18,6 +18,8 @@ import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetModalChooseAbilitySettings extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "list")
@@ -36,7 +38,7 @@ public class WidgetModalChooseAbilitySettings extends AnnotatedImportOnlyWidget 
 
     @On(functionName = "createNew")
     public void create() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
 
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(500, 400, "Create New Algorithm Setting", new WidgetCreateAbilitySettings(AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING), true), (a) -> {
@@ -53,7 +55,7 @@ public class WidgetModalChooseAbilitySettings extends AnnotatedImportOnlyWidget 
 
     @On(functionName = "cancel")
     public void cancel() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         PopupMgr.getPopupMgr(getDomElement()).closePopup(null);
     }
 }

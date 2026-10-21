@@ -14,6 +14,8 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.resources.Identifier;
 
 import java.util.function.Predicate;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
 
@@ -157,7 +159,7 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "pickaxeEdit")
     public void pickaxeEdit() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         Rect rect = pickaxeButton.getValue().getAbsBounds();
         AbsLocationPopup absLocationPopup = new AbsLocationPopup(
                 rect.getX(), rect.getY()+rect.getHeight(), new WidgetToolEdit(WidgetToolEdit.ToolType.PICKAXE, pickaxeSettings), true
@@ -167,7 +169,7 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
     }
     @On(functionName = "shovelEdit")
     public void shovelEdit() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         Rect rect = shovelButton.getValue().getAbsBounds();
         AbsLocationPopup absLocationPopup = new AbsLocationPopup(
                 rect.getX(), rect.getY()+rect.getHeight(), new WidgetToolEdit(WidgetToolEdit.ToolType.SHOVEL, shovelSettings), true
@@ -177,7 +179,7 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
     }
     @On(functionName = "axeEdit")
     public void axeEdit() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         Rect rect = axeButton.getValue().getAbsBounds();
         AbsLocationPopup absLocationPopup = new AbsLocationPopup(
                 rect.getX(), rect.getY()+rect.getHeight(), new WidgetToolEdit(WidgetToolEdit.ToolType.AXE, axeSettings), true
@@ -188,7 +190,7 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "hasteEdit")
     public void hasteEdit() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         Rect rect = hasteButton.getValue().getAbsBounds();
         AbsLocationPopup absLocationPopup = new AbsLocationPopup(
                 rect.getX(), rect.getY()+rect.getHeight(), new WidgetHasteEdit(hasteSettings), true
@@ -199,7 +201,7 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "create")
     public void create() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         AlgorithmSetting algorithmSetting = new AlgorithmSetting(
                 pickaxeSettings.getValue(),

@@ -92,6 +92,8 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 import net.minecraft.resources.Identifier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class FeatureCollectDungeonRooms extends SimpleFeature {
     public FeatureCollectDungeonRooms() {
@@ -110,7 +112,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             FeatureCollectDungeonRooms.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDungeonRooms.this.setEnabled(true);
             Minecraft.getMinecraft().displayGuiScreen(null);
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         }
 
         @On(functionName = "deny")
@@ -118,7 +120,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             FeatureCollectDungeonRooms.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDungeonRooms.this.setEnabled(false);
             Minecraft.getMinecraft().displayGuiScreen(null);
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         }
     }
 

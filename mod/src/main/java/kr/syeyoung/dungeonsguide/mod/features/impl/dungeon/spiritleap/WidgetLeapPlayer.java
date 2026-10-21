@@ -10,6 +10,8 @@ import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.resources.Identifier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetLeapPlayer extends AnnotatedImportOnlyWidget {
 
@@ -97,7 +99,7 @@ public class WidgetLeapPlayer extends AnnotatedImportOnlyWidget {
         if (clazz.startsWith("DEAD")) return;
         if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY) && getDomElement().isFocused()) {
             this.backgroundColor.setValue(0xFF777777);
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(this.warpTarget.getSlotId(), 0, 0);
         } else {
             this.backgroundColor.setValue(0xFF555555);

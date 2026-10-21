@@ -22,6 +22,8 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetPrecalcStep1 extends AnnotatedImportOnlyWidget {
 
@@ -40,7 +42,7 @@ public class WidgetPrecalcStep1 extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "generateZip")
     public void generate() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         try {
             long requiredBytes = requestSet.getCredits() * 2622037L;
@@ -132,7 +134,7 @@ public class WidgetPrecalcStep1 extends AnnotatedImportOnlyWidget {
 
             @On(functionName = "reload")
             public void reload() {
-                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+                Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
                 this.err.setValue("");
                 this.currCredit.setValue("Loading...");

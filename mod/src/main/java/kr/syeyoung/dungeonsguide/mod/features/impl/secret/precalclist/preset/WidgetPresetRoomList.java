@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetPresetRoomList extends AnnotatedImportOnlyWidget {
 
@@ -156,7 +158,7 @@ public class WidgetPresetRoomList extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "cycleFilter")
     public void cycleFilter() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         currentFilter = RoomFilter.values()[(currentFilter.ordinal() + 1) % RoomFilter.values().length];
         this.filterText.setValue(currentFilter.display);
 
@@ -165,7 +167,7 @@ public class WidgetPresetRoomList extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "cycleSort")
     public void cycleSort() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         currentSort = RoomSort.SECRET.values()[(currentSort.ordinal() + 1) % RoomSort.values().length];
         this.sortText.setValue(currentSort.display);
 

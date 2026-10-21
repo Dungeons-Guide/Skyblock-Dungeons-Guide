@@ -38,6 +38,8 @@ import net.minecraft.resources.Identifier;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class MainConfigWidget extends AnnotatedImportOnlyWidget implements Renderer {
     @Bind(variableName = "menu")
@@ -83,13 +85,13 @@ public class MainConfigWidget extends AnnotatedImportOnlyWidget implements Rende
 
     @On(functionName = "back")
     public void back() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         Navigator.getNavigator(getDomElement()).goBack();
     }
 
     @On(functionName = "toggleSidebar")
     public void toggle() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         if ("show".equals(this.sidebar.getValue()))
             this.sidebar.setValue("hide");
         else

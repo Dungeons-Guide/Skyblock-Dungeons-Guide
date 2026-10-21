@@ -11,6 +11,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.resources.Identifier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetPresetRoomDetailsSecretPrecalculation extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "whatever")
@@ -41,7 +43,7 @@ public class WidgetPresetRoomDetailsSecretPrecalculation extends AnnotatedImport
 
     @On(functionName = "view")
     public void view() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         parent.setDetailsWidget(new WidgetPathfindResultDetails(pathfindPrecalculation,
                 info.getRoomPreset().getParent().isEditable() ?
                 () -> {

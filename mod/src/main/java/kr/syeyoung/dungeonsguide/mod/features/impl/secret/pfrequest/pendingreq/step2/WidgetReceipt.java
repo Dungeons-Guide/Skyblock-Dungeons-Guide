@@ -16,6 +16,8 @@ import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetReceipt extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "reqCredits")
@@ -42,7 +44,7 @@ public class WidgetReceipt extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "reload")
     public void reload() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         this.err.setValue("");
         this.receiptApi.getValue().removeAllWidget();

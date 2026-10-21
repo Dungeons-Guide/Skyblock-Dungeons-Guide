@@ -34,6 +34,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
@@ -48,7 +50,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
         this.preset = preset;
 
         includePrecalc.addOnUpdate((old, neu) -> {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         });
     }
 
@@ -56,7 +58,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "confirm")
     public void confirm() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
 
         File target = new File(Main.getConfigDir(), "presetExports");
@@ -191,7 +193,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "cancel")
     public void cancel() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         PopupMgr.getPopupMgr(getDomElement()).closePopup(null);
     }

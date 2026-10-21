@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetPrecalcStep2 extends AnnotatedImportOnlyWidget {
 
@@ -48,7 +50,7 @@ public class WidgetPrecalcStep2 extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "purchase")
     public void purchaseCredits() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         try {
             Desktop.getDesktop().browse(new URL("https://store.dungeons.guide/category/pathfinding").toURI());
         } catch (IOException e) {
@@ -60,7 +62,7 @@ public class WidgetPrecalcStep2 extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "request")
     public void actuallyRequest() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         this.requestSet.createRequest();
         this.parent.updateStep();
@@ -68,7 +70,7 @@ public class WidgetPrecalcStep2 extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "openGuide")
     public void openGuide() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         try {
             Desktop.getDesktop().browse(new URI("https://docs.dungeons.guide/docs/pathfinding/precalculation/introduction"));
@@ -79,7 +81,7 @@ public class WidgetPrecalcStep2 extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "openDir")
     public void openDir() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         File f = this.requestSet.getZipFile();
         try {

@@ -50,6 +50,8 @@ import net.minecraft.resources.Identifier;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class FeatureSoulRoomWarning extends TextHUDFeature {
 
@@ -122,7 +124,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
 
             for (Map.Entry<String, BindableAttribute<Boolean>> value : ifOrnot.entrySet()) {
                 value.getValue().addOnUpdate((old, neu) -> {
-                    Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+                    Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                     if (neu) uids.getValue().add(value.getKey());
                     else uids.getValue().remove(value.getKey());
                 });
@@ -151,14 +153,14 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
 
         @On(functionName = "eall")
         public void enableAll() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             for (BindableAttribute<Boolean> value : ifOrnot.values()) {
                 value.setValue(true);
             }
         }
         @On(functionName = "dall")
         public void disableAll() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             for (BindableAttribute<Boolean> value : ifOrnot.values()) {
                 value.setValue(false);
             }

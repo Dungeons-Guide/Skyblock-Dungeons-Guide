@@ -30,6 +30,8 @@ import net.minecraft.resources.Identifier;
 
 import java.io.IOException;
 import java.util.function.Supplier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class CategoryItem extends AnnotatedImportOnlyWidget {
 
@@ -65,7 +67,7 @@ public class CategoryItem extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "click")
     public void openPage() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         Navigator.getNavigator(getDomElement()).openPage(pageCreator.get());
 
         MainConfigWidget mainConfigWidget = (MainConfigWidget) getDomElement().getContext().CONTEXT.get("mainconfig");

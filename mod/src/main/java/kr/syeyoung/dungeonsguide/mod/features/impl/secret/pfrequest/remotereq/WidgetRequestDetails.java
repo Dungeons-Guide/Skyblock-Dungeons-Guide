@@ -39,6 +39,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "progress")
@@ -114,13 +116,13 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "reload")
     public void reload() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         ApiFetcher.ex.submit(this::doReload);
     }
 
     @On(functionName = "download")
     public void download() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         if (downloadUrl != null) {
             try {
@@ -133,7 +135,7 @@ public class WidgetRequestDetails extends AnnotatedImportOnlyWidget {
     @On(functionName = "downloadAndAutoApply")
     public void downloadAndAutoApply() {
         final String downloadUrl = this.downloadUrl;
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         if (cache != null) {
             cache.setCheckedAfterComplete(true);

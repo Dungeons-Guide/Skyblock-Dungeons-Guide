@@ -41,6 +41,8 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "enabled")
@@ -235,7 +237,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
 
         @On(functionName = "inc")
         public void inc() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             double newT = truth.getValue() + (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
             if (newT > max) newT = max;
             truth.setValue(newT);
@@ -244,7 +246,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
 
         @On(functionName = "dec")
         public void dec() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             double newT = truth.getValue() - (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
             if (newT < min) newT = min;
             truth.setValue(newT);
@@ -261,7 +263,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
             super(Identifier.parse("dungeonsguide:gui/config/text/editable_checkmark.gui"));
             isEnabled.exportTo(featureParameter);
             isEnabled.addOnUpdate((old,neu) -> {
-                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+                Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             });
         }
     }

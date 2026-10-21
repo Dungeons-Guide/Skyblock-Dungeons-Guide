@@ -19,6 +19,8 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.resources.Identifier;
 
 import java.io.IOException;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetRemoteRequestList extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "requestsApi")
@@ -50,7 +52,7 @@ public class WidgetRemoteRequestList extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "reload")
     public void reload() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         requestsApi.getValue().removeAllWidget();
         ApiFetcher.ex.submit(this::doReload);
     }
@@ -101,7 +103,7 @@ public class WidgetRemoteRequestList extends AnnotatedImportOnlyWidget {
 
         @On(functionName = "view")
         public void view() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
             Navigator.getNavigator(getDomElement()).openPage(new WidgetRequestDetails(requestId));
         }

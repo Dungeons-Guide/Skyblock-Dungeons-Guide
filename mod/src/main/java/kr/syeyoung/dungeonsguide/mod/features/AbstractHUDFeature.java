@@ -37,6 +37,8 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.resources.Identifier;
 
 import java.util.List;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 @Getter
 public abstract class AbstractHUDFeature extends AbstractGuiFeature {
@@ -140,7 +142,7 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
             super(Identifier.parse("dungeonsguide:gui/config/popup/quick_enable.gui"));
             enabled.setValue(abstractHUDFeature.isEnabled());
             enabled.addOnUpdate((old, neu) -> {
-                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+                Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 abstractHUDFeature.setEnabled(neu);
             });
         }
@@ -154,7 +156,7 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
 
         @On(functionName = "configure")
         public void configure() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             MainConfigWidget mainConfigWidget = new MainConfigWidget();
             GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(mainConfigWidget), Minecraft.getMinecraft().currentScreen);
             Minecraft.getMinecraft().displayGuiScreen(adapter);

@@ -31,6 +31,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.resources.Identifier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class TCKeybind implements FeatureTypeHandler<Integer> {
     public static final TCKeybind INSTANCE = new TCKeybind();
@@ -67,7 +69,7 @@ public class TCKeybind implements FeatureTypeHandler<Integer> {
 
         @On(functionName = "setKey")
         public void listen() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             getDomElement().obtainFocus();
             value.setValue("> "+GameSettings.getKeyDisplayString(currentKey)+" <");
             listen =true;

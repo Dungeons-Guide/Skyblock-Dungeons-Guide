@@ -31,6 +31,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.input.Keyboard;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class TCDouble implements FeatureTypeHandler<Double> {
     public static final TCDouble INSTANCE = new TCDouble();
@@ -82,7 +84,7 @@ public class TCDouble implements FeatureTypeHandler<Double> {
 
         @On(functionName = "inc")
         public void inc() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             truth += (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
             if (truth > max) truth = max;
             value.setValue(String.format("%f", truth));
@@ -90,7 +92,7 @@ public class TCDouble implements FeatureTypeHandler<Double> {
 
         @On(functionName = "dec")
         public void dec() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             truth -= (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
             if (truth < min) truth = min;
             value.setValue(String.format("%f", truth));

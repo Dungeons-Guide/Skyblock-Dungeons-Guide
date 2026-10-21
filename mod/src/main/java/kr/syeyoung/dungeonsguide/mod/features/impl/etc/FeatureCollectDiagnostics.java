@@ -50,6 +50,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class FeatureCollectDiagnostics extends SimpleFeature {
     private final Map<String, Long> lastSent = new HashMap<>();
@@ -68,7 +70,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
             FeatureCollectDiagnostics.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDiagnostics.this.setEnabled(true);
             Minecraft.getMinecraft().displayGuiScreen(null);
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         }
 
         @On(functionName = "deny")
@@ -76,7 +78,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
             FeatureCollectDiagnostics.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDiagnostics.this.setEnabled(false);
             Minecraft.getMinecraft().displayGuiScreen(null);
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         }
     }
 

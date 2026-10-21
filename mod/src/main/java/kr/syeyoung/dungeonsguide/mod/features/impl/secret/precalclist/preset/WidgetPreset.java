@@ -11,6 +11,8 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.resources.Identifier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetPreset extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "backgroundColor")
@@ -42,7 +44,7 @@ public class WidgetPreset extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "edit")
     public void edit() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         this.presetList.edit(this);
     }

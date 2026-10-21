@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetPresetRoomRequestAndCalcView extends AnnotatedImportOnlyWidget {
 
@@ -71,7 +73,7 @@ public class WidgetPresetRoomRequestAndCalcView extends AnnotatedImportOnlyWidge
 
     @On(functionName = "link")
     public void link() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         WidgetModalChoosePrecalculation choosePrecalculation = new WidgetModalChoosePrecalculation(
                 PathfindPrecalculationRegistry.getINSTANCE().getsByHash(request.getHash())
                         .stream()

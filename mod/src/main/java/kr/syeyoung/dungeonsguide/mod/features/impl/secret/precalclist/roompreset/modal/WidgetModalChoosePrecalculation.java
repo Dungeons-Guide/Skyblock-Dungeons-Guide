@@ -14,6 +14,8 @@ import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetModalChoosePrecalculation extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "list")
@@ -30,7 +32,7 @@ public class WidgetModalChoosePrecalculation extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "cancel")
     public void cancel() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         PopupMgr.getPopupMgr(getDomElement()).closePopup(null);
     }
 }

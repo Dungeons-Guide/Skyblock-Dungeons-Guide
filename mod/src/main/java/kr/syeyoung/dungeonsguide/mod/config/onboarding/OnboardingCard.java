@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class OnboardingCard extends AnnotatedWidget {
     @Getter
@@ -176,7 +178,7 @@ public class OnboardingCard extends AnnotatedWidget {
         isPressed = false;
         if (!getDomElement().getAbsBounds().contains(absMouseX, absMouseY)) return;
         // do stuff
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         if (selected.getValue())
             controller.getValue().unselect(id.getValue());

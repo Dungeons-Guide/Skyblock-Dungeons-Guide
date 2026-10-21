@@ -45,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class MainPageWidget extends AnnotatedImportOnlyWidget {
 
@@ -66,12 +68,12 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "guiconfig")
     public void guiConfig() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig(null)), Minecraft.getMinecraft().currentScreen));
     }
     @On(functionName = "discord")
     public void discord() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         try {
             Desktop.getDesktop().browse(new URI("https://dungeons.guide/discord"));
         } catch (IOException | URISyntaxException e) {
@@ -81,7 +83,7 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "github")
     public void github() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         try {
             Desktop.getDesktop().browse(new URI("https://github.com/Dungeons-Guide/Skyblock-Dungeons-Guide/"));
         } catch (IOException | URISyntaxException e) {
@@ -90,7 +92,7 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
     }
     @On(functionName = "store")
     public void store() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         try {
             Desktop.getDesktop().browse(new URI("https://store.dungeons.guide/"));
         } catch (IOException | URISyntaxException e) {
@@ -99,7 +101,7 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
     }
     @On(functionName = "modrinth")
     public void modrinth() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         try {
             Desktop.getDesktop().browse(new URI("https://modrinth.com/mod/dungeons-guide"));
         } catch (IOException | URISyntaxException e) {
@@ -108,7 +110,7 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
     }
     @On(functionName = "docs")
     public void docs() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         try {
             Desktop.getDesktop().browse(new URI("https://docs.dungeons.guide/"));
         } catch (IOException | URISyntaxException e) {

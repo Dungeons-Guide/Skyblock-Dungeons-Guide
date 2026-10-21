@@ -25,6 +25,8 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.resources.Identifier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetEnableAskToJoin extends AnnotatedImportOnlyWidget {
     public WidgetEnableAskToJoin() {
@@ -33,14 +35,14 @@ public class WidgetEnableAskToJoin extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "enable")
     public void enable() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         PartyManager.INSTANCE.toggleAllowAskToJoin();
         PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
         if (popupMgr != null) popupMgr.closePopup(true);
     }
     @On(functionName = "cancel")
     public void cancel() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
         if (popupMgr != null) popupMgr.closePopup(null);
     }

@@ -15,6 +15,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.resources.Identifier;
 
 import java.util.*;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class OnboardingPage extends AnnotatedImportOnlyWidget {
 
@@ -101,7 +103,7 @@ public class OnboardingPage extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "prev")
     public void prev() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         if (prevPage.getValue() == null) return;
         GuiScreen parent = getDomElement().getContext().getValue(GuiScreenAdapter.class, "screenAdapter").getParent();
         Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage(prevPage.getValue())), parent, false));
@@ -109,7 +111,7 @@ public class OnboardingPage extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "next")
     public void next() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         GuiScreen parent = getDomElement().getContext().getValue(GuiScreenAdapter.class, "screenAdapter").getParent();
         // apply settings.
 

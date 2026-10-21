@@ -33,6 +33,8 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.resources.Identifier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class TCEnum<T extends Enum<T>> implements FeatureTypeHandler<T> {
     @Getter
@@ -77,7 +79,7 @@ public class TCEnum<T extends Enum<T>> implements FeatureTypeHandler<T> {
 
         @On(functionName = "inc")
         public void inc() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             idx = (idx + 1) % values.length;
             value.setValue(values[idx].name());
             featureParameter.setValue(values[idx]);
@@ -90,7 +92,7 @@ public class TCEnum<T extends Enum<T>> implements FeatureTypeHandler<T> {
         }
         @On(functionName = "dec")
         public void dec() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             idx = (values.length + idx - 1) % values.length;
             value.setValue(values[idx].name());
             featureParameter.setValue(values[idx]);
