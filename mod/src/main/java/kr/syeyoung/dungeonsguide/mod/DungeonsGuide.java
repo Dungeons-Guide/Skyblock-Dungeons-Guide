@@ -50,7 +50,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
-import kr.syeyoung.dungeonsguide.mod.resources.DGTexturePack;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.utils.BlockCache;
@@ -62,7 +61,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.ProgressManager;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
@@ -175,14 +173,6 @@ public class DungeonsGuide {
         Config.f = configFile;
         Minecraft.getMinecraft().getFramebuffer().enableStencil();
 
-        try {
-            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
-            resourcePackList.add(new DGTexturePack());
-            Minecraft.getMinecraft().refreshResources();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         registerEventsForge(this);
 
         progressbar.step("Loading Native Libraries");
@@ -266,9 +256,6 @@ public class DungeonsGuide {
         ProgressManager.pop(progressbar);
 
         VersionInfo.checkAndOpen();
-
-
-        Minecraft.getMinecraft().refreshResources();
 
         if (firstTimeUsingDG) {
             GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")), null, false));
