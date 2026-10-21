@@ -20,7 +20,8 @@ package kr.syeyoung.dungeonsguide.mod;
 
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.KeyInputEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.MouseInputEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -28,7 +29,7 @@ public class Keybinds
 {
 
     @SubscribeEvent
-    public void onTogglePathfindStatus(InputEvent.KeyInputEvent keyInputEvent) {
+    public void onTogglePathfindStatus(KeyInputEvent keyInputEvent) {
         if (Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent()) {
             int key = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
             KeyBindPressedEvent keyBindPressedEvent = new KeyBindPressedEvent(key);
@@ -36,7 +37,7 @@ public class Keybinds
         }
     }
     @SubscribeEvent
-    public void onMousePressed(InputEvent.MouseInputEvent mouseInputEvent) {
+    public void onMousePressed(MouseInputEvent mouseInputEvent) {
         if (Mouse.getEventButtonState()) {
             int key = Mouse.getEventButton() - 100;
             KeyBindPressedEvent keyBindPressedEvent = new KeyBindPressedEvent(key);

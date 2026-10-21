@@ -3,7 +3,9 @@
   "package": "kr.syeyoung.dungeonsguide.mod.mixin",
   "compatibilityLevel": "JAVA_25",
   "client": [
-    "MinecraftMixin"
+    "KeyboardHandlerMixin",
+    "MinecraftMixin",
+    "MouseHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
