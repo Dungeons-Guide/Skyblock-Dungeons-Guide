@@ -34,7 +34,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,7 +58,7 @@ public class MainConfigWidget extends AnnotatedImportOnlyWidget implements Rende
 
     private long doSearch = Long.MAX_VALUE;
     public MainConfigWidget() {
-        super(new ResourceLocation("dungeonsguide:gui/config/normalconfig.gui"));
+        super(Identifier.parse("dungeonsguide:gui/config/normalconfig.gui"));
         menu.setValue(buildMenu());
         relocate.setValue(new GUIOpenItem("GUI Config", () -> new HUDLocationConfig(null)));
 
@@ -83,13 +83,13 @@ public class MainConfigWidget extends AnnotatedImportOnlyWidget implements Rende
 
     @On(functionName = "back")
     public void back() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         Navigator.getNavigator(getDomElement()).goBack();
     }
 
     @On(functionName = "toggleSidebar")
     public void toggle() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         if ("show".equals(this.sidebar.getValue()))
             this.sidebar.setValue("hide");
         else

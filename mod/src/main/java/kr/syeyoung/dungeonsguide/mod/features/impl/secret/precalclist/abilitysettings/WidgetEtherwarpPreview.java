@@ -19,7 +19,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
@@ -47,7 +47,7 @@ public class WidgetEtherwarpPreview extends AnnotatedExportOnlyWidget implements
     }
 
 
-    private ResourceLocation sampleBlock = new ResourceLocation("minecraft:textures/blocks/diamond_block.png");
+    private Identifier sampleBlock = Identifier.parse("minecraft:textures/blocks/diamond_block.png");
 
 
     @Override

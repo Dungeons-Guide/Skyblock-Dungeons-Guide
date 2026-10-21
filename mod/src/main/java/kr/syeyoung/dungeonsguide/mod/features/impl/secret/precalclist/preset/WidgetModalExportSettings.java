@@ -21,7 +21,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Tuple;
 import org.apache.commons.io.FileUtils;
 
@@ -43,12 +43,12 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
     private PathfindPreset preset;
     public WidgetModalExportSettings(PathfindPreset preset) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/presetview/modal_export_settings.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/presetview/modal_export_settings.gui"));
 
         this.preset = preset;
 
         includePrecalc.addOnUpdate((old, neu) -> {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         });
     }
 
@@ -56,7 +56,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "confirm")
     public void confirm() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
 
         File target = new File(Main.getConfigDir(), "presetExports");
@@ -191,7 +191,7 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "cancel")
     public void cancel() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
         PopupMgr.getPopupMgr(getDomElement()).closePopup(null);
     }

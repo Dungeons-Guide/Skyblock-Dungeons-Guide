@@ -91,6 +91,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
+import net.minecraft.resources.Identifier;
 
 public class FeatureCollectDungeonRooms extends SimpleFeature {
     public FeatureCollectDungeonRooms() {
@@ -101,7 +102,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
     public class WidgetUserApproval extends AnnotatedImportOnlyWidget {
         public WidgetUserApproval() {
-            super(new ResourceLocation("dungeonsguide:gui/collect_rooms_approval.gui"));
+            super(Identifier.parse("dungeonsguide:gui/collect_rooms_approval.gui"));
         }
 
         @On(functionName = "approve")
@@ -109,7 +110,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             FeatureCollectDungeonRooms.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDungeonRooms.this.setEnabled(true);
             Minecraft.getMinecraft().displayGuiScreen(null);
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         }
 
         @On(functionName = "deny")
@@ -117,7 +118,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             FeatureCollectDungeonRooms.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDungeonRooms.this.setEnabled(false);
             Minecraft.getMinecraft().displayGuiScreen(null);
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         }
     }
 

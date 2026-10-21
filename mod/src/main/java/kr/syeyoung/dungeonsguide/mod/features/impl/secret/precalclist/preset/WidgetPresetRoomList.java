@@ -12,7 +12,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -43,7 +43,7 @@ public class WidgetPresetRoomList extends AnnotatedImportOnlyWidget {
     private List<AdditionalInfoCaculatedDungeonRoomInfo> calculatedDRI;
     private List<WidgetPresetRoom> roomWidgets = new ArrayList<>();
     public WidgetPresetRoomList(PathfindPreset preset, WidgetViewPreset widgetViewPreset, List<AdditionalInfoCaculatedDungeonRoomInfo> roomInfoList) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/presetview/roomlist.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/presetview/roomlist.gui"));
         this.preset = preset;
         this.parent = widgetViewPreset;
 
@@ -156,7 +156,7 @@ public class WidgetPresetRoomList extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "cycleFilter")
     public void cycleFilter() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         currentFilter = RoomFilter.values()[(currentFilter.ordinal() + 1) % RoomFilter.values().length];
         this.filterText.setValue(currentFilter.display);
 
@@ -165,7 +165,7 @@ public class WidgetPresetRoomList extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "cycleSort")
     public void cycleSort() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         currentSort = RoomSort.SECRET.values()[(currentSort.ordinal() + 1) % RoomSort.values().length];
         this.sortText.setValue(currentSort.display);
 

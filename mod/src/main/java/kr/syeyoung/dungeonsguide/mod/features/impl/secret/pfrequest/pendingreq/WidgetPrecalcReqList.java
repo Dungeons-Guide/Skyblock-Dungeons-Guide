@@ -8,7 +8,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class WidgetPrecalcReqList extends AnnotatedImportOnlyWidget {
 
     private PathfindPrecalculationRequestSet requestSet;
     public WidgetPrecalcReqList(PathfindPrecalculationRequestSet requestSet) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/list.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/requestcalculation/pendingreq/list.gui"));
         this.requestSet = requestSet;
 
         List<Widget> widgets=  new ArrayList<>();
@@ -42,7 +42,7 @@ public class WidgetPrecalcReqList extends AnnotatedImportOnlyWidget {
 
 
         public WidgetPrecalcReqListElement(PathfindRequest pathfindRequest) {
-            super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/precalcreqelement.gui"));
+            super(Identifier.parse("dungeonsguide:gui/features/requestcalculation/pendingreq/precalcreqelement.gui"));
 
             this.hash.setValue(pathfindRequest.getHash());
             this.roomName.setValue(pathfindRequest.getDungeonRoomInfo().getName());

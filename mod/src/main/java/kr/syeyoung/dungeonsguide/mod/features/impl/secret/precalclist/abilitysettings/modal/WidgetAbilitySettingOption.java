@@ -13,7 +13,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class WidgetAbilitySettingOption extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "ability")
@@ -23,7 +23,7 @@ public class WidgetAbilitySettingOption extends AnnotatedImportOnlyWidget {
 
     private WidgetModalChooseAbilitySettings parent;
     public WidgetAbilitySettingOption(AlgorithmSetting algorithmSetting, WidgetModalChooseAbilitySettings parent) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/abilityedit/choose_ability_dummy.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/abilityedit/choose_ability_dummy.gui"));
 
         this.algorithmSetting = algorithmSetting;
         this.widgetBindableAttribute.setValue(new WidgetAbilitySettings(
@@ -34,14 +34,14 @@ public class WidgetAbilitySettingOption extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "select")
     public void select() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         PopupMgr.getPopupMgr(getDomElement()).closePopup(algorithmSetting);
     }
 
 
     @On(functionName = "derive")
     public void create() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(500, 500, "Create New Algorithm Setting", new WidgetCreateAbilitySettings(algorithmSetting), true), (a) -> {
             if (a != null) {

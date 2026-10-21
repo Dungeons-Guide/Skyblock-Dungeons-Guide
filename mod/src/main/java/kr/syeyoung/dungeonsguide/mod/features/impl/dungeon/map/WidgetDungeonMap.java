@@ -35,6 +35,7 @@ import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
+import net.minecraft.resources.Identifier;
 
 public class WidgetDungeonMap extends Widget implements Renderer {
 
@@ -307,7 +308,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
         }
     }
 
-    private final ResourceLocation resourceLocation = new ResourceLocation("dungeonsguide:map/maptexture.png");
+    private final Identifier resourceLocation = Identifier.parse("dungeonsguide:map/maptexture.png");
 
     private Rectangle maxFit(int rot, short shape) {
         int[] patterns = new int[]{
@@ -610,7 +611,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                             -8, -8, u, v, 16, 16, unitRoomWidth, unitRoomHeight, 128, 128
                     );
                 } else {
-                    Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(override.getIconLocation()));
+                    Minecraft.getMinecraft().getTextureManager().bindTexture(Identifier.parse(override.getIconLocation()));
                     GuiScreen.drawScaledCustomSizeModalRect(
                             -8, -8, u, v, 16, 16, unitRoomWidth, unitRoomHeight, 32, 32
                     );
@@ -718,7 +719,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 int rWidthPixels = dungeonRoom.getRoomBounds().getUnitLenX() * unitRoomBigWidth - gap;
                 int rHeightPixels = dungeonRoom.getRoomBounds().getUnitLenZ() * unitRoomBigHeight - gap;
 
-                Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(override.getTextureLocation()));
+                Minecraft.getMinecraft().getTextureManager().bindTexture(Identifier.parse(override.getTextureLocation()));
                 GlStateManager.pushMatrix();;
                 GlStateManager.translate(mapPt.x + rWidthPixels / 2.0, mapPt.y + rHeightPixels / 2.0, 0);
                 GlStateManager.rotate(-rotation * 90, 0, 0, 1);

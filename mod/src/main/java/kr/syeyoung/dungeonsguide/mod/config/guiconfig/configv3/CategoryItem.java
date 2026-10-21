@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.IOException;
 import java.util.function.Supplier;
@@ -43,7 +43,7 @@ public class CategoryItem extends AnnotatedImportOnlyWidget {
     private boolean triggerSidemenu = false;
 
     public CategoryItem(Supplier<Widget> pageCreator, String category, String description) {
-        super(new ResourceLocation("dungeonsguide:gui/config/categoryitem.gui"));
+        super(Identifier.parse("dungeonsguide:gui/config/categoryitem.gui"));
         this.pageCreator = pageCreator;
 
         this.name.setValue(category);
@@ -51,7 +51,7 @@ public class CategoryItem extends AnnotatedImportOnlyWidget {
         try {
             String target = "dungeonsguide:textures/config/category_icon/"+category.toLowerCase()
                     .replace("&","").replace(" ","_")+".png";
-            if (Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(target)) != null)
+            if (Minecraft.getMinecraft().getResourceManager().getResource(Identifier.parse(target)) != null)
                 icon.setValue(target);
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,7 +65,7 @@ public class CategoryItem extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "click")
     public void openPage() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         Navigator.getNavigator(getDomElement()).openPage(pageCreator.get());
 
         MainConfigWidget mainConfigWidget = (MainConfigWidget) getDomElement().getContext().CONTEXT.get("mainconfig");

@@ -12,7 +12,7 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemTool;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +70,7 @@ public class WidgetToolEdit extends AnnotatedImportOnlyWidget {
 
     private ToolType type;
     public WidgetToolEdit(ToolType type, BindableAttribute<AlgorithmSetting.ToolSettings> toolSettingsBindableAttribute) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/abilityedit/tooledit.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/abilityedit/tooledit.gui"));
         currentToolSettings.exportTo(toolSettingsBindableAttribute);
         this.type = type;
 
@@ -122,7 +122,7 @@ public class WidgetToolEdit extends AnnotatedImportOnlyWidget {
     }
 
     private void updateEfficiency(int i) {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
         for (BindableAttribute<Boolean> booleanBindableAttribute : effSelected) {
             booleanBindableAttribute.setValue(false);
@@ -135,7 +135,7 @@ public class WidgetToolEdit extends AnnotatedImportOnlyWidget {
     }
 
     public void updateChosen(ToolMaterialType material) {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
         for (BindableAttribute<Boolean> booleanBindableAttribute : selected) {
             booleanBindableAttribute.setValue(false);

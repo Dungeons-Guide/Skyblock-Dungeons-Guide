@@ -6,7 +6,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class MapOverlayMarker implements MapOverlay{
     private MarkerData marker;
@@ -29,7 +29,7 @@ public class MapOverlayMarker implements MapOverlay{
         return 50 - marker.getType().ordinal();
     }
 
-    private final ResourceLocation resourceLocation2 = new ResourceLocation("dungeonsguide:map/bossfight/markers.png");
+    private final Identifier resourceLocation2 = Identifier.parse("dungeonsguide:map/bossfight/markers.png");
     @Override
     public void doRender(float rotation, float partialTicks, double scale, double relMouseX, double relMouseY) {
         double yaw = marker.getPrevYaw() + (marker.getCurrYaw() - marker.getPrevYaw()) * partialTicks;

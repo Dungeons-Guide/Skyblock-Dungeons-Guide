@@ -24,20 +24,20 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ModalMessage extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "text")
     public final BindableAttribute<String> text = new BindableAttribute<>(String.class);
 
     public ModalMessage(String text) {
-        super(new ResourceLocation("dungeonsguide:gui/elements/modal_content_message.gui"));
+        super(Identifier.parse("dungeonsguide:gui/elements/modal_content_message.gui"));
         this.text.setValue(text);
     }
 
     @On(functionName = "ok")
     public void ok() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
         if (popupMgr != null) popupMgr.closePopup(null);
     }

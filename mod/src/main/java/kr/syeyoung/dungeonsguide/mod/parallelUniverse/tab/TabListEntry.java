@@ -30,7 +30,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.WorldSettings.GameType;
 
 @RequiredArgsConstructor
@@ -74,8 +74,8 @@ public class TabListEntry {
 
 
     private boolean playerTexturesLoaded = false;
-    private ResourceLocation locationSkin;
-    private ResourceLocation locationCape;
+    private Identifier locationSkin;
+    private Identifier locationCape;
     private String skinType;
 
 
@@ -87,15 +87,15 @@ public class TabListEntry {
         return this.skinType == null ? DefaultPlayerSkin.getSkinType(this.gameProfile.getId()) : this.skinType;
     }
 
-    public ResourceLocation getLocationSkin() {
+    public Identifier getLocationSkin() {
         if (this.locationSkin == null) {
             this.loadPlayerTextures();
         }
 
-        return (ResourceLocation) Objects.firstNonNull(this.locationSkin, DefaultPlayerSkin.getDefaultSkin(this.gameProfile.getId()));
+        return (Identifier) Objects.firstNonNull(this.locationSkin, DefaultPlayerSkin.getDefaultSkin(this.gameProfile.getId()));
     }
 
-    public ResourceLocation getLocationCape() {
+    public Identifier getLocationCape() {
         if (this.locationCape == null) {
             this.loadPlayerTextures();
         }
@@ -107,7 +107,7 @@ public class TabListEntry {
             if (!this.playerTexturesLoaded) {
                 this.playerTexturesLoaded = true;
                 Minecraft.getMinecraft().getSkinManager().loadProfileTextures(this.gameProfile, new SkinManager.SkinAvailableCallback() {
-                    public void skinAvailable(MinecraftProfileTexture.Type type, ResourceLocation location, MinecraftProfileTexture profileTexture) {
+                    public void skinAvailable(MinecraftProfileTexture.Type type, Identifier location, MinecraftProfileTexture profileTexture) {
                         switch (type) {
                             case SKIN:
                                 TabListEntry.this.locationSkin = location;

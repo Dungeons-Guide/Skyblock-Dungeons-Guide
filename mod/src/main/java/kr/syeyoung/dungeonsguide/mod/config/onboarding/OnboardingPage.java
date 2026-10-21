@@ -12,7 +12,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 
@@ -33,7 +33,7 @@ public class OnboardingPage extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<OnboardingPage> self = new BindableAttribute<>(OnboardingPage.class, this);
 
     public OnboardingPage(String name) {
-        super(new ResourceLocation("dungeonsguide:gui/onboarding/"+name));
+        super(Identifier.parse("dungeonsguide:gui/onboarding/"+name));
 
         requiredGroup.addOnUpdate((old, neu) -> check());
     }
@@ -101,7 +101,7 @@ public class OnboardingPage extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "prev")
     public void prev() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         if (prevPage.getValue() == null) return;
         GuiScreen parent = getDomElement().getContext().getValue(GuiScreenAdapter.class, "screenAdapter").getParent();
         Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage(prevPage.getValue())), parent, false));
@@ -109,7 +109,7 @@ public class OnboardingPage extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "next")
     public void next() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         GuiScreen parent = getDomElement().getContext().getValue(GuiScreenAdapter.class, "screenAdapter").getParent();
         // apply settings.
 

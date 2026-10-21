@@ -20,7 +20,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -57,7 +57,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
     private final BindableAttribute<AlgorithmSetting> algorithmSettingBindableAttribute = new BindableAttribute<>(AlgorithmSetting.class);
 
     public WidgetPresetRoomDetailsMetadata(AdditionalInfoCaculatedDungeonRoomInfo roomInfo, WidgetPresetRoomDetails parent) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/metadata.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/roompresetview/metadata.gui"));
         this.roomInfo = roomInfo;
         this.details = parent;
 
@@ -80,7 +80,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "unlinkUnused")
     public void unlinkUnused() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         ModalConfirm modalMessage = new ModalConfirm("This will unlink all UNUSED precalculations in this room.\nThis operation can not be undone");
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Are you sure?", modalMessage, true), (a) -> {
             if (a == null) return;
@@ -101,7 +101,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
     }
     @On(functionName = "unlinkAll")
     public void unlinkAll() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         ModalConfirm modalMessage = new ModalConfirm("This will unlink *ALL* precalculations in this room.\nThis operation can not be undone\n\nConsider making clone of this preset before continuing");
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Are you sure?", modalMessage, true), (a) -> {
             if (a == null) return;
@@ -124,7 +124,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
     }
     @On(functionName = "unlinkUnknown")
     public void unlinkUnknown() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         ModalConfirm modalMessage = new ModalConfirm("This will unlink all UNKNOWN (included in preset but nowhere to be found) precalculations in this room.\nThis operation can not be undone\n\nConsider making clone of this preset before continuing");
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Are you sure?", modalMessage, true), (a) -> {
             if (a == null) return;
@@ -147,7 +147,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
     }
     @On(functionName = "autolink")
     public void autolink() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         WidgetViewPreset.calculator.submit(() -> {
             for (PathfindRequest request : roomInfo.getMissing()) {
                 List<PathfindPrecalculation> precalcs = PathfindPrecalculationRegistry.getINSTANCE().getsByHash(request.getHash());
@@ -169,7 +169,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "removeOverrideAbilitySettings")
     public void removeOverride() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         this.roomInfo.getRoomPreset().setAlgorithmSettingOverride(null);
         algorithmSettingBindableAttribute.setValue(this.roomInfo.getRoomPreset().getEffectiveAlgorithmSetting(roomInfo.getDungeonRoomInfo()));
 
@@ -183,7 +183,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "editOverrideAbilitySettings")
     public void editOverride() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(400, 300, "Choose New Algorithm Setting Override", new WidgetModalChooseAbilitySettings(), true), (a) -> {
             if (a != null) {
@@ -204,7 +204,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "viewroom")
     public void viewRoom() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
         try {
             DungeonServerLaunchUtils.launchDungeonServerAndJoin(roomInfo.getDungeonRoomInfo(), roomInfo.getRoomPreset().getParent());

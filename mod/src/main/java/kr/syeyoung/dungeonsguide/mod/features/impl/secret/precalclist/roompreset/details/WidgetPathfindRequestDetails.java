@@ -11,7 +11,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -33,7 +33,7 @@ public class WidgetPathfindRequestDetails extends AnnotatedImportOnlyWidget {
     private PathfindRequest request;
     private BindableAttribute<AlgorithmSetting> algorithmSettingBindableAttribute = new BindableAttribute<>(AlgorithmSetting.class);
     public WidgetPathfindRequestDetails(PathfindRequest request) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequestdetails.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequestdetails.gui"));
         this.request = request;
         this.id.setValue(request.getId().substring(36, Math.min(request.getId().length(), 66)));
         this.hash.setValue(request.getHash());
@@ -45,7 +45,7 @@ public class WidgetPathfindRequestDetails extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "copyId")
     public void copyId() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         StringSelection selection = new StringSelection(request.getId());
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(selection, selection);

@@ -52,17 +52,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 import java.util.stream.Stream;
 
 public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     public WidgetPartyFinder() {
-        super(new ResourceLocation("dungeonsguide:gui/features/party_finder/custom_party_finder.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/party_finder/custom_party_finder.gui"));
         filterUnjoinable.addOnUpdate(this::updateUnjoinable);
         filterUnjoinable.addOnUpdate((old,neu) -> {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         });
         whitelist.addOnUpdate((old, neu) -> FeatureRegistry.PARTYKICKER_CUSTOM.setWhitelist(neu));
         blacklist.addOnUpdate((old, neu) -> FeatureRegistry.PARTYKICKER_CUSTOM.setBlacklist(neu));
@@ -125,30 +125,30 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "goBack")
     public void goBack() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+3, 0, 0);
     }
 
     @On(functionName = "next")
     public void nextPage() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*2+8, 0, 0);
     }
     @On(functionName = "prev")
     public void prevPage() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*2, 0, 0);
     }
 
     @On(functionName = "refresh")
     public void refresh() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+1, 0, 0);
     }
 
     @On(functionName = "leave")
     public void leaveParty() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         ChatProcessor.INSTANCE.subscribe(new ChatSubscriber() {
             int cnt = 0;
             @Override
@@ -168,24 +168,24 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     }
     @On(functionName = "create")
     public void createParty() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+0, 0, 0);
     }
     @On(functionName = "delist")
     public void delistParty() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+7, 0, 0);
     }
     @On(functionName = "searchSettings")
     public void openSearchSettings() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(9*5+5, 0, 0);
     }
 
 
     @On(functionName = "invite")
     public void openInviteDialog() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
         if (!DiscordIntegrationManager.INSTANCE.isLoaded()) {
             ModalMessage modalMessage = new ModalMessage("Discord GameSDK has been disabled, or it failed to load");
@@ -203,7 +203,7 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     }
     @On(functionName = "settings")
     public void openSettings() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
         MainConfigWidget mainConfigWidget = new MainConfigWidget();
         GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(mainConfigWidget));

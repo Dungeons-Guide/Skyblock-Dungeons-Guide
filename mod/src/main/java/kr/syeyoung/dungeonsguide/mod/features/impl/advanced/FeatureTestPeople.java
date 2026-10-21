@@ -49,7 +49,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
@@ -343,7 +343,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 
                     MinecraftProfileTexture profileTexture =  map.get(MinecraftProfileTexture.Type.SKIN);
 
-                    final ResourceLocation resourceLocation = new ResourceLocation("skins/" + profileTexture.getHash());
+                    final Identifier resourceLocation = Identifier.parse("skins/" + profileTexture.getHash());
                     ITextureObject iTextureObject = Minecraft.getMinecraft().getTextureManager().getTexture(resourceLocation);
                     if (iTextureObject == null) {
 
@@ -387,7 +387,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
         if (!PartyManager.INSTANCE.getPartyContext().isPartyExistHypixel()) return;
 //        if(isAloneInParty()) return;
 
-        ResourceLocation logoLoc = new ResourceLocation("dungeonsguide:textures/dglogox32.png");
+        Identifier logoLoc = Identifier.parse("dungeonsguide:textures/dglogox32.png");
 
         FontRenderer fr = getFontRenderer();
 

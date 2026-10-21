@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.input.Keyboard;
 
 public class TCDouble implements FeatureTypeHandler<Double> {
@@ -64,7 +64,7 @@ public class TCDouble implements FeatureTypeHandler<Double> {
         }
 
         public DoubleEditWidget(FeatureParameter<Double> featureParameter, double min, double max) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/number.gui"));
+            super(Identifier.parse("dungeonsguide:gui/config/parameter/number.gui"));
             this.truth = featureParameter.getValue();
             this.min = min;
             this.max = max;
@@ -82,7 +82,7 @@ public class TCDouble implements FeatureTypeHandler<Double> {
 
         @On(functionName = "inc")
         public void inc() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
             truth += (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
             if (truth > max) truth = max;
             value.setValue(String.format("%f", truth));
@@ -90,7 +90,7 @@ public class TCDouble implements FeatureTypeHandler<Double> {
 
         @On(functionName = "dec")
         public void dec() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
             truth -= (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
             if (truth < min) truth = min;
             value.setValue(String.format("%f", truth));

@@ -42,7 +42,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -128,7 +128,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
 
     private FeatureDungeonMap2 dungeonMap2;
     public WidgetMapConfiguration(FeatureDungeonMap2 featureDungeonMap2) {
-        super(new ResourceLocation("dungeonsguide:gui/features/map/editor.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/map/editor.gui"));
         this.dungeonMap2 = featureDungeonMap2;
 
         widgetBindableAttribute.setValue(new WidgetMapDemo(featureDungeonMap2));
@@ -201,7 +201,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "addOverride")
     public void addOverride() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         WidgetAddRoomPopup modalMessage = new WidgetAddRoomPopup(this);
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Add New Room", modalMessage, true), (a) -> {
             if (a instanceof UUID)
@@ -210,7 +210,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
     }
     @On(functionName = "resetscale")
     public void resetScale() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         for (MapConfiguration.PlayerHeadSettings value : dungeonMap2.getMapConfiguration().getHeadSettingsMap().values()) {
             value.setIconSize(1.0);
         }
@@ -228,7 +228,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "reset")
     public void reset() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         for (FeatureParameter parameter : dungeonMap2.getParameters()) {
             parameter.setValue(parameter.getDefault_value());
         }
@@ -267,7 +267,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         public final BindableAttribute<Widget> value = new BindableAttribute<>(Widget.class);
 
         public WidgetSimpleField(String name, Widget editor) {
-            super(new ResourceLocation("dungeonsguide:gui/features/map/field.gui"));
+            super(Identifier.parse("dungeonsguide:gui/features/map/field.gui"));
             this.name.setValue(name);
             this.value.setValue(editor);
         }
@@ -298,7 +298,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         private WidgetMapConfiguration widgetMapConfiguration;
         private UUID uuid;
         public WidgetRoomOverride(UUID uuid, MapConfiguration.RoomOverride roomOverride, WidgetMapConfiguration configuration) {
-            super(new ResourceLocation("dungeonsguide:gui/features/map/roomoverride.gui"));
+            super(Identifier.parse("dungeonsguide:gui/features/map/roomoverride.gui"));
 
             this.widgetMapConfiguration = configuration;
             this.uuid = uuid;
@@ -379,14 +379,14 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
 
         @On(functionName = "delete")
         public void delete() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
             widgetMapConfiguration.deleteOverride(uuid);
         }
     }
 
     @On(functionName = "syncscale")
     public void syncScale() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         FeatureParameter<Double> param1 = dungeonMap2.<Double>getParameter("selfscale");
         FeatureParameter<Double> param2 = dungeonMap2.<Double>getParameter("otherscale");
         double newVal = Math.max(param1.getValue(), param2.getValue());
@@ -403,10 +403,10 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         @Bind(variableName = "enabled")
         public final BindableAttribute<Boolean> isEnabled = new BindableAttribute<>(Boolean.class);
         public BooleanEditWidget(Boolean defaultValue, Consumer<Boolean> onUpdate) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/boolean.gui"));
+            super(Identifier.parse("dungeonsguide:gui/config/parameter/boolean.gui"));
             isEnabled.setValue(defaultValue);
             isEnabled.addOnUpdate((old, neu) -> {
-                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
                 onUpdate.accept(neu);
             });
         }
@@ -419,7 +419,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         private int idx;
         private Consumer<T> onUpdate;
         public EnumEditWidget(T[] values, T defaultValue, Consumer<T> onUpdate) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/string_choice.gui"));
+            super(Identifier.parse("dungeonsguide:gui/config/parameter/string_choice.gui"));
             this.idx = defaultValue.ordinal();
             this.values = values;
             this.onUpdate = onUpdate;
@@ -428,7 +428,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
 
         @On(functionName = "inc")
         public void inc() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
             idx = (idx + 1) % values.length;
             value.setValue(values[idx].name());
             onUpdate.accept(values[idx]);
@@ -441,7 +441,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         }
         @On(functionName = "dec")
         public void dec() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
             idx = (values.length + idx - 1) % values.length;
             value.setValue(values[idx].name());
             onUpdate.accept(values[idx]);

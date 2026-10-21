@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class FeatureItem extends AnnotatedImportOnlyWidget {
 
@@ -58,7 +58,7 @@ public class FeatureItem extends AnnotatedImportOnlyWidget {
     private AbstractFeature feature;
 
     public FeatureItem(AbstractFeature feature) {
-        super(new ResourceLocation("dungeonsguide:gui/config/featureitem.gui"));
+        super(Identifier.parse("dungeonsguide:gui/config/featureitem.gui"));
         this.feature = feature;
 
         this.name.setValue(feature.getName());
@@ -70,7 +70,7 @@ public class FeatureItem extends AnnotatedImportOnlyWidget {
         enabled.setValue(feature.isEnabled());
 
         enabled.addOnUpdate((old, neu) -> {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
             feature.setEnabled(neu);
         });
 
@@ -83,13 +83,13 @@ public class FeatureItem extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "configure")
     public void onEdit() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         Navigator.getNavigator(getDomElement()).openPage(feature.getConfigureWidget());
         // do stuff
     }
     @On(functionName = "relocate")
     public void onRelocate() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig((AbstractHUDFeature) feature)), Minecraft.getMinecraft().currentScreen));
         // do stuff
     }

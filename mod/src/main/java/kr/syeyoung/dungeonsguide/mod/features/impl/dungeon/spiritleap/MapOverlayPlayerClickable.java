@@ -15,7 +15,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec4b;
 
@@ -91,7 +91,7 @@ public class MapOverlayPlayerClickable implements MapOverlay {
         return 0;
     }
 
-    private final ResourceLocation resourceLocation = new ResourceLocation("dungeonsguide:map/maptexture.png");
+    private final Identifier resourceLocation = Identifier.parse("dungeonsguide:map/maptexture.png");
 
     @Override
     public void doRender(float rotation, float partialTicks, double scale, double relMouseX, double relMouseY) {
@@ -160,7 +160,7 @@ public class MapOverlayPlayerClickable implements MapOverlay {
     public boolean onClick(double relMouseX, double relMouseY, DomElement domElement) {
         if (target == null) return false;
         if (relMouseX < -4 * settings.getIconSize() || relMouseX > 4 * settings.getIconSize() || relMouseY < -4 * settings.getIconSize() || relMouseY > 4 * settings.getIconSize()) return false;
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         GuiScreenAdapterChestOverride.getAdapter(domElement).emulateClick(this.target.getSlotId(), 0, 0);
         return true;
     }

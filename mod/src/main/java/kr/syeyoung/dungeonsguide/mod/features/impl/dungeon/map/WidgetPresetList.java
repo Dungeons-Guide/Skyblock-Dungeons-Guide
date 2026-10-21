@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.ResourcePackRepository;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.io.IOException;
@@ -51,14 +51,14 @@ public class WidgetPresetList extends AnnotatedImportOnlyWidget {
     private FeatureDungeonMap2 dungeonMap2;
     private WidgetMapConfiguration mapConfiguration;
     public WidgetPresetList(FeatureDungeonMap2 dungeonMap2, WidgetMapConfiguration configuration) {
-        super(new ResourceLocation("dungeonsguide:gui/features/map/presetlist.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/map/presetlist.gui"));
 
         this.dungeonMap2 = dungeonMap2;
         this.mapConfiguration = configuration;
 
         List<Preset> foundPresets = new ArrayList<>();
         try {
-            for (IResource allResource : Minecraft.getMinecraft().getResourceManager().getAllResources(new ResourceLocation("dungeonsguide:map/presets.json"))) {
+            for (IResource allResource : Minecraft.getMinecraft().getResourceManager().getAllResources(Identifier.parse("dungeonsguide:map/presets.json"))) {
                 try (InputStream inputStream = allResource.getInputStream();
                      JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream))) {
 
@@ -106,7 +106,7 @@ public class WidgetPresetList extends AnnotatedImportOnlyWidget {
         private WidgetPresetList presetList;
         private Preset preset;
         public WidgetPreset(Preset preset, WidgetPresetList widgetPresetList) {
-            super(new ResourceLocation("dungeonsguide:gui/features/map/preset.gui"));
+            super(Identifier.parse("dungeonsguide:gui/features/map/preset.gui"));
 
             this.name.setValue(preset.getName());
             this.description.setValue(preset.getDescription());
@@ -115,7 +115,7 @@ public class WidgetPresetList extends AnnotatedImportOnlyWidget {
                     .getRepositoryEntries()) {
                 if (repositoryEntry.getResourcePackName().equals(preset.getTexturePack())) {
                     repositoryEntry.bindTexturePackIcon(Minecraft.getMinecraft().getTextureManager());
-                    ResourceLocation resourceLocation = ReflectionHelper.getPrivateValue(ResourcePackRepository.Entry.class, repositoryEntry, "locationTexturePackIcon", "field_5260", "f");
+                    Identifier resourceLocation = ReflectionHelper.getPrivateValue(ResourcePackRepository.Entry.class, repositoryEntry, "locationTexturePackIcon", "field_5260", "f");
                     if (resourceLocation != null)
                         this.icon.setValue(resourceLocation.toString());
                     break;

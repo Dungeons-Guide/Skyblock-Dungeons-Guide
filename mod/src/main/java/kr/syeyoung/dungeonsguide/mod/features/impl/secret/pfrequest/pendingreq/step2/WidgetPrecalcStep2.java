@@ -9,7 +9,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.awt.*;
 import java.io.File;
@@ -34,7 +34,7 @@ public class WidgetPrecalcStep2 extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> err = new BindableAttribute<>(String.class, "");
 
     public WidgetPrecalcStep2(WidgetPendingRequestPage parent, PathfindPrecalculationRequestSet requestSet) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/step2/step2.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/requestcalculation/pendingreq/step2/step2.gui"));
 
         this.parent = parent;
         this.requestSet = requestSet;
@@ -48,7 +48,7 @@ public class WidgetPrecalcStep2 extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "purchase")
     public void purchaseCredits() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         try {
             Desktop.getDesktop().browse(new URL("https://store.dungeons.guide/category/pathfinding").toURI());
         } catch (IOException e) {
@@ -60,7 +60,7 @@ public class WidgetPrecalcStep2 extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "request")
     public void actuallyRequest() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
         this.requestSet.createRequest();
         this.parent.updateStep();
@@ -68,7 +68,7 @@ public class WidgetPrecalcStep2 extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "openGuide")
     public void openGuide() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
         try {
             Desktop.getDesktop().browse(new URI("https://docs.dungeons.guide/docs/pathfinding/precalculation/introduction"));
@@ -79,7 +79,7 @@ public class WidgetPrecalcStep2 extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "openDir")
     public void openDir() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
         File f = this.requestSet.getZipFile();
         try {

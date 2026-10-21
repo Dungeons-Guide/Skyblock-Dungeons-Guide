@@ -42,6 +42,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.minecraft.resources.Identifier;
 
 public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplayEngineLineProperties> {
 
@@ -504,7 +505,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         GlStateManager.disableCull();
 
         GlStateManager.enableTexture2D();
-        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("minecraft:textures/blocks/tnt_side.png"));
+        Minecraft.getMinecraft().getTextureManager().bindTexture(Identifier.parse("minecraft:textures/blocks/tnt_side.png"));
         GlStateManager.color(1, 1, 1, 1.0F);
         Tessellator tesselator = Tessellator.getInstance();
         WorldRenderer vertexBuffer = tesselator.getWorldRenderer();
@@ -547,8 +548,8 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
     }
 
 
-    public static final ResourceLocation arrow = new ResourceLocation("dungeonsguide:textures/arrow.png");
-    public static final ResourceLocation abilities = new ResourceLocation("dungeonsguide:textures/features/precalclist/abilities.png");
+    public static final Identifier arrow = Identifier.parse("dungeonsguide:textures/arrow.png");
+    public static final Identifier abilities = Identifier.parse("dungeonsguide:textures/features/precalclist/abilities.png");
     public static void drawIcon(int iconIdx, PathSegment segment, AColor colour, AColor texture, float partialTicks, double animate, boolean path) {
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.color(1,1,1,1);

@@ -11,7 +11,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -44,7 +44,7 @@ public class WidgetPathfindResultDetails extends AnnotatedImportOnlyWidget {
     private final Runnable onDelete;
     private PathfindPrecalculation linked;
     public WidgetPathfindResultDetails(PathfindPrecalculation linkedResult, Runnable onDelete) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/pathfindprecalculationdetails.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/roompresetview/pathfindprecalculationdetails.gui"));
 
         this.modifiable.setValue(onDelete == null ? "false" : "true");
         this.onDelete = onDelete;
@@ -63,14 +63,14 @@ public class WidgetPathfindResultDetails extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "unlink")
     public void unlink() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         if (this.onDelete != null)
             this.onDelete.run();
     }
 
     @On(functionName = "copyId")
     public void copyId() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         StringSelection selection = new StringSelection(linked.getTargetId());
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(selection, selection);

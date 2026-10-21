@@ -9,7 +9,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class WidgetPendingRequestPage extends AnnotatedImportOnlyWidget {
     private PathfindPrecalculationRequestSet requestSet;
@@ -24,7 +24,7 @@ public class WidgetPendingRequestPage extends AnnotatedImportOnlyWidget {
 
 
     public WidgetPendingRequestPage(PathfindPrecalculationRequestSet requestSet) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/page.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/requestcalculation/pendingreq/page.gui"));
 
         this.requestSet = requestSet;
 

@@ -32,7 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class TCEnum<T extends Enum<T>> implements FeatureTypeHandler<T> {
     @Getter
@@ -68,7 +68,7 @@ public class TCEnum<T extends Enum<T>> implements FeatureTypeHandler<T> {
         private int idx;
         private FeatureParameter<T> featureParameter;
         public EnumEditWidget(T[] values, FeatureParameter<T> featureParameter) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/string_choice.gui"));
+            super(Identifier.parse("dungeonsguide:gui/config/parameter/string_choice.gui"));
             this.idx = featureParameter.getValue().ordinal();
             this.values = values;
             this.featureParameter = featureParameter;
@@ -77,7 +77,7 @@ public class TCEnum<T extends Enum<T>> implements FeatureTypeHandler<T> {
 
         @On(functionName = "inc")
         public void inc() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
             idx = (idx + 1) % values.length;
             value.setValue(values[idx].name());
             featureParameter.setValue(values[idx]);
@@ -90,7 +90,7 @@ public class TCEnum<T extends Enum<T>> implements FeatureTypeHandler<T> {
         }
         @On(functionName = "dec")
         public void dec() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
             idx = (values.length + idx - 1) % values.length;
             value.setValue(values[idx].name());
             featureParameter.setValue(values[idx]);

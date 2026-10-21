@@ -6,7 +6,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class WidgetUnknownPathfindResultDetails extends AnnotatedImportOnlyWidget {
 
@@ -18,7 +18,7 @@ public class WidgetUnknownPathfindResultDetails extends AnnotatedImportOnlyWidge
 
     private final Runnable onDelete;
     public WidgetUnknownPathfindResultDetails(String linkedResult, Runnable onDelete) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/unknownpathfindprecalculationdetails.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/roompresetview/unknownpathfindprecalculationdetails.gui"));
 
         this.modifiable.setValue(onDelete == null ? "false" : "true");
         this.onDelete = onDelete;
@@ -28,7 +28,7 @@ public class WidgetUnknownPathfindResultDetails extends AnnotatedImportOnlyWidge
 
     @On(functionName = "unlink")
     public void unlink() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         if (this.onDelete != null)
             this.onDelete.run();
     }

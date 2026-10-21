@@ -11,7 +11,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec4b;
 
@@ -74,7 +74,7 @@ public class MapOverlayPlayer implements MapOverlay{
         return 0;
     }
 
-    private final ResourceLocation resourceLocation = new ResourceLocation("dungeonsguide:map/maptexture.png");
+    private final Identifier resourceLocation = Identifier.parse("dungeonsguide:map/maptexture.png");
 
     @Override
     public void doRender(float rotation, float partialTicks, double scale, double relMouseX, double relMouseY) {

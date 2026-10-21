@@ -34,7 +34,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
@@ -69,7 +69,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
     private PartyFinderParty party;
 
     public WidgetPartyElement(WidgetPartyFinder widgetPartyFinder, int slot) {
-        super(new ResourceLocation("dungeonsguide:gui/features/party_finder/party_element.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/party_finder/party_element.gui"));
         this.slot = slot;
         this.widgetPartyFinder = widgetPartyFinder;
         WidgetHoverTooltip hoverTooltip;
@@ -165,7 +165,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "click")
     public void onClick() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(slot, 0, 0);
     }
 

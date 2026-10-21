@@ -20,7 +20,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPreset;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.PathfindPresetRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.io.FileUtils;
 
 import java.awt.*;
@@ -49,7 +49,7 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
 
 
     public WidgetPrecalcList() {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/precalclist.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/precalclist.gui"));
         loadPresets();
     }
 
@@ -66,7 +66,7 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "create")
     public void createNew() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
         PathfindPreset pathfindPreset = new PathfindPreset();
         PathfindPresetRegistry.getINSTANCE().register(pathfindPreset);
@@ -75,14 +75,14 @@ public class WidgetPrecalcList extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "import")
     public void importFile() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
         new Thread(DungeonsGuide.THREAD_GROUP, this::_importFile).start();
     }
 
     @On(functionName = "docs")
     public void docs() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         try {
             Desktop.getDesktop().browse(new URI("https://docs.dungeons.guide/docs/pathfinding/presets/"));
         } catch (IOException | URISyntaxException e) {

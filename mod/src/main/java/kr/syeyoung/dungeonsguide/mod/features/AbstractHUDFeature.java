@@ -34,7 +34,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
@@ -137,10 +137,10 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
         )
         public final BindableAttribute<Boolean> enabled = new BindableAttribute<Boolean>(Boolean.class);
         public QuickEnable(AbstractHUDFeature abstractHUDFeature) {
-            super(new ResourceLocation("dungeonsguide:gui/config/popup/quick_enable.gui"));
+            super(Identifier.parse("dungeonsguide:gui/config/popup/quick_enable.gui"));
             enabled.setValue(abstractHUDFeature.isEnabled());
             enabled.addOnUpdate((old, neu) -> {
-                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
                 abstractHUDFeature.setEnabled(neu);
             });
         }
@@ -148,13 +148,13 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
     public static class QuickConfigure extends AnnotatedImportOnlyWidget {
         private AbstractHUDFeature abstractHUDFeature;
         public QuickConfigure(AbstractHUDFeature abstractHUDFeature) {
-            super(new ResourceLocation("dungeonsguide:gui/config/popup/quick_edit.gui"));
+            super(Identifier.parse("dungeonsguide:gui/config/popup/quick_edit.gui"));
             this.abstractHUDFeature = abstractHUDFeature;
         }
 
         @On(functionName = "configure")
         public void configure() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
             MainConfigWidget mainConfigWidget = new MainConfigWidget();
             GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(mainConfigWidget), Minecraft.getMinecraft().currentScreen);
             Minecraft.getMinecraft().displayGuiScreen(adapter);

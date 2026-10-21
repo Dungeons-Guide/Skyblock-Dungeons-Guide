@@ -38,7 +38,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
 
     public class WidgetUserApproval extends AnnotatedImportOnlyWidget {
         public WidgetUserApproval() {
-            super(new ResourceLocation("dungeonsguide:gui/collect_diagnostic_approval.gui"));
+            super(Identifier.parse("dungeonsguide:gui/collect_diagnostic_approval.gui"));
         }
 
         @On(functionName = "approve")
@@ -68,7 +68,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
             FeatureCollectDiagnostics.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDiagnostics.this.setEnabled(true);
             Minecraft.getMinecraft().displayGuiScreen(null);
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         }
 
         @On(functionName = "deny")
@@ -76,7 +76,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
             FeatureCollectDiagnostics.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDiagnostics.this.setEnabled(false);
             Minecraft.getMinecraft().displayGuiScreen(null);
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         }
     }
 

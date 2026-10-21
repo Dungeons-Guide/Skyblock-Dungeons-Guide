@@ -9,7 +9,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class WidgetPresetRoomDetailsSecretPathfindRequest extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "whatever")
@@ -24,7 +24,7 @@ public class WidgetPresetRoomDetailsSecretPathfindRequest extends AnnotatedImpor
     public WidgetPresetRoomDetailsSecretPathfindRequest(PathfindRequest request,
                                                         AdditionalInfoCaculatedDungeonRoomInfo dungeonRoomInfo,
                                                         WidgetPresetRoomDetailsSecretPFCategory widgetPresetRoomDetailsSecretPFCategory) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequest.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequest.gui"));
         this.pathfindRequest = request;
         this.roomInfo = dungeonRoomInfo;
         this.parent = widgetPresetRoomDetailsSecretPFCategory;
@@ -45,7 +45,7 @@ public class WidgetPresetRoomDetailsSecretPathfindRequest extends AnnotatedImpor
 
     @On(functionName = "view")
     public void view() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         parent.setDetailsWidget(new WidgetPresetRoomRequestAndCalcView(pathfindRequest, roomInfo, this));
     }
 

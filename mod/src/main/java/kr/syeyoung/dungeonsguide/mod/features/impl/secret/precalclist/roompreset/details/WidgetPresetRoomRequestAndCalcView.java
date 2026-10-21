@@ -18,7 +18,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,7 +44,7 @@ public class WidgetPresetRoomRequestAndCalcView extends AnnotatedImportOnlyWidge
     public WidgetPresetRoomRequestAndCalcView(PathfindRequest request,
                                               AdditionalInfoCaculatedDungeonRoomInfo roomInfo,
                                               WidgetPresetRoomDetailsSecretPathfindRequest parent) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequestandcalcview.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/roompresetview/pathfindrequestandcalcview.gui"));
 
         this.request = request;
         this.parent = parent;
@@ -71,7 +71,7 @@ public class WidgetPresetRoomRequestAndCalcView extends AnnotatedImportOnlyWidge
 
     @On(functionName = "link")
     public void link() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         WidgetModalChoosePrecalculation choosePrecalculation = new WidgetModalChoosePrecalculation(
                 PathfindPrecalculationRegistry.getINSTANCE().getsByHash(request.getHash())
                         .stream()

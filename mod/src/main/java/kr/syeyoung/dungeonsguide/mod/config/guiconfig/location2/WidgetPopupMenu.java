@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class WidgetPopupMenu extends AnnotatedImportOnlyWidget {
     public final BindableAttribute widgetListBindableAttribute = new BindableAttribute<>(WidgetList.class);
 
     public WidgetPopupMenu(List<Widget> stuff) {
-        super(new ResourceLocation("dungeonsguide:gui/config/popupmenu.gui"));
+        super(Identifier.parse("dungeonsguide:gui/config/popupmenu.gui"));
         widgetListBindableAttribute.setValue(stuff);
     }
 

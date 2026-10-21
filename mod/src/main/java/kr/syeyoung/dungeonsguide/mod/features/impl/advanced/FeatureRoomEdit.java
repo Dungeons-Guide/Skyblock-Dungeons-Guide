@@ -71,7 +71,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
@@ -510,7 +510,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
         private List<FeatureRoomEdit.RoomSwitch> switches;
         public RoomConfiguration() {
-            super(new ResourceLocation("dungeonsguide:gui/features/roomedit/roomconfiguration.gui"));
+            super(Identifier.parse("dungeonsguide:gui/features/roomedit/roomconfiguration.gui"));
 
 
             rooms.setValue(switches = buildRooms());
@@ -751,7 +751,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
         private DungeonRoomInfo info;
         public RoomSwitch(DungeonRoomInfo dungeonRoomInfo) {
-            super(new ResourceLocation("dungeonsguide:gui/features/roomedit/room.gui"));
+            super(Identifier.parse("dungeonsguide:gui/features/roomedit/room.gui"));
             name.setValue(dungeonRoomInfo.getName());
             uuid.setValue(dungeonRoomInfo.getUuid().toString());
             StringBuilder builder = new StringBuilder();

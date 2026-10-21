@@ -37,7 +37,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class TCAColor implements FeatureTypeHandler<AColor> {
     public static final TCAColor INSTANCE = new TCAColor();
@@ -81,7 +81,7 @@ public class TCAColor implements FeatureTypeHandler<AColor> {
 
         private FeatureParameter<AColor> featureParameter;
         public ColorEditWidget(FeatureParameter<AColor> featureParameter) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/color.gui"));
+            super(Identifier.parse("dungeonsguide:gui/config/parameter/color.gui"));
             this.featureParameter = featureParameter;
 
             aColorBindableAttribute.addOnUpdate((old, color) -> {

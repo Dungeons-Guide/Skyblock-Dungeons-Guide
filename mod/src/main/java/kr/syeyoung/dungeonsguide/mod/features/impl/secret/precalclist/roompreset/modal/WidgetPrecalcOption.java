@@ -10,7 +10,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class WidgetPrecalcOption extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "precalculation")
@@ -18,7 +18,7 @@ public class WidgetPrecalcOption extends AnnotatedImportOnlyWidget {
 
     PathfindPrecalculation precalculation;
     public WidgetPrecalcOption(PathfindPrecalculation precalculation) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/choose_precalculation_dummy.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/choose_precalculation_dummy.gui"));
 
         this.precalculation = precalculation;
         this.widgetBindableAttribute.setValue(new WidgetPathfindResultDetails(
@@ -29,7 +29,7 @@ public class WidgetPrecalcOption extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "link")
     public void link() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         PopupMgr.getPopupMgr(getDomElement()).closePopup(precalculation);
     }
 }

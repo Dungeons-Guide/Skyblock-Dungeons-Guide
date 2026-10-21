@@ -16,7 +16,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.IOException;
 
@@ -27,7 +27,7 @@ public class WidgetRemoteRequestList extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> err = new BindableAttribute<>(String.class);
 
     public WidgetRemoteRequestList() {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/frontpage/remoterequestlist.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/requestcalculation/frontpage/remoterequestlist.gui"));
     }
 
     private void doReload() {
@@ -50,7 +50,7 @@ public class WidgetRemoteRequestList extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "reload")
     public void reload() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         requestsApi.getValue().removeAllWidget();
         ApiFetcher.ex.submit(this::doReload);
     }
@@ -73,7 +73,7 @@ public class WidgetRemoteRequestList extends AnnotatedImportOnlyWidget {
         private RemoteCache cache;
 
         public WidgetRemoteRequest(WidgetRemoteRequestList parent, String requestId, RemoteCache cache) {
-            super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/frontpage/remoterequest.gui"));
+            super(Identifier.parse("dungeonsguide:gui/features/requestcalculation/frontpage/remoterequest.gui"));
 
             this.parent = parent;
             this.requestId = requestId;
@@ -101,7 +101,7 @@ public class WidgetRemoteRequestList extends AnnotatedImportOnlyWidget {
 
         @On(functionName = "view")
         public void view() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
 
             Navigator.getNavigator(getDomElement()).openPage(new WidgetRequestDetails(requestId));
         }

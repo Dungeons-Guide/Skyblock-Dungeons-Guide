@@ -43,7 +43,7 @@ import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Arrays;
@@ -58,7 +58,7 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
 
 
     DynamicTexture dynamicTexture = new DynamicTexture(128, 128);
-    ResourceLocation location = Minecraft.getMinecraft().renderEngine.getDynamicTextureLocation("dungeons/map/", dynamicTexture);
+    Identifier location = Minecraft.getMinecraft().renderEngine.getDynamicTextureLocation("dungeons/map/", dynamicTexture);
 
     @Override
     public void drawHUD(float partialTicks) {

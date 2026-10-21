@@ -45,7 +45,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.awt.*;
 import java.util.List;
@@ -112,7 +112,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
         FeatureParameter<List<String>> uids;
         private List<RoomSwitch> switches;
         public RoomConfiguration(FeatureParameter<List<String>> uids) {
-            super(new ResourceLocation("dungeonsguide:gui/features/fairysoul/roomconfiguration.gui"));
+            super(Identifier.parse("dungeonsguide:gui/features/fairysoul/roomconfiguration.gui"));
 
             for (String s : uids.getValue()) {
                 ifOrnot.put(s, new BindableAttribute<>(Boolean.class, true));
@@ -122,7 +122,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
 
             for (Map.Entry<String, BindableAttribute<Boolean>> value : ifOrnot.entrySet()) {
                 value.getValue().addOnUpdate((old, neu) -> {
-                    Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                    Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
                     if (neu) uids.getValue().add(value.getKey());
                     else uids.getValue().remove(value.getKey());
                 });
@@ -151,14 +151,14 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
 
         @On(functionName = "eall")
         public void enableAll() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
             for (BindableAttribute<Boolean> value : ifOrnot.values()) {
                 value.setValue(true);
             }
         }
         @On(functionName = "dall")
         public void disableAll() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
             for (BindableAttribute<Boolean> value : ifOrnot.values()) {
                 value.setValue(false);
             }
@@ -171,7 +171,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
         @Bind(variableName = "enabled")
         public final BindableAttribute<Boolean> enabled= new BindableAttribute<>(Boolean.class);
         public RoomSwitch(DungeonRoomInfo dungeonRoomInfo, BindableAttribute<Boolean> linkTo) {
-            super(new ResourceLocation("dungeonsguide:gui/features/fairysoul/roomswitch.gui"));
+            super(Identifier.parse("dungeonsguide:gui/features/fairysoul/roomswitch.gui"));
             name.setValue(dungeonRoomInfo.getName());
             enabled.exportTo(linkTo);
         }

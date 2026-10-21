@@ -22,7 +22,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ import java.util.Map;
 public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
     private MapConfiguration mapConfiguration = new MapConfiguration();
     public WidgetSpiritLeap() {
-        super(new ResourceLocation("dungeonsguide:gui/features/spiritleap/spiritleap.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/spiritleap/spiritleap.gui"));
         MapConfiguration defaultConfig = FeatureRegistry.DUNGEON_MAP2.getMapConfiguration();
         mapConfiguration.setMapScale(1.0);
         mapConfiguration.setBorder(defaultConfig.getBorder());

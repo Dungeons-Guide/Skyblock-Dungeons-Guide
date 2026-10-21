@@ -11,7 +11,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
 
@@ -47,7 +47,7 @@ public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
 
 
     public WidgetPresetRoom(AdditionalInfoCaculatedDungeonRoomInfo dungeonRoomInfo, PathfindPreset preset, WidgetPresetRoomList roomList) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/presetview/room.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/presetview/room.gui"));
 
         this.roomInfo = dungeonRoomInfo;
         this.preset = preset;
@@ -72,7 +72,7 @@ public class WidgetPresetRoom extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "edit")
     public void edit() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F));
         Navigator.getNavigator(getDomElement()).openPage(new WidgetPresetRoomDetails(roomInfo));
     }
 }

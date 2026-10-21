@@ -21,16 +21,16 @@ package kr.syeyoung.dungeonsguide.mod.gui.xml;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.ParserElement;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class DelegatingWidgetConverter<R extends Widget & ImportingWidget> extends PropByPropParsedWidgetConverter<DelegatingWidget, R> {
-    private final ResourceLocation resourceLocation;
-    public DelegatingWidgetConverter(ResourceLocation resourceLocation) {
+    private final Identifier resourceLocation;
+    public DelegatingWidgetConverter(Identifier resourceLocation) {
         this.resourceLocation = resourceLocation;
     }
 
     public DelegatingWidget instantiateWidget(ParserElement parserElement) {
-        if (resourceLocation == null) return new DelegatingWidget(new ResourceLocation(parserElement.getAttributeValue("include")));
+        if (resourceLocation == null) return new DelegatingWidget(Identifier.parse(parserElement.getAttributeValue("include")));
         return new DelegatingWidget(resourceLocation);
     }
 

@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 @Data @AllArgsConstructor
 public class MarkerData {

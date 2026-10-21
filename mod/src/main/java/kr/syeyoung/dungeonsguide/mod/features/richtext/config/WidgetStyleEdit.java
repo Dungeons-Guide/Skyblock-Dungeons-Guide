@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class WidgetStyleEdit extends AnnotatedImportOnlyWidget {
     private final WidgetTextStyleConfig config;
     private DefaultingDelegatingTextStyle style;
     public WidgetStyleEdit(WidgetTextStyleConfig config, DefaultingDelegatingTextStyle style) {
-        super(new ResourceLocation("dungeonsguide:gui/config/text/styleedit.gui"));
+        super(Identifier.parse("dungeonsguide:gui/config/text/styleedit.gui"));
         this.config = config;
         this.style =style;
         DefaultingDelegatingTextStyle curr = style;
