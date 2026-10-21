@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon;
 
 import lombok.Getter;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.HashMap;

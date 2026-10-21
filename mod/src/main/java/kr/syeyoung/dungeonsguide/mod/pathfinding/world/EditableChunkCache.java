@@ -22,10 +22,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.pathfinding.world;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 public class EditableChunkCache extends ChunkCache {
     public EditableChunkCache(World worldIn, BlockPos posFromIn, BlockPos posToIn, int subIn) {
@@ -40,7 +40,7 @@ public class EditableChunkCache extends ChunkCache {
         return localZ >= 0 && localX >= 0 && localX < xWidth && localZ < zWidth;
     }
 
-    public void updateChunk(Chunk c) {
+    public void updateChunk(LevelChunk c) {
         int xWidth = this.chunkArray.length;
         int zWidth = this.chunkArray[0].length;
         int localX = c.xPosition - this.chunkX;

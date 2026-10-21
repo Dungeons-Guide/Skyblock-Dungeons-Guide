@@ -23,8 +23,8 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.core.BlockPos;
 
 import java.awt.*;
 import java.util.*;

@@ -52,7 +52,7 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -72,10 +72,10 @@ import net.minecraft.network.play.server.S21PacketChunkData;
 import net.minecraft.network.play.server.S26PacketMapChunkBulk;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.phys.Vec3;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
@@ -94,8 +94,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
 import java.util.HashSet;
 import java.util.Set;
@@ -444,7 +442,7 @@ public class DungeonListener {
                         for (BlockPos allInBox : BlockPos.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
                             CollisionStateCalculatingCoordinateMap.CollisionState blocked = roomProcessor.getPathfinderWorld().getBlock(allInBox.getX(), allInBox.getY(), allInBox.getZ());
                             RenderUtils.highlightBox(
-                                    AxisAlignedBB.fromBounds(
+                                    AABB.fromBounds(
                                             allInBox.getX() / 2.0 - 0.1, allInBox.getY() / 2.0 - 0.1, allInBox.getZ() / 2.0 - 0.1,
                                             allInBox.getX() / 2.0 + 0.1, allInBox.getY() / 2.0 + 0.1, allInBox.getZ() / 2.0 + 0.1
                                     ), blocked.getColor(), renderWorldLastEvent.partialTicks, false);
@@ -458,7 +456,7 @@ public class DungeonListener {
                         OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new BlockPos(0,0,0));
                         for (BlockPos allInBox : BlockPos.getAllInBox(dungeonRoom.getRoomBounds().getMin().add(0, -60, 0), dungeonRoom.getRoomBounds().getMax().add(0, 180, 0))) {
                             offsetPoint.setPosInWorld(dungeonRoom, allInBox);
-                            IBlockState blockState = dungeonRoom.getDungeonRoomInfo().getBlock(offsetPoint, dungeonRoom.getRoomMatcher().getRotation());
+                            BlockState blockState = dungeonRoom.getDungeonRoomInfo().getBlock(offsetPoint, dungeonRoom.getRoomMatcher().getRotation());
                             if (!blockState.equals(dungeonRoom.getCachedWorld().getBlockState(allInBox))) {
                                 RenderUtils.highlightBlock(allInBox, new Color(0x70FF0000,true), renderWorldLastEvent.partialTicks, false);
                                 Minecraft.getInstance().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);

@@ -33,7 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 
 import java.awt.*;
 

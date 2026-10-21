@@ -24,9 +24,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.init.Items;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
@@ -53,7 +53,7 @@ public class FeatureAirchkDebug extends SimpleFeature {
             event.setCanceled(true);
             // reset
             Vec3 vec = new Vec3(event.pos.getX() + 0.5, event.pos.getY() + 0.5, event.pos.getZ() + 0.5);
-            AxisAlignedBB check = AxisAlignedBB.fromBounds(
+            AABB check = AABB.fromBounds(
                     vec.xCoord - 3.1, vec.yCoord + 1.1, vec.zCoord -3.1,
                     vec.xCoord + 3.1, vec.yCoord - 3.6, vec.zCoord + 3.1
             );
@@ -83,7 +83,7 @@ public class FeatureAirchkDebug extends SimpleFeature {
 
             for (OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
                 RenderUtils.highlightBox(
-                        new AxisAlignedBB(
+                        new AABB(
                                 offsetVec3.xCoord - 0.025f, offsetVec3.yCoord - 0.025f + 70, offsetVec3.zCoord - 0.025f,
                                 offsetVec3.xCoord + 0.025f, offsetVec3.yCoord + 0.025f + 70, offsetVec3.zCoord + 0.025f
                         ),

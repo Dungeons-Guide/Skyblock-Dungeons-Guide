@@ -46,7 +46,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.Mth;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -158,7 +158,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
                     .ifPresent(a -> {
                         a.highlight(new Color(0,255,255,50), id +" ("+(
                                 dungeonRoom.getMechanics().get(id).getRepresentingPoint() != null ?
-                                String.format("%.1f", MathHelper.sqrt_double((dungeonRoom.getMechanics().get(id)).getRepresentingPoint().getBlockPos(dungeonRoom).distanceSq(Minecraft.getInstance().player.getPosition()))) : "")
+                                String.format("%.1f", Mth.sqrt_double((dungeonRoom.getMechanics().get(id)).getRepresentingPoint().getBlockPos(dungeonRoom).distanceSq(Minecraft.getInstance().player.getPosition()))) : "")
                                 +"m)", partialTicks);
                     });
         }

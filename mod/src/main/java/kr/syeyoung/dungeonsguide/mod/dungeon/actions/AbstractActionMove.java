@@ -35,9 +35,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 import java.io.IOException;
 import java.util.*;
@@ -77,7 +77,7 @@ public abstract class AbstractActionMove extends AbstractAction {
         BoundingBox boundingBox = new BoundingBox();
         for (OffsetVec3 offsetPoint : getTargetOffsetPointSet()) {
             Vec3 pos = offsetPoint.getPos(dungeonRoom);
-            boundingBox.addBoundingBox(new AxisAlignedBB(
+            boundingBox.addBoundingBox(new AABB(
                     pos.xCoord - 0.1, pos.yCoord - 0.1, pos.zCoord - 0.1,
                     pos.xCoord + 0.1, pos.yCoord + 0.1, pos.zCoord + 0.1
             ));

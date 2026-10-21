@@ -4,15 +4,15 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockSkull;
 import net.minecraft.block.BlockStairs;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<CollisionStateCalculatingCoordinateMap.CollisionState> {
-    private ICoordinateMap<IBlockState> map;
+    private ICoordinateMap<BlockState> map;
     private InstaBreakFactorCalculatingCoordinateMap instaBreakCalc;
 
     @Getter
@@ -31,7 +31,7 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
 
     private Set<BlockPos> poses;
     private RoomBounds roomBounds;
-    public CollisionStateCalculatingCoordinateMap(ICoordinateMap<IBlockState> map, Set<BlockPos> poses, InstaBreakFactorCalculatingCoordinateMap instaBreakCalc, RoomBounds roomBounds) {
+    public CollisionStateCalculatingCoordinateMap(ICoordinateMap<BlockState> map, Set<BlockPos> poses, InstaBreakFactorCalculatingCoordinateMap instaBreakCalc, RoomBounds roomBounds) {
         this.map = map;
         this.world = new CoordinateMapWorld(map);
 
@@ -59,24 +59,24 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
 
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
 
-        AxisAlignedBB bb = AxisAlignedBB
+        AABB bb = AABB
                 .fromBounds(wX - playerWidth, wY+0.06251, wZ - playerWidth,
                         wX + playerWidth, wY +0.06251 + 1.8, wZ + playerWidth);
-        AxisAlignedBB pearlTest = AxisAlignedBB.fromBounds(
+        AABB pearlTest = AABB.fromBounds(
                 wX - 0.5, wY - 0.5, wZ - 0.5, wX + 0.5, wY + 0.5, wZ+0.5
         );
 
-        int minX = MathHelper.floor_double(bb.minX);
-        int maxX = MathHelper.floor_double(bb.maxX + 1.0D);
-        int minY = MathHelper.floor_double(bb.minY);
-        int maxY = MathHelper.floor_double(bb.maxY + 1.0D);
-        int minZ = MathHelper.floor_double(bb.minZ);
-        int maxZ = MathHelper.floor_double(bb.maxZ + 1.0D);
+        int minX = Mth.floor_double(bb.minX);
+        int maxX = Mth.floor_double(bb.maxX + 1.0D);
+        int minY = Mth.floor_double(bb.minY);
+        int maxY = Mth.floor_double(bb.maxY + 1.0D);
+        int minZ = Mth.floor_double(bb.minZ);
+        int maxZ = Mth.floor_double(bb.maxZ + 1.0D);
 
-        AxisAlignedBB testBox = bb.offset(0, -0.5, 0);
+        AABB testBox = bb.offset(0, -0.5, 0);
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
-        java.util.List<AxisAlignedBB> list = new ArrayList<>();
-        List<AxisAlignedBB> list2 = new ArrayList<>();
+        java.util.List<AABB> list = new ArrayList<>();
+        List<AABB> list2 = new ArrayList<>();
         int size = 0;
 
 //        boolean
@@ -91,7 +91,7 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
                     blockPos.set(k1, i2, l1);
 
 
-                    IBlockState state = map.getBlock(k1, i2, l1);
+                    BlockState state = map.getBlock(k1, i2, l1);
                     Block block = state.getBlock();
                     block.addCollisionBoxesToList(
                             world, blockPos, state, testBox, list, null
@@ -137,7 +137,7 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
             }
         }
         boolean isOnGround = false;
-        for (AxisAlignedBB axisAlignedBB : list) {
+        for (AABB axisAlignedBB : list) {
             if (axisAlignedBB.maxY <= bb.minY) {
                 isOnGround = true;
                 break;
@@ -146,7 +146,7 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
         boolean blocked = !list2.isEmpty();
 
         int headcut = 0, bodycut = 0;
-        for (AxisAlignedBB axisAlignedBB : list2) {
+        for (AABB axisAlignedBB : list2) {
             if (axisAlignedBB.minY >= wY + 0.9f && axisAlignedBB.minY <= wY + 1.4f) headcut++;
             if (axisAlignedBB.minY >= wY) bodycut++;
         }
@@ -162,7 +162,7 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
                 for (int l1 = minZ; l1 < maxZ; ++l1) {
                     blockPos.set(k1, minY - 1, l1);
 
-                    IBlockState state = map.getBlock(k1, minY - 1, l1);
+                    BlockState state = map.getBlock(k1, minY - 1, l1);
                     Block block = state.getBlock();
 
                     block.addCollisionBoxesToList(

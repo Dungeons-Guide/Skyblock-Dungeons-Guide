@@ -28,8 +28,8 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class ActionDropItem extends AbstractAction {
     public boolean isComplete(DungeonRoom dungeonRoom) {
         BlockPos secretLocation = target.getBlockPos(dungeonRoom);
         List<EntityItem> item = dungeonRoom.getContext().getWorld().getEntitiesWithinAABB(EntityItem.class,
-                AxisAlignedBB.fromBounds(
+                AABB.fromBounds(
                         secretLocation.getX(),
                         secretLocation.getY(),
                         secretLocation.getZ(),

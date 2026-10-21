@@ -21,8 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.pathfinding;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec3i;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.core.Vec3i;
 
 import java.util.List;
 

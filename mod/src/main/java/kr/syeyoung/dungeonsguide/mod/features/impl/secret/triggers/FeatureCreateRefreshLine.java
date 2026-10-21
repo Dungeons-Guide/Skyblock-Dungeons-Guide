@@ -39,8 +39,8 @@ import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 import java.awt.*;
 import java.util.LinkedHashMap;

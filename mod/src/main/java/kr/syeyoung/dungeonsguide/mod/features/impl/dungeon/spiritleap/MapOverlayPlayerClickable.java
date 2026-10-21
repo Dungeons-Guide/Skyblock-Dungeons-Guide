@@ -13,9 +13,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.Vec4b;
 
 import javax.vecmath.Vector2d;

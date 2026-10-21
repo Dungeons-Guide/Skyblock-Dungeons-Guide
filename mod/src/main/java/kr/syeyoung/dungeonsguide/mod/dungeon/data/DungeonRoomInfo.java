@@ -33,11 +33,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.serialization.DungeonRoomInfoW
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.Direction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -131,12 +131,12 @@ public class DungeonRoomInfo {
         this.length = length;
         this.world = new char[width * length * 256];
     }
-    public void setBlock(OffsetPoint offsetPoint, IBlockState iBlockState) {
+    public void setBlock(OffsetPoint offsetPoint, BlockState iBlockState) {
         int index = offsetPoint.getX() + ((offsetPoint.getY()+70) * length + offsetPoint.getZ()) * width;
         world[index] = (char) Block.BLOCK_STATE_IDS.get(iBlockState);
     }
 
-    public IBlockState getBlock(OffsetPoint offsetPoint, int rot) {
+    public BlockState getBlock(OffsetPoint offsetPoint, int rot) {
         return getBlock(offsetPoint.getX(), offsetPoint.getY(), offsetPoint.getZ(), rot);
     }
 
@@ -151,19 +151,19 @@ public class DungeonRoomInfo {
         }
     }
 
-    public IBlockState getBlock(int x, int y, int z, int rot) {
+    public BlockState getBlock(int x, int y, int z, int rot) {
         if (y < -70 || y >= 186) return Blocks.bedrock.getDefaultState();
         if (x <= 0 || x >= width) return Blocks.bedrock.getDefaultState();
         if (z <= 0 || z >= length) return Blocks.bedrock.getDefaultState();
 
         int index = x + ((y + 70) * length + z) * width;
-        IBlockState blockState = Block.BLOCK_STATE_IDS.getByValue(world[index]);
+        BlockState blockState = Block.BLOCK_STATE_IDS.getByValue(world[index]);
         if (rot != 0) {
             PropertyDirection directions = directionMap[world[index] >> 4];
 
             if (directions != null) {
-                EnumFacing enumFacing = blockState.getValue(directions);
-                if (!(enumFacing == EnumFacing.UP || enumFacing == EnumFacing.DOWN)) {
+                Direction enumFacing = blockState.getValue(directions);
+                if (!(enumFacing == Direction.UP || enumFacing == Direction.DOWN)) {
                     for (int i = 0; i < 4 - rot; i++)
                         enumFacing = enumFacing.rotateY();
                     blockState = blockState.withProperty(directions, enumFacing);

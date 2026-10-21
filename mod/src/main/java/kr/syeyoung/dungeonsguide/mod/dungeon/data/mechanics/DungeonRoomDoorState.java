@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 
 import java.awt.*;
 import java.util.Set;

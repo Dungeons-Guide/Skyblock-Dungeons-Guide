@@ -33,7 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.phys.Vec3;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 import java.util.*;

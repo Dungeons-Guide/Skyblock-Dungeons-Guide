@@ -57,21 +57,21 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
-import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
@@ -95,6 +95,9 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class FeatureCollectDungeonRooms extends SimpleFeature {
     public FeatureCollectDungeonRooms() {
@@ -136,7 +139,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     private Map<Integer, EntityData> entityDataMap = new HashMap<>();
-    private Map<ChunkCoordIntPair, ChunkData> initialChunkDataMap = new HashMap<>();
+    private Map<ChunkPos, ChunkData> initialChunkDataMap = new HashMap<>();
     private Map<DungeonRoom, RoomInfo> roomInfoMap = new HashMap<>();
 
     @Data @Getter
@@ -174,7 +177,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             @AllArgsConstructor @Data
             public static class BlockUpdateData {
                 private BlockPos pos;
-                private IBlockState block;
+                private BlockState block;
             }
 
             private List<BlockUpdateData> updatedBlocks = new ArrayList<>();
@@ -246,7 +249,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     @DGEventHandler(ignoreDisabled = true)
     public void playerInteract(PlayerInteractEvent event) {
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
-        IBlockState blockState = Minecraft.getInstance().level.getBlockState(event.pos);
+        BlockState blockState = Minecraft.getInstance().level.getBlockState(event.pos);
         if (blockState == null) return;
         if (!(blockState.getBlock() == Blocks.lever || blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest || blockState.getBlock() == Blocks.skull)) {
             return;
@@ -334,7 +337,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             entityData.playerSkin = ((EntityOtherPlayerMP) event.entity).getGameProfile().getProperties().get("textures").stream().findFirst().map(Property::getValue).orElse(null);
         }
 
-        List<Entity> entityList = event.entity.worldObj.getEntitiesInAABBexcluding(event.entity, new AxisAlignedBB(-0.2,-0.2,-0.2,0.2,0.2,0.2).offset(event.entity.posX, event.entity.posY+event.entity.height, event.entity.posZ), e -> e instanceof EntityArmorStand);
+        List<Entity> entityList = event.entity.worldObj.getEntitiesInAABBexcluding(event.entity, new AABB(-0.2,-0.2,-0.2,0.2,0.2,0.2).offset(event.entity.posX, event.entity.posY+event.entity.height, event.entity.posZ), e -> e instanceof EntityArmorStand);
         Entity theEntity =entityList.stream().min(Comparator.comparingDouble(a -> Math.abs(a.posX - event.entityLiving.posX) + Math.abs(a.posZ - event.entityLiving.posZ))).orElse(null);
 
         if (theEntity != null && entityData.armorstand == null)
@@ -370,8 +373,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     //  as the room's initial state for the schematic export. the initial state part is decided with the feature port
 //    @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
 //    public void onChunkLoad(ChunkUpdateEvent chunkUpdateEvent) {
-//        Set<Tuple<BlockPos, IBlockState>> updates = new HashSet<>();
-//        for (Chunk updatedChunk : chunkUpdateEvent.getUpdatedChunks()) {
+//        Set<Tuple<BlockPos, BlockState>> updates = new HashSet<>();
+//        for (LevelChunk updatedChunk : chunkUpdateEvent.getUpdatedChunks()) {
 //            if (updatedChunk.isEmpty()) continue;
 //            if (initialChunkDataMap.containsKey(updatedChunk.getChunkCoordIntPair())) {
 //                // that's block update!
@@ -386,14 +389,14 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 //                        for (int x = 0; x < 16; x++) {
 //                            for (int y = 0; y < 16; y++) {
 //                                for (int z = 0; z < 16; z++) {
-//                                    IBlockState blockState = neuSt.get(x,y,z);
+//                                    BlockState blockState = neuSt.get(x,y,z);
 //                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x,  i * 16 + y, prevChunk.z * 16 + z);
 //                                    updates.add(new Tuple<>(pos, blockState));
 //                                }
 //                            }
 //                        }
 //                    } else if (prevSt != null && neuSt == null) {
-//                        IBlockState air = Blocks.air.getDefaultState();
+//                        BlockState air = Blocks.air.getDefaultState();
 //                        for (int x = 0; x < 16; x++) {
 //                            for (int y = 0; y < 16; y++) {
 //                                for (int z = 0; z < 16; z++) {
@@ -408,8 +411,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 //                            for (int y = 0; y < 16; y++) {
 //                                for (int z = 0; z < 16; z++) {
 //                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
-//                                    IBlockState prevState = prevSt.get(x,y,z);
-//                                    IBlockState neuState = neuSt.get(x,y,z);
+//                                    BlockState prevState = prevSt.get(x,y,z);
+//                                    BlockState neuState = neuSt.get(x,y,z);
 //                                    if (!neuState.equals(prevState)) {
 //                                        updates.add(new Tuple<>(pos, neuState));
 //                                    }
@@ -425,7 +428,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 //            chunkData.x = updatedChunk.xPosition;
 //            chunkData.z = updatedChunk.zPosition;
 //            chunkData.initialBlockStorages = updatedChunk.getBlockStorageArray();
-//            initialChunkDataMap.put(new ChunkCoordIntPair(chunkData.x, chunkData.z), chunkData);
+//            initialChunkDataMap.put(new ChunkPos(chunkData.x, chunkData.z), chunkData);
 //        }
 //        if (!updates.isEmpty()) {
 //            BlockUpdateEvent.Pre pre = new BlockUpdateEvent.Pre();
@@ -438,7 +441,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     public void onBlockUpdate(BlockUpdateEvent.Pre blockUpdateEvent) {
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
-        Map<DungeonRoom, List<Tuple<BlockPos, IBlockState>>> updatePerRoom = blockUpdateEvent.getUpdatedBlocks().stream()
+        Map<DungeonRoom, List<Tuple<BlockPos, BlockState>>> updatePerRoom = blockUpdateEvent.getUpdatedBlocks().stream()
                 .filter(a -> {
                     Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(a.getA());
                     return dungeonContext.getScaffoldParser().getRoomMap().get(roompt) != null;
@@ -448,7 +451,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                             return dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
                         }));
 
-        for (Map.Entry<DungeonRoom, List<Tuple<BlockPos, IBlockState>>> dungeonRoomListEntry : updatePerRoom.entrySet()) {
+        for (Map.Entry<DungeonRoom, List<Tuple<BlockPos, BlockState>>> dungeonRoomListEntry : updatePerRoom.entrySet()) {
             if (dungeonRoomListEntry.getKey() == null) {
                 System.out.println("WTF!!!");
             }
@@ -496,16 +499,16 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                             return null;
                         }
                     })
-                    .registerTypeAdapter(IBlockState.class, new TypeAdapter<IBlockState>() {
+                    .registerTypeAdapter(BlockState.class, new TypeAdapter<BlockState>() {
                         @Override
-                        public void write(JsonWriter out, IBlockState value) throws IOException {
+                        public void write(JsonWriter out, BlockState value) throws IOException {
                             int id = Block.getIdFromBlock(value.getBlock());
                             int meta = value.getBlock().getMetaFromState(value);
                             out.value(id+":"+meta);
                         }
 
                         @Override
-                        public IBlockState read(JsonReader in) throws IOException {
+                        public BlockState read(JsonReader in) throws IOException {
                             return null;
                         }
                     })
@@ -666,9 +669,9 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                 for (int z = 0; z < compound.getShort("Length"); z++) {
                     int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
                     BlockPos pos = dungeonRoom.getRelativeBlockPosAt(x,y - 70,z);
-                    ChunkData chunkData = initialChunkDataMap.get(new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4));
+                    ChunkData chunkData = initialChunkDataMap.get(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4));
 
-                    IBlockState blockState;
+                    BlockState blockState;
                     if (chunkData != null) {
 
                         ExtendedBlockStorage[] blockStorage = chunkData.initialBlockStorages;

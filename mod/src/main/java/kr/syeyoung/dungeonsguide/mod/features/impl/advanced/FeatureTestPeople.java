@@ -44,11 +44,11 @@ import net.minecraft.client.renderer.tileentity.TileEntitySkullRenderer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
+import net.minecraft.world.item.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -332,7 +332,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 
         GameProfile toDraw = cachedProfiles.get(stack.getName()) ? stack : null;
 
-        TileEntitySkullRenderer.instance.renderSkull(x, y, -0.5F, EnumFacing.UP, 180.0F, 1, stack, -1);
+        TileEntitySkullRenderer.instance.renderSkull(x, y, -0.5F, Direction.UP, 180.0F, 1, stack, -1);
 
         if(toDraw == null && !cachedProfiles.containsKey(stack.getName())){
             cachedProfiles.put(stack.getName(), false);

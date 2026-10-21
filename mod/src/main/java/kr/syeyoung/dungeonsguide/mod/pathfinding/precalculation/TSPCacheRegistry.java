@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPreset;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 import org.apache.commons.codec.binary.Hex;
 
 import java.awt.*;

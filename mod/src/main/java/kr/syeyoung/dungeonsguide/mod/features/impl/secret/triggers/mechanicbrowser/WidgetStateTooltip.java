@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.WorldSettings;
+import net.minecraft.world.level.GameType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +52,8 @@ public class WidgetStateTooltip extends AnnotatedWidget {
             widgetList.add(new WidgetState(dungeonRoom, mechanicId, s));
         }
 
-        if ((Minecraft.getInstance().gameMode.getCurrentGameType() == WorldSettings.GameType.CREATIVE
-                || Minecraft.getInstance().gameMode.getCurrentGameType() == WorldSettings.GameType.SPECTATOR)&&
+        if ((Minecraft.getInstance().gameMode.getCurrentGameType() == GameType.GameType.CREATIVE
+                || Minecraft.getInstance().gameMode.getCurrentGameType() == GameType.GameType.SPECTATOR)&&
                 Minecraft.getInstance().hasSingleplayerServer()) {
             widgetList.add(new WidgetTeleport(dungeonRoom, mechanicId));
         }

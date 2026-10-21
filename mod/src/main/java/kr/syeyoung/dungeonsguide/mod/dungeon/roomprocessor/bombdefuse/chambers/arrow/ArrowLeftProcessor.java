@@ -28,7 +28,7 @@ import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -33,7 +33,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.data.AnimationMetadataSection;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.util.*;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -43,6 +43,11 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.minecraft.resources.Identifier;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.HitResult;
 
 public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplayEngineLineProperties> {
 
@@ -224,8 +229,8 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         if (Minecraft.getInstance().player.getLook(partialTicks).dotProduct(lookVec) < 0.7) return;
 
-        MovingObjectPosition objectPosition = Minecraft.getInstance().hitResult;
-        if (objectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+        HitResult objectPosition = Minecraft.getInstance().hitResult;
+        if (objectPosition.typeOfHit == HitResult.MovingObjectType.BLOCK) {
             BlockPos blockPos = objectPosition.getBlockPos();
             for (Map.Entry<String, DungeonMechanicState> stringDungeonMechanicStateEntry : dungeonRoom.getMechanics().entrySet()) {
                 if (stringDungeonMechanicStateEntry.getValue() instanceof WorldMutatingMechanicState && ((WorldMutatingMechanicState) stringDungeonMechanicStateEntry.getValue()).isBlocking(dungeonRoom)) {
@@ -267,7 +272,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
 
 
-        float distance = MathHelper.sqrt_double(target.distanceSq(Minecraft.getInstance().player.getPosition()));
+        float distance = Mth.sqrt_double(target.distanceSq(Minecraft.getInstance().player.getPosition()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         float scale = 0.45f * multiplier;
         scale *= (float) settings.getDestinationSize();
@@ -280,7 +285,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         if (settings.getDestinationSize() != 0) {
             RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, (float) settings.getDestinationSize(), true, false, partialTicks);
-            RenderUtils.drawTextAtWorld(String.format("%.2f", MathHelper.sqrt_double(target.distanceSq(Minecraft.getInstance().player.getPosition()))) + "m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, (float) settings.getDestinationSize(), true, false, partialTicks);
+            RenderUtils.drawTextAtWorld(String.format("%.2f", Mth.sqrt_double(target.distanceSq(Minecraft.getInstance().player.getPosition()))) + "m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, (float) settings.getDestinationSize(), true, false, partialTicks);
         }
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
@@ -492,7 +497,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
         double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
 
-        AxisAlignedBB bb = RenderUtils.highlightBlocksStencil(blockPos, partialTicks, color, true);
+        AABB bb = RenderUtils.highlightBlocksStencil(blockPos, partialTicks, color, true);
 
 
         GlStateManager.enableDepth();

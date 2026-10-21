@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.phys.Vec3;
 
 public class ActionTeleport extends AbstractAction {
     private OffsetPoint target;

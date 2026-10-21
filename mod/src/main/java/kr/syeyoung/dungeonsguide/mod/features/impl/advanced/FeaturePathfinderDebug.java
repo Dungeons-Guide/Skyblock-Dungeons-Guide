@@ -40,8 +40,8 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 
 import java.awt.*;
@@ -80,7 +80,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
                 Vec3 pos = offsetVec3.getPos(drm);
 
                 RenderUtils.highlightBox(
-                        new AxisAlignedBB(
+                        new AABB(
                                 offsetVec3.xCoord - 0.025f, offsetVec3.yCoord + 0.025f + 70, offsetVec3.zCoord - 0.025f,
                                 offsetVec3.xCoord + 0.025f, offsetVec3.yCoord + 0.075f + 70, offsetVec3.zCoord + 0.025f
                         ),
@@ -116,7 +116,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
                 Vec3 pos = offsetVec3.getPos(drm);
 
                 RenderUtils.highlightBox(
-                        new AxisAlignedBB(
+                        new AABB(
                                 offsetVec3.xCoord - 0.025f, offsetVec3.yCoord + 0.075f + 70, offsetVec3.zCoord - 0.025f,
                                 offsetVec3.xCoord + 0.025f, offsetVec3.yCoord + 0.125f + 70, offsetVec3.zCoord + 0.025f
                         ),

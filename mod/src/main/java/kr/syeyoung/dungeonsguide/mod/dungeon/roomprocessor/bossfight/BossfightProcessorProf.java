@@ -25,7 +25,7 @@ import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityGuardian;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
 

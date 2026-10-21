@@ -21,8 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.catacombs;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonSpecificDataProvider;
 import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 

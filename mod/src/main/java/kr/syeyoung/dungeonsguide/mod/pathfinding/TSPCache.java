@@ -5,7 +5,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PathfindPrecalcu
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.PrecalculatedPathfinder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.phys.Vec3;
 
 import java.io.IOException;
 import java.util.*;

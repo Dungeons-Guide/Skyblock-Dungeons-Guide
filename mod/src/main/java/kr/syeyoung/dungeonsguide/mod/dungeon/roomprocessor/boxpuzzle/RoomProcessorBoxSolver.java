@@ -28,11 +28,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerato
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
@@ -44,6 +44,9 @@ import java.util.Queue;
 import java.util.*;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.util.Mth;
 
 public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
@@ -230,7 +233,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 BlockPos pos = poses[fromY][fromX];
                 BlockPos pos2 = poses[boxMove.y][boxMove.x];
                 BlockPos dir = pos.subtract(pos2);
-                dir = new BlockPos(MathHelper.clamp_int(dir.getX(), -1,1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
+                dir = new BlockPos(Mth.clamp_int(dir.getX(), -1,1), 0, Mth.clamp_double(dir.getZ(), -1, 1));
 
                 BlockPos highlight = pos2.add(dir);
                 totalPushedBlocks.add(highlight);
@@ -359,11 +362,11 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 BlockPos pos = poses[fromY][fromX];
                 BlockPos pos2 = poses[boxMove.y][boxMove.x];
                 BlockPos dir = pos.subtract(pos2);
-                dir = new BlockPos(MathHelper.clamp_int(dir.getX(), -1, 1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
+                dir = new BlockPos(Mth.clamp_int(dir.getX(), -1, 1), 0, Mth.clamp_double(dir.getZ(), -1, 1));
 
                 BlockPos highlight = pos2.add(dir);
-                AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(MathHelper.clamp_double(Minecraft.getInstance().player.getPosition().distanceSq(highlight), 100, 255) / 255);
-                RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, partialTicks, false);
+                AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(Mth.clamp_double(Minecraft.getInstance().player.getPosition().distanceSq(highlight), 100, 255) / 255);
+                RenderUtils.highlightBoxAColor(AABB.fromBounds(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, partialTicks, false);
             }
 
             if (pathFound != null) {
@@ -376,7 +379,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             if (totalPushedBlocks != null) {
                 for (int i = 0; i < totalPushedBlocks.size(); i++) {
                     BlockPos pos = totalPushedBlocks.get(i);
-                    RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1),  FeatureRegistry.SOLVER_BOX.getTargetColor(), partialTicks, false);
+                    RenderUtils.highlightBoxAColor(AABB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1),  FeatureRegistry.SOLVER_BOX.getTargetColor(), partialTicks, false);
                     RenderUtils.drawTextAtWorld("#"+i, pos.getX()+0.5f, pos.getY() +0.5f, pos.getZ() + 0.5f, i != step ?
                             RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor2()) : RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor()), 0.1f, false, false, partialTicks);
                 }

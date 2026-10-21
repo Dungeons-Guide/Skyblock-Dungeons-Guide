@@ -29,9 +29,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
@@ -153,11 +153,11 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
 
             boolean border = true;
 
-            RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getBlazeColor(), partialTicks, false);
+            RenderUtils.highlightBox(entity, AABB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getBlazeColor(), partialTicks, false);
             if (entity == nextBlaze) {
-                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextUpBlazeColor(), partialTicks, false);
+                RenderUtils.highlightBox(entity, AABB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextUpBlazeColor(), partialTicks, false);
             } else if (entity == currentBlaze)
-                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextBlazeColor(), partialTicks, false);
+                RenderUtils.highlightBox(entity, AABB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextBlazeColor(), partialTicks, false);
 
             GlStateManager.color(1,1,1,1);
 
@@ -182,7 +182,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
                 GL11.glStencilFunc(GL11.GL_EQUAL, 3, 0xFF);
                 GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 
-                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-1, 0, -1, 1, 2, 1), FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue(), partialTicks, false);
+                RenderUtils.highlightBox(entity, AABB.fromBounds(-1, 0, -1, 1, 2, 1), FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue(), partialTicks, false);
 
 
             }

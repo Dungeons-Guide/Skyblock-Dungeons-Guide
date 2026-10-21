@@ -30,14 +30,14 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle.fallback.
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.BlockLever;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
@@ -108,7 +108,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                 BlockPos pos = offsetPoint.getBlockPos(getDungeonRoom());
                 World w=  getDungeonRoom().getContext().getWorld();
                 BlockLever.EnumOrientation enumOrientation = w.getBlockState(pos).getValue(BlockLever.FACING);
-                EnumFacing enumFacing = enumOrientation.getFacing();
+                Direction enumFacing = enumOrientation.getFacing();
                 BlockPos newPos = pos.add(-enumFacing.getDirectionVec().getX(),0,-enumFacing.getDirectionVec().getZ());
 
                 int id = Block.getIdFromBlock(w.getBlockState(newPos).getBlock());

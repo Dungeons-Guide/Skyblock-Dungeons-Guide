@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.phys.Vec3;
 
 public class WidgetDungeonMap extends Widget implements Renderer {
 

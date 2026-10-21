@@ -35,19 +35,19 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntitySkull;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
 
 import java.awt.*;
 import java.util.*;
@@ -68,15 +68,15 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
     private int nearbyTicks = 0;
     public void tick(DungeonRoom dungeonRoom) {
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
-        IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
+        BlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
         if (blockState.getBlock() == Blocks.skull) {
             essenceWasThere = true;
-            List<EntityArmorStand> entities = Minecraft.getInstance().level.getEntitiesWithinAABB(EntityArmorStand.class, AxisAlignedBB.fromBounds(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
-            TileEntity tileEntity = dungeonRoom.getCachedWorld().getTileEntity(pos);
+            List<EntityArmorStand> entities = Minecraft.getInstance().level.getEntitiesWithinAABB(EntityArmorStand.class, AABB.fromBounds(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
+            BlockEntity tileEntity = dungeonRoom.getCachedWorld().getTileEntity(pos);
 
             if (Minecraft.getInstance().player.getDistanceSq(pos) < 25) {
-                if (tileEntity instanceof TileEntitySkull) {
-                    String texture = Optional.ofNullable(((TileEntitySkull) tileEntity).getPlayerProfile())
+                if (tileEntity instanceof SkullBlockEntity) {
+                    String texture = Optional.ofNullable(((SkullBlockEntity) tileEntity).getPlayerProfile())
                             .map(a -> a.getProperties())
                             .map(a -> a.get("textures"))
                             .flatMap(a -> a.stream().findFirst())

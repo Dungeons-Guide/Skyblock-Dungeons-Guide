@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
-import net.minecraft.init.Items;
+import net.minecraft.world.item.Items;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.EnumDyeColor;

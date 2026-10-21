@@ -24,11 +24,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 import org.apache.commons.codec.binary.Hex;
 
 import java.io.DataOutputStream;
@@ -174,7 +174,7 @@ public class PathfindRequest { // TODO: fix data flow.
             for (int y = 0; y < 256; y++) {
                 for (int z = 0; z < dungeonRoomInfo.getLength(); z++) {
                     for (int x = 0; x < dungeonRoomInfo.getWidth(); x++) {
-                        IBlockState blockState = driWorld.getBlockState(new BlockPos(x, y, z));
+                        BlockState blockState = driWorld.getBlockState(new BlockPos(x, y, z));
                         dataOutputStream.write((byte) Block.getIdFromBlock(blockState.getBlock()));
                         dataOutputStream.write((byte) blockState.getBlock().getMetaFromState(blockState));
                     }

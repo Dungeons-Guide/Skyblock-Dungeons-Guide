@@ -23,12 +23,12 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 
 import java.awt.*;
@@ -47,7 +47,7 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
         findCreeperAndDoPoses();
     }
 
-    private boolean check(AxisAlignedBB axis, Vec3 vec) {
+    private boolean check(AABB axis, Vec3 vec) {
         if (vec == null) return false;
         return axis.isVecInside(vec);
     }
@@ -57,7 +57,7 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
         List<BlockPos> prismarines = new ArrayList<BlockPos>();
         final BlockPos low = getDungeonRoom().getRoomBounds().getMin().add(0,-2,0);
         final BlockPos high = getDungeonRoom().getRoomBounds().getMax().add(0,20,0);
-        final AxisAlignedBB axis = AxisAlignedBB.fromBounds(
+        final AABB axis = AABB.fromBounds(
                 low.getX() + 17, low.getY() + 7, low.getZ() + 17,
                 low.getX() + 16, low.getY() + 10.5, low.getZ() + 16
         );
@@ -65,7 +65,7 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
         for (BlockPos pos : BlockPos.getAllInBox(low, high)) {
             Block b = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos).getBlock();
             if (b == Blocks.prismarine || b == Blocks.sea_lantern) {
-                for (EnumFacing face:EnumFacing.VALUES) {
+                for (Direction face:Direction.VALUES) {
                     if (w.getBlockState(pos.offset(face)).getBlock() == Blocks.air) {
                         prismarines.add(pos);
                         break;
@@ -132,7 +132,7 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
                     new Vec3(poset[1].getX() +0.5, poset[1].getY() +0.5, poset[1].getZ()+0.5), oneIsConnected ? new Color(0,0,0,50) : color, partialTicks, true);
         }
         final BlockPos low = getDungeonRoom().getRoomBounds().getMin();
-        final AxisAlignedBB axis = AxisAlignedBB.fromBounds(
+        final AABB axis = AABB.fromBounds(
                 low.getX() + 17, low.getY() + 5, low.getZ() + 17,
                 low.getX() + 16, low.getY() + 8.5, low.getZ() + 16
         );

@@ -23,8 +23,8 @@ import kr.syeyoung.dungeonsguide.mod.utils.ArrayUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.ShortUtils;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.List;
 

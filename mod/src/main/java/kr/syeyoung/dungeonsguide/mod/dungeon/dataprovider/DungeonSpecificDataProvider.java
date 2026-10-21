@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.World;
 
 import javax.vecmath.Vector2d;

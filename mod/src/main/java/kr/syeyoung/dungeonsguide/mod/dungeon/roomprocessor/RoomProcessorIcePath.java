@@ -29,8 +29,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntitySilverfish;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;

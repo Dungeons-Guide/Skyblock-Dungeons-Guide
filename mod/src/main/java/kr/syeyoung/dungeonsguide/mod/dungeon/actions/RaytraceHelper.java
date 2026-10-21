@@ -26,8 +26,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -36,10 +36,17 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.HitResult;
 
 public class RaytraceHelper {
 
-    public static Vec3 interpolate(AxisAlignedBB axisAlignedBB, double x, double y, double z) {
+    public static Vec3 interpolate(AABB axisAlignedBB, double x, double y, double z) {
         return new Vec3(
                 x * (axisAlignedBB.maxX - axisAlignedBB.minX) + axisAlignedBB.minX,
                 y * (axisAlignedBB.maxY - axisAlignedBB.minY) + axisAlignedBB.minY,
@@ -121,9 +128,9 @@ public class RaytraceHelper {
 
 
     public static List<PossibleClickingSpot> raycast(World w, BlockPos target, CalculateIsBlocked calculateIsBlocked) {
-        IBlockState targetBlockState = w.getBlockState(target);
+        BlockState targetBlockState = w.getBlockState(target);
         targetBlockState.getBlock().setBlockBoundsBasedOnState(w, target);
-        AxisAlignedBB bb = targetBlockState.getBlock().getSelectedBoundingBox(w, target);
+        AABB bb = targetBlockState.getBlock().getSelectedBoundingBox(w, target);
 
         Map<Vec3, RequiredTool[]> actualReq = new HashMap<>();
         Map<Vec3, Boolean> stonk = new HashMap<>();
@@ -164,7 +171,7 @@ public class RaytraceHelper {
 
                                     if (!notstonk && !isAir) {
                                         BlockPos pos = blocks.get(until);
-                                        IBlockState from_state = w.getBlockState(pos);
+                                        BlockState from_state = w.getBlockState(pos);
                                         Block from_block = from_state.getBlock();
 
                                         BlockBreakData breakData = new BlockBreakData(
@@ -204,7 +211,7 @@ public class RaytraceHelper {
                                         BlockPos from_bpos = blocks.get(i);
                                         if (from_bpos.equals(target)) continue;
                                         if (imposs) break;
-                                        IBlockState from_state = w.getBlockState(from_bpos);
+                                        BlockState from_state = w.getBlockState(from_bpos);
                                         Block from_block = from_state.getBlock();
 
                                         BlockBreakData breakData = new BlockBreakData(
@@ -343,7 +350,7 @@ public class RaytraceHelper {
 
         for (OffsetVec3 vec3 : sortedClusterId) {
 //            int cnt = 0;
-            for (EnumFacing face : EnumFacing.VALUES) {
+            for (Direction face : Direction.VALUES) {
                 OffsetVec3 newVec3 = new OffsetVec3(
                         vec3.xCoord + face.getFrontOffsetX() * 0.5,
                         vec3.yCoord + face.getFrontOffsetY() * 0.5,
@@ -389,7 +396,7 @@ public class RaytraceHelper {
         Queue<OffsetVec3> chk = new LinkedList<>();
         for (OffsetVec3 vec3 : sortedClusterId) {
             if (clusterId.get(vec3) == -2) {
-                for (EnumFacing face : EnumFacing.VALUES) {
+                for (Direction face : Direction.VALUES) {
                     OffsetVec3 newVec3 = new OffsetVec3(
                             vec3.xCoord + face.getFrontOffsetX() * 0.5,
                             vec3.yCoord + face.getFrontOffsetY() * 0.5,
@@ -406,7 +413,7 @@ public class RaytraceHelper {
             OffsetVec3 vec3 = chk.poll();
             if (clusterId.get(vec3) != -2) continue;
             boolean found = false;
-            for (EnumFacing face : EnumFacing.VALUES) {
+            for (Direction face : Direction.VALUES) {
                 OffsetVec3 newVec3 = new OffsetVec3(
                         vec3.xCoord + face.getFrontOffsetX() * 0.5,
                         vec3.yCoord + face.getFrontOffsetY() * 0.5,
@@ -418,7 +425,7 @@ public class RaytraceHelper {
                 break;
             }
             if (found) {
-                for (EnumFacing face : EnumFacing.VALUES) {
+                for (Direction face : Direction.VALUES) {
                     OffsetVec3 newVec3 = new OffsetVec3(
                             vec3.xCoord + face.getFrontOffsetX() * 0.5,
                             vec3.yCoord + face.getFrontOffsetY() * 0.5,
@@ -486,15 +493,15 @@ public class RaytraceHelper {
                     boolean canStand = calculateIsBlocked.canStand((int) (x*2),(int) (y*2),(int) (z*2));
 
                     boolean isAir = false;
-                    for (int xp = MathHelper.floor_double(x - 0.3); xp < MathHelper.floor_double(x + 0.3) + 1; xp++) {
-                        for (int zp = MathHelper.floor_double(z - 0.3); zp < MathHelper.floor_double(z + 0.3) + 1; zp++) {
+                    for (int xp = Mth.floor_double(x - 0.3); xp < Mth.floor_double(x + 0.3) + 1; xp++) {
+                        for (int zp = Mth.floor_double(z - 0.3); zp < Mth.floor_double(z + 0.3) + 1; zp++) {
                             isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord, zp)).getBlock() == Blocks.air;
                             isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord-1, zp)).getBlock() == Blocks.air;
                         }
                     }
                     if ((int)(y*2) % 2 == 1) {
-                        for (int xp = MathHelper.floor_double(x - 0.3); xp < MathHelper.floor_double(x + 0.3) + 1; xp++) {
-                            for (int zp = MathHelper.floor_double(z - 0.3); zp < MathHelper.floor_double(z + 0.3) + 1; zp++) {
+                        for (int xp = Mth.floor_double(x - 0.3); xp < Mth.floor_double(x + 0.3) + 1; xp++) {
+                            for (int zp = Mth.floor_double(z - 0.3); zp < Mth.floor_double(z + 0.3) + 1; zp++) {
                                 isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord, zp)).getBlock() instanceof BlockSlab;
                                 isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord, zp)).getBlock() instanceof BlockStairs;
                             }
@@ -536,7 +543,7 @@ public class RaytraceHelper {
         ).collect(Collectors.toList());
 
         for (OffsetVec3 vec3 : sortedClusterId) {
-            for (EnumFacing face : EnumFacing.VALUES) {
+            for (Direction face : Direction.VALUES) {
                 OffsetVec3 newVec3 = new OffsetVec3(
                         vec3.xCoord + face.getFrontOffsetX() * 0.5,
                         vec3.yCoord + face.getFrontOffsetY() * 0.5,
@@ -580,7 +587,7 @@ public class RaytraceHelper {
         Queue<OffsetVec3> chk = new LinkedList<>();
         for (OffsetVec3 vec3 : sortedClusterId) {
             if (clusterId.get(vec3) == -2) {
-                for (EnumFacing face : EnumFacing.VALUES) {
+                for (Direction face : Direction.VALUES) {
                     OffsetVec3 newVec3 = new OffsetVec3(
                             vec3.xCoord + face.getFrontOffsetX() * 0.5,
                             vec3.yCoord + face.getFrontOffsetY() * 0.5,
@@ -597,7 +604,7 @@ public class RaytraceHelper {
             OffsetVec3 vec3 = chk.poll();
             if (clusterId.get(vec3) != -2) continue;
             boolean found = false;
-            for (EnumFacing face : EnumFacing.VALUES) {
+            for (Direction face : Direction.VALUES) {
                 OffsetVec3 newVec3 = new OffsetVec3(
                         vec3.xCoord + face.getFrontOffsetX() * 0.5,
                         vec3.yCoord + face.getFrontOffsetY() * 0.5,
@@ -609,7 +616,7 @@ public class RaytraceHelper {
                 break;
             }
             if (found) {
-                for (EnumFacing face : EnumFacing.VALUES) {
+                for (Direction face : Direction.VALUES) {
                     OffsetVec3 newVec3 = new OffsetVec3(
                             vec3.xCoord + face.getFrontOffsetX() * 0.5,
                             vec3.yCoord + face.getFrontOffsetY() * 0.5,
@@ -694,26 +701,26 @@ public class RaytraceHelper {
         List<BlockPos> blocks = new ArrayList<>();
         if (!Double.isNaN(from.xCoord) && !Double.isNaN(from.yCoord) && !Double.isNaN(from.zCoord)) {
             if (!Double.isNaN(to.xCoord) && !Double.isNaN(to.yCoord) && !Double.isNaN(to.zCoord)) {
-                int to_x_floor = MathHelper.floor_double(to.xCoord);
-                int to_y_floor = MathHelper.floor_double(to.yCoord);
-                int to_z_floor = MathHelper.floor_double(to.zCoord);
-                int from_x_floor = MathHelper.floor_double(from.xCoord);
-                int from_y_floor = MathHelper.floor_double(from.yCoord);
-                int from_z_floor = MathHelper.floor_double(from.zCoord);
+                int to_x_floor = Mth.floor_double(to.xCoord);
+                int to_y_floor = Mth.floor_double(to.yCoord);
+                int to_z_floor = Mth.floor_double(to.zCoord);
+                int from_x_floor = Mth.floor_double(from.xCoord);
+                int from_y_floor = Mth.floor_double(from.yCoord);
+                int from_z_floor = Mth.floor_double(from.zCoord);
 
 
                 BlockPos from_bpos = new BlockPos(from_x_floor, from_y_floor, from_z_floor);
                 {
-                    IBlockState from_state = driWorld.getBlockState(from_bpos);
+                    BlockState from_state = driWorld.getBlockState(from_bpos);
                     Block from_block = from_state.getBlock();
                     if (from_block.canCollideCheck(from_state, false)) {
-                        MovingObjectPosition movingobjectposition2 = from_block.collisionRayTrace(driWorld, from_bpos, from, to);
+                        HitResult movingobjectposition2 = from_block.collisionRayTrace(driWorld, from_bpos, from, to);
                         if (movingobjectposition2 != null) {
                             blocks.add(from_bpos);
                         }
                     }
                 }
-                MovingObjectPosition movingobjectposition2 = null;
+                HitResult movingobjectposition2 = null;
                 int k1 = 200;
 
                 while(k1-- >= 0) {
@@ -785,27 +792,27 @@ public class RaytraceHelper {
                         perc_z = -1.0E-4;
                     }
 
-                    EnumFacing overwhat;
+                    Direction overwhat;
                     if (perc_x < perc_y && perc_x < perc_z) {
-                        overwhat = to_x_floor > from_x_floor ? EnumFacing.WEST : EnumFacing.EAST;
+                        overwhat = to_x_floor > from_x_floor ? Direction.WEST : Direction.EAST;
                         from = new Vec3(curr_x, from.yCoord + diff_y * perc_x, from.zCoord + diff_z * perc_x);
                     } else if (perc_y < perc_z) {
-                        overwhat = to_y_floor > from_y_floor ? EnumFacing.DOWN : EnumFacing.UP;
+                        overwhat = to_y_floor > from_y_floor ? Direction.DOWN : Direction.UP;
                         from = new Vec3(from.xCoord + diff_x * perc_y, curr_y, from.zCoord + diff_z * perc_y);
                     } else {
-                        overwhat = to_z_floor > from_z_floor ? EnumFacing.NORTH : EnumFacing.SOUTH;
+                        overwhat = to_z_floor > from_z_floor ? Direction.NORTH : Direction.SOUTH;
                         from = new Vec3(from.xCoord + diff_x * perc_z, from.yCoord + diff_y * perc_z, curr_z);
                     }
 
-                    from_x_floor = MathHelper.floor_double(from.xCoord) - (overwhat == EnumFacing.EAST ? 1 : 0);
-                    from_y_floor = MathHelper.floor_double(from.yCoord) - (overwhat == EnumFacing.UP ? 1 : 0);
-                    from_z_floor = MathHelper.floor_double(from.zCoord) - (overwhat == EnumFacing.SOUTH ? 1 : 0);
+                    from_x_floor = Mth.floor_double(from.xCoord) - (overwhat == Direction.EAST ? 1 : 0);
+                    from_y_floor = Mth.floor_double(from.yCoord) - (overwhat == Direction.UP ? 1 : 0);
+                    from_z_floor = Mth.floor_double(from.zCoord) - (overwhat == Direction.SOUTH ? 1 : 0);
 
                     from_bpos = new BlockPos(from_x_floor, from_y_floor, from_z_floor);
-                    IBlockState iblockstate1 = driWorld.getBlockState(from_bpos);
+                    BlockState iblockstate1 = driWorld.getBlockState(from_bpos);
                     Block block1 = iblockstate1.getBlock();
                         if (block1.canCollideCheck(iblockstate1, false)) {
-                            MovingObjectPosition movingobjectposition1 = block1.collisionRayTrace(driWorld, from_bpos, from, to);
+                            HitResult movingobjectposition1 = block1.collisionRayTrace(driWorld, from_bpos, from, to);
                             if (movingobjectposition1 != null) {
                                 blocks.add(from_bpos);
                             }
@@ -823,19 +830,19 @@ public class RaytraceHelper {
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
 
         float playerWidth = 0.3f;
-        AxisAlignedBB bb = AxisAlignedBB
+        AABB bb = AABB
                 .fromBounds(wX - playerWidth, wY+0.06251, wZ - playerWidth,
                         wX + playerWidth, wY +0.06251 + 1.8, wZ + playerWidth);
 
-        int minX = MathHelper.floor_double(bb.minX);
-        int maxX = MathHelper.floor_double(bb.maxX + 1.0D);
-        int minY = MathHelper.floor_double(bb.minY);
-        int maxY = MathHelper.floor_double(bb.maxY + 1.0D);
-        int minZ = MathHelper.floor_double(bb.minZ);
-        int maxZ = MathHelper.floor_double(bb.maxZ + 1.0D);
+        int minX = Mth.floor_double(bb.minX);
+        int maxX = Mth.floor_double(bb.maxX + 1.0D);
+        int minY = Mth.floor_double(bb.minY);
+        int maxY = Mth.floor_double(bb.maxY + 1.0D);
+        int minZ = Mth.floor_double(bb.minZ);
+        int maxZ = Mth.floor_double(bb.maxZ + 1.0D);
 
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
-        List<AxisAlignedBB> list2 = new ArrayList<>();
+        List<AABB> list2 = new ArrayList<>();
         int size = 0;
 
         int notstonkable = 0;
@@ -843,7 +850,7 @@ public class RaytraceHelper {
             for (int l1 = minZ; l1 < maxZ; ++l1) {
                 for (int i2 = minY-1; i2 < maxY; ++i2) {
                     blockPos.set(k1, i2, l1);
-                    IBlockState state = w.getBlockState(blockPos);
+                    BlockState state = w.getBlockState(blockPos);
                     Block block = state.getBlock();
                     block.addCollisionBoxesToList(
                             w, blockPos, state, bb, list2, null

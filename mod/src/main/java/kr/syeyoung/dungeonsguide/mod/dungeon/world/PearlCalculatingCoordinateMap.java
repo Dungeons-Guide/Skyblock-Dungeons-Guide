@@ -2,24 +2,24 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import lombok.Getter;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PearlCalculatingCoordinateMap implements ICoordinateMap<PearlCalculatingCoordinateMap.PearlLandType> {
-    protected ICoordinateMap<IBlockState> map;
+    protected ICoordinateMap<BlockState> map;
     @Getter
     private int minX, minY, minZ, maxX, maxY, maxZ, lenX, lenY, lenZ;
 
     private CoordinateMapWorld world;
     private RoomBounds roomBounds;
 
-    public PearlCalculatingCoordinateMap(ICoordinateMap<IBlockState> map, RoomBounds roomBounds) {
+    public PearlCalculatingCoordinateMap(ICoordinateMap<BlockState> map, RoomBounds roomBounds) {
         this.map = map;
         this.world = new CoordinateMapWorld(map);
 
@@ -41,26 +41,26 @@ public class PearlCalculatingCoordinateMap implements ICoordinateMap<PearlCalcul
 
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
 
-        AxisAlignedBB pearlTest = AxisAlignedBB.fromBounds(
+        AABB pearlTest = AABB.fromBounds(
                 wX-0.3, wY-0.3, wZ-0.3, wX+ 0.3, wY+ 0.3, wZ + 0.3
         );
 
-        int minX = MathHelper.floor_double(pearlTest.minX);
-        int maxX = MathHelper.floor_double(pearlTest.maxX + 1.0D);
-        int minY = MathHelper.floor_double(pearlTest.minY);
-        int maxY = MathHelper.floor_double(pearlTest.maxY + 1.0D);
-        int minZ = MathHelper.floor_double(pearlTest.minZ);
-        int maxZ = MathHelper.floor_double(pearlTest.maxZ + 1.0D);
+        int minX = Mth.floor_double(pearlTest.minX);
+        int maxX = Mth.floor_double(pearlTest.maxX + 1.0D);
+        int minY = Mth.floor_double(pearlTest.minY);
+        int maxY = Mth.floor_double(pearlTest.maxY + 1.0D);
+        int minZ = Mth.floor_double(pearlTest.minZ);
+        int maxZ = Mth.floor_double(pearlTest.maxZ + 1.0D);
 
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
-        List<AxisAlignedBB> pearlList = new ArrayList<>();
+        List<AABB> pearlList = new ArrayList<>();
         for (int k1 = minX; k1 < maxX; ++k1) {
             for (int l1 = minZ; l1 < maxZ; ++l1) {
                 label: for (int i2 = minY-1; i2 < maxY; ++i2) {
                     blockPos.set(k1, i2, l1);
 
 
-                    IBlockState state = map.getBlock(k1, i2, l1);
+                    BlockState state = map.getBlock(k1, i2, l1);
                     Block block = state.getBlock();
                     block.addCollisionBoxesToList(
                             world, blockPos, state, pearlTest, pearlList, null
@@ -71,7 +71,7 @@ public class PearlCalculatingCoordinateMap implements ICoordinateMap<PearlCalcul
         if (pearlList.isEmpty()) return PearlLandType.OPEN;
         double wholeVolume = 0;
         double topVolume = 0;
-        for (AxisAlignedBB a : pearlList) {
+        for (AABB a : pearlList) {
             double miX = Math.max(a.minX, pearlTest.minX);
             double miY = Math.max(a.minY, pearlTest.minY);
             double miZ = Math.max(a.minZ, pearlTest.minZ);

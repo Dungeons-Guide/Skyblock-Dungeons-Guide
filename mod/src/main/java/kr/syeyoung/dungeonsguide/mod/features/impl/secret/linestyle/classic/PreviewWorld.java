@@ -18,19 +18,19 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.IChunkProvider;
 
 public class PreviewWorld extends World {
-    private IBlockState iBlockState;
+    private BlockState iBlockState;
     private BlockPos pos;
 
-    public PreviewWorld(IBlockState blockState, BlockPos pos) {
+    public PreviewWorld(BlockState blockState, BlockPos pos) {
         super(null, null, new WorldProviderSurface(), null, true);
         this.iBlockState = blockState;
         this.pos = pos;
@@ -52,7 +52,7 @@ public class PreviewWorld extends World {
     }
 
     @Override
-    public TileEntity getTileEntity(BlockPos pos) {
+    public BlockEntity getTileEntity(BlockPos pos) {
         return null;
     }
 
@@ -62,7 +62,7 @@ public class PreviewWorld extends World {
     }
 
     @Override
-    public IBlockState getBlockState(BlockPos pos) {
+    public BlockState getBlockState(BlockPos pos) {
         if (pos.equals(this.pos)) {return iBlockState;} return Blocks.air.getDefaultState();
     }
 
@@ -77,12 +77,12 @@ public class PreviewWorld extends World {
     }
 
     @Override
-    public int getStrongPower(BlockPos pos, EnumFacing direction) {
+    public int getStrongPower(BlockPos pos, Direction direction) {
         return 0;
     }
 
     @Override
-    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
+    public boolean isSideSolid(BlockPos pos, Direction side, boolean _default) {
         return false;
     }
 }

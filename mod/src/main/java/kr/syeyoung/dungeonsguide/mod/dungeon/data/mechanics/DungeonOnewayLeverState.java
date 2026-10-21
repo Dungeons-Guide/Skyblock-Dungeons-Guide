@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 
 import java.awt.*;
 import java.util.List;

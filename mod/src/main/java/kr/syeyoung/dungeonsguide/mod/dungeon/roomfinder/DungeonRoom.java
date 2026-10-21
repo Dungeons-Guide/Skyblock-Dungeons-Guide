@@ -49,11 +49,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.*;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 import javax.vecmath.Vector2d;
@@ -63,6 +63,9 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.block.Block;
 
 @Getter
 public class DungeonRoom  {
@@ -176,9 +179,9 @@ public class DungeonRoom  {
                 && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16+15,0, z*16)) && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16,0, z*16+15))) {
                     continue;
                 }
-                Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
+                LevelChunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
                 if (c.isEmpty()) {
-                    throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
+                    throw new IllegalStateException("LevelChunk not loaded: "+x+"/"+z);
                 }
                 boolean nonNull = false;
                 for (ExtendedBlockStorage extendedBlockStorage : c.getBlockStorageArray()) {
@@ -188,7 +191,7 @@ public class DungeonRoom  {
                     }
                 }
                 if (!nonNull) {
-                    throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
+                    throw new IllegalStateException("LevelChunk not loaded: "+x+"/"+z);
                 }
             }
         }
@@ -253,7 +256,7 @@ public class DungeonRoom  {
                 matchRoomAndSetupRoomProcessor();
                 matched = true;
             } catch (Exception e) {
-                if (e.getMessage() == null || !e.getMessage().contains("Chunk not loaded")) {
+                if (e.getMessage() == null || !e.getMessage().contains("LevelChunk not loaded")) {
                     FeatureCollectDiagnostics.queueSendLogAsync(e);
                     e.printStackTrace();
                 }
@@ -272,7 +275,7 @@ public class DungeonRoom  {
             try {
                 this.updateRoomProcessor();
             } catch (Exception e) {
-                if (e.getMessage() == null || !e.getMessage().contains("Chunk not loaded")) {
+                if (e.getMessage() == null || !e.getMessage().contains("LevelChunk not loaded")) {
                     FeatureCollectDiagnostics.queueSendLogAsync(e);
                     e.printStackTrace();
                 }
@@ -355,7 +358,7 @@ public class DungeonRoom  {
         // validate x y z's
         if (getRoomBounds().canAccessRelative(x,z)) {
             BlockPos pos = new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
-            IBlockState iBlockState = getCachedWorld().getBlockState(pos);
+            BlockState iBlockState = getCachedWorld().getBlockState(pos);
             return iBlockState.getBlock().getMetaFromState(iBlockState);
         }
         return -1;

@@ -1,17 +1,17 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.IChunkProvider;
 
 public class CoordinateMapWorld extends World {
-    private ICoordinateMap<IBlockState> map;
+    private ICoordinateMap<BlockState> map;
 
-    public CoordinateMapWorld(ICoordinateMap<IBlockState> map) {
+    public CoordinateMapWorld(ICoordinateMap<BlockState> map) {
         super(null, null, new WorldProviderSurface(), null, true);
         this.map = map;
     }
@@ -32,7 +32,7 @@ public class CoordinateMapWorld extends World {
     }
 
     @Override
-    public TileEntity getTileEntity(BlockPos pos) {
+    public BlockEntity getTileEntity(BlockPos pos) {
         throw new UnsupportedOperationException("Yikes");
     }
 
@@ -42,7 +42,7 @@ public class CoordinateMapWorld extends World {
     }
 
     @Override
-    public IBlockState getBlockState(BlockPos pos) {
+    public BlockState getBlockState(BlockPos pos) {
         return map.getBlock(pos.getX(), pos.getY(), pos.getZ());
     }
 
@@ -53,21 +53,21 @@ public class CoordinateMapWorld extends World {
 
     @Override
     public boolean isAirBlock(BlockPos pos) {
-        IBlockState blockState = getBlockState(pos);
+        BlockState blockState = getBlockState(pos);
         return blockState == null || blockState.getBlock() == Blocks.air;
     }
 
     @Override
-    public int getStrongPower(BlockPos pos, EnumFacing direction) {
+    public int getStrongPower(BlockPos pos, Direction direction) {
         throw new UnsupportedOperationException("Yikes");
     }
 
     @Override
-    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
+    public boolean isSideSolid(BlockPos pos, Direction side, boolean _default) {
         if (pos.getY() >= 0 && pos.getY() < 256) {
             return _default;
         } else {
-            IBlockState blockState = map.getBlock(pos.getX(), pos.getY(), pos.getZ());
+            BlockState blockState = map.getBlock(pos.getX(), pos.getY(), pos.getZ());
 
             return blockState == null ? _default : blockState.getBlock().isSideSolid(this, pos, side);
         }

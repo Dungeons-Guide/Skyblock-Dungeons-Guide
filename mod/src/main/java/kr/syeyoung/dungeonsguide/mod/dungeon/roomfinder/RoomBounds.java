@@ -1,8 +1,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder;
 
 import lombok.Getter;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 @Getter
 public class RoomBounds {

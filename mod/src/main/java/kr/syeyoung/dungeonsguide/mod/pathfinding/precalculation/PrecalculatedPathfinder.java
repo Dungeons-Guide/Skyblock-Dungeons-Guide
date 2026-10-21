@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.IPathfinder;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.IPathfindWorld;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.phys.Vec3;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

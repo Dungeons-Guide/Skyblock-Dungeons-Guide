@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import org.jetbrains.annotations.Nullable;
 

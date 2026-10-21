@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.dataclasses.*;
 import kr.syeyoung.dungeonsguide.mod.utils.XPUtils;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;

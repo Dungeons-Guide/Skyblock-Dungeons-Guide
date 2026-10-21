@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.ChatFormatting;

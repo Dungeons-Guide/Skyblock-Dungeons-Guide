@@ -30,11 +30,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import lombok.Getter;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProviderSurface;
@@ -45,7 +45,7 @@ import java.util.HashSet;
 import java.util.List;
 
 // TODO: maybe touch some time later
-public class DRIWorld extends World implements ICoordinateMap<IBlockState> {
+public class DRIWorld extends World implements ICoordinateMap<BlockState> {
 
     @Getter
     private DungeonRoomInfo dungeonRoomInfo;
@@ -116,7 +116,7 @@ public class DRIWorld extends World implements ICoordinateMap<IBlockState> {
     }
 
     @Override
-    public TileEntity getTileEntity(BlockPos pos) {
+    public BlockEntity getTileEntity(BlockPos pos) {
         return null;
     }
 
@@ -126,7 +126,7 @@ public class DRIWorld extends World implements ICoordinateMap<IBlockState> {
     }
 
     @Override
-    public IBlockState getBlockState(BlockPos pos) {
+    public BlockState getBlockState(BlockPos pos) {
         if (open.contains(pos)) {
             return Blocks.air.getDefaultState();
         }
@@ -144,19 +144,19 @@ public class DRIWorld extends World implements ICoordinateMap<IBlockState> {
     }
 
     @Override
-    public int getStrongPower(BlockPos pos, EnumFacing direction) {
+    public int getStrongPower(BlockPos pos, Direction direction) {
         return 0;
     }
 
     @Override
-    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
+    public boolean isSideSolid(BlockPos pos, Direction side, boolean _default) {
         return this.getBlockState(pos).getBlock().isSideSolid(this, pos, side);
     }
 
 
     private final BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
     @Override
-    public IBlockState getBlock(int x, int y, int z) {
+    public BlockState getBlock(int x, int y, int z) {
         mutableBlockPos.set(x, y, z);
         if (open.contains(mutableBlockPos)) {
             return Blocks.air.getDefaultState();

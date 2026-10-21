@@ -25,9 +25,9 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -53,7 +53,7 @@ public class BDChamber {
         return getOffsetPoint(x,z).getBlockPos(room).add(0,y,0);
     }
 
-    public IBlockState getBlock(int x, int y, int z) {
+    public BlockState getBlock(int x, int y, int z) {
         BlockPos pos = getBlockPos(x,y,z);
         return DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos);
     }

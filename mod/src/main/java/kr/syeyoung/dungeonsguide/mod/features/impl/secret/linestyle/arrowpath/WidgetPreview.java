@@ -26,8 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -39,10 +38,10 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.util.glu.Project;
@@ -148,7 +147,7 @@ public class WidgetPreview extends Widget implements Renderer {
         GlStateManager.loadIdentity();
         Project.gluPerspective(70F,
                 (float) (buildContext.getSize().getWidth() / buildContext.getSize().getHeight())
-                , 0.05F, 4 * 16 * MathHelper.SQRT_2);
+                , 0.05F, 4 * 16 * Mth.SQRT_2);
 
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.pushMatrix();
@@ -189,7 +188,7 @@ public class WidgetPreview extends Widget implements Renderer {
             }
         }
 
-        IBlockState iBlockState = Blocks.stonebrick.getDefaultState();
+        BlockState iBlockState = Blocks.stonebrick.getDefaultState();
         blockrendererdispatcher.getBlockModelRenderer().renderModel(previewWorld,
                 blockrendererdispatcher.getBlockModelShapes().getModelForState(iBlockState),
                 iBlockState, new BlockPos(2 ,1,4), vertexBuffer, false);
@@ -207,10 +206,10 @@ public class WidgetPreview extends Widget implements Renderer {
                 iBlockState, new BlockPos(3 ,1,4), vertexBuffer, false);
         tessellator.draw();
 
-        TileEntityChest tileentity = new TileEntityChest();
+        ChestBlockEntity tileentity = new ChestBlockEntity();
         tileentity.setPos(new BlockPos(2,2,4));
         tileentity.setWorldObj(previewWorld);
-        TileEntitySpecialRenderer<TileEntityChest> specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileentity);
+        TileEntitySpecialRenderer<ChestBlockEntity> specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileentity);
         specialRenderer.renderTileEntityAt(tileentity,2,2,4, partialTicks, -1);
 
 

@@ -34,9 +34,9 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 import java.awt.*;
 import java.util.*;
@@ -126,7 +126,7 @@ public class PrecalculatedMoveNearest {
         }
         Vec3 vec = new Vec3(offsetPoint.getX() + 0.5, offsetPoint.getY() + 70.5, offsetPoint.getZ() + 0.5);
         List<PossibleMoveSpot>[] spots = new List[1 << calculateFor.size()];
-        AxisAlignedBB check = AxisAlignedBB.fromBounds(
+        AABB check = AABB.fromBounds(
                 vec.xCoord - 3, vec.yCoord + 1.1, vec.zCoord -3,
                 vec.xCoord + 3, vec.yCoord - 3.6, vec.zCoord + 3
         );
@@ -166,7 +166,7 @@ public class PrecalculatedMoveNearest {
 //                for (OffsetVec3 _vec3 : spot2.getOffsetPointSet()) {
 //                    Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
 //                    RenderUtils.highlightBox(
-//                            new AxisAlignedBB(
+//                            new AABB(
 //                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord - 0.25f,
 //                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.026f, offsetVec3.zCoord + 0.25f
 //                            ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
@@ -180,7 +180,7 @@ public class PrecalculatedMoveNearest {
 //            for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
 //                Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
 //                RenderUtils.highlightBox(
-//                        new AxisAlignedBB(
+//                        new AABB(
 //                                offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
 //                                offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.475f, offsetVec3.zCoord + 0.25f
 //                        ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),

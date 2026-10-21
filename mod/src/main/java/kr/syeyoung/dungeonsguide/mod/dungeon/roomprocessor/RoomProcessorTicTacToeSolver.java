@@ -23,13 +23,13 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
 
@@ -57,7 +57,7 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
                 if (b == Blocks.stone_button) {
                     board[y][x] = 0;
                 } else if (b == Blocks.air){
-                    AxisAlignedBB abab = AxisAlignedBB.fromBounds(bpos.getX() , bpos.getY(), bpos.getZ(), bpos.getX() +1, bpos.getY() +1, bpos.getZ() +1);
+                    AABB abab = AABB.fromBounds(bpos.getX() , bpos.getY(), bpos.getZ(), bpos.getX() +1, bpos.getY() +1, bpos.getZ() +1);
                     List<EntityItemFrame> frames = getDungeonRoom().getContext().getWorld().getEntitiesWithinAABB(EntityItemFrame.class, abab);
                     if (frames.isEmpty()) board[y][x] = 0;
                     else {
@@ -198,7 +198,7 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
                 }
                 whoseturn = ones < negativeones;
             }
-            RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(block.getX(), block.getY(), block.getZ(), block.getX()+1, block.getY() + 1, block.getZ() + 1),
+            RenderUtils.highlightBoxAColor(AABB.fromBounds(block.getX(), block.getY(), block.getZ(), block.getX()+1, block.getY() + 1, block.getZ() + 1),
                     whoseturn ? FeatureRegistry.SOLVER_TICTACTOE.getTargetColor()
                             : FeatureRegistry.SOLVER_TICTACTOE.getTargetColor2(), partialTicks, true);
         }

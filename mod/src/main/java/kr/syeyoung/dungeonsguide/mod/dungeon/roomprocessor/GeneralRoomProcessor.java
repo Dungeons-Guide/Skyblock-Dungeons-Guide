@@ -46,7 +46,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -55,8 +55,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.Items;
 import net.minecraft.util.*;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 import org.lwjgl.opengl.GL11;
@@ -67,6 +67,8 @@ import java.util.*;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 
 public class GeneralRoomProcessor implements RoomProcessor {
 
@@ -256,7 +258,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void onInteractBlock(PlayerInteractEvent event) {
 
         if (event.pos != null) {
-            IBlockState iBlockState = event.world.getBlockState(event.pos);
+            BlockState iBlockState = event.world.getBlockState(event.pos);
             if (iBlockState.getBlock() == Blocks.chest || iBlockState.getBlock() == Blocks.trapped_chest)
                 lastChest = event.pos;
         }
@@ -295,7 +297,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 //                    while (ec.getRoom().getDungeonRoomInfo().getMechanics().containsKey("ent-" + nextId)) nextId++;
 //                    DungeonRoomDoor2State.DungeonRoomDoor2Data door2 = new DungeonRoomDoor2State.DungeonRoomDoor2Data();
 //                    ec.getRoom().getDungeonRoomInfo().getMechanics().put("ent-" + nextId, door2);
-//                    EnumFacing enumFacing = event.face;
+//                    Direction enumFacing = event.face;
 //                    enumFacing = enumFacing.rotateY();
 //                    for (int x = -1; x <= 1; x++) {
 //                        for (int y = 0; y < 4; y++) {
@@ -351,10 +353,10 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     }
 
-    public static final IBlockState STONE = Blocks.stone.getStateFromMeta(2);
+    public static final BlockState STONE = Blocks.stone.getStateFromMeta(2);
     @Override
     public void onBlockUpdate(BlockUpdateEvent blockUpdateEvent) {
-        for (Tuple<BlockPos, IBlockState> updatedBlock : blockUpdateEvent.getUpdatedBlocks()) {
+        for (Tuple<BlockPos, BlockState> updatedBlock : blockUpdateEvent.getUpdatedBlocks()) {
             if (updatedBlock.getB().equals(STONE)) continue;
             pathfinderWorld.resetBlock(updatedBlock.getA());
         }

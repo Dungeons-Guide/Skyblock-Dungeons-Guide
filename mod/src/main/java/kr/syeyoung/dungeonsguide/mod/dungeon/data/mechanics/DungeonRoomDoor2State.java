@@ -32,7 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
 
 import javax.vecmath.Vector2d;
