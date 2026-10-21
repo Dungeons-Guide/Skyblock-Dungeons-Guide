@@ -135,11 +135,4 @@ public class EventHandlerRegistry {
             }
         }
     }
-
-    public static void unregisterListeners() {
-        for (ListenerRegistration registration : registeredHandlers.values()) {
-            DungeonsGuide.getDungeonsGuide().getEventBus().unregisterListener(registration);
-        }
-        registeredHandlers.clear();
-    }
 }
