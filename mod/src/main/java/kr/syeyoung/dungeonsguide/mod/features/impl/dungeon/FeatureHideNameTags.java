@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraftforge.client.event.RenderLivingEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderLivingEvent;
 
 
 public class FeatureHideNameTags extends SimpleFeature  {
