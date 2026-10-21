@@ -23,9 +23,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,23 +34,23 @@ import java.util.concurrent.TimeUnit;
 public class BlockCache {
 
     @SuppressWarnings("UnstableApiUsage")
-    private final LoadingCache<BlockPos, IBlockState> cache = CacheBuilder.newBuilder()
+    private final LoadingCache<BlockPos, BlockState> cache = CacheBuilder.newBuilder()
             .maximumSize(10000)
             .expireAfterWrite(3, TimeUnit.SECONDS)
             .build(
-                    new CacheLoader<BlockPos, IBlockState>() {
-                        public IBlockState load(@NotNull BlockPos pos) {
-                            return Minecraft.getMinecraft().theWorld.getBlockState(pos);
+                    new CacheLoader<BlockPos, BlockState>() {
+                        public BlockState load(@NotNull BlockPos pos) {
+                            return Minecraft.getInstance().level.getBlockState(pos);
                         }
                     });
 
 
     @SuppressWarnings("UnstableApiUsage")
-    public IBlockState getBlockState(@NotNull BlockPos pos){
+    public BlockState getBlockState(@NotNull BlockPos pos){
         if(FeatureRegistry.DEBUG_BLOCK_CACHING.isEnabled()){
             return cache.getUnchecked(pos);
         } else {
-            return Minecraft.getMinecraft().theWorld.getBlockState(pos);
+            return Minecraft.getInstance().level.getBlockState(pos);
         }
     }
 

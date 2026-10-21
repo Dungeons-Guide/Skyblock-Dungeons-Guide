@@ -19,9 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.utils;
 
 import lombok.Getter;
-import net.minecraft.block.material.MapColor;
+import net.minecraft.world.level.material.MapColor;
+import org.joml.Vector2d;
 
-import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -74,7 +74,7 @@ public class MapUtils {
         }
         else
         {
-            theColor = MapColor.mapColorArray[j / 4].getMapColor(j & 3);
+            theColor = MapColor.getColorFromPackedId(j);
         }
 
         return theColor;
