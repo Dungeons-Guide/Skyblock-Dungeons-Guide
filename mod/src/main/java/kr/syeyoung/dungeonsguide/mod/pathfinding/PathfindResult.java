@@ -50,10 +50,10 @@ public class PathfindResult {
         private NodeType type;
 
         public double distanceSq(Vec3 position) {
-            return position.squareDistanceTo(new Vec3(x,y,z));
+            return position.distanceToSqr(new Vec3(x,y,z));
         }
         public double distanceSq(Vec3i position) {
-            return position.distanceSq(x,y,z);
+            return position.distToLowCornerSqr(x,y,z);
         }
 
         public enum NodeType {

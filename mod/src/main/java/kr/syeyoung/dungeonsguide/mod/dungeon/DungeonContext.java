@@ -49,7 +49,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
-import javax.vecmath.Vector2d;
+import org.joml.Vector2d;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -155,9 +155,9 @@ public class DungeonContext {
     private final Rectangle roomBoundary = new Rectangle(-10, -10, 138, 138);
 
     public void tick() {
-        if (scaffoldParser != null && bossRoomEnterSeconds == -1 && !roomBoundary.contains(scaffoldParser.getDungeonMapLayout().worldPointToMapPoint(Minecraft.getInstance().player.getPositionVector()))) {
+        if (scaffoldParser != null && bossRoomEnterSeconds == -1 && !roomBoundary.contains(scaffoldParser.getDungeonMapLayout().worldPointToMapPoint(Minecraft.getInstance().player.position()))) {
             bossRoomEnterSeconds = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000;
-            bossroomSpawnPos = Minecraft.getInstance().player.getPosition();
+            bossroomSpawnPos = Minecraft.getInstance().player.blockPosition();
             DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new BossroomEnterEvent());
             recorder.createEvent(new DungeonNodataEvent("BOSSROOM_ENTER"));
             DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(getDungeonName());
@@ -174,7 +174,7 @@ public class DungeonContext {
                     dungeonRoom.tryRematch();
                 }
             }
-            executor.setRoomIn(scaffoldParser.getRoomMap().get(getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.getPositionVector())));
+            executor.setRoomIn(scaffoldParser.getRoomMap().get(getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.position())));
         }
 
 

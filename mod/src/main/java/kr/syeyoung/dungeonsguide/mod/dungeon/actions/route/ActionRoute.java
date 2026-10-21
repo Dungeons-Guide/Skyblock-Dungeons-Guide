@@ -92,7 +92,7 @@ public class ActionRoute {
         current = 0;
         actions = new ArrayList<>();
         actions.add(new ActionRoot());
-        Vec3 start = Minecraft.getInstance().player.getPositionVector();
+        Vec3 start = Minecraft.getInstance().player.position();
         pathCalculator.submit(() -> {
             ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
 

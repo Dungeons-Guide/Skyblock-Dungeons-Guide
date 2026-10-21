@@ -78,8 +78,8 @@ public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
 
     @Override
     public void onDataReceive(CompoundTag compound) {
-        if (1 == compound.getByte("a")) {
-            answer = compound.getInteger("b");
+        if (1 == compound.getByteOr("a", (byte) 0)) {
+            answer = compound.getIntOr("b", 0);
             d1 = answer / 1000;
             d2 = (answer % 1000) / 100;
             d3 = (answer % 100) / 10;

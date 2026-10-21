@@ -35,7 +35,7 @@ import lombok.Data;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
 
-import javax.vecmath.Vector2d;
+import org.joml.Vector2d;
 import java.awt.*;
 import java.util.Set;
 

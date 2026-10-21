@@ -24,14 +24,16 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.world.level.block.Block;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.World;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -74,24 +76,28 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
             final String name = TextUtils.stripColor(ch2.split(":")[0]).replace("[NPC] ","").trim();
             final BlockPos low = getDungeonRoom().getRoomBounds().getMin();
             final BlockPos high = getDungeonRoom().getRoomBounds().getMax();
-            World w = getDungeonRoom().getContext().getWorld();
-            List<ArmorStand> armor = w.getEntities(ArmorStand.class, new Predicate<ArmorStand>() {
+            DGWorld w = getDungeonRoom().getContext().getWorld();
+            Level level = Minecraft.getInstance().level;
+            // the room's bounds (D114)
+            AABB roomBox = new AABB(low.getX(), level.getMinY(), low.getZ(), high.getX() + 1, level.getMaxY() + 1, high.getZ() + 1);
+            List<ArmorStand> armor = level.getEntitiesOfClass(ArmorStand.class, roomBox, new Predicate<ArmorStand>() {
                 @Override
                 public boolean apply(@Nullable ArmorStand input) {
-                    BlockPos pos = input.getPosition();
+                    BlockPos pos = input.blockPosition();
+                    // TODO: D5 entity name stopgap (D116)
                     return low.getX() < pos.getX() && pos.getX() < high.getX()
-                            && low.getZ() < pos.getZ() && pos.getZ() < high.getZ() && TextUtils.stripColor(input.getName()).equalsIgnoreCase(name);
+                            && low.getZ() < pos.getZ() && pos.getZ() < high.getZ() && TextUtils.stripColor(TextUtils.getFormattedText(input.getName())).equalsIgnoreCase(name);
                 }
             });
 
             if (armor != null) {
                 this.chest = null;
-                BlockPos pos = armor.get(0).getPosition();
-                for (BlockPos allInBox : BlockPos.getAllInBox(pos.add(-1, 0, -1), pos.add(1, 0, 1))) {
-                    Block b = w.getChunkFromBlockCoords(allInBox).getBlock(allInBox);
+                BlockPos pos = armor.get(0).blockPosition();
+                for (BlockPos allInBox : BlockPos.betweenClosed(pos.offset(-1, 0, -1), pos.offset(1, 0, 1))) {
+                    BlockState b = w.getBlockState(allInBox);
 
-                    if ((b == Blocks.chest || b == Blocks.trapped_chest)&& allInBox.distanceSq(pos) == 1 ) {
-                        this.chest = allInBox;
+                    if ((LegacyBlock.CHEST.is(b) || LegacyBlock.TRAPPED_CHEST.is(b))&& allInBox.distSqr(pos) == 1 ) {
+                        this.chest = allInBox.immutable();
                         return;
                     }
                 }
@@ -107,7 +113,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
         super.drawWorld(partialTicks);
         if (!FeatureRegistry.SOLVER_RIDDLE.isEnabled()) return;
         if (chest != null) {
-            RenderUtils.highlightBoxAColor(AABB.fromBounds(chest.getX(), chest.getY(), chest.getZ(), chest.getX()+1, chest.getY() + 1, chest.getZ() + 1),  FeatureRegistry.SOLVER_RIDDLE.getTargetColor(), partialTicks, true);
+            RenderUtils.highlightBoxAColor(new AABB(chest.getX(), chest.getY(), chest.getZ(), chest.getX()+1, chest.getY() + 1, chest.getZ() + 1),  FeatureRegistry.SOLVER_RIDDLE.getTargetColor(), partialTicks, true);
         }
     }
 

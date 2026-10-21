@@ -38,7 +38,7 @@ public class BoundingBox {
 
     public boolean isIn(Vec3 vec) {
         for (AABB boundingBox : boundingBoxes) {
-            if (boundingBox.isVecInside(vec)) return true;
+            if (boundingBox.contains(vec)) return true;
         }
         return false;
     }

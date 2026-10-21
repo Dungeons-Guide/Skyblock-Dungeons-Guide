@@ -160,16 +160,16 @@ public class DRIWorld implements DGWorld {
 
     @Override
     public int getLenX() {
-        return ICoordinateMap.super.getLenX();
+        return DGWorld.super.getLenX();
     }
 
     @Override
     public int getLenY() {
-        return ICoordinateMap.super.getLenY();
+        return DGWorld.super.getLenY();
     }
 
     @Override
     public int getLenZ() {
-        return ICoordinateMap.super.getLenZ();
+        return DGWorld.super.getLenZ();
     }
 }

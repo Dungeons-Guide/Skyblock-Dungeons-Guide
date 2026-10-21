@@ -117,7 +117,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     @Override
     public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
         if (keyInputEvent.getKey().equals(FeatureRegistry.SOLVER_BOMBDEFUSE.<InputConstants.Key>getParameter("key").getValue())) {
-            if (!getChamber().isWithinAbsolute(Minecraft.getInstance().player.getPosition())) {
+            if (!getChamber().isWithinAbsolute(Minecraft.getInstance().player.blockPosition())) {
                 return;
             }
             onSendData();

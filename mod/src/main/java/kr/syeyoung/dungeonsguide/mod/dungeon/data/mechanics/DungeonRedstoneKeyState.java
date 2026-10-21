@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedStonk;
@@ -118,7 +119,7 @@ public class DungeonRedstoneKeyState implements DungeonMechanicState {
         if (didClickOnRedstoneKey) {
             return "obtained-self";
         }
-        if (data.secretPoint.getBlock(room) == Blocks.skull) {
+        if (LegacyBlock.SKULL.is(data.secretPoint.getBlock(room))) {
             return "unobtained";
         }
         return "obtained-other";

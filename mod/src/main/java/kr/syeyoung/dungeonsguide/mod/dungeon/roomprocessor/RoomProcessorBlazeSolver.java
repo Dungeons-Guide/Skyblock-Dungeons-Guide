@@ -32,7 +32,7 @@ import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -59,22 +59,26 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
         super.tick();
 
         DungeonRoom dungeonRoom = getDungeonRoom();
-        World w = dungeonRoom.getContext().getWorld();
+        Level w = Minecraft.getInstance().level;
         final BlockPos low = dungeonRoom.getRoomBounds().getMin();
         final BlockPos high = dungeonRoom.getRoomBounds().getMax();
-        entityList = new ArrayList<ArmorStand>(w.getEntities(ArmorStand.class, input -> {
-            BlockPos pos = input.getPosition();
+        // the room's bounds (D114)
+        AABB roomBox = new AABB(low.getX(), w.getMinY(), low.getZ(), high.getX() + 1, w.getMaxY() + 1, high.getZ() + 1);
+        // TODO: D5 entity name stopgap (D116)
+        entityList = new ArrayList<ArmorStand>(w.getEntitiesOfClass(ArmorStand.class, roomBox, input -> {
+            BlockPos pos = input.blockPosition();
             return low.getX() < pos.getX() && pos.getX() < high.getX()
-                    && low.getZ() < pos.getZ() && pos.getZ() < high.getZ() && input.getName().toLowerCase().contains("blaze");
+                    && low.getZ() < pos.getZ() && pos.getZ() < high.getZ() && TextUtils.getFormattedText(input.getName()).toLowerCase().contains("blaze");
         }));
-        blazeList = new ArrayList<Blaze>(w.getEntities(Blaze.class, input -> {
-            BlockPos pos = input.getPosition();
+        blazeList = new ArrayList<Blaze>(w.getEntitiesOfClass(Blaze.class, roomBox, input -> {
+            BlockPos pos = input.blockPosition();
             return low.getX() < pos.getX() && pos.getX() < high.getX()
                     && low.getZ() < pos.getZ() && pos.getZ() < high.getZ();
         }));
 
         Comparator<ArmorStand> comparator = Comparator.comparingInt(a -> {
-            String name = a.getName();
+            // TODO: D5 entity name stopgap (D116)
+            String name = TextUtils.getFormattedText(a.getName());
             String colorGone = TextUtils.stripColor(name);
             String health2 = TextUtils.keepIntegerCharactersOnly(colorGone.split("/")[1]);
             try {
@@ -89,14 +93,14 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
 
         if (entityList.size() > 0) {
             next = entityList.get(0);
-            currentBlaze = blazeList.stream().min(Comparator.comparingDouble(e -> e.getDistanceSqToEntity(next))).orElse(null);
+            currentBlaze = blazeList.stream().min(Comparator.comparingDouble(e -> e.distanceToSqr(next))).orElse(null);
         } else {
             next = null;
             currentBlaze = null;
         }
         if (entityList.size() > 1) {
             ArmorStand theNextOne = entityList.get(1);
-            nextBlaze = blazeList.stream().min(Comparator.comparingDouble(e -> e.getDistanceSqToEntity(theNextOne))).orElse(null);
+            nextBlaze = blazeList.stream().min(Comparator.comparingDouble(e -> e.distanceToSqr(theNextOne))).orElse(null);
         } else {
             nextBlaze = null;
         }
@@ -109,21 +113,21 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
         if (!FeatureRegistry.SOLVER_BLAZE.isEnabled()) return;
         if (next == null) return;
         Vec3 pos = next.getPositionEyes(partialTicks);
-        RenderUtils.drawTextAtWorld("NEXT", (float)pos.xCoord, (float)pos.yCoord, (float)pos.zCoord, 0xFFFF0000, 0.5f, true, false, partialTicks);
+        RenderUtils.drawTextAtWorld("NEXT", (float)pos.x, (float)pos.y, (float)pos.z, 0xFFFF0000, 0.5f, true, false, partialTicks);
 
         Entity viewing_from = Minecraft.getInstance().getCameraEntity();
 
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
+        double x_fix = viewing_from.lastTickPosX + ((viewing_from.getX() - viewing_from.lastTickPosX) * partialTicks);
+        double y_fix = viewing_from.lastTickPosY + ((viewing_from.getY() - viewing_from.lastTickPosY) * partialTicks);
+        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.getZ() - viewing_from.lastTickPosZ) * partialTicks);
 
 
         for (Blaze entity : blazeList) {
             GlStateManager.pushMatrix();
             float f = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks;
-            double x = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks;
-            double y = entity.prevPosY + (entity.posY - entity.prevPosY) * partialTicks;
-            double z = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
+            double x = entity.prevPosX + (entity.getX() - entity.prevPosX) * partialTicks;
+            double y = entity.prevPosY + (entity.getY() - entity.prevPosY) * partialTicks;
+            double z = entity.prevPosZ + (entity.getZ() - entity.prevPosZ) * partialTicks;
 
 
             GL11.glEnable(GL11.GL_STENCIL_TEST);
@@ -153,11 +157,11 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
 
             boolean border = true;
 
-            RenderUtils.highlightBox(entity, AABB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getBlazeColor(), partialTicks, false);
+            RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getBlazeColor(), partialTicks, false);
             if (entity == nextBlaze) {
-                RenderUtils.highlightBox(entity, AABB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextUpBlazeColor(), partialTicks, false);
+                RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextUpBlazeColor(), partialTicks, false);
             } else if (entity == currentBlaze)
-                RenderUtils.highlightBox(entity, AABB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextBlazeColor(), partialTicks, false);
+                RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextBlazeColor(), partialTicks, false);
 
             GlStateManager.color(1,1,1,1);
 
@@ -182,7 +186,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
                 GL11.glStencilFunc(GL11.GL_EQUAL, 3, 0xFF);
                 GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 
-                RenderUtils.highlightBox(entity, AABB.fromBounds(-1, 0, -1, 1, 2, 1), FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue(), partialTicks, false);
+                RenderUtils.highlightBox(entity, new AABB(-1, 0, -1, 1, 2, 1), FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue(), partialTicks, false);
 
 
             }

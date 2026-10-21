@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.goldenpath;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
@@ -28,8 +29,8 @@ import net.minecraft.world.level.block.Blocks;
 public class GoldenPathProcessorMatcher implements BombDefuseChamberGenerator {
     @Override
     public boolean match(BDChamber left, BDChamber right) {
-        return left.getBlock(4,0,0).getBlock() == Blocks.hardened_clay
-                || left.getBlock(4,0,0).getBlock() == Blocks.stained_hardened_clay;
+        return LegacyBlock.HARDENED_CLAY.is(left.getBlock(4,0,0))
+                || LegacyBlock.STAINED_HARDENED_CLAY.is(left.getBlock(4,0,0));
     }
 
     @Override

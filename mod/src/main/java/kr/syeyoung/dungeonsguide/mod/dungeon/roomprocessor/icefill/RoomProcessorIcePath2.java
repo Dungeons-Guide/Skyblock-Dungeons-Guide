@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.icefill;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
@@ -75,7 +76,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
                         map2[y][x] = level.getOffsetPointList().get(y * width + x).getBlockPos(dungeonRoom);
-                        map[y][x] = level.getOffsetPointList().get(y * width + x).getBlock(dungeonRoom) == Blocks.air ? 0 : 1;
+                        map[y][x] = LegacyBlock.AIR.is(level.getOffsetPointList().get(y * width + x).getBlock(dungeonRoom)) ? 0 : 1;
                     }
                 }
 

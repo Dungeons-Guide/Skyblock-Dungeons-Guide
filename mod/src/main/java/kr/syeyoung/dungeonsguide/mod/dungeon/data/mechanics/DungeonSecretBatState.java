@@ -87,17 +87,17 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
         BlockPos bpos = data.secretPoint.getBlockPos(dungeonRoom);
         Vec3 pos = new Vec3(bpos);
         for (Map.Entry<Integer, Vec3> integerVec3Entry : DungeonActionContext.getSpawnLocation().entrySet()) {
-            if (integerVec3Entry.getValue().squareDistanceTo(pos) < 100) {
-                Entity e = Minecraft.getInstance().level.getEntityByID(integerVec3Entry.getKey());
+            if (integerVec3Entry.getValue().distanceToSqr(pos) < 100) {
+                Entity e = Minecraft.getInstance().level.getEntity(integerVec3Entry.getKey());
                 if (e == null) continue;
                 if (!(e instanceof Bat)) continue;
-                if (e.isDead) continue;
+                if (e.isRemoved()) continue;
                 return; // bat is not dead.
             }
         }
 
         // can't find the bat!!!
-        if (bpos.distanceSq(Minecraft.getInstance().player.getPosition()) < 49) {
+        if (bpos.distSqr(Minecraft.getInstance().player.blockPosition()) < 49) {
             nearbyTicks++;
         }
         if (nearbyTicks > 100) {

@@ -18,12 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.maze;
 
+import net.minecraft.world.level.block.state.BlockState;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.world.level.block.Block;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 
@@ -38,37 +39,38 @@ public class MazeRightProcessor extends GeneralDefuseChamberProcessor {
 
         for (int x = 0; x < 9; x++) {
             for (int y =0; y< 6; y++) {
-                Block b = chamber.getBlock(x,0,y).getBlock();
+                BlockState b = chamber.getBlock(x,0,y);
                 BlockPos pos = chamber.getBlockPos(x,0,y);
-                blockToBlockPosMap.put(b, pos);
+                // 1.8.9 keyed by block, without meta
+                blockToBlockPosMap.put(LegacyBlock.legacyId(b), pos);
             }
         }
     }
 
     private final BlockPos center;
-    private final Map<Block, BlockPos> blockToBlockPosMap = new HashMap<Block, BlockPos>();
+    private final Map<Integer, BlockPos> blockToBlockPosMap = new HashMap<Integer, BlockPos>();
     @Override
     public String getName() {
         return "mazeRight";
     }
 
 
-    private Block latestRequest = null;
+    private BlockState latestRequest = null;
 
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        RenderUtils.drawTextAtWorld(latestRequest == null ? "Request not received yet" : "Requested received "+latestRequest.getLocalizedName() , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-        BlockPos pos = blockToBlockPosMap.get(latestRequest);
+        RenderUtils.drawTextAtWorld(latestRequest == null ? "Request not received yet" : "Requested received "+latestRequest.getBlock().getName().getString() , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        BlockPos pos = latestRequest == null ? null : blockToBlockPosMap.get(LegacyBlock.legacyId(latestRequest));
         if (pos == null) return;
         RenderUtils.highlightBlock(pos, new Color(0,255,0,100), partialTicks, false);
     }
 
     @Override
     public void onDataReceive(CompoundTag compound) {
-        if (5 == compound.getByte("a")) {
-            int latestRequestid = compound.getInteger("b");
-            latestRequest = Block.getBlockById(latestRequestid);
+        if (5 == compound.getByteOr("a", (byte) 0)) {
+            int latestRequestid = compound.getIntOr("b", 0);
+            latestRequest = LegacyBlock.state(latestRequestid, 0);
         }
     }
 }

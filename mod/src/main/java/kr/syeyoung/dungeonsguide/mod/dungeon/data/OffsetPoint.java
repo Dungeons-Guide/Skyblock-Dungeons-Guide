@@ -25,11 +25,11 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import lombok.Data;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
-import javax.vecmath.Vector2d;
+import org.joml.Vector2d;
 import java.io.Serializable;
 
 @Data
@@ -57,7 +57,7 @@ public class OffsetPoint implements Cloneable {
         setPosInWorld(dungeonRoom, pos);
     }
     public OffsetPoint(DungeonRoom dungeonRoom, Vec3 pos) {
-        setPosInWorld(dungeonRoom, new BlockPos((int)pos.xCoord, (int)pos.yCoord, (int)pos.zCoord));
+        setPosInWorld(dungeonRoom, new BlockPos((int)pos.x, (int)pos.y, (int)pos.z));
     }
 
 
@@ -88,7 +88,7 @@ public class OffsetPoint implements Cloneable {
             }
         }
 
-        return new BlockPos(rot.x, y, rot.y);
+        return BlockPos.containing(rot.x, y, rot.y);
     }
 
     public BlockPos toRotatedRelBlockPos(int rotation, int zLen, int xLen) {
@@ -102,10 +102,10 @@ public class OffsetPoint implements Cloneable {
             }
         }
 
-        return new BlockPos(rot.x, y, rot.y);
+        return BlockPos.containing(rot.x, y, rot.y);
     }
 
-    public Block getBlock(DungeonRoom dungeonRoom) {
+    public BlockState getBlock(DungeonRoom dungeonRoom) {
         BlockPos relBp = toRotatedRelBlockPos(dungeonRoom);
 
         return dungeonRoom.getRelativeBlockAt(relBp.getX(), relBp.getY(), relBp.getZ());

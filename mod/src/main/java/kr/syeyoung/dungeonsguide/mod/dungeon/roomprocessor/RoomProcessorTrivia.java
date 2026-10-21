@@ -147,7 +147,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
         OffsetPoint op = (OffsetPoint) getDungeonRoom().getDungeonRoomInfo().getProperties().get(correctAnswer);
         if (op != null) {
             BlockPos solution = op.getBlockPos(getDungeonRoom());
-            RenderUtils.highlightBoxAColor(AABB.fromBounds(solution.getX(), solution.getY(), solution.getZ(), solution.getX()+1, solution.getY() + 1, solution.getZ() + 1),  FeatureRegistry.SOLVER_KAHOOT.getTargetColor(), partialTicks, false);
+            RenderUtils.highlightBoxAColor(new AABB(solution.getX(), solution.getY(), solution.getZ(), solution.getX()+1, solution.getY() + 1, solution.getZ() + 1),  FeatureRegistry.SOLVER_KAHOOT.getTargetColor(), partialTicks, false);
         }
     }
 

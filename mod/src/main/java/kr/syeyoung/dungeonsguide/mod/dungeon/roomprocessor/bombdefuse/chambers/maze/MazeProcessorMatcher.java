@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.maze;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
@@ -28,8 +29,8 @@ import net.minecraft.world.level.block.Blocks;
 public class MazeProcessorMatcher implements BombDefuseChamberGenerator {
     @Override
     public boolean match(BDChamber left, BDChamber right) {
-        return right.getBlock(1,0,1).getBlock() != Blocks.double_stone_slab &&
-                left.getBlock(1,1,1).getBlock() != Blocks.barrier;
+        return !LegacyBlock.DOUBLE_STONE_SLAB.is(right.getBlock(1,0,1)) &&
+                !LegacyBlock.BARRIER.is(left.getBlock(1,1,1));
     }
 
     @Override

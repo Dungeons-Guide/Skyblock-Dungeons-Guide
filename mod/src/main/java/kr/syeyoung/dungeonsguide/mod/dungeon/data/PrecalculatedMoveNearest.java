@@ -96,7 +96,7 @@ public class PrecalculatedMoveNearest {
             }
 
             spots[i] = RaytraceHelper.findMovespots(new DRIWorld(dri, included), new BlockPos(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()),
-                    a -> a.squareDistanceTo(vec) <= 25, 6);
+                    a -> a.distanceToSqr(vec) <= 25, 6);
         }
         return new PrecalculatedMoveNearest(calculateFor, spots, offsetPoint);
     }
@@ -126,9 +126,9 @@ public class PrecalculatedMoveNearest {
         }
         Vec3 vec = new Vec3(offsetPoint.getX() + 0.5, offsetPoint.getY() + 70.5, offsetPoint.getZ() + 0.5);
         List<PossibleMoveSpot>[] spots = new List[1 << calculateFor.size()];
-        AABB check = AABB.fromBounds(
-                vec.xCoord - 3, vec.yCoord + 1.1, vec.zCoord -3,
-                vec.xCoord + 3, vec.yCoord - 3.6, vec.zCoord + 3
+        AABB check = new AABB(
+                vec.x - 3, vec.y + 1.1, vec.z -3,
+                vec.x + 3, vec.y - 3.6, vec.z + 3
         );
         for (int i = 0; i < (1 << calculateFor.size()); i++) {
             List<String> included = new ArrayList<>();
@@ -138,7 +138,7 @@ public class PrecalculatedMoveNearest {
             }
 
             spots[i] = RaytraceHelper.findMovespots(new DRIWorld(dri, included), new BlockPos(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()),
-                    a -> check.isVecInside(a), 8);
+                    a -> check.contains(a), 8);
         }
         return new PrecalculatedMoveNearest(calculateFor, spots, offsetPoint);
     }

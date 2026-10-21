@@ -48,13 +48,12 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
 import net.minecraft.world.level.chunk.LevelChunk;
 
-import javax.vecmath.Vector2d;
+import org.joml.Vector2d;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
@@ -298,7 +297,7 @@ public class DungeonRoom  {
             BlockPos pos = context.getScaffoldParser().getDungeonMapLayout().roomPointToWorldPoint(minRoomPt).add(16, 0, 16);
             for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : doorsAndStates) {
                 Vector2d vector2d = doorsAndState.getA();
-                BlockPos neu = pos.add(vector2d.x * 32, 0, vector2d.y * 32);
+                BlockPos neu = BlockPos.containing(pos.getX() + vector2d.x * 32, pos.getY(), pos.getZ() + vector2d.y * 32);
                 positions.add(new Tuple<>(neu, doorsAndState.getB()));
             }
 

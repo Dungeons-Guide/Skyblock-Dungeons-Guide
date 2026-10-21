@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
@@ -69,12 +70,12 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
     public void tick(DungeonRoom dungeonRoom) {
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
         BlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
-        if (blockState.getBlock() == Blocks.skull) {
+        if (LegacyBlock.SKULL.is(blockState)) {
             essenceWasThere = true;
-            List<ArmorStand> entities = Minecraft.getInstance().level.getEntitiesWithinAABB(ArmorStand.class, AABB.fromBounds(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
-            BlockEntity tileEntity = dungeonRoom.getCachedWorld().getTileEntity(pos);
+            List<ArmorStand> entities = Minecraft.getInstance().level.getEntitiesOfClass(ArmorStand.class, new AABB(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
+            BlockEntity tileEntity = dungeonRoom.getCachedWorld().getBlockEntity(pos);
 
-            if (Minecraft.getInstance().player.getDistanceSq(pos) < 25) {
+            if (pos.distToLowCornerSqr(Minecraft.getInstance().player.getX(), Minecraft.getInstance().player.getY(), Minecraft.getInstance().player.getZ()) < 25) {
                 if (tileEntity instanceof SkullBlockEntity) {
                     String texture = Optional.ofNullable(((SkullBlockEntity) tileEntity).getPlayerProfile())
                             .map(a -> a.getProperties())
@@ -103,10 +104,10 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
                     }
                 }
             }
-        } else if (blockState.getBlock() == Blocks.air && essenceWasThere) {
+        } else if (LegacyBlock.AIR.is(blockState) && essenceWasThere) {
             found = true;
-        } else if (blockState.getBlock() == Blocks.air && !essenceWasThere) {
-            if (Minecraft.getInstance().player.getDistanceSq(pos) < 25) {
+        } else if (LegacyBlock.AIR.is(blockState) && !essenceWasThere) {
+            if (pos.distToLowCornerSqr(Minecraft.getInstance().player.getX(), Minecraft.getInstance().player.getY(), Minecraft.getInstance().player.getZ()) < 25) {
                 nearbyTicks++;
             }
             if (nearbyTicks > 100) {

@@ -26,13 +26,13 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.Giant;
 import net.minecraft.world.entity.animal.golem.IronGolem;
-import net.minecraft.entity.passive.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// TODO: D5 entity name stopgap (D116), the getFormattedText(entity.getName()) reads
 public class BossfightProcessorSadan extends GeneralBossfightProcessor {
     public BossfightProcessorSadan() {
         super("CATACOMBS_FLOOR_SIX");
@@ -78,7 +78,7 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
         {
             long health = 0;
             if (sadanStand != null) {
-                String name = TextUtils.stripColor(sadanStand.getName());
+                String name = TextUtils.stripColor(TextUtils.getFormattedText(sadanStand.getName()));
                 String healthPart = name.split(" ")[2];
                 health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
             }
@@ -88,7 +88,7 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
             {
                 long health = 0;
                 if (diamondGiant != null) {
-                    String name = TextUtils.stripColor(diamondGiant.getName());
+                    String name = TextUtils.stripColor(TextUtils.getFormattedText(diamondGiant.getName()));
                     String healthPart = name.split(" ")[3];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
@@ -97,7 +97,7 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
             {
                 long health = 0;
                 if (bigfootGiant != null) {
-                    String name = TextUtils.stripColor(bigfootGiant.getName());
+                    String name = TextUtils.stripColor(TextUtils.getFormattedText(bigfootGiant.getName()));
                     String healthPart = name.split(" ")[1];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
@@ -106,7 +106,7 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
             {
                 long health = 0;
                 if (laserGiant != null) {
-                    String name = TextUtils.stripColor(laserGiant.getName());
+                    String name = TextUtils.stripColor(TextUtils.getFormattedText(laserGiant.getName()));
                     String healthPart = name.split(" ")[1];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
@@ -115,7 +115,7 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
             {
                 long health = 0;
                 if (boulderGiant != null) {
-                    String name = TextUtils.stripColor(boulderGiant.getName());
+                    String name = TextUtils.stripColor(TextUtils.getFormattedText(boulderGiant.getName()));
                     String healthPart = name.split(" ")[3];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
@@ -138,35 +138,35 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
     @Override
     public void onEntityUpdate(LivingTickEvent updateEvent) {
         if (updateEvent.entityLiving instanceof ArmorStand) {
-            if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lSadan§r"))
+            if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).startsWith("§e﴾ §c§lSadan§r"))
                 sadanStand = (ArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§c§d§lJolly Pink Giant"))
+            else if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).startsWith("§c§d§lJolly Pink Giant"))
                 boulderGiant = (ArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§c§4§lL.A.S.R."))
+            else if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).startsWith("§c§4§lL.A.S.R."))
                 laserGiant = (ArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§c§3§lThe Diamond Giant"))
+            else if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).startsWith("§c§3§lThe Diamond Giant"))
                 diamondGiant = (ArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§c§c§lBigfoot"))
+            else if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).startsWith("§c§c§lBigfoot"))
                 bigfootGiant = (ArmorStand) updateEvent.entityLiving;
         } else if (updateEvent.entityLiving instanceof Giant) {
 
-            if (updateEvent.entityLiving.posY < 55) {
-                mapping.put(updateEvent.entityLiving.getEntityId(), 50);
-            } else if (Math.abs(updateEvent.entityLiving.posY - 84.0) < 0.01) {
-                boolean xS = Math.abs(updateEvent.entityLiving.posX - -16.5) < 0.01;
-                boolean xB = Math.abs(updateEvent.entityLiving.posX - -0.5) < 0.01;
-                boolean zS = Math.abs(updateEvent.entityLiving.posZ - 53.5) < 0.01;
-                boolean zB = Math.abs(updateEvent.entityLiving.posZ - 79.5) < 0.01;
+            if (updateEvent.entityLiving.getY() < 55) {
+                mapping.put(updateEvent.entityLiving.getId(), 50);
+            } else if (Math.abs(updateEvent.entityLiving.getY() - 84.0) < 0.01) {
+                boolean xS = Math.abs(updateEvent.entityLiving.getX() - -16.5) < 0.01;
+                boolean xB = Math.abs(updateEvent.entityLiving.getX() - -0.5) < 0.01;
+                boolean zS = Math.abs(updateEvent.entityLiving.getZ() - 53.5) < 0.01;
+                boolean zB = Math.abs(updateEvent.entityLiving.getZ() - 79.5) < 0.01;
 
                 // 43 44 51 52
                 if (xS && zS) {
-                    mapping.put(updateEvent.entityLiving.getEntityId(), 52); // jolley
+                    mapping.put(updateEvent.entityLiving.getId(), 52); // jolley
                 } else if (xS && zB) {
-                    mapping.put(updateEvent.entityLiving.getEntityId(), 43); // diamond
+                    mapping.put(updateEvent.entityLiving.getId(), 43); // diamond
                 } else if (xB && zB) {
-                    mapping.put(updateEvent.entityLiving.getEntityId(), 51); // big foot
+                    mapping.put(updateEvent.entityLiving.getId(), 51); // big foot
                 } else if (xB && zS) {
-                    mapping.put(updateEvent.entityLiving.getEntityId(), 49); // laser
+                    mapping.put(updateEvent.entityLiving.getId(), 49); // laser
                 }
             }
             // lpx
@@ -186,13 +186,13 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
     @Override
     public MarkerData convertToMarker(Entity entity) {
         if (entity instanceof IronGolem) {
-            return MarkerData.fromEntity(entity, MarkerData.MobType.GOLEM, Math.abs(entity.rotationPitch - 59.0625) < 0.01 ? 42 : 49);
+            return MarkerData.fromEntity(entity, MarkerData.MobType.GOLEM, Math.abs(entity.getXRot() - 59.0625) < 0.01 ? 42 : 49);
         } else if (entity instanceof Giant) {
-            Integer map = mapping.get(entity.getEntityId());
+            Integer map = mapping.get(entity.getId());
             if (map == null) return null;
             return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, map);
         } else if (entity instanceof RemotePlayer) {
-            String name = entity.getName();
+            String name = TextUtils.getFormattedText(entity.getName());
             if ("Terracotta ".equals(name)) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.TERRACOTA, 41);
             } else if ("Sadan ".equals(name)) {

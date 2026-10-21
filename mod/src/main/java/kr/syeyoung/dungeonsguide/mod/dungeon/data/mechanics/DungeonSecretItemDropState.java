@@ -72,14 +72,14 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
 
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
         boolean itemFound = false;
-        for (ItemEntity entityItem : Minecraft.getInstance().level.getEntitiesWithinAABB(ItemEntity.class, new AABB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()))) {
+        for (ItemEntity entityItem : Minecraft.getInstance().level.getEntitiesOfClass(ItemEntity.class, new AABB(-4, -4, -4, 4, 4, 4).expandTowards(pos.getX(), pos.getY(), pos.getZ()))) {
             if (entityItem.getEntityItem().getItem() == Items.dye) continue;
             itemFound = true;
         }
 
-        if (Minecraft.getInstance().player.getDistanceSq(pos) < 40) {
+        if (pos.distToLowCornerSqr(Minecraft.getInstance().player.getX(), Minecraft.getInstance().player.getY(), Minecraft.getInstance().player.getZ()) < 40) {
             nearbyTicks++;
-            List<ItemEntity> items = Minecraft.getInstance().level.getEntitiesWithinAABB(ItemEntity.class, new AABB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()));
+            List<ItemEntity> items = Minecraft.getInstance().level.getEntitiesOfClass(ItemEntity.class, new AABB(-4, -4, -4, 4, 4, 4).expandTowards(pos.getX(), pos.getY(), pos.getZ()));
             if (itemFound) {
                 status = SecretStatus.DEFINITELY_NOT;
             } else if (status != SecretStatus.FOUND && nearbyTicks > 40) {

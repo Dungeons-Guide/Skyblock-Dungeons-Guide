@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.number;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BombDefuseChamberGenerator;
@@ -27,14 +28,14 @@ import net.minecraft.world.level.block.Blocks;
 public class NumberProcessorMatcher implements BombDefuseChamberGenerator {
     @Override
     public boolean match(BDChamber left, BDChamber right) {
-        return left.getBlock(1,1,4).getBlock() == Blocks.stone &&
-                left.getBlock(2,1,4).getBlock() == Blocks.stone &&
-                left.getBlock(6,1,4).getBlock() == Blocks.stone &&
-                left.getBlock(7,1,4).getBlock() == Blocks.stone &&
-                right.getBlock(1,1,4).getBlock() == Blocks.stone &&
-                right.getBlock(2,1,4).getBlock() == Blocks.stone &&
-                right.getBlock(6,1,4).getBlock() == Blocks.stone &&
-                right.getBlock(7,1,4).getBlock() == Blocks.stone;
+        return LegacyBlock.STONE.is(left.getBlock(1,1,4)) &&
+                LegacyBlock.STONE.is(left.getBlock(2,1,4)) &&
+                LegacyBlock.STONE.is(left.getBlock(6,1,4)) &&
+                LegacyBlock.STONE.is(left.getBlock(7,1,4)) &&
+                LegacyBlock.STONE.is(right.getBlock(1,1,4)) &&
+                LegacyBlock.STONE.is(right.getBlock(2,1,4)) &&
+                LegacyBlock.STONE.is(right.getBlock(6,1,4)) &&
+                LegacyBlock.STONE.is(right.getBlock(7,1,4));
     }
 
     @Override

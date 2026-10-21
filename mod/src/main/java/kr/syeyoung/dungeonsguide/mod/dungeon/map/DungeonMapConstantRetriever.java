@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 
-import javax.vecmath.Vector2d;
+import org.joml.Vector2d;
 import java.awt.*;
 import java.util.Set;
 import net.minecraft.network.chat.Component;
@@ -80,7 +80,7 @@ public class DungeonMapConstantRetriever {
 
         int worldX = unitPoint.x * 16;
         int worldY = unitPoint.y * 16;
-        BlockPos worldMin = worldDoor.add(-worldX, 0, -worldY);
+        BlockPos worldMin = worldDoor.offset(-worldX, 0, -worldY);
         return worldMin;
     }
     private static  Point obtainTopLeft(byte[] mapData, Rectangle firstRoom, Dimension doorDimension) {

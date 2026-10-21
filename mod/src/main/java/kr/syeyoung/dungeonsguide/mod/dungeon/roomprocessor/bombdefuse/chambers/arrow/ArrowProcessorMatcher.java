@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.arrow;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BombDefuseChamberGenerator;
@@ -27,12 +28,12 @@ import net.minecraft.world.level.block.Blocks;
 public class ArrowProcessorMatcher implements BombDefuseChamberGenerator {
     @Override
     public boolean match(BDChamber left, BDChamber right) {
-        return left.getBlock(8,1,1).getBlock() == Blocks.planks &&
-                left.getBlock(8,1,2).getBlock() == Blocks.planks &&
-                left.getBlock(8,1,3).getBlock() == Blocks.planks &&
-                right.getBlock(0,1,1).getBlock() == Blocks.planks &&
-                right.getBlock(0,1,2).getBlock() == Blocks.planks &&
-                right.getBlock(0,1,3).getBlock() == Blocks.planks;
+        return LegacyBlock.PLANKS.is(left.getBlock(8,1,1)) &&
+                LegacyBlock.PLANKS.is(left.getBlock(8,1,2)) &&
+                LegacyBlock.PLANKS.is(left.getBlock(8,1,3)) &&
+                LegacyBlock.PLANKS.is(right.getBlock(0,1,1)) &&
+                LegacyBlock.PLANKS.is(right.getBlock(0,1,2)) &&
+                LegacyBlock.PLANKS.is(right.getBlock(0,1,3));
     }
 
     @Override

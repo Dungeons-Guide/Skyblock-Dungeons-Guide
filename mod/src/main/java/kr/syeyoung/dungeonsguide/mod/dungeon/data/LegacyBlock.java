@@ -131,7 +131,8 @@ public enum LegacyBlock {
         return state(legacyId, meta);
     }
 
+    // null is no block, like 1.8.9's null == Blocks.x
     public boolean is(BlockState state) {
-        return legacyId(state) == legacyId;
+        return state != null && legacyId(state) == legacyId;
     }
 }

@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
@@ -32,6 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 
 import java.awt.*;
@@ -117,7 +119,7 @@ public class DungeonBreakableWallState implements WorldMutatingMechanicState {
     @Override
     public boolean isBlocking(DungeonRoom dungeonRoom) {
         for (OffsetPoint offsetPoint : data.secretPoint.getOffsetPointList()) {
-            if (offsetPoint.getBlock(dungeonRoom) != Blocks.air) return true;
+            if (!LegacyBlock.AIR.is(offsetPoint.getBlock(dungeonRoom))) return true;
         }
         return false;
     }
@@ -129,11 +131,11 @@ public class DungeonBreakableWallState implements WorldMutatingMechanicState {
 
     @Override
     public String getCurrentState() {
-        Block b = Blocks.air;
+        BlockState b = Blocks.AIR.defaultBlockState();
         if (!data.secretPoint.getOffsetPointList().isEmpty())
             b = data.secretPoint.getOffsetPointList().get(0).getBlock(room);
 
-        return b == Blocks.air ?"open" :"closed";
+        return LegacyBlock.AIR.is(b) ?"open" :"closed";
     }
 
     @Override

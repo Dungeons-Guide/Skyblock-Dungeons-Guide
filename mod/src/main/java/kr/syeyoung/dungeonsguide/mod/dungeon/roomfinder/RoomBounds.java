@@ -60,10 +60,10 @@ public class RoomBounds {
 
 
     public boolean isFullyWithin(Vec3 vec) {
-        if (vec.xCoord * 2 <= minX * 2 + 3 || vec.zCoord * 2 <= minZ * 2 + 3) return false;
-        if (vec.xCoord * 2 >= maxX * 2 + 1 || vec.zCoord * 2 >= maxZ * 2 + 1) return false;
-        if (!canAccessRelative( (int) Math.floor((vec.xCoord * 2 - minX * 2 - 1) / 2), (int) Math.floor((vec.zCoord * 2 - minZ * 2 - 1) / 2))) return false;
-        if (!canAccessRelative( (int) Math.floor((vec.xCoord * 2 - minX * 2 + 1) / 2), (int) Math.floor((vec.zCoord * 2 - minZ * 2 + 1) / 2))) return false;
+        if (vec.x * 2 <= minX * 2 + 3 || vec.z * 2 <= minZ * 2 + 3) return false;
+        if (vec.x * 2 >= maxX * 2 + 1 || vec.z * 2 >= maxZ * 2 + 1) return false;
+        if (!canAccessRelative( (int) Math.floor((vec.x * 2 - minX * 2 - 1) / 2), (int) Math.floor((vec.z * 2 - minZ * 2 - 1) / 2))) return false;
+        if (!canAccessRelative( (int) Math.floor((vec.x * 2 - minX * 2 + 1) / 2), (int) Math.floor((vec.z * 2 - minZ * 2 + 1) / 2))) return false;
         return true;
     }
 }

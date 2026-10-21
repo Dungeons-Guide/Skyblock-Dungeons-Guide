@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
+import net.minecraft.client.Minecraft;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
@@ -46,8 +47,8 @@ public class ActionDropItem extends AbstractAction {
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
         BlockPos secretLocation = target.getBlockPos(dungeonRoom);
-        List<ItemEntity> item = dungeonRoom.getContext().getWorld().getEntitiesWithinAABB(ItemEntity.class,
-                AABB.fromBounds(
+        List<ItemEntity> item = Minecraft.getInstance().level.getEntitiesOfClass(ItemEntity.class,
+                new AABB(
                         secretLocation.getX(),
                         secretLocation.getY(),
                         secretLocation.getZ(),

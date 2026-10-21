@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
@@ -32,13 +33,15 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LeverBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.World;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 import java.awt.*;
@@ -104,15 +107,16 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
 
     private void buildLeverStates(){
         for (OffsetPoint offsetPoint : levers.getOffsetPointList()) {
-            if (offsetPoint.getBlock(getDungeonRoom()) == Blocks.lever){
+            if (LegacyBlock.LEVER.is(offsetPoint.getBlock(getDungeonRoom()))){
                 BlockPos pos = offsetPoint.getBlockPos(getDungeonRoom());
-                World w=  getDungeonRoom().getContext().getWorld();
-                LeverBlock.EnumOrientation enumOrientation = w.getBlockState(pos).getValue(LeverBlock.FACING);
-                Direction enumFacing = enumOrientation.getFacing();
-                BlockPos newPos = pos.add(-enumFacing.getDirectionVec().getX(),0,-enumFacing.getDirectionVec().getZ());
+                DGWorld w=  getDungeonRoom().getContext().getWorld();
+                BlockState lever = w.getBlockState(pos);
+                Direction enumFacing = lever.getValue(LeverBlock.FACING);
+                // 1.8.9's floor / ceiling levers faced up / down, so the offset was zero
+                BlockPos newPos = lever.getValue(LeverBlock.FACE) == AttachFace.WALL ? pos.offset(-enumFacing.getStepX(),0,-enumFacing.getStepZ()) : pos;
 
-                int id = Block.getIdFromBlock(w.getBlockState(newPos).getBlock());
-                int data = w.getBlockState(newPos).getBlock().getMetaFromState(w.getBlockState(newPos));
+                int id = LegacyBlock.legacyId(w.getBlockState(newPos));
+                int data = LegacyBlock.meta(w.getBlockState(newPos));
 
                 switchFlips.put(id+":"+data, new ArrayList<>());
                 switchLoc.put(id+":"+data, pos);
@@ -135,8 +139,8 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                 OffsetPoint back = backPoints.get(x * 25 +y);
 
                 ptMapping.put(new Simulator.Pt(x,y), front.getBlockPos(getDungeonRoom()));
-                int frontId = Block.getIdFromBlock(front.getBlock(getDungeonRoom()));
-                int backId = Block.getIdFromBlock(back.getBlock(getDungeonRoom()));
+                int frontId = LegacyBlock.legacyId(front.getBlock(getDungeonRoom()));
+                int backId = LegacyBlock.legacyId(back.getBlock(getDungeonRoom()));
                 int frontData = front.getData(getDungeonRoom());
                 int backData = back.getData(getDungeonRoom());
 
@@ -157,7 +161,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                             pos = frontPoints.get((x+1) * 25 +y);
                         }
 
-                        int id = Block.getIdFromBlock(pos.getBlock(getDungeonRoom()));
+                        int id = LegacyBlock.legacyId(pos.getBlock(getDungeonRoom()));
                         int data= pos.getData(getDungeonRoom());
                         waterNodeEnds.put(id+":"+data, new Simulator.Pt(x,y));
                     }
@@ -178,8 +182,8 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     private void targetDoors() {
         targetDoors.clear();
         for (OffsetPoint offsetPoint : doorsClosed.getOffsetPointList()) {
-            if (offsetPoint.getBlock(getDungeonRoom()) != Blocks.air) {
-                targetDoors.add(Block.getIdFromBlock(offsetPoint.getBlock(getDungeonRoom()))+":"+offsetPoint.getData(getDungeonRoom()));
+            if (!LegacyBlock.AIR.is(offsetPoint.getBlock(getDungeonRoom()))) {
+                targetDoors.add(LegacyBlock.legacyId(offsetPoint.getBlock(getDungeonRoom()))+":"+offsetPoint.getData(getDungeonRoom()));
             }
         }
     }
@@ -353,7 +357,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                         GlStateManager.color(1,1,1,1);
                         RenderUtils.drawLine(
                                 Minecraft.getInstance().player.getPositionEyes(partialTicks),
-                                new Vec3(pos).addVector(0.5, 0, 0.5),
+                                new Vec3(pos).add(0.5, 0, 0.5),
                                 Color.green,
                                 partialTicks,
                                 false);

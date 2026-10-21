@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers;
 
+import net.minecraft.world.phys.AABB;
+import net.minecraft.client.Minecraft;
 import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
@@ -50,7 +52,7 @@ public class BDChamber {
     }
 
     public BlockPos getBlockPos(int x, int y, int z) {
-        return getOffsetPoint(x,z).getBlockPos(room).add(0,y,0);
+        return getOffsetPoint(x,z).getBlockPos(room).offset(0,y,0);
     }
 
     public BlockState getBlock(int x, int y, int z) {
@@ -71,10 +73,11 @@ public class BDChamber {
         return getEntityAt(entity, pos);
     }
     public <T extends Entity> T getEntityAt(Class<T> entity, final BlockPos pos) {
-        List<T> entities = room.getContext().getWorld().getEntities(entity, new Predicate<T>() {
+        // the block at pos (D114)
+        List<T> entities = Minecraft.getInstance().level.getEntitiesOfClass(entity, new AABB(pos), new Predicate<T>() {
             @Override
             public boolean apply(@Nullable T input) {
-                return input.getPosition().equals(pos);
+                return input.blockPosition().equals(pos);
             }
         });
         if (entities.size() == 0) return null;

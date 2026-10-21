@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
@@ -108,7 +109,7 @@ public class DungeonDoorState implements WorldMutatingMechanicState {
     @Override
     public boolean isBlocking(DungeonRoom dungeonRoom) {
         for (OffsetPoint offsetPoint : data.secretPoint.getOffsetPointList()) {
-            if (offsetPoint.getBlock(dungeonRoom) != Blocks.air) return true;
+            if (!LegacyBlock.AIR.is(offsetPoint.getBlock(dungeonRoom))) return true;
         }
         return false;
     }

@@ -18,18 +18,22 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleClickingSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleMoveSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.RequiredTool;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.util.*;
-import net.minecraft.world.World;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 
@@ -43,6 +47,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
 
 public class RaytraceHelper {
@@ -58,7 +63,7 @@ public class RaytraceHelper {
     public static interface CalculateIsBlocked {
         boolean canStand(int x, int y, int z);
     }
-    public static List<PossibleClickingSpot> raycast(World w, BlockPos target) {
+    public static List<PossibleClickingSpot> raycast(DGWorld w, BlockPos target) {
         return raycast(w, target, (a,b,c) -> RaytraceHelper.canStand(w,a,b,c));
     }
 
@@ -128,10 +133,11 @@ public class RaytraceHelper {
     }
 
 
-    public static List<PossibleClickingSpot> raycast(World w, BlockPos target, CalculateIsBlocked calculateIsBlocked) {
+    public static List<PossibleClickingSpot> raycast(DGWorld w, BlockPos target, CalculateIsBlocked calculateIsBlocked) {
         BlockState targetBlockState = w.getBlockState(target);
-        targetBlockState.getBlock().setBlockBoundsBasedOnState(w, target);
-        AABB bb = targetBlockState.getBlock().getSelectedBoundingBox(w, target);
+        // 1.8.9's selected bounding box is the outline shape, empty ones (air) were the full block
+        VoxelShape targetShape = targetBlockState.getShape(w.asVanilla(), target);
+        AABB bb = targetShape.isEmpty() ? new AABB(target) : targetShape.bounds().move(target);
 
         Map<Vec3, RequiredTool[]> actualReq = new HashMap<>();
         Map<Vec3, Boolean> stonk = new HashMap<>();
@@ -148,15 +154,15 @@ public class RaytraceHelper {
 
                     Vec3 playerFoot = new Vec3(x, y, z);
                     for (int shift = 0; shift <= 1; shift++) {
-                        Vec3 eye = playerFoot.addVector(0, 1.62F  - shift * 0.08F, 0); // assume sneaking lol
+                        Vec3 eye = playerFoot.add(0, 1.62F  - shift * 0.08F, 0); // assume sneaking lol
                         for (int ix = 0; ix <= 2; ix++) {
                             for (int iy = 0; iy <= 2; iy++) {
                                 for (int iz = 0; iz <= 2; iz++) {
                                     Vec3 to = interpolate(bb, ix * 0.45 + 0.05 + 0.001, iy * 0.45 + 0.05 + 0.002, iz * 0.45 + 0.05 + 0.003);
 
-                                    if (to.squareDistanceTo(eye) > 4.5 * 4.5) {
+                                    if (to.distanceToSqr(eye) > 4.5 * 4.5) {
                                         to = to.subtract(eye).normalize();
-                                        to = eye.addVector(to.xCoord * 4.5, to.yCoord * 4.5, to.zCoord * 4.5);
+                                        to = eye.add(to.x * 4.5, to.y * 4.5, to.z * 4.5);
                                     }
                                     // 2 * 2 * 2 * 20 * 20 * 20 = 64k collision checks.
                                     List<BlockPos> blocks = rayTraceBlocks(w, eye, to);
@@ -173,12 +179,12 @@ public class RaytraceHelper {
                                     if (!notstonk && !isAir) {
                                         BlockPos pos = blocks.get(until);
                                         BlockState from_state = w.getBlockState(pos);
-                                        Block from_block = from_state.getBlock();
 
+                                        // stonks are instant on 26.1, harvest level / tool are kept for compatibility only (D117)
                                         BlockBreakData breakData = new BlockBreakData(
-                                                (isAir ? 5 : 1) * from_block.getBlockHardness(w, pos),
-                                                from_block.getHarvestLevel(from_state),
-                                                from_block.getHarvestTool(from_state)
+                                                (isAir ? 5 : 1) * from_state.getDestroySpeed(w.asVanilla(), pos),
+                                                from_state.is(BlockTags.NEEDS_DIAMOND_TOOL) ? 3 : from_state.is(BlockTags.NEEDS_IRON_TOOL) ? 2 : from_state.is(BlockTags.NEEDS_STONE_TOOL) ? 1 : 0,
+                                                from_state.is(BlockTags.MINEABLE_WITH_PICKAXE) ? "pickaxe" : from_state.is(BlockTags.MINEABLE_WITH_AXE) ? "axe" : from_state.is(BlockTags.MINEABLE_WITH_SHOVEL) ? "shovel" : null
                                         );
 
                                         if (breakData.hardness < 0) {
@@ -188,12 +194,10 @@ public class RaytraceHelper {
                                         }
 
                                         int idx = 0;
-                                        if ("pickaxe".equals(breakData.toolClass)|| from_block.getMaterial() == Material.rock || from_block.getMaterial() == Material.anvil || from_block.getMaterial() == Material.iron) {
+                                        // 1.8.9 also sorted by Material (rock / anvil / iron, wood / plants / vine), 26.1's mineable tags cover it
+                                        if ("pickaxe".equals(breakData.toolClass)) {
                                             idx = 0;
-                                        } else if ("axe".equals(breakData.toolClass)||
-                                                from_block.getMaterial() == Material.wood ||
-                                                from_block.getMaterial() == Material.plants ||
-                                                from_block.getMaterial() == Material.vine) {
+                                        } else if ("axe".equals(breakData.toolClass)) {
                                             idx = 2;
                                         } else if ("shovel".equals(breakData.toolClass)) {
                                             idx = 1;
@@ -213,12 +217,12 @@ public class RaytraceHelper {
                                         if (from_bpos.equals(target)) continue;
                                         if (imposs) break;
                                         BlockState from_state = w.getBlockState(from_bpos);
-                                        Block from_block = from_state.getBlock();
 
+                                        // stonks are instant on 26.1, harvest level / tool are kept for compatibility only (D117)
                                         BlockBreakData breakData = new BlockBreakData(
-                                                (isAir ? 5 : 1) * from_block.getBlockHardness(w, from_bpos),
-                                                from_block.getHarvestLevel(from_state),
-                                                from_block.getHarvestTool(from_state)
+                                                (isAir ? 5 : 1) * from_state.getDestroySpeed(w.asVanilla(), from_bpos),
+                                                from_state.is(BlockTags.NEEDS_DIAMOND_TOOL) ? 3 : from_state.is(BlockTags.NEEDS_IRON_TOOL) ? 2 : from_state.is(BlockTags.NEEDS_STONE_TOOL) ? 1 : 0,
+                                                from_state.is(BlockTags.MINEABLE_WITH_PICKAXE) ? "pickaxe" : from_state.is(BlockTags.MINEABLE_WITH_AXE) ? "axe" : from_state.is(BlockTags.MINEABLE_WITH_SHOVEL) ? "shovel" : null
                                         );
                                         if (breakData.hardness < 0) {
                                             imposs = true;
@@ -226,13 +230,10 @@ public class RaytraceHelper {
                                         }
 
                                         int idx = 0;
-                                        if ("pickaxe".equals(breakData.toolClass) || from_block.getMaterial() == Material.rock || from_block.getMaterial() == Material.anvil || from_block.getMaterial() == Material.iron) {
+                                        // 1.8.9 also sorted by Material (rock / anvil / iron, wood / plants / vine), 26.1's mineable tags cover it
+                                        if ("pickaxe".equals(breakData.toolClass)) {
                                             idx = 0;
-                                        } else if ("axe".equals(breakData.toolClass) ||
-                                                from_block.getMaterial() == Material.wood ||
-                                                from_block.getMaterial() == Material.plants ||
-                                                from_block.getMaterial() == Material.vine
-                                        ) {
+                                        } else if ("axe".equals(breakData.toolClass)) {
                                             idx = 2;
                                         } else if ("shovel".equals(breakData.toolClass) ) {
                                             idx = 1;
@@ -304,7 +305,7 @@ public class RaytraceHelper {
                     return new PossibleClickingSpot(
                             entries.get(0).getValue(),
                             entries.stream().map(Map.Entry::getKey)
-                                    .map(b -> new OffsetVec3(b.xCoord, b.yCoord - 70, b.zCoord))
+                                    .map(b -> new OffsetVec3(b.x, b.y - 70, b.z))
                                     .collect(Collectors.toList()),
                             stonk.get(entries.get(0).getKey()), 0
                     );
@@ -351,11 +352,11 @@ public class RaytraceHelper {
 
         for (OffsetVec3 vec3 : sortedClusterId) {
 //            int cnt = 0;
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 OffsetVec3 newVec3 = new OffsetVec3(
-                        vec3.xCoord + face.getFrontOffsetX() * 0.5,
-                        vec3.yCoord + face.getFrontOffsetY() * 0.5,
-                        vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                        vec3.xCoord + face.getStepX() * 0.5,
+                        vec3.yCoord + face.getStepY() * 0.5,
+                        vec3.zCoord + face.getStepZ() * 0.5
                 );
                 if (clusterId.containsKey(newVec3)) continue;
                 clusterId.put(vec3, -2);
@@ -397,11 +398,11 @@ public class RaytraceHelper {
         Queue<OffsetVec3> chk = new LinkedList<>();
         for (OffsetVec3 vec3 : sortedClusterId) {
             if (clusterId.get(vec3) == -2) {
-                for (Direction face : Direction.VALUES) {
+                for (Direction face : Direction.values()) {
                     OffsetVec3 newVec3 = new OffsetVec3(
-                            vec3.xCoord + face.getFrontOffsetX() * 0.5,
-                            vec3.yCoord + face.getFrontOffsetY() * 0.5,
-                            vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                            vec3.xCoord + face.getStepX() * 0.5,
+                            vec3.yCoord + face.getStepY() * 0.5,
+                            vec3.zCoord + face.getStepZ() * 0.5
                     );
                     if (!clusterId.containsKey(newVec3) || clusterId.get(newVec3) == -2) continue;
                     chk.add(vec3);
@@ -414,11 +415,11 @@ public class RaytraceHelper {
             OffsetVec3 vec3 = chk.poll();
             if (clusterId.get(vec3) != -2) continue;
             boolean found = false;
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 OffsetVec3 newVec3 = new OffsetVec3(
-                        vec3.xCoord + face.getFrontOffsetX() * 0.5,
-                        vec3.yCoord + face.getFrontOffsetY() * 0.5,
-                        vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                        vec3.xCoord + face.getStepX() * 0.5,
+                        vec3.yCoord + face.getStepY() * 0.5,
+                        vec3.zCoord + face.getStepZ() * 0.5
                 );
                 if (!clusterId.containsKey(newVec3) || clusterId.get(newVec3) == -2) continue;
                 clusterId.put(vec3, clusterId.get(newVec3));
@@ -426,11 +427,11 @@ public class RaytraceHelper {
                 break;
             }
             if (found) {
-                for (Direction face : Direction.VALUES) {
+                for (Direction face : Direction.values()) {
                     OffsetVec3 newVec3 = new OffsetVec3(
-                            vec3.xCoord + face.getFrontOffsetX() * 0.5,
-                            vec3.yCoord + face.getFrontOffsetY() * 0.5,
-                            vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                            vec3.xCoord + face.getStepX() * 0.5,
+                            vec3.yCoord + face.getStepY() * 0.5,
+                            vec3.zCoord + face.getStepZ() * 0.5
                     );
                     if (!clusterId.containsKey(newVec3) || clusterId.get(newVec3) != -2) continue;
                     chk.add(newVec3);
@@ -477,11 +478,11 @@ public class RaytraceHelper {
                         )
                 ).collect(Collectors.toList());
     }
-    public static List<PossibleMoveSpot> findMovespots(World w, BlockPos target, Predicate<Vec3> included, double manhattenDist) {
+    public static List<PossibleMoveSpot> findMovespots(DGWorld w, BlockPos target, Predicate<Vec3> included, double manhattenDist) {
         return findMovespots(w, target, included, manhattenDist, (x,y,z) -> RaytraceHelper.canStand(w, x,y,z));
     }
 
-    public static List<PossibleMoveSpot> findMovespots(World w, BlockPos target, Predicate<Vec3> included, double manhattenDist, CalculateIsBlocked calculateIsBlocked) {
+    public static List<PossibleMoveSpot> findMovespots(DGWorld w, BlockPos target, Predicate<Vec3> included, double manhattenDist, CalculateIsBlocked calculateIsBlocked) {
 
         Map<OffsetVec3, Boolean> lol = new HashMap<>();
         Map<OffsetVec3, Boolean> air = new HashMap<>();
@@ -494,24 +495,24 @@ public class RaytraceHelper {
                     boolean canStand = calculateIsBlocked.canStand((int) (x*2),(int) (y*2),(int) (z*2));
 
                     boolean isAir = false;
-                    for (int xp = Mth.floor_double(x - 0.3); xp < Mth.floor_double(x + 0.3) + 1; xp++) {
-                        for (int zp = Mth.floor_double(z - 0.3); zp < Mth.floor_double(z + 0.3) + 1; zp++) {
-                            isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord, zp)).getBlock() == Blocks.air;
-                            isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord-1, zp)).getBlock() == Blocks.air;
+                    for (int xp = Mth.floor(x - 0.3); xp < Mth.floor(x + 0.3) + 1; xp++) {
+                        for (int zp = Mth.floor(z - 0.3); zp < Mth.floor(z + 0.3) + 1; zp++) {
+                            isAir |= LegacyBlock.AIR.is(w.getBlockState(BlockPos.containing(xp, posToCheck.y, zp)));
+                            isAir |= LegacyBlock.AIR.is(w.getBlockState(BlockPos.containing(xp, posToCheck.y-1, zp)));
                         }
                     }
                     if ((int)(y*2) % 2 == 1) {
-                        for (int xp = Mth.floor_double(x - 0.3); xp < Mth.floor_double(x + 0.3) + 1; xp++) {
-                            for (int zp = Mth.floor_double(z - 0.3); zp < Mth.floor_double(z + 0.3) + 1; zp++) {
-                                isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord, zp)).getBlock() instanceof BlockSlab;
-                                isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord, zp)).getBlock() instanceof StairBlock;
+                        for (int xp = Mth.floor(x - 0.3); xp < Mth.floor(x + 0.3) + 1; xp++) {
+                            for (int zp = Mth.floor(z - 0.3); zp < Mth.floor(z + 0.3) + 1; zp++) {
+                                isAir |= w.getBlockState(BlockPos.containing(xp, posToCheck.y, zp)).getBlock() instanceof SlabBlock;
+                                isAir |= w.getBlockState(BlockPos.containing(xp, posToCheck.y, zp)).getBlock() instanceof StairBlock;
                             }
                         }
                     }
 
 
                     if (isAir || canStand) {
-                        OffsetVec3 vec3 = new OffsetVec3(posToCheck.xCoord, posToCheck.yCoord -70, posToCheck.zCoord);
+                        OffsetVec3 vec3 = new OffsetVec3(posToCheck.x, posToCheck.y -70, posToCheck.z);
                         lol.put(vec3, !canStand);
                     }
                 }
@@ -544,11 +545,11 @@ public class RaytraceHelper {
         ).collect(Collectors.toList());
 
         for (OffsetVec3 vec3 : sortedClusterId) {
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 OffsetVec3 newVec3 = new OffsetVec3(
-                        vec3.xCoord + face.getFrontOffsetX() * 0.5,
-                        vec3.yCoord + face.getFrontOffsetY() * 0.5,
-                        vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                        vec3.xCoord + face.getStepX() * 0.5,
+                        vec3.yCoord + face.getStepY() * 0.5,
+                        vec3.zCoord + face.getStepZ() * 0.5
                 );
                 if (clusterId.containsKey(newVec3)) continue;
                 clusterId.put(vec3, -2);
@@ -588,11 +589,11 @@ public class RaytraceHelper {
         Queue<OffsetVec3> chk = new LinkedList<>();
         for (OffsetVec3 vec3 : sortedClusterId) {
             if (clusterId.get(vec3) == -2) {
-                for (Direction face : Direction.VALUES) {
+                for (Direction face : Direction.values()) {
                     OffsetVec3 newVec3 = new OffsetVec3(
-                            vec3.xCoord + face.getFrontOffsetX() * 0.5,
-                            vec3.yCoord + face.getFrontOffsetY() * 0.5,
-                            vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                            vec3.xCoord + face.getStepX() * 0.5,
+                            vec3.yCoord + face.getStepY() * 0.5,
+                            vec3.zCoord + face.getStepZ() * 0.5
                     );
                     if (!clusterId.containsKey(newVec3) || clusterId.get(newVec3) == -2) continue;
                     chk.add(vec3);
@@ -605,11 +606,11 @@ public class RaytraceHelper {
             OffsetVec3 vec3 = chk.poll();
             if (clusterId.get(vec3) != -2) continue;
             boolean found = false;
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 OffsetVec3 newVec3 = new OffsetVec3(
-                        vec3.xCoord + face.getFrontOffsetX() * 0.5,
-                        vec3.yCoord + face.getFrontOffsetY() * 0.5,
-                        vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                        vec3.xCoord + face.getStepX() * 0.5,
+                        vec3.yCoord + face.getStepY() * 0.5,
+                        vec3.zCoord + face.getStepZ() * 0.5
                 );
                 if (!clusterId.containsKey(newVec3) || clusterId.get(newVec3) == -2) continue;
                 clusterId.put(vec3, clusterId.get(newVec3));
@@ -617,11 +618,11 @@ public class RaytraceHelper {
                 break;
             }
             if (found) {
-                for (Direction face : Direction.VALUES) {
+                for (Direction face : Direction.values()) {
                     OffsetVec3 newVec3 = new OffsetVec3(
-                            vec3.xCoord + face.getFrontOffsetX() * 0.5,
-                            vec3.yCoord + face.getFrontOffsetY() * 0.5,
-                            vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                            vec3.xCoord + face.getStepX() * 0.5,
+                            vec3.yCoord + face.getStepY() * 0.5,
+                            vec3.zCoord + face.getStepZ() * 0.5
                     );
                     if (!clusterId.containsKey(newVec3) || clusterId.get(newVec3) != -2) continue;
                     chk.add(newVec3);
@@ -698,34 +699,33 @@ public class RaytraceHelper {
     }
 
 
-    private static List<BlockPos> rayTraceBlocks(World driWorld, Vec3 from, Vec3 to) {
+    private static List<BlockPos> rayTraceBlocks(DGWorld driWorld, Vec3 from, Vec3 to) {
         List<BlockPos> blocks = new ArrayList<>();
-        if (!Double.isNaN(from.xCoord) && !Double.isNaN(from.yCoord) && !Double.isNaN(from.zCoord)) {
-            if (!Double.isNaN(to.xCoord) && !Double.isNaN(to.yCoord) && !Double.isNaN(to.zCoord)) {
-                int to_x_floor = Mth.floor_double(to.xCoord);
-                int to_y_floor = Mth.floor_double(to.yCoord);
-                int to_z_floor = Mth.floor_double(to.zCoord);
-                int from_x_floor = Mth.floor_double(from.xCoord);
-                int from_y_floor = Mth.floor_double(from.yCoord);
-                int from_z_floor = Mth.floor_double(from.zCoord);
+        if (!Double.isNaN(from.x) && !Double.isNaN(from.y) && !Double.isNaN(from.z)) {
+            if (!Double.isNaN(to.x) && !Double.isNaN(to.y) && !Double.isNaN(to.z)) {
+                int to_x_floor = Mth.floor(to.x);
+                int to_y_floor = Mth.floor(to.y);
+                int to_z_floor = Mth.floor(to.z);
+                int from_x_floor = Mth.floor(from.x);
+                int from_y_floor = Mth.floor(from.y);
+                int from_z_floor = Mth.floor(from.z);
 
 
+                BlockGetter getter = driWorld.asVanilla();
                 BlockPos from_bpos = new BlockPos(from_x_floor, from_y_floor, from_z_floor);
                 {
                     BlockState from_state = driWorld.getBlockState(from_bpos);
-                    Block from_block = from_state.getBlock();
-                    if (from_block.canCollideCheck(from_state, false)) {
-                        HitResult movingobjectposition2 = from_block.collisionRayTrace(driWorld, from_bpos, from, to);
-                        if (movingobjectposition2 != null) {
-                            blocks.add(from_bpos);
-                        }
+                    // 1.8.9's canCollideCheck + collisionRayTrace: a ray against the outline shape, which is empty for air / liquids
+                    HitResult movingobjectposition2 = from_state.getShape(getter, from_bpos).clip(from, to, from_bpos);
+                    if (movingobjectposition2 != null) {
+                        blocks.add(from_bpos);
                     }
                 }
                 HitResult movingobjectposition2 = null;
                 int k1 = 200;
 
                 while(k1-- >= 0) {
-                    if (Double.isNaN(from.xCoord) || Double.isNaN(from.yCoord) || Double.isNaN(from.zCoord)) {
+                    if (Double.isNaN(from.x) || Double.isNaN(from.y) || Double.isNaN(from.z)) {
                         return blocks;
                     }
 
@@ -766,19 +766,19 @@ public class RaytraceHelper {
                     double perc_x = 999.0;
                     double perc_y = 999.0;
                     double perc_z = 999.0;
-                    double diff_x = to.xCoord - from.xCoord;
-                    double diff_y = to.yCoord - from.yCoord;
-                    double diff_z = to.zCoord - from.zCoord;
+                    double diff_x = to.x - from.x;
+                    double diff_y = to.y - from.y;
+                    double diff_z = to.z - from.z;
                     if (x_equal) {
-                        perc_x = (curr_x - from.xCoord) / diff_x;
+                        perc_x = (curr_x - from.x) / diff_x;
                     }
 
                     if (y_equal) {
-                        perc_y = (curr_y - from.yCoord) / diff_y;
+                        perc_y = (curr_y - from.y) / diff_y;
                     }
 
                     if (z_equal) {
-                        perc_z = (curr_z - from.zCoord) / diff_z;
+                        perc_z = (curr_z - from.z) / diff_z;
                     }
 
                     if (perc_x == -0.0) {
@@ -796,28 +796,25 @@ public class RaytraceHelper {
                     Direction overwhat;
                     if (perc_x < perc_y && perc_x < perc_z) {
                         overwhat = to_x_floor > from_x_floor ? Direction.WEST : Direction.EAST;
-                        from = new Vec3(curr_x, from.yCoord + diff_y * perc_x, from.zCoord + diff_z * perc_x);
+                        from = new Vec3(curr_x, from.y + diff_y * perc_x, from.z + diff_z * perc_x);
                     } else if (perc_y < perc_z) {
                         overwhat = to_y_floor > from_y_floor ? Direction.DOWN : Direction.UP;
-                        from = new Vec3(from.xCoord + diff_x * perc_y, curr_y, from.zCoord + diff_z * perc_y);
+                        from = new Vec3(from.x + diff_x * perc_y, curr_y, from.z + diff_z * perc_y);
                     } else {
                         overwhat = to_z_floor > from_z_floor ? Direction.NORTH : Direction.SOUTH;
-                        from = new Vec3(from.xCoord + diff_x * perc_z, from.yCoord + diff_y * perc_z, curr_z);
+                        from = new Vec3(from.x + diff_x * perc_z, from.y + diff_y * perc_z, curr_z);
                     }
 
-                    from_x_floor = Mth.floor_double(from.xCoord) - (overwhat == Direction.EAST ? 1 : 0);
-                    from_y_floor = Mth.floor_double(from.yCoord) - (overwhat == Direction.UP ? 1 : 0);
-                    from_z_floor = Mth.floor_double(from.zCoord) - (overwhat == Direction.SOUTH ? 1 : 0);
+                    from_x_floor = Mth.floor(from.x) - (overwhat == Direction.EAST ? 1 : 0);
+                    from_y_floor = Mth.floor(from.y) - (overwhat == Direction.UP ? 1 : 0);
+                    from_z_floor = Mth.floor(from.z) - (overwhat == Direction.SOUTH ? 1 : 0);
 
                     from_bpos = new BlockPos(from_x_floor, from_y_floor, from_z_floor);
                     BlockState iblockstate1 = driWorld.getBlockState(from_bpos);
-                    Block block1 = iblockstate1.getBlock();
-                        if (block1.canCollideCheck(iblockstate1, false)) {
-                            HitResult movingobjectposition1 = block1.collisionRayTrace(driWorld, from_bpos, from, to);
+                            HitResult movingobjectposition1 = iblockstate1.getShape(getter, from_bpos).clip(from, to, from_bpos);
                             if (movingobjectposition1 != null) {
                                 blocks.add(from_bpos);
                             }
-                        }
                 }
             }
         }
@@ -826,24 +823,25 @@ public class RaytraceHelper {
     }
 
 
-    private static  boolean canStand(World w, int x, int y, int z) {
+    private static  boolean canStand(DGWorld w, int x, int y, int z) {
        
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
 
         float playerWidth = 0.3f;
-        AABB bb = AABB
-                .fromBounds(wX - playerWidth, wY+0.06251, wZ - playerWidth,
+        AABB bb = new AABB(wX - playerWidth, wY+0.06251, wZ - playerWidth,
                         wX + playerWidth, wY +0.06251 + 1.8, wZ + playerWidth);
 
-        int minX = Mth.floor_double(bb.minX);
-        int maxX = Mth.floor_double(bb.maxX + 1.0D);
-        int minY = Mth.floor_double(bb.minY);
-        int maxY = Mth.floor_double(bb.maxY + 1.0D);
-        int minZ = Mth.floor_double(bb.minZ);
-        int maxZ = Mth.floor_double(bb.maxZ + 1.0D);
+        int minX = Mth.floor(bb.minX);
+        int maxX = Mth.floor(bb.maxX + 1.0D);
+        int minY = Mth.floor(bb.minY);
+        int maxY = Mth.floor(bb.maxY + 1.0D);
+        int minZ = Mth.floor(bb.minZ);
+        int maxZ = Mth.floor(bb.maxZ + 1.0D);
 
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
-        List<AABB> list2 = new ArrayList<>();
+        BlockGetter getter = w.asVanilla();
+        VoxelShape playerShape = Shapes.create(bb);
+        List<VoxelShape> list2 = new ArrayList<>();
         int size = 0;
 
         int notstonkable = 0;
@@ -852,10 +850,8 @@ public class RaytraceHelper {
                 for (int i2 = minY-1; i2 < maxY; ++i2) {
                     blockPos.set(k1, i2, l1);
                     BlockState state = w.getBlockState(blockPos);
-                    Block block = state.getBlock();
-                    block.addCollisionBoxesToList(
-                            w, blockPos, state, bb, list2, null
-                    );
+                    VoxelShape hit = Shapes.join(state.getCollisionShape(getter, blockPos).move(k1, i2, l1), playerShape, BooleanOp.AND);
+                    if (!hit.isEmpty()) list2.add(hit);
                 }
             }
         }

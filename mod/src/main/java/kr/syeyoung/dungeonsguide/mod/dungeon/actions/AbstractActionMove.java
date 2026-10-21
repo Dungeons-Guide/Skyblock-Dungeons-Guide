@@ -78,8 +78,8 @@ public abstract class AbstractActionMove extends AbstractAction {
         for (OffsetVec3 offsetPoint : getTargetOffsetPointSet()) {
             Vec3 pos = offsetPoint.getPos(dungeonRoom);
             boundingBox.addBoundingBox(new AABB(
-                    pos.xCoord - 0.1, pos.yCoord - 0.1, pos.zCoord - 0.1,
-                    pos.xCoord + 0.1, pos.yCoord + 0.1, pos.zCoord + 0.1
+                    pos.x - 0.1, pos.y - 0.1, pos.z - 0.1,
+                    pos.x + 0.1, pos.y + 0.1, pos.z + 0.1
             ));
         }
         return this.boundingBox = boundingBox;
@@ -87,7 +87,7 @@ public abstract class AbstractActionMove extends AbstractAction {
 
     public BlockPos getBeaconTargetPos(DungeonRoom dungeonRoom) {
         if (beaconTargetPos != null) return beaconTargetPos;
-        return beaconTargetPos = new BlockPos(targetVec3.getPos(dungeonRoom));
+        return beaconTargetPos = BlockPos.containing(targetVec3.getPos(dungeonRoom));
     }
 
     private Vec3 transformedTargetVec3;

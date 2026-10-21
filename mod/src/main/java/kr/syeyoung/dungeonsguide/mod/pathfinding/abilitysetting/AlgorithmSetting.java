@@ -25,7 +25,7 @@ public class AlgorithmSetting implements Cloneable {
         public CompoundTag serialize() {
             CompoundTag tag = new CompoundTag();
             tag.setString("level", tool.getRegistryName());
-            tag.setInteger("efficiency", efficiency);
+            tag.putInt("efficiency", efficiency);
             return tag;
         }
 
@@ -124,25 +124,25 @@ public class AlgorithmSetting implements Cloneable {
 
     public CompoundTag serializeToNBT() {
         CompoundTag nbt = new CompoundTag();
-        nbt.setInteger("version", 2);
+        nbt.putInt("version", 2);
 
-        nbt.setInteger("haste", hasteLevel);
+        nbt.putInt("haste", hasteLevel);
 
-        nbt.setTag("pickaxe", pickaxe == null ? new ByteTag((byte)0) : pickaxe.serialize());
-        nbt.setTag("shovel", shovel == null ? new ByteTag((byte)0) : shovel.serialize());
-        nbt.setTag("axe", axe == null ? new ByteTag((byte)0) : axe.serialize());
-        nbt.setBoolean("slowStonk", allowSlowStonkPath);
+        nbt.put("pickaxe", pickaxe == null ? new ByteTag((byte)0) : pickaxe.serialize());
+        nbt.put("shovel", shovel == null ? new ByteTag((byte)0) : shovel.serialize());
+        nbt.put("axe", axe == null ? new ByteTag((byte)0) : axe.serialize());
+        nbt.putBoolean("slowStonk", allowSlowStonkPath);
 
-        nbt.setBoolean("stonkDown", stonkDown);
-        nbt.setBoolean("stonkTeleport", stonkTeleport);
-        nbt.setBoolean("stonkEChest", stonkEChest);
-        nbt.setBoolean("routeEtherwarp", routeEtherwarp);
-        nbt.setInteger("maxStonk", maxStonk);
-        nbt.setBoolean("enderpearl", enderpearl);
-        nbt.setBoolean("tntpearl", tntpearl);
-        nbt.setDouble("etherwarpOffset", etherwarpOffset);
-        nbt.setInteger("etherwarpRadius", etherwarpRadius);
-        nbt.setDouble("etherwarpLeeway", etherwarpLeeway);
+        nbt.putBoolean("stonkDown", stonkDown);
+        nbt.putBoolean("stonkTeleport", stonkTeleport);
+        nbt.putBoolean("stonkEChest", stonkEChest);
+        nbt.putBoolean("routeEtherwarp", routeEtherwarp);
+        nbt.putInt("maxStonk", maxStonk);
+        nbt.putBoolean("enderpearl", enderpearl);
+        nbt.putBoolean("tntpearl", tntpearl);
+        nbt.putDouble("etherwarpOffset", etherwarpOffset);
+        nbt.putInt("etherwarpRadius", etherwarpRadius);
+        nbt.putDouble("etherwarpLeeway", etherwarpLeeway);
         return nbt;
     }
 

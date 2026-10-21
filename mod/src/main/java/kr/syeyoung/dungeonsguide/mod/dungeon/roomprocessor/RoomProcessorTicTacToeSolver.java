@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import net.minecraft.client.Minecraft;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -26,11 +28,12 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.World;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import java.util.List;
@@ -48,25 +51,25 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
     // -1 com, 1 pla, 0 emp
     private byte[][] buildBoardState() {
         byte[][] board = new byte[3][3];
-        World w= getDungeonRoom().getContext().getWorld();
+        DGWorld w= getDungeonRoom().getContext().getWorld();
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
                 OffsetPoint op = this.board.getOffsetPointList().get(x * 3 + y);
                 BlockPos bpos = op.getBlockPos(getDungeonRoom());
-                Block b = w.getChunkFromBlockCoords(bpos).getBlock(bpos);
-                if (b == Blocks.stone_button) {
+                BlockState b = w.getBlockState(bpos);
+                if (LegacyBlock.STONE_BUTTON.is(b)) {
                     board[y][x] = 0;
-                } else if (b == Blocks.air){
-                    AABB abab = AABB.fromBounds(bpos.getX() , bpos.getY(), bpos.getZ(), bpos.getX() +1, bpos.getY() +1, bpos.getZ() +1);
-                    List<ItemFrame> frames = getDungeonRoom().getContext().getWorld().getEntitiesWithinAABB(ItemFrame.class, abab);
+                } else if (LegacyBlock.AIR.is(b)){
+                    AABB abab = new AABB(bpos.getX() , bpos.getY(), bpos.getZ(), bpos.getX() +1, bpos.getY() +1, bpos.getZ() +1);
+                    List<ItemFrame> frames = Minecraft.getInstance().level.getEntitiesOfClass(ItemFrame.class, abab);
                     if (frames.isEmpty()) board[y][x] = 0;
                     else {
-                        ItemStack displayedItem = frames.get(0).getDisplayedItem();
-                        if (displayedItem == null || displayedItem.getItem() == null || !displayedItem.getItem().isMap()) {
+                        ItemStack displayedItem = frames.get(0).getItem();
+                        if (displayedItem == null || displayedItem.getItem() == null || !(displayedItem.getItem() instanceof MapItem)) {
                             board[y][x] = 0;
                             continue;
                         }
-                        MapItemSavedData mapData = ((MapItem)displayedItem.getItem()).getMapData(displayedItem, w);
+                        MapItemSavedData mapData = MapItem.getSavedData(displayedItem, Minecraft.getInstance().level);
                         byte center = mapData.colors[64 * 128+64];
                         if (center == 114)
                             board[y][x] = -1;
@@ -198,7 +201,7 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
                 }
                 whoseturn = ones < negativeones;
             }
-            RenderUtils.highlightBoxAColor(AABB.fromBounds(block.getX(), block.getY(), block.getZ(), block.getX()+1, block.getY() + 1, block.getZ() + 1),
+            RenderUtils.highlightBoxAColor(new AABB(block.getX(), block.getY(), block.getZ(), block.getX()+1, block.getY() + 1, block.getZ() + 1),
                     whoseturn ? FeatureRegistry.SOLVER_TICTACTOE.getTargetColor()
                             : FeatureRegistry.SOLVER_TICTACTOE.getTargetColor2(), partialTicks, true);
         }

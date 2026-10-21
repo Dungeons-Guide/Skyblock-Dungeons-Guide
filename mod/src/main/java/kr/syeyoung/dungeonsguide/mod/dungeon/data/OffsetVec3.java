@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import lombok.Data;
 import net.minecraft.world.phys.Vec3;
 
-import javax.vecmath.Vector2d;
+import org.joml.Vector2d;
 import java.io.Serializable;
 
 @Data
@@ -57,8 +57,8 @@ public class OffsetVec3 implements Cloneable {
 
 
     public void setPosInWorld(DungeonRoom dungeonRoom, Vec3 pos) {
-        double x = pos.xCoord - dungeonRoom.getRoomBounds().getMin().getX();
-        double y = pos.zCoord - dungeonRoom.getRoomBounds().getMin().getZ();
+        double x = pos.x - dungeonRoom.getRoomBounds().getMin().getX();
+        double y = pos.z - dungeonRoom.getRoomBounds().getMin().getZ();
 
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             double temp = x;
@@ -73,7 +73,7 @@ public class OffsetVec3 implements Cloneable {
 
         this.xCoord = x;
         this.zCoord = y;
-        this.yCoord = pos.yCoord - dungeonRoom.getRoomBounds().getMin().getY();
+        this.yCoord = pos.y - dungeonRoom.getRoomBounds().getMin().getY();
     }
 
     public void setPosInWorld(int xWid, int zWid, int minX, int minY, int minZ, double x, double y, double z, int rotation) {
@@ -124,7 +124,7 @@ public class OffsetVec3 implements Cloneable {
 
     public Vec3 getPos(DungeonRoom dungeonRoom) {
         Vec3 relBp = toRotatedRelBlockPos(dungeonRoom);
-        return dungeonRoom.getRelativeVec3At(relBp.xCoord, relBp.yCoord, relBp.zCoord);
+        return dungeonRoom.getRelativeVec3At(relBp.x, relBp.y, relBp.z);
     }
 
 

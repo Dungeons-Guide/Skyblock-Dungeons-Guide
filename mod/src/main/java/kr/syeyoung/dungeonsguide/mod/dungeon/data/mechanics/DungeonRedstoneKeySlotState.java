@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
@@ -92,7 +93,7 @@ public class DungeonRedstoneKeySlotState implements DungeonMechanicState {
     @Override
     public String getCurrentState() {
         for (OffsetPoint offsetPoint : data.headPoint.getOffsetPointList()) {
-            if (offsetPoint.getBlock(room) == Blocks.skull) {
+            if (LegacyBlock.SKULL.is(offsetPoint.getBlock(room))) {
                 return "triggered";
             }
         }
