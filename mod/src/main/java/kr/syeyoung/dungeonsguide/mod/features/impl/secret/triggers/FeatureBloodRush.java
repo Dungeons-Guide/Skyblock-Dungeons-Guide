@@ -34,23 +34,23 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import net.minecraft.util.ChatComponentText;
-import org.lwjgl.input.Keyboard;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import com.mojang.blaze3d.platform.InputConstants;
 
 public class FeatureBloodRush extends SimpleFeature {
     public FeatureBloodRush() {
         super("Pathfinding & Secrets.Blood Rush", "Blood Rush Mode", "Auto pathfind to witherdoors. \nCan be toggled with key set in settings", "secret.bloodrush", false);
-        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle Blood Rush", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
+        addParameter("key", new FeatureParameter<InputConstants.Key>("key", "Key", "Press to toggle Blood Rush", InputConstants.UNKNOWN, TCKeybind.INSTANCE));
     }
 
     private final Set<DungeonRoom> triggered = Sets.newSetFromMap(new WeakHashMap<>());
 
     @DGEventHandler(ignoreDisabled = true)
     public void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent) {
-        if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue()) {
+        if (keyBindPressedEvent.getKey().equals(this.<InputConstants.Key>getParameter("key").getValue())) {
             setEnabled(!isEnabled());
             try {
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Blood Rush to §e"+(FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled() ? "on":"off")));

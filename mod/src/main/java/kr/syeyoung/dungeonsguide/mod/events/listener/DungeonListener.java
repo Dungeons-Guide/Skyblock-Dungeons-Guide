@@ -89,6 +89,7 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import com.mojang.blaze3d.platform.InputConstants;
 
 public class DungeonListener {
 
@@ -591,7 +592,7 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onKeyInput(KeyBindPressedEvent keyInputEvent) {
-        if (FeatureRegistry.DEBUG.isEnabled() && FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && keyInputEvent.getKey() == FeatureRegistry.ADVANCED_ROOMEDIT.<Integer>getParameter("key").getValue()) {
+        if (FeatureRegistry.DEBUG.isEnabled() && FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && keyInputEvent.getKey().equals(FeatureRegistry.ADVANCED_ROOMEDIT.<InputConstants.Key>getParameter("key").getValue())) {
             EditingContext ec = EditingContext.getEditingContext();
             if (ec == null) {
                 DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

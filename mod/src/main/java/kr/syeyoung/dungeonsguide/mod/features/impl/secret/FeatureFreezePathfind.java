@@ -26,17 +26,17 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.util.ChatComponentText;
-import org.lwjgl.input.Keyboard;
+import com.mojang.blaze3d.platform.InputConstants;
 
 public class FeatureFreezePathfind extends SimpleFeature  {
     public FeatureFreezePathfind() {
         super("Pathfinding & Secrets", "Global Freeze Pathfind", "Freeze Pathfind, meaning the pathfind lines won't change when you move.\nPress settings to edit the key", "secret.freezepathfind", false);
-        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle freeze pathfind", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
+        addParameter("key", new FeatureParameter<InputConstants.Key>("key", "Key", "Press to toggle freeze pathfind", InputConstants.UNKNOWN, TCKeybind.INSTANCE));
     }
 
     @DGEventHandler(ignoreDisabled = true)
     public void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent) {
-        if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue()) {
+        if (keyBindPressedEvent.getKey().equals(this.<InputConstants.Key>getParameter("key").getValue())) {
             setEnabled(!isEnabled());
             try {
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Pathfind Freeze to §e"+(FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() ? "on":"off")));

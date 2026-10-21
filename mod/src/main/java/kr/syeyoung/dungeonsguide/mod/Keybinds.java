@@ -22,24 +22,23 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyInputEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.MouseInputEvent;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
+import com.mojang.blaze3d.platform.InputConstants;
 
 public class Keybinds
 {
 
     @SubscribeEvent
     public void onTogglePathfindStatus(KeyInputEvent keyInputEvent) {
-        if (Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent()) {
-            int key = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
+        if (keyInputEvent.action == KeyInputEvent.Action.PRESS) {
+            InputConstants.Key key = InputConstants.getKey(keyInputEvent.keyEvent);
             KeyBindPressedEvent keyBindPressedEvent = new KeyBindPressedEvent(key);
             DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(keyBindPressedEvent);
         }
     }
     @SubscribeEvent
     public void onMousePressed(MouseInputEvent mouseInputEvent) {
-        if (Mouse.getEventButtonState()) {
-            int key = Mouse.getEventButton() - 100;
+        if (mouseInputEvent.action == MouseInputEvent.Action.PRESS) {
+            InputConstants.Key key = InputConstants.Type.MOUSE.getOrCreate(mouseInputEvent.buttonInfo.button());
             KeyBindPressedEvent keyBindPressedEvent = new KeyBindPressedEvent(key);
             DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(keyBindPressedEvent);
         }

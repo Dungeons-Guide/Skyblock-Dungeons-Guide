@@ -26,18 +26,18 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.util.ChatComponentText;
-import org.lwjgl.input.Keyboard;
+import com.mojang.blaze3d.platform.InputConstants;
 
 public class FeatureTogglePathfind extends SimpleFeature {
     public FeatureTogglePathfind() {
         super("Pathfinding & Secrets", "Toggle Pathfind Lines", "A key for toggling pathfound line visibility.\nPress settings to edit the key", "secret.togglePathfind");
-        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle pathfind lines", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
+        addParameter("key", new FeatureParameter<InputConstants.Key>("key", "Key", "Press to toggle pathfind lines", InputConstants.UNKNOWN, TCKeybind.INSTANCE));
     }
     public boolean togglePathfindStatus = false;
 
     @DGEventHandler
     public void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent) {
-        if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue() && isEnabled()) {
+        if (keyBindPressedEvent.getKey().equals(this.<InputConstants.Key>getParameter("key").getValue()) && isEnabled()) {
             togglePathfindStatus = !togglePathfindStatus;
             try {
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Pathfind Line visibility to §e"+(togglePathfindStatus ? "on":"off")));

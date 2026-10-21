@@ -44,24 +44,24 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRoute
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import com.mojang.blaze3d.platform.InputConstants;
 
 public class FeatureSmartRoute extends SimpleFeature {
     public FeatureSmartRoute() {
         super("Pathfinding & Secrets.Smart Route", "Auto pathfind to new secret", "Generate smart route going through all secrets upon entering the room.", "secret.smartroute", false);
-        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to navigate to next best secret", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
+        addParameter("key", new FeatureParameter<InputConstants.Key>("key", "Key", "Press to navigate to next best secret", InputConstants.UNKNOWN, TCKeybind.INSTANCE));
     }
 
     private final Set<DungeonRoom> triggered = Sets.newSetFromMap(new WeakHashMap<>());
 
     @DGEventHandler(ignoreDisabled = true)
     public void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent) {
-        if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue()) {
+        if (keyBindPressedEvent.getKey().equals(this.<InputConstants.Key>getParameter("key").getValue())) {
 
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (!SkyblockStatus.isOnDungeon() || context == null) return;

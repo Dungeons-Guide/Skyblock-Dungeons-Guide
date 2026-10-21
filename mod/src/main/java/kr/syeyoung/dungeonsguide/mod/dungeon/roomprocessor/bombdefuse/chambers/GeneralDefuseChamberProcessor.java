@@ -32,12 +32,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IChatComponent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
+import com.mojang.blaze3d.platform.InputConstants;
 
 @Getter
 public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor{
@@ -107,7 +107,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     protected void drawPressKey() {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        String str = "Press "+ GameSettings.getKeyDisplayString(FeatureRegistry.SOLVER_BOMBDEFUSE.<Integer>getParameter("key").getValue()) + " to save and send solution";
+        String str = "Press "+ FeatureRegistry.SOLVER_BOMBDEFUSE.<InputConstants.Key>getParameter("key").getValue().getDisplayName().getString() + " to save and send solution";
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -116,7 +116,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
 
     @Override
     public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
-        if (keyInputEvent.getKey() == FeatureRegistry.SOLVER_BOMBDEFUSE.<Integer>getParameter("key").getValue()) {
+        if (keyInputEvent.getKey().equals(FeatureRegistry.SOLVER_BOMBDEFUSE.<InputConstants.Key>getParameter("key").getValue())) {
             if (!getChamber().isWithinAbsolute(Minecraft.getMinecraft().thePlayer.getPosition())) {
                 return;
             }
