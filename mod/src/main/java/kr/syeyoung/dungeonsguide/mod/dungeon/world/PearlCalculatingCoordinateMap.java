@@ -3,24 +3,26 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import lombok.Getter;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class PearlCalculatingCoordinateMap implements ICoordinateMap<PearlCalculatingCoordinateMap.PearlLandType> {
     protected ICoordinateMap<BlockState> map;
     @Getter
     private int minX, minY, minZ, maxX, maxY, maxZ, lenX, lenY, lenZ;
 
-    private CoordinateMapWorld world;
+    private BlockAndTintGetter world;
     private RoomBounds roomBounds;
 
     public PearlCalculatingCoordinateMap(ICoordinateMap<BlockState> map, RoomBounds roomBounds) {
         this.map = map;
-        this.world = new CoordinateMapWorld(map);
+        this.world = new CoordinateMapWorld(map).asVanilla();
 
         this.minX = roomBounds.getMinX() * 2 + 2;
         this.minY = 0;
@@ -51,34 +53,30 @@ public class PearlCalculatingCoordinateMap implements ICoordinateMap<PearlCalcul
         int minZ = Mth.floor(pearlTest.minZ);
         int maxZ = Mth.floor(pearlTest.maxZ + 1.0D);
 
+        // 26.1: volumes of the blocks' collision shapes inside the test cube and its top half, 1.8.9 summed clipped boxes
+        VoxelShape pearlShape = Shapes.create(pearlTest);
+        VoxelShape topShape = Shapes.create(new AABB(pearlTest.minX, pearlTest.minY + 0.3, pearlTest.minZ, pearlTest.maxX, pearlTest.maxY, pearlTest.maxZ));
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
-        List<AABB> pearlList = new ArrayList<>();
+        boolean any = false;
+        double wholeVolume = 0;
+        double topVolume = 0;
         for (int k1 = minX; k1 < maxX; ++k1) {
             for (int l1 = minZ; l1 < maxZ; ++l1) {
-                label: for (int i2 = minY-1; i2 < maxY; ++i2) {
+                for (int i2 = minY-1; i2 < maxY; ++i2) {
                     blockPos.set(k1, i2, l1);
 
 
                     BlockState state = map.getBlock(k1, i2, l1);
-                    world.addCollisionBoxes(blockPos, state, pearlTest, pearlList);
+                    VoxelShape shape = state.getCollisionShape(world, blockPos).move(k1, i2, l1);
+                    VoxelShape whole = Shapes.join(shape, pearlShape, BooleanOp.AND);
+                    if (whole.isEmpty()) continue;
+                    any = true;
+                    for (AABB a : whole.toAabbs()) wholeVolume += a.getXsize() * a.getYsize() * a.getZsize();
+                    for (AABB a : Shapes.join(shape, topShape, BooleanOp.AND).toAabbs()) topVolume += a.getXsize() * a.getYsize() * a.getZsize();
                 }
             }
         }
-        if (pearlList.isEmpty()) return PearlLandType.OPEN;
-        double wholeVolume = 0;
-        double topVolume = 0;
-        for (AABB a : pearlList) {
-            double miX = Math.max(a.minX, pearlTest.minX);
-            double miY = Math.max(a.minY, pearlTest.minY);
-            double miZ = Math.max(a.minZ, pearlTest.minZ);
-            double maX = Math.min(a.maxX, pearlTest.maxX);
-            double maY = Math.min(a.maxY, pearlTest.maxY);
-            double maZ = Math.min(a.maxZ, pearlTest.maxZ);
-            wholeVolume += (maX - miX) * (maY - miY) * (maZ - miZ);
-            miY = Math.max(a.minY, pearlTest.minY+0.3);
-            if (miY > maY) continue;
-            topVolume += (maX - miX) * (maY - miY) * (maZ - miZ);
-        }
+        if (!any) return PearlLandType.OPEN;
         // total is 0.216
         if (wholeVolume > 0.215) return PearlLandType.BLOCKED;
         if (wholeVolume > 0.027 && 0 == topVolume) return PearlLandType.FLOOR;
