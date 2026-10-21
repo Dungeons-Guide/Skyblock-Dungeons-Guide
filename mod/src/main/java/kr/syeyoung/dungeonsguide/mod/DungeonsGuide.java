@@ -25,6 +25,12 @@ import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandDgDebug;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.tree.CommandNode;
+import kr.syeyoung.dungeonsguide.mod.commands.CommandRegistrationHelper;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RegisterCommandEvent;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandDungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandReparty;
 import kr.syeyoung.dungeonsguide.mod.config.Config;
@@ -141,6 +147,23 @@ public class DungeonsGuide {
     CommandReparty commandReparty;
     @Getter
     CommandDungeonsGuide commandDungeonsGuide;
+    CommandDgDebug commandDgDebug;
+
+    @SubscribeEvent
+    public void onRegisterCommands(RegisterCommandEvent event) {
+        CommandRegistrationHelper.registerCommands(event.dispatcher, commandDungeonsGuide);
+        CommandRegistrationHelper.registerCommands(event.dispatcher, commandDgDebug);
+
+        CommandNode<FabricClientCommandSource> dg = event.dispatcher.getRoot().getChild("dg");
+        for (String alias : CommandDungeonsGuide.ALIASES) {
+            event.dispatcher.register(ClientCommands.literal(alias)
+                    .executes(ctx -> {
+                        commandDungeonsGuide.openConfig();
+                        return Command.SINGLE_SUCCESS;
+                    })
+                    .redirect(dg));
+        }
+    }
 
 
     public void registerEventsForge(Object object) {
@@ -214,9 +237,9 @@ public class DungeonsGuide {
 
 
         commandDungeonsGuide = new CommandDungeonsGuide();
-        CommandDgDebug command = new CommandDgDebug();
+        commandDgDebug = new CommandDgDebug();
 
-        registerEventsForge(command);
+        registerEventsForge(commandDgDebug);
         registerEventsForge(commandDungeonsGuide);
 
         registerEventsForge(commandReparty = new CommandReparty());
