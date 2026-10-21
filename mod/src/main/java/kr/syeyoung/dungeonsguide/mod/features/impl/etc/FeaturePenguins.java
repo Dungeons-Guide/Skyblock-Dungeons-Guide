@@ -83,6 +83,7 @@ public class FeaturePenguins extends SimpleFeature {
             }
         }
     }
+    // TODO: 1.8.9 hack to load the penguin obj models and their textures at stitch time. 26.1 has no stitch event or forge obj loader, decided later
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onTextureStitch(TextureStitchEvent.Pre event) {
         if (event instanceof TextureStitchEvent.Pre) {

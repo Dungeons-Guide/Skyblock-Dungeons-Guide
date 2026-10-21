@@ -125,6 +125,7 @@ public class LiveRouteRegistry extends SimpleFeature {
 
     public TextureAtlasSprite sprite;
 
+    // TODO: 1.8.9 hack to get the arrow sprite into the block atlas. 26.1 has no stitch event, decided later
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onTextureStitch(TextureStitchEvent.Pre event) {
          sprite = event.map.registerSprite(new ResourceLocation("dungeonsguide", "arrow"));
