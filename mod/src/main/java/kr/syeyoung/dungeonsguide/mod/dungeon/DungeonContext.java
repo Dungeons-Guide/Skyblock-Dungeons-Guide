@@ -154,9 +154,9 @@ public class DungeonContext {
     private final Rectangle roomBoundary = new Rectangle(-10, -10, 138, 138);
 
     public void tick() {
-        if (scaffoldParser != null && bossRoomEnterSeconds == -1 && !roomBoundary.contains(scaffoldParser.getDungeonMapLayout().worldPointToMapPoint(Minecraft.getMinecraft().thePlayer.getPositionVector()))) {
+        if (scaffoldParser != null && bossRoomEnterSeconds == -1 && !roomBoundary.contains(scaffoldParser.getDungeonMapLayout().worldPointToMapPoint(Minecraft.getInstance().player.getPositionVector()))) {
             bossRoomEnterSeconds = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000;
-            bossroomSpawnPos = Minecraft.getMinecraft().thePlayer.getPosition();
+            bossroomSpawnPos = Minecraft.getInstance().player.getPosition();
             DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new BossroomEnterEvent());
             recorder.createEvent(new DungeonNodataEvent("BOSSROOM_ENTER"));
             DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(getDungeonName());
@@ -173,7 +173,7 @@ public class DungeonContext {
                     dungeonRoom.tryRematch();
                 }
             }
-            executor.setRoomIn(scaffoldParser.getRoomMap().get(getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())));
+            executor.setRoomIn(scaffoldParser.getRoomMap().get(getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.getPositionVector())));
         }
 
 

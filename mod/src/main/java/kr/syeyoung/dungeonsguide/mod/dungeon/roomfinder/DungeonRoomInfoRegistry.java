@@ -100,7 +100,7 @@ public class DungeonRoomInfoRegistry {
     public static void saveAll(File dir) {
         dir.mkdirs();
         //User is dev if they are in a dev environment or they are on the allowlist DEV_USERS
-        boolean isDev = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment") || DEV_USERS.contains(Minecraft.getMinecraft().thePlayer.getUniqueID().toString().replace("-",""));
+        boolean isDev = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment") || DEV_USERS.contains(Minecraft.getInstance().player.getUniqueID().toString().replace("-",""));
         StringBuilder nameIDString = new StringBuilder("name,uuid,processsor,secrets");
         StringBuilder ids = new StringBuilder();
         CBORMapper objectMapper = new CBORMapper();

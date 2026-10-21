@@ -49,14 +49,14 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
 
     @Override
     public void drawScreen(float partialTicks) {
-        if (Minecraft.getMinecraft().objectMouseOver == null ) return;
-        MovingObjectPosition pos = Minecraft.getMinecraft().objectMouseOver;
+        if (Minecraft.getInstance().hitResult == null ) return;
+        MovingObjectPosition pos = Minecraft.getInstance().hitResult;
         if (pos.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) return;
 
         Block b = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos.getBlockPos()).getBlock();
 
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+        FontRenderer fr = Minecraft.getInstance().font;
+        ScaledResolution sr = new ScaledResolution(Minecraft.getInstance());
         String str = "Press "+ FeatureRegistry.SOLVER_BOMBDEFUSE.<InputConstants.Key>getParameter("key").getValue().getDisplayName().getString() + " to request open "+b.getLocalizedName();
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -66,8 +66,8 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
 
     @Override
     public void onSendData() {
-        if (Minecraft.getMinecraft().objectMouseOver == null ) return;
-        MovingObjectPosition pos = Minecraft.getMinecraft().objectMouseOver;
+        if (Minecraft.getInstance().hitResult == null ) return;
+        MovingObjectPosition pos = Minecraft.getInstance().hitResult;
         if (pos.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) return;
 
         BlockPos block = pos.getBlockPos();

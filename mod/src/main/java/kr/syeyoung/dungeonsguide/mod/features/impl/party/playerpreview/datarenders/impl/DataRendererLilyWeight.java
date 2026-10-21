@@ -31,7 +31,7 @@ import java.util.List;
 public class DataRendererLilyWeight implements IDataRenderer {
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         if (playerProfile.getLilyWeight() == null)
             fr.drawString("§eLily Weight §cAPI DISABLED", 0,0,-1);
         else
@@ -41,13 +41,13 @@ public class DataRendererLilyWeight implements IDataRenderer {
 
     @Override
     public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         fr.drawString("§eLily Weight §b300", 0,0,-1);
         return new Dimension(100, fr.FONT_HEIGHT);
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT);
+        return new Dimension(100, Minecraft.getInstance().font.FONT_HEIGHT);
     }
 
     @Override

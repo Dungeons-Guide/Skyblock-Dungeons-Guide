@@ -45,8 +45,8 @@ public class FeatureGoodParties extends SimpleFeature {
     @DGEventHandler
     public void onGuiPostRender(ScreenRenderEvent.Post rendered) {
         
-        if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) return;
-        GuiChest chest = (GuiChest) Minecraft.getMinecraft().currentScreen;
+        if (!(Minecraft.getInstance().screen instanceof GuiChest)) return;
+        GuiChest chest = (GuiChest) Minecraft.getInstance().screen;
         ContainerChest cont = (ContainerChest) chest.inventorySlots;
         String name = cont.getLowerChestInventory().getName();
         if (!"Party Finder".equals(name)) return;
@@ -54,7 +54,7 @@ public class FeatureGoodParties extends SimpleFeature {
 
         int i = 222;
         int j = i - 108;
-        int ySize = j + (((ContainerChest)(((GuiChest) Minecraft.getMinecraft().currentScreen).inventorySlots)).getLowerChestInventory().getSizeInventory() / 9) * 18;
+        int ySize = j + (((ContainerChest)(((GuiChest) Minecraft.getInstance().screen).inventorySlots)).getLowerChestInventory().getSizeInventory() / 9) * 18;
         int left = (rendered.gui.width - 176) / 2;
         int top = (rendered.gui.height - ySize ) / 2;
         GlStateManager.pushMatrix();
@@ -62,7 +62,7 @@ public class FeatureGoodParties extends SimpleFeature {
         GlStateManager.disableLighting();
         GlStateManager.colorMask(true, true, true, false);
         GlStateManager.translate(left, top, 0);
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         try {
 
             for (int i1 = 0; i1 < Integer.min(54, cont.inventorySlots.size()); i1++) {

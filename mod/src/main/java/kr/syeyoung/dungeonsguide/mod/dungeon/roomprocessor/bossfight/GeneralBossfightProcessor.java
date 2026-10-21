@@ -107,7 +107,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     @Override
     public List<MarkerData> getMarkers() {
         List<MarkerData> markerData = new ArrayList<>();
-        for (Entity entity : Minecraft.getMinecraft().theWorld.getLoadedEntityList()) {
+        for (Entity entity : Minecraft.getInstance().level.getLoadedEntityList()) {
             if (!(entity instanceof EntityLivingBase)) continue;
             if (((EntityLivingBase) entity).getHealth() <= 0) continue;
             MarkerData markerData1 = convertToMarker(entity);

@@ -210,7 +210,7 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
 
         MainConfigWidget mainConfigWidget = new MainConfigWidget();
         GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(mainConfigWidget));
-        Minecraft.getMinecraft().displayGuiScreen(adapter);
+        Minecraft.getInstance().setScreen(adapter);
 
         Navigator.getNavigator(mainConfigWidget.getDomElement()).openPage(
                 new CategoryPageWidget("Dungeon Party")
@@ -379,7 +379,7 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
             return;
         }
 
-        List<String> list = itemStack.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
+        List<String> list = itemStack.getTooltip(Minecraft.getInstance().player, Minecraft.getInstance().options.advancedItemTooltips);
         for (int i = 0; i < list.size(); ++i) {
             if (i == 0) {
                 list.set(i, itemStack.getRarity().rarityColor + list.get(i));

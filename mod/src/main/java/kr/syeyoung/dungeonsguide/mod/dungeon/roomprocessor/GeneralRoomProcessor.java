@@ -111,13 +111,13 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void drawScreen(float partialTicks) {
         // TODO: room editor is not in the first 26.1 build
 //        if (FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && FeatureRegistry.DEBUG.isEnabled()) {
-//            FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+//            FontRenderer fr = Minecraft.getInstance().font;
 
-//            if (Minecraft.getMinecraft().objectMouseOver == null) return;
-//            Entity en = Minecraft.getMinecraft().objectMouseOver.entityHit;
+//            if (Minecraft.getInstance().hitResult == null) return;
+//            Entity en = Minecraft.getInstance().hitResult.entityHit;
 //            if (en == null) return;
 
-//            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+//            ScaledResolution sr = new ScaledResolution(Minecraft.getInstance());
 //            if (DungeonActionContext.getSpawnLocation().containsKey(en.getEntityId())) {
 //                GlStateManager.enableBlend();
 //                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -183,7 +183,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             ChatTransmitter.sendDebugChat(new ChatComponentText(chat.getFormattedText().replace('§', '&') + " - received"));
         }
         if (!chat.getFormattedText().contains("/")) return;
-        BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
+        BlockPos pos = Minecraft.getInstance().player.getPosition();
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         Point pt1 = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(pos.add(2, 0, 2));
@@ -219,7 +219,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         if (stack == 4 && dungeonRoom.getTotalSecrets() != secrets) {
             dungeonRoom.setTotalSecrets(secrets);
             if (FeatureRegistry.DUNGEON_INTERMODCOMM.isEnabled())
-                Minecraft.getMinecraft().thePlayer.sendChatMessage("/pchat $DG-Comm " + pos2.getX() + "/" + pos2.getZ() + " " + secrets);
+                Minecraft.getInstance().player.sendChatMessage("/pchat $DG-Comm " + pos2.getX() + "/" + pos2.getZ() + " " + secrets);
         }
     }
 
@@ -241,7 +241,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 updateEvent.entityLiving.getName().contains("Mimic") &&
                 !dungeonRoom.getContext().isGotMimic()) {
             dungeonRoom.getContext().setGotMimic(true);
-//            Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-Mimic");
+//            Minecraft.getInstance().player.sendChatMessage("/pc $DG-Mimic");
         }
     }
 
@@ -287,7 +287,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 //                }
 //            }
 //            try {
-//                if (ec != null && event.pos != null && Minecraft.getMinecraft().theWorld.getBlockState(event.pos).getBlock() == Blocks.sponge) {
+//                if (ec != null && event.pos != null && Minecraft.getInstance().level.getBlockState(event.pos).getBlock() == Blocks.sponge) {
 //                    int nextId = 1;
 //                    while (ec.getRoom().getDungeonRoomInfo().getMechanics().containsKey("ent-" + nextId)) nextId++;
 //                    DungeonRoomDoor2State.DungeonRoomDoor2Data door2 = new DungeonRoomDoor2State.DungeonRoomDoor2Data();

@@ -91,7 +91,7 @@ public class FeatureItem extends AnnotatedImportOnlyWidget {
     @On(functionName = "relocate")
     public void onRelocate() {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-        Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig((AbstractHUDFeature) feature)), Minecraft.getMinecraft().currentScreen));
+        Minecraft.getInstance().setScreen(new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig((AbstractHUDFeature) feature)), Minecraft.getInstance().screen));
         // do stuff
     }
 }

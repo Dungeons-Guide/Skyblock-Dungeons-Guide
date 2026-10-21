@@ -267,7 +267,7 @@ public class DungeonRoom  {
         buildRoom();
         buildDoors(doorsAndStates);
 
-        Minecraft.getMinecraft().addScheduledTask(() -> {
+        Minecraft.getInstance().execute(() -> {
             try {
                 this.updateRoomProcessor();
             } catch (Exception e) {

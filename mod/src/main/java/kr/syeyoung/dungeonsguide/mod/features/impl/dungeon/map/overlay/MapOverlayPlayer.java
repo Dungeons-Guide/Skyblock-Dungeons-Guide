@@ -31,12 +31,12 @@ public class MapOverlayPlayer implements MapOverlay{
     }
 
     public Vector3d getLocation(float partialTicks) {
-        EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
+        EntityPlayer entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
 
         Vector2d pt2 = null;
         double yaw2 = 0;
 
-        if (entityplayer != null && (!entityplayer.isInvisible() || entityplayer == Minecraft.getMinecraft().thePlayer)) {
+        if (entityplayer != null && (!entityplayer.isInvisible() || entityplayer == Minecraft.getInstance().player)) {
             // getting location from player entity
             Vec3 playerPos = entityplayer.getPositionEyes(partialTicks);
             yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYawHead - entityplayer.prevRotationYawHead) * partialTicks;
@@ -83,16 +83,16 @@ public class MapOverlayPlayer implements MapOverlay{
         if (settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.NONE) return;
         if (settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.ARROW) {
             GlStateManager.enableTexture2D();
-            Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
+            Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation);
 
             GlStateManager.rotate((float) yaw, 0, 0, 1);
             GlStateManager.scale(settings.getIconSize(), settings.getIconSize(), 0);
             Gui.drawScaledCustomSizeModalRect(-4, -4, 128 - 16,
-                    name.equals(Minecraft.getMinecraft().thePlayer.getName()) ? 128 - 16 : 128 - 0, 16, -16, 8, 8, 128, 128);
+                    name.equals(Minecraft.getInstance().player.getName()) ? 128 - 16 : 128 - 0, 16, -16, 8, 8, 128, 128);
         } else {
             boolean flag1 = settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.HEAD_FLIP;
             GlStateManager.enableTexture2D();
-            Minecraft.getMinecraft().getTextureManager().bindTexture(
+            Minecraft.getInstance().getTextureManager().bindTexture(
                     entry.getLocationSkin()
             );
             int l2 = 8 + (flag1 ? 8 : 0);

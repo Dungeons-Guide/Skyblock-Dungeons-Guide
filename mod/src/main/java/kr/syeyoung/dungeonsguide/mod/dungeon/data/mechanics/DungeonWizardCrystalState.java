@@ -92,7 +92,7 @@ public class DungeonWizardCrystalState implements DungeonMechanicState {
 
     @Override
     public String getCurrentState() {
-        for (ItemStack stack : Minecraft.getMinecraft().thePlayer.inventory.mainInventory) {
+        for (ItemStack stack : Minecraft.getInstance().player.inventory.mainInventory) {
             if (stack == null) continue;
             if (stack.getItem() != Items.skull) continue;
             if (stack.getDisplayName().equals("§9Wizard's Crystal")) return "obtained-self";

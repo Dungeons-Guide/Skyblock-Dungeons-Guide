@@ -155,7 +155,7 @@ public abstract class RawRenderingGuiFeature extends AbstractHUDFeature {
         drawHUD(partialTicks);
     }
     public static FontRenderer getFontRenderer() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         return fr;
     }
 }

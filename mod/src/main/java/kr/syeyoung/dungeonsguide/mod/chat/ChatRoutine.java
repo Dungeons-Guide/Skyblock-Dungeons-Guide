@@ -98,7 +98,7 @@ public class ChatRoutine {
                     }
                     if (state == 2){
                         callback.accept(lol);
-                        Minecraft.getMinecraft().addScheduledTask(next);
+                        Minecraft.getInstance().execute(next);
                         return ChatProcessResult.REMOVE_LISTENER;
                     }
                     return ChatProcessResult.NONE;
@@ -119,7 +119,7 @@ public class ChatRoutine {
                 public ChatProcessResult process(String txt, Map<String, Object> context) {
                     if (starting.test(txt)) {
                         callback.accept(txt);
-                        Minecraft.getMinecraft().addScheduledTask(next);
+                        Minecraft.getInstance().execute(next);
                         return ChatProcessResult.REMOVE_LISTENER;
                     }
                     return ChatProcessResult.NONE;
@@ -133,17 +133,17 @@ public class ChatRoutine {
 
         @Override
         public void execute(Runnable next) {
-            Minecraft.getMinecraft().theWorld.sendQuittingDisconnectingPacket();
-            Minecraft.getMinecraft().loadWorld((WorldClient)null);
+            Minecraft.getInstance().level.sendQuittingDisconnectingPacket();
+            Minecraft.getInstance().loadWorld((WorldClient)null);
             GuiMultiplayer guiMultiplayer;
-            Minecraft.getMinecraft().displayGuiScreen(guiMultiplayer = new GuiMultiplayer(new GuiMainMenu()));
+            Minecraft.getInstance().setScreen(guiMultiplayer = new GuiMultiplayer(new GuiMainMenu()));
             ses.schedule(() -> {
-                Minecraft.getMinecraft().addScheduledTask(() -> {
+                Minecraft.getInstance().execute(() -> {
                     guiMultiplayer.selectServer(0);
                     guiMultiplayer.connectToSelected();
 
                     ses.schedule(() -> {
-                        Minecraft.getMinecraft().addScheduledTask(next::run);
+                        Minecraft.getInstance().execute(next::run);
                     }, 10, TimeUnit.SECONDS);
                 });
             }, 3, TimeUnit.SECONDS);
@@ -166,7 +166,7 @@ public class ChatRoutine {
         @Override
         public void execute(Runnable next) {
             ses.schedule(() -> {
-                Minecraft.getMinecraft().addScheduledTask(next);
+                Minecraft.getInstance().execute(next);
             }, ms, TimeUnit.MILLISECONDS);
         }
     }

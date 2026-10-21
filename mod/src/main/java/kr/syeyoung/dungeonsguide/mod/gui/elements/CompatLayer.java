@@ -160,9 +160,9 @@ public class CompatLayer extends Widget implements Layouter, Renderer {
         Rectangle originalRect = context.currentClip();
         Rectangle rectangle = originalRect == null ? null : originalRect.getBounds();
         boolean isNotNull = rectangle != null;
-        if (rectangle == null) rectangle = new Rectangle(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+        if (rectangle == null) rectangle = new Rectangle(0,0,Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight());
 
-        rectangle.y = Minecraft.getMinecraft().displayHeight - rectangle.y - rectangle.height;
+        rectangle.y = Minecraft.getInstance().getWindow().getHeight() - rectangle.y - rectangle.height;
         rectangle.width /= scale;
         rectangle.height /= scale;
         rectangle.x /= scale;

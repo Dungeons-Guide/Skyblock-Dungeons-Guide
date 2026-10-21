@@ -111,10 +111,10 @@ public class WidgetPresetList extends AnnotatedImportOnlyWidget {
             this.name.setValue(preset.getName());
             this.description.setValue(preset.getDescription());
             this.icon.setValue("dungeonsguide:textures/dglogox128.png");
-            for (ResourcePackRepository.Entry repositoryEntry : Minecraft.getMinecraft().getResourcePackRepository()
+            for (ResourcePackRepository.Entry repositoryEntry : Minecraft.getInstance().getResourcePackRepository()
                     .getRepositoryEntries()) {
                 if (repositoryEntry.getResourcePackName().equals(preset.getTexturePack())) {
-                    repositoryEntry.bindTexturePackIcon(Minecraft.getMinecraft().getTextureManager());
+                    repositoryEntry.bindTexturePackIcon(Minecraft.getInstance().getTextureManager());
                     Identifier resourceLocation = ReflectionHelper.getPrivateValue(ResourcePackRepository.Entry.class, repositoryEntry, "locationTexturePackIcon", "field_5260", "f");
                     if (resourceLocation != null)
                         this.icon.setValue(resourceLocation.toString());

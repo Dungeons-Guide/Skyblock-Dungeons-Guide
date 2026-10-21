@@ -71,10 +71,10 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
         IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
         if (blockState.getBlock() == Blocks.skull) {
             essenceWasThere = true;
-            List<EntityArmorStand> entities = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityArmorStand.class, AxisAlignedBB.fromBounds(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
+            List<EntityArmorStand> entities = Minecraft.getInstance().level.getEntitiesWithinAABB(EntityArmorStand.class, AxisAlignedBB.fromBounds(pos.getX(),pos.getY()-3,pos.getZ(), pos.getX()+1, pos.getY()+2, pos.getZ()+1));
             TileEntity tileEntity = dungeonRoom.getCachedWorld().getTileEntity(pos);
 
-            if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 25) {
+            if (Minecraft.getInstance().player.getDistanceSq(pos) < 25) {
                 if (tileEntity instanceof TileEntitySkull) {
                     String texture = Optional.ofNullable(((TileEntitySkull) tileEntity).getPlayerProfile())
                             .map(a -> a.getProperties())
@@ -106,7 +106,7 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
         } else if (blockState.getBlock() == Blocks.air && essenceWasThere) {
             found = true;
         } else if (blockState.getBlock() == Blocks.air && !essenceWasThere) {
-            if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 25) {
+            if (Minecraft.getInstance().player.getDistanceSq(pos) < 25) {
                 nearbyTicks++;
             }
             if (nearbyTicks > 100) {

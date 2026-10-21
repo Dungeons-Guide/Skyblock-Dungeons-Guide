@@ -102,9 +102,9 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 if (mapOverlay.onClick(relMouseX + 64 - px, relMouseY + 64 - pz, getDomElement())) return true;
             }
         } else {
-            double yaw = ((Minecraft.getMinecraft().thePlayer.rotationYawHead) % 360 + 360) % 360;
+            double yaw = ((Minecraft.getInstance().player.rotationYawHead) % 360 + 360) % 360;
 
-            Vector2d pt = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(Minecraft.getMinecraft().thePlayer.getPositionEyes(0));
+            Vector2d pt = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(Minecraft.getInstance().player.getPositionEyes(0));
 
             relMouseX /= mapConfiguration.getMapScale();
             relMouseY /= mapConfiguration.getMapScale();
@@ -177,7 +177,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
     public void renderMap(float partialTicks, DungeonContext dungeonContext) {
         DungeonRoomScaffoldParser mapProcessor = dungeonContext.getScaffoldParser();
 
-        EntityPlayer p = Minecraft.getMinecraft().thePlayer;
+        EntityPlayer p = Minecraft.getInstance().player;
 
 
         Size featureRect = getDomElement().getSize();
@@ -275,7 +275,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
 
 
     private void renderBossfight(float partialTicks, float scale, BossfightRenderSettings bossfightRenderSettings, List<MapOverlay> overlays) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(bossfightRenderSettings.getResourceLocation());
+        Minecraft.getInstance().getTextureManager().bindTexture(bossfightRenderSettings.getResourceLocation());
         double x, y, width, height;
         if (bossfightRenderSettings.getTextureWidth() > bossfightRenderSettings.getTextureHeight()) {
             double rHeight = bossfightRenderSettings.getTextureHeight() * 128.0 / bossfightRenderSettings.getTextureWidth();
@@ -463,11 +463,11 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 String name = override != null && !override.getNameOverride().isEmpty() ? override.getNameOverride() : dungeonRoomInfo.getName();
                 if (dungeonRoomInfo.isRegistered()) {
                     if (nameRotation == MapConfiguration.NameSettings.NameRotation.ROTATE) {
-                        Minecraft.getMinecraft().fontRendererObj.drawString(name, -Minecraft.getMinecraft().fontRendererObj.getStringWidth(name) / 2,
-                                -Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT / 2,
+                        Minecraft.getInstance().font.drawString(name, -Minecraft.getInstance().font.getStringWidth(name) / 2,
+                                -Minecraft.getInstance().font.FONT_HEIGHT / 2,
                                 RenderUtils.getColorAt(0, 0, mapConfiguration.getNameSettings().getTextColor()));
                     } else {
-                        Minecraft.getMinecraft().fontRendererObj.drawSplitString(name, 0, 0, renderWidth,
+                        Minecraft.getInstance().font.drawSplitString(name, 0, 0, renderWidth,
                                 RenderUtils.getColorAt(0, 0, mapConfiguration.getNameSettings().getTextColor()));
                     }
                 }
@@ -476,7 +476,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
         }
 
         GlStateManager.color(1,1,1,1);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
+        Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation);
         GlStateManager.enableBlend();
         for (Point point : scaffoldParser.getPotential()) {
             Point mapPt = layout.roomPointToMapPoint(point);
@@ -599,19 +599,19 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED)
                     color = 0xFF777777;
 
-                Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(
-                        toDraw, -Minecraft.getMinecraft().fontRendererObj.getStringWidth(toDraw)/2, -4, color
+                Minecraft.getInstance().font.drawStringWithShadow(
+                        toDraw, -Minecraft.getInstance().font.getStringWidth(toDraw)/2, -4, color
                 );
             } else {
                 GlStateManager.color(1,1,1,1);
                 GlStateManager.enableBlend();
                 if (override == null || override.getIconLocation().isEmpty()) {
-                    Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
+                    Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation);
                     GuiScreen.drawScaledCustomSizeModalRect(
                             -8, -8, u, v, 16, 16, unitRoomWidth, unitRoomHeight, 128, 128
                     );
                 } else {
-                    Minecraft.getMinecraft().getTextureManager().bindTexture(Identifier.parse(override.getIconLocation()));
+                    Minecraft.getInstance().getTextureManager().bindTexture(Identifier.parse(override.getIconLocation()));
                     GuiScreen.drawScaledCustomSizeModalRect(
                             -8, -8, u, v, 16, 16, unitRoomWidth, unitRoomHeight, 32, 32
                     );
@@ -647,7 +647,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
 
 
         GlStateManager.enableBlend();
-        Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
+        Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation);
         for (Point point : scaffoldParser.getPotential()) {
             Point mapPt = layout.roomPointToMapPoint(point);
             int offX = mapPt.x;
@@ -719,7 +719,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 int rWidthPixels = dungeonRoom.getRoomBounds().getUnitLenX() * unitRoomBigWidth - gap;
                 int rHeightPixels = dungeonRoom.getRoomBounds().getUnitLenZ() * unitRoomBigHeight - gap;
 
-                Minecraft.getMinecraft().getTextureManager().bindTexture(Identifier.parse(override.getTextureLocation()));
+                Minecraft.getInstance().getTextureManager().bindTexture(Identifier.parse(override.getTextureLocation()));
                 GlStateManager.pushMatrix();;
                 GlStateManager.translate(mapPt.x + rWidthPixels / 2.0, mapPt.y + rHeightPixels / 2.0, 0);
                 GlStateManager.rotate(-rotation * 90, 0, 0, 1);
@@ -728,7 +728,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 );
                 GlStateManager.popMatrix();
             } else {
-                Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
+                Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation);
                 for (int y = 0; y < 4; y++) {
                     for (int x = 0; x < 4; x++) {
                         boolean isIn = ((dungeonRoom.getRoomBounds().getShape() >> ((y * 4) + x)) & 0x1) > 0;
@@ -763,7 +763,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 }
             }
 
-            Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
+            Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation);
             for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : dungeonRoom.getDoorsAndStates()) {
                 double x = doorsAndState.getFirst().x;
                 double y = doorsAndState.getFirst().y;

@@ -41,7 +41,7 @@ public class MapOverlayMarker implements MapOverlay{
         boolean flip = settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.HEAD_FLIP;
         int tx = marker.getMarkerIndex() % 8;
         int ty = marker.getMarkerIndex() / 8;
-        Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation2);
+        Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation2);
         Gui.drawScaledCustomSizeModalRect(-4, -4, tx * 72,ty * 72 + (flip ? 8 : 0) , 72, 72, 8, flip ? -8 : 8, 576, 576);
     }
 

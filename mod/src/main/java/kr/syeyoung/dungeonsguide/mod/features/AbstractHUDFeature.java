@@ -112,7 +112,7 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
 //                    if (guiScreen == null) {
 //                        guiScreen = new GuiConfigV2();
 //                    }
-//                    Minecraft.getMinecraft().displayGuiScreen(guiScreen);
+//                    Minecraft.getInstance().setScreen(guiScreen);
 //                    if (guiScreen instanceof GuiConfigV2) {
 //                        ((GuiConfigV2) guiScreen).getRootConfigPanel().setCurrentPageAndPushHistory(getEditRoute(((GuiConfigV2) guiScreen).getRootConfigPanel()));
 //                    }
@@ -157,8 +157,8 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
         public void configure() {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             MainConfigWidget mainConfigWidget = new MainConfigWidget();
-            GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(mainConfigWidget), Minecraft.getMinecraft().currentScreen);
-            Minecraft.getMinecraft().displayGuiScreen(adapter);
+            GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(mainConfigWidget), Minecraft.getInstance().screen);
+            Minecraft.getInstance().setScreen(adapter);
 
             Navigator.getNavigator(mainConfigWidget.getDomElement()).openPage(
                     abstractHUDFeature.getConfigureWidget()

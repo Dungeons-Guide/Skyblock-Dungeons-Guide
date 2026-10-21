@@ -67,7 +67,7 @@ public class CommandReparty {
                 reparting = false;
                 return;
             }
-            if (!pc.hasLeader(Minecraft.getMinecraft().getSession().getUsername())) {
+            if (!pc.hasLeader(Minecraft.getInstance().getSession().getUsername())) {
                 if (!noerror)
                     ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou're not the leader"));
                 reparting = false;
@@ -79,7 +79,7 @@ public class CommandReparty {
                 reparting = false;
                 return;
             }
-            String members = pc.getPartyRawMembers().stream().filter(a -> !a.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername())).collect(Collectors.joining(" "));
+            String members = pc.getPartyRawMembers().stream().filter(a -> !a.equalsIgnoreCase(Minecraft.getInstance().getSession().getUsername())).collect(Collectors.joining(" "));
             String command = "/p invite "+members;
 
             ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eDisbanding Party..."));

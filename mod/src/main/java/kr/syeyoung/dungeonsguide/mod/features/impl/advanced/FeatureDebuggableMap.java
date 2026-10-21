@@ -58,7 +58,7 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
 
 
     DynamicTexture dynamicTexture = new DynamicTexture(128, 128);
-    Identifier location = Minecraft.getMinecraft().renderEngine.getDynamicTextureLocation("dungeons/map/", dynamicTexture);
+    Identifier location = Minecraft.getInstance().getTextureManager().getDynamicTextureLocation("dungeons/map/", dynamicTexture);
 
     @Override
     public void drawHUD(float partialTicks) {
@@ -73,13 +73,13 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
         int[] textureData = dynamicTexture.getTextureData();
         MapUtils.getImage().getRGB(0, 0, 128, 128, textureData, 0, 128);
         dynamicTexture.updateDynamicTexture();
-        Minecraft.getMinecraft().getTextureManager().bindTexture(location);
+        Minecraft.getInstance().getTextureManager().bindTexture(location);
         GlStateManager.enableAlpha();
         GuiScreen.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 128, 128, 128, 128);
         GlStateManager.popMatrix();
 
 
-        if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChat)) return;
+        if (!(Minecraft.getInstance().screen instanceof GuiChat)) return;
     }
 
     @Override

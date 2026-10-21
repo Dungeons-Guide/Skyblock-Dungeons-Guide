@@ -141,10 +141,10 @@ public class FeaturePenguins extends SimpleFeature {
         }
         float f1 = renderPlayerEvent.entityPlayer.prevRotationYawHead + (renderPlayerEvent.entityPlayer.rotationYawHead - renderPlayerEvent.entityPlayer.prevRotationYawHead) * renderPlayerEvent.partialRenderTick;
         GlStateManager.rotate(f1+180,0,-1,0);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+        Minecraft.getInstance().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 
         GlStateManager.scale(1.5,1.5,1.5);
-        Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(
+        Minecraft.getInstance().getBlockRenderer().getBlockModelRenderer().renderModelBrightnessColor(
                 models.get(modelName), 1,1,1,1
         );
         GlStateManager.popMatrix();
@@ -173,7 +173,7 @@ public class FeaturePenguins extends SimpleFeature {
                 }
 
                 Item item = itemstack.getItem();
-                Minecraft minecraft = Minecraft.getMinecraft();
+                Minecraft minecraft = Minecraft.getInstance();
 
                 GlStateManager.rotate(180, 0.0f, 0.0f, 1.0f);
                 if (item.isFull3D()) {

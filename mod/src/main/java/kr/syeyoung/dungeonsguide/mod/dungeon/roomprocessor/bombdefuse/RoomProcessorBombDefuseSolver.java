@@ -168,7 +168,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             w.flush();
             byte[] bytes = baos.toByteArray();
             String str = Base64.encodeBase64String(bytes);
-            Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-BD " +str);
+            Minecraft.getInstance().player.sendChatMessage("/pc $DG-BD " +str);
 
             for (ChamberSet ch:chambers) {
                 if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
@@ -219,7 +219,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     public void tick() {
         super.tick();
         if (bugged) return;
-        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        BlockPos player = Minecraft.getInstance().player.getPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
@@ -240,7 +240,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     public void drawScreen(float partialTicks) {
         super.drawScreen(partialTicks);
         if (bugged) return;
-        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        BlockPos player = Minecraft.getInstance().player.getPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         if (FeatureRegistry.DEBUG.isEnabled()) {
             for (ChamberSet ch : chambers) {
@@ -249,7 +249,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                     if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                         ch.getLeft().getProcessor().drawScreen(partialTicks);
 
-                        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+                        FontRenderer fr = Minecraft.getInstance().font;
                         String str = "Current: " + ch.getChamberGen().getName() + " Specific: " + ch.getLeft().getProcessor().getName();
                         fr.drawString(str, 0, 0, 0xFFFFFFFF);
                     }
@@ -258,7 +258,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                     if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                         ch.getRight().getProcessor().drawScreen(partialTicks);
 
-                        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+                        FontRenderer fr = Minecraft.getInstance().font;
                         if (ch.getChamberGen() == null || ch.getRight().getProcessor() == null) continue;
                         String str = "Current: " + ch.getChamberGen().getName() + " Specific: " + ch.getRight().getProcessor().getName();
                         fr.drawString(str, 0, 0, 0xFFFFFFFF);
@@ -273,7 +273,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.drawWorld(partialTicks);
         if (bugged) return;
 
-        OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos((int)Minecraft.getMinecraft().thePlayer.posX, 68, (int)Minecraft.getMinecraft().thePlayer.posZ));
+        OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos((int)Minecraft.getInstance().player.posX, 68, (int)Minecraft.getInstance().player.posZ));
         boolean found = false;
         for (ChamberSet ch:chambers) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
@@ -323,7 +323,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.onPostGuiRender(event);
         if (bugged) return;
 
-        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        BlockPos player = Minecraft.getInstance().player.getPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
@@ -344,7 +344,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.onEntityUpdate(updateEvent);
         if (bugged) return;
 
-        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        BlockPos player = Minecraft.getInstance().player.getPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
@@ -365,7 +365,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.onKeybindPress(keyInputEvent);
         if (bugged) return;
 
-        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        BlockPos player = Minecraft.getInstance().player.getPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
@@ -386,7 +386,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.onInteract(event);
         if (bugged) return;
 
-        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        BlockPos player = Minecraft.getInstance().player.getPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
@@ -407,7 +407,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.onInteractBlock(event);
         if (bugged) return;
 
-        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        BlockPos player = Minecraft.getInstance().player.getPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {

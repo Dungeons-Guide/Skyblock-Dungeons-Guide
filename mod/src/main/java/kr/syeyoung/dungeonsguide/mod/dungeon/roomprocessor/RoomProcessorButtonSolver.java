@@ -103,7 +103,7 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
         if (bugged) return;
-        if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(woods[6]) > 100) return;
+        if (Minecraft.getInstance().player.getPosition().distanceSq(woods[6]) > 100) return;
 
 
         for (int i = 0; i < woods.length; i++) {

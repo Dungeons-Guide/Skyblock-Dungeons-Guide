@@ -51,11 +51,11 @@ public class FeatureBoxStarMobs extends SimpleFeature {
         
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        final BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        final BlockPos player = Minecraft.getInstance().player.getPosition();
         int val = this.<Integer>getParameter("radius").getValue();
         final int sq = val * val;
 
-        List<EntityArmorStand> skeletonList = Minecraft.getMinecraft().theWorld.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
+        List<EntityArmorStand> skeletonList = Minecraft.getInstance().level.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
             @Override
             public boolean apply(@Nullable EntityArmorStand input) {
                 if (player.distanceSq(input.getPosition()) > sq) return false;

@@ -78,7 +78,7 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
 
     @Override
     public boolean checkIfBlocked(int x, int y, int z) {
-        return !Minecraft.getMinecraft().theWorld.isAirBlock(new BlockPos(x,y,z));
+        return !Minecraft.getInstance().level.isAirBlock(new BlockPos(x,y,z));
 //
 //        int maxX = (int) Math.floor(x/2.0);
 //        int maxY = (int) Math.floor(y/2.0);
@@ -89,7 +89,7 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
 //        for (int xp = minX; xp <= maxX; xp++)
 //            for (int yp = minY; yp <= maxY; yp++)
 //                for (int zp = minZ; zp <= maxZ; zp++)
-//                    if (Minecraft.getMinecraft().theWorld.isAirBlock(new BlockPos(xp,yp,zp)))
+//                    if (Minecraft.getInstance().level.isAirBlock(new BlockPos(xp,yp,zp)))
 //                        return false;
 //        return true;
     }

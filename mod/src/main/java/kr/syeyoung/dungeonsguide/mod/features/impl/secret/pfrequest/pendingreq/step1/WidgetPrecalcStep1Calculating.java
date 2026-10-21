@@ -33,7 +33,7 @@ public class WidgetPrecalcStep1Calculating extends AnnotatedImportOnlyWidget {
     }
 
     public void notifyDone() {
-        Minecraft.getMinecraft().addScheduledTask(() -> {
+        Minecraft.getInstance().execute(() -> {
             parent.updateStep();
         });
     }

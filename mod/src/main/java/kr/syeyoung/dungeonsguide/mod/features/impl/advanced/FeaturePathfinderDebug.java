@@ -145,7 +145,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
         if (dungeonContext == null) return;
         if (dungeonContext.getScaffoldParser() == null) return;
         DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
-                dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())
+                dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.getPositionVector())
         );
         if (drm == null) return;
 
@@ -181,7 +181,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
                 );
 
                 for (PathfindResult.PathfindNode pose : res.getNodeList()) {
-                    if (pose.getType() != null && pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+                    if (pose.getType() != null && pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getInstance().player.getPosition()) < 100) {
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(),
                                 0xFF000000 | c.getRGB(), 0.02f, false, true, event.partialTicks);
                     }
@@ -216,7 +216,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
                 PathfindPrecalculation pfc = new PathfindPrecalculation(new File(args[2]));
                 DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
                 DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
-                        dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())
+                        dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.getPositionVector())
                 );
 
                 PrecalculatedPathfinder precalculatedPathfinder = (PrecalculatedPathfinder) pfc.createPathfinder(drm.getRoomMatcher().getRotation());
@@ -226,7 +226,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
                 e.printStackTrace();
             }
         } else if (args[1].equals("check")) {
-            pfDebugPts.add(Minecraft.getMinecraft().thePlayer.getPositionVector());
+            pfDebugPts.add(Minecraft.getInstance().player.getPositionVector());
         } else if (args[1].equals("clearpt")) {
             pfDebugPts.clear();
         } else if (args[1].equals("stonkmech")) {
@@ -234,7 +234,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null) return;
             DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
-                    dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())
+                    dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.getPositionVector())
             );
             if (drm == null) return;
             FeatureRegistry.DEBUG_ST.change(
@@ -244,7 +244,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null) return;
             DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
-                    dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())
+                    dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.getPositionVector())
             );
             if (drm == null) return;
             DungeonOnewayLeverState.DungeonOnewayLeverData mechanic1 = (DungeonOnewayLeverState.DungeonOnewayLeverData) drm.getDungeonRoomInfo().getMechanics().get(args[2]);

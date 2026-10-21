@@ -146,7 +146,7 @@ public class ApiFetcher {
 
     public static Optional<GameProfile> getSkinGameProfileByUUID(String uid, String nickname) throws IOException {
         GameProfile gameProfile = new GameProfile(UUID.fromString(uid), nickname);
-        GameProfile newProf = Minecraft.getMinecraft().getSessionService().fillProfileProperties(gameProfile, true);
+        GameProfile newProf = Minecraft.getInstance().getSessionService().fillProfileProperties(gameProfile, true);
         return newProf == gameProfile ? Optional.empty() : Optional.of(newProf);
     }
 

@@ -128,7 +128,7 @@ public class CommandDungeonsGuide {
     public void onTick(ClientTickEvent e) {
         try {
             if (target != null && e.phase == ClientTickEvent.Phase.START) {
-                Minecraft.getMinecraft().displayGuiScreen(target);
+                Minecraft.getInstance().setScreen(target);
                 target = null;
             }
         } catch (Exception t) {

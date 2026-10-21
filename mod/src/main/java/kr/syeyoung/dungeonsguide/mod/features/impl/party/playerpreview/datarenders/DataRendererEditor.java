@@ -53,14 +53,14 @@ public class DataRendererEditor extends MPanel {
     private int lastY;
     private int scrollY;
     private final int baseWidth = 120;
-    private final int hamburgerWidth = Minecraft.getMinecraft().fontRendererObj.getStringWidth("==");
+    private final int hamburgerWidth = Minecraft.getInstance().font.getStringWidth("==");
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
         Gui.drawRect(0,0,getBounds().width, getBounds().height,  RenderUtils.blendAlpha(0x141414, 0.12f));
 
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+        FontRenderer fr = Minecraft.getInstance().font;
+        ScaledResolution sr = new ScaledResolution(Minecraft.getInstance());
 
 
         GlStateManager.enableBlend();
@@ -240,7 +240,7 @@ public class DataRendererEditor extends MPanel {
         super.mouseClicked(absMouseX, absMouseY, relMouseX, relMouseY, mouseButton);
         lastX = relMouseX;
         lastY = relMouseY;
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         int legitRelY = relMouseY - (5+fr.FONT_HEIGHT+3);
         if (new Rectangle(155,5+fr.FONT_HEIGHT + 3, hamburgerWidth, 230).contains(relMouseX, relMouseY)) {
             Set<String> rest = new HashSet<>(DataRendererRegistry.getValidDataRenderer());
@@ -309,7 +309,7 @@ public class DataRendererEditor extends MPanel {
     @Override
     public void mouseReleased(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int state) {
         super.mouseReleased(absMouseX, absMouseY, relMouseX, relMouseY, state);
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         int legitRelY = selectedY - (5+fr.FONT_HEIGHT+3);
         if (currentlySelected != null && new Rectangle(0,5+fr.FONT_HEIGHT + 3, hamburgerWidth+11, 232).contains(selectedX, selectedY)) {
             Set<String> rest = new HashSet<>(DataRendererRegistry.getValidDataRenderer());
@@ -345,7 +345,7 @@ public class DataRendererEditor extends MPanel {
     public void mouseScrolled(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
         super.mouseScrolled(absMouseX, absMouseY, relMouseX0, relMouseY0, scrollAmount);
 
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         if (!new Rectangle(155,5+fr.FONT_HEIGHT + 3, hamburgerWidth+baseWidth+1, 230).contains(relMouseX0, relMouseY0)) return;
 
         if (scrollAmount < 0) scrollY += 20;

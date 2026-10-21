@@ -68,7 +68,7 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
     @On(functionName = "guiconfig")
     public void guiConfig() {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-        Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig(null)), Minecraft.getMinecraft().currentScreen));
+        Minecraft.getInstance().setScreen(new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig(null)), Minecraft.getInstance().screen));
     }
     @On(functionName = "discord")
     public void discord() {
@@ -123,7 +123,7 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Are you sure?", modalMessage, true), (a) -> {
             if (a == null) return;
             if (a == Boolean.TRUE) {
-                Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")),
+                Minecraft.getInstance().setScreen(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")),
                         GuiScreenAdapter.getAdapter(getDomElement()), true));
             }
         });

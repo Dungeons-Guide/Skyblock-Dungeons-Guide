@@ -68,7 +68,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
         public void onApprove() {
             FeatureCollectDiagnostics.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDiagnostics.this.setEnabled(true);
-            Minecraft.getMinecraft().displayGuiScreen(null);
+            Minecraft.getInstance().setScreen(null);
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         }
 
@@ -76,7 +76,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
         public void onDeny() {
             FeatureCollectDiagnostics.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDiagnostics.this.setEnabled(false);
-            Minecraft.getMinecraft().displayGuiScreen(null);
+            Minecraft.getInstance().setScreen(null);
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         }
     }
@@ -90,7 +90,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
     public void init() {
         if (!this.<Boolean>getParameter("prompted").getValue()) {
             Scaler scaler = new Scaler();
-            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getInstance()).getScaleFactor());
             scaler.child.setValue(new WidgetUserApproval());
             GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler, null, false));
         }

@@ -84,7 +84,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null || DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser() == null) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP thePlayer = Minecraft.getInstance().player;
         if (thePlayer == null) return;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);

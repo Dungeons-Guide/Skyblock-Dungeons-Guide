@@ -69,10 +69,10 @@ public class ChatProcessor {
     @SubscribeEvent
     public void onTick(ClientTickEvent clientTickEvent) {
         try {
-            if (clientTickEvent.phase == ClientTickEvent.Phase.START && Minecraft.getMinecraft().thePlayer != null && minimumNext < System.currentTimeMillis()) {
+            if (clientTickEvent.phase == ClientTickEvent.Phase.START && Minecraft.getInstance().player != null && minimumNext < System.currentTimeMillis()) {
                 if (!chatQueue.isEmpty()) {
                     Tuple<String, Runnable> tuple = chatQueue.poll();
-                    Minecraft.getMinecraft().thePlayer.sendChatMessage(tuple.getFirst());
+                    Minecraft.getInstance().player.sendChatMessage(tuple.getFirst());
                     if (tuple.getSecond() != null)
                         tuple.getSecond().run();
                     minimumNext = System.currentTimeMillis() + 700;

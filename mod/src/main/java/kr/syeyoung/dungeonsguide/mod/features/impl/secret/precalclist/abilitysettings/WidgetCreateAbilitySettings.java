@@ -147,13 +147,13 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
         txtEtherwarpOffset.setValue(String.valueOf(defaultAlgorithm.getEtherwarpOffset()));
         txtEtherwarpLeeway.setValue(String.valueOf(defaultAlgorithm.getEtherwarpLeeway()));
 
-        etherwarp.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F)));
-        stair.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F)));
-        teleportdown.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F)));
-        enderchest.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F)));
-        tntpearl.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F)));
-        enderpearl.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F)));
-        slowstonk.addOnUpdate((old, neu) -> Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F)));
+        etherwarp.addOnUpdate((old, neu) -> Minecraft.getInstance().getSoundManager().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F)));
+        stair.addOnUpdate((old, neu) -> Minecraft.getInstance().getSoundManager().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F)));
+        teleportdown.addOnUpdate((old, neu) -> Minecraft.getInstance().getSoundManager().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F)));
+        enderchest.addOnUpdate((old, neu) -> Minecraft.getInstance().getSoundManager().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F)));
+        tntpearl.addOnUpdate((old, neu) -> Minecraft.getInstance().getSoundManager().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F)));
+        enderpearl.addOnUpdate((old, neu) -> Minecraft.getInstance().getSoundManager().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F)));
+        slowstonk.addOnUpdate((old, neu) -> Minecraft.getInstance().getSoundManager().playSound(PositionedSoundRecord.create(Identifier.parse("gui.button.press"), 1.0F)));
     }
 
 

@@ -32,7 +32,7 @@ public class WidgetAbilitySettings extends Widget implements Renderer {
 
     private void renderIndex(int x, int y, int index, int width, int height, int type) {
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(abilities);
+        Minecraft.getInstance().getTextureManager().bindTexture(abilities);
 
         int offsetX = (type % 2) * 256;
         int offsetY = (type / 2) * 256;
@@ -52,7 +52,7 @@ public class WidgetAbilitySettings extends Widget implements Renderer {
 
         AlgorithmSetting algorithmSetting = settings.getValue();
         if (algorithmSetting == null) return;
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
 
         int pickX = 5;
         if (algorithmSetting.getPickaxe() != null) {

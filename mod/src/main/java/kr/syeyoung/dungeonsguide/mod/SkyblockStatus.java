@@ -109,9 +109,9 @@ public class SkyblockStatus {
     private boolean forceIsOnDungeon2;
 
     public static boolean isOnHypixel() {
-        Minecraft mc = Minecraft.getMinecraft();
-        if (mc == null || mc.thePlayer == null) return false;
-        String clientBrand = mc.thePlayer.getClientBrand();
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null || mc.player == null) return false;
+        String clientBrand = mc.player.getClientBrand();
         if (clientBrand == null) return false;
         if (!mc.isSingleplayer() && mc.loadingScreen != null) {
             return clientBrand.startsWith("Hypixel BungeeCord");
@@ -122,7 +122,7 @@ public class SkyblockStatus {
     private static final Set<String> SKYBLOCK_IN_ALL_LANGUAGES = Sets.newHashSet("SKYBLOCK");
 
     public void updateStatus() {
-        // TODO: fakeserver is not in the first 26.1 build. was: DungeonServerLaunchUtils.isDungeonIntegratedServerRunning() && Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().theWorld != null || forceIsOnDungeon2
+        // TODO: fakeserver is not in the first 26.1 build. was: DungeonServerLaunchUtils.isDungeonIntegratedServerRunning() && Minecraft.getInstance().player != null && Minecraft.getInstance().level != null || forceIsOnDungeon2
         forceIsOnDungeon = forceIsOnDungeon2;
         if (forceIsOnDungeon) {
             locationName = "TEST DG";

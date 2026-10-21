@@ -107,7 +107,7 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
             widgetPartyFinder = new WidgetPartyFinder();
 
             Scaler scaler = new Scaler();
-            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getInstance()).getScaleFactor());
             scaler.child.setValue(widgetPartyFinder);
             guiScreenAdapter = new GuiScreenAdapterChestOverride(scaler);
         }
@@ -122,8 +122,8 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
             widgetPartyFinder.onChestUpdate(windowUpdateEvent);
         }
 
-        if (Minecraft.getMinecraft().currentScreen instanceof GuiChest) {
-            GuiChest chest = (GuiChest) Minecraft.getMinecraft().currentScreen;
+        if (Minecraft.getInstance().screen instanceof GuiChest) {
+            GuiChest chest = (GuiChest) Minecraft.getInstance().screen;
 
             if (!(chest.inventorySlots instanceof ContainerChest)) return;
             ContainerChest containerChest = (ContainerChest) chest.inventorySlots;

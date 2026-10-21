@@ -391,7 +391,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
 
     @DGEventHandler
     public void onTick(DGTickEvent event) {
-        EntityPlayerSP sp = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP sp = Minecraft.getInstance().player;
         if (sp == null) return;
         if (sp.inventory == null || sp.inventory.armorInventory == null) return;
         for (ItemStack itemStack : sp.inventory.armorInventory) {

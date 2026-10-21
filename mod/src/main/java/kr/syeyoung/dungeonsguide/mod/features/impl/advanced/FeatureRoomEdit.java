@@ -170,7 +170,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
         if (!dungeonRoomInfo.hasSchematic()) throw new IllegalArgumentException("HAS NO SCHEMATIC!");
 
 
-        if (Minecraft.getMinecraft().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
+        if (Minecraft.getInstance().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
             NBTTagCompound compound = schematic;
             for (int x = 0; x < compound.getShort("Width") + 16; x+= 1) {
                 for (int y = 0; y < compound.getShort("Height"); y++) {
@@ -188,15 +188,15 @@ public class FeatureRoomEdit  extends SimpleFeature {
             }
             onWorldUnload(null);
         } else {
-            if (Minecraft.getMinecraft().theWorld != null) {
-                boolean flag = Minecraft.getMinecraft().isIntegratedServerRunning();
-                boolean flag1 = Minecraft.getMinecraft().isConnectedToRealms();
-                Minecraft.getMinecraft().theWorld.sendQuittingDisconnectingPacket();
-                Minecraft.getMinecraft().loadWorld((WorldClient) null);
+            if (Minecraft.getInstance().level != null) {
+                boolean flag = Minecraft.getInstance().hasSingleplayerServer();
+                boolean flag1 = Minecraft.getInstance().isConnectedToRealms();
+                Minecraft.getInstance().level.sendQuittingDisconnectingPacket();
+                Minecraft.getInstance().loadWorld((WorldClient) null);
             }
 
 
-            ISaveFormat isaveformat = Minecraft.getMinecraft().getSaveLoader();
+            ISaveFormat isaveformat = Minecraft.getInstance().getSaveLoader();
             isaveformat.flushCache();
             isaveformat.deleteWorldDirectory("dungeonsguide");
 
@@ -208,7 +208,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
             worldsettings.setWorldName("3;minecraft:air");
             worldsettings.enableCommands();
 
-            Minecraft.getMinecraft().launchIntegratedServer("dungeonsguide", "dungeonsguide", worldsettings);
+            Minecraft.getInstance().launchIntegratedServer("dungeonsguide", "dungeonsguide", worldsettings);
         }
 
         blockUpdates = new ArrayList<>();
@@ -276,7 +276,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
             throw new RuntimeException(e);
         }
 
-        if (Minecraft.getMinecraft().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
+        if (Minecraft.getInstance().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
             NBTTagCompound compound = schematic;
             for (int x = 0; x < compound.getShort("Width") + 16; x+= 1) {
                 for (int y = 0; y < compound.getShort("Height"); y++) {
@@ -294,15 +294,15 @@ public class FeatureRoomEdit  extends SimpleFeature {
             }
             onWorldUnload(null);
         } else {
-            if (Minecraft.getMinecraft().theWorld != null) {
-                boolean flag = Minecraft.getMinecraft().isIntegratedServerRunning();
-                boolean flag1 = Minecraft.getMinecraft().isConnectedToRealms();
-                Minecraft.getMinecraft().theWorld.sendQuittingDisconnectingPacket();
-                Minecraft.getMinecraft().loadWorld((WorldClient) null);
+            if (Minecraft.getInstance().level != null) {
+                boolean flag = Minecraft.getInstance().hasSingleplayerServer();
+                boolean flag1 = Minecraft.getInstance().isConnectedToRealms();
+                Minecraft.getInstance().level.sendQuittingDisconnectingPacket();
+                Minecraft.getInstance().loadWorld((WorldClient) null);
             }
 
 
-            ISaveFormat isaveformat = Minecraft.getMinecraft().getSaveLoader();
+            ISaveFormat isaveformat = Minecraft.getInstance().getSaveLoader();
             isaveformat.flushCache();
             isaveformat.deleteWorldDirectory("dungeonsguide");
 
@@ -314,7 +314,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
             worldsettings.setWorldName("3;minecraft:air");
             worldsettings.enableCommands();
 
-            Minecraft.getMinecraft().launchIntegratedServer("dungeonsguide", "dungeonsguide", worldsettings);
+            Minecraft.getInstance().launchIntegratedServer("dungeonsguide", "dungeonsguide", worldsettings);
         }
         blockUpdates = new ArrayList<>();
         int minX = jsonObject.get("minX").getAsInt(), minZ = jsonObject.get("minZ").getAsInt();
@@ -399,7 +399,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
         this.f = f;
 
 
-        if (Minecraft.getMinecraft().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
+        if (Minecraft.getInstance().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
             NBTTagCompound compound = schematic;
             for (int x = 0; x < compound.getShort("Width") + 16; x+= 1) {
                 for (int y = 0; y < compound.getShort("Height"); y++) {
@@ -417,15 +417,15 @@ public class FeatureRoomEdit  extends SimpleFeature {
             }
             onWorldUnload(null);
         } else {
-            if (Minecraft.getMinecraft().theWorld != null) {
-                boolean flag = Minecraft.getMinecraft().isIntegratedServerRunning();
-                boolean flag1 = Minecraft.getMinecraft().isConnectedToRealms();
-                Minecraft.getMinecraft().theWorld.sendQuittingDisconnectingPacket();
-                Minecraft.getMinecraft().loadWorld((WorldClient) null);
+            if (Minecraft.getInstance().level != null) {
+                boolean flag = Minecraft.getInstance().hasSingleplayerServer();
+                boolean flag1 = Minecraft.getInstance().isConnectedToRealms();
+                Minecraft.getInstance().level.sendQuittingDisconnectingPacket();
+                Minecraft.getInstance().loadWorld((WorldClient) null);
             }
 
 
-            ISaveFormat isaveformat = Minecraft.getMinecraft().getSaveLoader();
+            ISaveFormat isaveformat = Minecraft.getInstance().getSaveLoader();
             isaveformat.flushCache();
             isaveformat.deleteWorldDirectory("dungeonsguide");
 
@@ -437,7 +437,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
             worldsettings.setWorldName("3;minecraft:air");
             worldsettings.enableCommands();
 
-            Minecraft.getMinecraft().launchIntegratedServer("dungeonsguide", "dungeonsguide", worldsettings);
+            Minecraft.getInstance().launchIntegratedServer("dungeonsguide", "dungeonsguide", worldsettings);
         }
         blockUpdates = new ArrayList<>();
         try {
@@ -624,7 +624,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
     @DGEventHandler
     public void onKey(KeyBindPressedEvent event) {
         if (event.getKey() == 68) {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new RoomConfiguration()));
+            Minecraft.getInstance().setScreen(new GuiScreenAdapter(new RoomConfiguration()));
         }
     }
     @DGEventHandler()
@@ -634,11 +634,11 @@ public class FeatureRoomEdit  extends SimpleFeature {
             GlStateManager.enableCull();
             for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate blockUpdate : blockUpdates) {
                 for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
-                    if (Minecraft.getMinecraft().thePlayer.getDistanceSq(updatedBlock.getPos()) > 100)
+                    if (Minecraft.getInstance().player.getDistanceSq(updatedBlock.getPos()) > 100)
                         RenderUtils.highlightBlock(updatedBlock.getPos(), new Color(0x33FFFF00, true), event.partialTicks, false);
                     int meta1 = updatedBlock.getBlock().getBlock().getMetaFromState(updatedBlock.getBlock());
                     Block block1 = updatedBlock.getBlock().getBlock();
-                    IBlockState blockstate2 = Minecraft.getMinecraft().theWorld.getBlockState(updatedBlock.getPos());
+                    IBlockState blockstate2 = Minecraft.getInstance().level.getBlockState(updatedBlock.getPos());
                     int meta2 = blockstate2.getBlock().getMetaFromState(blockstate2);
                     Block block2 = blockstate2.getBlock();
                     if (block1 == block2 && meta2 == meta1)
@@ -646,9 +646,9 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
 //                    GlStateManager.enableCull();
                     if (updatedBlock.getBlock().getBlock() != Blocks.air && updatedBlock.getBlock().getBlock() != Blocks.barrier) {
-                        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+                        Minecraft.getInstance().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
                         float partialTicks = event.partialTicks;
-                        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
+                        Entity viewing_from = Minecraft.getInstance().getCameraEntity();
 
                         double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
                         double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
@@ -665,9 +665,9 @@ public class FeatureRoomEdit  extends SimpleFeature {
                         Tessellator tessellator = Tessellator.getInstance();
                         WorldRenderer vertexBuffer = tessellator.getWorldRenderer();
                         vertexBuffer.begin(7, DefaultVertexFormats.BLOCK);
-                        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+                        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRenderer();
 //                        GlStateManager.color(1.0f,1.0f,1.0f,0.1f);
-                        blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld,
+                        blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getInstance().level,
                                 blockrendererdispatcher.getBlockModelShapes().getModelForState(updatedBlock.getBlock()),
                                 updatedBlock.getBlock(), updatedBlock.getPos(), vertexBuffer, false);
                         tessellator.draw();
@@ -688,11 +688,11 @@ public class FeatureRoomEdit  extends SimpleFeature {
     public void onWorldLoad(DGTickEvent event) {
         if (flag && !setup) {
             setup = true;
-            System.out.println(Minecraft.getMinecraft().theWorld);
-            Minecraft.getMinecraft().thePlayer.setPosition(0, 70, 0);
-            Minecraft.getMinecraft().thePlayer.inventory.mainInventory[0] = new ItemStack(Items.stick);
+            System.out.println(Minecraft.getInstance().level);
+            Minecraft.getInstance().player.setPosition(0, 70, 0);
+            Minecraft.getInstance().player.inventory.mainInventory[0] = new ItemStack(Items.stick);
 
-            DungeonContext fakeContext = new DungeonContext("TEST DG", Minecraft.getMinecraft().theWorld);
+            DungeonContext fakeContext = new DungeonContext("TEST DG", Minecraft.getInstance().level);
             DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(fakeContext);
             DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon2(true);
             DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(

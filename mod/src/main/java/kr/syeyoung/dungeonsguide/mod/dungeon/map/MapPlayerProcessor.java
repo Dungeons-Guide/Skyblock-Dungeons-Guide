@@ -40,7 +40,7 @@ import java.util.Map;
 
 public class MapPlayerProcessor {
 
-   private static final Minecraft mc = Minecraft.getMinecraft();
+   private static final Minecraft mc = Minecraft.getInstance();
     private final DungeonContext context;
     @Getter
     private final BiMap<String, String> mapIconToPlayerMap = HashBiMap.create();
@@ -62,13 +62,13 @@ public class MapPlayerProcessor {
             waitDelay++;
             return;
         }
-        ItemStack stack = mc.thePlayer.inventory.getStackInSlot(8);
+        ItemStack stack = mc.player.inventory.getStackInSlot(8);
 
         if (stack == null || !(stack.getItem() instanceof ItemMap)) {
             return;
         }
 
-        MapData mapData = ((ItemMap) stack.getItem()).getMapData(stack, mc.theWorld);
+        MapData mapData = ((ItemMap) stack.getItem()).getMapData(stack, mc.level);
 
         if (mapData != null && mapIconToPlayerMap.size() < context.getPlayers().size()) {
             getPlayersFromMap(mapData);
@@ -78,7 +78,7 @@ public class MapPlayerProcessor {
 
 
     private void getPlayersFromMap(MapData mapdata) {
-        int lim = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16;
+        int lim = Minecraft.getInstance().options.renderDistanceChunks * 16;
         lim = lim * lim;
 
         if (context.getScaffoldParser() == null) return;
@@ -91,13 +91,13 @@ public class MapPlayerProcessor {
                 int x = vec4.func_176112_b() / 2 + 64;
                 int y = vec4.func_176113_c() / 2 + 64;
                 BlockPos worldPos = context.getScaffoldParser().getDungeonMapLayout().mapPointToWorldPoint(new Point(x, y));
-                if (Minecraft.getMinecraft().thePlayer.getDistanceSq(worldPos) > lim) continue; // too far away
+                if (Minecraft.getInstance().player.getDistanceSq(worldPos) > lim) continue; // too far away
                 String potentialPlayer = null;
 
                 int players = 0;
 
                 for (String player : context.getPlayers()) {
-                    if (player.equals(Minecraft.getMinecraft().thePlayer.getName())) continue;
+                    if (player.equals(Minecraft.getInstance().player.getName())) continue;
                     if (!mapIconToPlayerMap.containsKey(player) && isPlayerNear(player, worldPos)) {
                         potentialPlayer = player;
                         players++;
@@ -112,7 +112,7 @@ public class MapPlayerProcessor {
     }
 
     private boolean isPlayerNear(String player, BlockPos mapPos) {
-        EntityPlayer entityPlayer = mc.theWorld.getPlayerEntityByName(player);
+        EntityPlayer entityPlayer = mc.level.getPlayerEntityByName(player);
 
         if (entityPlayer != null && !entityPlayer.isInvisible()) {
             BlockPos pos = entityPlayer.getPosition();

@@ -51,11 +51,11 @@ public class FeatureBoxBats extends SimpleFeature  {
         
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        final BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        final BlockPos player = Minecraft.getInstance().player.getPosition();
         int val = this.<Integer>getParameter("radius").getValue();
         final int sq = val * val;
 
-        List<EntityBat> skeletonList = Minecraft.getMinecraft().theWorld.getEntities(EntityBat.class, new Predicate<EntityBat>() {
+        List<EntityBat> skeletonList = Minecraft.getInstance().level.getEntities(EntityBat.class, new Predicate<EntityBat>() {
             @Override
             public boolean apply(@Nullable EntityBat input) {
                 if (input != null && input.isInvisible()) return false;

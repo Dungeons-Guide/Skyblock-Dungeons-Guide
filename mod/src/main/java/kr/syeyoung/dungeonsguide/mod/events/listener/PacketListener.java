@@ -55,7 +55,7 @@ public class PacketListener {
                     && packet instanceof S04PacketEntityEquipment
                     && FeatureRegistry.FIX_SPIRIT_BOOTS.isEnabled()) { // Inventory packet name
                 S04PacketEntityEquipment packet2 = (S04PacketEntityEquipment) packet;
-                if (Minecraft.getMinecraft().thePlayer != null && packet2.getEntityID() == Minecraft.getMinecraft().thePlayer.getEntityId()) {
+                if (Minecraft.getInstance().player != null && packet2.getEntityID() == Minecraft.getInstance().player.getEntityId()) {
                     packet2 = new S04PacketEntityEquipment(packet2.getEntityID(), packet2.getEquipmentSlot() + 1, packet2.getItemStack());
                     packet = packet2;
                 }
@@ -227,7 +227,7 @@ public class PacketListener {
             try {
                 if (((S21PacketChunkData) packet).getExtractedSize() == 0) return;
                 WorldProvider provider = new WorldProviderSurface();
-                if (Minecraft.getMinecraft().theWorld != null) provider = Minecraft.getMinecraft().theWorld.provider;
+                if (Minecraft.getInstance().level != null) provider = Minecraft.getInstance().level.provider;
 
                 Chunk c = new Chunk(new CachedWorld(null, provider), ((S21PacketChunkData) packet).getChunkX(), ((S21PacketChunkData) packet).getChunkZ());
                 c.fillChunk(((S21PacketChunkData) packet).getExtractedDataBytes(), ((S21PacketChunkData) packet).getExtractedSize(), ((S21PacketChunkData) packet).func_149274_i());
@@ -239,7 +239,7 @@ public class PacketListener {
         } else if (packet instanceof S26PacketMapChunkBulk) {
             try {
                 WorldProvider provider = new WorldProviderSurface();
-                if (Minecraft.getMinecraft().theWorld != null) provider = Minecraft.getMinecraft().theWorld.provider;
+                if (Minecraft.getInstance().level != null) provider = Minecraft.getInstance().level.provider;
 
                 List<Chunk> set = new ArrayList<>();
                 for (int i = 0; i < ((S26PacketMapChunkBulk) packet).getChunkCount(); i++) {

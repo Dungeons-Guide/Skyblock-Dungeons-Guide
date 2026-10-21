@@ -64,13 +64,13 @@ public class FeatureSingleTargetPathfind extends SimpleFeature {
 
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (!SkyblockStatus.isOnDungeon() || context == null) return;
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) return;
             if (context.getScaffoldParser() == null) return;
             Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
             DungeonRoom currentRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
             if (currentRoom == null) return;
-            if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) return;
+            if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getInstance().player.getPositionVector())) return;
             RoomRouteHandler handler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(currentRoom);
             if (handler == null) return;
 
@@ -93,13 +93,13 @@ public class FeatureSingleTargetPathfind extends SimpleFeature {
     public void onTick(DGTickEvent tickEvent) {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (!SkyblockStatus.isOnDungeon() || context == null) return;
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP thePlayer = Minecraft.getInstance().player;
         if (thePlayer == null) return;
         if (context.getScaffoldParser() == null) return;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom currentRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (currentRoom == null) return;
-        if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) return;
+        if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getInstance().player.getPositionVector())) return;
         RoomRouteHandler handler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(currentRoom);
         if (handler == null) return;
         if (!triggered.contains(currentRoom)) return;
@@ -119,7 +119,7 @@ public class FeatureSingleTargetPathfind extends SimpleFeature {
             return;
         }
 
-        BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
+        BlockPos pos = Minecraft.getInstance().player.getPosition();
 
         double lowestCost = 99999999999999.0;
         Map.Entry<String, DungeonMechanicState> lowestWeightMechanic = null;

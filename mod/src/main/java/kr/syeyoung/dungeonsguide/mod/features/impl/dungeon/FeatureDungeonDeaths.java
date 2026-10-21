@@ -158,7 +158,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
             String nickname = "me";
             int deaths = getDeaths().getOrDefault(nickname, 0);
             getDeaths().put(nickname, deaths + 1);
-            context.getRecorder().createEvent(new DungeonDeathEvent(Minecraft.getMinecraft().thePlayer.getName(), txt, deaths));
+            context.getRecorder().createEvent(new DungeonDeathEvent(Minecraft.getInstance().player.getName(), txt, deaths));
             ChatTransmitter.sendDebugChat(new ChatComponentText("Death verified :: me / "+(deaths + 1)));
         }
     }

@@ -110,7 +110,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         public void onApprove() {
             FeatureCollectDungeonRooms.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDungeonRooms.this.setEnabled(true);
-            Minecraft.getMinecraft().displayGuiScreen(null);
+            Minecraft.getInstance().setScreen(null);
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         }
 
@@ -118,7 +118,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         public void onDeny() {
             FeatureCollectDungeonRooms.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDungeonRooms.this.setEnabled(false);
-            Minecraft.getMinecraft().displayGuiScreen(null);
+            Minecraft.getInstance().setScreen(null);
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         }
     }
@@ -127,7 +127,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     public void init() {
         if (!this.<Boolean>getParameter("prompted").getValue()) {
             Scaler scaler = new Scaler();
-            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getInstance()).getScaleFactor());
             scaler.child.setValue(new FeatureCollectDungeonRooms.WidgetUserApproval());
             GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler, null, false));
         }
@@ -244,7 +244,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     @DGEventHandler(ignoreDisabled = true)
     public void playerInteract(PlayerInteractEvent event) {
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
-        IBlockState blockState = Minecraft.getMinecraft().theWorld.getBlockState(event.pos);
+        IBlockState blockState = Minecraft.getInstance().level.getBlockState(event.pos);
         if (blockState == null) return;
         if (!(blockState.getBlock() == Blocks.lever || blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest || blockState.getBlock() == Blocks.skull)) {
             return;
@@ -265,8 +265,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (event.type == 2) return;
         if (!event.message.getFormattedText().contains(":")) {
             // this is not user message.
-            if (Minecraft.getMinecraft().thePlayer == null) return;
-            Vec3 pos = Minecraft.getMinecraft().thePlayer.getPositionVector();
+            if (Minecraft.getInstance().player == null) return;
+            Vec3 pos = Minecraft.getInstance().player.getPositionVector();
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
@@ -288,7 +288,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (secret != lastNo || total != totalSecret) {
             lastNo = secret;
             totalSecret = total;
-            Vec3 pos = Minecraft.getMinecraft().thePlayer.getPositionVector();
+            Vec3 pos = Minecraft.getInstance().player.getPositionVector();
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
@@ -303,13 +303,13 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null || dungeonContext.getScaffoldParser() == null) return;
-        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector());
+        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.getPositionVector());
         DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
         if (dungeonRoom == null) return;
         RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
         if (roomInfo == null) return;
-        if (roomInfo.playerTrajactory.size() == 0 || roomInfo.playerTrajactory.getLast().getPos() == null || roomInfo.playerTrajactory.getLast().getPos().squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) > 0.1f) {
-            roomInfo.playerTrajactory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, Minecraft.getMinecraft().thePlayer.getPositionVector(), System.currentTimeMillis()));
+        if (roomInfo.playerTrajactory.size() == 0 || roomInfo.playerTrajactory.getLast().getPos() == null || roomInfo.playerTrajactory.getLast().getPos().squareDistanceTo(Minecraft.getInstance().player.getPositionVector()) > 0.1f) {
+            roomInfo.playerTrajactory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, Minecraft.getInstance().player.getPositionVector(), System.currentTimeMillis()));
         }
     }
 
@@ -723,7 +723,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (!FeatureRegistry.DEBUG.isEnabled()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
 
-        Entity hovered = Minecraft.getMinecraft().pointedEntity;
+        Entity hovered = Minecraft.getInstance().pointedEntity;
         if (hovered == null) return;
         EntityData entityData = entityDataMap.get(hovered.getEntityId());
         if (entityData == null) {

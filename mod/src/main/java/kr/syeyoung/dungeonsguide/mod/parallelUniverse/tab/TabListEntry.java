@@ -106,7 +106,7 @@ public class TabListEntry {
         synchronized(this) {
             if (!this.playerTexturesLoaded) {
                 this.playerTexturesLoaded = true;
-                Minecraft.getMinecraft().getSkinManager().loadProfileTextures(this.gameProfile, new SkinManager.SkinAvailableCallback() {
+                Minecraft.getInstance().getSkinManager().loadProfileTextures(this.gameProfile, new SkinManager.SkinAvailableCallback() {
                     public void skinAvailable(MinecraftProfileTexture.Type type, Identifier location, MinecraftProfileTexture profileTexture) {
                         switch (type) {
                             case SKIN:

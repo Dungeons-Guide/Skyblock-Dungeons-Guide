@@ -352,7 +352,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                     if (i == idx) {
                         GlStateManager.color(1,1,1,1);
                         RenderUtils.drawLine(
-                                Minecraft.getMinecraft().thePlayer.getPositionEyes(partialTicks),
+                                Minecraft.getInstance().player.getPositionEyes(partialTicks),
                                 new Vec3(pos).addVector(0.5, 0, 0.5),
                                 Color.green,
                                 partialTicks,

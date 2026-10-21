@@ -31,8 +31,8 @@ public class AbsPosPositioner implements Positioner {
 
     @Override
     public Rect position(DomElement domElement, double screenWidth, double screenHeight) {
-        double xScale = Minecraft.getMinecraft().displayWidth/screenWidth;
-        double yScale = Minecraft.getMinecraft().displayHeight /screenHeight;
+        double xScale = Minecraft.getInstance().getWindow().getWidth()/screenWidth;
+        double yScale = Minecraft.getInstance().getWindow().getHeight() /screenHeight;
         Size size = domElement.getLayouter().layout(domElement,
                 new ConstraintBox(0, screenWidth-x /xScale, 0, screenHeight - y/yScale));
         return new Rect(x / xScale, y/ yScale, size.getWidth(), size.getHeight());

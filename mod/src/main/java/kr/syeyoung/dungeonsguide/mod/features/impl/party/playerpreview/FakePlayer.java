@@ -87,7 +87,7 @@ public class FakePlayer extends EntityOtherPlayerMP {
     }
 
     public FakePlayer(GameProfile playerProfile, SkinFetcher.SkinSet skinSet, PlayerProfile skyblockProfile) {
-        super(Minecraft.getMinecraft().theWorld, playerProfile);
+        super(Minecraft.getInstance().level, playerProfile);
         this.skyblockProfile = skyblockProfile;
         this.skinSet = skinSet;
         armor = skyblockProfile.getCurrentArmor();

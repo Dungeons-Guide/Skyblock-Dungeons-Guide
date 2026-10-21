@@ -110,7 +110,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void onSendData() {
         if (goldenPathsolution == null) return;
-        Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-BDGP "+goldenPathsolution);
+        Minecraft.getInstance().player.sendChatMessage("/pc $DG-BDGP "+goldenPathsolution);
 
         ChatComponentText text = new ChatComponentText("$DG-BDGP "+goldenPathsolution);
         for (RoomProcessorBombDefuseSolver.ChamberSet ch: getSolver().getChambers()) {

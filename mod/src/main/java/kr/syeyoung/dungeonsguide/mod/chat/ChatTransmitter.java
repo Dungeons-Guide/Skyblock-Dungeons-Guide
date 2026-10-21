@@ -71,13 +71,13 @@ public class ChatTransmitter {
 
     @SubscribeEvent
     public void onTick(ClientTickEvent clientTickEvent) {
-        if(clientTickEvent.phase != ClientTickEvent.Phase.START && Minecraft.getMinecraft().thePlayer == null) return;
+        if(clientTickEvent.phase != ClientTickEvent.Phase.START && Minecraft.getInstance().player == null) return;
 
-        while (!receiveQueue.isEmpty() && Minecraft.getMinecraft().thePlayer != null) {
+        while (!receiveQueue.isEmpty() && Minecraft.getInstance().player != null) {
             ChatReceivedEvent event = new ChatReceivedEvent((byte) 1, receiveQueue.poll());
             DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(event);
             if (!event.isCanceled()) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(event.message);
+                Minecraft.getInstance().player.addChatMessage(event.message);
             }
         }
     }

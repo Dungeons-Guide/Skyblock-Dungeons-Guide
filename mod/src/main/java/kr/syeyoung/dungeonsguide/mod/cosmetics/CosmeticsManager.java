@@ -197,8 +197,8 @@ public class CosmeticsManager {
 
                 activeCosmeticMap.put(cosmeticData.getActivityUID(), cosmeticData);
                 try {
-                    if (Minecraft.getMinecraft().theWorld != null) {
-                        EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(cosmeticData.getPlayerUID());
+                    if (Minecraft.getInstance().level != null) {
+                        EntityPlayer entityPlayer = Minecraft.getInstance().level.getPlayerEntityByUUID(cosmeticData.getPlayerUID());
                         if (entityPlayer != null) entityPlayer.refreshDisplayName();
                     }
                 } catch (Exception exception) {
@@ -386,9 +386,9 @@ public class CosmeticsManager {
     public void onTabList(PlayerListItemPacketEvent packetPlayerListItem) {
         S38PacketPlayerListItem asd = packetPlayerListItem.getPacketPlayerListItem();
         if (asd.getAction() == S38PacketPlayerListItem.Action.ADD_PLAYER) {
-            if (Minecraft.getMinecraft().getNetHandler() == null) return;
+            if (Minecraft.getInstance().getConnection() == null) return;
 
-            Map<UUID, NetworkPlayerInfo> playerInfoMap = ReflectionHelper.getPrivateValue(NetHandlerPlayClient.class, Minecraft.getMinecraft().getNetHandler(), "playerInfoMap", "field_147310_i","i");
+            Map<UUID, NetworkPlayerInfo> playerInfoMap = ReflectionHelper.getPrivateValue(NetHandlerPlayClient.class, Minecraft.getInstance().getConnection(), "playerInfoMap", "field_147310_i","i");
             List<UUID> pingTarget = new ArrayList<>();
             for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
                 playerInfoMap.remove(entry.getProfile().getId());
@@ -414,8 +414,8 @@ public class CosmeticsManager {
 
     private void refresh(UUID uuid) {
         try {
-            if (Minecraft.getMinecraft().theWorld != null) {
-                EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(uuid);
+            if (Minecraft.getInstance().level != null) {
+                EntityPlayer entityPlayer = Minecraft.getInstance().level.getPlayerEntityByUUID(uuid);
                 if (entityPlayer != null) entityPlayer.refreshDisplayName();
             }
         } catch (Exception exception) {

@@ -38,7 +38,7 @@ public class DataRendererSkillLv implements IDataRenderer {
     }
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         Double xp = playerProfile.getSkillXp().get(skill);
         if (xp == null) {
             fr.drawString(skill.getFriendlyName(), 0,0, 0xFF55ffff);
@@ -56,7 +56,7 @@ public class DataRendererSkillLv implements IDataRenderer {
 
     @Override
     public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         fr.drawString(skill.getFriendlyName(), 0,0, 0xFF55ffff);
         fr.drawString("99", fr.getStringWidth(skill.getFriendlyName()+" "),0,0xFFFFFFFF);
         RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,1.0f);
@@ -64,7 +64,7 @@ public class DataRendererSkillLv implements IDataRenderer {
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT*2);
+        return new Dimension(100, Minecraft.getInstance().font.FONT_HEIGHT*2);
     }
 
     @Override

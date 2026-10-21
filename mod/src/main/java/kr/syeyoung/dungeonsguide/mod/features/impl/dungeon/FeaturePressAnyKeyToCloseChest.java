@@ -42,7 +42,7 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
 
     @DGEventHandler
     public void onKeyInput(ScreenKeyboardEvent keyboardInputEvent) {
-        GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+        GuiScreen screen = Minecraft.getInstance().screen;
         
         if (!SkyblockStatus.isOnDungeon()) return;
 
@@ -59,14 +59,14 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
 
 //            int threshold = this.<Integer>getParameter("threshold").getValue();
 //            if (priceSum < threshold) {
-                Minecraft.getMinecraft().thePlayer.closeScreen();
+                Minecraft.getInstance().player.closeScreen();
 //            }
         }
     }
 
     @DGEventHandler
     public void onMouseInput(ScreenMouseEvent.Pre mouseInputEvent) {
-        GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+        GuiScreen screen = Minecraft.getInstance().screen;
         
         if (!SkyblockStatus.isOnDungeon()) return;
         if (Mouse.getEventButton() == -1) return;
@@ -84,7 +84,7 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
 
 //            int threshold = this.<Integer>getParameter("threshold").getValue();
 //            if (priceSum < threshold) {
-                Minecraft.getMinecraft().thePlayer.closeScreen();
+                Minecraft.getInstance().player.closeScreen();
 //            }
         }
     }

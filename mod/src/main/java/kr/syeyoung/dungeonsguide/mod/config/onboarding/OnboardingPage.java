@@ -105,7 +105,7 @@ public class OnboardingPage extends AnnotatedImportOnlyWidget {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         if (prevPage.getValue() == null) return;
         GuiScreen parent = getDomElement().getContext().getValue(GuiScreenAdapter.class, "screenAdapter").getParent();
-        Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage(prevPage.getValue())), parent, false));
+        Minecraft.getInstance().setScreen(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage(prevPage.getValue())), parent, false));
     }
 
     @On(functionName = "next")
@@ -128,9 +128,9 @@ public class OnboardingPage extends AnnotatedImportOnlyWidget {
 
         if (nextPage.getValue() == null) return;
         if (nextPage.getValue().equals("quit")) {
-            Minecraft.getMinecraft().displayGuiScreen(parent);
+            Minecraft.getInstance().setScreen(parent);
             return;
         }
-        Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage(nextPage.getValue())), parent, false));
+        Minecraft.getInstance().setScreen(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage(nextPage.getValue())), parent, false));
     }
 }

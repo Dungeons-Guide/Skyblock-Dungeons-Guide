@@ -150,7 +150,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
 
     public MinecraftTooltip createTooltip() {
         if (party == null) return new MinecraftTooltip();
-        List<String> toHover = party.itemStack.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
+        List<String> toHover = party.itemStack.getTooltip(Minecraft.getInstance().player, Minecraft.getInstance().options.advancedItemTooltips);
         for (int i = 0; i < toHover.size(); ++i) {
             if (i == 0) {
                 toHover.set(i, party.itemStack.getRarity().rarityColor + toHover.get(i));

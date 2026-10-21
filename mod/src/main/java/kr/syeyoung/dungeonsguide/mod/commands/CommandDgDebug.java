@@ -271,7 +271,7 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug mockdungeonstart {time}")
     public void mockDungeonStartCommand(int time) {
-        if (!Minecraft.getMinecraft().isSingleplayer()) {
+        if (!Minecraft.getInstance().isSingleplayer()) {
             ChatTransmitter.addToQueue("This only works in singlepauer", false);
             return;
         }
@@ -313,8 +313,8 @@ public class CommandDgDebug {
 
         GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")), null, false);
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                Minecraft.getMinecraft().displayGuiScreen(adapter);
+            Minecraft.getInstance().execute(() -> {
+                Minecraft.getInstance().setScreen(adapter);
             });
         }).start();
         String features = "advanced.coords,dungeon.map2,secret.actionview,bossfight.health,bossfight.spiritbear,bossfight.spiritbowdisplay,bossfight.terracota,bossfight.phasedisplay,party.list,party.readylist,secret.fairysoulwarn,dungen.watcherwarn,dungeon.lowhealthwarn,dungeon.stats.score,dungeon.stats.tombs,dungeon.stats.totaltombs,dungeon.stats.secretsroom,dungeon.stats.secrets,dungeon.stats.igtime,dungeon.stats.realtime,dungeon.stats.milestone,dungeon.stats.deaths,dungeon.roomname,etc.abilitycd2,qol.cooldown";
@@ -384,7 +384,7 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug brand")
     public void brandCommand() {
-        String serverBrand = Minecraft.getMinecraft().thePlayer.getClientBrand();
+        String serverBrand = Minecraft.getInstance().player.getClientBrand();
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
     }
 
@@ -1050,7 +1050,7 @@ public class CommandDgDebug {
     public static class MechanicNameSuggestor implements SuggestionProvider<FabricClientCommandSource> {
         public CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> commandContext, SuggestionsBuilder suggestionsBuilder) {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return suggestionsBuilder.buildFuture();
             }
@@ -1067,7 +1067,7 @@ public class CommandDgDebug {
     public static class StateSuggestor implements SuggestionProvider<FabricClientCommandSource> {
         public CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> commandContext, SuggestionsBuilder suggestionsBuilder) {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return suggestionsBuilder.buildFuture();
             }
@@ -1091,7 +1091,7 @@ public class CommandDgDebug {
                                 @CommandParam(value = "state", suggestionProvider = StateSuggestor.class) String state) {
         try {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return;
             }
@@ -1405,28 +1405,28 @@ public class CommandDgDebug {
     public void testGuiCommand() {
         GuiScreenAdapter adapter = new GuiScreenAdapter(new TestView());
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                Minecraft.getMinecraft().displayGuiScreen(adapter);
+            Minecraft.getInstance().execute(() -> {
+                Minecraft.getInstance().setScreen(adapter);
             });
         }).start();
     }
 
     @DGCommand("dgdebug clearprofile")
     public void clearProfileCommand() {
-        Minecraft.getMinecraft().mcProfiler.clearProfiling();
+        Minecraft.getInstance().mcProfiler.clearProfiling();
     }
 
     @DGCommand("dgdebug fullbright {gamma}")
     @DGCommand("dgdebug gimmebright {gamma}")
     public void fullBrightCommand(int gamma) {
-        Minecraft.getMinecraft().gameSettings.setOptionFloatValue(GameSettings.Options.GAMMA, gamma);
+        Minecraft.getInstance().options.setOptionFloatValue(GameSettings.Options.GAMMA, gamma);
     }
 
     @DGCommand("dgdebug pfall")
     public void pFallCommand() {
         try {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return;
             }
@@ -1451,7 +1451,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug partycollection {otherPlayerName} {fragbot} {offline}")
     public void partyCollectionCommand(String otherPlayerName, String fragbot, String offline) {
 
-        String sourcePlayer = Minecraft.getMinecraft().thePlayer.getName();
+        String sourcePlayer = Minecraft.getInstance().player.getName();
         String targetPlayer = otherPlayerName;
         String thirdPlayer = fragbot;
         String offlinePlayer = offline;

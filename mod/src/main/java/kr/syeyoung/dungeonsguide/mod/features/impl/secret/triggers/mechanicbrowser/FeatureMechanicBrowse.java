@@ -91,7 +91,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         GUIPosition bigDim = getFeatureRect();
         Dimension effectiveDim = new Dimension((int) (bigDim.getWidth() / scale),(int)( bigDim.getHeight() / scale));
 
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         Gui.drawRect(0, 0, effectiveDim.width, fr.FONT_HEIGHT + 4, 0xFF444444);
         Gui.drawRect(1, 1, effectiveDim.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
         GlStateManager.enableBlend();
@@ -108,7 +108,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null || DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser() == null) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP thePlayer = Minecraft.getInstance().player;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) return;
@@ -121,7 +121,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         GUIPosition bigDim = getFeatureRect();
         Dimension effectiveDim = new Dimension((int) (bigDim.getWidth() / scale),(int)( bigDim.getHeight() / scale));
 
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         Gui.drawRect(0, 0, effectiveDim.width, fr.FONT_HEIGHT + 4, 0xFF444444);
         Gui.drawRect(1, 1, effectiveDim.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
         GlStateManager.enableBlend();
@@ -146,7 +146,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null || DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser() == null) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP thePlayer = Minecraft.getInstance().player;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) return;
@@ -158,7 +158,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
                     .ifPresent(a -> {
                         a.highlight(new Color(0,255,255,50), id +" ("+(
                                 dungeonRoom.getMechanics().get(id).getRepresentingPoint() != null ?
-                                String.format("%.1f", MathHelper.sqrt_double((dungeonRoom.getMechanics().get(id)).getRepresentingPoint().getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")
+                                String.format("%.1f", MathHelper.sqrt_double((dungeonRoom.getMechanics().get(id)).getRepresentingPoint().getBlockPos(dungeonRoom).distanceSq(Minecraft.getInstance().player.getPosition()))) : "")
                                 +"m)", partialTicks);
                     });
         }
@@ -192,7 +192,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
     public void onTick(DGTickEvent event) {
         Optional<DungeonRoom> dungeonRoomOpt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext())
                 .map(DungeonContext::getScaffoldParser)
-                .map(a->a.getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector()))
+                .map(a->a.getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.getPositionVector()))
                 .map(a -> DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getRoomMap().get(a))
                 .filter(a -> a.getRoomProcessor() != null);
         UUID currentUID = dungeonRoomOpt.filter(a -> a.getDungeonRoomInfo() != null)

@@ -107,7 +107,7 @@ public class WidgetPresetRoomRequestAndCalcView extends AnnotatedImportOnlyWidge
                     ));
                 }
 
-                Minecraft.getMinecraft().addScheduledTask(() -> {
+                Minecraft.getInstance().execute(() -> {
                     parent.updateStatus();
                     if (this.precalculationsApi.getValue() != null)
                         for (Widget precalculation : precalculations) {

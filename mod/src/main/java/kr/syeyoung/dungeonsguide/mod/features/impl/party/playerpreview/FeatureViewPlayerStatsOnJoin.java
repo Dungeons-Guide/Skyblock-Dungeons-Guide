@@ -57,7 +57,7 @@ import java.util.UUID;
 // maybe a cool editor?
 public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
 
-    static Minecraft mc = Minecraft.getMinecraft();
+    static Minecraft mc = Minecraft.getInstance();
 
     public static UUID fromString(String input) {
         return UUID.fromString(input.replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"));
@@ -120,7 +120,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
 
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onGuiPostRender(ScreenMouseEvent.Pre mouseInputEvent) {
-        if (!(mc.currentScreen instanceof GuiChat)) {
+        if (!(mc.screen instanceof GuiChat)) {
             return;
         }
         ScaledResolution scaledResolution = new ScaledResolution(mc);
@@ -132,7 +132,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         }
         if (gameProfile != null && widget == null) {
             int mouseX = Mouse.getX();
-            int mouseY = (Minecraft.getMinecraft().displayHeight - Mouse.getY());
+            int mouseY = (Minecraft.getInstance().getWindow().getHeight() - Mouse.getY());
 
             double width = 220 * scaledResolution.getScaleFactor();
             double height = 220 * scaledResolution.getScaleFactor();
@@ -173,7 +173,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
 //            }
 //        }
 //        if (ichatcomponent == null) {
-            ichatcomponent = Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
+            ichatcomponent = Minecraft.getInstance().gui.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
 //        }
         return ichatcomponent;
     }
