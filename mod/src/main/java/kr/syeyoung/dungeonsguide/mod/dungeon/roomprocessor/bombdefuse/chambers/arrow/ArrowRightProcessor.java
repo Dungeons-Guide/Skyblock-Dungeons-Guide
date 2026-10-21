@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.arrow;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
@@ -63,10 +64,10 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
 
-        RenderUtils.drawTextAtWorld(answer == -1 ? "Answer not received yet. Visit left room to obtain solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(answer == -1 ? "Answer not received yet. Visit left room to obtain solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, event.partialTicks);
 
         for (int i = 0; i < 9; i++) {
             BlockPos pos = grid[i];
@@ -75,8 +76,8 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
             String charac = arrows.get(direction);
             String car2 = arrows.get(direction2);
 
-            RenderUtils.drawTextAtWorld(car2, pos.getX()+ 0.5f, pos.getY()+ 0.6f, pos.getZ()+ 0.5f, direction == direction2 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
-            RenderUtils.drawTextAtWorld(charac, pos.getX()+ 0.5f, pos.getY()+ 0.2f, pos.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, partialTicks);
+            RenderUtils.drawTextAtWorld(car2, pos.getX()+ 0.5f, pos.getY()+ 0.6f, pos.getZ()+ 0.5f, direction == direction2 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, event.partialTicks);
+            RenderUtils.drawTextAtWorld(charac, pos.getX()+ 0.5f, pos.getY()+ 0.2f, pos.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, event.partialTicks);
         }
     }
 

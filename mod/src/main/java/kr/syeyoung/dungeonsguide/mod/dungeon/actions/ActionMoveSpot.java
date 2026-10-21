@@ -27,7 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 

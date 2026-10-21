@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -25,7 +26,6 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.monster.Blaze;
@@ -33,7 +33,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -108,91 +107,24 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
 
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
         if (!FeatureRegistry.SOLVER_BLAZE.isEnabled()) return;
         if (next == null) return;
-        Vec3 pos = next.getPositionEyes(partialTicks);
-        RenderUtils.drawTextAtWorld("NEXT", (float)pos.x, (float)pos.y, (float)pos.z, 0xFFFF0000, 0.5f, true, false, partialTicks);
-
-        Entity viewing_from = Minecraft.getInstance().getCameraEntity();
-
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.getX() - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.getY() - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.getZ() - viewing_from.lastTickPosZ) * partialTicks);
-
+        Vec3 pos = next.getEyePosition(event.partialTicks);
+        RenderUtils.drawTextAtWorld("NEXT", (float)pos.x, (float)pos.y, (float)pos.z, 0xFFFF0000, 0.5f, true, false, event.partialTicks);
 
         for (Blaze entity : blazeList) {
-            GlStateManager.pushMatrix();
-            float f = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks;
-            double x = entity.prevPosX + (entity.getX() - entity.prevPosX) * partialTicks;
-            double y = entity.prevPosY + (entity.getY() - entity.prevPosY) * partialTicks;
-            double z = entity.prevPosZ + (entity.getZ() - entity.prevPosZ) * partialTicks;
-
-
-            GL11.glEnable(GL11.GL_STENCIL_TEST);
-            GL11.glClearStencil(0);
-            GlStateManager.disableDepth();
-            GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-
-            GL11.glStencilMask(0xFF);
-            GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
-            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
-
-            GlStateManager.pushMatrix();
-
-            GlStateManager.translate(-x_fix, -y_fix, -z_fix);
-
-            GlStateManager.colorMask(false, false, false, false);
-            Minecraft.getInstance().getEntityRenderDispatcher().doRenderEntity(entity, x,y,z,f,partialTicks, true);
-            GlStateManager.colorMask(true, true, true, true);
-
-            GlStateManager.popMatrix();
-
-
-            GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
-            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-
-//            Gui.drawRect(-9999,-9999, 9999, 9999, 0xFFFFFFFF);
-
-            boolean border = true;
-
-            RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getBlazeColor(), partialTicks, false);
+            // TODO: D72, 1.8.9 masked these boxes to the blaze's shape (and a 1.1x scaled one for the border) with the stencil buffer, 26.1 draws the boxes
+            RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getBlazeColor(), event.partialTicks, false);
             if (entity == nextBlaze) {
-                RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextUpBlazeColor(), partialTicks, false);
+                RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextUpBlazeColor(), event.partialTicks, false);
             } else if (entity == currentBlaze)
-                RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextBlazeColor(), partialTicks, false);
-
-            GlStateManager.color(1,1,1,1);
-
+                RenderUtils.highlightBox(entity, new AABB(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextBlazeColor(), event.partialTicks, false);
 
             if (FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue().getAlpha() > 0x10) {
-                GL11.glStencilFunc(GL11.GL_NOTEQUAL, 3, 0x01);
-                GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
-                GlStateManager.pushMatrix();
-
-                GlStateManager.translate(-x_fix, -y_fix, -z_fix);
-                GlStateManager.translate(x, y + 0.7, z);
-                GlStateManager.scale(1.1f, 1.1f, 1.1f);
-
-                GlStateManager.colorMask(false, false, false, false);
-                Minecraft.getInstance().getEntityRenderDispatcher().doRenderEntity(entity, 0, -0.7, 0, f, partialTicks, true);
-                GlStateManager.colorMask(true, true, true, true);
-
-                GlStateManager.popMatrix();
-
-
-
-                GL11.glStencilFunc(GL11.GL_EQUAL, 3, 0xFF);
-                GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-
-                RenderUtils.highlightBox(entity, new AABB(-1, 0, -1, 1, 2, 1), FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue(), partialTicks, false);
-
-
+                RenderUtils.highlightBox(entity, new AABB(-1, 0, -1, 1, 2, 1), FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue(), event.partialTicks, false);
             }
-            GL11.glDisable(GL11.GL_STENCIL_TEST);
-            GlStateManager.enableDepth();
-            GlStateManager.popMatrix();
         }
     }
 

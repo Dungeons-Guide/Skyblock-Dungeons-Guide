@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingDeathEvent;
@@ -49,9 +51,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.ambient.Bat;
@@ -59,8 +58,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.Items;
 import net.minecraft.util.*;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.*;
@@ -113,7 +110,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
     @Override
-    public void drawScreen(float partialTicks) {
+    public void drawScreen(RenderHUDEvent event) {
         // TODO: room editor is not in the first 26.1 build
 //        if (FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && FeatureRegistry.DEBUG.isEnabled()) {
 //            FontRenderer fr = Minecraft.getInstance().font;
@@ -133,12 +130,12 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
+    public void drawWorld(RenderWorldEvent event) {
         // TODO: room editor is not in the first 26.1 build
 //        if (FeatureRegistry.DEBUG.isEnabled() && (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit)) {
 //            for (Map.Entry<String, DungeonMechanicState> value : dungeonRoom.getMechanics().entrySet()) {
 //                if (value.getValue() == null) continue;
-//                value.getValue().highlight(new Color(0,255,255,50), value.getKey(), partialTicks);
+//                value.getValue().highlight(new Color(0,255,255,50), value.getKey(), event.partialTicks);
 //            }
 //        }
     }

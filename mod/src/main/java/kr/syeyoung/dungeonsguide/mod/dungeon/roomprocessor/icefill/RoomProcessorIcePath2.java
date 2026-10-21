@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.icefill;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -108,10 +109,10 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
+    public void drawWorld(RenderWorldEvent event) {
         if (!FeatureRegistry.SOLVER_ICEPATH.isEnabled()) return;
         for (List<BlockPos> solution:this.solution)
-            RenderUtils.drawLines(solution, FeatureRegistry.SOLVER_ICEPATH.getLineColor(), (float) FeatureRegistry.SOLVER_ICEPATH.getLineWidth(), partialTicks, true);
+            RenderUtils.drawLines(solution, FeatureRegistry.SOLVER_ICEPATH.getLineColor(), (float) FeatureRegistry.SOLVER_ICEPATH.getLineWidth(), event.partialTicks, true);
     }
 
     public static class Generator implements RoomProcessorGenerator<RoomProcessorIcePath2> {

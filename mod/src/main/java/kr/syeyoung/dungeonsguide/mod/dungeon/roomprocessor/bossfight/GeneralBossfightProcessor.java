@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingDeathEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
@@ -108,7 +110,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     @Override
     public List<MarkerData> getMarkers() {
         List<MarkerData> markerData = new ArrayList<>();
-        for (Entity entity : Minecraft.getInstance().level.getLoadedEntityList()) {
+        for (Entity entity : Minecraft.getInstance().level.entitiesForRendering()) {
             if (!(entity instanceof LivingEntity)) continue;
             if (((LivingEntity) entity).getHealth() <= 0) continue;
             MarkerData markerData1 = convertToMarker(entity);
@@ -174,10 +176,10 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     public void tick() {}
 
     @Override
-    public void drawScreen(float partialTicks) {}
+    public void drawScreen(RenderHUDEvent event) {}
 
     @Override
-    public void drawWorld(float partialTicks) {}
+    public void drawWorld(RenderWorldEvent event) {}
 
     @Override
     public boolean readGlobalChat() {return true;}

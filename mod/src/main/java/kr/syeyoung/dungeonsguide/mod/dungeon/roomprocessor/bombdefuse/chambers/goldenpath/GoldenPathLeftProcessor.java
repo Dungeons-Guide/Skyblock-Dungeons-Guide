@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.goldenpath;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
@@ -98,15 +100,15 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void drawScreen(float partialTicks) {
+    public void drawScreen(RenderHUDEvent event) {
         if (goldenPathsolution == null) return;
-        drawPressKey();
+        drawPressKey(event);
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
-        RenderUtils.drawLines(blocksolution, new AColor(0,0,255,0), 1,partialTicks, false);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
+        RenderUtils.drawLines(blocksolution, new AColor(0,0,255,0), 1,event.partialTicks, false);
     }
 
     @Override

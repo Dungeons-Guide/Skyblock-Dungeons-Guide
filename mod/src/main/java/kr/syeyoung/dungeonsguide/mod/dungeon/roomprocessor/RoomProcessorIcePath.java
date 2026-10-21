@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.Level;
 import net.minecraft.client.Minecraft;
@@ -146,11 +147,11 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
 
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
         if (!FeatureRegistry.SOLVER_SILVERFISH.isEnabled()) return;
         if (!err)
-        RenderUtils.drawLines(solution, FeatureRegistry.SOLVER_SILVERFISH.getLineColor(), (float) FeatureRegistry.SOLVER_SILVERFISH.getLineWidth(), partialTicks, true);
+        RenderUtils.drawLines(solution, FeatureRegistry.SOLVER_SILVERFISH.getLineColor(), (float) FeatureRegistry.SOLVER_SILVERFISH.getLineWidth(), event.partialTicks, true);
     }
 
     public Point getPointOfSilverFishOnMap(BlockPos blockPos) {

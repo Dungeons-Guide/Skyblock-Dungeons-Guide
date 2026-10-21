@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.maze;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import net.minecraft.world.level.block.state.BlockState;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -27,15 +28,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.G
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.Font;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 import com.mojang.blaze3d.platform.InputConstants;
 
 public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
@@ -50,20 +47,16 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
 
 
     @Override
-    public void drawScreen(float partialTicks) {
+    public void drawScreen(RenderHUDEvent event) {
         if (Minecraft.getInstance().hitResult == null ) return;
         HitResult pos = Minecraft.getInstance().hitResult;
         if (pos.getType() != HitResult.Type.BLOCK) return;
 
         BlockState b = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(((BlockHitResult) pos).getBlockPos());
 
-        FontRenderer fr = Minecraft.getInstance().font;
-        ScaledResolution sr = new ScaledResolution(Minecraft.getInstance());
+        Font fr = Minecraft.getInstance().font;
         String str = "Press "+ FeatureRegistry.SOLVER_BOMBDEFUSE.<InputConstants.Key>getParameter("key").getValue().getDisplayName().getString() + " to request open "+b.getBlock().getName().getString();
-        GlStateManager.enableBlend();
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        fr.drawString(str, (sr.getScaledWidth() - fr.getStringWidth(str)) / 2, (sr.getScaledHeight() - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
+        event.graphics.text(fr, str, (event.graphics.guiWidth() - fr.width(str)) / 2, (event.graphics.guiHeight() - fr.lineHeight) / 2, 0xFFFFFFFF, false);
     }
 
     @Override

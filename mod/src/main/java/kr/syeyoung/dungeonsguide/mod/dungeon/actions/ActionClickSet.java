@@ -48,7 +48,7 @@ public class ActionClickSet extends AbstractAction {
     public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event) {
         if (clicked) return;
         for (OffsetPoint pt2: target.getOffsetPointList()) {
-            if (pt2.getBlockPos(dungeonRoom).equals(event.pos) && predicate.test(event.entityLiving.getHeldItem())) {
+            if (pt2.getBlockPos(dungeonRoom).equals(event.pos) && predicate.test(event.entityPlayer.getMainHandItem())) {
                 clicked = true;
             }
         }

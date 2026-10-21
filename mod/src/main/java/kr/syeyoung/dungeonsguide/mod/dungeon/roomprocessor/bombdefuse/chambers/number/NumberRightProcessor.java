@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.number;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
@@ -63,17 +64,17 @@ public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
-        RenderUtils.drawTextAtWorld(a1+"", d1p.getX()+ 0.5f, d1p.getY()+ 0.6f, d1p.getZ()+ 0.5f, a1 == d1 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(a2+"", d2p.getX()+ 0.5f, d2p.getY()+ 0.6f, d2p.getZ()+ 0.5f, a2 == d2 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(a3+"", d3p.getX()+ 0.5f, d3p.getY()+ 0.6f, d3p.getZ()+ 0.5f, a3 == d3 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(a4+"", d4p.getX()+ 0.5f, d4p.getY()+ 0.6f, d4p.getZ()+ 0.5f, a4 == d4 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(answer == -1 ? "Answer not received yet. Visit left room to obtain solution" : ("Solution: "+answer) , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(d1+"", d1p.getX()+ 0.5f, d1p.getY()+ 0.2f, d1p.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(d2+"", d2p.getX()+ 0.5f, d2p.getY()+ 0.2f, d2p.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(d3+"", d3p.getX()+ 0.5f, d3p.getY()+ 0.2f, d3p.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(d4+"", d4p.getX()+ 0.5f, d4p.getY()+ 0.2f, d4p.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
+        RenderUtils.drawTextAtWorld(a1+"", d1p.getX()+ 0.5f, d1p.getY()+ 0.6f, d1p.getZ()+ 0.5f, a1 == d1 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, event.partialTicks);
+        RenderUtils.drawTextAtWorld(a2+"", d2p.getX()+ 0.5f, d2p.getY()+ 0.6f, d2p.getZ()+ 0.5f, a2 == d2 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, event.partialTicks);
+        RenderUtils.drawTextAtWorld(a3+"", d3p.getX()+ 0.5f, d3p.getY()+ 0.6f, d3p.getZ()+ 0.5f, a3 == d3 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, event.partialTicks);
+        RenderUtils.drawTextAtWorld(a4+"", d4p.getX()+ 0.5f, d4p.getY()+ 0.6f, d4p.getZ()+ 0.5f, a4 == d4 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, event.partialTicks);
+        RenderUtils.drawTextAtWorld(answer == -1 ? "Answer not received yet. Visit left room to obtain solution" : ("Solution: "+answer) , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, event.partialTicks);
+        RenderUtils.drawTextAtWorld(d1+"", d1p.getX()+ 0.5f, d1p.getY()+ 0.2f, d1p.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, event.partialTicks);
+        RenderUtils.drawTextAtWorld(d2+"", d2p.getX()+ 0.5f, d2p.getY()+ 0.2f, d2p.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, event.partialTicks);
+        RenderUtils.drawTextAtWorld(d3+"", d3p.getX()+ 0.5f, d3p.getY()+ 0.2f, d3p.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, event.partialTicks);
+        RenderUtils.drawTextAtWorld(d4+"", d4p.getX()+ 0.5f, d4p.getY()+ 0.2f, d4p.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, event.partialTicks);
     }
 
     @Override

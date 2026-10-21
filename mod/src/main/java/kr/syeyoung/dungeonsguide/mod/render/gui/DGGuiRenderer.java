@@ -81,7 +81,7 @@ public class DGGuiRenderer implements AutoCloseable {
     public void renderQueued(GpuBufferSlice fog) {
         try {
             for (Job job : queue) {
-                render(job, fog);
+                renderInto(job.target, job.states, fog);
             }
         } finally {
             queue.clear();
@@ -92,8 +92,9 @@ public class DGGuiRenderer implements AutoCloseable {
         }
     }
 
-    private void render(Job job, GpuBufferSlice fog) {
-        prepareItems(job.states);
+    // executes states into an image now: the gui queue above, and DGWorldRenderer's prepare for world images
+    public void renderInto(StencilImage target, List<DGRenderState> states, GpuBufferSlice fog) {
+        prepareItems(states);
 
         List<Step> steps = new ArrayList<>();
         BufferBuilder bufferBuilder = null;
@@ -101,7 +102,7 @@ public class DGGuiRenderer implements AutoCloseable {
         TextureSetup batchTextures = null;
         Rectangle batchScissor = null;
 
-        for (DGRenderState state : job.states) {
+        for (DGRenderState state : states) {
             if (state instanceof StencilState) {
                 if (bufferBuilder != null) recordMesh(steps, bufferBuilder, batchPipeline, batchTextures, batchScissor);
                 bufferBuilder = null;
@@ -143,7 +144,6 @@ public class DGGuiRenderer implements AutoCloseable {
 
         upload(steps);
 
-        StencilImage target = job.target;
         projection.setupOrtho(1000.0F, 11000.0F, target.getWidth(), target.getHeight(), true);
         GpuBufferSlice dynamicTransforms = RenderSystem.getDynamicUniforms()
                 .writeTransform(new Matrix4f().setTranslation(0.0F, 0.0F, -11000.0F), new Vector4f(1.0F, 1.0F, 1.0F, 1.0F), new Vector3f(), new Matrix4f());

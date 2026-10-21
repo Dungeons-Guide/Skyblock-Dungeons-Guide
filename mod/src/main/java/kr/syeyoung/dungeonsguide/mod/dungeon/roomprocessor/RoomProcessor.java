@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingDeathEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
@@ -29,8 +31,8 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 public interface RoomProcessor {
     void tick();
-    void drawScreen(float partialTicks);
-    void drawWorld(float partialTicks);
+    void drawScreen(RenderHUDEvent event);
+    void drawWorld(RenderWorldEvent event);
     void chatReceived(Component chat);
     void actionbarReceived(Component chat);
 

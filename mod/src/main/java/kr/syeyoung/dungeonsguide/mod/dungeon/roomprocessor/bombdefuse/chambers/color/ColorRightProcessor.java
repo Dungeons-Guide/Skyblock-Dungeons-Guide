@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.color;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
@@ -67,16 +68,16 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
-        RenderUtils.drawTextAtWorld(answer == -1 ? "Press "+ FeatureRegistry.SOLVER_BOMBDEFUSE.<InputConstants.Key>getParameter("key").getValue().getDisplayName().getString() +" to request solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld( colors.get((int) c1b), b1.getX()+ 0.5f, b1.getY()+0.6f, b1.getZ()+ 0.5f,c1b == b1b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld( colors.get((int) c2b), b2.getX()+ 0.5f, b2.getY()+0.6f, b2.getZ()+ 0.5f,c2b == b2b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld( colors.get((int) c3b), b3.getX()+ 0.5f, b3.getY()+0.6f, b3.getZ()+ 0.5f,c3b == b3b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
+        RenderUtils.drawTextAtWorld(answer == -1 ? "Press "+ FeatureRegistry.SOLVER_BOMBDEFUSE.<InputConstants.Key>getParameter("key").getValue().getDisplayName().getString() +" to request solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, event.partialTicks);
+        RenderUtils.drawTextAtWorld( colors.get((int) c1b), b1.getX()+ 0.5f, b1.getY()+0.6f, b1.getZ()+ 0.5f,c1b == b1b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, event.partialTicks);
+        RenderUtils.drawTextAtWorld( colors.get((int) c2b), b2.getX()+ 0.5f, b2.getY()+0.6f, b2.getZ()+ 0.5f,c2b == b2b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, event.partialTicks);
+        RenderUtils.drawTextAtWorld( colors.get((int) c3b), b3.getX()+ 0.5f, b3.getY()+0.6f, b3.getZ()+ 0.5f,c3b == b3b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, event.partialTicks);
 
-        RenderUtils.drawTextAtWorld( colors.get((int) b1b), b1.getX()+ 0.5f, b1.getY()+0.2f, b1.getZ()+ 0.5f,0xFFFFFF00, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld( colors.get((int) b2b), b2.getX()+ 0.5f, b2.getY()+0.2f, b2.getZ()+ 0.5f,0xFFFFFF00, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld( colors.get((int) b3b), b3.getX()+ 0.5f, b3.getY()+0.2f, b3.getZ()+ 0.5f,0xFFFFFF00, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld( colors.get((int) b1b), b1.getX()+ 0.5f, b1.getY()+0.2f, b1.getZ()+ 0.5f,0xFFFFFF00, 0.03F, false, false, event.partialTicks);
+        RenderUtils.drawTextAtWorld( colors.get((int) b2b), b2.getX()+ 0.5f, b2.getY()+0.2f, b2.getZ()+ 0.5f,0xFFFFFF00, 0.03F, false, false, event.partialTicks);
+        RenderUtils.drawTextAtWorld( colors.get((int) b3b), b3.getX()+ 0.5f, b3.getY()+0.2f, b3.getZ()+ 0.5f,0xFFFFFF00, 0.03F, false, false, event.partialTicks);
     }
 
     @Override

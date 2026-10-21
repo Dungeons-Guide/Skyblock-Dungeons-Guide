@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.monster.ElderGuardian;
 import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.phys.Vec3;
 
@@ -170,7 +171,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
             } else if (yE && xS && zS) {
                 mapping.put(updateEvent.entityLiving.getId(), 20);
             } else if (!mapping.containsKey(updateEvent.entityLiving.getId())) {
-                mapping.put(updateEvent.entityLiving.getId(), ((Guardian) updateEvent.entityLiving).isElder() ? 21 : 22);
+                mapping.put(updateEvent.entityLiving.getId(), updateEvent.entityLiving instanceof ElderGuardian ? 21 : 22);
             }
         }
     }

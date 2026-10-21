@@ -73,7 +73,7 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
         boolean itemFound = false;
         for (ItemEntity entityItem : Minecraft.getInstance().level.getEntitiesOfClass(ItemEntity.class, new AABB(-4, -4, -4, 4, 4, 4).expandTowards(pos.getX(), pos.getY(), pos.getZ()))) {
-            if (entityItem.getEntityItem().getItem() == Items.dye) continue;
+            if (entityItem.getItem().getItem() == Items.dye) continue;
             itemFound = true;
         }
 
@@ -89,7 +89,7 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
         }
 
         if (!absolutelyFound) {
-            Vec3 pos2 = new Vec3(pos);
+            Vec3 pos2 = Vec3.atLowerCornerOf(pos);
             for (Integer pickedup : DungeonActionContext.getPickedups()) {
                 if (DungeonActionContext.getSpawnLocation().get(pickedup) == null) continue;
                 if (DungeonActionContext.getSpawnLocation().get(pickedup).squareDistanceTo(pos2) < 4) {
