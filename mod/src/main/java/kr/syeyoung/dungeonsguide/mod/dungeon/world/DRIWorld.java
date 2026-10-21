@@ -32,20 +32,14 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting
 import lombok.Getter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldProviderSurface;
-import net.minecraft.world.chunk.IChunkProvider;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
 // TODO: maybe touch some time later
-public class DRIWorld extends World implements ICoordinateMap<BlockState> {
+public class DRIWorld implements DGWorld {
 
     @Getter
     private DungeonRoomInfo dungeonRoomInfo;
@@ -64,7 +58,6 @@ public class DRIWorld extends World implements ICoordinateMap<BlockState> {
     }
 
     public DRIWorld(DungeonRoomInfo dungeonRoomInfo, List<String> openMechanics) {
-        super(null, null, new WorldProviderSurface(), null, true);
         this.dungeonRoomInfo = dungeonRoomInfo;
         this.openMechanics = openMechanics;
         this.shape = dungeonRoomInfo.getShape();
@@ -100,58 +93,24 @@ public class DRIWorld extends World implements ICoordinateMap<BlockState> {
         ), poses);
     }
 
-    @Override
-    protected IChunkProvider createChunkProvider() {
-        return null;
-    }
 
-    @Override
-    protected int getRenderDistanceChunks() {
-        return 999;
-    }
 
-    @Override
-    public boolean extendedLevelsInChunkCache() {
-        return false;
-    }
 
-    @Override
-    public BlockEntity getTileEntity(BlockPos pos) {
-        return null;
-    }
+    // 1.8.9 also overrode isSideSolid to ask the block, 26.1 decides face solidity from the block shape
 
-    @Override
-    public int getCombinedLight(BlockPos pos, int lightValue) {
-        return 0;
-    }
 
     @Override
     public BlockState getBlockState(BlockPos pos) {
         if (open.contains(pos)) {
-            return Blocks.air.getDefaultState();
+            return Blocks.AIR.defaultBlockState();
         }
         return dungeonRoomInfo.getBlock(pos.getX(), pos.getY()-70, pos.getZ(), 0);
     }
 
-    @Override
-    public int getLightFor(EnumSkyBlock type, BlockPos pos) {
-        return 0;
-    }
 
-    @Override
-    public boolean isAirBlock(BlockPos pos) {
-        return getBlockState(pos) == null || getBlockState(pos).getBlock() == Blocks.air;
-    }
 
-    @Override
-    public int getStrongPower(BlockPos pos, Direction direction) {
-        return 0;
-    }
 
-    @Override
-    public boolean isSideSolid(BlockPos pos, Direction side, boolean _default) {
-        return this.getBlockState(pos).getBlock().isSideSolid(this, pos, side);
-    }
+
 
 
     private final BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
@@ -159,7 +118,7 @@ public class DRIWorld extends World implements ICoordinateMap<BlockState> {
     public BlockState getBlock(int x, int y, int z) {
         mutableBlockPos.set(x, y, z);
         if (open.contains(mutableBlockPos)) {
-            return Blocks.air.getDefaultState();
+            return Blocks.AIR.defaultBlockState();
         }
         return dungeonRoomInfo.getBlock(x, y-70, z, 0);
     }

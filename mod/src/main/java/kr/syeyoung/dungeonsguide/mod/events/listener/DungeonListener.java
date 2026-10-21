@@ -97,6 +97,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.util.Tuple;
 import java.util.HashSet;
 import java.util.Set;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.MinecraftWorld;
 
 public class DungeonListener {
 
@@ -201,7 +202,7 @@ public class DungeonListener {
                     } else if (SkyblockStatus.isOnDungeon()) {
                         DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(new DungeonContext(
                                 SkyblockStatus.getLocationName(),
-                                Minecraft.getInstance().player.worldObj));
+                                new MinecraftWorld(Minecraft.getInstance().level)));
                         DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DungeonStartedEvent());
                     }
                 } catch (IllegalStateException e) {

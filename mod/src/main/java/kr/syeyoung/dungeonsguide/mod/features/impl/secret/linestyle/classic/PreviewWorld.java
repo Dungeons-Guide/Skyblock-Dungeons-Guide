@@ -20,70 +20,68 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.classic;
 
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.*;
-import net.minecraft.world.chunk.IChunkProvider;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
 
-public class PreviewWorld extends World {
+public class PreviewWorld implements DGWorld {
     private BlockState iBlockState;
     private BlockPos pos;
 
     public PreviewWorld(BlockState blockState, BlockPos pos) {
-        super(null, null, new WorldProviderSurface(), null, true);
         this.iBlockState = blockState;
         this.pos = pos;
     }
 
     @Override
-    protected IChunkProvider createChunkProvider() {
-        return null;
-    }
-
-    @Override
-    protected int getRenderDistanceChunks() {
-        return 999;
-    }
-
-    @Override
-    public boolean extendedLevelsInChunkCache() {
-        return false;
-    }
-
-    @Override
-    public BlockEntity getTileEntity(BlockPos pos) {
-        return null;
-    }
-
-    @Override
-    public int getCombinedLight(BlockPos pos, int lightValue) {
-        return 0;
-    }
-
-    @Override
     public BlockState getBlockState(BlockPos pos) {
-        if (pos.equals(this.pos)) {return iBlockState;} return Blocks.air.getDefaultState();
+        if (pos.equals(this.pos)) {return iBlockState;} return Blocks.AIR.defaultBlockState();
+    }
+
+
+    @Override
+    public BlockState getBlock(int x, int y, int z) {
+        return getBlockState(new BlockPos(x, y, z));
     }
 
     @Override
-    public int getLightFor(EnumSkyBlock type, BlockPos pos) {
-        return 0;
-    }
-
-    @Override
-    public boolean isAirBlock(BlockPos pos) {
+    public boolean isAir(BlockPos pos) {
         return !pos.equals(this.pos);
     }
 
     @Override
-    public int getStrongPower(BlockPos pos, Direction direction) {
+    public boolean isInScope(int x, int y, int z) {
+        return true;
+    }
+
+    @Override
+    public int getMinX() {
+        return Integer.MIN_VALUE;
+    }
+
+    // 1.8.9 worlds were 256 high
+    @Override
+    public int getMinY() {
         return 0;
     }
 
     @Override
-    public boolean isSideSolid(BlockPos pos, Direction side, boolean _default) {
-        return false;
+    public int getMinZ() {
+        return Integer.MIN_VALUE;
+    }
+
+    @Override
+    public int getMaxX() {
+        return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public int getMaxY() {
+        return 256;
+    }
+
+    @Override
+    public int getMaxZ() {
+        return Integer.MAX_VALUE;
     }
 }
 

@@ -3,15 +3,14 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 import lombok.Getter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.World;
 
 public class WorldBackedCoordinateMap implements ICoordinateMap<BlockState>  {
-    private World world;
+    private DGWorld world;
 
     @Getter
     private int minX, minY, minZ, maxX, maxY, maxZ, lenX, lenY, lenZ;
 
-    public WorldBackedCoordinateMap(World world, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+    public WorldBackedCoordinateMap(DGWorld world, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
         this.world = world;
         this.minX = minX; this.minY = minY; this.minZ = minZ;
         this.maxX = maxX; this.maxY = maxY; this.maxZ = maxZ;

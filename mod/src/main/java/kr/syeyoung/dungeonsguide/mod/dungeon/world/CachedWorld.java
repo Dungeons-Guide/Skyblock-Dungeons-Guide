@@ -18,50 +18,23 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import kr.syeyoung.dungeonsguide.mod.pathfinding.world.EditableChunkCache;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.*;
-import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class CachedWorld extends World {
-    private ChunkCache chunkCache;
+// a room's view of the level through its chunk cache (D108)
+public class CachedWorld implements DGWorld {
+    private final EditableChunkCache chunkCache;
+    private final ThreadLocal<BlockPos.MutableBlockPos> blockPosThreadLocal = ThreadLocal.withInitial(BlockPos.MutableBlockPos::new);
 
-    public CachedWorld(ChunkCache chunkCache) {
-        super(null, null, new WorldProviderSurface(), null, true);
-        this.chunkCache = chunkCache;
-    }
-
-
-    public CachedWorld(ChunkCache chunkCache, WorldProvider provider) {
-        super(null, null, provider, null, true);
+    public CachedWorld(EditableChunkCache chunkCache) {
         this.chunkCache = chunkCache;
     }
 
     @Override
-    protected IChunkProvider createChunkProvider() {
-        return null;
-    }
-
-    @Override
-    protected int getRenderDistanceChunks() {
-        return 999;
-    }
-
-    @Override
-    public boolean extendedLevelsInChunkCache() {
-        return chunkCache.extendedLevelsInChunkCache();
-    }
-
-    @Override
-    public BlockEntity getTileEntity(BlockPos pos) {
-        return chunkCache.getTileEntity(pos);
-    }
-
-    @Override
-    public int getCombinedLight(BlockPos pos, int lightValue) {
-        return chunkCache.getCombinedLight(pos, lightValue);
+    public BlockState getBlock(int x, int y, int z) {
+        return chunkCache.getBlockState(blockPosThreadLocal.get().set(x, y, z));
     }
 
     @Override
@@ -70,22 +43,44 @@ public class CachedWorld extends World {
     }
 
     @Override
-    public int getLightFor(EnumSkyBlock type, BlockPos pos) {
-        return chunkCache.getLightFor(type, pos);
+    public BlockEntity getBlockEntity(BlockPos pos) {
+        return chunkCache.getBlockEntity(pos);
     }
 
     @Override
-    public boolean isAirBlock(BlockPos pos) {
-        return chunkCache.isAirBlock(pos);
+    public boolean isInScope(int x, int y, int z) {
+        return x >= getMinX() && x < getMaxX() && y >= getMinY() && y < getMaxY() && z >= getMinZ() && z < getMaxZ();
     }
 
     @Override
-    public int getStrongPower(BlockPos pos, Direction direction) {
-        return chunkCache.getStrongPower(pos, direction);
+    public int getMinX() {
+        return chunkCache.getMinX();
     }
 
     @Override
-    public boolean isSideSolid(BlockPos pos, Direction side, boolean _default) {
-        return chunkCache.isSideSolid(pos, side, _default);
+    public int getMinY() {
+        return chunkCache.getLevel().getMinY();
     }
+
+    @Override
+    public int getMinZ() {
+        return chunkCache.getMinZ();
+    }
+
+    @Override
+    public int getMaxX() {
+        return chunkCache.getMaxX();
+    }
+
+    @Override
+    public int getMaxY() {
+        return chunkCache.getLevel().getMaxY() + 1;
+    }
+
+    @Override
+    public int getMaxZ() {
+        return chunkCache.getMaxZ();
+    }
+
+    // 1.8.9 forwarded light and isSideSolid to the chunk cache, light is the adapter's (none) and solidity comes from block shapes on 26.1
 }

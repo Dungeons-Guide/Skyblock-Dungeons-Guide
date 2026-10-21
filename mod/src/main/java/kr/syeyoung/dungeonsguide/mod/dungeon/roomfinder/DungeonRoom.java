@@ -52,9 +52,7 @@ import net.minecraft.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
-import net.minecraft.world.World;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -66,6 +64,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.block.Block;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.MinecraftWorld;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.EmptyLevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 
 @Getter
 public class DungeonRoom  {
@@ -89,7 +92,7 @@ public class DungeonRoom  {
     private Map<String, DungeonMechanicState> _mechanics = null;
 
     @Setter
-    private World cachedWorld;
+    private DGWorld cachedWorld;
     private WorldBackedCoordinateMap coordinateMap;
     private EditableChunkCache chunkCache;
 
@@ -164,9 +167,12 @@ public class DungeonRoom  {
     }
 
 
-    public World getCachedWorld() {
+    public DGWorld getCachedWorld() {
         if (this.cachedWorld != null) return cachedWorld;
 
+
+        // rooms read the real level, offline contexts use DRIWorld
+        Level level = ((MinecraftWorld) getContext().getWorld()).getLevel();
 
         int minZChunk = roomBounds.getMin().getZ() >> 4;
         int minXChunk = roomBounds.getMin().getX() >> 4;
@@ -179,13 +185,13 @@ public class DungeonRoom  {
                 && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16+15,0, z*16)) && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16,0, z*16+15))) {
                     continue;
                 }
-                LevelChunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
-                if (c.isEmpty()) {
+                LevelChunk c = level.getChunk(x,z);
+                if (c instanceof EmptyLevelChunk) {
                     throw new IllegalStateException("LevelChunk not loaded: "+x+"/"+z);
                 }
                 boolean nonNull = false;
-                for (ExtendedBlockStorage extendedBlockStorage : c.getBlockStorageArray()) {
-                    if (extendedBlockStorage != null) {
+                for (LevelChunkSection section : c.getSections()) {
+                    if (!section.hasOnlyAir()) {
                         nonNull = true;
                         break;
                     }
@@ -196,8 +202,8 @@ public class DungeonRoom  {
             }
         }
 
-        this.chunkCache = new EditableChunkCache(getContext().getWorld(), roomBounds.getMin().add(-3, 0, -3), roomBounds.getMax().add(3,0,3), 0);
-        CachedWorld cachedWorld =  new CachedWorld(chunkCache, context.getWorld().provider);
+        this.chunkCache = new EditableChunkCache(level, roomBounds.getMin().add(-3, 0, -3), roomBounds.getMax().add(3,0,3), 0);
+        CachedWorld cachedWorld =  new CachedWorld(chunkCache);
 
         coordinateMap = new WorldBackedCoordinateMap(cachedWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
 

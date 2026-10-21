@@ -47,19 +47,20 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.World;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
 
 public class DungeonContext {
     @Getter @Setter
     private String dungeonName;
     @Getter
-    private final World world;
+    // the client level as MinecraftWorld, or a DRIWorld for offline contexts (D108)
+    private final DGWorld world;
     @Getter
     private final MapPlayerProcessor mapPlayerMarkerProcessor;
     @Getter @Setter
@@ -120,10 +121,10 @@ public class DungeonContext {
     private final Vector2d doorOffset;
     private final BlockPos door;
 
-    public DungeonContext(String dungeonName, World world) {
+    public DungeonContext(String dungeonName, DGWorld world) {
         this(dungeonName, world, FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPreset());
     }
-    public DungeonContext(String dungeonName, World world, PathfindPreset preset) {
+    public DungeonContext(String dungeonName, DGWorld world, PathfindPreset preset) {
         this.dungeonName = dungeonName;
         this.preset = preset;
         this.world = world;
