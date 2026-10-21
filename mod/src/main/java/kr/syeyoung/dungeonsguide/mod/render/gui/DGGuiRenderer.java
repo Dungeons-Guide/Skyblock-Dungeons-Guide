@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.gui.renderer;
+package kr.syeyoung.dungeonsguide.mod.render.gui;
 
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
@@ -30,11 +30,11 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.DGRenderState;
-import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.ItemState;
-import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.ShaderShapeState;
+import kr.syeyoung.dungeonsguide.mod.render.gui.state.DGRenderState;
+import kr.syeyoung.dungeonsguide.mod.render.gui.state.ItemState;
+import kr.syeyoung.dungeonsguide.mod.render.gui.state.ShaderShapeState;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderUniforms;
-import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.StencilState;
+import kr.syeyoung.dungeonsguide.mod.render.gui.state.StencilState;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.GuiItemAtlas;

@@ -22,9 +22,9 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
-import kr.syeyoung.dungeonsguide.mod.gui.renderer.DGGuiRenderer;
+import kr.syeyoung.dungeonsguide.mod.render.gui.DGGuiRenderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.gui.renderer.StencilImage;
+import kr.syeyoung.dungeonsguide.mod.render.gui.StencilImage;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import lombok.Getter;

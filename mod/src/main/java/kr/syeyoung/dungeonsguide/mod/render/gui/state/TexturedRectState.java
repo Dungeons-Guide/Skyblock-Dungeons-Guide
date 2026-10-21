@@ -16,42 +16,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.gui.renderer.state;
+package kr.syeyoung.dungeonsguide.mod.render.gui.state;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.textures.GpuSampler;
+import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
-import kr.syeyoung.dungeonsguide.mod.shader.ShaderUniforms;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import net.minecraft.client.gui.render.TextureSetup;
+import net.minecraft.client.renderer.RenderPipelines;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
 
 import java.awt.*;
+import java.util.function.Supplier;
 
-/**
- * A quad drawn with one of DG's shaders (D78) and that shader's uniforms (D103). Corners and colors in order.
- */
 @AllArgsConstructor
-public class ShaderShapeState implements DGRenderState {
+public class TexturedRectState implements DGRenderState {
     private final Matrix3x2f pose;
-    private final ShaderProgram shader;
-    @Getter
-    private final ShaderUniforms uniforms;
-    private final float[] corners; // x0, y0, x1, y1, x2, y2, x3, y3
-    private final int[] colors;
+    private final float x0, y0, x1, y1;
+    private final float u0, u1, v0, v1;
+    private final int color;
+    // textures can be (re)loaded between recording and executing
+    private final Supplier<GpuTextureView> texture;
+    private final Supplier<GpuSampler> sampler;
     private final Rectangle scissor;
     private final boolean stencilMask;
 
     @Override
     public RenderPipeline pipeline() {
-        return shader.getPipeline();
+        return RenderPipelines.GUI_TEXTURED;
     }
 
     @Override
     public TextureSetup textureSetup() {
-        return TextureSetup.noTexture();
+        return TextureSetup.singleTexture(texture.get(), sampler.get());
     }
 
     @Override
@@ -66,7 +65,9 @@ public class ShaderShapeState implements DGRenderState {
 
     @Override
     public void buildVertices(VertexConsumer consumer) {
-        for (int i = 0; i < 4; i++)
-            consumer.addVertexWith2DPose(pose, corners[i * 2], corners[i * 2 + 1]).setColor(colors[i]);
+        consumer.addVertexWith2DPose(pose, x0, y0).setUv(u0, v0).setColor(color);
+        consumer.addVertexWith2DPose(pose, x0, y1).setUv(u0, v1).setColor(color);
+        consumer.addVertexWith2DPose(pose, x1, y1).setUv(u1, v1).setColor(color);
+        consumer.addVertexWith2DPose(pose, x1, y0).setUv(u1, v0).setColor(color);
     }
 }

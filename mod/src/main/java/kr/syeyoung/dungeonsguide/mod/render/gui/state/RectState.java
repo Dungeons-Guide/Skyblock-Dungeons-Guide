@@ -16,11 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.gui.renderer.state;
+package kr.syeyoung.dungeonsguide.mod.render.gui.state;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.textures.GpuSampler;
-import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.gui.render.TextureSetup;
@@ -29,28 +27,26 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
 
 import java.awt.*;
-import java.util.function.Supplier;
 
+/**
+ * Solid colored quad. Corners in order, transformed by pose.
+ */
 @AllArgsConstructor
-public class TexturedRectState implements DGRenderState {
+public class RectState implements DGRenderState {
     private final Matrix3x2f pose;
-    private final float x0, y0, x1, y1;
-    private final float u0, u1, v0, v1;
+    private final float[] corners; // x0, y0, x1, y1, x2, y2, x3, y3
     private final int color;
-    // textures can be (re)loaded between recording and executing
-    private final Supplier<GpuTextureView> texture;
-    private final Supplier<GpuSampler> sampler;
     private final Rectangle scissor;
     private final boolean stencilMask;
 
     @Override
     public RenderPipeline pipeline() {
-        return RenderPipelines.GUI_TEXTURED;
+        return RenderPipelines.GUI;
     }
 
     @Override
     public TextureSetup textureSetup() {
-        return TextureSetup.singleTexture(texture.get(), sampler.get());
+        return TextureSetup.noTexture();
     }
 
     @Override
@@ -65,9 +61,7 @@ public class TexturedRectState implements DGRenderState {
 
     @Override
     public void buildVertices(VertexConsumer consumer) {
-        consumer.addVertexWith2DPose(pose, x0, y0).setUv(u0, v0).setColor(color);
-        consumer.addVertexWith2DPose(pose, x0, y1).setUv(u0, v1).setColor(color);
-        consumer.addVertexWith2DPose(pose, x1, y1).setUv(u1, v1).setColor(color);
-        consumer.addVertexWith2DPose(pose, x1, y0).setUv(u1, v0).setColor(color);
+        for (int i = 0; i < 4; i++)
+            consumer.addVertexWith2DPose(pose, corners[i * 2], corners[i * 2 + 1]).setColor(color);
     }
 }

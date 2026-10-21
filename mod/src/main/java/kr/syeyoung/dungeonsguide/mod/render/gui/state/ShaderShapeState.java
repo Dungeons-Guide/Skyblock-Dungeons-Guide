@@ -16,41 +16,42 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.gui.renderer.state;
+package kr.syeyoung.dungeonsguide.mod.render.gui.state;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
+import kr.syeyoung.dungeonsguide.mod.shader.ShaderUniforms;
 import lombok.AllArgsConstructor;
-import net.minecraft.client.gui.font.TextRenderable;
+import lombok.Getter;
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.util.LightCoordsUtil;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
-import org.joml.Matrix4f;
 
 import java.awt.*;
-import java.util.List;
 
 /**
- * Vanilla glyphs (D79) that share a pipeline and a texture.
+ * A quad drawn with one of DG's shaders (D78) and that shader's uniforms (D103). Corners and colors in order.
  */
 @AllArgsConstructor
-public class GlyphRunState implements DGRenderState {
+public class ShaderShapeState implements DGRenderState {
     private final Matrix3x2f pose;
-    private final List<TextRenderable> glyphs;
+    private final ShaderProgram shader;
+    @Getter
+    private final ShaderUniforms uniforms;
+    private final float[] corners; // x0, y0, x1, y1, x2, y2, x3, y3
+    private final int[] colors;
     private final Rectangle scissor;
     private final boolean stencilMask;
 
     @Override
     public RenderPipeline pipeline() {
-        return glyphs.get(0).guiPipeline();
+        return shader.getPipeline();
     }
 
     @Override
     public TextureSetup textureSetup() {
-        return TextureSetup.singleTextureWithLightmap(glyphs.get(0).textureView(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST));
+        return TextureSetup.noTexture();
     }
 
     @Override
@@ -65,8 +66,7 @@ public class GlyphRunState implements DGRenderState {
 
     @Override
     public void buildVertices(VertexConsumer consumer) {
-        Matrix4f pose4 = new Matrix4f().mul(pose);
-        for (TextRenderable glyph : glyphs)
-            glyph.render(pose4, consumer, LightCoordsUtil.FULL_BRIGHT, true);
+        for (int i = 0; i < 4; i++)
+            consumer.addVertexWith2DPose(pose, corners[i * 2], corners[i * 2 + 1]).setColor(colors[i]);
     }
 }

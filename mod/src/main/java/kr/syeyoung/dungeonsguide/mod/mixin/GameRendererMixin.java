@@ -22,7 +22,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import kr.syeyoung.dungeonsguide.mod.gui.PassthroughManager;
-import kr.syeyoung.dungeonsguide.mod.gui.renderer.DGGuiRenderer;
+import kr.syeyoung.dungeonsguide.mod.render.gui.DGGuiRenderer;
 import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
