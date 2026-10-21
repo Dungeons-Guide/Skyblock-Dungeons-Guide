@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.player;
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGPlayerEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGPlayerJoinEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGPlayerQuitEvent;
@@ -7,8 +8,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.stomp.*;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResource;
 import lombok.Getter;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -53,11 +53,11 @@ public class PlayerManager {
                 JSONObject obj = new JSONObject(msg);
                 String type = obj.getString("type");
                 if ("joined".equals(type)) {
-                    MinecraftForge.EVENT_BUS.post(new DGPlayerJoinEvent(uuid));
+                    DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DGPlayerJoinEvent(uuid));
                 } else if ("quit".equals(type)) {
-                    MinecraftForge.EVENT_BUS.post(new DGPlayerQuitEvent(uuid));
+                    DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DGPlayerQuitEvent(uuid));
                 } else {
-                    MinecraftForge.EVENT_BUS.post(new DGPlayerEvent(uuid, type, obj.getJSONObject("payload")));
+                    DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DGPlayerEvent(uuid, type, obj.getJSONObject("payload")));
                 }
             });
         } catch (Exception e) {}
@@ -82,8 +82,8 @@ public class PlayerManager {
                 JSONObject object = (JSONObject) o;
                 UUID playeruid = UUID.fromString(object.getString("uuid"));
                 boolean online = object.getBoolean("online");
-                if (online) MinecraftForge.EVENT_BUS.post(new DGPlayerJoinEvent(playeruid));
-                else MinecraftForge.EVENT_BUS.post(new DGPlayerQuitEvent(playeruid));
+                if (online) DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DGPlayerJoinEvent(playeruid));
+                else DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DGPlayerQuitEvent(playeruid));
             }
         });
 

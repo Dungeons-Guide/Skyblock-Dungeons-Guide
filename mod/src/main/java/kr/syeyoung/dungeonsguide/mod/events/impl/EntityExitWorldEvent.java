@@ -20,13 +20,13 @@ package kr.syeyoung.dungeonsguide.mod.events.impl;
 
 import lombok.*;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data @AllArgsConstructor @NoArgsConstructor
-public class EntityExitWorldEvent extends Event {
+public class EntityExitWorldEvent extends DGEvent {
     @Getter @Setter
     private int[] entityIds;
 }

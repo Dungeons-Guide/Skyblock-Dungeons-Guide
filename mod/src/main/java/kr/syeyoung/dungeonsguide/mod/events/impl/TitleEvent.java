@@ -22,11 +22,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.network.play.server.S45PacketTitle;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
-public class TitleEvent extends Event {
+public class TitleEvent extends DGEvent {
     S45PacketTitle packetTitle;
 }

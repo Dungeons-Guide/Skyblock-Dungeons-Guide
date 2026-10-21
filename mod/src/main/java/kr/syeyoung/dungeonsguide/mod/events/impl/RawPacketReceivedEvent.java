@@ -21,9 +21,9 @@ package kr.syeyoung.dungeonsguide.mod.events.impl;
 import lombok.AllArgsConstructor;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.INetHandlerPlayClient;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 @AllArgsConstructor
-public class RawPacketReceivedEvent extends Event {
+public class RawPacketReceivedEvent extends DGEvent {
     public Packet<INetHandlerPlayClient> packet;
 }

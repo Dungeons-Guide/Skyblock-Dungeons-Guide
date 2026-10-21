@@ -22,11 +22,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
-public class PlayerListItemPacketEvent extends Event {
+public class PlayerListItemPacketEvent extends DGEvent {
     private S38PacketPlayerListItem packetPlayerListItem;
 }

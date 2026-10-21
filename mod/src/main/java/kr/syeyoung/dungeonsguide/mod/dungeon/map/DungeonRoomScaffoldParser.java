@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.map;
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
@@ -31,7 +32,6 @@ import lombok.Getter;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.storage.MapData;
-import net.minecraftforge.common.MinecraftForge;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -73,7 +73,7 @@ public class DungeonRoomScaffoldParser {
             roomMap.put(p, dungeonRoom);
         }
 
-        MinecraftForge.EVENT_BUS.post(new DungeonRoomDiscoveredEvent(dungeonRoom));
+        DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DungeonRoomDiscoveredEvent(dungeonRoom));
     }
 
     public void processMap(MapData mapData2) {

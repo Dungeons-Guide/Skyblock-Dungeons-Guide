@@ -21,11 +21,11 @@ package kr.syeyoung.dungeonsguide.mod.events.impl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 import java.util.UUID;
 
 @Data @AllArgsConstructor @NoArgsConstructor
-public class DGPlayerQuitEvent extends Event {
+public class DGPlayerQuitEvent extends DGEvent {
     private UUID uuid;
 }

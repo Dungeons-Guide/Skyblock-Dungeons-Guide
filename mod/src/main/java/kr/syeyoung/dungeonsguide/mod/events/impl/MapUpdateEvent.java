@@ -24,12 +24,12 @@ import lombok.EqualsAndHashCode;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
 import net.minecraft.network.play.server.S30PacketWindowItems;
 import net.minecraft.world.storage.MapData;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
-public class MapUpdateEvent extends Event {
+public class MapUpdateEvent extends DGEvent {
     private int mapId;
     private MapData mapData;
 }

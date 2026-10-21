@@ -66,7 +66,6 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -1343,7 +1342,7 @@ public class CommandDgDebug extends CommandBase {
 
     private void reloadDungeonCommand() {
         try {
-            MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DungeonLeftEvent());
 
             DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
             MapUtils.clearMap();

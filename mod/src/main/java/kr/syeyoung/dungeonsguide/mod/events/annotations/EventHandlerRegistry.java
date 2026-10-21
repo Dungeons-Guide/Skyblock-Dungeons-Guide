@@ -18,25 +18,23 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.annotations;
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
+import kr.syeyoung.dungeonsguide.mod.events.EventProcessResult;
+import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
+import kr.syeyoung.dungeonsguide.mod.events.ListenerRegistration;
 import kr.syeyoung.dungeonsguide.mod.features.IFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.profiler.Profiler;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.IEventListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -51,23 +49,12 @@ public class EventHandlerRegistry {
 
     @AllArgsConstructor
     @Getter
-    private static class InvocationTarget<T extends Event> {
+    private static class InvocationTarget<T extends DGEvent> {
         private final Class<T> targetEvent;
         private final IFeature feature;
         private final String targetName;
         private final Supplier<Boolean> condition;
         private final MethodHandle invokeSite;
-    }
-
-    private static final int busID;
-    static {
-        try {
-            Field f = EventBus.class.getDeclaredField("busID");
-            f.setAccessible(true);
-            busID = (int) f.get(MinecraftForge.EVENT_BUS);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static void registerEvents(IFeature feature) {
@@ -109,17 +96,16 @@ public class EventHandlerRegistry {
         registerActualListeners();
     }
 
-    private static Map<Class<? extends Event>, IEventListener> registeredHandlers = new HashMap<>();
+    private static Map<Class<? extends DGEvent>, ListenerRegistration> registeredHandlers = new HashMap<>();
 
     public static synchronized void registerActualListeners() {
-        for (Class<? extends Event> aClass : targets.keySet()) {
+        for (Class aClass : targets.keySet()) {
             if (registeredHandlers.containsKey(aClass)) continue;
+            if (!DGEvent.class.isAssignableFrom(aClass)) continue;
             try {
-                Event ev = aClass.getConstructor().newInstance();
                 List<InvocationTarget> targetList = targets.get(aClass);
                 Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-                IEventListener registered;
-                ev.getListenerList().register(busID, EventPriority.NORMAL, registered = (event) -> {
+                ListenerRegistration registered = DungeonsGuide.getDungeonsGuide().getEventBus().registerListener(aClass, ListenerPriority.THIRD, (event) -> {
                     if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
                     profiler.startSection("Dungeons Guide Event Handling");
                     for (InvocationTarget target : targetList) {
@@ -141,6 +127,7 @@ public class EventHandlerRegistry {
                     }
                     if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
                     profiler.endSection();
+                    return EventProcessResult.COMPLETE;
                 });
                 registeredHandlers.put(aClass, registered);
             } catch (Exception e) {
@@ -150,14 +137,8 @@ public class EventHandlerRegistry {
     }
 
     public static void unregisterListeners() {
-        for (Map.Entry<Class<? extends Event>, IEventListener> eventIEventListenerEntry : registeredHandlers.entrySet()) {
-            try {
-                Event ev = eventIEventListenerEntry.getKey().getConstructor().newInstance();
-                ev.getListenerList().unregister(busID, eventIEventListenerEntry.getValue());
-            } catch (InstantiationException | NoSuchMethodException | InvocationTargetException |
-                     IllegalAccessException e) {
-                e.printStackTrace();
-            }
+        for (ListenerRegistration registration : registeredHandlers.values()) {
+            DungeonsGuide.getDungeonsGuide().getEventBus().unregisterListener(registration);
         }
         registeredHandlers.clear();
     }

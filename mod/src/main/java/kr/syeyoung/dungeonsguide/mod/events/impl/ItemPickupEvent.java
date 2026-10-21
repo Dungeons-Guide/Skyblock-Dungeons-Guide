@@ -19,10 +19,10 @@
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
 import lombok.*;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 @Data @AllArgsConstructor @NoArgsConstructor
-public class ItemPickupEvent extends Event {
+public class ItemPickupEvent extends DGEvent {
     @Getter @Setter
     private int itemId;
     @Getter @Setter

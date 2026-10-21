@@ -74,14 +74,13 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.opengl.GL11;
@@ -180,7 +179,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent ev) {
         if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
-        MinecraftForge.EVENT_BUS.post(new DGTickEvent());
+        DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DGTickEvent());
 
         if (SkyblockStatus.isOnSkyblock() || SkyblockStatus.isOnDungeon()) {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
@@ -191,12 +190,12 @@ public class DungeonListener {
                 try {
                     if (DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isForceIsOnDungeon()) {
                         DungeonServerLaunchUtils.createContext();
-                        MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
+                        DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DungeonStartedEvent());
                     } else if (SkyblockStatus.isOnDungeon()) {
                         DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(new DungeonContext(
                                 SkyblockStatus.getLocationName(),
                                 Minecraft.getMinecraft().thePlayer.worldObj));
-                        MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
+                        DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DungeonStartedEvent());
                     }
                 } catch (IllegalStateException e) {
                     if (! "?".equals(e.getMessage()) && !"No door finder found".equals(e.getMessage())) {
@@ -256,9 +255,9 @@ public class DungeonListener {
 
         if (oldRoom == currentRoom) return;
         if (oldRoom != null)
-            MinecraftForge.EVENT_BUS.post(new DungeonRoomExitEvent(oldRoom));
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DungeonRoomExitEvent(oldRoom));
         if (currentRoom != null)
-            MinecraftForge.EVENT_BUS.post(new DungeonRoomEnterEvent(currentRoom));
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DungeonRoomEnterEvent(currentRoom));
     }
 
     @SubscribeEvent
@@ -329,12 +328,12 @@ public class DungeonListener {
             context.onMapUpdate(mapUpdateEvent);
         }
     }
-    @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGHEST)
+    @SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FIRST)
     public void onChatReceived(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
         if (clientChatReceivedEvent.type != 2 && clientChatReceivedEvent.message.getFormattedText().contains("§6> §e§lEXTRA STATS §6<")) {
-            MinecraftForge.EVENT_BUS.post(new DungeonEndedEvent());
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DungeonEndedEvent());
         }
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

@@ -22,8 +22,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -35,7 +35,7 @@ public class GuiDisplayer {
     private Queue<GuiScreen> guiScreensToShow = new LinkedList<>();
     private boolean isMcLoaded;
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SubscribeEvent(priority = ListenerPriority.LAST)
     public void onGuiOpen(GuiOpenEvent guiOpenEvent) {
         isMcLoaded = true;
         if (Minecraft.getMinecraft().currentScreen == guiScreensToShow.peek()) {

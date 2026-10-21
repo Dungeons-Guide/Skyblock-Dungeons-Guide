@@ -22,9 +22,9 @@ package kr.syeyoung.dungeonsguide.launcher.events;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.AuthToken;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 @AllArgsConstructor @Getter
-public class AuthChangedEvent extends Event {
+public class AuthChangedEvent extends DGEvent {
     private AuthToken authToken;
 }

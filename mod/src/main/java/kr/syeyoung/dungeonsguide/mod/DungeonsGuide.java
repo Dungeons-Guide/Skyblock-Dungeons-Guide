@@ -35,6 +35,10 @@ import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CustomNetworkPlayerInfo;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
+import kr.syeyoung.dungeonsguide.mod.events.EventBus;
+import kr.syeyoung.dungeonsguide.mod.events.ListenerRegistration;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.AnnotatedListenerHelper;
+import kr.syeyoung.dungeonsguide.mod.events.listenerlist.BasicEventBus;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketInjector;
@@ -82,9 +86,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.ProgressManager;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.eventhandler.ListenerList;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -148,6 +151,9 @@ public class DungeonsGuide implements DGInterface {
     @Getter
     private BlockCache blockCache;
 
+    @Getter
+    private final EventBus eventBus = new BasicEventBus();
+
     public DungeonsGuide(){
         instance = this;
     }
@@ -163,10 +169,9 @@ public class DungeonsGuide implements DGInterface {
     CommandDungeonsGuide commandDungeonsGuide;
 
 
-    private List<Object> registeredListeners = new ArrayList<>();
+    private List<ListenerRegistration> registeredListeners = new ArrayList<>();
     public void registerEventsForge(Object object) {
-        registeredListeners.add(object);
-        MinecraftForge.EVENT_BUS.register(object);
+        registeredListeners.addAll(AnnotatedListenerHelper.registerListeners(eventBus, object));
     }
     private List<ICommand> registeredCommands = new ArrayList<>();
     private List<ExecutorService> executorServices = new ArrayList<>();
@@ -345,14 +350,14 @@ public class DungeonsGuide implements DGInterface {
         // have FUN!
 
 
-        for (Object registeredListener : registeredListeners) {
-            MinecraftForge.EVENT_BUS.unregister(registeredListener);
+        for (ListenerRegistration registeredListener : registeredListeners) {
+            eventBus.unregisterListener(registeredListener);
         }
 
         EventHandlerRegistry.unregisterListeners();
 
         List<ListenerList> all = ReflectionHelper.getPrivateValue(ListenerList.class, null, "allLists");
-        int busId = ReflectionHelper.getPrivateValue(EventBus.class, MinecraftForge.EVENT_BUS, "busID");
+        int busId = ReflectionHelper.getPrivateValue(net.minecraftforge.fml.common.eventhandler.EventBus.class, MinecraftForge.EVENT_BUS, "busID");
         for (ListenerList listenerList : all) {
             Object[] list = ReflectionHelper.getPrivateValue(ListenerList.class, listenerList, "lists");
             Object inst = list[busId];

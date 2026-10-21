@@ -23,12 +23,12 @@ import kr.syeyoung.dungeonsguide.mod.discord.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
-public class DiscordUserInvitedEvent extends Event {
+public class DiscordUserInvitedEvent extends DGEvent {
     private User discordUser;
     private InviteHandle handle;
 }
