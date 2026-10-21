@@ -28,9 +28,12 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.DGRenderState;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.GlyphRunState;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.ItemState;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.RectState;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.ShaderShapeState;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.StencilState;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.TexturedRectState;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.VanillaElementState;
+import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
+import kr.syeyoung.dungeonsguide.mod.shader.ShaderUniforms;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -103,8 +106,9 @@ public class RenderingContext {
         double len = Math.sqrt(dx * dx + dy * dy);
         if (len == 0) return;
         double nx = -dy / len * width / 2, ny = dx / len * width / 2;
-        drawQuad((float) (x0 + nx), (float) (y0 + ny), (float) (x0 - nx), (float) (y0 - ny),
-                (float) (x1 - nx), (float) (y1 - ny), (float) (x1 + nx), (float) (y1 + ny), color);
+        // same winding as drawRect, gui pipelines cull back faces
+        drawQuad((float) (x0 - nx), (float) (y0 - ny), (float) (x0 + nx), (float) (y0 + ny),
+                (float) (x1 + nx), (float) (y1 + ny), (float) (x1 - nx), (float) (y1 - ny), color);
     }
 
     public void drawScaledCustomSizeModalRect(Identifier texture, double x, double y, float u, float v, int uWidth, int vHeight, double width, double height, float tileWidth, float tileHeight) {
@@ -172,6 +176,49 @@ public class RenderingContext {
             }
         });
         drawGlyphs(glyphs);
+    }
+
+    // rect drawn with a DG shader, what 1.8.9 did with useShader + drawRect (D103)
+    public void drawShape(ShaderProgram shader, ShaderUniforms uniforms, double left, double top, double right, double bottom, int color) {
+        double i;
+        if (left < right) {
+            i = left;
+            left = right;
+            right = i;
+        }
+
+        if (top < bottom) {
+            i = top;
+            top = bottom;
+            bottom = i;
+        }
+        drawShape(shader, uniforms, (float) left, (float) bottom, (float) right, (float) bottom, (float) right, (float) top, (float) left, (float) top,
+                color, color, color, color);
+    }
+
+    // corners and their colors in order
+    public void drawShape(ShaderProgram shader, ShaderUniforms uniforms, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3,
+                          int color0, int color1, int color2, int color3) {
+        if (isClipEmpty()) return;
+        states.add(new ShaderShapeState(new Matrix3x2f(pose), shader, uniforms, new float[] {x0, y0, x1, y1, x2, y2, x3, y3},
+                new int[] {color0, color1, color2, color3}, currentClip(), writingStencilMask));
+    }
+
+    // the pipelines draw quads, a triangle is a quad with its last corner repeated
+    private void drawShapeTriangle(ShaderProgram shader, ShaderUniforms uniforms, float x0, float y0, float x1, float y1, float x2, float y2, int color) {
+        drawShape(shader, uniforms, x0, y0, x1, y1, x2, y2, x2, y2, color, color, color, color);
+    }
+
+    // what GL_TRIANGLE_FAN did, xy pairs
+    public void drawShapeTriangleFan(ShaderProgram shader, ShaderUniforms uniforms, int color, float... xy) {
+        for (int i = 2; i + 3 < xy.length; i += 2)
+            drawShapeTriangle(shader, uniforms, xy[0], xy[1], xy[i], xy[i + 1], xy[i + 2], xy[i + 3], color);
+    }
+
+    // what GL_TRIANGLE_STRIP did, xy pairs
+    public void drawShapeTriangleStrip(ShaderProgram shader, ShaderUniforms uniforms, int color, float... xy) {
+        for (int i = 0; i + 5 < xy.length; i += 2)
+            drawShapeTriangle(shader, uniforms, xy[i], xy[i + 1], xy[i + 2], xy[i + 3], xy[i + 4], xy[i + 5], color);
     }
 
     // 16x16 gui item at x, y, like 1.8.9's renderItemAndEffectIntoGUI (D100)

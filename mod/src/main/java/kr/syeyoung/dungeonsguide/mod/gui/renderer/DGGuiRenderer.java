@@ -32,11 +32,14 @@ import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.DGRenderState;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.ItemState;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.ShaderShapeState;
+import kr.syeyoung.dungeonsguide.mod.shader.ShaderUniforms;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.StencilState;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.GuiItemAtlas;
 import net.minecraft.client.gui.render.TextureSetup;
+import net.minecraft.client.renderer.DynamicUniformStorage;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MappableRingBuffer;
 import net.minecraft.client.renderer.Projection;
@@ -66,6 +69,7 @@ public class DGGuiRenderer implements AutoCloseable {
     private final Projection projection = new Projection();
     private final ProjectionMatrixBuffer projectionBuffer = new ProjectionMatrixBuffer("dungeonsguide gui");
     private final Map<RenderPipeline, RenderPipeline> maskPipelines = new HashMap<>();
+    private final Map<Class<?>, DynamicUniformStorage<ShaderUniforms>> shaderUniforms = new HashMap<>();
     private GuiItemAtlas itemAtlas;
     private int itemAtlasGuiScale;
 
@@ -82,6 +86,9 @@ public class DGGuiRenderer implements AutoCloseable {
         } finally {
             queue.clear();
             if (itemAtlas != null) itemAtlas.endFrame();
+            for (DynamicUniformStorage<ShaderUniforms> storage : shaderUniforms.values()) {
+                storage.endFrame();
+            }
         }
     }
 
@@ -99,6 +106,21 @@ public class DGGuiRenderer implements AutoCloseable {
                 if (bufferBuilder != null) recordMesh(steps, bufferBuilder, batchPipeline, batchTextures, batchScissor);
                 bufferBuilder = null;
                 steps.add(new Step(null, null, null, null, (StencilState) state, 0, null));
+                continue;
+            }
+            // each shape has its own uniforms, so it's its own draw
+            if (state instanceof ShaderShapeState) {
+                if (bufferBuilder != null) recordMesh(steps, bufferBuilder, batchPipeline, batchTextures, batchScissor);
+                bufferBuilder = null;
+                RenderPipeline pipeline = state.stencilMask() ? maskVariant(state.pipeline()) : state.pipeline();
+                BufferBuilder shapeBuilder = new BufferBuilder(byteBufferBuilder, pipeline.getVertexFormatMode(), pipeline.getVertexFormat());
+                state.buildVertices(shapeBuilder);
+                MeshData mesh = shapeBuilder.build();
+                if (mesh != null) {
+                    Step step = new Step(mesh, pipeline, state.textureSetup(), state.scissor(), null, 0, null);
+                    step.uniforms = ((ShaderShapeState) state).getUniforms();
+                    steps.add(step);
+                }
                 continue;
             }
 
@@ -226,12 +248,20 @@ public class DGGuiRenderer implements AutoCloseable {
             offsets.put(format, offset + size);
             step.baseVertex = offset / format.getVertexSize();
             step.vertexBuffer = vertexBuffer.currentBuffer();
+
+            if (step.uniforms != null) {
+                ShaderUniforms uniforms = step.uniforms;
+                step.uniformSlice = shaderUniforms
+                        .computeIfAbsent(uniforms.getClass(), c -> new DynamicUniformStorage<>("Dungeons Guide " + uniforms.blockName() + " UBO", uniforms.blockSize(), 16))
+                        .writeUniform(uniforms);
+            }
         }
     }
 
     private void draw(RenderPass renderPass, Step step) {
         MeshData.DrawState drawState = step.mesh.drawState();
         renderPass.setPipeline(step.pipeline);
+        if (step.uniforms != null) renderPass.setUniform(step.uniforms.blockName(), step.uniformSlice);
         renderPass.setVertexBuffer(0, step.vertexBuffer);
         if (step.scissor != null) {
             renderPass.enableScissor(step.scissor.x, step.scissor.y, step.scissor.width, step.scissor.height);
@@ -311,6 +341,9 @@ public class DGGuiRenderer implements AutoCloseable {
     @Override
     public void close() {
         if (itemAtlas != null) itemAtlas.close();
+        for (DynamicUniformStorage<ShaderUniforms> storage : shaderUniforms.values()) {
+            storage.close();
+        }
         byteBufferBuilder.close();
         projectionBuffer.close();
         for (MappableRingBuffer buffer : vertexBuffers.values()) {
@@ -333,5 +366,7 @@ public class DGGuiRenderer implements AutoCloseable {
         private final StencilState stencil;
         private int baseVertex;
         private GpuBuffer vertexBuffer;
+        private ShaderUniforms uniforms;
+        private GpuBufferSlice uniformSlice;
     }
 }

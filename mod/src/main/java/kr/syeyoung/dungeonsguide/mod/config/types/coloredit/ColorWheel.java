@@ -29,12 +29,12 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
-import net.minecraft.client.Minecraft;
-import org.lwjgl.opengl.GL20;
 
 import java.awt.*;
 import java.util.Collections;
 import java.util.List;
+import kr.syeyoung.dungeonsguide.mod.shader.ChromaCircleUniforms;
+import kr.syeyoung.dungeonsguide.mod.shader.DonutUniforms;
 
 public class ColorWheel extends Widget implements Renderer, Layouter {
     public final BindableAttribute<AColor> color = new BindableAttribute<>(AColor.class);
@@ -61,30 +61,22 @@ public class ColorWheel extends Widget implements Renderer, Layouter {
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         double rad = buildContext.getAbsBounds().getWidth() / 2.0;
         ShaderProgram shaderProgram = ShaderManager.getShader("shaders/chromacircle");
-        shaderProgram.useShader();
-        shaderProgram.uploadUniform("radius", (float) rad);
-        shaderProgram.uploadUniform("value", hsv[2]);
-        shaderProgram.uploadUniform("centerPos",
-                (float) (buildContext.getAbsBounds().getX()+buildContext.getAbsBounds().getWidth()/2),
-                Minecraft.getMinecraft().displayHeight - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight()/2));
-        shaderProgram.uploadUniform("smoothness", 0.0f);
-        context.drawRect(0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0xFFFFFFFF);
-        GL20.glUseProgram(0);
+        context.drawShape(shaderProgram, new ChromaCircleUniforms((float) rad,
+                        (float) (buildContext.getAbsBounds().getX()+buildContext.getAbsBounds().getWidth()/2),
+                        context.getImageHeight() - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight()/2),
+                        0.0f, hsv[2]),
+                0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0xFFFFFFFF);
 
         double angle = (hsv[0] - Math.floor(hsv[0])) * Math.PI * 2;
         double x = Math.sin(angle) * hsv[1] * rad;
         double y = -Math.cos(angle) * hsv[1] * rad;
 
         shaderProgram = ShaderManager.getShader("shaders/donut");
-        shaderProgram.useShader();
-        shaderProgram.uploadUniform("radius", 5.0f);
-        shaderProgram.uploadUniform("thickness", 1f);
-        shaderProgram.uploadUniform("centerPos",
-                (float) (buildContext.getAbsBounds().getX()+rad+x),
-                Minecraft.getMinecraft().displayHeight - (float) (buildContext.getAbsBounds().getY() + rad+y));
-        shaderProgram.uploadUniform("smoothness", 0.0f);
-        context.drawRect(0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0xFFFFFFFF);
-        GL20.glUseProgram(0);
+        context.drawShape(shaderProgram, new DonutUniforms(5.0f, 1f,
+                        (float) (buildContext.getAbsBounds().getX()+rad+x),
+                        context.getImageHeight() - (float) (buildContext.getAbsBounds().getY() + rad+y),
+                        0.0f),
+                0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0xFFFFFFFF);
     }
 
     @Override
