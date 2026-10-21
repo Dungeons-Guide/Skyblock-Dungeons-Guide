@@ -28,7 +28,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Items;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
@@ -62,7 +62,7 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void renderworldLast(RenderWorldLastEvent event) {
+    public void renderworldLast(RenderWorldEvent event) {
         if (toHighlight == null) return;
         GlStateManager.disableAlpha();
         Color c =  new Color(0x3300FF00, true);

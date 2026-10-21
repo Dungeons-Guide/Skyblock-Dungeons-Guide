@@ -49,7 +49,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 
 import java.util.*;
 
@@ -88,7 +88,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onRenderWorldLast(RenderWorldLastEvent event) {
+    public void onRenderWorldLast(RenderWorldEvent event) {
         if (!beacon) return;
         BossfightProcessor necron = getProcessor();
         if (necron == null) return;

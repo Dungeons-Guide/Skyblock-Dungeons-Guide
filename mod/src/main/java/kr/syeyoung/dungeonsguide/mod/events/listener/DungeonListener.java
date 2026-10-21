@@ -73,7 +73,7 @@ import net.minecraft.util.Vec3;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -380,7 +380,7 @@ public class DungeonListener {
 
 
     @SubscribeEvent
-    public void onWorldRender(RenderWorldLastEvent renderWorldLastEvent) {
+    public void onWorldRender(RenderWorldEvent renderWorldLastEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
         try {
 

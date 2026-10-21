@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public class FeatureBoxStarMobs extends SimpleFeature {
 
 
     @DGEventHandler
-    public void drawWorld(RenderWorldLastEvent event) {
+    public void drawWorld(RenderWorldEvent event) {
         float partialTicks = event.partialTicks;
         
         if (!SkyblockStatus.isOnDungeon()) return;

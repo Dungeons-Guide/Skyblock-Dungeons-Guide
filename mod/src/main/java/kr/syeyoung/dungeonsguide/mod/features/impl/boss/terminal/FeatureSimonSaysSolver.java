@@ -32,7 +32,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
@@ -49,7 +49,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
     private final LinkedList<BlockPos> orderClick = new LinkedList<BlockPos>();
 
     @DGEventHandler
-    public void drawWorld(RenderWorldLastEvent event) {
+    public void drawWorld(RenderWorldEvent event) {
         float partialTicks = event.partialTicks;
         if (!isEnabled()) return;
         DungeonContext dc = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

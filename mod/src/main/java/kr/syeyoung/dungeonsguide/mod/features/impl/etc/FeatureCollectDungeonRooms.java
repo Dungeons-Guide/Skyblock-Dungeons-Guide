@@ -71,7 +71,7 @@ import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -717,7 +717,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
 
     @DGEventHandler
-    public void onRender(RenderWorldLastEvent event) {
+    public void onRender(RenderWorldEvent event) {
         if (!FeatureRegistry.DEBUG.isEnabled()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
 

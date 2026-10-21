@@ -22,8 +22,11 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ClientTickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
+import net.minecraft.client.Minecraft;
 
 // turns fabric callbacks and mixin hooks into dg events
 public class FabricEventBridge {
@@ -46,6 +49,12 @@ public class FabricEventBridge {
         // TODO: there is no MODIFY for player chat on 26.1, so replacing the message does nothing here
         ClientReceiveMessageEvents.ALLOW_CHAT.register((message, playerChatMessage, sender, boundChatType, timestamp) ->
                 !fire(new ChatReceivedEvent((byte) 0, message)));
+
+        // closest to 1.8.9's RenderWorldLastEvent: end of the main pass
+        LevelRenderEvents.END_MAIN.register(context -> {
+            fire(new RenderWorldEvent(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false), context));
+            context.bufferSource().endBatch();
+        });
     }
 
     public static boolean fire(DGEvent event) {
