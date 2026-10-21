@@ -69,6 +69,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.world.MinecraftWorld;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.EmptyLevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 
 @Getter
 public class DungeonRoom  {
@@ -343,11 +344,12 @@ public class DungeonRoom  {
         }
     }
 
-    public Block getRelativeBlockAt(int x, int y, int z) {
+    // 26.1: the block state, checks go through LegacyBlock (D112)
+    public BlockState getRelativeBlockAt(int x, int y, int z) {
         // validate x y z's
         if (getRoomBounds().canAccessRelative(x,z)) {
-            BlockPos pos = new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
-            return getCachedWorld().getBlockState(pos).getBlock();
+            BlockPos pos = new BlockPos(x,y,z).offset(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
+            return getCachedWorld().getBlockState(pos);
         }
         return null;
     }
@@ -363,9 +365,10 @@ public class DungeonRoom  {
     public int getRelativeBlockDataAt(int x, int y, int z) {
         // validate x y z's
         if (getRoomBounds().canAccessRelative(x,z)) {
-            BlockPos pos = new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
+            BlockPos pos = new BlockPos(x,y,z).offset(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
             BlockState iBlockState = getCachedWorld().getBlockState(pos);
-            return iBlockState.getBlock().getMetaFromState(iBlockState);
+            // 1.8.9's meta
+            return LegacyBlock.meta(iBlockState);
         }
         return -1;
     }

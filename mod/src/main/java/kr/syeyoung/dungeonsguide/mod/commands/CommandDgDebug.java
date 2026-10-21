@@ -87,6 +87,10 @@ import java.util.function.Consumer;
 import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatCapture;
 import java.io.IOException;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.RoomDataConverter;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
+import net.minecraft.world.level.block.state.BlockState;
+import java.io.File;
 
 public class CommandDgDebug {
     @DGCommand("dgdebug")
@@ -1412,6 +1416,24 @@ public class CommandDgDebug {
                 Minecraft.getInstance().setScreen(adapter);
             });
         }).start();
+    }
+
+    // D109: converts the loaded 1.8.9 room data to format 2 and writes it with the legacy block table, to be copied into the resources
+    @DGCommand("dgdebug convertroomdata")
+    public void convertRoomDataCommand() {
+        try {
+            File out = new File(Main.getConfigDir(), "convertedroomdata");
+            BlockState[] table = RoomDataConverter.buildLegacyTable();
+            RoomDataConverter.writeTable(table, new File(out, "legacy_blocks.json"));
+            for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+                RoomDataConverter.convert(dungeonRoomInfo, table);
+            }
+            DungeonRoomInfoRegistry.saveAll(new File(out, "roomdata"));
+            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fConverted room data to " + out.getAbsolutePath()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cRoom data conversion failed: " + e));
+        }
     }
 
     // D104: records what the server sends as chat / action bar / titles

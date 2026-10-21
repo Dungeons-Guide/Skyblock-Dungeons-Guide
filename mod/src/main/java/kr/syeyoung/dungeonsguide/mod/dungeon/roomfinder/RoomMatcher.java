@@ -23,10 +23,10 @@ import kr.syeyoung.dungeonsguide.mod.utils.ArrayUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.ShortUtils;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 
 import java.util.List;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class RoomMatcher {
     private final DungeonRoom dungeonRoom;
@@ -86,9 +86,10 @@ public class RoomMatcher {
             for (int x = 0; x < res[0].length; x++) {
                 int data = res[z][x];
                 if (data == -1) continue;
-                Block b = dungeonRoom.getRelativeBlockAt(x,0,z);
+                BlockState b = dungeonRoom.getRelativeBlockAt(x,0,z);
 
-                if (b == null || Block.getIdFromBlock(b) != data) {
+                // D110: 1.8.9 compared block ids without meta, the same as comparing legacy groups
+                if (b == null || LegacyBlock.legacyId(b) != LegacyBlock.legacyId(dungeonRoomInfo.getPaletteState(data))) {
                     wrongs++;
 
                     if (wrongs > 10) return wrongs;
@@ -101,6 +102,8 @@ public class RoomMatcher {
     private static final int offset = 3;
     public DungeonRoomInfo createNew() {
         DungeonRoomInfo roomInfo = new DungeonRoomInfo(dungeonRoom.getRoomBounds().getShape(), dungeonRoom.getColor());
+        // new rooms are format 2 (D111)
+        roomInfo.setFormatVersion(2);
 
         int maxX = dungeonRoom.getRoomBounds().getMax().getX();
         int maxZ = dungeonRoom.getRoomBounds().getMax().getZ();
@@ -118,11 +121,11 @@ public class RoomMatcher {
                     continue;
                 }
 
-                Block b = dungeonRoom.getRelativeBlockAt(x,0,z);
-                if (b == null || b == Blocks.chest || b == Blocks.trapped_chest) {
+                BlockState b = dungeonRoom.getRelativeBlockAt(x,0,z);
+                if (b == null || LegacyBlock.CHEST.is(b) || LegacyBlock.TRAPPED_CHEST.is(b)) {
                     data[z][x] = -1;
                 } else {
-                    data[z][x] = Block.getIdFromBlock(b);
+                    data[z][x] = roomInfo.getPaletteIndex(b);
                 }
             }
         }

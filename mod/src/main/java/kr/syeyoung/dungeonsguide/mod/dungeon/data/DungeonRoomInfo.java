@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -33,15 +34,17 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.serialization.DungeonRoomInfoW
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.commands.arguments.blocks.BlockStateParser;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.Direction;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter
@@ -62,6 +65,12 @@ public class DungeonRoomInfo {
     private short shape;
     private byte color;
 
+    // D111: version 1 is 1.8.9's legacy ids, version 2 indexes `palette` (converted by dgdebug convertroomdata)
+    private int formatVersion = 1;
+    // version 2: block state strings
+    private List<String> palette;
+
+    // the matching layer. version 1: legacy block ids, version 2: palette indices. -1 is ignored
     @JsonDeserialize(using = DungeonRoomInfoBlocksDeserializer.class)
     @JsonSerialize(using = DungeonRoomInfoBlocksSerializer.class)
     private int[][] blocks;
@@ -131,42 +140,70 @@ public class DungeonRoomInfo {
         this.length = length;
         this.world = new char[width * length * 256];
     }
+
+    @JsonIgnore
+    private transient BlockState[] paletteStates;
+
+    private BlockState[] getPaletteStates() {
+        if (formatVersion != 2) throw new IllegalStateException("Room data " + uuid + " is still 1.8.9 data, run dgdebug convertroomdata");
+        if (paletteStates == null || paletteStates.length != palette.size()) {
+            BlockState[] states = new BlockState[palette.size()];
+            for (int i = 0; i < states.length; i++) states[i] = LegacyBlock.parse(palette.get(i));
+            paletteStates = states;
+        }
+        return paletteStates;
+    }
+
+    public int getPaletteIndex(BlockState blockState) {
+        if (palette == null) palette = new ArrayList<>();
+        String serialized = BlockStateParser.serialize(blockState);
+        int index = palette.indexOf(serialized);
+        if (index == -1) {
+            palette.add(serialized);
+            index = palette.size() - 1;
+        }
+        return index;
+    }
+
+    // state at a palette index, null for -1 (ignored in the matching layer)
+    public BlockState getPaletteState(int index) {
+        return index == -1 ? null : getPaletteStates()[index];
+    }
+
     public void setBlock(OffsetPoint offsetPoint, BlockState iBlockState) {
         int index = offsetPoint.getX() + ((offsetPoint.getY()+70) * length + offsetPoint.getZ()) * width;
-        world[index] = (char) Block.BLOCK_STATE_IDS.get(iBlockState);
+        world[index] = (char) getPaletteIndex(iBlockState);
     }
 
     public BlockState getBlock(OffsetPoint offsetPoint, int rot) {
         return getBlock(offsetPoint.getX(), offsetPoint.getY(), offsetPoint.getZ(), rot);
     }
 
-    private static final PropertyDirection[] directionMap = new PropertyDirection[4096];
-    static {
-        for (Block block : Block.blockRegistry) {
-
-            Optional<PropertyDirection> propertyDirection = block.getDefaultState().getPropertyNames().stream()
-                    .filter(a -> a instanceof PropertyDirection)
-                    .map(PropertyDirection.class::cast).findFirst();
-            directionMap[Block.getIdFromBlock(block)] = propertyDirection.orElse(null);
+    // 1.8.9 rotated a block's first direction property, unless it pointed up or down
+    private static EnumProperty<Direction> directionProperty(BlockState blockState) {
+        for (Property<?> property : blockState.getProperties()) {
+            if (property instanceof EnumProperty<?> enumProperty && enumProperty.getValueClass() == Direction.class)
+                return (EnumProperty<Direction>) enumProperty;
         }
+        return null;
     }
 
     public BlockState getBlock(int x, int y, int z, int rot) {
-        if (y < -70 || y >= 186) return Blocks.bedrock.getDefaultState();
-        if (x <= 0 || x >= width) return Blocks.bedrock.getDefaultState();
-        if (z <= 0 || z >= length) return Blocks.bedrock.getDefaultState();
+        if (y < -70 || y >= 186) return Blocks.BEDROCK.defaultBlockState();
+        if (x <= 0 || x >= width) return Blocks.BEDROCK.defaultBlockState();
+        if (z <= 0 || z >= length) return Blocks.BEDROCK.defaultBlockState();
 
         int index = x + ((y + 70) * length + z) * width;
-        BlockState blockState = Block.BLOCK_STATE_IDS.getByValue(world[index]);
+        BlockState blockState = getPaletteStates()[world[index]];
         if (rot != 0) {
-            PropertyDirection directions = directionMap[world[index] >> 4];
+            EnumProperty<Direction> directions = directionProperty(blockState);
 
             if (directions != null) {
                 Direction enumFacing = blockState.getValue(directions);
                 if (!(enumFacing == Direction.UP || enumFacing == Direction.DOWN)) {
                     for (int i = 0; i < 4 - rot; i++)
-                        enumFacing = enumFacing.rotateY();
-                    blockState = blockState.withProperty(directions, enumFacing);
+                        enumFacing = enumFacing.getClockWise();
+                    blockState = blockState.setValue(directions, enumFacing);
                 }
             }
         }
@@ -174,7 +211,7 @@ public class DungeonRoomInfo {
 
 
 
-        return blockState == null ? Blocks.air.getDefaultState() : blockState;
+        return blockState == null ? Blocks.AIR.defaultBlockState() : blockState;
     }
     public boolean hasSchematic() {
         return world != null;

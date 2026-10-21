@@ -27,7 +27,6 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
-import net.minecraft.launchwrapper.Launch;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -37,6 +36,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import net.fabricmc.loader.api.FabricLoader;
 
 
 
@@ -100,7 +100,7 @@ public class DungeonRoomInfoRegistry {
     public static void saveAll(File dir) {
         dir.mkdirs();
         //User is dev if they are in a dev environment or they are on the allowlist DEV_USERS
-        boolean isDev = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment") || DEV_USERS.contains(Minecraft.getInstance().player.getUniqueID().toString().replace("-",""));
+        boolean isDev = FabricLoader.getInstance().isDevelopmentEnvironment() || DEV_USERS.contains(Minecraft.getInstance().player.getUUID().toString().replace("-",""));
         StringBuilder nameIDString = new StringBuilder("name,uuid,processsor,secrets");
         StringBuilder ids = new StringBuilder();
         CBORMapper objectMapper = new CBORMapper();
