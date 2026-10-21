@@ -63,9 +63,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.command.ICommand;
 import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.common.ProgressManager;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -152,10 +150,6 @@ public class DungeonsGuide {
         AnnotatedListenerHelper.registerListeners(eventBus, object);
     }
 
-    public void registerCommands(ICommand command) {
-        ClientCommandHandler.instance.registerCommand(command);
-    }
-
     public ExecutorService registerExecutorService(ExecutorService executorService) {
         return executorService;
     }
@@ -233,9 +227,6 @@ public class DungeonsGuide {
         commandDungeonsGuide = new CommandDungeonsGuide();
         CommandDgDebug command = new CommandDgDebug();
 
-        registerCommands(commandDungeonsGuide);
-        registerCommands(command);
-
         registerEventsForge(command);
         registerEventsForge(commandDungeonsGuide);
 
@@ -263,9 +254,6 @@ public class DungeonsGuide {
             e.printStackTrace();
         }
 
-        if (FeatureRegistry.ETC_REPARTY.isEnabled()) {
-            registerCommands(commandReparty);
-        }
         DiscordIntegrationManager.INSTANCE.isLoaded();
 
         for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
