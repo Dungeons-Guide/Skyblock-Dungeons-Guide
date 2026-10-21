@@ -23,7 +23,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.profiler.Profiler;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.FogColorsEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
@@ -40,7 +40,7 @@ public class PassthroughManager {
     private int fogColor = 0;
 
     @SubscribeEvent
-    public void onFogColour(EntityViewRenderEvent.FogColors event) {
+    public void onFogColour(FogColorsEvent event) {
         fogColor = 0xff000000
                     | ((int) (event.red * 255) & 0xFF) << 16
                     | ((int) (event.green * 255) & 0xFF) << 8
