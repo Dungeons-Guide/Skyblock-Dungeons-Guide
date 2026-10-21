@@ -56,6 +56,7 @@ public class PacketInjector {
         targetedPackets.add(ClientboundMapItemDataPacket.class); // S34PacketMaps
         targetedPackets.add(ClientboundRemoveEntitiesPacket.class); // S13PacketDestroyEntities
         targetedPackets.add(ClientboundTakeItemEntityPacket.class); // S0DPacketCollectItem
+        targetedPackets.add(ClientboundBossEventPacket.class); // BossStatus
     }
 
     // netty thread. returns the packet minecraft should handle
