@@ -19,11 +19,10 @@
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
 import lombok.AllArgsConstructor;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.INetHandlerPlayClient;
+import net.minecraft.network.protocol.Packet;
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 @AllArgsConstructor
 public class RawPacketReceivedEvent extends DGEvent {
-    public Packet<INetHandlerPlayClient> packet;
+    public Packet<?> packet;
 }
