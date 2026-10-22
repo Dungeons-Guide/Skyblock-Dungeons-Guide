@@ -28,6 +28,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic.Dung
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.MinecraftWorld;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
@@ -58,7 +60,7 @@ public class FeatureStonkDebug extends SimpleFeature {
         if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             event.setCanceled(true);
             // reset
-            this.spots =RaytraceHelper.raycast(event.world, event.pos);
+            this.spots =RaytraceHelper.raycast(new MinecraftWorld(Minecraft.getInstance().level), event.pos);
             System.out.println(spots);
         } else {
 //            this.spots = null;
