@@ -18,7 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map;
 
+import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.google.gson.stream.JsonReader;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.popups.Modal;
@@ -30,9 +32,11 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.client.resources.ResourcePackRepository;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.resources.IoSupplier;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -111,13 +115,22 @@ public class WidgetPresetList extends AnnotatedImportOnlyWidget {
             this.name.setValue(preset.getName());
             this.description.setValue(preset.getDescription());
             this.icon.setValue("dungeonsguide:textures/dglogox128.png");
-            for (ResourcePackRepository.Entry repositoryEntry : Minecraft.getInstance().getResourcePackRepository()
-                    .getRepositoryEntries()) {
-                if (repositoryEntry.getResourcePackName().equals(preset.getTexturePack())) {
-                    repositoryEntry.bindTexturePackIcon(Minecraft.getInstance().getTextureManager());
-                    Identifier resourceLocation = ReflectionHelper.getPrivateValue(ResourcePackRepository.Entry.class, repositoryEntry, "locationTexturePackIcon", "field_5260", "f");
-                    if (resourceLocation != null)
-                        this.icon.setValue(resourceLocation.toString());
+            // 1.8.9's pack names are file names, 26.1's pack ids are prefixed with "file/".
+            // the icon is loaded the way vanilla's pack screen does, under a dungeonsguide identifier
+            for (Pack pack : Minecraft.getInstance().getResourcePackRepository().getAvailablePacks()) {
+                if (pack.getId().equals("file/" + preset.getTexturePack())) {
+                    try (PackResources packResources = pack.open()) {
+                        IoSupplier<InputStream> resource = packResources.getRootResource("pack.png");
+                        if (resource != null) {
+                            Identifier resourceLocation = Identifier.fromNamespaceAndPath("dungeonsguide", "preset/" + Hashing.sha1().hashUnencodedChars(pack.getId()) + "/icon");
+                            try (InputStream stream = resource.get()) {
+                                Minecraft.getInstance().getTextureManager().register(resourceLocation, new DynamicTexture(resourceLocation::toString, NativeImage.read(stream)));
+                            }
+                            this.icon.setValue(resourceLocation.toString());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     break;
                 }
             }

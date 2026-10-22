@@ -53,9 +53,9 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.level.GameType;
 
 import java.lang.reflect.Type;
@@ -176,10 +176,10 @@ public class FeatureDungeonMap2 extends AbstractHUDFeature {
     @Getter
     private final MapConfiguration mapConfiguration = new MapConfiguration();
 
-    public static final Ordering<NetworkPlayerInfo> sorter = Ordering.from((compare1, compare2) -> {
-        ScorePlayerTeam scorePlayerTeam = compare1.getPlayerTeam();
-        ScorePlayerTeam scorePlayerTeam1 = compare2.getPlayerTeam();
-        return ComparisonChain.start().compareTrueFirst(compare1.getGameType() != GameType.GameType.SPECTATOR, compare2.getGameType() != GameType.GameType.SPECTATOR).compare(scorePlayerTeam != null ? scorePlayerTeam.getRegisteredName() : "", scorePlayerTeam1 != null ? scorePlayerTeam1.getRegisteredName() : "").compare(compare1.getGameProfile().getName(), compare2.getGameProfile().getName()).result();
+    public static final Ordering<PlayerInfo> sorter = Ordering.from((compare1, compare2) -> {
+        PlayerTeam scorePlayerTeam = compare1.getTeam();
+        PlayerTeam scorePlayerTeam1 = compare2.getTeam();
+        return ComparisonChain.start().compareTrueFirst(compare1.getGameMode() != GameType.SPECTATOR, compare2.getGameMode() != GameType.SPECTATOR).compare(scorePlayerTeam != null ? scorePlayerTeam.getName() : "", scorePlayerTeam1 != null ? scorePlayerTeam1.getName() : "").compare(compare1.getProfile().name(), compare2.getProfile().name()).result();
     });
 
     @Override
@@ -276,7 +276,7 @@ public class FeatureDungeonMap2 extends AbstractHUDFeature {
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
             if (name == null) continue;
 
-            Player entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
+            Player entityplayer = Minecraft.getInstance().level.players().stream().filter(p -> p.getGameProfile().name().equals(name)).findFirst().orElse(null);
 
             overlays.add(new MapOverlayPlayer(playerInfo,
                     entityplayer == Minecraft.getInstance().player ? mapConfiguration.getSelfSettings() : mapConfiguration.getTeammateSettings()));

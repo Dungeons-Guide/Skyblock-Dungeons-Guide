@@ -28,11 +28,10 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.Container;
-import org.lwjgl.input.Mouse;
 
 public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
     public FeaturePressAnyKeyToCloseChest() {
@@ -42,7 +41,7 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
 
     @DGEventHandler
     public void onKeyInput(ScreenKeyboardEvent keyboardInputEvent) {
-        GuiScreen screen = Minecraft.getInstance().screen;
+        Screen screen = Minecraft.getInstance().screen;
         
         if (!SkyblockStatus.isOnDungeon()) return;
 
@@ -66,10 +65,10 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
 
     @DGEventHandler
     public void onMouseInput(ScreenMouseEvent.Pre mouseInputEvent) {
-        GuiScreen screen = Minecraft.getInstance().screen;
+        Screen screen = Minecraft.getInstance().screen;
         
         if (!SkyblockStatus.isOnDungeon()) return;
-        if (Mouse.getEventButton() == -1) return;
+        if ((mouseInputEvent.buttonEvent == null ? -1 : mouseInputEvent.buttonEvent.button()) == -1) return;
 
         if (screen instanceof ContainerScreen){
             String title = ((ContainerScreen)screen).getTitle().getString();

@@ -25,7 +25,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -51,10 +50,12 @@ public class FeaturePlayerESP extends SimpleFeature {
 
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null) return;
-        if (!dungeonContext.getPlayers().contains(renderPlayerEvent.entityPlayer.getName())) {
+        if (!dungeonContext.getPlayers().contains(renderPlayerEvent.entityPlayer.getGameProfile().name())) {
             return;
         }
 
+        // TODO: D72, 1.8.9 re-rendered the player into the stencil buffer and drew its outline where the stencil was not set, stubbed on 26.1
+/*
         preCalled = true;
 
         GL11.glEnable(GL11.GL_STENCIL_TEST);
@@ -100,6 +101,7 @@ public class FeaturePlayerESP extends SimpleFeature {
         inv.mainInventory = hand;
 
         preCalled = false;
+*/
 
     }
 

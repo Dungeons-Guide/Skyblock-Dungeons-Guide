@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon;
 
-import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
@@ -31,10 +30,14 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 
 public class FeatureBoxBats extends SimpleFeature  {
@@ -51,15 +54,21 @@ public class FeatureBoxBats extends SimpleFeature  {
         
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        final BlockPos player = Minecraft.getInstance().player.getPosition();
+        final BlockPos player = Minecraft.getInstance().player.blockPosition();
         int val = this.<Integer>getParameter("radius").getValue();
         final int sq = val * val;
 
-        List<Bat> skeletonList = Minecraft.getInstance().level.getEntities(Bat.class, new Predicate<Bat>() {
+        // the loaded chunk area around the player (D114)
+        Minecraft mc = Minecraft.getInstance();
+        ChunkPos center = mc.player.chunkPosition();
+        int loadedRadius = mc.options.getEffectiveRenderDistance() * 16;
+        AABB loaded = new AABB(center.getMinBlockX() - loadedRadius, mc.level.getMinY(), center.getMinBlockZ() - loadedRadius,
+                center.getMaxBlockX() + 1 + loadedRadius, mc.level.getMaxY() + 1, center.getMaxBlockZ() + 1 + loadedRadius);
+        List<Bat> skeletonList = mc.level.getEntitiesOfClass(Bat.class, loaded, new Predicate<Bat>() {
             @Override
-            public boolean apply(@Nullable Bat input) {
+            public boolean test(@Nullable Bat input) {
                 if (input != null && input.isInvisible()) return false;
-                return input != null && input.distanceToSqr(player) < sq;
+                return input != null && input.distanceToSqr(Vec3.atLowerCornerOf(player)) < sq;
             }
         });
         AColor c = this.<AColor>getParameter("color").getValue();

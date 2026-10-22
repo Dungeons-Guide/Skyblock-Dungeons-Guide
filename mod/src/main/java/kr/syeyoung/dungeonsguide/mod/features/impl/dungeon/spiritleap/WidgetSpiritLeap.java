@@ -61,7 +61,7 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
             if (name == null) continue;
 
-            Player entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
+            Player entityplayer = Minecraft.getInstance().level.players().stream().filter(p -> p.getGameProfile().name().equals(name)).findFirst().orElse(null);
 
             overlays.add(new MapOverlayPlayerClickable(playerInfo, entityplayer == Minecraft.getInstance().player ? mapConfiguration.getSelfSettings() : mapConfiguration.getTeammateSettings(), nameMap.get(name)));
         }
