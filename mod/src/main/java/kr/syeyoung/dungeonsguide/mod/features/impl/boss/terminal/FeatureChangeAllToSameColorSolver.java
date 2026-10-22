@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
@@ -33,8 +34,6 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.Container;
@@ -42,7 +41,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ItemTooltipEvent;
-import org.lwjgl.input.Mouse;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -160,11 +158,10 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
             int ySize = j + (inventory.getContainerSize() / 9) * 18;
             int left = (rendered.gui.width - 176) / 2;
             int top = (rendered.gui.height - ySize ) / 2;
-            GlStateManager.pushMatrix();
-            GlStateManager.disableDepth();
-            GlStateManager.disableLighting();
-            GlStateManager.colorMask(true, true, true, false);
-            GlStateManager.translate(left, top, 0);
+            // D126: drawn through the event's RenderingContext
+            RenderingContext context = rendered.context;
+            context.pose().pushMatrix();
+            context.pose().translate(left, top);
 
             for (int y = 0; y < 3; y++) {
                 for (int x = 0; x < 3; x++) {
@@ -173,27 +170,23 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
                     Slot currSlot = container.getSlot(slotId);
                     int rx = currSlot.x;
                     int ry = currSlot.y;
-                    Minecraft.getInstance().font
-                            .drawString(String.valueOf(clicks), rx, ry, 0xFF00FF00);
+                    context.drawString(String.valueOf(clicks), rx, ry, 0xFF00FF00, false);
                 }
             }
 
-            GlStateManager.colorMask(true, true, true, true);
-            GlStateManager.popMatrix();
+            context.pose().popMatrix();
         }
-        GlStateManager.enableBlend();
-        GlStateManager.enableLighting();
     }
 
     @DGEventHandler
     public void onMouseInput(ScreenMouseEvent.Pre mouseInputEvent) {
         if (!isEnabled()) return;
-        if (Mouse.getEventButton() == -1) return;
+        if ((mouseInputEvent.buttonEvent == null ? -1 : mouseInputEvent.buttonEvent.button()) == -1) return;
         if (!isCorrectGui) return;
 
         ContainerScreen chest = (ContainerScreen) Minecraft.getInstance().screen;
 
-//        if (Mouse.getEventButton())
+//        if ((mouseInputEvent.buttonEvent == null ? -1 : mouseInputEvent.buttonEvent.button()))
 
         Slot s = chest.hoveredSlot;
         if (s == null) return;
@@ -204,7 +197,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
             int solutionSlotId = (row - 1) * 3 + column - 3;
             int clicks = solution[solutionSlotId];
 
-            if ((clicks > 0 && Mouse.getEventButton() == 0) || (clicks < 0 && Mouse.getEventButton() == 1)) {
+            if ((clicks > 0 && (mouseInputEvent.buttonEvent == null ? -1 : mouseInputEvent.buttonEvent.button()) == 0) || (clicks < 0 && (mouseInputEvent.buttonEvent == null ? -1 : mouseInputEvent.buttonEvent.button()) == 1)) {
                 // correct.
 
             } else {

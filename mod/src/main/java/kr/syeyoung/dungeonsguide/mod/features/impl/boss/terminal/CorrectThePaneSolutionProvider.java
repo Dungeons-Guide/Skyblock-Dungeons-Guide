@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.inventory.ChestMenu;

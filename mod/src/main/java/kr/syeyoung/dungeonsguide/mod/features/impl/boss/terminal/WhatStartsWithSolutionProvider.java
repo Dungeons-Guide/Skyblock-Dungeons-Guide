@@ -37,7 +37,7 @@ public class WhatStartsWithSolutionProvider implements TerminalSolutionProvider{
         for (Slot inventorySlot : chest.slots) {
             if (inventorySlot.container != chest.getContainer()) continue;
             if (inventorySlot.hasItem() && !inventorySlot.getItem().isEmpty() && !inventorySlot.getItem().hasFoil() ) {
-                String name = TextUtils.stripColor(inventorySlot.getItem().getDisplayName()).toLowerCase();
+                String name = TextUtils.stripColor(TextUtils.getFormattedName(inventorySlot.getItem())).toLowerCase();
                 if (name.startsWith(that))
                     ts.getCurrSlots().add(inventorySlot);
             }
