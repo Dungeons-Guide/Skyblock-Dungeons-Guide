@@ -196,7 +196,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             secrets2 = -1;
             return;
         }
-        BlockPos pos2 = dungeonRoom.getRoomBounds().getMin().add(5, 0, 5);
+        BlockPos pos2 = dungeonRoom.getRoomBounds().getMin().offset(5, 0, 5);
 
         String text = TextUtils.getFormattedText(chat);
         int secretsIndex = text.indexOf("Secrets");

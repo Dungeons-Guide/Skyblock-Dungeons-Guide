@@ -32,6 +32,8 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 public class FeatureThornSpiritBowTimer extends TextHUDFeature {
@@ -94,7 +96,9 @@ public class FeatureThornSpiritBowTimer extends TextHUDFeature {
     @DGEventHandler
     public void onTitle(TitleEvent event) {
         if (!(SkyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
-        Component text = event.getPacketTitle().getMessage();
+        // 1.8.9's S45PacketTitle.getMessage(), the title / subtitle text packets on 26.1 (null for times / clear)
+        Component text = event.getPacketTitle() instanceof ClientboundSetTitleTextPacket titleText ? titleText.text()
+                : event.getPacketTitle() instanceof ClientboundSetSubtitleTextPacket subtitleText ? subtitleText.text() : null;
         if (text != null && TextUtils.getFormattedText(text) != null && TextUtils.getFormattedText(text).contains("picked up")) {
             time = System.currentTimeMillis() + 21000;
         }

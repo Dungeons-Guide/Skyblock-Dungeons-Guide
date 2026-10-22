@@ -46,7 +46,7 @@ public class ActionKill extends AbstractAction {
         Vec3 spawn = new Vec3(target.getBlockPos(dungeonRoom));
         for (Integer killed : DungeonActionContext.getKilleds()) {
             if (DungeonActionContext.getSpawnLocation().get(killed) == null) continue;
-            if (DungeonActionContext.getSpawnLocation().get(killed).squareDistanceTo(spawn) < 100) {
+            if (DungeonActionContext.getSpawnLocation().get(killed).distanceToSqr(spawn) < 100) {
                 return true;
             }
         }

@@ -190,7 +190,7 @@ public class DungeonsGuide {
         }
 
         Config.f = configFile;
-        Minecraft.getInstance().getFramebuffer().enableStencil();
+        // 1.8.9 enabled the main framebuffer's stencil here; 26.1's main target has none, DG's stencil is its own image (D74)
 
         registerEventsForge(this);
 

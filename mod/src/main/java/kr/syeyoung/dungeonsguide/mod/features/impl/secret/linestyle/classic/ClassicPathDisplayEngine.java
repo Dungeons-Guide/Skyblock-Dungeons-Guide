@@ -132,7 +132,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         List<AbstractAction> actions = actionRoute.getActions();
         if (current -1 >= 0) {
             AbstractAction abstractAction = actions.get(current - 1);
-            if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.position()) >= 25))) {
+            if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).distanceToSqr(Minecraft.getInstance().player.position()) >= 25))) {
                 drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, event);
             }
         }
@@ -164,7 +164,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
             List<AbstractAction> atomicActionActions = ((AtomicAction) currentAction).getActions();
             if (atomicActionCurrent -1 >= 0) {
                 AbstractAction abstractAction = atomicActionActions.get(atomicActionCurrent - 1);
-                if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.position()) >= 25))) {
+                if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).distanceToSqr(Minecraft.getInstance().player.position()) >= 25))) {
                     drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, event);
                 }
             }

@@ -51,7 +51,7 @@ public class ActionInteract extends AbstractAction {
     public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event) {
         if (interacted) return;
 
-        Vec3 spawnLoc = DungeonActionContext.getSpawnLocation().get(event.getEntity().getEntityId());
+        Vec3 spawnLoc = DungeonActionContext.getSpawnLocation().get(event.getEntity().getId());
         if (spawnLoc == null) {
             return;
         }

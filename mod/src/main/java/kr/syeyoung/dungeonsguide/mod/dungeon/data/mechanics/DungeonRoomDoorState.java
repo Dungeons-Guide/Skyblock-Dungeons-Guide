@@ -44,15 +44,15 @@ public class DungeonRoomDoorState implements DungeonMechanicState {
         this.doorfinder = doorfinder;
         this.room = dungeonRoom;
         if (doorfinder.isZDir()) {
-            if (dungeonRoom.getRoomBounds().canAccessAbsolute(doorfinder.getPosition().add(0, 0, 2)))
-                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(0, 0, 2));
-            else if (dungeonRoom.getRoomBounds().canAccessAbsolute(doorfinder.getPosition().add(0, 0, -2)))
-                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(0, 0, -2));
+            if (dungeonRoom.getRoomBounds().canAccessAbsolute(doorfinder.getPosition().offset(0, 0, 2)))
+                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().offset(0, 0, 2));
+            else if (dungeonRoom.getRoomBounds().canAccessAbsolute(doorfinder.getPosition().offset(0, 0, -2)))
+                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().offset(0, 0, -2));
         } else {
-            if (dungeonRoom.getRoomBounds().canAccessAbsolute(doorfinder.getPosition().add(2, 0, 0)))
-                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(2, 0, 0));
-            else if (dungeonRoom.getRoomBounds().canAccessAbsolute(doorfinder.getPosition().add(-2, 0, 0)))
-                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(-2, 0, 0));
+            if (dungeonRoom.getRoomBounds().canAccessAbsolute(doorfinder.getPosition().offset(2, 0, 0)))
+                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().offset(2, 0, 0));
+            else if (dungeonRoom.getRoomBounds().canAccessAbsolute(doorfinder.getPosition().offset(-2, 0, 0)))
+                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().offset(-2, 0, 0));
         }
         if (offsetPoint == null) {
             offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition());
