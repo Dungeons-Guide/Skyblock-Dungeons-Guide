@@ -26,10 +26,9 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraft.client.gui.GuiMultiplayer;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.realms.RealmsBridge;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.multiplayer.ServerList;
 
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
@@ -133,14 +132,15 @@ public class ChatRoutine {
 
         @Override
         public void execute(Runnable next) {
-            Minecraft.getInstance().level.sendQuittingDisconnectingPacket();
-            Minecraft.getInstance().loadWorld((WorldClient)null);
-            GuiMultiplayer guiMultiplayer;
-            Minecraft.getInstance().setScreen(guiMultiplayer = new GuiMultiplayer(new GuiMainMenu()));
+            // 1.8.9 sent the disconnect packet, unloaded the world and opened the multiplayer screen over the main menu
+            JoinMultiplayerScreen guiMultiplayer;
+            Minecraft.getInstance().disconnect(guiMultiplayer = new JoinMultiplayerScreen(new TitleScreen()), false);
             ses.schedule(() -> {
                 Minecraft.getInstance().execute(() -> {
-                    guiMultiplayer.selectServer(0);
-                    guiMultiplayer.connectToSelected();
+                    // 1.8.9's selectServer(0) + connectToSelected, the first saved server
+                    ServerList servers = new ServerList(Minecraft.getInstance());
+                    servers.load();
+                    guiMultiplayer.join(servers.get(0));
 
                     ses.schedule(() -> {
                         Minecraft.getInstance().execute(next::run);
