@@ -188,6 +188,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         }
 
         Point player = getPlayerPos(currBoard);
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         boolean currYState = Minecraft.getInstance().player.blockPosition().getY() < 68;
         if (((currYState && !player.equals(lastPlayer)) || (currYState != yState) || (moved) || pathFindReq) && solution != null) {
             Point target = null;
@@ -244,6 +245,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
     private boolean yState = true;
     public Point getPlayerPos(byte[][] map) {
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         BlockPos playerPos = Minecraft.getInstance().player.blockPosition();
         int minDir = Integer.MAX_VALUE;
         Point pt = null;
@@ -351,6 +353,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (bugged) return;
         if (!calcDone) return;
         if (solution == null) return;
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         if (Minecraft.getInstance().player.blockPosition().getY() < 68) {
             if (step < solution.size()) {
                 BoxPuzzleSolvingThread.BoxMove boxMove = solution.get(step);
@@ -363,6 +366,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 dir = new BlockPos(Mth.clamp(dir.getX(), -1, 1), 0, Mth.clamp(dir.getZ(), -1, 1));
 
                 BlockPos highlight = pos2.offset(dir);
+                // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
                 AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(Mth.clamp(Minecraft.getInstance().player.blockPosition().distSqr(highlight), 100, 255) / 255);
                 RenderUtils.highlightBoxAColor(new AABB(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, event.partialTicks, false);
             }

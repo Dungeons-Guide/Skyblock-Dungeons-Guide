@@ -74,7 +74,9 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
 
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         if (depth && Minecraft.getInstance().player.blockPosition().distToLowCornerSqr(-2,120,75) > 400) return;
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         if (!depth && Minecraft.getInstance().player.blockPosition().distToLowCornerSqr(-2,120,75) > 25) return;
 
         for (int y = 0; y < 5; y++){
@@ -99,11 +101,13 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
 
 
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         if (Minecraft.getInstance().player.blockPosition().distToLowCornerSqr(-2,120,75) > 400) return;
 
         if (System.currentTimeMillis() < nextUpdate) return;
         // the frames' blocks: x -2, y 121..125, z 75..79 (D114)
         List<ItemFrame> frames = Minecraft.getInstance().level.getEntitiesOfClass(ItemFrame.class, new AABB(-2, 121, 75, -1, 126, 80), filter -> {
+            // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
             BlockPos pos = filter.blockPosition();
             if (pos.getX() != -2) return false;
             if (pos.getZ() < 75 || pos.getZ() > 79) return false;
@@ -120,7 +124,9 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         int[][] solution = new int[5][5];
         Queue<Point> begin = new LinkedList<>();
         for (ItemFrame frame : frames) {
+            // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
             int x = frame.blockPosition().getZ() - 75;
+            // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
             int y = frame.blockPosition().getY() - 121;
 
             if (frame.getItem().is(Items.ARROW)) {
@@ -214,6 +220,7 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         Entity e = event.getEntity();
         if (!(e instanceof ItemFrame)) return;
         ItemFrame itemFrame = (ItemFrame) e;
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         BlockPos pos = itemFrame.blockPosition();
         if (pos.getX() != -2) return;
         if (pos.getZ() < 75 || pos.getZ() > 79) return;

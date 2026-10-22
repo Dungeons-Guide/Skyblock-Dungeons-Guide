@@ -65,11 +65,13 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
         AABB roomBox = new AABB(low.getX(), w.getMinY(), low.getZ(), high.getX() + 1, w.getMaxY() + 1, high.getZ() + 1);
         // TODO: D5 entity name stopgap (D116)
         entityList = new ArrayList<ArmorStand>(w.getEntitiesOfClass(ArmorStand.class, roomBox, input -> {
+            // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
             BlockPos pos = input.blockPosition();
             return low.getX() < pos.getX() && pos.getX() < high.getX()
                     && low.getZ() < pos.getZ() && pos.getZ() < high.getZ() && TextUtils.getFormattedText(input.getName()).toLowerCase().contains("blaze");
         }));
         blazeList = new ArrayList<Blaze>(w.getEntitiesOfClass(Blaze.class, roomBox, input -> {
+            // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
             BlockPos pos = input.blockPosition();
             return low.getX() < pos.getX() && pos.getX() < high.getX()
                     && low.getZ() < pos.getZ() && pos.getZ() < high.getZ();

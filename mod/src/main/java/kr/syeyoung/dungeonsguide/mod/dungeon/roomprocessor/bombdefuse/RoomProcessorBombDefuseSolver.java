@@ -223,6 +223,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     public void tick() {
         super.tick();
         if (bugged) return;
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         BlockPos player = Minecraft.getInstance().player.blockPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
@@ -244,6 +245,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     public void drawScreen(RenderHUDEvent event) {
         super.drawScreen(event);
         if (bugged) return;
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         BlockPos player = Minecraft.getInstance().player.blockPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         if (FeatureRegistry.DEBUG.isEnabled()) {
@@ -327,6 +329,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.onPostGuiRender(event);
         if (bugged) return;
 
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         BlockPos player = Minecraft.getInstance().player.blockPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
@@ -348,6 +351,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.onEntityUpdate(updateEvent);
         if (bugged) return;
 
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         BlockPos player = Minecraft.getInstance().player.blockPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
@@ -369,6 +373,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.onKeybindPress(keyInputEvent);
         if (bugged) return;
 
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         BlockPos player = Minecraft.getInstance().player.blockPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
@@ -390,6 +395,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.onInteract(event);
         if (bugged) return;
 
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         BlockPos player = Minecraft.getInstance().player.blockPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
@@ -411,6 +417,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.onInteractBlock(event);
         if (bugged) return;
 
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         BlockPos player = Minecraft.getInstance().player.blockPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {

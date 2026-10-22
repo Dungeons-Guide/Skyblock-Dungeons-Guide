@@ -247,6 +247,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
 
 
 
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         float distance = (float) Math.sqrt(target.distSqr(Minecraft.getInstance().player.blockPosition()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         float scale = 0.45f * multiplier;
@@ -257,6 +258,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         }
         RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, 1f, true, false, partialTicks);
 
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         RenderUtils.drawTextAtWorld(String.format("%.2f",Math.sqrt(target.distSqr(Minecraft.getInstance().player.blockPosition())))+"m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
@@ -267,6 +269,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
                 int warp = 0;
                 for (PathfindResult.PathfindNode pose : poses.getNodeList()) {
                     cnt ++;
+                    // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
                     if (pose.getType() != null && pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getInstance().player.blockPosition()) < 100) {
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }
@@ -297,6 +300,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         if (poses.size() == 0) return;
 
         // 1.8.9 drew a line strip per run of node types, with depth off for stonk walks near the player
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         boolean depth = !((poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK ) && poses.get(0).distanceSq(Minecraft.getInstance().player.blockPosition()) < 100);
         List<Vec3> points = new ArrayList<>();
         List<Integer> colors = new ArrayList<>();
@@ -313,6 +317,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
                 points = new ArrayList<>();
                 colors = new ArrayList<>();
 
+                // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
                 depth = !((pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK)&& pos.distanceSq(Minecraft.getInstance().player.blockPosition()) < 100);
 
                 points.add(new Vec3(pos.getX(), pos.getY(), pos.getZ()));

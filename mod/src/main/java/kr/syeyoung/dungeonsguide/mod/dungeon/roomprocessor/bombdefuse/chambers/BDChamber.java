@@ -77,6 +77,7 @@ public class BDChamber {
         List<T> entities = Minecraft.getInstance().level.getEntitiesOfClass(entity, new AABB(pos), new Predicate<T>() {
             @Override
             public boolean apply(@Nullable T input) {
+                // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
                 return input.blockPosition().equals(pos);
             }
         });

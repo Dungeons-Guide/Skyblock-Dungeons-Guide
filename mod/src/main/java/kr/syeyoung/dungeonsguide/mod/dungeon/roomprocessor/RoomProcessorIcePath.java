@@ -72,6 +72,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
             @Override
             public boolean apply(@Nullable Silverfish input) {
                 if (input.isInvisible()) return false;
+                // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
                 BlockPos pos = input.blockPosition();
                 return low.getX() < pos.getX() && pos.getX() < high.getX()
                         && low.getZ() < pos.getZ() && pos.getZ() < high.getZ();
@@ -117,12 +118,14 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
             findSilverFishAndDoStuff();
             if (err) return;
         }
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         if (silverfish.blockPosition().equals(lastSilverfishLoc)) {
             if (sameTick < 10) {
                 sameTick ++;
                 return;
             } else if (sameTick == 10) {
                 sameTick ++;
+                // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
                 Point silverfish = getPointOfSilverFishOnMap(this.silverfish.blockPosition());
                 List<Point> tempSol = solve(map, silverfish.x, silverfish.y, new Predicate<Point>() {
                     @Override
@@ -142,6 +145,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
             sameTick = 0;
         }
 
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         lastSilverfishLoc = silverfish.blockPosition();
     }
 

@@ -119,6 +119,7 @@ public class MapPlayerProcessor {
         Player entityPlayer = mc.level.players().stream().filter(p -> p.getGameProfile().name().equals(player)).findFirst().orElse(null);
 
         if (entityPlayer != null && !entityPlayer.isInvisible()) {
+            // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
             BlockPos pos = entityPlayer.blockPosition();
             int dx = mapPos.getX() - pos.getX();
             int dz = mapPos.getZ() - pos.getZ();
