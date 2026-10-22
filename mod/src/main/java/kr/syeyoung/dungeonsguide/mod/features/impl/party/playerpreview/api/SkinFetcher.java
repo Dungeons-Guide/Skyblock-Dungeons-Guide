@@ -19,13 +19,14 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+import com.mojang.authlib.yggdrasil.ProfileResult;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.client.resources.SkinManager;
+import net.minecraft.world.entity.player.PlayerModelType;
+import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
@@ -43,41 +44,35 @@ public class SkinFetcher {
 
     public static CompletableFuture<SkinSet> getSkinSet(GameProfile gameProfile) {
         if (gameProfile == null) {
-            return CompletableFuture.completedFuture(new SkinSet(DefaultPlayerSkin.getDefaultSkinLegacy(), null, "default"));
+            return CompletableFuture.completedFuture(new SkinSet(DefaultPlayerSkin.getDefaultTexture(), null, "default"));
         }
-        if (skinSetMap.containsKey(gameProfile.getId().toString())) {
-            CachedData<SkinSet> ss = skinSetMap.get(gameProfile.getId().toString());
+        if (skinSetMap.containsKey(gameProfile.id().toString())) {
+            CachedData<SkinSet> ss = skinSetMap.get(gameProfile.id().toString());
             if (ss.getExpire() > System.currentTimeMillis())
-                CompletableFuture.completedFuture(skinSetMap.get(gameProfile.getId().toString()).getData());
-            skinSetMap.remove(gameProfile.getId().toString());
+                CompletableFuture.completedFuture(skinSetMap.get(gameProfile.id().toString()).getData());
+            skinSetMap.remove(gameProfile.id().toString());
         }
-        if (currentReq.containsKey(gameProfile.getId().toString()))
-            return currentReq.get(gameProfile.getId().toString());
+        if (currentReq.containsKey(gameProfile.id().toString()))
+            return currentReq.get(gameProfile.id().toString());
 
         SkinSet skinSet = new SkinSet();
         CompletableFuture<SkinSet> skinSet2 = new CompletableFuture<>();
-        currentReq.put(gameProfile.getId().toString(), skinSet2);
+        currentReq.put(gameProfile.id().toString(), skinSet2);
             ApiFetcher.ex.submit(() -> {
-                GameProfile gameProfile1 = Minecraft.getInstance().getSessionService().fillProfileProperties(gameProfile, true);
+                // 1.8.9's fillProfileProperties kept the profile as is when it failed
+                ProfileResult profileResult = Minecraft.getInstance().services().sessionService().fetchProfile(gameProfile.id(), true);
+                GameProfile gameProfile1 = profileResult == null ? gameProfile : profileResult.profile();
 
-                Minecraft.getInstance().getSkinManager().loadProfileTextures(gameProfile1, new SkinManager.SkinAvailableCallback() {
-                    public void skinAvailable(MinecraftProfileTexture.Type p_180521_1_, Identifier location, MinecraftProfileTexture profileTexture) {
-                        switch (p_180521_1_) {
-                            case SKIN:
-                                skinSet.setSkinLoc(location);
-                                skinSet.setSkinType(profileTexture.getMetadata("model"));
-                                if (skinSet.getSkinType() == null) {
-                                    skinSet.setSkinType("default");
-                                }
-                                skinSet2.complete(skinSet);
-                                skinSetMap.put(gameProfile.getId().toString(), new CachedData<>(System.currentTimeMillis() + 1000*60*60*3, skinSet));
-                                currentReq.get(gameProfile.getId().toString());
-                                break;
-                            case CAPE:
-                                skinSet.setCapeLoc(location);
-                        }
-                    }
-                }, true);
+                // 1.8.9's loadProfileTextures callback (only called when there was a skin), the skin manager's PlayerSkin on 26.1
+                Minecraft.getInstance().getSkinManager().get(gameProfile1).thenAccept(playerSkin -> playerSkin.ifPresent(skin -> {
+                    if (skin.cape() != null)
+                        skinSet.setCapeLoc(skin.cape().texturePath());
+                    skinSet.setSkinLoc(skin.body().texturePath());
+                    skinSet.setSkinType(skin.model() == PlayerModelType.SLIM ? "slim" : "default");
+                    skinSet2.complete(skinSet);
+                    skinSetMap.put(gameProfile.id().toString(), new CachedData<>(System.currentTimeMillis() + 1000*60*60*3, skinSet));
+                    currentReq.get(gameProfile.id().toString());
+                }));
             });
         return skinSet2;
     }

@@ -9,6 +9,7 @@
     "FogRendererMixin",
     "GameRendererMixin",
     "GlCommandEncoderMixin",
+    "HoverEventActionMixin",
     "KeyboardHandlerMixin",
     "LevelRendererMixin",
     "LivingEntityMixin",

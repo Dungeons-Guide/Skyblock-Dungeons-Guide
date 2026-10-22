@@ -21,28 +21,29 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarend
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.IDataRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import net.minecraft.client.gui.Font;
 
 import java.awt.*;
 import java.util.List;
 
 public class DataRendererFairySouls implements IDataRenderer {
     @Override
-    public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getInstance().font;
-        fr.drawString("§eFairy Souls §f"+playerProfile.getFairySouls(), 0,0,-1);
-        return new Dimension(100, fr.FONT_HEIGHT);
+    public Dimension renderData(RenderingContext context, PlayerProfile playerProfile) {
+        Font fr = Minecraft.getInstance().font;
+        context.drawString("§eFairy Souls §f"+playerProfile.getFairySouls(), 0,0,-1, false);
+        return new Dimension(100, fr.lineHeight);
     }
 
     @Override
-    public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getInstance().font;
-        fr.drawString("§eFairy Souls §f300", 0,0,-1);
-        return new Dimension(100, fr.FONT_HEIGHT);
+    public Dimension renderDummy(RenderingContext context) {
+        Font fr = Minecraft.getInstance().font;
+        context.drawString("§eFairy Souls §f300", 0,0,-1, false);
+        return new Dimension(100, fr.lineHeight);
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getInstance().font.FONT_HEIGHT);
+        return new Dimension(100, Minecraft.getInstance().font.lineHeight);
     }
 
     @Override

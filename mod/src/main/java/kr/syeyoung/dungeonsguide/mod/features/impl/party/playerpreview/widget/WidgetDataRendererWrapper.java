@@ -63,7 +63,7 @@ public class WidgetDataRendererWrapper extends Widget implements Layouter, Rende
 
     @Override
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
-        dataRenderer.renderData(profile);
+        dataRenderer.renderData(context, profile);
     }
 
 

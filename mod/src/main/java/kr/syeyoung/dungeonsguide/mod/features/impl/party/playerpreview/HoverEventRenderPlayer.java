@@ -19,53 +19,43 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.serialization.MapCodec;
 import lombok.Getter;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.Component;
+import net.minecraft.util.ExtraCodecs;
 
 import java.util.Objects;
 
-public class HoverEventRenderPlayer extends HoverEvent {
+public class HoverEventRenderPlayer implements HoverEvent {
+    public static final MapCodec<HoverEventRenderPlayer> CODEC = ExtraCodecs.STORED_GAME_PROFILE.xmap(HoverEventRenderPlayer::new, HoverEventRenderPlayer::getGameProfile);
+    // added to HoverEvent.Action by HoverEventActionMixin
+    private static HoverEvent.Action action;
+
     @Getter
     private final GameProfile gameProfile;
-    private Component cached;
 
     public HoverEventRenderPlayer(GameProfile gameProfile) {
-        super(Action.SHOW_TEXT, Component.literal(""));
         this.gameProfile = Objects.requireNonNull(gameProfile);
+    }
+
+    @Override
+    public HoverEvent.Action action() {
+        if (action == null) action = HoverEvent.Action.valueOf("DUNGEONSGUIDE_RENDER_PLAYER");
+        return action;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         HoverEventRenderPlayer that = (HoverEventRenderPlayer) o;
-        return Objects.equals(gameProfile.getId(), that.gameProfile.getId());
+        return Objects.equals(gameProfile.id(), that.gameProfile.id());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), gameProfile.getId());
+        return Objects.hash(gameProfile.id());
     }
 
-    @Override
-    public Component getValue() {
-        if (cached == null) {
-            cached = Component.literal("")
-                    .setStyle(
-                            Style.EMPTY
-                                    .withHoverEvent(
-                                            new HoverEvent(
-                                                    Action.SHOW_TEXT,
-                                                    Component.literal(gameProfile.getId().toString())
-                                            )
-                                    )
-                    );
-            return cached;
-        }
-        return cached;
-    }
+    // 1.8.9's getValue (a text hover carrying the uuid) has no 26.1 counterpart: vanilla draws no tooltip for this action
 }

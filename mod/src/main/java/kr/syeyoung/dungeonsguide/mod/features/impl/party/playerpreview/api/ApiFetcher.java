@@ -24,6 +24,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.yggdrasil.ProfileResult;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.auth.DgAuthUtil;
@@ -146,8 +147,9 @@ public class ApiFetcher {
 
     public static Optional<GameProfile> getSkinGameProfileByUUID(String uid, String nickname) throws IOException {
         GameProfile gameProfile = new GameProfile(UUID.fromString(uid), nickname);
-        GameProfile newProf = Minecraft.getInstance().getSessionService().fillProfileProperties(gameProfile, true);
-        return newProf == gameProfile ? Optional.empty() : Optional.of(newProf);
+        // 1.8.9's fillProfileProperties returned the same profile when it failed
+        ProfileResult result = Minecraft.getInstance().services().sessionService().fetchProfile(gameProfile.id(), true);
+        return result == null ? Optional.empty() : Optional.of(result.profile());
     }
 
 

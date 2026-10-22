@@ -20,8 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarend
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import net.minecraft.client.gui.Font;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ import java.util.List;
 public class DataRendererTalismans extends DataRendererTalismanBase {
 
     @Override
-    public Dimension renderData(PlayerProfile playerProfile) {
+    public Dimension renderData(RenderingContext context, PlayerProfile playerProfile) {
         String str = "";
         int[] rawData = getTalismanRarityTallies(playerProfile).orElse(null);
         if (rawData != null)
@@ -38,35 +38,34 @@ public class DataRendererTalismans extends DataRendererTalismanBase {
                 str = r.getColor() + rawData[r.getIndex()] +" "+ str;
             }
 
-        FontRenderer fr = Minecraft.getInstance().font;
+        Font fr = Minecraft.getInstance().font;
         if (rawData == null)
-            fr.drawString("§eTalis §cAPI DISABLED", 0,0,-1);
+            context.drawString("§eTalis §cAPI DISABLED", 0,0,-1, false);
         else
-            fr.drawString("§eTalis §f"+str, 0,0,-1);
-        return new Dimension(100, fr.FONT_HEIGHT);
+            context.drawString("§eTalis §f"+str, 0,0,-1, false);
+        return new Dimension(100, fr.lineHeight);
     }
 
     @Override
-    public Dimension renderDummy() {
+    public Dimension renderDummy(RenderingContext context) {
         String str = "";
         for (Rarity r : Rarity.values()) {
             str = r.getColor() + (r.getIndex()+5)*2+" "+str;
         }
 
-        FontRenderer fr = Minecraft.getInstance().font;
-        fr.drawString("§eTalis §f" + str, 0,0,-1);
-        return new Dimension(100, fr.FONT_HEIGHT);
+        Font fr = Minecraft.getInstance().font;
+        context.drawString("§eTalis §f" + str, 0,0,-1, false);
+        return new Dimension(100, fr.lineHeight);
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getInstance().font.FONT_HEIGHT);
+        return new Dimension(100, Minecraft.getInstance().font.lineHeight);
     }
 
     @Override
     public List<String> onHover(PlayerProfile playerProfile) {
         int[] rawData = getTalismanRarityTallies(playerProfile).orElse(null);
         if (rawData == null) return null;
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getInstance());
         List<String> list = new ArrayList<>();
 
         for (Rarity r : Rarity.values()) {

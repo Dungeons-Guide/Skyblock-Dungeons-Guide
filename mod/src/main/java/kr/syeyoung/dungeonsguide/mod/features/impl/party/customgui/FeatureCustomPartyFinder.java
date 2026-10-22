@@ -32,8 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.Scaler;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.Container;
@@ -78,7 +77,7 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
     private WidgetPartyFinder widgetPartyFinder;
     private GuiScreenAdapterChestOverride guiScreenAdapter;
 
-    private String conditionCheck(GuiScreen guiScreen) {
+    private String conditionCheck(Screen guiScreen) {
         if (!(guiScreen instanceof ContainerScreen)) return null;
         ContainerScreen chest = (ContainerScreen) guiScreen;
         if (!(chest.getMenu() instanceof ChestMenu)) return null;
@@ -110,7 +109,7 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
             widgetPartyFinder = new WidgetPartyFinder();
 
             Scaler scaler = new Scaler();
-            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getInstance()).getScaleFactor());
+            scaler.scale.setValue((double) Minecraft.getInstance().getWindow().getGuiScale());
             scaler.child.setValue(widgetPartyFinder);
             guiScreenAdapter = new GuiScreenAdapterChestOverride(scaler);
         }

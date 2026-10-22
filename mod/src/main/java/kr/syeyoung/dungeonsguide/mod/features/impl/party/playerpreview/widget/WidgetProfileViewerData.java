@@ -88,12 +88,12 @@ public class WidgetProfileViewerData extends AnnotatedWidget {
 
     @On(functionName = "invite")
     public void invite() {
-        ChatProcessor.INSTANCE.addToChatQueue("/p invite " + gameProfile.getName(), () -> {
+        ChatProcessor.INSTANCE.addToChatQueue("/p invite " + gameProfile.name(), () -> {
         }, true);
     }
     @On(functionName = "kick")
     public void kick() {
-        ChatProcessor.INSTANCE.addToChatQueue("/p kick " + gameProfile.getName(), () -> {
+        ChatProcessor.INSTANCE.addToChatQueue("/p kick " + gameProfile.name(), () -> {
         }, true);
     }
 

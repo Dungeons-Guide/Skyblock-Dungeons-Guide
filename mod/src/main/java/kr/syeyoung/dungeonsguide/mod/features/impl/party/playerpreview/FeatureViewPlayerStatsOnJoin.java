@@ -40,13 +40,18 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.gui.ActiveTextCollector;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.TextAlignment;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.renderer.state.gui.GuiTextRenderState;
+import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.input.Mouse;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,7 +80,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         ChatProcessor.INSTANCE.subscribe(((txt, messageContext) -> {
             if (isEnabled() && txt.contains("§r§ejoined the dungeon group! (§r§b")) {
                 String username = TextUtils.stripColor(txt).split(" ")[3];
-                if (username.equalsIgnoreCase(mc.getSession().getUsername())) {
+                if (username.equalsIgnoreCase(mc.getUser().getName())) {
                     PartyManager.INSTANCE.requestPartyList(context -> {
                         if (context == null) {
                             ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cBugged Dungeon Party "));
@@ -120,22 +125,22 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
 
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onGuiPostRender(ScreenMouseEvent.Pre mouseInputEvent) {
-        if (!(mc.screen instanceof GuiChat)) {
+        if (!(mc.screen instanceof ChatScreen)) {
             return;
         }
-        ScaledResolution scaledResolution = new ScaledResolution(mc);
 
-        Component ichatcomponent = getHoveredComponent(scaledResolution);
+        // 1.8.9 got the hovered chat component, 26.1 finds the hovered style
+        Style hoveredStyle = getHoveredStyle();
         GameProfile gameProfile = null;
-        if (ichatcomponent !=  null && ichatcomponent.getStyle().getHoverEvent() instanceof HoverEventRenderPlayer) {
-            gameProfile = ((HoverEventRenderPlayer) ichatcomponent.getStyle().getHoverEvent()).getGameProfile();
+        if (hoveredStyle !=  null && hoveredStyle.getHoverEvent() instanceof HoverEventRenderPlayer) {
+            gameProfile = ((HoverEventRenderPlayer) hoveredStyle.getHoverEvent()).getGameProfile();
         }
         if (gameProfile != null && widget == null) {
-            int mouseX = Mouse.getX();
-            int mouseY = (Minecraft.getInstance().getWindow().getHeight() - Mouse.getY());
+            int mouseX = (int) mc.mouseHandler.xpos();
+            int mouseY = (int) mc.mouseHandler.ypos();
 
-            double width = 220 * scaledResolution.getScaleFactor();
-            double height = 220 * scaledResolution.getScaleFactor();
+            double width = 220 * mc.getWindow().getGuiScale();
+            double height = 220 * mc.getWindow().getGuiScale();
             widget = new OverlayWidget(
                     new WidgetProfileViewer(gameProfile, () -> {
                         if (widget != null) {
@@ -152,15 +157,14 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
     }
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onGuiClose(ScreenOpenEvent event) {
-        if (!(event.gui instanceof GuiChat) && widget != null) {
+        if (!(event.gui instanceof ChatScreen) && widget != null) {
             OverlayManager.getInstance().removeOverlay(widget);
             widget = null;
         }
     }
 
 
-    public Component getHoveredComponent(ScaledResolution scaledResolution) {
-        Component ichatcomponent = null;
+    public Style getHoveredStyle() {
 //        if (Loader.isModLoaded("hychat")) {
 //            try {
 //                ChatManager chatManager = HyChat.getInstance().getChatManager();
@@ -172,10 +176,51 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
 //            } catch (Exception t) {
 //            }
 //        }
-//        if (ichatcomponent == null) {
-            ichatcomponent = Minecraft.getInstance().gui.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
-//        }
-        return ichatcomponent;
+        // the way ChatScreen finds a clicked style, keeping styles with a hover event instead
+        HoveredStyleFinder finder = new HoveredStyleFinder(mc.font,
+                (int) mc.mouseHandler.getScaledXPos(mc.getWindow()), (int) mc.mouseHandler.getScaledYPos(mc.getWindow()));
+        mc.gui.getChat().captureClickableText(finder, mc.getWindow().getGuiScaledHeight(), mc.gui.getGuiTicks(), ChatComponent.DisplayMode.FOREGROUND);
+        return finder.result;
+    }
+
+    private static class HoveredStyleFinder implements ActiveTextCollector {
+        private final Font font;
+        private final int testX;
+        private final int testY;
+        private ActiveTextCollector.Parameters defaultParameters = new ActiveTextCollector.Parameters(new org.joml.Matrix3x2f());
+        private Style result;
+
+        private HoveredStyleFinder(Font font, int testX, int testY) {
+            this.font = font;
+            this.testX = testX;
+            this.testY = testY;
+        }
+
+        @Override
+        public ActiveTextCollector.Parameters defaultParameters() {
+            return this.defaultParameters;
+        }
+
+        @Override
+        public void defaultParameters(ActiveTextCollector.Parameters newParameters) {
+            this.defaultParameters = newParameters;
+        }
+
+        @Override
+        public void accept(TextAlignment alignment, int anchorX, int y, ActiveTextCollector.Parameters parameters, FormattedCharSequence text) {
+            int leftX = alignment.calculateLeft(anchorX, this.font, text);
+            GuiTextRenderState renderState = new GuiTextRenderState(
+                    this.font, text, parameters.pose(), leftX, y, ARGB.white(parameters.opacity()), 0, true, true, parameters.scissor()
+            );
+            ActiveTextCollector.findElementUnderCursor(renderState, this.testX, this.testY, style -> {
+                if (style.getHoverEvent() != null) this.result = style;
+            });
+        }
+
+        @Override
+        public void acceptScrolling(Component message, int centerX, int left, int right, int top, int bottom, ActiveTextCollector.Parameters parameters) {
+            this.defaultScrollingHelper(message, centerX, left, right, top, bottom, this.font.width(message), 9, parameters);
+        }
     }
 
 }

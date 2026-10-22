@@ -21,20 +21,21 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarend
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.IDataRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import net.minecraft.client.gui.Font;
 
 import java.awt.*;
 import java.util.List;
 
 public class DataRendererSetUrOwn implements IDataRenderer {
     @Override
-    public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getInstance().font;
-        fr.drawString("§aCustomize at /dg", 0,0,-1);
-        fr.drawString("§a-> Dungeon Party", 0,fr.FONT_HEIGHT,-1);
-        fr.drawString("§a-> View player stats when join", 0,fr.FONT_HEIGHT*2,-1);
-        fr.drawString("§a-> Configure", 0,fr.FONT_HEIGHT*3,-1);
-        return new Dimension(100, fr.FONT_HEIGHT*4);
+    public Dimension renderData(RenderingContext context, PlayerProfile playerProfile) {
+        Font fr = Minecraft.getInstance().font;
+        context.drawString("§aCustomize at /dg", 0,0,-1, false);
+        context.drawString("§a-> Dungeon Party", 0,fr.lineHeight,-1, false);
+        context.drawString("§a-> View player stats when join", 0,fr.lineHeight*2,-1, false);
+        context.drawString("§a-> Configure", 0,fr.lineHeight*3,-1, false);
+        return new Dimension(100, fr.lineHeight*4);
     }
 
     @Override
@@ -43,16 +44,16 @@ public class DataRendererSetUrOwn implements IDataRenderer {
     }
 
     @Override
-    public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getInstance().font;
-        fr.drawString("§aCustomize at /dg", 0,0,-1);
-        fr.drawString("§a-> Dungeon Party", 0,fr.FONT_HEIGHT,-1);
-        fr.drawString("§a-> View player stats when join", 0,fr.FONT_HEIGHT*2,-1);
-        fr.drawString("§a-> Configure", 0,fr.FONT_HEIGHT*3,-1);
-        return new Dimension(100, fr.FONT_HEIGHT*4);
+    public Dimension renderDummy(RenderingContext context) {
+        Font fr = Minecraft.getInstance().font;
+        context.drawString("§aCustomize at /dg", 0,0,-1, false);
+        context.drawString("§a-> Dungeon Party", 0,fr.lineHeight,-1, false);
+        context.drawString("§a-> View player stats when join", 0,fr.lineHeight*2,-1, false);
+        context.drawString("§a-> Configure", 0,fr.lineHeight*3,-1, false);
+        return new Dimension(100, fr.lineHeight*4);
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getInstance().font.FONT_HEIGHT*4);
+        return new Dimension(100, Minecraft.getInstance().font.lineHeight*4);
     }
 }

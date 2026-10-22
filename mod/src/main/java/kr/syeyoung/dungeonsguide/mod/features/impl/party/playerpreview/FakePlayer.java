@@ -18,26 +18,31 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview;
 
-import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.SkinFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
-import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.RemotePlayer;
-import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.scoreboard.Team;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.World;
 
+// TODO: D124, only drawn by the 3D player preview, which is stubbed. The profile is kept; armor, held item, skin and
+// the render-only overrides of 1.8.9 (below) come back with the previews
 public class FakePlayer extends RemotePlayer {
+    @Setter
+    @Getter
+    private PlayerProfile skyblockProfile;
+
+    private final SkinFetcher.SkinSet skinSet;
+
+    public FakePlayer(GameProfile playerProfile, SkinFetcher.SkinSet skinSet, PlayerProfile skyblockProfile) {
+        super(Minecraft.getInstance().level, playerProfile);
+        this.skyblockProfile = skyblockProfile;
+        this.skinSet = skinSet;
+    }
+
+/*
+
     @Setter
     @Getter
     private PlayerProfile skyblockProfile;
@@ -150,4 +155,5 @@ public class FakePlayer extends RemotePlayer {
             }
         };
     }
+*/
 }

@@ -25,7 +25,8 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.XPUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import net.minecraft.client.gui.Font;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -37,34 +38,34 @@ public class DataRendererSkillLv implements IDataRenderer {
         this.skill = skill;
     }
     @Override
-    public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getInstance().font;
+    public Dimension renderData(RenderingContext context, PlayerProfile playerProfile) {
+        Font fr = Minecraft.getInstance().font;
         Double xp = playerProfile.getSkillXp().get(skill);
         if (xp == null) {
-            fr.drawString(skill.getFriendlyName(), 0,0, 0xFF55ffff);
-            fr.drawString("§cSkill API Disabled", 0, fr.FONT_HEIGHT,0xFFFFFFFF);
+            context.drawString(skill.getFriendlyName(), 0,0, 0xFF55ffff, false);
+            context.drawString("§cSkill API Disabled", 0, fr.lineHeight,0xFFFFFFFF, false);
         } else {
             XPUtils.XPCalcResult xpCalcResult = XPUtils.getSkillXp(skill, xp);
-            fr.drawString(skill.getFriendlyName(), 0,0, 0xFF55ffff);
-            fr.drawString(xpCalcResult.getLevel()+"", fr.getStringWidth(skill.getFriendlyName()+" "),0,0xFFFFFFFF);
+            context.drawString(skill.getFriendlyName(), 0,0, 0xFF55ffff, false);
+            context.drawString(xpCalcResult.getLevel()+"", fr.width(skill.getFriendlyName()+" "),0,0xFFFFFFFF, false);
 
-            RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,xpCalcResult.getRemainingXp() == 0 ? 1 : (float) (xpCalcResult.getRemainingXp() / xpCalcResult.getNextLvXp()));
+            context.renderBar(0, fr.lineHeight, 100,xpCalcResult.getRemainingXp() == 0 ? 1 : (float) (xpCalcResult.getRemainingXp() / xpCalcResult.getNextLvXp()));
         }
 
-        return new Dimension(100, fr.FONT_HEIGHT*2);
+        return new Dimension(100, fr.lineHeight*2);
     }
 
     @Override
-    public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getInstance().font;
-        fr.drawString(skill.getFriendlyName(), 0,0, 0xFF55ffff);
-        fr.drawString("99", fr.getStringWidth(skill.getFriendlyName()+" "),0,0xFFFFFFFF);
-        RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,1.0f);
-        return new Dimension(100, fr.FONT_HEIGHT*2);
+    public Dimension renderDummy(RenderingContext context) {
+        Font fr = Minecraft.getInstance().font;
+        context.drawString(skill.getFriendlyName(), 0,0, 0xFF55ffff, false);
+        context.drawString("99", fr.width(skill.getFriendlyName()+" "),0,0xFFFFFFFF, false);
+        context.renderBar(0, fr.lineHeight, 100,1.0f);
+        return new Dimension(100, fr.lineHeight*2);
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getInstance().font.FONT_HEIGHT*2);
+        return new Dimension(100, Minecraft.getInstance().font.lineHeight*2);
     }
 
     @Override
