@@ -1,9 +1,10 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 
 public interface IPathDisplayEngine<T> {
-    void renderActionRoute(float partialTicks);
+    void renderActionRoute(RenderWorldEvent event);
 
     ActionRoute getActionRoute();
 

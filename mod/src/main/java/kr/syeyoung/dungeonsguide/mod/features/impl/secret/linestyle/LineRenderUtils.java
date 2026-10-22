@@ -7,9 +7,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleClickingSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PossibleMoveSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 
 public class LineRenderUtils {
 
-    public static void renderDebug(ActionMoveSpot actionMoveSpot, DungeonRoom dungeonRoom, float partialTicks) {
+    public static void renderDebug(ActionMoveSpot actionMoveSpot, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         List<PossibleMoveSpot> targets = actionMoveSpot.getTargets();
         if (FeatureRegistry.DEBUG_ST.isEnabled()) {
             int i = 0;
             for (PossibleMoveSpot spot : targets) {
-                GlStateManager.disableAlpha();
                 i++;
                 Color c = Color.getHSBColor(
                         1.0f * i / targets.size(), 0.5f, 1.0f
@@ -33,7 +33,6 @@ public class LineRenderUtils {
                 Color actual;
 
 
-                GlStateManager.disableAlpha();
                 if (!spot.isBlocked()) {
                     actual = new Color(c.getRGB() & 0xFFFFFF | 0x90000000, true);
                     PossibleMoveSpot spot2 = RaytraceHelper.chooseMinimalY2(Arrays.asList(spot)).get(0);
@@ -41,9 +40,9 @@ public class LineRenderUtils {
                         Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
                         RenderUtils.highlightBox(
                                 new AABB(
-                                        offsetVec3.xCoord - 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord - 0.25f,
-                                        offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.026f, offsetVec3.zCoord + 0.25f
-                                ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
+                                        offsetVec3.x - 0.25f, offsetVec3.y + 0.025f, offsetVec3.z - 0.25f,
+                                        offsetVec3.x + 0.25f, offsetVec3.y + 0.026f, offsetVec3.z + 0.25f
+                                ).inflate(0.0030000000949949026),
                                 actual,
                                 partialTicks,
                                 true
@@ -55,9 +54,9 @@ public class LineRenderUtils {
                     Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
                     RenderUtils.highlightBox(
                             new AABB(
-                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
-                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.475f, offsetVec3.zCoord + 0.25f
-                            ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
+                                    offsetVec3.x - 0.25f, offsetVec3.y - 0.025f, offsetVec3.z - 0.25f,
+                                    offsetVec3.x + 0.25f, offsetVec3.y + 0.475f, offsetVec3.z + 0.25f
+                            ).inflate(0.0030000000949949026),
                             actual,
                             partialTicks,
                             true
@@ -66,9 +65,9 @@ public class LineRenderUtils {
                 double cx = 0, cy = 0, cz = 0;
                 for (OffsetVec3 _offsetVec3 : spot.getOffsetPointSet()) {
                     Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
-                    cx += offsetVec3.xCoord;
-                    cy += offsetVec3.yCoord;
-                    cz += offsetVec3.zCoord;
+                    cx += offsetVec3.x;
+                    cy += offsetVec3.y;
+                    cz += offsetVec3.z;
                 }
                 cx /= spot.getOffsetPointSet().size();
                 cy /= spot.getOffsetPointSet().size();
@@ -78,18 +77,17 @@ public class LineRenderUtils {
                         spot.getClusterId() + "/" + spot.isBlocked() + " / " + spot.getOffsetPointSet().size(), (float) cx, (float) cy, (float) cz, actual.getRGB() | 0xFF000000, 0.01f, false, true, partialTicks);
 
 
-                GlStateManager.enableAlpha();
             }
         }
     }
 
-    public static void renderDebug(ActionMove actionMove, DungeonRoom dungeonRoom, float partialTicks) {
+    public static void renderDebug(ActionMove actionMove, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         List<PossibleClickingSpot> targets = actionMove.getTargets();
         if (FeatureRegistry.DEBUG_ST.isEnabled()) {
 
             int i = 0;
             for (PossibleClickingSpot spot : RaytraceHelper.chooseMinimalY(targets)) {
-                GlStateManager.disableAlpha();
                 i++;
                 Color c = Color.getHSBColor(
                         1.0f * i / targets.size(), 0.5f, 1.0f
@@ -99,9 +97,9 @@ public class LineRenderUtils {
                     Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
                     RenderUtils.highlightBox(
                             new AABB(
-                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord - 0.25f,
-                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.026f, offsetVec3.zCoord + 0.25f
-                            ).expand(0.0020000000949949026, 0.0020000000949949026, 0.0020000000949949026),
+                                    offsetVec3.x - 0.25f, offsetVec3.y + 0.025f, offsetVec3.z - 0.25f,
+                                    offsetVec3.x + 0.25f, offsetVec3.y + 0.026f, offsetVec3.z + 0.25f
+                            ).inflate(0.0020000000949949026),
                             actual,
                             partialTicks,
                             true
@@ -111,7 +109,6 @@ public class LineRenderUtils {
 
             i = 0;
             for (PossibleClickingSpot spot : targets) {
-                GlStateManager.disableAlpha();
                 i++;
                 Color c = Color.getHSBColor(
                         1.0f * i / targets.size(), 0.5f, 1.0f
@@ -121,9 +118,9 @@ public class LineRenderUtils {
                     Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
                     RenderUtils.highlightBox(
                             new AABB(
-                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
-                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.475f, offsetVec3.zCoord + 0.25f
-                            ).expand(0.0020000000949949026, 0.0020000000949949026, 0.0020000000949949026),
+                                    offsetVec3.x - 0.25f, offsetVec3.y - 0.025f, offsetVec3.z - 0.25f,
+                                    offsetVec3.x + 0.25f, offsetVec3.y + 0.475f, offsetVec3.z + 0.25f
+                            ).inflate(0.0020000000949949026),
                             actual,
                             partialTicks,
                             true
@@ -133,9 +130,9 @@ public class LineRenderUtils {
                 double cx = 0, cy = 0, cz = 0;
                 for (OffsetVec3 _offsetVec3 : spot.getOffsetPointSet()) {
                     Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
-                    cx += offsetVec3.xCoord;
-                    cy += offsetVec3.yCoord;
-                    cz += offsetVec3.zCoord;
+                    cx += offsetVec3.x;
+                    cy += offsetVec3.y;
+                    cz += offsetVec3.z;
                 }
                 cx /= spot.getOffsetPointSet().size();
                 cy /= spot.getOffsetPointSet().size();

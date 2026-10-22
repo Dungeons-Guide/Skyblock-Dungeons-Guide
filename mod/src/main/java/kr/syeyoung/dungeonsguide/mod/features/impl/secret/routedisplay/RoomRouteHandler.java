@@ -41,7 +41,7 @@ public class RoomRouteHandler {
 
     public void onWorldRenderLast(RenderWorldEvent event) {
         path.values().forEach(a -> {
-            a.renderActionRoute(event.partialTicks);
+            a.renderActionRoute(event);
         });
     }
 

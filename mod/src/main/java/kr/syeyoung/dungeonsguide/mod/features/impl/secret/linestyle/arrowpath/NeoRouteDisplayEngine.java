@@ -21,22 +21,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
+import kr.syeyoung.dungeonsguide.mod.render.world.DGWorldRenderer;
+import kr.syeyoung.dungeonsguide.mod.render.world.state.QuadState;
+import kr.syeyoung.dungeonsguide.mod.render.world.state.ShaderQuadState;
+import kr.syeyoung.dungeonsguide.mod.render.world.state.TexturedQuadState;
+import kr.syeyoung.dungeonsguide.mod.shader.RepeatUniforms;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.data.AnimationMetadataSection;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.util.*;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
+import net.minecraft.world.phys.BlockHitResult;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.*;
@@ -134,7 +130,8 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
     private NeoRouteDisplayEngineLineProperties settings;
 
     @Override
-    public void renderActionRoute(float partialTicks) {
+    public void renderActionRoute(RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         if (actionRoute.isCalculating()) return;
 
         DungeonRoom dungeonRoom = actionRoute.getDungeonRoom();
@@ -143,64 +140,69 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         if (current -1 >= 0) {
             AbstractAction abstractAction = actions.get(current - 1);
             if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.position()) >= 25))) {
-                drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
+                drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, event);
             }
         }
 
         AbstractAction currentAction = actionRoute.getCurrentAction();
-        renderAction(currentAction, dungeonRoom, partialTicks);
+        renderAction(currentAction, dungeonRoom, event);
     }
 
-    public void renderAction(AbstractAction currentAction, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderAction(AbstractAction currentAction, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         if (currentAction instanceof AbstractActionMove) {
-            drawActionMove((AbstractActionMove) currentAction, dungeonRoom, partialTicks);
+            drawActionMove((AbstractActionMove) currentAction, dungeonRoom, event);
         } else if (currentAction instanceof ActionClick) {
-            renderActionClick((ActionClick) currentAction, dungeonRoom, partialTicks);
+            renderActionClick((ActionClick) currentAction, dungeonRoom, event);
         } else if (currentAction instanceof ActionClickSet) {
-            renderActionClickSet((ActionClickSet) currentAction, dungeonRoom, partialTicks);
+            renderActionClickSet((ActionClickSet) currentAction, dungeonRoom, event);
         } else if (currentAction instanceof ActionStonkClick) {
-            renderActionStonkClick((ActionStonkClick) currentAction, dungeonRoom, partialTicks);
+            renderActionStonkClick((ActionStonkClick) currentAction, dungeonRoom, event);
         } else if (currentAction instanceof ActionKill) {
-            renderActionKill((ActionKill) currentAction, dungeonRoom, partialTicks);
+            renderActionKill((ActionKill) currentAction, dungeonRoom, event);
         } else if (currentAction instanceof ActionInteract) {
-            renderActionInteract((ActionInteract) currentAction, dungeonRoom ,partialTicks);
+            renderActionInteract((ActionInteract) currentAction, dungeonRoom , event);
         } else if (currentAction instanceof ActionDropItem) {
-            renderActionDropItem((ActionDropItem) currentAction, dungeonRoom, partialTicks);
+            renderActionDropItem((ActionDropItem) currentAction, dungeonRoom, event);
         } else if (currentAction instanceof ActionBreakWithSuperBoom) {
-            renderActionBreakWithSuperboom((ActionBreakWithSuperBoom) currentAction, dungeonRoom, partialTicks);
+            renderActionBreakWithSuperboom((ActionBreakWithSuperBoom) currentAction, dungeonRoom, event);
         } else if (currentAction instanceof AtomicAction) {
             int atomicActionCurrent = ((AtomicAction) currentAction).getCurrent();
             List<AbstractAction> atomicActionActions = ((AtomicAction) currentAction).getActions();
             if (atomicActionCurrent -1 >= 0) {
                 AbstractAction abstractAction = atomicActionActions.get(atomicActionCurrent - 1);
                 if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.position()) >= 25))) {
-                    drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
+                    drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, event);
                 }
             }
-            renderAction(((AtomicAction) currentAction).getCurrentAction(), dungeonRoom, partialTicks);
+            renderAction(((AtomicAction) currentAction).getCurrentAction(), dungeonRoom, event);
         }
     }
 
 
-    public void renderActionKill(ActionKill actionKill, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionKill(ActionKill actionKill, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         BlockPos pos = actionKill.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
         RenderUtils.drawTextAtWorld("Spawn", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionInteract(ActionInteract actionInteract, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionInteract(ActionInteract actionInteract, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         BlockPos pos = actionInteract.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
         RenderUtils.drawTextAtWorld("Interact", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionDropItem(ActionDropItem dropItem, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionDropItem(ActionDropItem dropItem, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         BlockPos pos = dropItem.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, true);
         RenderUtils.drawTextAtWorld("Drop Item", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionClickSet(ActionClickSet actionClickSet, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionClickSet(ActionClickSet actionClickSet, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         float xAcc = 0;
         float yAcc = 0;
         float zAcc = 0;
@@ -218,7 +220,8 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         RenderUtils.drawTextAtWorld("Click", xAcc / size, yAcc / size, zAcc / size, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionClick(ActionClick actionClick, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionClick(ActionClick actionClick, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         BlockPos pos = actionClick.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlockStencil(pos, partialTicks,new AColor(0, 255,0,100), false);
         RenderUtils.drawTextAtWorld("Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
@@ -227,18 +230,18 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         Vec3 eyePos = Minecraft.getInstance().player.getEyePosition(partialTicks);
         Vec3 lookVec = from.subtract(eyePos).normalize();
 
-        if (Minecraft.getInstance().player.getViewVector(partialTicks).dotProduct(lookVec) < 0.7) return;
+        if (Minecraft.getInstance().player.getViewVector(partialTicks).dot(lookVec) < 0.7) return;
 
         HitResult objectPosition = Minecraft.getInstance().hitResult;
-        if (objectPosition.typeOfHit == HitResult.MovingObjectType.BLOCK) {
-            BlockPos blockPos = objectPosition.getBlockPos();
+        if (objectPosition.getType() == HitResult.Type.BLOCK) {
+            BlockPos blockPos = ((BlockHitResult) objectPosition).getBlockPos();
             for (Map.Entry<String, DungeonMechanicState> stringDungeonMechanicStateEntry : dungeonRoom.getMechanics().entrySet()) {
                 if (stringDungeonMechanicStateEntry.getValue() instanceof WorldMutatingMechanicState && ((WorldMutatingMechanicState) stringDungeonMechanicStateEntry.getValue()).isBlocking(dungeonRoom)) {
                     List<OffsetPoint> offsetPointList = ((WorldMutatingMechanicState)stringDungeonMechanicStateEntry.getValue()).blockedPoints();
                     List<BlockPos> blocks = offsetPointList.stream().map(a -> a.getBlockPos(dungeonRoom)).collect(Collectors.toList());
                     for (BlockPos block : blocks) {
                         if (blockPos.equals(block)) {
-                            highlightSuperboom(blocks, partialTicks, new AColor(255, 0, 0, 50));
+                            highlightSuperboom(blocks, event, new AColor(255, 0, 0, 50));
                             break;
                         }
                     }
@@ -248,22 +251,25 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
     }
 
-    public void renderActionStonkClick(ActionStonkClick actionStonkClick, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionStonkClick(ActionStonkClick actionStonkClick, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         BlockPos pos = actionStonkClick.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlockStencil(pos, partialTicks,new AColor(0, 255,0,100), false);
         RenderUtils.drawTextAtWorld("Stonk&Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionBreakWithSuperboom(ActionBreakWithSuperBoom superBoom, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionBreakWithSuperboom(ActionBreakWithSuperBoom superBoom, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         List<BlockPos> pos = new ArrayList<>();
         for (OffsetPoint offsetPoint : superBoom.getTarget().getOffsetPointList()) {
             pos.add(offsetPoint.getBlockPos(dungeonRoom));
         }
 
-        highlightSuperboom(pos, partialTicks, new AColor(255,0,0,50));
+        highlightSuperboom(pos, event, new AColor(255,0,0,50));
     }
 
-    public void drawActionMove(AbstractActionMove actionMove, DungeonRoom dungeonRoom, float partialTicks) {
+    public void drawActionMove(AbstractActionMove actionMove, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         ActionMoveContext context = executorWeakHashMap.get(actionMove);
 
         BlockPos target = actionMove.getBeaconTargetPos(dungeonRoom);
@@ -272,7 +278,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
 
 
-        float distance = Mth.sqrt_double(target.distanceSq(Minecraft.getInstance().player.getPosition()));
+        float distance = (float) Math.sqrt(target.distSqr(Minecraft.getInstance().player.blockPosition()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         float scale = 0.45f * multiplier;
         scale *= (float) settings.getDestinationSize();
@@ -285,20 +291,20 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         if (settings.getDestinationSize() != 0) {
             RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, (float) settings.getDestinationSize(), true, false, partialTicks);
-            RenderUtils.drawTextAtWorld(String.format("%.2f", Mth.sqrt_double(target.distanceSq(Minecraft.getInstance().player.getPosition()))) + "m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, (float) settings.getDestinationSize(), true, false, partialTicks);
+            RenderUtils.drawTextAtWorld(String.format("%.2f", Math.sqrt(target.distSqr(Minecraft.getInstance().player.blockPosition()))) + "m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, (float) settings.getDestinationSize(), true, false, partialTicks);
         }
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
             if (poses != null){
-                drawLinesPathfindNode(context.segment, settings.getBackground(), settings.getArrow(), partialTicks);
+                drawLinesPathfindNode(context.segment, settings.getBackground(), settings.getArrow(), event);
 
                 Vec3 pos = Minecraft.getInstance().player.position();
                 if (settings.isEnableEtherwarpTracer()) {
                     for (PathSegment segment : context.segment) {
-                        if (segment.nodeType == PathfindResult.PathfindNode.NodeType.ETHERWARP && segment.from.squareDistanceTo(pos) < settings.getEtherwarpTracerDist()) {
+                        if (segment.nodeType == PathfindResult.PathfindNode.NodeType.ETHERWARP && segment.from.distanceToSqr(pos) < settings.getEtherwarpTracerDist()) {
                             RenderUtils.drawLinesVec3(Arrays.asList(
                                     Minecraft.getInstance().player.getEyePosition(partialTicks),
-                                    segment.to.addVector(0, -0.5, 0)), settings.getEtherwarpTracerColor(), settings.getEtherwarpTracerWidth(), partialTicks, false);
+                                    segment.to.add(0, -0.5, 0)), settings.getEtherwarpTracerColor(), settings.getEtherwarpTracerWidth(), partialTicks, false);
                         }
                     }
                 }
@@ -311,18 +317,18 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                             pose.getType() != PathfindResult.PathfindNode.NodeType.ENDERPEARL &&
                             pose.getType() != PathfindResult.PathfindNode.NodeType.ETHERWARP &&
                             pose.getType() != PathfindResult.PathfindNode.NodeType.SUPERBOOM &&
-                            pose.distanceSq(Minecraft.getInstance().player.getPosition()) < 100) {
+                            pose.distanceSq(Minecraft.getInstance().player.blockPosition()) < 100) {
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }
                     if (last != null && last.getType() == PathfindResult.PathfindNode.NodeType.SUPERBOOM) {
-                        BlockPos test = new BlockPos(pose.getX(), pose.getY(), pose.getZ());
+                        BlockPos test = BlockPos.containing(pose.getX(), pose.getY(), pose.getZ());
                         for (Map.Entry<String, DungeonMechanicState> stringDungeonMechanicStateEntry : dungeonRoom.getMechanics().entrySet()) {
                             if (stringDungeonMechanicStateEntry.getValue() instanceof WorldMutatingMechanicState && ((WorldMutatingMechanicState) stringDungeonMechanicStateEntry.getValue()).isBlocking(dungeonRoom)) {
                                 List<OffsetPoint> offsetPointList = ((WorldMutatingMechanicState)stringDungeonMechanicStateEntry.getValue()).blockedPoints();
                                 List<BlockPos> blocks = offsetPointList.stream().map(a -> a.getBlockPos(dungeonRoom)).collect(Collectors.toList());
                                 for (BlockPos block : blocks) {
-                                    if (test.distanceSq(block) <= 2) {
-                                        highlightSuperboom(blocks, partialTicks, new AColor(255, 0, 0, 50));
+                                    if (test.distSqr(block) <= 2) {
+                                        highlightSuperboom(blocks, event, new AColor(255, 0, 0, 50));
                                         break;
                                     }
                                 }
@@ -337,9 +343,9 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         }
 
         if (actionMove instanceof ActionMoveSpot)
-            LineRenderUtils.renderDebug((ActionMoveSpot) actionMove, dungeonRoom, partialTicks);
+            LineRenderUtils.renderDebug((ActionMoveSpot) actionMove, dungeonRoom, event);
         else if (actionMove instanceof ActionMove)
-            LineRenderUtils.renderDebug((ActionMove) actionMove, dungeonRoom, partialTicks);
+            LineRenderUtils.renderDebug((ActionMove) actionMove, dungeonRoom, event);
     }
 
     @AllArgsConstructor @Data
@@ -373,10 +379,10 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                 Vec3 to = new Vec3(pose.getX(), pose.getY(), pose.getZ());
                 Vec3 dir = to.subtract(from).normalize();
 
-                Vec3 normal = dir.crossProduct(up).normalize();
+                Vec3 normal = dir.cross(up).normalize();
 
                 segments.add(new PathSegment(
-                        from.addVector(0, 0.05, 0), to.addVector(0, 0.05, 0), dir, normal, null,null,null,null, last.getType(),0 ,0
+                        from.add(0, 0.05, 0), to.add(0, 0.05, 0), dir, normal, null,null,null,null, last.getType(),0 ,0
                 ));
             }
             last = pose;
@@ -386,7 +392,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         for (int i = 1; i < segments.size(); i++) {
             Vec3 dir1 = segments.get(i-1).dir;
             Vec3 dir2 = segments.get(i).dir;
-            if (dir1.xCoord == dir2.xCoord && dir2.yCoord == dir1.yCoord && dir1.zCoord == dir2.zCoord && segments.get(i-1).nodeType == segments.get(i).nodeType) {
+            if (dir1.x == dir2.x && dir2.y == dir1.y && dir1.z == dir2.z && segments.get(i-1).nodeType == segments.get(i).nodeType) {
                 segments.get(i).from = segments.get(i-1).from;
             } else {
                 result.add(segments.get(i-1));
@@ -408,13 +414,13 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             realResult.add(prev);
             for (int j = fromIdx + 1; j < toIdx; j++) {
                 PathSegment to = result.get(j);
-                double lenTo = to.to.subtract(to.from).lengthVector();
-                double lenFrom = prev.to.subtract(prev.from).lengthVector();
+                double lenTo = to.to.subtract(to.from).length();
+                double lenFrom = prev.to.subtract(prev.from).length();
                 double radTo = Math.min(lenTo/2, rad);
                 double radFrom = Math.min(lenFrom / 2, rad);
 
-                Vec3 scaledVecTo = new Vec3(to.dir.xCoord * radTo, to.dir.yCoord * radTo, to.dir.zCoord * radTo);
-                Vec3 scaledVecFrom = new Vec3(prev.dir.xCoord * radFrom, prev.dir.yCoord*radFrom, prev.dir.zCoord * radFrom);
+                Vec3 scaledVecTo = new Vec3(to.dir.x * radTo, to.dir.y * radTo, to.dir.z * radTo);
+                Vec3 scaledVecFrom = new Vec3(prev.dir.x * radFrom, prev.dir.y*radFrom, prev.dir.z * radFrom);
                 Vec3 P2 = to.from;
                 to.from = to.from.add(scaledVecTo);
                 prev.to = prev.to.subtract(scaledVecFrom);
@@ -422,18 +428,18 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
                 PathSegment realPrev = prev;
                 for (double t = 0.1; t < 1.0; t += 0.1) {
-                    double xCoord = P1.xCoord * (1-t)*(1-t) + P2.xCoord * 2*(1-t) * t + P3.xCoord * t * t;
-                    double yCoord = P1.yCoord * (1-t)*(1-t) + P2.yCoord * 2*(1-t) * t + P3.yCoord * t * t;
-                    double zCoord = P1.zCoord * (1-t)*(1-t) + P2.zCoord * 2*(1-t) * t + P3.zCoord * t * t;
+                    double xCoord = P1.x * (1-t)*(1-t) + P2.x * 2*(1-t) * t + P3.x * t * t;
+                    double yCoord = P1.y * (1-t)*(1-t) + P2.y * 2*(1-t) * t + P3.y * t * t;
+                    double zCoord = P1.z * (1-t)*(1-t) + P2.z * 2*(1-t) * t + P3.z * t * t;
                     Vec3 pt = new Vec3(xCoord, yCoord, zCoord);
 
-                    double xTangent = P1.xCoord * 2 * (t-1) + P2.xCoord * (2 - 4*t) + P3.xCoord * (2*t);
-                    double yTangent = P1.yCoord * 2 * (t-1) + P2.yCoord * (2 - 4*t) + P3.yCoord * (2*t);
-                    double zTangent = P1.zCoord * 2 * (t-1) + P2.zCoord * (2 - 4*t) + P3.zCoord * (2*t);
+                    double xTangent = P1.x * 2 * (t-1) + P2.x * (2 - 4*t) + P3.x * (2*t);
+                    double yTangent = P1.y * 2 * (t-1) + P2.y * (2 - 4*t) + P3.y * (2*t);
+                    double zTangent = P1.z * 2 * (t-1) + P2.z * (2 - 4*t) + P3.z * (2*t);
                     Vec3 dir = new Vec3(xTangent, yTangent, zTangent);
 
                     realResult.add(realPrev = new PathSegment(
-                            realPrev.to, pt, dir.normalize(), dir.crossProduct(up).normalize(), null, null, null, null, realPrev.nodeType, 0, 0
+                            realPrev.to, pt, dir.normalize(), dir.cross(up).normalize(), null, null, null, null, realPrev.nodeType, 0, 0
                     ));
                 }
                 realResult.add(to);
@@ -442,15 +448,15 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         }
 
         for (int i = 1; i < realResult.size(); i++) {
-            if (realResult.get(i).side.lengthVector() == 0)
+            if (realResult.get(i).side.length() == 0)
                 realResult.get(i).side = realResult.get(i-1).side;
         }
         for (int i = realResult.size()-2; i >= 0; i--) {
-            if (realResult.get(i).side.lengthVector() == 0)
+            if (realResult.get(i).side.length() == 0)
                 realResult.get(i).side = realResult.get(i+1).side;
         }
         for (PathSegment segment : realResult) {
-            if (segment.side.lengthVector() == 0)
+            if (segment.side.length() == 0)
                 segment.side = new Vec3(1, 0, 0);
         }
 
@@ -461,11 +467,11 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             int toIdx = i; i--;
 
             PathSegment prev = realResult.get(fromIdx);
-            prev.BL = prev.from.subtract(prev.side.xCoord * thickness/2, prev.side.yCoord * thickness/2, prev.side.zCoord * thickness/2);
-            prev.BR = prev.from.addVector(prev.side.xCoord * thickness/2, prev.side.yCoord * thickness/2, prev.side.zCoord * thickness/2);
+            prev.BL = prev.from.subtract(prev.side.x * thickness/2, prev.side.y * thickness/2, prev.side.z * thickness/2);
+            prev.BR = prev.from.add(prev.side.x * thickness/2, prev.side.y * thickness/2, prev.side.z * thickness/2);
             for (int j = fromIdx+1; j < toIdx; j++) {
                 PathSegment curr = realResult.get(j);
-                Vec3 prevSideScaled = new Vec3(prev.side.xCoord * thickness/2, prev.side.yCoord * thickness/2, prev.side.zCoord * thickness/2);
+                Vec3 prevSideScaled = new Vec3(prev.side.x * thickness/2, prev.side.y * thickness/2, prev.side.z * thickness/2);
 
                 prev.TL = prev.to.subtract(prevSideScaled);
                 prev.TR = prev.to.add(prevSideScaled);
@@ -475,12 +481,12 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                 prev = curr;
             }
             PathSegment to = realResult.get(toIdx-1);
-            to.TL = to.to.subtract(to.side.xCoord * thickness/2, to.side.yCoord * thickness/2, to.side.zCoord * thickness/2);
-            to.TR = to.to.addVector(to.side.xCoord * thickness/2, to.side.yCoord * thickness/2, to.side.zCoord * thickness/2);
+            to.TL = to.to.subtract(to.side.x * thickness/2, to.side.y * thickness/2, to.side.z * thickness/2);
+            to.TR = to.to.add(to.side.x * thickness/2, to.side.y * thickness/2, to.side.z * thickness/2);
         }
         double culLen = 0;
         for (PathSegment segment : realResult) {
-            double len = segment.to.subtract(segment.from).lengthVector();
+            double len = segment.to.subtract(segment.from).length();
             segment.texCulLenFrom = culLen / thickness;
             culLen += len;
             segment.texCulLenTo = culLen / thickness;
@@ -490,31 +496,11 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
     }
 
 
-    private static void highlightSuperboom(List<BlockPos> blockPos, float partialTicks, AColor color) {
-        RenderManager renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
-        Entity render = Minecraft.getInstance().getCameraEntity();
-        double realX = render.xOld + (render.getX() - render.xOld) * partialTicks;
-        double realY = render.yOld + (render.getY() - render.yOld) * partialTicks;
-        double realZ = render.zOld + (render.getZ() - render.zOld) * partialTicks;
+    private static final Identifier tntSide = Identifier.parse("minecraft:textures/block/tnt_side.png");
 
+    private static void highlightSuperboom(List<BlockPos> blockPos, RenderWorldEvent event, AColor color) {
+        float partialTicks = event.partialTicks;
         AABB bb = RenderUtils.highlightBlocksStencil(blockPos, partialTicks, color, true);
-
-
-        GlStateManager.enableDepth();
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-realX, -realY, -realZ);
-        GlStateManager.disableLighting();
-        GlStateManager.enableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.disableCull();
-
-        GlStateManager.enableTexture2D();
-        Minecraft.getInstance().getTextureManager().bindTexture(Identifier.parse("minecraft:textures/blocks/tnt_side.png"));
-        GlStateManager.color(1, 1, 1, 1.0F);
-        Tessellator tesselator = Tessellator.getInstance();
-        WorldRenderer vertexBuffer = tesselator.getWorldRenderer();
-        vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
         int[][][] quads = {
                 {{0,0,-1}, {1,0,-1}, {1,1,-1}, {0,1,-1}},
@@ -524,7 +510,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                 {{0,-1,0}, {1,-1,0}, {1,-1,1}, {0,-1,1}},
                 {{0,2,0}, {1,2,0}, {1,2,1}, {0,2,1}}
         };
-        int[][] quads2 = {
+        float[][] quads2 = {
                 {0,1}, {1,1}, {1,0}, {0,0}
         };
 
@@ -537,211 +523,123 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         };
 
         for (int i = 0; i < 6; i++) {
+            Vec3[] corners = new Vec3[4];
             for (int j = 0; j < 4; j++) {
-                vertexBuffer.pos(faces[0][quads[i][j][0]+1],
+                corners[j] = new Vec3(faces[0][quads[i][j][0]+1],
                                 faces[1][quads[i][j][1]+1],
-                                faces[2][quads[i][j][2]+1])
-                        .tex(quads2[j][0], quads2[j][1]).endVertex();
+                                faces[2][quads[i][j][2]+1]);
             }
+            DGWorldRenderer.record(new TexturedQuadState(tntSide, corners, quads2, 0xFFFFFFFF, true));
         }
-
-        tesselator.draw();
-
-        GlStateManager.enableTexture2D();
-        GlStateManager.popMatrix();
-
     }
 
 
     public static final Identifier arrow = Identifier.parse("dungeonsguide:textures/arrow.png");
     public static final Identifier abilities = Identifier.parse("dungeonsguide:textures/features/precalclist/abilities.png");
-    public static void drawIcon(int iconIdx, PathSegment segment, AColor colour, AColor texture, float partialTicks, double animate, boolean path) {
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.color(1,1,1,1);
-        WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
-        RenderManager renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
+    // the arrow repeated along the quad by the repeat shader. 1.8.9 passed the arrow sprite's rect in the block atlas,
+    // 26.1 binds the standalone texture (D128)
+    private static void drawArrows(Vec3[] corners, float[][] uvs, int color, boolean depth) {
+        DGWorldRenderer.record(new ShaderQuadState(ShaderManager.getShader("shaders/repeat"), new RepeatUniforms(0, 0, 1, 1),
+                arrow, corners, uvs, color, depth));
+    }
 
-        boolean flag = renderManager.getDistanceToCamera(segment.from.xCoord, segment.from.yCoord, segment.from.zCoord) > 0.25;
-        Vec3 fixedFrom = flag ? segment.from.addVector(0, 1.5, 0) : segment.from;
+    // a point of 1.8.9's icon billboard: translate(from + (0, 0.5, 0)), rotate(-viewY, y), rotate(viewX, x), scale(1/32, -1/32, 1/32)
+    private static Vec3 billboardCorner(Vec3 from, Matrix4f rotation, float u, float v) {
+        Vector3f offset = rotation.transformPosition(new Vector3f(u, v, 0));
+        return from.add(offset.x, offset.y + 0.5, offset.z);
+    }
+
+    public static void drawIcon(int iconIdx, PathSegment segment, AColor colour, AColor texture, RenderWorldEvent event, double animate, boolean path) {
+        float partialTicks = event.partialTicks;
+        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+
+        boolean flag = camera.position().distanceToSqr(segment.from.x, segment.from.y, segment.from.z) > 0.25;
+        Vec3 fixedFrom = flag ? segment.from.add(0, 1.5, 0) : segment.from;
         Vec3 dir = segment.to.subtract(fixedFrom);
-        if (!flag) {
-            GlStateManager.disableDepth();
-        }
         if (path){
             Vec3 normal;
             if (flag) {
-                normal = dir.crossProduct(renderManager.livingPlayer.getLookVec()).normalize();
-                if (normal.lengthVector() == 0) normal = new Vec3(1, 0, 0);
-                normal = new Vec3(normal.xCoord * 0.05, normal.yCoord * 0.05, normal.zCoord * 0.05);
+                normal = dir.cross(Minecraft.getInstance().getCameraEntity().getLookAngle()).normalize();
+                if (normal.length() == 0) normal = new Vec3(1, 0, 0);
+                normal = new Vec3(normal.x * 0.05, normal.y * 0.05, normal.z * 0.05);
             } else {
-                normal = new Vec3(segment.side.xCoord * 0.05, segment.side.yCoord * 0.05, segment.side.zCoord * 0.05);
+                normal = new Vec3(segment.side.x * 0.05, segment.side.y * 0.05, segment.side.z * 0.05);
             }
 
-            GlStateManager.disableTexture2D();
-            worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-            double len = segment.to.subtract(segment.from).lengthVector();
+            double len = segment.to.subtract(segment.from).length();
             int i = RenderUtils.getColorAt(0, 0, 0, colour);
-            float r = ((i >> 16) & 0xFF) / 255.0f, g = ((i >> 8) & 0xFF) / 255.0f, b = (i & 0xFF) / 255.0f, a = ((i >> 24) & 0xFF) / 255.0f;
             Vec3 quadBL = fixedFrom.add(normal), quadBR = fixedFrom.subtract(normal), quadTL = segment.to.add(normal), quadTR = segment.to.subtract(normal);
-            {
-                worldRenderer.pos(quadBL.xCoord, quadBL.yCoord, quadBL.zCoord).color(r, g, b, a).endVertex();
-                worldRenderer.pos(quadBR.xCoord, quadBR.yCoord, quadBR.zCoord).color(r, g, b, a).endVertex();
-                worldRenderer.pos(quadTR.xCoord, quadTR.yCoord, quadTR.zCoord).color(r, g, b, a).endVertex();
-                worldRenderer.pos(quadTL.xCoord, quadTL.yCoord, quadTL.zCoord).color(r, g, b, a).endVertex();
-            }
-            Tessellator.getInstance().draw();
-
-            TextureManager textureManager = Minecraft.getInstance().getTextureManager();
-            GlStateManager.enableTexture2D();
-            textureManager.bindTexture(TextureMap.locationBlocksTexture);
-
-            ShaderProgram shaderProgram = ShaderManager.getShader("shaders/repeat");
-            shaderProgram.useShader();
-            TextureAtlasSprite sprite = FeatureRegistry.SECRET_ROUTE_REGISTRY.sprite;
-            shaderProgram.uploadUniform("position", sprite.getMinU(), sprite.getMinV());
-            shaderProgram.uploadUniform("size", sprite.getMaxU() - sprite.getMinU(), sprite.getMaxV() - sprite.getMinV());
+            // 1.8.9 turned depth off when the segment starts at the camera
+            DGWorldRenderer.record(new QuadState(new Vec3[] {quadBL, quadBR, quadTR, quadTL}, i, flag));
 
             i = RenderUtils.getColorAt(0,0,0, texture);
-            r= ((i >> 16) &0xFF)/255.0f; g=((i >> 8) &0xFF)/255.0f; b=(i &0xFF)/255.0f; a=((i >> 24) &0xFF)/255.0f;
-            GlStateManager.color(r, g, b, a);
-
-            worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            {
-                worldRenderer.pos(quadBL.xCoord, quadBL.yCoord, quadBL.zCoord).tex(0, -animate).endVertex();
-                worldRenderer.pos(quadBR.xCoord, quadBR.yCoord, quadBR.zCoord).tex(1, -animate).endVertex();
-                worldRenderer.pos(quadTR.xCoord, quadTR.yCoord, quadTR.zCoord).tex(1, -len / 0.1-animate).endVertex();
-                worldRenderer.pos(quadTL.xCoord, quadTL.yCoord, quadTL.zCoord).tex(0, -len / 0.1-animate).endVertex();
-            }
-            Tessellator.getInstance().draw();
-
-            GL20.glUseProgram(0);
-        }
-        if (!flag) {
-            GlStateManager.enableDepth();
+            drawArrows(new Vec3[] {quadBL, quadBR, quadTR, quadTL}, new float[][] {
+                    {0, (float) -animate},
+                    {1, (float) -animate},
+                    {1, (float) (-len / 0.1-animate)},
+                    {0, (float) (-len / 0.1-animate)}
+            }, i, flag);
         }
 
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(segment.from.xCoord, segment.from.yCoord+0.5, segment.from.zCoord);
-        GlStateManager.rotate(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
-        GlStateManager.rotate(renderManager.playerViewX, 1.0f, 0.0f, 0.0f);
-        GlStateManager.scale(1/32.0, -1/32.0, 1/32.0);
+        Matrix4f rotation = new Matrix4f()
+                .rotateY((float) Math.toRadians(-camera.yRot()))
+                .rotateX((float) Math.toRadians(camera.xRot()))
+                .scale(1/32.0f, -1/32.0f, 1/32.0f);
 
-        GlStateManager.enableDepth();
-        GlStateManager.disableTexture2D();
         int size = 16;
-        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        worldRenderer.pos(-size /2 - 1, -size /2-1, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
-        worldRenderer.pos(-size /2 - 1, size /2+1, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
-        worldRenderer.pos(size /2 + 1, size /2+1, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
-        worldRenderer.pos(size /2 + 1, -size /2-1, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
-        Tessellator.getInstance().draw();
-        GlStateManager.enableTexture2D();
+        DGWorldRenderer.record(new QuadState(new Vec3[] {
+                billboardCorner(segment.from, rotation, -size /2 - 1, -size /2-1),
+                billboardCorner(segment.from, rotation, -size /2 - 1, size /2+1),
+                billboardCorner(segment.from, rotation, size /2 + 1, size /2+1),
+                billboardCorner(segment.from, rotation, size /2 + 1, -size /2-1)
+        }, 0x40000000, true));
 
-        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-        Minecraft.getInstance().getTextureManager().bindTexture(abilities);
+        // 1.8.9's drawScaledCustomSizeModalRect(-size/2, -size/2, u, v, 31, 31, size, size, 512, 512)
+        float u = (iconIdx % 8)*32 + 0.5f, v = (iconIdx/8)*32 + 0.5f;
+        DGWorldRenderer.record(new TexturedQuadState(abilities, new Vec3[] {
+                billboardCorner(segment.from, rotation, -size /2, size /2),
+                billboardCorner(segment.from, rotation, size /2, size /2),
+                billboardCorner(segment.from, rotation, size /2, -size /2),
+                billboardCorner(segment.from, rotation, -size /2, -size /2)
+        }, new float[][] {
+                {u / 512, (v + 31) / 512},
+                {(u + 31) / 512, (v + 31) / 512},
+                {(u + 31) / 512, v / 512},
+                {u / 512, v / 512}
+        }, 0xFFFFFFFF, true));
 
-        GuiScreen.drawScaledCustomSizeModalRect(
-                -size /2, -size /2, (iconIdx % 8)*32 + 0.5f , (iconIdx/8)*32 + 0.5f ,  31, 31, size, size, 512, 512
-        );
-
-        GlStateManager.enableDepth();
-        GlStateManager.popMatrix();
-
-        GlStateManager.pushMatrix();
-        GlStateManager.disableLighting();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.disableCull();
-
-        GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
-        GL11.glPolygonOffset(-1.0f, -1.0f);
-        BlockPos pos = new BlockPos(Math.floor(segment.to.xCoord), Math.floor(segment.to.yCoord) -1 , Math.floor(segment.to.zCoord));
+        // TODO: 1.8.9 drew this highlight with polygon offset (-1, -1), 26.1 draws it as is
+        BlockPos pos = BlockPos.containing(segment.to.x, Math.floor(segment.to.y) -1 , segment.to.z);
         RenderUtils._highlightBlock(pos, Color.green, partialTicks, true);
-        GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
-
-        GlStateManager.disableLighting();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.disableCull();
-
-        GlStateManager.popMatrix();
-
-//        }
     }
 
-    public static void drawLinesNormal(List<PathSegment> poses, int from, int to, PathfindResult.PathfindNode.NodeType type, AColor colour, AColor texture, float partialTicks, double animate) {
-        if (type == PathfindResult.PathfindNode.NodeType.STONK_WALK || type == PathfindResult.PathfindNode.NodeType.STONK_EXIT) {
-            GlStateManager.disableDepth();
-        } else {
-            GlStateManager.enableDepth();
-        }
+    public static void drawLinesNormal(List<PathSegment> poses, int from, int to, PathfindResult.PathfindNode.NodeType type, AColor colour, AColor texture, RenderWorldEvent event, double animate) {
+        boolean depth = !(type == PathfindResult.PathfindNode.NodeType.STONK_WALK || type == PathfindResult.PathfindNode.NodeType.STONK_EXIT);
 
-        WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
-        GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.color(1,1,1,1);
-
-        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         int i = RenderUtils.getColorAt(0,0,0, colour);
-        float r= ((i >> 16) &0xFF)/255.0f, g=((i >> 8) &0xFF)/255.0f, b=(i &0xFF)/255.0f, a=((i >> 24) &0xFF)/255.0f;
         for (int j = from; j < to; j++) {
             PathSegment pos = poses.get(j);
-            Vec3 quadBL = pos.BL, quadBR = pos.BR, quadTL = pos.TL, quadTR = pos.TR;
-            worldRenderer.pos(quadBL.xCoord, quadBL.yCoord, quadBL.zCoord).color(r,g,b,a).endVertex();
-            worldRenderer.pos(quadBR.xCoord, quadBR.yCoord, quadBR.zCoord).color(r,g,b,a).endVertex();
-            worldRenderer.pos(quadTR.xCoord, quadTR.yCoord, quadTR.zCoord).color(r,g,b,a).endVertex();
-            worldRenderer.pos(quadTL.xCoord, quadTL.yCoord, quadTL.zCoord).color(r,g,b,a).endVertex();
+            DGWorldRenderer.record(new QuadState(new Vec3[] {pos.BL, pos.BR, pos.TR, pos.TL}, i, depth));
         }
-        Tessellator.getInstance().draw();
-
-        TextureManager textureManager = Minecraft.getInstance().getTextureManager();
-        GlStateManager.enableTexture2D();
-        textureManager.bindTexture(TextureMap.locationBlocksTexture);
-
-        ShaderProgram shaderProgram = ShaderManager.getShader("shaders/repeat");
-        shaderProgram.useShader();
-        TextureAtlasSprite sprite = FeatureRegistry.SECRET_ROUTE_REGISTRY.sprite;
-        shaderProgram.uploadUniform("position", sprite.getMinU(), sprite.getMinV());
-        shaderProgram.uploadUniform("size", sprite.getMaxU() - sprite.getMinU(), sprite.getMaxV() - sprite.getMinV());
-
 
         i = RenderUtils.getColorAt(0,0,0, texture);
-        r= ((i >> 16) &0xFF)/255.0f; g=((i >> 8) &0xFF)/255.0f; b=(i &0xFF)/255.0f; a=((i >> 24) &0xFF)/255.0f;
-        GlStateManager.color(r, g, b, a);
-
-        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         for (int j = from; j < to; j++) {
             PathSegment pos = poses.get(j);
-            Vec3 quadBL = pos.BL, quadBR = pos.BR, quadTL = pos.TL, quadTR = pos.TR;
-            worldRenderer.pos(quadBL.xCoord, quadBL.yCoord, quadBL.zCoord).tex(0, -pos.texCulLenFrom-animate).endVertex();
-            worldRenderer.pos(quadBR.xCoord, quadBR.yCoord, quadBR.zCoord).tex(1, -pos.texCulLenFrom-animate).endVertex();
-            worldRenderer.pos(quadTR.xCoord, quadTR.yCoord, quadTR.zCoord).tex(1, -pos.texCulLenTo-animate).endVertex();
-            worldRenderer.pos(quadTL.xCoord, quadTL.yCoord, quadTL.zCoord).tex(0,-pos.texCulLenTo-animate).endVertex();
+            drawArrows(new Vec3[] {pos.BL, pos.BR, pos.TR, pos.TL}, new float[][] {
+                    {0, (float) (-pos.texCulLenFrom-animate)},
+                    {1, (float) (-pos.texCulLenFrom-animate)},
+                    {1, (float) (-pos.texCulLenTo-animate)},
+                    {0, (float) (-pos.texCulLenTo-animate)}
+            }, i, depth);
         }
-        Tessellator.getInstance().draw();
-
-        GL20.glUseProgram(0);
     }
-    public void drawLinesPathfindNode(List<PathSegment> poses, AColor colour, AColor texture, float partialTicks) {
+    public void drawLinesPathfindNode(List<PathSegment> poses, AColor colour, AColor texture, RenderWorldEvent event) {
         if (poses.size() == 0) return;
         double speed = settings.getAnimationSpeed();
         double animate = System.currentTimeMillis() / 1000.0 * speed;
         animate = animate - Math.floor(animate);
         animate *= -1;
-
-        Entity render = Minecraft.getInstance().getCameraEntity();
-
-        double realX = render.xOld + (render.getX() - render.xOld) * partialTicks;
-        double realY = render.yOld + (render.getY() - render.yOld) * partialTicks;
-        double realZ = render.zOld + (render.getZ() - render.zOld) * partialTicks;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-realX, -realY, -realZ);
-        GlStateManager.disableLighting();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.disableCull();
 
         for (int i = 0; i < poses.size(); i++) {
             int st = i;
@@ -754,22 +652,13 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             if (nodeType == PathfindResult.PathfindNode.NodeType.ETHERWARP) {
                 boolean path = true;
                 if (settings.isEtherwarpTracerDisableEtherwarpRoute() && settings.isEnableEtherwarpTracer()) {
-                    if (Minecraft.getInstance().player.position().squareDistanceTo(poses.get(st).from) < settings.getEtherwarpTracerDist()) path = false;
+                    if (Minecraft.getInstance().player.position().distanceToSqr(poses.get(st).from) < settings.getEtherwarpTracerDist()) path = false;
                 }
-                drawIcon(40, poses.get(st), colour, texture, partialTicks, animate, path);
+                drawIcon(40, poses.get(st), colour, texture, event, animate, path);
             } else if (nodeType == PathfindResult.PathfindNode.NodeType.ENDERPEARL)
-                drawIcon(41, poses.get(st), colour, texture, partialTicks, animate, true);
+                drawIcon(41, poses.get(st), colour, texture, event, animate, true);
             else
-                drawLinesNormal(poses, st, toIdx, poses.get(st).nodeType, colour, texture, partialTicks, animate);
+                drawLinesNormal(poses, st, toIdx, poses.get(st).nodeType, colour, texture, event, animate);
         }
-
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.enableDepth();
-        GlStateManager.depthMask(true);
-        GlStateManager.enableCull();
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        GlStateManager.popMatrix();
-        GL11.glLineWidth(1);
     }
 }

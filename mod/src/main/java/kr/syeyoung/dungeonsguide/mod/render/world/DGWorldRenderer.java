@@ -27,6 +27,9 @@ import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.resource.ResourceHandle;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.GpuTexture;
+import com.mojang.blaze3d.textures.GpuTextureView;
+import com.mojang.blaze3d.textures.TextureFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import kr.syeyoung.dungeonsguide.mod.render.world.state.BlockModelState;
 import kr.syeyoung.dungeonsguide.mod.render.world.state.DGWorldRenderState;
@@ -105,6 +108,38 @@ public class DGWorldRenderer {
         });
     }
 
+    private static void renderBlockModels(List<BlockModelState> models, GpuTextureView color, GpuTextureView depth, Vec3 frameCamera) {
+        if (models.isEmpty()) return;
+        GameRenderer gameRenderer = Minecraft.getInstance().gameRenderer;
+        RenderSystem.outputColorTextureOverride = color;
+        RenderSystem.outputDepthTextureOverride = depth;
+        gameRenderer.getLighting().setupFor(Lighting.Entry.LEVEL);
+        PoseStack poseStack = new PoseStack();
+        for (BlockModelState state : models) {
+            state.submit(poseStack, gameRenderer.getSubmitNodeStorage(), frameCamera);
+        }
+        gameRenderer.getFeatureRenderDispatcher().renderAllFeatures();
+        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+        RenderSystem.outputColorTextureOverride = null;
+        RenderSystem.outputDepthTextureOverride = null;
+    }
+
+    private static GpuTexture seeThroughDepth;
+    private static GpuTextureView seeThroughDepthView;
+
+    // a DG-owned depth texture the size of the main target, cleared for each use
+    private static GpuTextureView seeThroughDepth(int width, int height) {
+        if (seeThroughDepth == null || seeThroughDepth.getWidth(0) != width || seeThroughDepth.getHeight(0) != height) {
+            if (seeThroughDepthView != null) seeThroughDepthView.close();
+            if (seeThroughDepth != null) seeThroughDepth.close();
+            seeThroughDepth = RenderSystem.getDevice().createTexture(() -> "Dungeons Guide see-through block depth",
+                    GpuTexture.USAGE_RENDER_ATTACHMENT | GpuTexture.USAGE_COPY_DST, TextureFormat.DEPTH32, width, height, 1, 1);
+            seeThroughDepthView = RenderSystem.getDevice().createTextureView(seeThroughDepth);
+        }
+        RenderSystem.getDevice().createCommandEncoder().clearDepthTexture(seeThroughDepth, 1.0);
+        return seeThroughDepthView;
+    }
+
     public static void addPasses(FrameGraphBuilder frame, LevelTargetBundle targets) {
         if (states.isEmpty() && blockModels.isEmpty()) return;
         List<DGWorldRenderState> frameStates = new ArrayList<>(states);
@@ -129,18 +164,15 @@ public class DGWorldRenderer {
         ResourceHandle<RenderTarget> blockTarget = targets.main;
         blockPass.executes(() -> {
             if (frameBlockModels.isEmpty()) return;
-            GameRenderer gameRenderer = Minecraft.getInstance().gameRenderer;
-            RenderSystem.outputColorTextureOverride = blockTarget.get().getColorTextureView();
-            RenderSystem.outputDepthTextureOverride = blockTarget.get().getDepthTextureView();
-            gameRenderer.getLighting().setupFor(Lighting.Entry.LEVEL);
-            PoseStack poseStack = new PoseStack();
+            RenderTarget target = blockTarget.get();
+            List<BlockModelState> depthTested = new ArrayList<>(), seeThrough = new ArrayList<>();
             for (BlockModelState state : frameBlockModels) {
-                state.submit(poseStack, gameRenderer.getSubmitNodeStorage(), frameCamera);
+                (state.isDepth() ? depthTested : seeThrough).add(state);
             }
-            gameRenderer.getFeatureRenderDispatcher().renderAllFeatures();
-            Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
-            RenderSystem.outputColorTextureOverride = null;
-            RenderSystem.outputDepthTextureOverride = null;
+            renderBlockModels(depthTested, target.getColorTextureView(), target.getDepthTextureView(), frameCamera);
+            // vanilla's block pipelines always depth test, see-through models get a cleared depth of their own
+            if (!seeThrough.isEmpty())
+                renderBlockModels(seeThrough, target.getColorTextureView(), seeThroughDepth(target.width, target.height), frameCamera);
         });
 
         FramePass worldPass = frame.addPass("dungeonsguide_world");

@@ -38,6 +38,12 @@ public class BlockModelState {
     private final BlockState blockState;
     // the model's block space (0..1) to world
     private final Matrix4f transform;
+    // false: drawn over the world, tested only against other see-through block models
+    private final boolean depth;
+
+    public boolean isDepth() {
+        return depth;
+    }
 
     public void submit(PoseStack poseStack, SubmitNodeCollector collector, Vec3 camera) {
         BlockModelRenderState renderState = new BlockModelRenderState();

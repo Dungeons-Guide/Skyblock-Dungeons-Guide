@@ -15,10 +15,8 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.arrowpath.Ne
 import lombok.Data;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 import java.awt.*;
@@ -123,13 +121,8 @@ public class LiveRouteRegistry extends SimpleFeature {
         roomRouteHandler.onEntityDeath(event);
     }
 
-    public TextureAtlasSprite sprite;
-
-    // TODO: 1.8.9 hack to get the arrow sprite into the block atlas. 26.1 has no stitch event, decided later
-    @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onTextureStitch(TextureStitchEvent.Pre event) {
-         sprite = event.map.registerSprite(Identifier.fromNamespaceAndPath("dungeonsguide", "arrow"));
-    }
+    // 1.8.9 stitched dungeonsguide:arrow into the block atlas here for the repeat shader.
+    // TODO: syeyoung: building the sprite is the way to go, 26.1 binds the standalone textures/arrow.png for now (D128)
 
     @Override
     public boolean shouldShowOnConfig() {

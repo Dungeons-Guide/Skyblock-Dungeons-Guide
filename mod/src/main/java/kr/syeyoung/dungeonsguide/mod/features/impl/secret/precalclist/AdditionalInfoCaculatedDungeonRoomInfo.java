@@ -96,7 +96,7 @@ public class AdditionalInfoCaculatedDungeonRoomInfo {
         if (j / 4 == 0) {
             color = 0x00000000;
         } else {
-            color = MapColor.mapColorArray[j / 4].getMapColor(j & 3);
+            color = MapColor.getColorFromPackedId(j);
         }
         this.roomColor = color;
         this.roomType = color+"";

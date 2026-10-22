@@ -119,7 +119,7 @@ public class FeatureSingleTargetPathfind extends SimpleFeature {
             return;
         }
 
-        BlockPos pos = Minecraft.getInstance().player.getPosition();
+        BlockPos pos = Minecraft.getInstance().player.blockPosition();
 
         double lowestCost = 99999999999999.0;
         Map.Entry<String, DungeonMechanicState> lowestWeightMechanic = null;
@@ -135,7 +135,7 @@ public class FeatureSingleTargetPathfind extends SimpleFeature {
                 if (mech.getValue().getRepresentingPoint() == null) continue;
                 BlockPos blockpos = mech.getValue().getRepresentingPoint().getBlockPos(dungeonRoom);
 
-                cost += blockpos.distanceSq(pos);
+                cost += blockpos.distSqr(pos);
                 cost += ((ISecret) mech.getValue()).getPreRequisite().size() * 100;
 
                 if (cost < lowestCost) {

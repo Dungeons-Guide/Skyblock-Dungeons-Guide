@@ -447,7 +447,7 @@ public class DungeonListener {
                                 RenderUtils.highlightBlock(allInBox, new Color(0x70FF0000,true), renderWorldLastEvent.partialTicks, false);
                                 // the expected block at half size in the middle of the block
                                 DGWorldRenderer.record(new BlockModelState(blockState,
-                                        new Matrix4f().translate(allInBox.getX(), allInBox.getY(), allInBox.getZ()).scale(0.5f).translate(0.5f, 0.5f, 0.5f)));
+                                        new Matrix4f().translate(allInBox.getX(), allInBox.getY(), allInBox.getZ()).scale(0.5f).translate(0.5f, 0.5f, 0.5f), true));
                             }
                         }
                     }
