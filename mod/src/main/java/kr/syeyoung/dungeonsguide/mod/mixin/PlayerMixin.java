@@ -19,22 +19,39 @@
 package kr.syeyoung.dungeonsguide.mod.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kr.syeyoung.dungeonsguide.launcher.FabricEventBridge;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerNameFormatEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+
+import java.util.List;
 
 @Mixin(Player.class)
 public class PlayerMixin {
     // 1.8.9: PlayerEvent.NameFormat
     @ModifyExpressionValue(method = "getDisplayName", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getName()Lnet/minecraft/network/chat/Component;"))
-    private Component dungeonsguide$formatName(Component name) {
+    private Component dungeonsguide$formatName(Component name, @Share("dungeonsguide$prefixes") LocalRef<List<Component>> prefixes) {
         Player self = (Player) (Object) this;
         if (!self.level().isClientSide()) return name;
         PlayerNameFormatEvent event = new PlayerNameFormatEvent(self, name.getString(), name);
         FabricEventBridge.fire(event);
+        prefixes.set(event.prefixes);
         return event.displayname;
+    }
+
+    // 1.8.9: Forge's getDisplayName put the player's prefixes before the team-formatted name
+    @ModifyExpressionValue(method = "getDisplayName", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/scores/PlayerTeam;formatNameForTeam(Lnet/minecraft/world/scores/Team;Lnet/minecraft/network/chat/Component;)Lnet/minecraft/network/chat/MutableComponent;"))
+    private MutableComponent dungeonsguide$prefixName(MutableComponent formatted, @Share("dungeonsguide$prefixes") LocalRef<List<Component>> prefixes) {
+        if (prefixes.get() == null || prefixes.get().isEmpty()) return formatted;
+        MutableComponent result = Component.empty();
+        for (Component prefix : prefixes.get()) {
+            result.append(prefix);
+        }
+        return result.append(formatted);
     }
 }

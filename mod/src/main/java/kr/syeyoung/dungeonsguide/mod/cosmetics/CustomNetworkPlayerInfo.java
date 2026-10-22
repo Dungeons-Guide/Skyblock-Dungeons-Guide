@@ -18,56 +18,23 @@
 
 package kr.syeyoung.dungeonsguide.mod.cosmetics;
 
-import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.network.play.server.S38PacketPlayerListItem;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
 import java.util.UUID;
 
 // Reimplement this using ASM. Removing reference to this is too painful.
-public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
-    public CustomNetworkPlayerInfo(GameProfile gameProfile) {
-        super(gameProfile);
-    }
-
-    public CustomNetworkPlayerInfo(S38PacketPlayerListItem.AddPlayerData playerData) {
-        super(playerData);
-        setDisplayName(super.getDisplayName());
-    }
-
-
-    private Component displayName;
-
-    private String formatted;
-
-    public Component getOriginalDisplayName() {
-        return displayName;
-    }
-
-    @Override
-    public void setDisplayName(Component displayNameIn) {
-        displayName = displayNameIn;
-        if (displayName == null) {
-            formatted = null;
-            return;
-        }
-
-        formatted = TextUtils.getFormattedText(displayName);
-    }
-
-
-    public Component getDisplayName()
+// 1.8.9 extended NetworkPlayerInfo and replaced vanilla's entries; on 26.1 PlayerTabOverlayMixin passes the tab name vanilla built
+public class CustomNetworkPlayerInfo {
+    // 1.8.9's displayName was the packet's display name, formatted its text; vanilla's tab name covers both
+    public static Component getDisplayName(Component displayName)
     {
-        String rawPlayerString = formatted != null ? formatted : ScorePlayerTeam.formatPlayerName(super.getPlayerTeam(), super.getGameProfile().getName());
+        String rawPlayerString = TextUtils.getFormattedText(displayName);
 
         String actualName = null;
         List<ActiveCosmetic> activeCosmetics;
@@ -80,12 +47,13 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
 
         if (actualName == null) return displayName;
 
-        UUID uuid = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getNameIdCache().get(actualName);
+        // 1.8.9's nameIdCache, the parallel universe tab list
+        UUID uuid = TabList.INSTANCE.getPlayer(actualName);
         boolean dg = FeatureRegistry.DG_INDICATOR.isEnabled() && PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(uuid, false);
 
 
         activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(actualName.toLowerCase());
-        if (activeCosmetics == null && dg) return new MarkedChatComponent(formatted == null ? rawPlayerString : displayName.getString(), "\ued00" + rawPlayerString);
+        if (activeCosmetics == null && dg) return Component.literal("\ued00" + rawPlayerString);
         else if (activeCosmetics == null) return displayName;
 
         CosmeticData color=null;
@@ -99,13 +67,13 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
         if (color != null) { // ᨠ
             String coloredName = color.getData() + actualName;
             if (dg) {
-                return new MarkedChatComponent(formatted == null ? rawPlayerString : displayName.getString(), "\ued00" + rawPlayerString.replace(actualName, coloredName));
+                return Component.literal("\ued00" + rawPlayerString.replace(actualName, coloredName));
             } else {
                 return Component.literal(rawPlayerString.replace(actualName, coloredName));
             }
         } else {
             if (dg) {
-                return new MarkedChatComponent(formatted == null ? rawPlayerString : displayName.getString(), "\ued00" + rawPlayerString);
+                return Component.literal("\ued00" + rawPlayerString);
             } else {
                 return displayName;
             }

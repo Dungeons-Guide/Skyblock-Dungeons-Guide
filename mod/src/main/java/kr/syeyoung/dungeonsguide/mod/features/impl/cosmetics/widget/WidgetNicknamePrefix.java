@@ -84,7 +84,7 @@ public class WidgetNicknamePrefix extends AnnotatedImportOnlyWidget {
                 }));
             }
         }
-        List<ActiveCosmetic> activeCosmeticList =  cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getInstance().getSession().getProfile().getId(), (a) -> new ArrayList<>());
+        List<ActiveCosmetic> activeCosmeticList =  cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getInstance().getUser().getProfileId(), (a) -> new ArrayList<>());
         for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
             CosmeticData cosmeticData =  cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
             if (cosmeticData != null && cosmeticData.getCosmeticType().equals("bracket_color")) {
@@ -128,7 +128,7 @@ public class WidgetNicknamePrefix extends AnnotatedImportOnlyWidget {
                         "§dFrom §r§r§a[RANK§r§6+§r§a] %prefix%§a%name%§r§7: §r§7TEST§r",
                         "§r§b[RANK§c+§b] %prefix%§a%name%§f: TEST",
                         "§r§bCo-op > §r§a[RANK§6+§a] %prefix%§a%name%§f: §rTEST§r"
-                }).replace("%name%", Minecraft.getInstance().getSession().getUsername())
+                }).replace("%name%", Minecraft.getInstance().getUser().getName())
                 .replace("%prefix%", prefix));
 
         boolean disable = (currentSelectedColor == previouslySelectedColor && currentSelectedPrefix == previouslySelectedPrefix)
@@ -148,7 +148,7 @@ public class WidgetNicknamePrefix extends AnnotatedImportOnlyWidget {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         if (previouslySelectedColor != null) {
-            List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getInstance().getSession().getProfile().getId(), (a) -> new ArrayList<>());
+            List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getInstance().getUser().getProfileId(), (a) -> new ArrayList<>());
             for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
                 if (activeCosmetic.getCosmeticData().equals(previouslySelectedColor.getId())) {
                     cosmeticsManager.removeCosmetic(activeCosmetic);
@@ -156,7 +156,7 @@ public class WidgetNicknamePrefix extends AnnotatedImportOnlyWidget {
             }
         }
         if (previouslySelectedPrefix != null) {
-            List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getInstance().getSession().getProfile().getId(), (a) -> new ArrayList<>());
+            List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getInstance().getUser().getProfileId(), (a) -> new ArrayList<>());
             for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
                 if (activeCosmetic.getCosmeticData().equals(previouslySelectedPrefix.getId())) {
                     cosmeticsManager.removeCosmetic(activeCosmetic);

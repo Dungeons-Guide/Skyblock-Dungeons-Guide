@@ -66,7 +66,7 @@ public class WidgetPlayerModel extends AnnotatedImportOnlyWidget {
                 }));
             }
         }
-        List<ActiveCosmetic> activeCosmeticList =  cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getInstance().getSession().getProfile().getId(), (a) -> new ArrayList<>());
+        List<ActiveCosmetic> activeCosmeticList =  cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getInstance().getUser().getProfileId(), (a) -> new ArrayList<>());
         for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
             CosmeticData cosmeticData =  cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
             if (cosmeticData != null && cosmeticData.getCosmeticType().equals("model")) {
@@ -97,7 +97,7 @@ public class WidgetPlayerModel extends AnnotatedImportOnlyWidget {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         if (previouslySelected != null) {
-            List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getInstance().getSession().getProfile().getId(), (a) -> new ArrayList<>());
+            List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getInstance().getUser().getProfileId(), (a) -> new ArrayList<>());
             for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
                 if (activeCosmetic.getCosmeticData().equals(previouslySelected.getId())) {
                     cosmeticsManager.removeCosmetic(activeCosmetic);
