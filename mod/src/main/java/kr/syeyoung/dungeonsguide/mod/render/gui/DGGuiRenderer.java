@@ -106,7 +106,7 @@ public class DGGuiRenderer implements AutoCloseable {
             if (state instanceof StencilState) {
                 if (bufferBuilder != null) recordMesh(steps, bufferBuilder, batchPipeline, batchTextures, batchScissor);
                 bufferBuilder = null;
-                steps.add(new Step(null, null, null, null, (StencilState) state, 0, null));
+                steps.add(new Step(null, null, null, null, (StencilState) state, 0, null, null, null));
                 continue;
             }
             // each shape has its own uniforms, so it's its own draw
@@ -118,7 +118,7 @@ public class DGGuiRenderer implements AutoCloseable {
                 state.buildVertices(shapeBuilder);
                 MeshData mesh = shapeBuilder.build();
                 if (mesh != null) {
-                    Step step = new Step(mesh, pipeline, state.textureSetup(), state.scissor(), null, 0, null);
+                    Step step = new Step(mesh, pipeline, state.textureSetup(), state.scissor(), null, 0, null, null, null);
                     step.uniforms = ((ShaderShapeState) state).getUniforms();
                     steps.add(step);
                 }
@@ -214,7 +214,7 @@ public class DGGuiRenderer implements AutoCloseable {
     private void recordMesh(List<Step> steps, BufferBuilder bufferBuilder, RenderPipeline pipeline, TextureSetup textures, Rectangle scissor) {
         MeshData mesh = bufferBuilder.build();
         if (mesh != null)
-            steps.add(new Step(mesh, pipeline, textures, scissor, null, 0, null));
+            steps.add(new Step(mesh, pipeline, textures, scissor, null, 0, null, null, null));
     }
 
     private void upload(List<Step> steps) {
