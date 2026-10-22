@@ -56,7 +56,7 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
 
         Font fr = Minecraft.getInstance().font;
         String str = "Press "+ FeatureRegistry.SOLVER_BOMBDEFUSE.<InputConstants.Key>getParameter("key").getValue().getDisplayName().getString() + " to request open "+b.getBlock().getName().getString();
-        event.graphics.text(fr, str, (event.graphics.guiWidth() - fr.width(str)) / 2, (event.graphics.guiHeight() - fr.lineHeight) / 2, 0xFFFFFFFF, false);
+        event.context.drawString(str, (Minecraft.getInstance().getWindow().getGuiScaledWidth() - fr.width(str)) / 2, (Minecraft.getInstance().getWindow().getGuiScaledHeight() - fr.lineHeight) / 2, 0xFFFFFFFF, false);
     }
 
     @Override

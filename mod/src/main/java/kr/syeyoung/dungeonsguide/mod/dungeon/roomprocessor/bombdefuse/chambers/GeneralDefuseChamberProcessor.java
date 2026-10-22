@@ -105,7 +105,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     protected void drawPressKey(RenderHUDEvent event) {
         Font fr = Minecraft.getInstance().font;
         String str = "Press "+ FeatureRegistry.SOLVER_BOMBDEFUSE.<InputConstants.Key>getParameter("key").getValue().getDisplayName().getString() + " to save and send solution";
-        event.graphics.text(fr, str, (event.graphics.guiWidth() - fr.width(str)) / 2, (event.graphics.guiHeight() - fr.lineHeight) / 2, 0xFFFFFFFF, false);
+        event.context.drawString(str, (Minecraft.getInstance().getWindow().getGuiScaledWidth() - fr.width(str)) / 2, (Minecraft.getInstance().getWindow().getGuiScaledHeight() - fr.lineHeight) / 2, 0xFFFFFFFF, false);
     }
 
     @Override

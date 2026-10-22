@@ -255,7 +255,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
 
                         Font fr = Minecraft.getInstance().font;
                         String str = "Current: " + ch.getChamberGen().getName() + " Specific: " + ch.getLeft().getProcessor().getName();
-                        event.graphics.text(fr, str, 0, 0, 0xFFFFFFFF, false);
+                        event.context.drawString(str, 0, 0, 0xFFFFFFFF, false);
                     }
                 }
                 if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
@@ -265,7 +265,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                         Font fr = Minecraft.getInstance().font;
                         if (ch.getChamberGen() == null || ch.getRight().getProcessor() == null) continue;
                         String str = "Current: " + ch.getChamberGen().getName() + " Specific: " + ch.getRight().getProcessor().getName();
-                        event.graphics.text(fr, str, 0, 0, 0xFFFFFFFF, false);
+                        event.context.drawString(str, 0, 0, 0xFFFFFFFF, false);
                     }
                 }
             }

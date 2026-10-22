@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.listener;
 
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.events.impl.WorldUnloadEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingDeathEvent;
@@ -285,22 +286,24 @@ public class DungeonListener {
 
             if (context.getDungeonName().equals("TEST DG")) {
                 Font fr = Minecraft.getInstance().font;
-                GuiGraphicsExtractor graphics = postRender.graphics;
+                RenderingContext renderingContext = postRender.context;
+                int guiWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+                int guiHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
 
                 int width = fr.width("Dungeons Guide Mockup Dungeon");
                 int width2 = fr.width("Preset: "+context.getPreset().getPresetName());
                 int bigger = Math.max(width, width2);
-                graphics.fill(
-                        (graphics.guiWidth()-bigger - 10)/2,
-                        (graphics.guiHeight()/9 - 5) ,
-                        (graphics.guiWidth() + bigger + 10) /2,
-                        (graphics.guiHeight()/9) + 5 + fr.lineHeight*2,
+                renderingContext.drawRect(
+                        (guiWidth-bigger - 10)/2,
+                        (guiHeight/9 - 5) ,
+                        (guiWidth + bigger + 10) /2,
+                        (guiHeight/9) + 5 + fr.lineHeight*2,
                         0x77111111
                 );
 
-                graphics.text(fr, "Dungeons Guide Mockup Dungeon", (graphics.guiWidth()-width)/2, graphics.guiHeight()/9, 0xFF00FF00, false);
+                renderingContext.drawString("Dungeons Guide Mockup Dungeon", (guiWidth-width)/2, guiHeight/9, 0xFF00FF00, false);
 
-                graphics.text(fr, "Preset: "+context.getPreset().getPresetName(), (graphics.guiWidth() - width2) / 2, graphics.guiHeight() / 9 + fr.lineHeight, 0xFF00FF00, false);
+                renderingContext.drawString("Preset: "+context.getPreset().getPresetName(), (guiWidth - width2) / 2, guiHeight / 9 + fr.lineHeight, 0xFF00FF00, false);
             }
 
         }

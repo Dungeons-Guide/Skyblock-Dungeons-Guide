@@ -18,6 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.launcher;
 
+import java.util.function.Function;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import com.mojang.blaze3d.platform.Window;
+import kr.syeyoung.dungeonsguide.mod.render.gui.StencilImage;
+import kr.syeyoung.dungeonsguide.mod.render.gui.DGGuiRenderer;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
@@ -119,16 +125,16 @@ public class FabricEventBridge {
         });
 
         HudElementRegistry.addFirst(Identifier.fromNamespaceAndPath("dungeonsguide", "hud_pre"), (graphics, deltaTracker) ->
-                fire(new RenderHUDEvent.Pre(deltaTracker.getGameTimeDeltaPartialTick(false), graphics)));
+                fireDrawing(hudPreImage, graphics, context -> new RenderHUDEvent.Pre(deltaTracker.getGameTimeDeltaPartialTick(false), graphics, context)));
         HudElementRegistry.addLast(Identifier.fromNamespaceAndPath("dungeonsguide", "hud_post"), (graphics, deltaTracker) ->
-                fire(new RenderHUDEvent.Post(deltaTracker.getGameTimeDeltaPartialTick(false), graphics)));
+                fireDrawing(hudPostImage, graphics, context -> new RenderHUDEvent.Post(deltaTracker.getGameTimeDeltaPartialTick(false), graphics, context)));
 
         // fabric resets per screen events on every init, so they are registered here
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
             fire(new ScreenInitEvent.Post(screen, scaledWidth, scaledHeight));
 
             ScreenEvents.afterExtract(screen).register((s, graphics, mouseX, mouseY, tickProgress) ->
-                    fire(new ScreenRenderEvent.Post(s, graphics, mouseX, mouseY, tickProgress)));
+                    fireDrawing(screenImage, graphics, context -> new ScreenRenderEvent.Post(s, graphics, mouseX, mouseY, tickProgress, context)));
 
             ScreenMouseEvents.allowMouseClick(screen).register((s, event) ->
                     !fire(new ScreenMouseEvent.Pre(s, ScreenMouseEvent.Action.CLICK, event, event.x(), event.y(), 0, 0, 0, 0)));
@@ -155,6 +161,24 @@ public class FabricEventBridge {
     }
 
     // minecraft can call into the bridge (mixins) before dungeons guide is created
+    // D126: handlers of drawing events draw into a RenderingContext in gui units, rendered into an image after dispatch
+    private static final StencilImage hudPreImage = new StencilImage("Dungeons Guide hud pre event");
+    private static final StencilImage hudPostImage = new StencilImage("Dungeons Guide hud post event");
+    private static final StencilImage screenImage = new StencilImage("Dungeons Guide screen render event");
+
+    private static boolean fireDrawing(StencilImage image, GuiGraphicsExtractor graphics, Function<RenderingContext, DGEvent> event) {
+        Window window = Minecraft.getInstance().getWindow();
+        RenderingContext context = new RenderingContext(window.getHeight());
+        context.pose().scale(window.getGuiScale(), window.getGuiScale());
+        boolean result = fire(event.apply(context));
+        if (!context.getStates().isEmpty()) {
+            image.ensureSize(window.getWidth(), window.getHeight());
+            DGGuiRenderer.INSTANCE.submit(image, context.getStates());
+            image.extractComposite(graphics);
+        }
+        return result;
+    }
+
     public static boolean fire(DGEvent event) {
         if (DungeonsGuide.getDungeonsGuide() == null) return false;
         return DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(event);
