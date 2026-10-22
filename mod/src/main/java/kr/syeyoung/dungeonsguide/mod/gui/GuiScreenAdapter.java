@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.gui;
 
+import com.mojang.blaze3d.platform.cursor.CursorType;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
@@ -156,7 +157,9 @@ public class GuiScreenAdapter extends Screen {
             DGGuiRenderer.INSTANCE.submit(image, context.getStates());
             image.extractComposite(graphics);
 
-            graphics.requestCursor(GLCursors.getCursor(view.getCurrentCursor()));
+            // 1.8.9's setNativeCursor(null) was the default cursor; 26.1 can't request null, vanilla's default stays
+            CursorType cursor = GLCursors.getCursor(view.getCurrentCursor());
+            if (cursor != null) graphics.requestCursor(cursor);
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();

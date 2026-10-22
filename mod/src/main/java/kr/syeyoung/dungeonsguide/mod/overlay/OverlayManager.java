@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.overlay;
 
+import com.mojang.blaze3d.platform.cursor.CursorType;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenMouseEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenKeyboardEvent;
@@ -169,8 +170,11 @@ public class OverlayManager {
         image.extractComposite(graphics);
 
         // 1.8.9 only set the native cursor when the overlay changed it, so vanilla's own cursor stays otherwise
-        if (view.getCurrentCursor() != EnumCursor.DEFAULT)
-            graphics.requestCursor(GLCursors.getCursor(view.getCurrentCursor()));
+        if (view.getCurrentCursor() != EnumCursor.DEFAULT) {
+            // 1.8.9's setNativeCursor(null) was the default cursor; 26.1 can't request null, vanilla's default stays
+            CursorType cursor = GLCursors.getCursor(view.getCurrentCursor());
+            if (cursor != null) graphics.requestCursor(cursor);
+        }
     }
 
     private void keyTyped(KeyEvent keyEvent) {
