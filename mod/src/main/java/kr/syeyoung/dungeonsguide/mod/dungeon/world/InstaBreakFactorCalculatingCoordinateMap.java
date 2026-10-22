@@ -42,7 +42,8 @@ public class InstaBreakFactorCalculatingCoordinateMap implements ICoordinateMap<
         if (hardness < 0) {
             return BreakFactor.NO;
         } else if (algorithmSetting.getPickaxeSpeed() > 0 &&
-                (((new ItemStack(algorithmSetting.getPickaxe().getTool()).isCorrectToolForDrops(iBlockState)) &&
+                // the stub pickaxe is the highest level, so it's the correct tool for anything mineable with a pickaxe (D125)
+                ((iBlockState.is(BlockTags.MINEABLE_WITH_PICKAXE) &&
                         hardness <= algorithmSetting.getPickaxeSpeed() / 30.0) ||
                         (hardness <= algorithmSetting.getPickaxeSpeed() / 100.0))
         ) {

@@ -18,6 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
+import java.util.stream.Collectors;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.world.item.TooltipFlag;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapterChestOverride;
@@ -150,10 +153,13 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
 
     public MinecraftTooltip createTooltip() {
         if (party == null) return new MinecraftTooltip();
-        List<String> toHover = party.itemStack.getTooltip(Minecraft.getInstance().player, Minecraft.getInstance().options.advancedItemTooltips);
+        List<String> toHover = party.itemStack.getTooltipLines(Item.TooltipContext.of(Minecraft.getInstance().level), Minecraft.getInstance().player,
+                Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL)
+                // TODO: D5 stopgap (D125), 1.8.9 tooltips were legacy strings
+                .stream().map(TextUtils::getFormattedText).collect(Collectors.toList());
         for (int i = 0; i < toHover.size(); ++i) {
             if (i == 0) {
-                toHover.set(i, party.itemStack.getRarity().rarityColor + toHover.get(i));
+                toHover.set(i, party.itemStack.getRarity().color() + toHover.get(i));
             } else {
                 toHover.set(i, ChatFormatting.GRAY + toHover.get(i));
             }

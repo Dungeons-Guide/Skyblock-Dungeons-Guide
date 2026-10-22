@@ -21,6 +21,10 @@ package kr.syeyoung.dungeonsguide.mod.utils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,6 +32,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class SkyblockUtils {
+    // TODO: D125 stopgap until measured (dgdebug itemcapture): 1.8.9 kept SkyBlock's ExtraAttributes in the item's nbt,
+    // 26.1 has custom_data; this reads a nested ExtraAttributes compound, else custom_data's root. Empty if none
+    public static CompoundTag getExtraAttributes(ItemStack itemStack) {
+        CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA);
+        if (customData == null) return new CompoundTag();
+        CompoundTag tag = customData.copyTag();
+        return tag.getCompound("ExtraAttributes").orElse(tag);
+    }
+
     public static long getSkyblockYear() throws IOException {
         URL url = new URL("https://hypixel-api.inventivetalent.org/api/skyblock/calendar");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

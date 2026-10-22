@@ -1,5 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist;
 
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.precalclist.abilitysettings.WidgetToolEdit;
+
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
@@ -56,7 +58,7 @@ public class WidgetAbilitySettings extends Widget implements Renderer {
 
         int pickX = 5;
         if (algorithmSetting.getPickaxe() != null) {
-            renderIndex(pickX, 1, algorithmSetting.getPickaxe().getTool().getToolMaterial().ordinal() * 8, 16, 16, 0);
+            renderIndex(pickX, 1, WidgetToolEdit.ToolMaterialType.of(algorithmSetting.getPickaxe().getTool()).index, 16, 16, 0);
             String toDraw = algorithmSetting.getPickaxe().getEfficiency() + "";
             fr.drawStringWithShadow(toDraw, pickX + 17 - fr.getStringWidth(toDraw), 10, 0xFF979797);
         } else {
@@ -66,7 +68,7 @@ public class WidgetAbilitySettings extends Widget implements Renderer {
 
         int shovelX = 24;
         if (algorithmSetting.getShovel() != null) {
-            renderIndex(shovelX, 1, algorithmSetting.getShovel().getTool().getToolMaterial().ordinal() * 8 + 1, 16, 16, 0);
+            renderIndex(shovelX, 1, WidgetToolEdit.ToolMaterialType.of(algorithmSetting.getShovel().getTool()).index + 1, 16, 16, 0);
             String toDraw = algorithmSetting.getShovel().getEfficiency() + "";
             fr.drawStringWithShadow(toDraw, shovelX + 17 - fr.getStringWidth(toDraw), 10, 0xFF979797);
         } else {
@@ -76,7 +78,7 @@ public class WidgetAbilitySettings extends Widget implements Renderer {
 
         int axeX = 43;
         if (algorithmSetting.getAxe() != null) {
-            renderIndex(axeX, 1, algorithmSetting.getAxe().getTool().getToolMaterial().ordinal() * 8 + 2, 16, 16, 0);
+            renderIndex(axeX, 1, WidgetToolEdit.ToolMaterialType.of(algorithmSetting.getAxe().getTool()).index + 2, 16, 16, 0);
             String toDraw = algorithmSetting.getAxe().getEfficiency() + "";
             fr.drawStringWithShadow(toDraw, axeX + 17 - fr.getStringWidth(toDraw), 10, 0xFF979797);
         } else {

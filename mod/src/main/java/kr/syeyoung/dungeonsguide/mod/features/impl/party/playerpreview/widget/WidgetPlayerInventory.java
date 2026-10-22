@@ -18,6 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget;
 
+import java.util.stream.Collectors;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.Item;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
@@ -102,11 +106,13 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
 
 
             if (toHoverStack != null) {
-                List<String> list = toHoverStack.getTooltip(Minecraft.getInstance().player,
-                        Minecraft.getInstance().options.advancedItemTooltips);
+                List<String> list = toHoverStack.getTooltipLines(Item.TooltipContext.of(Minecraft.getInstance().level), Minecraft.getInstance().player,
+                Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL)
+                // TODO: D5 stopgap (D125), 1.8.9 tooltips were legacy strings
+                .stream().map(TextUtils::getFormattedText).collect(Collectors.toList());
                 for (int i = 0; i < list.size(); ++i) {
                     if (i == 0) {
-                        list.set(i, toHoverStack.getRarity().rarityColor + list.get(i));
+                        list.set(i, toHoverStack.getRarity().color() + list.get(i));
                     } else {
                         list.set(i, ChatFormatting.GRAY + list.get(i));
                     }

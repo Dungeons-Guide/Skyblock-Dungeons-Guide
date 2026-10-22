@@ -212,26 +212,26 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (event.entity instanceof AbstractArrow) {
             return;
         }
-        if (entityDataMap.get(event.entity.getEntityId()) != null) return;
+        if (entityDataMap.get(event.entity.getId()) != null) return;
         EntityData entityData = new EntityData();
-        entityData.id = event.entity.getEntityId();
+        entityData.id = event.entity.getId();
         entityData.trajectory.add(new EntityData.EntityTrajectory(
                 EntityData.EntityTrajectory.Type.ENTER,
-                event.entity.getPositionVector(),
+                event.entity.position(),
                 System.currentTimeMillis()
         ));
         entityData.type = event.entity.getClass().getSimpleName();
-        entityDataMap.put(event.entity.getEntityId(), entityData);
+        entityDataMap.put(event.entity.getId(), entityData);
 
         Point roompt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext())
                 .map(DungeonContext::getScaffoldParser)
                 .map(DungeonRoomScaffoldParser::getDungeonMapLayout)
-                .map(a -> a.worldPointToRoomPoint(event.entity.getPositionVector())).orElse(null);
+                .map(a -> a.worldPointToRoomPoint(event.entity.position())).orElse(null);
         if (roompt == null) return;;
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
         if (dungeonRoom != null && roomInfoMap.containsKey(dungeonRoom)) {
-            roomInfoMap.get(dungeonRoom).entityData.put(event.entity.getEntityId(), entityData);
+            roomInfoMap.get(dungeonRoom).entityData.put(event.entity.getId(), entityData);
         }
     }
 
@@ -271,7 +271,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (!TextUtils.getFormattedText(event.message).contains(":")) {
             // this is not user message.
             if (Minecraft.getInstance().player == null) return;
-            Vec3 pos = Minecraft.getInstance().player.getPositionVector();
+            Vec3 pos = Minecraft.getInstance().player.position();
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
@@ -293,7 +293,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (secret != lastNo || total != totalSecret) {
             lastNo = secret;
             totalSecret = total;
-            Vec3 pos = Minecraft.getInstance().player.getPositionVector();
+            Vec3 pos = Minecraft.getInstance().player.position();
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
@@ -308,13 +308,13 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null || dungeonContext.getScaffoldParser() == null) return;
-        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.getPositionVector());
+        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.position());
         DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
         if (dungeonRoom == null) return;
         RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
         if (roomInfo == null) return;
-        if (roomInfo.playerTrajactory.size() == 0 || roomInfo.playerTrajactory.getLast().getPos() == null || roomInfo.playerTrajactory.getLast().getPos().squareDistanceTo(Minecraft.getInstance().player.getPositionVector()) > 0.1f) {
-            roomInfo.playerTrajactory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, Minecraft.getInstance().player.getPositionVector(), System.currentTimeMillis()));
+        if (roomInfo.playerTrajactory.size() == 0 || roomInfo.playerTrajactory.getLast().getPos() == null || roomInfo.playerTrajactory.getLast().getPos().squareDistanceTo(Minecraft.getInstance().player.position()) > 0.1f) {
+            roomInfo.playerTrajactory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, Minecraft.getInstance().player.position(), System.currentTimeMillis()));
         }
     }
 
@@ -326,19 +326,19 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (event.entity instanceof AbstractArrow) {
             return;
         }
-        EntityData entityData = entityDataMap.get(event.entity.getEntityId());
+        EntityData entityData = entityDataMap.get(event.entity.getId());
         if (entityData == null) {
 //            System.out.println("WTFF??? it's not on map?? "+event.entity);
             return;
         }
-        entityData.id = event.entity.getEntityId();
+        entityData.id = event.entity.getId();
 
         if (event.entity instanceof RemotePlayer && entityData.playerSkin == null) {
             entityData.playerSkin = ((RemotePlayer) event.entity).getGameProfile().getProperties().get("textures").stream().findFirst().map(Property::getValue).orElse(null);
         }
 
-        List<Entity> entityList = event.entity.worldObj.getEntitiesInAABBexcluding(event.entity, new AABB(-0.2,-0.2,-0.2,0.2,0.2,0.2).offset(event.entity.posX, event.entity.posY+event.entity.height, event.entity.posZ), e -> e instanceof ArmorStand);
-        Entity theEntity =entityList.stream().min(Comparator.comparingDouble(a -> Math.abs(a.posX - event.entityLiving.posX) + Math.abs(a.posZ - event.entityLiving.posZ))).orElse(null);
+        List<Entity> entityList = event.entity.worldObj.getEntitiesInAABBexcluding(event.entity, new AABB(-0.2,-0.2,-0.2,0.2,0.2,0.2).offset(event.entity.getX(), event.entity.getY()+event.entity.height, event.entity.getZ()), e -> e instanceof ArmorStand);
+        Entity theEntity =entityList.stream().min(Comparator.comparingDouble(a -> Math.abs(a.getX() - event.entityLiving.getX()) + Math.abs(a.getZ() - event.entityLiving.getZ()))).orElse(null);
 
         if (theEntity != null && entityData.armorstand == null)
             entityData.armorstand = theEntity.getDisplayName();
@@ -355,17 +355,17 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             entityData.armoritems[2] = event.entityLiving.getCurrentArmor(2);
         if (event.entityLiving.getCurrentArmor(3) != null)
             entityData.armoritems[3] = event.entityLiving.getCurrentArmor(3);
-        if (entityData.trajectory.getLast() == null || entityData.trajectory.getLast().getPos() == null || entityData.trajectory.getLast().getPos().squareDistanceTo(event.entity.getPositionVector()) > 0.1f) {
-            entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, event.entity.getPositionVector(), System.currentTimeMillis()));
+        if (entityData.trajectory.getLast() == null || entityData.trajectory.getLast().getPos() == null || entityData.trajectory.getLast().getPos().squareDistanceTo(event.entity.position()) > 0.1f) {
+            entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, event.entity.position(), System.currentTimeMillis()));
         }
     }
 
     @DGEventHandler
     public void onEntityDespawn(LivingDeathEvent event) {
 //        System.out.println("Entity died!!:" +event.entity);
-        EntityData entityData = entityDataMap.get(event.entity.getEntityId());
+        EntityData entityData = entityDataMap.get(event.entity.getId());
         if (entityData != null) {
-            entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.DEATH, event.entity.getPositionVector(), System.currentTimeMillis()));
+            entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.DEATH, event.entity.position(), System.currentTimeMillis()));
         }
     }
 
@@ -732,13 +732,13 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
         Entity hovered = Minecraft.getInstance().pointedEntity;
         if (hovered == null) return;
-        EntityData entityData = entityDataMap.get(hovered.getEntityId());
+        EntityData entityData = entityDataMap.get(hovered.getId());
         if (entityData == null) {
-            RenderUtils.drawTextAtWorld("??Unknown??", (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
+            RenderUtils.drawTextAtWorld("??Unknown??", (float) hovered.getX(), (float) hovered.getY()+3, (float) hovered.getZ(), 0xFF000000, 0.02f, false, true, event.partialTicks);
         } else {
             if (entityData.getArmorstand() != null)
-                RenderUtils.drawTextAtWorld(TextUtils.getFormattedText(entityData.getArmorstand()), (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
-            RenderUtils.drawTextAtWorld(entityData.getType(), (float) hovered.posX, (float) hovered.posY+3.2f, (float) hovered.posZ, 0xFF00FF00, 0.02f, false, true, event.partialTicks);
+                RenderUtils.drawTextAtWorld(TextUtils.getFormattedText(entityData.getArmorstand()), (float) hovered.getX(), (float) hovered.getY()+3, (float) hovered.getZ(), 0xFF000000, 0.02f, false, true, event.partialTicks);
+            RenderUtils.drawTextAtWorld(entityData.getType(), (float) hovered.getX(), (float) hovered.getY()+3.2f, (float) hovered.getZ(), 0xFF00FF00, 0.02f, false, true, event.partialTicks);
             Vec3 pos = entityData.getTrajectory().getFirst().getPos();
             RenderUtils.renderBeaconBeam(
                     pos.xCoord,

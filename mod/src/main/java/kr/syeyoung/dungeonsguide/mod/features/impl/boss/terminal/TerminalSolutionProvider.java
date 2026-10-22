@@ -18,12 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
-import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.inventory.Slot;
 
 import java.util.List;
 
 public interface TerminalSolutionProvider {
-    TerminalSolution provideSolution(ChestMenu chest, List<Slot> clicked);
-    boolean isApplicable(ChestMenu chest);
+    // the screen, since its title is 1.8.9's chest inventory name (D125)
+    TerminalSolution provideSolution(ContainerScreen screen, List<Slot> clicked);
+    boolean isApplicable(ContainerScreen screen);
 }

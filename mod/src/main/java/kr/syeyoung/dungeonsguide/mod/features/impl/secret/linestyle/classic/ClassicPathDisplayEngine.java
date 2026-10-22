@@ -76,7 +76,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         ActionMoveContext ctx = executorWeakHashMap.get(actionMove);
 
         if (ctx.executor == null) ctx.executor = pathPlanner.loadPrecalculatedByHash(actionMove.getPathfindRequest(dungeonRoom).getHash(), dungeonRoom);
-        if (ctx.executor != null) ctx.executor.setTarget(Minecraft.getInstance().player.getPositionVector());
+        if (ctx.executor != null) ctx.executor.setTarget(Minecraft.getInstance().player.position());
     }
 
     private void tickAction(AbstractAction action) {
@@ -98,12 +98,12 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
                 forceRefresh(actionMove);
             }
             if (ctx.executor != null && (ctx.poses == null || !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled())) {
-                ctx.poses = ctx.executor.getRoute(Minecraft.getInstance().player.getPositionVector());
+                ctx.poses = ctx.executor.getRoute(Minecraft.getInstance().player.position());
             }
 
             if (ctx.tick == 0 && classicPathEngineLineProperties.isPathfind() && ctx.executor != null) {
                 if (classicPathEngineLineProperties.getLineRefreshRate() != -1 && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() && ctx.executor.isComplete()) {
-                    ctx.executor.setTarget(Minecraft.getInstance().player.getPositionVector());
+                    ctx.executor.setTarget(Minecraft.getInstance().player.position());
                 }
             }
             return;
@@ -134,7 +134,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         List<AbstractAction> actions = actionRoute.getActions();
         if (current -1 >= 0) {
             AbstractAction abstractAction = actions.get(current - 1);
-            if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.getPositionVector()) >= 25))) {
+            if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.position()) >= 25))) {
                 drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
             }
         }
@@ -165,7 +165,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
             List<AbstractAction> atomicActionActions = ((AtomicAction) currentAction).getActions();
             if (atomicActionCurrent -1 >= 0) {
                 AbstractAction abstractAction = atomicActionActions.get(atomicActionCurrent - 1);
-                if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.getPositionVector()) >= 25))) {
+                if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.position()) >= 25))) {
                     drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
                 }
             }
@@ -227,9 +227,9 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
 
         Entity viewing_from = Minecraft.getInstance().getCameraEntity();
 
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
+        double x_fix = viewing_from.xOld + ((viewing_from.getX() - viewing_from.xOld) * partialTicks);
+        double y_fix = viewing_from.yOld + ((viewing_from.getY() - viewing_from.yOld) * partialTicks);
+        double z_fix = viewing_from.zOld + ((viewing_from.getZ() - viewing_from.zOld) * partialTicks);
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(-x_fix, -y_fix, -z_fix);
@@ -316,9 +316,9 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         Entity render = Minecraft.getInstance().getCameraEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
-        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
-        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
-        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
+        double realX = render.xOld + (render.getX() - render.xOld) * partialTicks;
+        double realY = render.yOld + (render.getY() - render.yOld) * partialTicks;
+        double realZ = render.zOld + (render.getZ() - render.zOld) * partialTicks;
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(-realX, -realY, -realZ);

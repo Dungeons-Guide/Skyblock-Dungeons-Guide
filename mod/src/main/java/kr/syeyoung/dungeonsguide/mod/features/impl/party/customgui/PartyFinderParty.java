@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
+import net.minecraft.core.component.DataComponents;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -46,32 +47,28 @@ public class PartyFinderParty {
     }
 
     public static PartyFinderParty fromItemStack(ItemStack itemStack) {
-        PartyFinderParty party = fromItemNbt(itemStack.getTagCompound());
+        PartyFinderParty party = fromItemNbt(itemStack);
         party.itemStack = itemStack;
         return party;
     }
 
-    private static PartyFinderParty fromItemNbt(CompoundTag stackTagCompound) {
-        if (stackTagCompound != null && stackTagCompound.hasKey("display", 10)) {
-            CompoundTag nbttagcompound = stackTagCompound.getCompoundTag("display");
-            String name = nbttagcompound.getString("Name");
-
-            if (nbttagcompound.getTagId("Lore") == 9) {
-                ListTag nbttaglist1 = nbttagcompound.getTagList("Lore", 8);
-                return fromLore(name, nbttaglist1);
-            }
+    // 1.8.9's display.Name / display.Lore, the name and lore components on 26.1 (D125)
+    private static PartyFinderParty fromItemNbt(ItemStack itemStack) {
+        if (itemStack.has(DataComponents.LORE)) {
+            String name = TextUtils.getFormattedName(itemStack);
+            return fromLore(name, TextUtils.getFormattedLore(itemStack));
         }
         return new PartyFinderParty();
     }
 
-    private static PartyFinderParty fromLore(String name, ListTag tagList) {
+    private static PartyFinderParty fromLore(String name, List<String> tagList) {
         PartyFinderParty party = new PartyFinderParty();
-        for (int i = 0; i < tagList.tagCount(); i++) {
-            String line = tagList.getStringTagAt(i);
+        for (int i = 0; i < tagList.size(); i++) {
+            String line = tagList.get(i);
             if (line.startsWith("§7§7Note: ")) {
                 party.note = line.substring(10).trim();
-                if (i + 1 < tagList.tagCount()) {
-                    String nextLine = tagList.getStringTagAt(i + 1);
+                if (i + 1 < tagList.size()) {
+                    String nextLine = tagList.get(i + 1);
                     if (!nextLine.contains("§7") && !nextLine.replaceAll("§.| ", "").isEmpty()) {
                         i++;
                         party.note += " " + nextLine;

@@ -86,6 +86,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatCapture;
+import kr.syeyoung.dungeonsguide.mod.utils.ItemCapture;
 import java.io.IOException;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.RoomDataConverter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
@@ -391,7 +392,8 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug brand")
     public void brandCommand() {
-        String serverBrand = Minecraft.getInstance().player.getClientBrand();
+        // 1.8.9 kept the server brand on the player, 26.1 on the connection
+        String serverBrand = Minecraft.getInstance().getConnection().serverBrand();
         ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §e" + serverBrand));
     }
 
@@ -415,11 +417,11 @@ public class CommandDgDebug {
                 CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
                 )));
-                byte[] blocks = compound.getByteArray("Blocks");
-                byte[] meta = compound.getByteArray("Data");
+                byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
+                byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
                 int shape = jsonObject.get("shape").getAsShort();
-                int len = compound.getShort("Length");
-                int wid = compound.getShort("Width");
+                int len = compound.getShortOr("Length", (short) 0);
+                int wid = compound.getShortOr("Width", (short) 0);
                 // formula y *len*width + z * width + x
 
                 for (int x = 0; x <= 11; x ++) {
@@ -516,8 +518,8 @@ public class CommandDgDebug {
                         }
                     }
                 }
-                compound.setByteArray("Blocks", blocks);
-                compound.setByteArray("Data", meta);
+                compound.putByteArray("Blocks", blocks);
+                compound.putByteArray("Data", meta);
 
                 String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound);
                 jsonObject.remove("schematic");
@@ -548,11 +550,11 @@ public class CommandDgDebug {
         File f = new File(dir, file);
             try (FileInputStream fis = new FileInputStream(f)){
                 CompoundTag compound = NbtIo.readCompressed(fis);
-                byte[] blocks = compound.getByteArray("Blocks");
-                byte[] meta = compound.getByteArray("Data");
+                byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
+                byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
                 int shape = 1;
-                int len = compound.getShort("Length");
-                int wid = compound.getShort("Width");
+                int len = compound.getShortOr("Length", (short) 0);
+                int wid = compound.getShortOr("Width", (short) 0);
                 // formula y *len*width + z * width + x
 
                 for (int x = 0; x <= 11; x ++) {
@@ -649,8 +651,8 @@ public class CommandDgDebug {
                         }
                     }
                 }
-                compound.setByteArray("Blocks", blocks);
-                compound.setByteArray("Data", meta);
+                compound.putByteArray("Blocks", blocks);
+                compound.putByteArray("Data", meta);
 
 
                 OutputStream outputStream = Files.newOutputStream(new File(outdir, "fixed-"+f.getName()).toPath());
@@ -686,8 +688,8 @@ public class CommandDgDebug {
                 CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
                 )));
-                byte[] blocks = compound.getByteArray("Blocks");
-                byte[] meta = compound.getByteArray("Data");
+                byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
+                byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
 
                 JsonArray jsonElements = new JsonArray();
                 Set<String> updated = new HashSet<>();
@@ -771,11 +773,11 @@ public class CommandDgDebug {
                     CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                             jsonObject.get("schematic").getAsString()
                     )));
-                    byte[] blocks = compound.getByteArray("Blocks");
-                    byte[] meta = compound.getByteArray("Data");
+                    byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
+                    byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
 
-                    int len = compound.getShort("Length");
-                    int wid = compound.getShort("Width");
+                    int len = compound.getShortOr("Length", (short) 0);
+                    int wid = compound.getShortOr("Width", (short) 0);
 
                     int air = 0;
                     for (int i = 1; i <= 31; i++) {
@@ -842,8 +844,8 @@ public class CommandDgDebug {
                 CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
                 )));
-                byte[] blocks = compound.getByteArray("Blocks");
-                byte[] meta = compound.getByteArray("Data");
+                byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
+                byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
                 // to get
 
                 JsonArray jsonElements = new JsonArray();
@@ -859,7 +861,7 @@ public class CommandDgDebug {
                         int z = blockData.get(2).getAsInt() - jsonObject.get("minZ").getAsInt();
                         String block = blockData.get(3).getAsString().split(":")[0];
 
-                        int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
+                        int index = x + (y * compound.getShortOr("Length", (short) 0) + z) * compound.getShortOr("Width", (short) 0);
                         if (index >= blocks.length) continue;
                         if (index < 0) continue;
                         String worldBlock = (blocks[index] & 0xFF)+"";
@@ -869,7 +871,7 @@ public class CommandDgDebug {
                         if (block.equals("0") && blockupdates.getAsJsonArray("updatedBlocks").size() > 800) continue;
                         if (block.equals("148")) continue; // trap plate
                         if (x == 0 || z == 0 && (y < 66 || y > 73)) continue;
-                        if (x >=  compound.getShort("Width") || z >=  compound.getShort("Length")) continue;
+                        if (x >=  compound.getShortOr("Width", (short) 0) || z >=  compound.getShortOr("Length", (short) 0)) continue;
                         if (block.equals("45")) continue; // bricks... mages do be like..
                         if (block.equals("79")) continue; // ice... apparently some1 uses frostworker
                         updated.add(x+":"+y+":"+z+":"+block);
@@ -892,8 +894,8 @@ public class CommandDgDebug {
 
 
                 if (chestpopulated) {
-                    compound.setByteArray("Blocks", blocks);
-                    compound.setByteArray("Data", meta);
+                    compound.putByteArray("Blocks", blocks);
+                    compound.putByteArray("Data", meta);
 
                     String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound);
                     jsonObject.remove("schematic");
@@ -915,10 +917,10 @@ public class CommandDgDebug {
                     CompoundTag compound2 = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                             originalRoomMapping.get("schematic").getAsString()
                     )));
-                    byte[] blocks2 = compound2.getByteArray("Blocks");
-                    byte[] meta2 = compound2.getByteArray("Data");
-                    int len = compound.getShort("Length");
-                    int wid = compound.getShort("Width");
+                    byte[] blocks2 = compound2.getByteArray("Blocks").orElse(new byte[0]);
+                    byte[] meta2 = compound2.getByteArray("Data").orElse(new byte[0]);
+                    int len = compound.getShortOr("Length", (short) 0);
+                    int wid = compound.getShortOr("Width", (short) 0);
 
                     boolean changed = false;
 
@@ -1030,8 +1032,8 @@ public class CommandDgDebug {
                         }
                     }
                     if (changed) {
-                        compound2.setByteArray("Blocks", blocks2);
-                        compound2.setByteArray("Data", meta2);
+                        compound2.putByteArray("Blocks", blocks2);
+                        compound2.putByteArray("Data", meta2);
 
                         String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound2);
                         originalRoomMapping.remove("schematic");
@@ -1061,7 +1063,7 @@ public class CommandDgDebug {
             if (thePlayer == null) {
                 return suggestionsBuilder.buildFuture();
             }
-            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.position());
 
             DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
             for (String s : dungeonRoom.getMechanics().keySet()) {
@@ -1078,7 +1080,7 @@ public class CommandDgDebug {
             if (thePlayer == null) {
                 return suggestionsBuilder.buildFuture();
             }
-            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.position());
 
             DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
 
@@ -1105,7 +1107,7 @@ public class CommandDgDebug {
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().tick();
             }
-            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.position());
 
             DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
             RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
@@ -1437,6 +1439,16 @@ public class CommandDgDebug {
     }
 
     // D104: records what the server sends as chat / action bar / titles
+    @DGCommand("dgdebug itemcapture")
+    public void itemCaptureCommand() {
+        try {
+            File file = ItemCapture.capture();
+            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fItems captured to " + file.getAbsolutePath()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @DGCommand("dgdebug chatcapture")
     public void chatCaptureCommand() {
         try {
@@ -1474,7 +1486,7 @@ public class CommandDgDebug {
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().tick();
             }
-            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.position());
 
             DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
 

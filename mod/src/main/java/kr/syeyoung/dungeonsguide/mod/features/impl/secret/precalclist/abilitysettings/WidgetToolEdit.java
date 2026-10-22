@@ -8,9 +8,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Item;
-import net.minecraft.item.ItemTool;
 import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
@@ -42,25 +39,32 @@ public class WidgetToolEdit extends AnnotatedImportOnlyWidget {
     public enum ToolType {
         PICKAXE(0, (a) -> a.pickaxe), SHOVEL(1, (a) -> a.shovel), AXE(2, (a) -> a.axe);
         public int offset;
-        public Function<ToolMaterialType, ItemTool> converter;
+        public Function<ToolMaterialType, String> converter;
     }
 
+    // tools are saved by their 1.8.9 registry names (D125)
     @AllArgsConstructor
     public enum ToolMaterialType {
-        NONE(3, null, null, null, null),
-        WOOD(0, Item.ToolMaterial.WOOD, (ItemTool) Items.wooden_pickaxe, (ItemTool) Items.wooden_shovel, (ItemTool) Items.wooden_axe),
-        STONE(8, Item.ToolMaterial.STONE, (ItemTool) Items.stone_pickaxe, (ItemTool) Items.stone_shovel, (ItemTool) Items.stone_axe),
-        IRON(16, Item.ToolMaterial.IRON, (ItemTool) Items.iron_pickaxe, (ItemTool) Items.iron_shovel, (ItemTool) Items.iron_axe),
-        DIAMOND(24, Item.ToolMaterial.EMERALD, (ItemTool) Items.diamond_pickaxe, (ItemTool) Items.diamond_shovel, (ItemTool) Items.diamond_axe),
-        GOLD(32, Item.ToolMaterial.GOLD, (ItemTool) Items.golden_pickaxe, (ItemTool) Items.golden_shovel, (ItemTool) Items.golden_axe);
+        NONE(3, null, null, null),
+        WOOD(0, "minecraft:wooden_pickaxe", "minecraft:wooden_shovel", "minecraft:wooden_axe"),
+        STONE(8, "minecraft:stone_pickaxe", "minecraft:stone_shovel", "minecraft:stone_axe"),
+        IRON(16, "minecraft:iron_pickaxe", "minecraft:iron_shovel", "minecraft:iron_axe"),
+        DIAMOND(24, "minecraft:diamond_pickaxe", "minecraft:diamond_shovel", "minecraft:diamond_axe"),
+        GOLD(32, "minecraft:golden_pickaxe", "minecraft:golden_shovel", "minecraft:golden_axe");
 
         public int index;
 
-        public Item.ToolMaterial material;
+        public String pickaxe;
+        public String shovel;
+        public String axe;
 
-        public ItemTool pickaxe;
-        public ItemTool shovel;
-        public ItemTool axe;
+        // 1.8.9 read the tool's material, the saved name has it
+        public static ToolMaterialType of(String tool) {
+            for (ToolMaterialType value : values()) {
+                if (tool.equals(value.pickaxe) || tool.equals(value.shovel) || tool.equals(value.axe)) return value;
+            }
+            return NONE;
+        }
     }
 
     public final BindableAttribute<AlgorithmSetting.ToolSettings> currentToolSettings = new BindableAttribute<>(AlgorithmSetting.ToolSettings.class);
@@ -87,7 +91,7 @@ public class WidgetToolEdit extends AnnotatedImportOnlyWidget {
             WidgetIconButton iconButton = new WidgetIconButton();
             selected[i] = new BindableAttribute<Boolean>(Boolean.class,
                     toolSettings == null && material == ToolMaterialType.NONE
-                    || toolSettings != null && material.material == toolSettings.getTool().getToolMaterial());
+                    || toolSettings != null && material == ToolMaterialType.of(toolSettings.getTool()));
             iconButton.selected.exportTo(selected[i]);
             iconButton.iconOffset.exportTo(offset);
 

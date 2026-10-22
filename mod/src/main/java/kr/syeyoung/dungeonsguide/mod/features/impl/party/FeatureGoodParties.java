@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 
+import net.minecraft.core.component.DataComponents;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 
 
@@ -28,7 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui.PartyFinderPa
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.inventory.ChestMenu;
@@ -45,16 +46,16 @@ public class FeatureGoodParties extends SimpleFeature {
     @DGEventHandler
     public void onGuiPostRender(ScreenRenderEvent.Post rendered) {
         
-        if (!(Minecraft.getInstance().screen instanceof GuiChest)) return;
-        GuiChest chest = (GuiChest) Minecraft.getInstance().screen;
-        ChestMenu cont = (ChestMenu) chest.inventorySlots;
-        String name = cont.getLowerChestInventory().getName();
+        if (!(Minecraft.getInstance().screen instanceof ContainerScreen)) return;
+        ContainerScreen chest = (ContainerScreen) Minecraft.getInstance().screen;
+        ChestMenu cont = (ChestMenu) chest.getMenu();
+        String name = chest.getTitle().getString();
         if (!"Party Finder".equals(name)) return;
 
 
         int i = 222;
         int j = i - 108;
-        int ySize = j + (((ChestMenu)(((GuiChest) Minecraft.getInstance().screen).inventorySlots)).getLowerChestInventory().getSizeInventory() / 9) * 18;
+        int ySize = j + (((ChestMenu)(((ContainerScreen) Minecraft.getInstance().screen).getMenu())).getContainer().getContainerSize() / 9) * 18;
         int left = (rendered.gui.width - 176) / 2;
         int top = (rendered.gui.height - ySize ) / 2;
         GlStateManager.pushMatrix();
@@ -65,19 +66,19 @@ public class FeatureGoodParties extends SimpleFeature {
         FontRenderer fr = Minecraft.getInstance().font;
         try {
 
-            for (int i1 = 0; i1 < Integer.min(54, cont.inventorySlots.size()); i1++) {
-                Slot s = cont.inventorySlots.get(i1);
-                if (s.getStack() == null) continue;
-                if (s.getStack().getItem() != Items.skull) continue;
-                CompoundTag nbt = s.getStack().getTagCompound();
-                if (nbt == null || nbt.hasNoTags()) continue;
-                CompoundTag display = nbt.getCompoundTag("display");
-                if (display.hasNoTags()) return;
+            for (int i1 = 0; i1 < Integer.min(54, cont.slots.size()); i1++) {
+                Slot s = cont.slots.get(i1);
+                if (s.getItem().isEmpty()) continue;
+                if (!s.getItem().is(Items.PLAYER_HEAD)) continue;
+                // 1.8.9 skipped heads without nbt and stopped at one without a display compound:
+                // the custom name / lore components on 26.1 (D125)
+                if (s.getItem().getComponentsPatch().isEmpty()) continue;
+                if (!s.getItem().has(DataComponents.CUSTOM_NAME) && !s.getItem().has(DataComponents.LORE)) return;
 
-                PartyFinderParty party = PartyFinderParty.fromItemStack(s.getStack());
+                PartyFinderParty party = PartyFinderParty.fromItemStack(s.getItem());
 
-                int x = s.xDisplayPosition;
-                int y = s.yDisplayPosition;
+                int x = s.x;
+                int y = s.y;
                 if (!party.canJoin) {
                     Gui.drawRect(x, y, x + 16, y + 16, 0x77AA0000);
                 } else {

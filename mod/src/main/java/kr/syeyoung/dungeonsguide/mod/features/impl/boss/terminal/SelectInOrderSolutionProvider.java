@@ -18,7 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.DyeColor;
@@ -29,17 +31,17 @@ import java.util.List;
 
 public class SelectInOrderSolutionProvider implements TerminalSolutionProvider {
     @Override
-    public TerminalSolution provideSolution(ChestMenu chest, List<Slot> clicked) {
+    public TerminalSolution provideSolution(ContainerScreen screen, List<Slot> clicked) {
+        ChestMenu chest = screen.getMenu();
         TerminalSolution ts = new TerminalSolution();
         ts.setCurrSlots(new ArrayList<Slot>());
         int lowest = 1000;
         Slot slotLowest = null;
-        for (Slot inventorySlot : chest.inventorySlots) {
-            if (inventorySlot.inventory != chest.getLowerChestInventory()) continue;
-            if (inventorySlot.getHasStack() && inventorySlot.getStack() != null && inventorySlot.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane)
-                    && inventorySlot.getStack().getItemDamage() == DyeColor.RED.getMetadata()) {
-                if (inventorySlot.getStack().stackSize < lowest) {
-                    lowest = inventorySlot.getStack().stackSize;
+        for (Slot inventorySlot : chest.slots) {
+            if (inventorySlot.container != chest.getContainer()) continue;
+            if (inventorySlot.hasItem() && !inventorySlot.getItem().isEmpty() && inventorySlot.getItem().is(Items.RED_STAINED_GLASS_PANE)) {
+                if (inventorySlot.getItem().getCount() < lowest) {
+                    lowest = inventorySlot.getItem().getCount();
                     slotLowest = inventorySlot;
                 }
             }
@@ -48,11 +50,10 @@ public class SelectInOrderSolutionProvider implements TerminalSolutionProvider {
             ts.getCurrSlots().add(slotLowest);
 
         Slot next = null;
-        for (Slot inventorySlot : chest.inventorySlots) {
-            if (inventorySlot.inventory != chest.getLowerChestInventory()) continue;
-            if (inventorySlot.getHasStack() && inventorySlot.getStack() != null && inventorySlot.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane)
-                    && inventorySlot.getStack().getItemDamage() == DyeColor.RED.getMetadata()) {
-                if (inventorySlot.getStack().stackSize == lowest + 1) {
+        for (Slot inventorySlot : chest.slots) {
+            if (inventorySlot.container != chest.getContainer()) continue;
+            if (inventorySlot.hasItem() && !inventorySlot.getItem().isEmpty() && inventorySlot.getItem().is(Items.RED_STAINED_GLASS_PANE)) {
+                if (inventorySlot.getItem().getCount() == lowest + 1) {
                     next = inventorySlot;
                 }
             }
@@ -66,7 +67,8 @@ public class SelectInOrderSolutionProvider implements TerminalSolutionProvider {
     }
 
     @Override
-    public boolean isApplicable(ChestMenu chest) {
-        return chest.getLowerChestInventory().getName().equals("Click in order!");
+    public boolean isApplicable(ContainerScreen screen) {
+        ChestMenu chest = screen.getMenu();
+        return screen.getTitle().getString().equals("Click in order!");
     }
 }

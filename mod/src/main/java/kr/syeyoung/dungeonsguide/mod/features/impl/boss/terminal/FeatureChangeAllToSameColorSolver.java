@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenOpenEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenMouseEvent;
@@ -30,7 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.level.block.Blocks;
@@ -64,9 +66,8 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     public void onGuiOpen(ScreenOpenEvent event) {
         if (!isEnabled()) return;
         isCorrectGui = false;
-        if (event.gui instanceof GuiChest) {
-            ChestMenu cc = (ChestMenu) ((GuiChest) event.gui).inventorySlots;
-            if (cc.getLowerChestInventory().getName().equals("Change all to same color!")) {
+        if (event.gui instanceof ContainerScreen) {
+            if (((ContainerScreen) event.gui).getTitle().getString().equals("Change all to same color!")) {
                 isCorrectGui = true;
             }
         }
@@ -76,28 +77,28 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     public void onTick(DGTickEvent tickEvent) {
         if (!isEnabled()) return;
         if (!isCorrectGui) return;
-        if (!(Minecraft.getInstance().screen instanceof GuiChest)) {
+        if (!(Minecraft.getInstance().screen instanceof ContainerScreen)) {
             isCorrectGui = false;
             return;
         }
-        ChestMenu cc = (ChestMenu) ((GuiChest) Minecraft.getInstance().screen).inventorySlots;
+        ChestMenu cc = (ChestMenu) ((ContainerScreen) Minecraft.getInstance().screen).getMenu();
         int[] currSlot = new int[9];
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
                 Slot toChk = cc.getSlot(y * 9 + x + 12);
-                if (toChk.getHasStack() && toChk.getStack() != null &&
-                        toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane)) {
-                    int meta = toChk.getStack().getItemDamage();
+                if (toChk.hasItem() && !toChk.getItem().isEmpty()) {
+                    // 1.8.9's stained glass pane metadata, the colored pane items on 26.1 (D125)
+                    ItemStack pane = toChk.getItem();
                     int idx = y * 3 + x;
-                    if (meta == DyeColor.RED.getMetadata()) {
+                    if (pane.is(Items.RED_STAINED_GLASS_PANE)) {
                         currSlot[idx] = 0;
-                    } else if (meta == DyeColor.ORANGE.getMetadata()) {
+                    } else if (pane.is(Items.ORANGE_STAINED_GLASS_PANE)) {
                         currSlot[idx] = 1;
-                    } else if (meta == DyeColor.YELLOW.getMetadata()) {
+                    } else if (pane.is(Items.YELLOW_STAINED_GLASS_PANE)) {
                         currSlot[idx] = 2;
-                    } else if (meta == DyeColor.GREEN.getMetadata()) {
+                    } else if (pane.is(Items.GREEN_STAINED_GLASS_PANE)) {
                         currSlot[idx] = 3;
-                    } else if (meta == DyeColor.BLUE.getMetadata()) {
+                    } else if (pane.is(Items.BLUE_STAINED_GLASS_PANE)) {
                         currSlot[idx] = 4;
                     }
                 }
@@ -146,7 +147,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     @DGEventHandler
     public void onGuiPostRender(ScreenRenderEvent.Post rendered) {
         if (!isCorrectGui) return;
-        if (!(Minecraft.getInstance().screen instanceof GuiChest)) {
+        if (!(Minecraft.getInstance().screen instanceof ContainerScreen)) {
             isCorrectGui = false;
             return;
         }
@@ -154,9 +155,9 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
         if (solution != null) {
             int i = 222;
             int j = i - 108;
-            ChestMenu container = (ChestMenu) (((GuiChest) Minecraft.getInstance().screen).inventorySlots);
-            Container inventory  = container.getLowerChestInventory();
-            int ySize = j + (inventory.getSizeInventory() / 9) * 18;
+            ChestMenu container = (ChestMenu) (((ContainerScreen) Minecraft.getInstance().screen).getMenu());
+            Container inventory  = container.getContainer();
+            int ySize = j + (inventory.getContainerSize() / 9) * 18;
             int left = (rendered.gui.width - 176) / 2;
             int top = (rendered.gui.height - ySize ) / 2;
             GlStateManager.pushMatrix();
@@ -170,8 +171,8 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
                     int slotId = y * 9 + x + 12;
                     int clicks = solution[y * 3 + x];
                     Slot currSlot = container.getSlot(slotId);
-                    int rx = currSlot.xDisplayPosition;
-                    int ry = currSlot.yDisplayPosition;
+                    int rx = currSlot.x;
+                    int ry = currSlot.y;
                     Minecraft.getInstance().font
                             .drawString(String.valueOf(clicks), rx, ry, 0xFF00FF00);
                 }
@@ -190,14 +191,14 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
         if (Mouse.getEventButton() == -1) return;
         if (!isCorrectGui) return;
 
-        GuiChest chest = (GuiChest) Minecraft.getInstance().screen;
+        ContainerScreen chest = (ContainerScreen) Minecraft.getInstance().screen;
 
 //        if (Mouse.getEventButton())
 
-        Slot s = chest.getSlotUnderMouse();
+        Slot s = chest.hoveredSlot;
         if (s == null) return;
-        int row = s.slotNumber / 9;
-        int column = s.slotNumber % 9;
+        int row = s.index / 9;
+        int column = s.index % 9;
 
         if (1 <= row && row <= 3 && 3 <= column && column <= 5) {
             int solutionSlotId = (row - 1) * 3 + column - 3;

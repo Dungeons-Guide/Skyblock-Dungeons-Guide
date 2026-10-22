@@ -42,8 +42,8 @@ public class FeatureAirchkDebug extends SimpleFeature {
     private List<PossibleMoveSpot> spots;
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onInteract(PlayerInteractEvent event) {
-        if (event.entityPlayer.getHeldItem() == null ||
-                event.entityPlayer.getHeldItem().getItem() != Items.golden_axe) {
+        if (event.entityPlayer.getMainHandItem().isEmpty() ||
+                !event.entityPlayer.getMainHandItem().is(Items.GOLDEN_AXE)) {
             return;
         }
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && event.action != PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {

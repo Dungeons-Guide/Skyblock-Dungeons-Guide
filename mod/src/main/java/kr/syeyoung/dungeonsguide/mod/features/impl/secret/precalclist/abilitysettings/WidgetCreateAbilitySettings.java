@@ -105,15 +105,15 @@ public class WidgetCreateAbilitySettings extends AnnotatedImportOnlyWidget {
         super(Identifier.parse("dungeonsguide:gui/features/precalclist/abilityedit/abilitycreate.gui"));
 
         pickaxeSettings.addOnUpdate((old ,neu) -> {
-            pickaxeIndex.setValue(neu == null ? 3 : neu.getTool().getToolMaterial().ordinal() * 8);
+            pickaxeIndex.setValue(neu == null ? 3 : WidgetToolEdit.ToolMaterialType.of(neu.getTool()).index);
             pickaxeEfficiency.setValue(neu == null ? "" : "Efficiency Level: "+neu.getEfficiency());
         });
         shovelSettings.addOnUpdate((old ,neu) -> {
-            shovelIndex.setValue(neu == null ? 4 : neu.getTool().getToolMaterial().ordinal() * 8 + 1);
+            shovelIndex.setValue(neu == null ? 4 : WidgetToolEdit.ToolMaterialType.of(neu.getTool()).index + 1);
             shovelEfficiency.setValue(neu == null ? "" : "Efficiency Level: "+neu.getEfficiency());
         });
         axeSettings.addOnUpdate((old ,neu) -> {
-            axeIndex.setValue(neu == null ? 5 : neu.getTool().getToolMaterial().ordinal() * 8 + 2);
+            axeIndex.setValue(neu == null ? 5 : WidgetToolEdit.ToolMaterialType.of(neu.getTool()).index + 2);
             axeEfficiency.setValue(neu == null ? "" : "Efficiency Level: "+neu.getEfficiency());
         });
 

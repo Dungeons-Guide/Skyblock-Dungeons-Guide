@@ -103,9 +103,9 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 if (mapOverlay.onClick(relMouseX + 64 - px, relMouseY + 64 - pz, getDomElement())) return true;
             }
         } else {
-            double yaw = ((Minecraft.getInstance().player.rotationYawHead) % 360 + 360) % 360;
+            double yaw = ((Minecraft.getInstance().player.getYHeadRot()) % 360 + 360) % 360;
 
-            Vector2d pt = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(Minecraft.getInstance().player.getPositionEyes(0));
+            Vector2d pt = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(Minecraft.getInstance().player.getEyePosition(0));
 
             relMouseX /= mapConfiguration.getMapScale();
             relMouseY /= mapConfiguration.getMapScale();
@@ -194,7 +194,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
         calcMouseX -= 64;
         calcMouseY -= 64;
 
-        Vector2d pt = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(p.getPositionEyes(partialTicks));
+        Vector2d pt = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(p.getEyePosition(partialTicks));
 
         if (dungeonContext.getBossfightProcessor() != null) {
             GlStateManager.translate(-64, -64, 0);
@@ -207,7 +207,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
 
         } else {
 
-            double yaw = ((p.prevRotationYawHead + (p.rotationYawHead - p.prevRotationYawHead) * partialTicks) % 360 + 360) % 360;
+            double yaw = ((p.yHeadRotO + (p.getYHeadRot() - p.yHeadRotO) * partialTicks) % 360 + 360) % 360;
 
             boolean rotated = false;
             GlStateManager.scale(mapConfiguration.getMapScale(), mapConfiguration.getMapScale(), 0);

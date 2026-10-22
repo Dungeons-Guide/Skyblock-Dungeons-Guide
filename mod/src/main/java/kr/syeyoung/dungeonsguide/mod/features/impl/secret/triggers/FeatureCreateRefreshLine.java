@@ -91,7 +91,7 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
 
             Entity e = Minecraft.getInstance().getCameraEntity();
 
-            double vectorV = VectorUtils.distSquared(e.getLook(partialTicks), e.getPositionEyes(partialTicks), new Vec3(target).addVector(0.5,0.5,0.5));
+            double vectorV = VectorUtils.distSquared(e.getViewVector(partialTicks), e.getEyePosition(partialTicks), new Vec3(target).addVector(0.5,0.5,0.5));
 
             if (vectorV < smallestTan) {
                 smallest = value2;
@@ -109,10 +109,10 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
         LocalPlayer thePlayer = Minecraft.getInstance().player;
         if (thePlayer == null) return;
         if (context.getScaffoldParser() == null) return;
-        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.position());
         DungeonRoom currentRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (currentRoom == null) return;
-        if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getInstance().player.getPositionVector())) return;
+        if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getInstance().player.position())) return;
         RoomRouteHandler handler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(currentRoom);
 
         if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getKeybind().equals(keyInputEvent.getKey()) && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {

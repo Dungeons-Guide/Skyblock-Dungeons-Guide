@@ -19,6 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.etc.ability;
 
 
+import net.minecraft.world.entity.EquipmentSlot;
+import kr.syeyoung.dungeonsguide.mod.utils.SkyblockUtils;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
@@ -345,21 +347,17 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
     }
 
     public void checkForCooldown(ItemStack itemStack) {
-        if (itemStack == null) return;
-        CompoundTag nbt = itemStack.getTagCompound();
-        if (nbt == null) return;
-        CompoundTag extra = nbt.getCompoundTag("ExtraAttributes");
-        if (extra == null) return;
-        String id = extra.getString("id");
+        if (itemStack.isEmpty()) return;
+        // 1.8.9's ExtraAttributes / display.Lore nbt, custom_data / lore components on 26.1 (D125)
+        CompoundTag extra = SkyblockUtils.getExtraAttributes(itemStack);
+        String id = extra.getStringOr("id", "");
         List<SkyblockAbility> skyblockAbility = skyblockAbilitiesByItemID.get(id);
 
-        CompoundTag display = nbt.getCompoundTag("display");
-        if (display == null) return;
-        ListTag lore = display.getTagList("Lore", 8);
+        List<String> lore = TextUtils.getFormattedLore(itemStack);
         int thecd = -1;
         SkyblockAbility currentAbility = null;
-        for (int i = 0; i < lore.tagCount(); i++) {
-            String specific = lore.getStringTagAt(i);
+        for (int i = 0; i < lore.size(); i++) {
+            String specific = lore.get(i);
             if (specific.startsWith("§8Cooldown: §a") && currentAbility != null) {
                 String thecdstr = TextUtils.stripColor(specific).substring(10).trim();
                 thecdstr = thecdstr.substring(0, thecdstr.length() - 1);
@@ -393,11 +391,11 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
     public void onTick(DGTickEvent event) {
         LocalPlayer sp = Minecraft.getInstance().player;
         if (sp == null) return;
-        if (sp.inventory == null || sp.inventory.armorInventory == null) return;
-        for (ItemStack itemStack : sp.inventory.armorInventory) {
-            checkForCooldown(itemStack);
+        // 1.8.9's armorInventory (feet to head) and mainInventory
+        for (EquipmentSlot slot : new EquipmentSlot[] {EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD}) {
+            checkForCooldown(sp.getItemBySlot(slot));
         }
-        for (ItemStack itemStack : sp.inventory.mainInventory) {
+        for (ItemStack itemStack : sp.getInventory().getNonEquipmentItems()) {
             checkForCooldown(itemStack);
         }
     }

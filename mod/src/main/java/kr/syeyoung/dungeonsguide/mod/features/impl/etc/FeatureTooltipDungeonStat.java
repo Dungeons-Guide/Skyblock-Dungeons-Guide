@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 
 
+import kr.syeyoung.dungeonsguide.mod.utils.SkyblockUtils;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.world.item.ItemStack;
@@ -36,19 +37,17 @@ public class FeatureTooltipDungeonStat extends SimpleFeature {
         
 
         ItemStack hoveredItem = event.itemStack;
-        CompoundTag compound = hoveredItem.getTagCompound();
-        if (compound == null)
+        // 1.8.9's ExtraAttributes nbt, custom_data on 26.1 (D125)
+        CompoundTag nbtTagCompound = SkyblockUtils.getExtraAttributes(hoveredItem);
+        if (nbtTagCompound.isEmpty())
             return;
-        if (!compound.hasKey("ExtraAttributes"))
-            return;
-        CompoundTag nbtTagCompound = compound.getCompoundTag("ExtraAttributes");
 
-        int floor = nbtTagCompound.getInteger("item_tier");
-        int percentage = nbtTagCompound.getInteger("baseStatBoostPercentage");
+        int floor = nbtTagCompound.getIntOr("item_tier", 0);
+        int percentage = nbtTagCompound.getIntOr("baseStatBoostPercentage", 0);
 
-        if (nbtTagCompound.hasKey("item_tier"))
+        if (nbtTagCompound.contains("item_tier"))
             event.toolTip.add("§7Obtained in: §c"+(floor == 0 ? "Entrance" : "Floor "+floor));
-        if (nbtTagCompound.hasKey("baseStatBoostPercentage"))
+        if (nbtTagCompound.contains("baseStatBoostPercentage"))
             event.toolTip.add("§7Stat Percentage: §"+(percentage == 50 ? "6§l":"c")+(percentage * 2)+"%");
     }
 }
