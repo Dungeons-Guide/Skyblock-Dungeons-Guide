@@ -2,7 +2,7 @@
   "readysetgo": {
     "category" : "player",
     "sounds": [{
-      "name": "skyblock_dungeons_guide:readysetgo",
+      "name": "dungeonsguide:readysetgo",
       "stream": true
     }
     ]

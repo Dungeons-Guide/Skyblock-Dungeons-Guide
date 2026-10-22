@@ -313,7 +313,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (dungeonRoom == null) return;
         RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
         if (roomInfo == null) return;
-        if (roomInfo.playerTrajactory.size() == 0 || roomInfo.playerTrajactory.getLast().getPos() == null || roomInfo.playerTrajactory.getLast().getPos().squareDistanceTo(Minecraft.getInstance().player.position()) > 0.1f) {
+        if (roomInfo.playerTrajactory.size() == 0 || roomInfo.playerTrajactory.getLast().getPos() == null || roomInfo.playerTrajactory.getLast().getPos().distanceToSqr(Minecraft.getInstance().player.position()) > 0.1f) {
             roomInfo.playerTrajactory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, Minecraft.getInstance().player.position(), System.currentTimeMillis()));
         }
     }
@@ -355,7 +355,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             entityData.armoritems[2] = event.entityLiving.getCurrentArmor(2);
         if (event.entityLiving.getCurrentArmor(3) != null)
             entityData.armoritems[3] = event.entityLiving.getCurrentArmor(3);
-        if (entityData.trajectory.getLast() == null || entityData.trajectory.getLast().getPos() == null || entityData.trajectory.getLast().getPos().squareDistanceTo(event.entity.position()) > 0.1f) {
+        if (entityData.trajectory.getLast() == null || entityData.trajectory.getLast().getPos() == null || entityData.trajectory.getLast().getPos().distanceToSqr(event.entity.position()) > 0.1f) {
             entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, event.entity.position(), System.currentTimeMillis()));
         }
     }
@@ -519,7 +519,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                                 out.nullValue();
                                 return;
                             }
-                            out.beginArray().value(value.xCoord).value(value.yCoord).value(value.zCoord).endArray();
+                            out.beginArray().value(value.x).value(value.y).value(value.z).endArray();
                         }
 
                         @Override
@@ -714,12 +714,12 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
         compound.setByteArray("Blocks", blocks);
         compound.setByteArray("Data", meta);
-        compound.setString("Materials", "Alpha");
+        compound.putString("Materials", "Alpha");
         if (extraEx) {
             compound.setByteArray("AddBlocks", extraNibble);
         }
-        compound.setTag("Entities", new ListTag());
-        compound.setTag("TileEntities", tileEntitiesList);
+        compound.put("Entities", new ListTag());
+        compound.put("TileEntities", tileEntitiesList);
 
         return compound;
     }
@@ -741,9 +741,9 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             RenderUtils.drawTextAtWorld(entityData.getType(), (float) hovered.getX(), (float) hovered.getY()+3.2f, (float) hovered.getZ(), 0xFF00FF00, 0.02f, false, true, event.partialTicks);
             Vec3 pos = entityData.getTrajectory().getFirst().getPos();
             RenderUtils.renderBeaconBeam(
-                    pos.xCoord,
-                    pos.yCoord,
-                    pos.zCoord,
+                    pos.x,
+                    pos.y,
+                    pos.z,
                     new AColor(0, 255, 0, 255),
                     event.partialTicks
             );

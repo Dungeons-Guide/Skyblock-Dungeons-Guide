@@ -32,11 +32,6 @@ import lombok.Setter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Item;
@@ -45,10 +40,6 @@ import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.Identifier;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderPlayerEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.obj.OBJLoader;
-import net.minecraftforge.client.model.obj.OBJModel;
 
 import java.io.IOException;
 import java.util.*;
@@ -57,8 +48,13 @@ import java.util.*;
 public class FeaturePenguins extends SimpleFeature {
     public FeaturePenguins() {
         super("Player & Mob", "Penguins", "Awwww", "etc.penguin", false);
-        OBJLoader.instance.addDomain("dungeonsguide");
+        // TODO: D64 / D124, see below
+//        OBJLoader.instance.addDomain("dungeonsguide");
     }
+
+    // TODO: D64 / D124, 1.8.9 loaded the penguin OBJ models through Forge's OBJLoader and texture stitch events, and drew
+    // them in place of the player with raw GL in RenderPlayerEvent; stubbed on 26.1
+/*
 
     private void tryLoading(String modelName, String location, TextureStitchEvent.Pre event) {
         Identifier modelResourceLocation = Identifier.parse(location);
@@ -212,4 +208,5 @@ public class FeaturePenguins extends SimpleFeature {
     }
 
 
+*/
 }

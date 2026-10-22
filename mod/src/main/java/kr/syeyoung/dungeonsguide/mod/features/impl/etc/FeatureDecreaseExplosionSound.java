@@ -25,7 +25,10 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.resources.sounds.AbstractSoundInstance;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlaySoundEvent;
 
 public class FeatureDecreaseExplosionSound extends SimpleFeature {
@@ -39,15 +42,22 @@ public class FeatureDecreaseExplosionSound extends SimpleFeature {
     public void onSound(PlaySoundEvent soundEvent) {
         if (!SkyblockStatus.isOnSkyblock()) return;
 
-        if (soundEvent.name.equalsIgnoreCase("random.explode") && soundEvent.result instanceof PositionedSoundRecord) {
-            PositionedSoundRecord positionedSoundRecord = (PositionedSoundRecord) soundEvent.result;
-            PositionedSoundRecord neweff = new PositionedSoundRecord(
-                    positionedSoundRecord.getSoundLocation(),
-                    (float) (positionedSoundRecord.getVolume() * (this.<Double>getParameter("sound").getValue() / 100)),
-                    positionedSoundRecord.getPitch(),
-                    positionedSoundRecord.getXPosF(),
-                    positionedSoundRecord.getYPosF(),
-                    positionedSoundRecord.getZPosF()
+        // 1.8.9's random.explode; the instance isn't resolved yet, so the raw volume / pitch are read (class tweaker)
+        if (soundEvent.name.equalsIgnoreCase(SoundEvents.GENERIC_EXPLODE.value().location().getPath()) && soundEvent.result instanceof AbstractSoundInstance) {
+            AbstractSoundInstance positionedSoundRecord = (AbstractSoundInstance) soundEvent.result;
+            SimpleSoundInstance neweff = new SimpleSoundInstance(
+                    positionedSoundRecord.getIdentifier(),
+                    positionedSoundRecord.getSource(),
+                    (float) (positionedSoundRecord.volume * (this.<Double>getParameter("sound").getValue() / 100)),
+                    positionedSoundRecord.pitch,
+                    RandomSource.create(),
+                    positionedSoundRecord.isLooping(),
+                    positionedSoundRecord.getDelay(),
+                    positionedSoundRecord.getAttenuation(),
+                    positionedSoundRecord.getX(),
+                    positionedSoundRecord.getY(),
+                    positionedSoundRecord.getZ(),
+                    positionedSoundRecord.isRelative()
             );
 
             soundEvent.result = neweff;

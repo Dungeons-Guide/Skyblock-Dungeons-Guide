@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ItemTooltipEvent;
 
 public class FeatureTooltipDungeonStat extends SimpleFeature {
@@ -46,8 +47,8 @@ public class FeatureTooltipDungeonStat extends SimpleFeature {
         int percentage = nbtTagCompound.getIntOr("baseStatBoostPercentage", 0);
 
         if (nbtTagCompound.contains("item_tier"))
-            event.toolTip.add("§7Obtained in: §c"+(floor == 0 ? "Entrance" : "Floor "+floor));
+            event.toolTip.add(Component.literal("§7Obtained in: §c"+(floor == 0 ? "Entrance" : "Floor "+floor)));
         if (nbtTagCompound.contains("baseStatBoostPercentage"))
-            event.toolTip.add("§7Stat Percentage: §"+(percentage == 50 ? "6§l":"c")+(percentage * 2)+"%");
+            event.toolTip.add(Component.literal("§7Stat Percentage: §"+(percentage == 50 ? "6§l":"c")+(percentage * 2)+"%"));
     }
 }
