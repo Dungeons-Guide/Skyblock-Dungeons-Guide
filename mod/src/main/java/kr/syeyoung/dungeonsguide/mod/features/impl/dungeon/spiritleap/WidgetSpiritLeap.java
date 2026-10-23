@@ -126,7 +126,7 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
         }
         nameMap.clear();
         for (Map.Entry<Integer, WarpTarget> integerWarpTargetEntry : slotMap.entrySet()) {
-            nameMap.put(TextUtils.stripColor(integerWarpTargetEntry.getValue().getItemStack().getDisplayName()), integerWarpTargetEntry.getValue());
+            nameMap.put(TextUtils.stripColor(TextUtils.getFormattedName(integerWarpTargetEntry.getValue().getItemStack())), integerWarpTargetEntry.getValue());
         }
         update();
     }
@@ -146,7 +146,7 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
         }
 
         for (Map.Entry<Integer, WarpTarget> integerWarpTargetEntry : slotMap.entrySet()) {
-            this.api.getValue().addWidget(new WidgetLeapPlayer(integerWarpTargetEntry.getValue(), map.get(TextUtils.stripColor(integerWarpTargetEntry.getValue().getItemStack().getDisplayName()))));
+            this.api.getValue().addWidget(new WidgetLeapPlayer(integerWarpTargetEntry.getValue(), map.get(TextUtils.stripColor(TextUtils.getFormattedName(integerWarpTargetEntry.getValue().getItemStack())))));
         }
     }
 }

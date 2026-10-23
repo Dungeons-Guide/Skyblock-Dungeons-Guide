@@ -627,7 +627,7 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onItemPickup(ItemPickupEvent event) {
-        if (Minecraft.getInstance().level.getEntityByID(event.getItemId()) instanceof ItemEntity)
+        if (Minecraft.getInstance().level.getEntity(event.getItemId()) instanceof ItemEntity)
             DungeonActionContext.getPickedups().add(event.getItemId());
     }
 

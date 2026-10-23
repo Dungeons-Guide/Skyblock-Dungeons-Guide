@@ -114,7 +114,8 @@ public class SkyblockStatus {
         // 1.8.9 kept the server brand on the player, 26.1 on the connection
         String clientBrand = mc.getConnection().serverBrand();
         if (clientBrand == null) return false;
-        if (!mc.isSingleplayer() && mc.loadingScreen != null) {
+        // 1.8.9 also checked mc.loadingScreen != null, which is set once the game has started
+        if (!mc.isSingleplayer()) {
             return clientBrand.startsWith("Hypixel BungeeCord");
         }
         return false;
@@ -138,7 +139,7 @@ public class SkyblockStatus {
         Objective objective = ScoreboardManager.INSTANCE.getSidebarObjective();
         if (objective == null) return;
 
-        String objectiveName = TextUtils.stripColor(objective.getDisplayName());
+        String objectiveName = TextUtils.stripColor(TextUtils.getFormattedText(objective.getDisplayName()));
         boolean skyblockFound = false;
         for (String skyblock : SKYBLOCK_IN_ALL_LANGUAGES) {
             if (objectiveName.startsWith(skyblock)) {

@@ -202,7 +202,7 @@ public class DungeonRoom  {
             }
         }
 
-        this.chunkCache = new EditableChunkCache(level, roomBounds.getMin().add(-3, 0, -3), roomBounds.getMax().add(3,0,3), 0);
+        this.chunkCache = new EditableChunkCache(level, roomBounds.getMin().offset(-3, 0, -3), roomBounds.getMax().offset(3,0,3), 0);
         CachedWorld cachedWorld =  new CachedWorld(chunkCache);
 
         coordinateMap = new WorldBackedCoordinateMap(cachedWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
@@ -294,7 +294,7 @@ public class DungeonRoom  {
     private void buildDoors(Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
         if (getDungeonRoomInfo().getMechanics().values().stream().noneMatch(a -> a instanceof DungeonRoomDoor2State.DungeonRoomDoor2Data)) {
             Set<Tuple<BlockPos, EDungeonDoorType>> positions = new HashSet<>();
-            BlockPos pos = context.getScaffoldParser().getDungeonMapLayout().roomPointToWorldPoint(minRoomPt).add(16, 0, 16);
+            BlockPos pos = context.getScaffoldParser().getDungeonMapLayout().roomPointToWorldPoint(minRoomPt).offset(16, 0, 16);
             for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : doorsAndStates) {
                 Vector2d vector2d = doorsAndState.getA();
                 BlockPos neu = BlockPos.containing(pos.getX() + vector2d.x * 32, pos.getY(), pos.getZ() + vector2d.y * 32);
@@ -354,11 +354,11 @@ public class DungeonRoom  {
     }
 
     public BlockPos getRelativeBlockPosAt(int x, int y, int z) {
-        return new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
+        return new BlockPos(x,y,z).offset(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
     }
 
     public Vec3 getRelativeVec3At(double x, double y, double z) {
-        return new Vec3(x,y,z).addVector(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
+        return new Vec3(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
     }
 
     public int getRelativeBlockDataAt(int x, int y, int z) {

@@ -61,22 +61,19 @@ public class WidgetPresetList extends AnnotatedImportOnlyWidget {
         this.mapConfiguration = configuration;
 
         List<Preset> foundPresets = new ArrayList<>();
-        try {
-            for (Resource allResource : Minecraft.getInstance().getResourceManager().getResourceStack(Identifier.parse("dungeonsguide:map/presets.json"))) {
-                try (InputStream inputStream = allResource.open();
-                     JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream))) {
+        // 1.8.9's getAllResources threw IOException, getResourceStack doesn't
+        for (Resource allResource : Minecraft.getInstance().getResourceManager().getResourceStack(Identifier.parse("dungeonsguide:map/presets.json"))) {
+            try (InputStream inputStream = allResource.open();
+                 JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream))) {
 
-                        Preset[] preset = new Gson().fromJson(jsonReader, Preset[].class);
-                        for (Preset preset1 : preset) {
-                            preset1.setTexturePack(allResource.sourcePackId());
-                            foundPresets.add(preset1);
-                        }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    Preset[] preset = new Gson().fromJson(jsonReader, Preset[].class);
+                    for (Preset preset1 : preset) {
+                        preset1.setTexturePack(allResource.sourcePackId());
+                        foundPresets.add(preset1);
+                    }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
         List<WidgetPreset> presets = foundPresets.stream().map(a -> new WidgetPreset(a, this)).collect(Collectors.toList());
         widgetList.setValue(presets);

@@ -97,7 +97,7 @@ public class DPTSP {
                         roomState.setPlayerPos(new Vec3(getX(handle), getY(handle), getZ(handle)));
                         roomState.setOpenMechanicsBitset(getMech(handle));
                         double cost = everyNode[getNode(handle)].getAction().evalulateCost(roomState, dungeonRoom, cache, pathPlanner);
-                        boolean res = resumeCoroutine(handle, roomState.getPlayerPos().xCoord, roomState.getPlayerPos().yCoord, roomState.getPlayerPos().zCoord, roomState.openMechanicsBitset, cost);
+                        boolean res = resumeCoroutine(handle, roomState.getPlayerPos().x, roomState.getPlayerPos().y, roomState.getPlayerPos().z, roomState.openMechanicsBitset, cost);
                         if (!res) break;
                     }
                     solution = getResult(handle, dag.getActionDAGNode().getId());

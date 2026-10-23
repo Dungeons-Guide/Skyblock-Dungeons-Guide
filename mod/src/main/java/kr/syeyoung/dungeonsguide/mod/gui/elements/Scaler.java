@@ -92,7 +92,7 @@ public class Scaler extends AnnotatedExportOnlyWidget implements Layouter, Rende
 
         Rect original = value.getRelativeBound();
         context.pose().translate((float) (original.getX()), (float) (original.getY()));
-        context.pose().scale((float) (scale.getValue()), (float) (scale.getValue()));
+        context.pose().scale(scale.getValue().floatValue(), scale.getValue().floatValue());
 
         double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
         double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();

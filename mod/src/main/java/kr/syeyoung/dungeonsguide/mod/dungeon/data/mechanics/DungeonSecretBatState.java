@@ -66,7 +66,7 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
         Vec3 spawn = Vec3.atLowerCornerOf(bpos);
         for (Integer killed : DungeonActionContext.getKilleds()) {
             if (DungeonActionContext.getSpawnLocation().get(killed) == null) continue;
-            if (DungeonActionContext.getSpawnLocation().get(killed).squareDistanceTo(spawn) < 100) {
+            if (DungeonActionContext.getSpawnLocation().get(killed).distanceToSqr(spawn) < 100) {
                 didKillBat = true;
                 return SecretStatus.FOUND;
             }

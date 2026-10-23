@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.utils;
 
-import net.minecraft.client.renderer.GlStateManager;
+import com.mojang.blaze3d.opengl.GlStateManager;
 
 import java.lang.reflect.Field;
 import java.util.*;

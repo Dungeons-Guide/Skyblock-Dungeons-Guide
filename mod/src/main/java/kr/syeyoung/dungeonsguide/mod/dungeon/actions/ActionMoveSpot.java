@@ -53,7 +53,7 @@ public class ActionMoveSpot extends AbstractActionMove {
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
         return targets.stream().flatMap(a -> a.getOffsetPointSet().stream()).anyMatch(
-                a-> a.getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.position()) < 0.625
+                a-> a.getPos(dungeonRoom).distanceToSqr(Minecraft.getInstance().player.position()) < 0.625
         );
     }
 

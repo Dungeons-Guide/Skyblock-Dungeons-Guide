@@ -32,7 +32,8 @@ public class WidgetLeapPlayer extends AnnotatedImportOnlyWidget {
         this.backgroundColor.setValue(0xFF555555);
         this.borderColor.setValue(0xFFFFFFFF);
 
-        this.playerName.setValue(target.getItemStack().getDisplayName());
+        // 1.8.9's display name string, the D104 stopgap
+        this.playerName.setValue(TextUtils.getFormattedName(target.getItemStack()));
         this.texture.setValue(entry != null ? entry.getLocationSkin().toString() : "dungeonsguide:map/maptexture.png");
         this.warpTarget = target;
 

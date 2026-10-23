@@ -96,7 +96,7 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
             Vec3 pos2 = Vec3.atLowerCornerOf(pos);
             for (Integer pickedup : DungeonActionContext.getPickedups()) {
                 if (DungeonActionContext.getSpawnLocation().get(pickedup) == null) continue;
-                if (DungeonActionContext.getSpawnLocation().get(pickedup).squareDistanceTo(pos2) < 4) {
+                if (DungeonActionContext.getSpawnLocation().get(pickedup).distanceToSqr(pos2) < 4) {
                     status = SecretStatus.FOUND;
                     absolutelyFound = true;
                 }
