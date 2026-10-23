@@ -85,7 +85,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import net.minecraft.network.chat.Component;
-import kr.syeyoung.dungeonsguide.mod.chat.ChatCapture;
 import kr.syeyoung.dungeonsguide.mod.utils.ItemCapture;
 import java.io.IOException;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.RoomDataConverter;
@@ -1452,12 +1451,12 @@ public class CommandDgDebug {
     @DGCommand("dgdebug chatcapture")
     public void chatCaptureCommand() {
         try {
-            if (ChatCapture.INSTANCE.isCapturing()) {
-                ChatCapture.INSTANCE.stop();
-                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fChat capture stopped: " + ChatCapture.INSTANCE.getFile().getAbsolutePath()));
+            if (FeatureRegistry.DEBUG_CHAT_CAPTURE.isCapturing()) {
+                FeatureRegistry.DEBUG_CHAT_CAPTURE.stop();
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fChat capture stopped: " + FeatureRegistry.DEBUG_CHAT_CAPTURE.getFile().getAbsolutePath()));
             } else {
-                ChatCapture.INSTANCE.start();
-                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fCapturing chat to " + ChatCapture.INSTANCE.getFile().getAbsolutePath()));
+                FeatureRegistry.DEBUG_CHAT_CAPTURE.start();
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fCapturing chat to " + FeatureRegistry.DEBUG_CHAT_CAPTURE.getFile().getAbsolutePath()));
             }
         } catch (IOException e) {
             e.printStackTrace();

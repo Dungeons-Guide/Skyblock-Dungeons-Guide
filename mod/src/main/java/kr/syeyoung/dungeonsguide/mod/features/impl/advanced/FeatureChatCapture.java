@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.chat;
+package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -24,10 +24,10 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
-import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.TitleEvent;
+import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -45,9 +45,12 @@ import java.nio.charset.StandardCharsets;
 /**
  * Writes what the server sends as chat / action bar / titles, to measure for D104 (dgdebug chatcapture).
  * One json object per line: time, type, the component as json, and the 1.8.9 style legacy string.
+ * Writes only while the feature is enabled.
  */
-public class ChatCapture {
-    public static final ChatCapture INSTANCE = new ChatCapture();
+public class FeatureChatCapture extends SimpleFeature {
+    public FeatureChatCapture() {
+        super("Debug", "Chat Capture", "Writes what the server sends as chat / action bar / titles while /dgdebug chatcapture is on", "debug.chatcapture", false);
+    }
 
     private final Gson gson = new Gson();
     private Writer writer;
@@ -72,12 +75,12 @@ public class ChatCapture {
         writer = null;
     }
 
-    @SubscribeEvent(priority = ListenerPriority.FIRST, receiveCanceled = true)
+    @DGEventHandler(triggerOutOfSkyblock = true)
     public void onChat(ChatReceivedEvent event) {
         write(event.type == 0 ? "chat" : event.type == 1 ? "system" : "actionbar", event.message);
     }
 
-    @SubscribeEvent(priority = ListenerPriority.FIRST)
+    @DGEventHandler(triggerOutOfSkyblock = true)
     public void onTitle(TitleEvent event) {
         if (event.getPacketTitle() instanceof ClientboundSetTitleTextPacket title)
             write("title", title.text());
