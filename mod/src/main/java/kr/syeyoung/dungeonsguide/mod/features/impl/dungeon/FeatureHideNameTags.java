@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderLivingEvent;
 
@@ -41,7 +42,8 @@ public class FeatureHideNameTags extends SimpleFeature  {
 
         if (renderPlayerEvent.entity instanceof ArmorStand) {
             ArmorStand armorStand = (ArmorStand) renderPlayerEvent.entity;
-            if (armorStand.isCustomNameVisible() && armorStand.getName().contains("❤"))
+            // TODO: D5 entity name stopgap (D116)
+            if (armorStand.isCustomNameVisible() && TextUtils.getFormattedText(armorStand.getName()).contains("❤"))
                 renderPlayerEvent.setCanceled(true);
         }
     }

@@ -19,18 +19,12 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.gui.Font;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.*;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
-import org.lwjgl.opengl.GL11;
+import org.joml.Vector2d;
 
-import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.Collections;
 import java.util.List;
@@ -160,22 +154,20 @@ public class WidgetDungeonMap extends Widget implements Renderer {
         MapItemSavedData mapData = mapProcessor.getLatestMapData();
         Size featureSize = getDomElement().getSize();
         // TODO: redo chroma
-        Gui.drawRect(0, 0, (int)featureSize.getWidth(), (int)featureSize.getHeight(), RenderUtils.getColorAt(0,0, mapConfiguration.getBackgroundColor()));
-        GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.pushMatrix();
+        renderingContext.drawRect(0, 0, (int)featureSize.getWidth(), (int)featureSize.getHeight(), RenderUtils.getColorAt(0,0, mapConfiguration.getBackgroundColor()));
+        renderingContext.pose().pushMatrix();
 //        if (mapData == null) {
 //            Gui.drawRect(0, 0, (int)featureSize.getWidth(), (int)featureSize.getHeight(), 0xFFFF0000);
 //        } else {
-            renderMap(partialTicks, context);
+            renderMap(renderingContext, partialTicks, context);
 //        }
-        GlStateManager.popMatrix();
-        GL11.glLineWidth((float) mapConfiguration.getBorderWidth());
-        RenderUtils.drawUnfilledBox(0, 0, (int)featureSize.getWidth(), (int)featureSize.getHeight(),mapConfiguration.getBorder());
+        renderingContext.pose().popMatrix();
+        renderingContext.drawUnfilledBox(0, 0, (int)featureSize.getWidth(), (int)featureSize.getHeight(), mapConfiguration.getBorderWidth(), mapConfiguration.getBorder());
     }
 
 
 
-    public void renderMap(float partialTicks, DungeonContext dungeonContext) {
+    public void renderMap(RenderingContext ctx, float partialTicks, DungeonContext dungeonContext) {
         DungeonRoomScaffoldParser mapProcessor = dungeonContext.getScaffoldParser();
 
         Player p = Minecraft.getInstance().player;
@@ -186,8 +178,8 @@ public class WidgetDungeonMap extends Widget implements Renderer {
         float scale = width / 128.0f;
         double calcMouseX = mouseX, calcMouseY = mouseY;
 
-        GlStateManager.translate(width / 2.0, width / 2.0, 0);
-        GlStateManager.scale(scale, scale, 0);
+        ctx.pose().translate((float) (width / 2.0), (float) (width / 2.0));
+        ctx.pose().scale((float) scale, (float) scale);
         calcMouseX /= scale;
         calcMouseY /= scale;
 
@@ -197,11 +189,11 @@ public class WidgetDungeonMap extends Widget implements Renderer {
         Vector2d pt = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(p.getEyePosition(partialTicks));
 
         if (dungeonContext.getBossfightProcessor() != null) {
-            GlStateManager.translate(-64, -64, 0);
+            ctx.pose().translate(-64, -64);
             BossfightProcessor bossfightProcessor = dungeonContext.getBossfightProcessor();
             BossfightRenderSettings settings = bossfightProcessor.getMapRenderSettings();
             if (settings != null) {
-                renderBossfight(partialTicks, scale, settings, getOverlays.get());
+                renderBossfight(ctx, partialTicks, scale, settings, getOverlays.get());
             }
 
 
@@ -210,12 +202,12 @@ public class WidgetDungeonMap extends Widget implements Renderer {
             double yaw = ((p.yHeadRotO + (p.getYHeadRot() - p.yHeadRotO) * partialTicks) % 360 + 360) % 360;
 
             boolean rotated = false;
-            GlStateManager.scale(mapConfiguration.getMapScale(), mapConfiguration.getMapScale(), 0);
+            ctx.pose().scale((float) mapConfiguration.getMapScale(), (float) mapConfiguration.getMapScale());
             calcMouseX /= mapConfiguration.getMapScale();
             calcMouseY /= mapConfiguration.getMapScale();
             if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.VERTICAL) {
                 if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.CENTER) {
-                    GlStateManager.rotate((float) (180.0 - yaw), 0, 0, 1);
+                    ctx.pose().rotate((float) Math.toRadians(180.0 - yaw));
 
 
                     float angle = (float) ((yaw - 180) * Math.PI / 180);
@@ -229,16 +221,16 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                     rotated = true;
                 }
                 if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.ROTATE) {
-                    GlStateManager.translate(-pt.x, -pt.y, 0);
+                    ctx.pose().translate((float) -pt.x, (float) -pt.y);
                     calcMouseX += pt.x;
                     calcMouseY += pt.y;
                 } else {
-                    GlStateManager.translate(-64, -64, 0);
+                    ctx.pose().translate(-64, -64);
                     calcMouseX += 64;
                     calcMouseY += 64;
                 }
             } else {
-                GlStateManager.translate(-64, -64, 0);
+                ctx.pose().translate(-64, -64);
                 calcMouseX += 64;
                 calcMouseY += 64;
             }
@@ -248,11 +240,10 @@ public class WidgetDungeonMap extends Widget implements Renderer {
             if (rotated) {
                 snapRotation =  (yaw - 180) % 360;
             }
-            renderRooms(mapProcessor);
+            renderRooms(ctx, mapProcessor);
 
 
-            renderIcons(mapProcessor, scale * mapConfiguration.getMapScale(), snapRotation + 360);
-            GlStateManager.color(1,1,1,1);
+            renderIcons(ctx, mapProcessor, scale * mapConfiguration.getMapScale(), snapRotation + 360);
             for (MapOverlay marker : getOverlays.get()) {
                 double xCoord = marker.getX(partialTicks);
                 double zCoord = marker.getZ(partialTicks);
@@ -260,34 +251,32 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 double px = loc.x;
                 double pz = loc.y;
 
-                GlStateManager.enableTexture2D();
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(px, pz, 0);
+                ctx.pose().pushMatrix();
+                ctx.pose().translate((float) px, (float) pz);
 
                 // well mouse pos is incorrect. :/
                 // rotate MouseX
 
-                marker.doRender(0, partialTicks, scale * mapConfiguration.getMapScale(), calcMouseX - px, calcMouseY - pz);
+                marker.doRender(ctx, 0, partialTicks, scale * mapConfiguration.getMapScale(), calcMouseX - px, calcMouseY - pz);
 
-                GlStateManager.popMatrix();
+                ctx.pose().popMatrix();
             }
         }
     }
 
 
-    private void renderBossfight(float partialTicks, float scale, BossfightRenderSettings bossfightRenderSettings, List<MapOverlay> overlays) {
-        Minecraft.getInstance().getTextureManager().bindTexture(bossfightRenderSettings.getResourceLocation());
+    private void renderBossfight(RenderingContext ctx, float partialTicks, float scale, BossfightRenderSettings bossfightRenderSettings, List<MapOverlay> overlays) {
         double x, y, width, height;
         if (bossfightRenderSettings.getTextureWidth() > bossfightRenderSettings.getTextureHeight()) {
             double rHeight = bossfightRenderSettings.getTextureHeight() * 128.0 / bossfightRenderSettings.getTextureWidth();
             x = 0; y = (128 -rHeight) / 2; width = 128; height = rHeight;
-            drawScaledCustomSizeModalRect(
+            ctx.drawScaledCustomSizeModalRect(bossfightRenderSettings.getResourceLocation(),
                     0,(128 -rHeight) / 2, 0, 0, bossfightRenderSettings.getTextureWidth(), bossfightRenderSettings.getTextureHeight(), 128, rHeight, bossfightRenderSettings.getTextureWidth(), bossfightRenderSettings.getTextureHeight()
             );
         } else {
             double rWidth = bossfightRenderSettings.getTextureWidth() * 128.0 / bossfightRenderSettings.getTextureHeight();
             x = (128 - rWidth) / 2; y = 0; width = rWidth; height = 128;
-            drawScaledCustomSizeModalRect(
+            ctx.drawScaledCustomSizeModalRect(bossfightRenderSettings.getResourceLocation(),
                     (128 - rWidth) / 2,0, 0, 0, bossfightRenderSettings.getTextureWidth(), bossfightRenderSettings.getTextureHeight(), rWidth, 128, bossfightRenderSettings.getTextureWidth(), bossfightRenderSettings.getTextureHeight()
             );
         }
@@ -299,13 +288,12 @@ public class WidgetDungeonMap extends Widget implements Renderer {
             double pz = height * (zCoord - bossfightRenderSettings.getMinZ()) / (bossfightRenderSettings.getMaxZ() - bossfightRenderSettings.getMinZ()) + y;
 
 
-            GlStateManager.enableTexture2D();
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(px, pz, 0);
+            ctx.pose().pushMatrix();
+            ctx.pose().translate((float) px, (float) pz);
 
-            marker.doRender(0, partialTicks, scale, mouseX / scale - px, mouseY / scale - pz);
+            marker.doRender(ctx, 0, partialTicks, scale, mouseX / scale - px, mouseY / scale - pz);
 
-            GlStateManager.popMatrix();
+            ctx.pose().popMatrix();
         }
     }
 
@@ -365,7 +353,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
 
     }
 
-    private void renderIcons(DungeonRoomScaffoldParser scaffoldParser, double scale, double snapRotation) {
+    private void renderIcons(RenderingContext ctx, DungeonRoomScaffoldParser scaffoldParser, double scale, double snapRotation) {
 
         DungeonMapLayout layout = scaffoldParser.getDungeonMapLayout();
 
@@ -446,12 +434,12 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 width = fit.width;
             }
 
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(offX, offY, 0);
-            GlStateManager.scale(1/scale, 1/scale, 1.0);
+            ctx.pose().pushMatrix();
+            ctx.pose().translate((float) offX, (float) offY);
+            ctx.pose().scale((float) (1/scale), (float) (1/scale));
             double size = mapConfiguration.getNameSettings().getSize();
-            GlStateManager.scale(size, size, 1.0);
-            GlStateManager.rotate((float) (firstSnap ), 0, 0, 90);
+            ctx.pose().scale((float) size, (float) size);
+            ctx.pose().rotate((float) Math.toRadians(firstSnap));
             int renderWidth = (int) ((width * unitRoomBigWidth - gap - 2 *pad) * scale / size);
 
             if (renderWidth < 10) {
@@ -464,35 +452,32 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 String name = override != null && !override.getNameOverride().isEmpty() ? override.getNameOverride() : dungeonRoomInfo.getName();
                 if (dungeonRoomInfo.isRegistered()) {
                     if (nameRotation == MapConfiguration.NameSettings.NameRotation.ROTATE) {
-                        Minecraft.getInstance().font.drawString(name, -Minecraft.getInstance().font.getStringWidth(name) / 2,
-                                -Minecraft.getInstance().font.FONT_HEIGHT / 2,
-                                RenderUtils.getColorAt(0, 0, mapConfiguration.getNameSettings().getTextColor()));
+                        ctx.drawString(name, -Minecraft.getInstance().font.width(name) / 2,
+                                -Minecraft.getInstance().font.lineHeight / 2,
+                                RenderUtils.getColorAt(0, 0, mapConfiguration.getNameSettings().getTextColor()), false);
                     } else {
-                        Minecraft.getInstance().font.drawSplitString(name, 0, 0, renderWidth,
+                        ctx.drawSplitString(name, 0, 0, renderWidth,
                                 RenderUtils.getColorAt(0, 0, mapConfiguration.getNameSettings().getTextColor()));
                     }
                 }
             }
-            GlStateManager.popMatrix();
+            ctx.pose().popMatrix();
         }
 
-        GlStateManager.color(1,1,1,1);
-        Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation);
-        GlStateManager.enableBlend();
         for (Point point : scaffoldParser.getPotential()) {
             Point mapPt = layout.roomPointToMapPoint(point);
             int offX = mapPt.x + unitRoomWidth / 2;
             int offY = mapPt.y + unitRoomHeight / 2;
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(offX, offY, 0);
-            GlStateManager.scale(1/scale, 1/scale, 1.0);
-            GlStateManager.scale(chkmark, chkmark, 1.0);
-            GlStateManager.rotate((float) (snapRotation), 0, 0, 90);
+            ctx.pose().pushMatrix();
+            ctx.pose().translate((float) offX, (float) offY);
+            ctx.pose().scale((float) (1/scale), (float) (1/scale));
+            ctx.pose().scale((float) chkmark, (float) chkmark);
+            ctx.pose().rotate((float) Math.toRadians(snapRotation));
 
-            GuiScreen.drawScaledCustomSizeModalRect(
+            ctx.drawScaledCustomSizeModalRect(resourceLocation,
                     -8, -8, 128 - 16, 64, 16, 16, unitRoomWidth, unitRoomHeight, 128, 128
             );
-            GlStateManager.popMatrix();
+            ctx.pose().popMatrix();
         }
         for (DungeonRoom dungeonRoom : scaffoldParser.getDungeonRoomList()) {
             DungeonRoomInfo dungeonRoomInfo = dungeonRoom.getDungeonRoomInfo();
@@ -511,11 +496,11 @@ public class WidgetDungeonMap extends Widget implements Renderer {
 //                System.out.println(dungeonRoom.getShape() + " / "+ fit);
             }
 
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(offX, offY, 0);
-            GlStateManager.scale(1/scale, 1/scale, 1.0);
+            ctx.pose().pushMatrix();
+            ctx.pose().translate((float) offX, (float) offY);
+            ctx.pose().scale((float) (1/scale), (float) (1/scale));
 
-            GlStateManager.scale(chkmark, chkmark, 1.0);
+            ctx.pose().scale((float) chkmark, (float) chkmark);
 
 
             double iconRotation;
@@ -528,7 +513,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 iconRotation = 0;
             }
 
-            GlStateManager.rotate((float) (iconRotation ), 0, 0, 90);
+            ctx.pose().rotate((float) Math.toRadians(iconRotation));
 
             int u = 0;
             int v = 0;
@@ -600,43 +585,27 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED)
                     color = 0xFF777777;
 
-                Minecraft.getInstance().font.drawStringWithShadow(
-                        toDraw, -Minecraft.getInstance().font.getStringWidth(toDraw)/2, -4, color
+                ctx.drawString(
+                        toDraw, -Minecraft.getInstance().font.width(toDraw)/2, -4, color, true
                 );
             } else {
-                GlStateManager.color(1,1,1,1);
-                GlStateManager.enableBlend();
                 if (override == null || override.getIconLocation().isEmpty()) {
-                    Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation);
-                    GuiScreen.drawScaledCustomSizeModalRect(
+                    ctx.drawScaledCustomSizeModalRect(resourceLocation,
                             -8, -8, u, v, 16, 16, unitRoomWidth, unitRoomHeight, 128, 128
                     );
                 } else {
-                    Minecraft.getInstance().getTextureManager().bindTexture(Identifier.parse(override.getIconLocation()));
-                    GuiScreen.drawScaledCustomSizeModalRect(
+                    ctx.drawScaledCustomSizeModalRect(Identifier.parse(override.getIconLocation()),
                             -8, -8, u, v, 16, 16, unitRoomWidth, unitRoomHeight, 32, 32
                     );
                 }
             }
 
-            GlStateManager.popMatrix();
+            ctx.pose().popMatrix();
         }
     }
 
 
-    public static void drawScaledCustomSizeModalRect(double x, double y, float u, float v, int uWidth, int vHeight, double width, double height, float tileWidth, float tileHeight) {
-        float f = 1.0F / tileWidth;
-        float g = 1.0F / tileHeight;
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-        worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        worldRenderer.pos((double)x, (double)(y + height), 0.0).tex((double)(u * f), (double)((v + (float)vHeight) * g)).endVertex();
-        worldRenderer.pos((double)(x + width), (double)(y + height), 0.0).tex((double)((u + (float)uWidth) * f), (double)((v + (float)vHeight) * g)).endVertex();
-        worldRenderer.pos((double)(x + width), (double)y, 0.0).tex((double)((u + (float)uWidth) * f), (double)(v * g)).endVertex();
-        worldRenderer.pos((double)x, (double)y, 0.0).tex((double)(u * f), (double)(v * g)).endVertex();
-        tessellator.draw();
-    }
-    private void renderRooms(DungeonRoomScaffoldParser scaffoldParser) {
+    private void renderRooms(RenderingContext ctx, DungeonRoomScaffoldParser scaffoldParser) {
 
         DungeonMapLayout layout = scaffoldParser.getDungeonMapLayout();
 
@@ -647,14 +616,12 @@ public class WidgetDungeonMap extends Widget implements Renderer {
         int gap = layout.getMapRoomGap();
 
 
-        GlStateManager.enableBlend();
-        Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation);
         for (Point point : scaffoldParser.getPotential()) {
             Point mapPt = layout.roomPointToMapPoint(point);
             int offX = mapPt.x;
             int offY = mapPt.y;
 
-            GuiScreen.drawScaledCustomSizeModalRect(
+            ctx.drawScaledCustomSizeModalRect(resourceLocation,
                     offX, offY, 24, 24*3, 16, 16, unitRoomWidth, unitRoomHeight, 128, 128
             );
         }
@@ -720,16 +687,14 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 int rWidthPixels = dungeonRoom.getRoomBounds().getUnitLenX() * unitRoomBigWidth - gap;
                 int rHeightPixels = dungeonRoom.getRoomBounds().getUnitLenZ() * unitRoomBigHeight - gap;
 
-                Minecraft.getInstance().getTextureManager().bindTexture(Identifier.parse(override.getTextureLocation()));
-                GlStateManager.pushMatrix();;
-                GlStateManager.translate(mapPt.x + rWidthPixels / 2.0, mapPt.y + rHeightPixels / 2.0, 0);
-                GlStateManager.rotate(-rotation * 90, 0, 0, 1);
-                drawScaledCustomSizeModalRect(
+                ctx.pose().pushMatrix();
+                ctx.pose().translate((float) (mapPt.x + rWidthPixels / 2.0), (float) (mapPt.y + rHeightPixels / 2.0));
+                ctx.pose().rotate((float) Math.toRadians(-rotation * 90));
+                ctx.drawScaledCustomSizeModalRect(Identifier.parse(override.getTextureLocation()),
                         -widthPixels / 2.0, -heightPixels / 2.0, 0, 0, widthTexturePixels, heightTexturePixels, widthPixels, heightPixels, 128, 128
                 );
-                GlStateManager.popMatrix();
+                ctx.pose().popMatrix();
             } else {
-                Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation);
                 for (int y = 0; y < 4; y++) {
                     for (int x = 0; x < 4; x++) {
                         boolean isIn = ((dungeonRoom.getRoomBounds().getShape() >> ((y * 4) + x)) & 0x1) > 0;
@@ -741,21 +706,21 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                         int offY = mapPt.y + y * unitRoomBigHeight;
 
                         if (isIn) {
-                            GuiScreen.drawScaledCustomSizeModalRect(
+                            ctx.drawScaledCustomSizeModalRect(resourceLocation,
                                     offX, offY, offsetX, offsetY, 16, 16, unitRoomWidth, unitRoomHeight, 128, 128
                             );
                             if (isRightIn) {
-                                GuiScreen.drawScaledCustomSizeModalRect(
+                                ctx.drawScaledCustomSizeModalRect(resourceLocation,
                                         offX+unitRoomWidth, offY, offsetX+16, offsetY, 4, 16, gap, unitRoomHeight, 128, 128
                                 );
                             }
                             if (isBottomIn) {
-                                GuiScreen.drawScaledCustomSizeModalRect(
+                                ctx.drawScaledCustomSizeModalRect(resourceLocation,
                                         offX, offY+unitRoomHeight, offsetX, offsetY + 16, 16, 4, unitRoomWidth, gap, 128, 128
                                 );
                             }
                             if (isBottomRightIn && isRightIn && isBottomIn) {
-                                GuiScreen.drawScaledCustomSizeModalRect(
+                                ctx.drawScaledCustomSizeModalRect(resourceLocation,
                                         offX+unitRoomWidth, offY+unitRoomHeight, offsetX+16, offsetY+16, 4, 4, gap, gap, 128, 128
                                 );
                             }
@@ -764,7 +729,6 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 }
             }
 
-            Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation);
             for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : dungeonRoom.getDoorsAndStates()) {
                 double x = doorsAndState.getA().x;
                 double y = doorsAndState.getA().y;
@@ -789,11 +753,11 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 }
 
                 if (x % 1 != 0) {
-                    GuiScreen.drawScaledCustomSizeModalRect(
+                    ctx.drawScaledCustomSizeModalRect(resourceLocation,
                             mapPt.x + (int) (Math.ceil(x) * unitRoomBigWidth) - gap, mapPt.y + (int) (Math.ceil(y) * unitRoomBigHeight), offsetXX + 20, offsetYY, 4, 16, gap, unitRoomHeight, 128, 128
                     );
                 } else {
-                    GuiScreen.drawScaledCustomSizeModalRect(
+                    ctx.drawScaledCustomSizeModalRect(resourceLocation,
                             mapPt.x + (int) (Math.ceil(x) * unitRoomBigWidth), mapPt.y +(int) (Math.ceil(y) * unitRoomBigHeight) - gap, offsetXX, offsetYY + 20, 16, 4, unitRoomWidth, gap, 128, 128
                     );
                 }

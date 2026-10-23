@@ -3,9 +3,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.MarkerData;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.MapConfiguration;
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.resources.Identifier;
 
 public class MapOverlayMarker implements MapOverlay{
@@ -31,18 +30,17 @@ public class MapOverlayMarker implements MapOverlay{
 
     private final Identifier resourceLocation2 = Identifier.parse("dungeonsguide:map/bossfight/markers.png");
     @Override
-    public void doRender(float rotation, float partialTicks, double scale, double relMouseX, double relMouseY) {
+    public void doRender(RenderingContext ctx, float rotation, float partialTicks, double scale, double relMouseX, double relMouseY) {
         double yaw = marker.getPrevYaw() + (marker.getCurrYaw() - marker.getPrevYaw()) * partialTicks;
-        GlStateManager.rotate((float) yaw, 0, 0, 1);
+        ctx.pose().rotate((float) Math.toRadians(yaw));
 
-        GlStateManager.scale(1 / scale, 1 / scale, 0);
-        GlStateManager.scale(settings.getIconSize(), settings.getIconSize(), 1);
+        ctx.pose().scale((float) (1 / scale), (float) (1 / scale));
+        ctx.pose().scale((float) settings.getIconSize(), (float) settings.getIconSize());
 
         boolean flip = settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.HEAD_FLIP;
         int tx = marker.getMarkerIndex() % 8;
         int ty = marker.getMarkerIndex() / 8;
-        Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation2);
-        Gui.drawScaledCustomSizeModalRect(-4, -4, tx * 72,ty * 72 + (flip ? 8 : 0) , 72, 72, 8, flip ? -8 : 8, 576, 576);
+        ctx.drawScaledCustomSizeModalRect(resourceLocation2, -4, -4, tx * 72,ty * 72 + (flip ? 8 : 0) , 72, 72, 8, flip ? -8 : 8, 576, 576);
     }
 
     @Override

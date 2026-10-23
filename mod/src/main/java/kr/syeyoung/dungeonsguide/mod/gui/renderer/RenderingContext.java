@@ -22,6 +22,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuSampler;
 import com.mojang.blaze3d.textures.GpuTextureView;
+import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.render.gui.state.DGRenderState;
@@ -34,11 +35,15 @@ import kr.syeyoung.dungeonsguide.mod.render.gui.state.TexturedRectState;
 import kr.syeyoung.dungeonsguide.mod.render.gui.state.VanillaElementState;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderUniforms;
+import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.client.gui.font.TextRenderable;
 import net.minecraft.client.renderer.item.TrackingItemStackRenderState;
 import net.minecraft.resources.Identifier;
@@ -111,6 +116,36 @@ public class RenderingContext {
                 (float) (x1 + nx), (float) (y1 + ny), (float) (x1 - nx), (float) (y1 - ny), color);
     }
 
+    // 1.8.9's RenderUtils.drawUnfilledBox, a line loop; width replaces the glLineWidth callers set beforehand
+    public void drawUnfilledBox(double left, double top, double right, double bottom, double width, AColor color) {
+        double i;
+        if (left < right) {
+            i = left;
+            left = right;
+            right = i;
+        }
+
+        if (top < bottom) {
+            i = top;
+            top = bottom;
+            bottom = i;
+        }
+
+        if (!color.isChroma() && (color.getRGB() >> 24 & 255) == 0) return;
+        if (!color.isChroma()) {
+            drawLine(left, bottom, right, bottom, width, color.getRGB());
+            drawLine(right, bottom, right, top, width, color.getRGB());
+            drawLine(right, top, left, top, width, color.getRGB());
+            drawLine(left, top, left, bottom, width, color.getRGB());
+        } else {
+            // TODO: 1.8.9 shaded chroma between the corners, each edge takes its start corner's color here
+            drawLine(left, bottom, right, bottom, width, RenderUtils.getColorAt(left, bottom, color));
+            drawLine(right, bottom, right, top, width, RenderUtils.getColorAt(right, bottom, color));
+            drawLine(right, top, left, top, width, RenderUtils.getColorAt(right, top, color));
+            drawLine(left, top, left, bottom, width, RenderUtils.getColorAt(left, top, color));
+        }
+    }
+
     public void drawScaledCustomSizeModalRect(Identifier texture, double x, double y, float u, float v, int uWidth, int vHeight, double width, double height, float tileWidth, float tileHeight) {
         drawScaledCustomSizeModalRect(texture, x, y, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight, 0xFFFFFFFF);
     }
@@ -176,6 +211,28 @@ public class RenderingContext {
             }
         });
         drawGlyphs(glyphs);
+    }
+
+    // what 1.8.9's FontRenderer.drawSplitString did, wrapped at wrapWidth with formatting carried to the next line
+    public void drawSplitString(String text, float x, float y, int wrapWidth, int color) {
+        if ((color & 0xFC000000) == 0) color |= 0xFF000000;
+        Font font = Minecraft.getInstance().font;
+        for (FormattedText line : font.getSplitter().splitLines(text, wrapWidth, Style.EMPTY)) {
+            List<TextRenderable> glyphs = new ArrayList<>();
+            font.prepareText(Language.getInstance().getVisualOrder(line), x, y, color, false, false, 0).visit(new Font.GlyphVisitor() {
+                @Override
+                public void acceptGlyph(TextRenderable.Styled glyph) {
+                    glyphs.add(glyph);
+                }
+
+                @Override
+                public void acceptEffect(TextRenderable effect) {
+                    glyphs.add(effect);
+                }
+            });
+            drawGlyphs(glyphs);
+            y += font.lineHeight;
+        }
     }
 
     // rect drawn with a DG shader, what 1.8.9 did with useShader + drawRect (D103)

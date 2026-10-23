@@ -230,7 +230,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
             deaths = FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths();
             skill -= FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths() * 2;
 
-            skill = Mth.clamp_int(skill, 20, 100);
+            skill = Mth.clamp(skill, 20, 100);
         }
         int explorer = 0;
         boolean fullyCleared = false;
@@ -251,8 +251,8 @@ public class FeatureDungeonScore extends TextHUDFeature {
             totalSecretsKnown = FeatureRegistry.DUNGEON_SECRETS.sureOfTotalSecrets();
 
             fullyCleared = completed >= getTotalRooms() && parser.getUndiscoveredRoom() == 0;
-            explorer += Mth.clamp_int((int) Math.floor(6.0 / 10.0 * (parser.getUndiscoveredRoom() != 0 ? DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage() : completed / total * 100)), 0, 60);
-            explorer += Mth.clamp_int((int) Math.floor(40 * (secrets = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) / Math.ceil(totalSecrets * context.getSecretPercentage())),0,40);
+            explorer += Mth.clamp((int) Math.floor(6.0 / 10.0 * (parser.getUndiscoveredRoom() != 0 ? DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage() : completed / total * 100)), 0, 60);
+            explorer += Mth.clamp((int) Math.floor(40 * (secrets = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) / Math.ceil(totalSecrets * context.getSecretPercentage())),0,40);
         }
         int time = 0;
         {
@@ -269,7 +269,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
         int bonus = 0;
         int tombs;
         {
-            bonus += tombs = Mth.clamp_int(FeatureRegistry.DUNGEON_TOMBS.getTombsFound(), 0, 5);
+            bonus += tombs = Mth.clamp(FeatureRegistry.DUNGEON_TOMBS.getTombsFound(), 0, 5);
             if (context.isGotMimic()) bonus += 2;
             CompletableFuture<StaticResource> staticResourceCompletableFuture = StaticResourceCache.INSTANCE.getResource(StaticResourceCache.BONUS_SCORE);
             if (staticResourceCompletableFuture.isDone()) {

@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon;
 
-import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
@@ -28,13 +27,17 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.phys.AABB;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 
 public class FeatureBoxSkelemaster extends SimpleFeature  {
@@ -51,16 +54,23 @@ public class FeatureBoxSkelemaster extends SimpleFeature  {
         
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        final BlockPos player = Minecraft.getInstance().player.getPosition();
+        final BlockPos player = Minecraft.getInstance().player.blockPosition();
         int val = this.<Integer>getParameter("radius").getValue();
         final int sq = val * val;
 
-        List<ArmorStand> skeletonList = Minecraft.getInstance().level.getEntities(ArmorStand.class, new Predicate<ArmorStand>() {
+        // the loaded chunk area around the player (D114)
+        Minecraft mc = Minecraft.getInstance();
+        ChunkPos center = mc.player.chunkPosition();
+        int loadedRadius = mc.options.getEffectiveRenderDistance() * 16;
+        AABB loaded = new AABB(center.getMinBlockX() - loadedRadius, mc.level.getMinY(), center.getMinBlockZ() - loadedRadius,
+                center.getMaxBlockX() + 1 + loadedRadius, mc.level.getMaxY() + 1, center.getMaxBlockZ() + 1 + loadedRadius);
+        List<ArmorStand> skeletonList = mc.level.getEntitiesOfClass(ArmorStand.class, loaded, new Predicate<ArmorStand>() {
             @Override
-            public boolean apply(@Nullable ArmorStand input) {
-                if (player.distanceSq(input.getPosition()) > sq) return false;
+            public boolean test(@Nullable ArmorStand input) {
+                if (player.distSqr(input.blockPosition()) > sq) return false;
                 if (!input.isCustomNameVisible()) return false;
-                return input.getName().contains("Skeleton Master");
+                // TODO: D5 entity name stopgap (D116)
+                return TextUtils.getFormattedText(input.getName()).contains("Skeleton Master");
             }
         });
         AColor c = this.<AColor>getParameter("color").getValue();
