@@ -119,7 +119,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
     private OverlayWidget widget;
 
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void onGuiPostRender(ScreenMouseEvent.Pre mouseInputEvent) {
+    public void onGuiPostRender(ScreenMouseEvent mouseInputEvent) {
         if (!(mc.currentScreen instanceof GuiChat)) {
             return;
         }
