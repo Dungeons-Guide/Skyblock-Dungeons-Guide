@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "dungeonsguide",
+  "version": "${version}",
+  "name": "Dungeons Guide",
+  "description": "The most intelligent Hypixel Skyblock Dungeons Mod",
+  "license": "AGPL-3.0-or-later",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "kr.syeyoung.dungeonsguide.launcher.FabricEntrypoint"
+    ]
+  },
+  "mixins": [
+    "dungeonsguide.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "26.1.2",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}

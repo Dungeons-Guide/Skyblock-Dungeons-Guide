@@ -5,14 +5,6 @@ plugins {
 }
 
 configurations {
-    loaderOnly {
-        transitive = false
-        canBeConsumed = false
-    }
-    loaderOnlyDev {
-        transitive = false
-        canBeConsumed = false
-    }
     modOnly {
         transitive = false
         canBeConsumed = false
@@ -35,56 +27,9 @@ configurations {
 
 
 dependencies {
-    loaderOnly(project(path: ":loader", configuration: "remappedMod"))
-    loaderOnlyDev(project(path: ":loader", configuration: "unmappedMod"))
     modOnly(project(path: ":mod", configuration: "remappedMod"))
     modOnlyDev(project(path: ":mod", configuration: "unmappedMod"))
 }
-
-task standaloneJar(type: Zip) {
-    group = "build"
-
-    archiveClassifier = "standalone"
-    dependsOn ":mod:build", ":loader:build"
-    from(zipTree(configurations.loaderOnly.files[0]))
-    archiveFileName = configurations.modOnly.files.name.get(0).replace("-mapped.jar", "")+"-standalone.jar"
-
-//    print(configurations.remappedMod.version)
-
-    from(configurations.modOnly.files) {
-        rename ".+\\.jar", "mod.jar"
-    }
-    doLast {
-        println(archiveFile.get().asFile)
-    }
-}
-
-task standaloneDevJar(type: Zip) {
-    group = "build"
-
-    archiveClassifier = "devStandalone"
-    dependsOn ":mod:build", ":loader:build"
-    from(zipTree(configurations.loaderOnlyDev.files[0]))
-    archiveFileName = configurations.modOnlyDev.files.name.get(0).replace(".jar", "")+"-standalone.jar"
-    from(configurations.modOnlyDev.files) {
-        rename ".+\\.jar", "mod.jar"
-    }
-    doLast {
-        println(archiveFile.get().asFile)
-    }
-}
-
-signing {
-    required ( project.findProperty("dg.dosign") == "true")
-    useGpgCmd()
-    sign standaloneDevJar
-    sign standaloneJar
-}
-
-tasks.standaloneDevJar.dependsOn project(":mod").task("archive")
-
-tasks.build.dependsOn tasks.signStandaloneJar, tasks.signStandaloneDevJar
-
 
 import org.jetbrains.gradle.ext.*
 idea.project.settings {
@@ -94,12 +39,6 @@ idea.project.settings {
         }
         "Build Standalone Jars"(Gradle) {
             taskNames = ["build"]
-        }
-        "Build Loader Only With Signing"(Gradle) {
-            taskNames = [":loader:build -Pdg.dosign=true"]
-        }
-        "Build Loader Only"(Gradle) {
-            taskNames = [":loader:build"]
         }
         "Build Mod Only With Signing"(Gradle) {
             taskNames = [":mod:build -Pdg.dosign=true"]
