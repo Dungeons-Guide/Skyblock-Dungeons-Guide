@@ -26,7 +26,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightPr
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import net.minecraft.entity.passive.*;
+import net.minecraft.world.entity.animal.chicken.Chicken;
+import net.minecraft.world.entity.animal.cow.Cow;
+import net.minecraft.world.entity.animal.rabbit.Rabbit;
+import net.minecraft.world.entity.animal.sheep.Sheep;
+import net.minecraft.world.entity.animal.wolf.Wolf;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderLivingEvent;
 
 
@@ -56,15 +60,15 @@ public class FeatureHideAnimals extends SimpleFeature  {
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() == null) return;
         if (!(DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
 
-        if (renderPlayerEvent.entity instanceof EntitySheep && sheep) {
+        if (renderPlayerEvent.entity instanceof Sheep && sheep) {
             renderPlayerEvent.setCanceled(true);
-        } else if (renderPlayerEvent.entity instanceof EntityCow && cow ) {
+        } else if (renderPlayerEvent.entity instanceof Cow && cow ) {
             renderPlayerEvent.setCanceled(true);
-        } else if (renderPlayerEvent.entity instanceof EntityChicken && chicken) {
+        } else if (renderPlayerEvent.entity instanceof Chicken && chicken) {
             renderPlayerEvent.setCanceled(true);
-        } else if (renderPlayerEvent.entity instanceof EntityWolf && wolf) {
+        } else if (renderPlayerEvent.entity instanceof Wolf && wolf) {
             renderPlayerEvent.setCanceled(true);
-        } else if (renderPlayerEvent.entity instanceof EntityRabbit && rabbit) {
+        } else if (renderPlayerEvent.entity instanceof Rabbit && rabbit) {
             renderPlayerEvent.setCanceled(true);
         }
     }

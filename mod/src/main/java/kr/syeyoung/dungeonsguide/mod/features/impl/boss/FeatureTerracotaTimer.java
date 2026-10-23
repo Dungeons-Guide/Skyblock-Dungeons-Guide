@@ -29,7 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.entity.boss.BossStatus;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.bossbar.BossBar;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.bossbar.BossBarManager;
 
 public class FeatureTerracotaTimer extends TextHUDFeature {
     public FeatureTerracotaTimer() {
@@ -55,12 +56,18 @@ public class FeatureTerracotaTimer extends TextHUDFeature {
         return actualBit;
     }
 
+    // 1.8.9's BossStatus.healthScale: the first boss bar (D115)
+    private static float terracottaHealthScale() {
+        BossBar bossBar = BossBarManager.INSTANCE.getFirst();
+        return bossBar == null ? 0 : bossBar.getProgress();
+    }
+
     @Override
     public TextSpan getText() {
         TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
         actualBit.addChild(new TextSpan(getStyle("title"), "Terracottas"));
         actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
-        actualBit.addChild(new TextSpan(getStyle("time"), TextUtils.formatTime((long) (BossStatus.healthScale * 1000 * 60 * 1.5))));
+        actualBit.addChild(new TextSpan(getStyle("time"), TextUtils.formatTime((long) (terracottaHealthScale() * 1000 * 60 * 1.5))));
         return actualBit;
     }
 

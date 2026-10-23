@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 
+import net.minecraft.world.phys.AABB;
 import net.minecraft.tags.ItemTags;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
@@ -32,7 +33,6 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.decoration.ItemFrame;
@@ -42,10 +42,9 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.World;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
-import scala.actors.threadpool.Arrays;
+import java.util.Arrays;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -75,8 +74,8 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
 
-        if (depth && Minecraft.getInstance().player.getPosition().distanceSq(-2,120,75) > 400) return;
-        if (!depth && Minecraft.getInstance().player.getPosition().distanceSq(-2,120,75) > 25) return;
+        if (depth && Minecraft.getInstance().player.blockPosition().distToLowCornerSqr(-2,120,75) > 400) return;
+        if (!depth && Minecraft.getInstance().player.blockPosition().distToLowCornerSqr(-2,120,75) > 25) return;
 
         for (int y = 0; y < 5; y++){
             for (int x = 0; x < 5; x++) {
@@ -100,12 +99,12 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
 
 
-        if (Minecraft.getInstance().player.getPosition().distanceSq(-2,120,75) > 400) return;
+        if (Minecraft.getInstance().player.blockPosition().distToLowCornerSqr(-2,120,75) > 400) return;
 
         if (System.currentTimeMillis() < nextUpdate) return;
-        World w = dc.getWorld();
-        List<ItemFrame> frames = w.getEntities(ItemFrame.class, filter -> {
-            BlockPos pos = filter.getPosition();
+        // the frames' blocks: x -2, y 121..125, z 75..79 (D114)
+        List<ItemFrame> frames = Minecraft.getInstance().level.getEntitiesOfClass(ItemFrame.class, new AABB(-2, 121, 75, -1, 126, 80), filter -> {
+            BlockPos pos = filter.blockPosition();
             if (pos.getX() != -2) return false;
             if (pos.getZ() < 75 || pos.getZ() > 79) return false;
             if (pos.getY() < 121 || pos.getY() > 125) return false;
@@ -121,8 +120,8 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         int[][] solution = new int[5][5];
         Queue<Point> begin = new LinkedList<>();
         for (ItemFrame frame : frames) {
-            int x = frame.getPosition().getZ() - 75;
-            int y = frame.getPosition().getY() - 121;
+            int x = frame.blockPosition().getZ() - 75;
+            int y = frame.blockPosition().getY() - 121;
 
             if (frame.getItem().is(Items.ARROW)) {
                 mapping[y][x] = frame.getRotation()+1;
@@ -215,7 +214,7 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         Entity e = event.getEntity();
         if (!(e instanceof ItemFrame)) return;
         ItemFrame itemFrame = (ItemFrame) e;
-        BlockPos pos = itemFrame.getPosition();
+        BlockPos pos = itemFrame.blockPosition();
         if (pos.getX() != -2) return;
         if (pos.getZ() < 75 || pos.getZ() > 79) return;
         if (pos.getY() < 121 || pos.getY() > 125) return;

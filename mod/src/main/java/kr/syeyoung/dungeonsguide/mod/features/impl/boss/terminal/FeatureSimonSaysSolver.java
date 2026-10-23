@@ -31,7 +31,8 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.World;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
@@ -57,7 +58,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
             return;
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
-        if (Minecraft.getInstance().player.getPosition().distanceSq(110,120,94) > 400) return;
+        if (Minecraft.getInstance().player.blockPosition().distToLowCornerSqr(110,120,94) > 400) return;
 
 
         if (orderClick.size() >= 1)
@@ -75,21 +76,22 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
 
-        World w = dc.getWorld();
-        if (wasButton && w.getBlockState(new BlockPos(110, 121, 92)).getBlock() == Blocks.air) { // check here instead :D
+        DGWorld w = dc.getWorld();
+        if (wasButton && w.isAir(new BlockPos(110, 121, 92))) { // check here instead :D
             orderClick.clear();
             orderBuild.clear();
             wasButton = false;
-        } else if (!wasButton && w.getBlockState(new BlockPos(110, 121, 92)).getBlock() == Blocks.stone_button){
+        } else if (!wasButton && LegacyBlock.STONE_BUTTON.is(w.getBlockState(new BlockPos(110, 121, 92)))){
             orderClick.addAll(orderBuild);
             wasButton = true;
         }
 
 
         if (!wasButton) {
-            for (BlockPos allInBox : BlockPos.getAllInBox(new BlockPos(111, 120, 92), new BlockPos(111, 123, 95))) {
-                if (w.getBlockState(allInBox).getBlock() == Blocks.sea_lantern && !orderBuild.contains(allInBox)) {
-                    orderBuild.add(allInBox);
+            for (BlockPos allInBox : BlockPos.betweenClosed(new BlockPos(111, 120, 92), new BlockPos(111, 123, 95))) {
+                if (LegacyBlock.SEA_LANTERN.is(w.getBlockState(allInBox)) && !orderBuild.contains(allInBox)) {
+                    // betweenClosed reuses one mutable pos, 1.8.9's getAllInBox didn't
+                    orderBuild.add(allInBox.immutable());
                 }
             }
         }
@@ -103,11 +105,11 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         if (dc == null) return;
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
-        World w = dc.getWorld();
+        DGWorld w = dc.getWorld();
 
-        BlockPos pos = event.pos.add(1,0,0);
+        BlockPos pos = event.pos.offset(1,0,0);
         if (120 <= pos.getY() && pos.getY() <= 123 && pos.getX() == 111 && 92 <= pos.getZ() && pos.getZ() <= 95) {
-            if (w.getBlockState(event.pos).getBlock() != Blocks.stone_button) return;
+            if (!LegacyBlock.STONE_BUTTON.is(w.getBlockState(event.pos))) return;
             if (pos.equals(orderClick.peek())) {
                 orderClick.poll();
             }

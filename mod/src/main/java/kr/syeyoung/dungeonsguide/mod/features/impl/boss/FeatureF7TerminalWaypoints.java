@@ -45,7 +45,6 @@ import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
@@ -108,9 +107,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
                 RenderUtils.renderBeaconBeam(allWaypt.x, allWaypt.y, allWaypt.z, beamColor, event.partialTicks);
             }
             if (beacon) {
-                GlStateManager.pushMatrix();
                 RenderUtils.highlightBlock(new BlockPos(allWaypt.x, allWaypt.y, allWaypt.z), highlightColor, event.partialTicks, false);
-                GlStateManager.popMatrix();
             }
 
             if (status) {
@@ -173,13 +170,13 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
             if (name == null) continue;
-            Player entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
+            Player entityplayer = Minecraft.getInstance().level.players().stream().filter(p -> p.getGameProfile().name().equals(name)).findFirst().orElse(null);
             if (entityplayer == null) continue;
 
             for (List<WaypointData> value : waypoints.values()) {
                 for (WaypointData waypointData : value) {
                     if (entityplayer.distanceToSqr(waypointData.x, waypointData.y, waypointData.z) < 25) {
-                        nearPlayer.put(waypointData.id, entityplayer.getName());
+                        nearPlayer.put(waypointData.id, entityplayer.getGameProfile().name());
                     }
                 }
             }
@@ -191,7 +188,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
         String txt = TextUtils.getFormattedText(event.message);
         String player = TextUtils.stripColor(txt.split(" ")[0]);
         if (txt.contains("§r§a completed a device! (§r§c")) {
-            Player player1 = Minecraft.getInstance().level.getPlayerEntityByName(player);
+            Player player1 = Minecraft.getInstance().level.players().stream().filter(p -> p.getGameProfile().name().equals(player)).findFirst().orElse(null);
             if (player1 == null) {
                 System.out.println("umm no player found named "+player);
                 return;
@@ -213,7 +210,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
             completedTerminals.put(minDistId, player);
         } else if (txt.contains("§r§a activated a lever! (§r§c")) {
-            Player player1 = Minecraft.getInstance().level.getPlayerEntityByName(player);
+            Player player1 = Minecraft.getInstance().level.players().stream().filter(p -> p.getGameProfile().name().equals(player)).findFirst().orElse(null);
             if (player1 == null) {
                 System.out.println("umm no player found named "+player);
                 return;
@@ -234,7 +231,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
             completedTerminals.put(minDistId, player);
         } else if (txt.contains("§r§a activated a terminal! (§r§c")) {
-            Player player1 = Minecraft.getInstance().level.getPlayerEntityByName(player);
+            Player player1 = Minecraft.getInstance().level.players().stream().filter(p -> p.getGameProfile().name().equals(player)).findFirst().orElse(null);
             if (player1 == null) {
                 System.out.println("umm no player found named "+player);
                 return;

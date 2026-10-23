@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenOpenEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenMouseEvent;
@@ -31,11 +32,10 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.client.input.MouseButtonEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ItemTooltipEvent;
-import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,36 +107,45 @@ public class FeatureTerminalSolvers extends SimpleFeature {
             int ySize = j + (((ChestMenu)(((ContainerScreen) Minecraft.getInstance().screen).getMenu())).getContainer().getContainerSize() / 9) * 18;
             int left = (rendered.gui.width - 176) / 2;
             int top = (rendered.gui.height - ySize ) / 2;
-            GlStateManager.pushMatrix();
-            GlStateManager.disableDepth();
-            GlStateManager.disableLighting();
-            GlStateManager.colorMask(true, true, true, false);
-            GlStateManager.translate(left, top, 0);
+            // D126: drawn through the event's RenderingContext
+            RenderingContext context = rendered.context;
+            context.pose().pushMatrix();
+            context.pose().translate(left, top);
             if (solution.getCurrSlots() != null) {
                 for (Slot currSlot : solution.getCurrSlots()) {
                     int x = currSlot.x;
                     int y = currSlot.y;
-                    Gui.drawRect(x, y, x + 16, y + 16, 0x7700FFFF);
+                    context.drawRect(x, y, x + 16, y + 16, 0x7700FFFF);
                 }
             }
             if (solution.getNextSlots() != null) {
                 for (Slot nextSlot : solution.getNextSlots()) {
                     int x = nextSlot.x;
                     int y = nextSlot.y;
-                    Gui.drawRect(x, y, x + 16, y + 16, 0x77FFFF00);
+                    context.drawRect(x, y, x + 16, y + 16, 0x77FFFF00);
                 }
             }
-            GlStateManager.colorMask(true, true, true, true);
-            GlStateManager.popMatrix();
+            context.pose().popMatrix();
         }
-        GlStateManager.enableBlend();
-        GlStateManager.enableLighting();
     }
 
     @DGEventHandler
-    public void onMouseInput(ScreenMouseEvent.Pre mouseInputEvent) {
+    public void onMouseClick(ScreenMouseEvent.Click mouseInputEvent) {
+        onMouseButton(mouseInputEvent, mouseInputEvent.buttonEvent);
+    }
+
+    @DGEventHandler
+    public void onMouseRelease(ScreenMouseEvent.Release mouseInputEvent) {
+        onMouseButton(mouseInputEvent, mouseInputEvent.buttonEvent);
+    }
+
+    @DGEventHandler
+    public void onMouseDrag(ScreenMouseEvent.Drag mouseInputEvent) {
+        onMouseButton(mouseInputEvent, mouseInputEvent.buttonEvent);
+    }
+
+    private void onMouseButton(ScreenMouseEvent mouseInputEvent, MouseButtonEvent buttonEvent) {
         if (!isEnabled()) return;
-        if (Mouse.getEventButton() == -1) return;
         if (solutionProvider == null) return;
         if (solution == null) return;
         if (solution.getCurrSlots() == null) {

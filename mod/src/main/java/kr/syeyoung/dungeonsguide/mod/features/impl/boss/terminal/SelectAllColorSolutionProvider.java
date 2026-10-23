@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
@@ -68,7 +67,7 @@ public class SelectAllColorSolutionProvider implements TerminalSolutionProvider 
 
     // 1.8.9's dye item by dye damage: the dyes, and ink sac / cocoa beans / lapis / bone meal for their colors
     private static boolean isDye(ItemStack stack, DyeColor color) {
-        if (stack.is(DyeItem.byColor(color))) return true;
+        if (stack.is(BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace(color.getName() + "_dye")))) return true;
         switch (color) {
             case BLACK: return stack.is(Items.INK_SAC);
             case BROWN: return stack.is(Items.COCOA_BEANS);
