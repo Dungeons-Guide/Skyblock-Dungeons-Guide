@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.textures.GpuTextureView;
-import kr.syeyoung.dungeonsguide.mod.gui.renderer.StencilImage;
+import kr.syeyoung.dungeonsguide.mod.render.gui.StencilImage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 

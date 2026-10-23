@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.gui.renderer;
+package kr.syeyoung.dungeonsguide.mod.render.gui;
 
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
@@ -30,11 +30,11 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.DGRenderState;
-import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.ItemState;
-import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.ShaderShapeState;
+import kr.syeyoung.dungeonsguide.mod.render.gui.state.DGRenderState;
+import kr.syeyoung.dungeonsguide.mod.render.gui.state.ItemState;
+import kr.syeyoung.dungeonsguide.mod.render.gui.state.ShaderShapeState;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderUniforms;
-import kr.syeyoung.dungeonsguide.mod.gui.renderer.state.StencilState;
+import kr.syeyoung.dungeonsguide.mod.render.gui.state.StencilState;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.GuiItemAtlas;
@@ -81,7 +81,7 @@ public class DGGuiRenderer implements AutoCloseable {
     public void renderQueued(GpuBufferSlice fog) {
         try {
             for (Job job : queue) {
-                render(job, fog);
+                renderInto(job.target, job.states, fog);
             }
         } finally {
             queue.clear();
@@ -92,8 +92,9 @@ public class DGGuiRenderer implements AutoCloseable {
         }
     }
 
-    private void render(Job job, GpuBufferSlice fog) {
-        prepareItems(job.states);
+    // executes states into an image now: the gui queue above, and DGWorldRenderer's prepare for world images
+    public void renderInto(StencilImage target, List<DGRenderState> states, GpuBufferSlice fog) {
+        prepareItems(states);
 
         List<Step> steps = new ArrayList<>();
         BufferBuilder bufferBuilder = null;
@@ -101,7 +102,7 @@ public class DGGuiRenderer implements AutoCloseable {
         TextureSetup batchTextures = null;
         Rectangle batchScissor = null;
 
-        for (DGRenderState state : job.states) {
+        for (DGRenderState state : states) {
             if (state instanceof StencilState) {
                 if (bufferBuilder != null) recordMesh(steps, bufferBuilder, batchPipeline, batchTextures, batchScissor);
                 bufferBuilder = null;
@@ -143,7 +144,6 @@ public class DGGuiRenderer implements AutoCloseable {
 
         upload(steps);
 
-        StencilImage target = job.target;
         projection.setupOrtho(1000.0F, 11000.0F, target.getWidth(), target.getHeight(), true);
         GpuBufferSlice dynamicTransforms = RenderSystem.getDynamicUniforms()
                 .writeTransform(new Matrix4f().setTranslation(0.0F, 0.0F, -11000.0F), new Vector4f(1.0F, 1.0F, 1.0F, 1.0F), new Vector3f(), new Matrix4f());

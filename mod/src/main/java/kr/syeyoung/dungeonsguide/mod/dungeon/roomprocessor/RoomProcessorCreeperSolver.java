@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -131,8 +132,8 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
 
     private static final Color[] colors = new Color[] {Color.red, Color.orange, Color.green, Color.cyan, Color.blue, Color.pink, Color.yellow, Color.darkGray, Color.lightGray};
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
         if (!FeatureRegistry.SOLVER_CREEPER.isEnabled()) return;
         DGWorld w = getDungeonRoom().getContext().getWorld();
         for (int i = 0; i < poses.size(); i++) {
@@ -141,14 +142,14 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
             boolean oneIsConnected = !LegacyBlock.SEA_LANTERN.is(w.getBlockState(poset[0])) &&
                     !LegacyBlock.SEA_LANTERN.is(w.getBlockState(poset[1]));
             RenderUtils.drawLine(new Vec3(poset[0].getX() +0.5, poset[0].getY() +0.5, poset[0].getZ()+0.5),
-                    new Vec3(poset[1].getX() +0.5, poset[1].getY() +0.5, poset[1].getZ()+0.5), oneIsConnected ? new Color(0,0,0,50) : color, partialTicks, true);
+                    new Vec3(poset[1].getX() +0.5, poset[1].getY() +0.5, poset[1].getZ()+0.5), oneIsConnected ? new Color(0,0,0,50) : color, event.partialTicks, true);
         }
         final BlockPos low = getDungeonRoom().getRoomBounds().getMin();
         final AABB axis = new AABB(
                 low.getX() + 17, low.getY() + 5, low.getZ() + 17,
                 low.getX() + 16, low.getY() + 8.5, low.getZ() + 16
         );
-        RenderUtils.highlightBox(axis, new Color(0x4400FF00, true), partialTicks, false);
+        RenderUtils.highlightBox(axis, new Color(0x4400FF00, true), event.partialTicks, false);
     }
 
     public static class Generator implements RoomProcessorGenerator<RoomProcessorCreeperSolver> {

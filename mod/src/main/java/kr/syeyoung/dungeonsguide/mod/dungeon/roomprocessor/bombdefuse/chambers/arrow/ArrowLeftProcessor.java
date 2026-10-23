@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.arrow;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
@@ -65,14 +67,14 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void drawScreen(float partialTicks) {
+    public void drawScreen(RenderHUDEvent event) {
         if (answer == -1) return;
-        drawPressKey();
+        drawPressKey(event);
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
 
         if (answer == -1) return;
         for (int i = 0; i < 9; i++) {
@@ -80,7 +82,7 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
             int direction = answers[i];
             String charac = arrows.get(direction);
 
-            RenderUtils.drawTextAtWorld(charac, pos.getX()+ 0.5f, pos.getY()+ 0.5f, pos.getZ()+ 0.5f, 0xFFFFFFFF, 0.05F, false, false, partialTicks);
+            RenderUtils.drawTextAtWorld(charac, pos.getX()+ 0.5f, pos.getY()+ 0.5f, pos.getZ()+ 0.5f, 0xFFFFFFFF, 0.05F, false, false, event.partialTicks);
         }
     }
 

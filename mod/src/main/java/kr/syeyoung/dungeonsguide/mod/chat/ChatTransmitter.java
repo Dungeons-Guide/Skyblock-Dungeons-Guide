@@ -77,7 +77,7 @@ public class ChatTransmitter {
             ChatReceivedEvent event = new ChatReceivedEvent((byte) 1, receiveQueue.poll());
             DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(event);
             if (!event.isCanceled()) {
-                Minecraft.getInstance().gui.getChat().addMessage(event.message);
+                Minecraft.getInstance().gui.getChat().addClientSystemMessage(event.message);
             }
         }
     }

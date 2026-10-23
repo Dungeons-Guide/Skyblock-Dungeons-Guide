@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.creeper;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
@@ -62,19 +64,19 @@ public class CreeperLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void drawScreen(float partialTicks) {
+    public void drawScreen(RenderHUDEvent event) {
         if (answer == -1) return;
-        drawPressKey();
+        drawPressKey(event);
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
         for (int i = 0; i < 9; i++) {
             if (((answer >> i) & 0x01) != 0) {
-                RenderUtils.highlightBlock(poses[i], new Color(255,0,0,100), partialTicks, false);
+                RenderUtils.highlightBlock(poses[i], new Color(255,0,0,100), event.partialTicks, false);
             } else {
-                RenderUtils.highlightBlock(poses[i], new Color(0,255,0,100), partialTicks, false);
+                RenderUtils.highlightBlock(poses[i], new Color(0,255,0,100), event.partialTicks, false);
             }
         }
     }

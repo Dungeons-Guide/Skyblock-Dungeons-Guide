@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingDeathEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
@@ -29,14 +31,10 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.Font;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 import com.mojang.blaze3d.platform.InputConstants;
 
 @Getter
@@ -61,12 +59,12 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     }
 
     @Override
-    public void drawScreen(float partialTicks) {
+    public void drawScreen(RenderHUDEvent event) {
 
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
+    public void drawWorld(RenderWorldEvent event) {
 
     }
 
@@ -104,14 +102,10 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
 
     }
 
-    protected void drawPressKey() {
-        FontRenderer fr = Minecraft.getInstance().font;
-        ScaledResolution sr = new ScaledResolution(Minecraft.getInstance());
+    protected void drawPressKey(RenderHUDEvent event) {
+        Font fr = Minecraft.getInstance().font;
         String str = "Press "+ FeatureRegistry.SOLVER_BOMBDEFUSE.<InputConstants.Key>getParameter("key").getValue().getDisplayName().getString() + " to save and send solution";
-        GlStateManager.enableBlend();
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        fr.drawString(str, (sr.getScaledWidth() - fr.getStringWidth(str)) / 2, (sr.getScaledHeight() - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
+        event.graphics.text(fr, str, (event.graphics.guiWidth() - fr.width(str)) / 2, (event.graphics.guiHeight() - fr.lineHeight) / 2, 0xFFFFFFFF, false);
     }
 
     @Override

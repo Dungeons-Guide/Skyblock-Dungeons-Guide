@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.shader;
 
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
+import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.shaders.UniformType;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -44,7 +45,24 @@ public class ShaderManager {
         register("shaders/chromacircle", Identifier.withDefaultNamespace("core/gui"), "ChromaCircle");
         register("shaders/donut", Identifier.withDefaultNamespace("core/gui"), "Donut");
         register("shaders/etherwarppreview", Identifier.withDefaultNamespace("core/gui"), "EtherwarpPreview");
-        // TODO: shaders/repeat (repeat.fsh, RepeatUniforms) is only used by world rendering, its pipeline comes with the world rendering port (D81)
+        // drawn in the world (ShaderQuadState), textured: vanilla's position_tex_color vertex shader
+        registerWorld("shaders/repeat", Identifier.withDefaultNamespace("core/position_tex_color"), "Repeat");
+    }
+
+    private static void registerWorld(String name, Identifier vertexShader, String uniformBlock) {
+        String shaderName = name.substring("shaders/".length());
+        RenderPipeline pipeline = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+                .withLocation(Identifier.fromNamespaceAndPath("dungeonsguide", "pipeline/" + shaderName))
+                .withVertexShader(vertexShader)
+                .withFragmentShader(Identifier.fromNamespaceAndPath("dungeonsguide", shaderName))
+                .withSampler("Sampler0")
+                .withUniform(uniformBlock, UniformType.UNIFORM_BUFFER)
+                .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
+                .withCull(false)
+                .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
+                .withDepthStencilState(DepthStencilState.DEFAULT)
+                .build();
+        shaders.put(name, new ShaderProgram(name, pipeline));
     }
 
     private static void register(String name, Identifier vertexShader, String uniformBlock) {

@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 
@@ -47,7 +49,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.CompoundTag;
@@ -239,8 +241,8 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
 
 
     @Override
-    public void drawScreen(float partialTicks) {
-        super.drawScreen(partialTicks);
+    public void drawScreen(RenderHUDEvent event) {
+        super.drawScreen(event);
         if (bugged) return;
         BlockPos player = Minecraft.getInstance().player.blockPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
@@ -249,21 +251,21 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                 if (ch.getChamberGen() == null) continue;
                 if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
                     if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
-                        ch.getLeft().getProcessor().drawScreen(partialTicks);
+                        ch.getLeft().getProcessor().drawScreen(event);
 
-                        FontRenderer fr = Minecraft.getInstance().font;
+                        Font fr = Minecraft.getInstance().font;
                         String str = "Current: " + ch.getChamberGen().getName() + " Specific: " + ch.getLeft().getProcessor().getName();
-                        fr.drawString(str, 0, 0, 0xFFFFFFFF);
+                        event.graphics.text(fr, str, 0, 0, 0xFFFFFFFF, false);
                     }
                 }
                 if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
                     if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
-                        ch.getRight().getProcessor().drawScreen(partialTicks);
+                        ch.getRight().getProcessor().drawScreen(event);
 
-                        FontRenderer fr = Minecraft.getInstance().font;
+                        Font fr = Minecraft.getInstance().font;
                         if (ch.getChamberGen() == null || ch.getRight().getProcessor() == null) continue;
                         String str = "Current: " + ch.getChamberGen().getName() + " Specific: " + ch.getRight().getProcessor().getName();
-                        fr.drawString(str, 0, 0, 0xFFFFFFFF);
+                        event.graphics.text(fr, str, 0, 0, 0xFFFFFFFF, false);
                     }
                 }
             }
@@ -271,8 +273,8 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
         if (bugged) return;
 
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos((int)Minecraft.getInstance().player.getX(), 68, (int)Minecraft.getInstance().player.getZ()));
@@ -281,28 +283,28 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
                 if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     found = true;
-                    ch.getLeft().getProcessor().drawWorld(partialTicks);
+                    ch.getLeft().getProcessor().drawWorld(event);
                 }
             }
             if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
                 if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     found = true;
-                    ch.getRight().getProcessor().drawWorld(partialTicks);
+                    ch.getRight().getProcessor().drawWorld(event);
                 }
             }
         }
 
         if ((maze || impossible) && warning != null && !found) {
             if (impossible) {
-                RenderUtils.drawTextAtWorld("Warning: This Bomb Defuse is bugged and Impossible" , warning.getX()+ 0.5f, warning.getY(), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
+                RenderUtils.drawTextAtWorld("Warning: This Bomb Defuse is bugged and Impossible" , warning.getX()+ 0.5f, warning.getY(), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, event.partialTicks);
             } else {
-                RenderUtils.drawTextAtWorld("Warning: This Bomb Defuse must be done with 2 people (maze)" , warning.getX()+ 0.5f, warning.getY(), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
+                RenderUtils.drawTextAtWorld("Warning: This Bomb Defuse must be done with 2 people (maze)" , warning.getX()+ 0.5f, warning.getY(), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, event.partialTicks);
             }
         }
         if (warning != null && !found) {
             for (int i = 0; i < 4; i++) {
                 BombDefuseChamberGenerator bdcg = chambers.get(i).getChamberGen();
-                RenderUtils.drawTextAtWorld((i + 1) + ". " + (bdcg == null ? "null" : bdcg.getName()), warning.getX() + 0.5f, warning.getY() - ((i + 1) * 0.3f), warning.getZ() + 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
+                RenderUtils.drawTextAtWorld((i + 1) + ". " + (bdcg == null ? "null" : bdcg.getName()), warning.getX() + 0.5f, warning.getY() - ((i + 1) * 0.3f), warning.getZ() + 0.5f, 0xFF00FF00, 0.03F, false, false, event.partialTicks);
             }
         }
     }

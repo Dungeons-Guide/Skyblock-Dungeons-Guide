@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -139,15 +140,15 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
         if (!FeatureRegistry.SOLVER_KAHOOT.isEnabled()) return;
         if (correctAnswer == null) return;
 
         OffsetPoint op = (OffsetPoint) getDungeonRoom().getDungeonRoomInfo().getProperties().get(correctAnswer);
         if (op != null) {
             BlockPos solution = op.getBlockPos(getDungeonRoom());
-            RenderUtils.highlightBoxAColor(new AABB(solution.getX(), solution.getY(), solution.getZ(), solution.getX()+1, solution.getY() + 1, solution.getZ() + 1),  FeatureRegistry.SOLVER_KAHOOT.getTargetColor(), partialTicks, false);
+            RenderUtils.highlightBoxAColor(new AABB(solution.getX(), solution.getY(), solution.getZ(), solution.getX()+1, solution.getY() + 1, solution.getZ() + 1),  FeatureRegistry.SOLVER_KAHOOT.getTargetColor(), event.partialTicks, false);
         }
     }
 

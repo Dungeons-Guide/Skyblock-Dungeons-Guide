@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -131,15 +132,15 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
         if (!FeatureRegistry.SOLVER_TELEPORT.isEnabled()) return;
         for (BlockPos bpos:visitedPortals) {
-            RenderUtils.highlightBoxAColor( new AABB(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX()+1, bpos.getY() + 1, bpos.getZ() + 1),  FeatureRegistry.SOLVER_TELEPORT.getTargetColor2(), partialTicks, true);
+            RenderUtils.highlightBoxAColor( new AABB(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX()+1, bpos.getY() + 1, bpos.getZ() + 1),  FeatureRegistry.SOLVER_TELEPORT.getTargetColor2(), event.partialTicks, true);
         }
 
         if (intersection != null) {
-            RenderUtils.highlightBoxAColor( new AABB(intersection.getX(), intersection.getY(), intersection.getZ(), intersection.getX()+1, intersection.getY() + 1, intersection.getZ() + 1),   FeatureRegistry.SOLVER_TELEPORT.getTargetColor(), partialTicks, false);
+            RenderUtils.highlightBoxAColor( new AABB(intersection.getX(), intersection.getY(), intersection.getZ(), intersection.getX()+1, intersection.getY() + 1, intersection.getZ() + 1),   FeatureRegistry.SOLVER_TELEPORT.getTargetColor(), event.partialTicks, false);
         }
     }
     public static class Generator implements RoomProcessorGenerator<RoomProcessorTeleportMazeSolver> {

@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
@@ -101,8 +102,8 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
         if (bugged) return;
         if (Minecraft.getInstance().player.blockPosition().distSqr(woods[6]) > 100) return;
 
@@ -112,13 +113,13 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
             BlockPos pos = woods[i];
 
             if (data == 0) {
-                RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, false);
+                RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), event.partialTicks, false);
             } else if (data == -1) {
-                RenderUtils.highlightBlock(pos, new Color(255, 0, 0, 50), partialTicks, false);
+                RenderUtils.highlightBlock(pos, new Color(255, 0, 0, 50), event.partialTicks, false);
             } else if (data == 1) {
-                RenderUtils.highlightBlock(pos, new Color(0, 255, 0, 50), partialTicks, false);
+                RenderUtils.highlightBlock(pos, new Color(0, 255, 0, 50), event.partialTicks, false);
             } else if (data == 2) {
-                RenderUtils.highlightBlock(pos, new Color(0, 255, 0, 100), partialTicks, false);
+                RenderUtils.highlightBlock(pos, new Color(0, 255, 0, 100), event.partialTicks, false);
             }
         }
     }

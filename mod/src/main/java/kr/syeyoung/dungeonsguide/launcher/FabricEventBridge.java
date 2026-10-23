@@ -33,6 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenKeyboardEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenMouseEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.WorldLoadEvent;
+import kr.syeyoung.dungeonsguide.mod.render.world.DGWorldRenderer;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
@@ -111,10 +112,10 @@ public class FabricEventBridge {
         ClientReceiveMessageEvents.ALLOW_CHAT.register((message, playerChatMessage, sender, boundChatType, timestamp) ->
                 !fire(new ChatReceivedEvent((byte) 0, message)));
 
-        // closest to 1.8.9's RenderWorldLastEvent: end of the main pass
-        LevelRenderEvents.END_MAIN.register(context -> {
-            fire(new RenderWorldEvent(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false), context));
-            context.bufferSource().endBatch();
+        // 1.8.9's RenderWorldLastEvent: handlers record DG world states during extraction, DG's frame graph passes draw them (D123)
+        LevelRenderEvents.END_EXTRACTION.register(context -> {
+            DGWorldRenderer.beginExtraction(context.camera().position());
+            fire(new RenderWorldEvent(context.deltaTracker().getGameTimeDeltaPartialTick(false), context));
         });
 
         HudElementRegistry.addFirst(Identifier.fromNamespaceAndPath("dungeonsguide", "hud_pre"), (graphics, deltaTracker) ->

@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.goldenpath;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
@@ -58,11 +59,11 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
     private final LinkedList<BlockPos> blocksolution = new LinkedList<BlockPos>();
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
-        RenderUtils.drawTextAtWorld(blocksolution.size() == 0 ? "Answer not received yet. Visit left room to obtain solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
+        RenderUtils.drawTextAtWorld(blocksolution.size() == 0 ? "Answer not received yet. Visit left room to obtain solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, event.partialTicks);
 
-        RenderUtils.drawLines(blocksolution, new AColor(0,0,255,0),1, partialTicks, false);
+        RenderUtils.drawLines(blocksolution, new AColor(0,0,255,0),1, event.partialTicks, false);
 
     }
 

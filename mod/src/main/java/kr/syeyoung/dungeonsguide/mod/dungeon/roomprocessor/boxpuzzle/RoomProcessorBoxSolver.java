@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.boxpuzzle;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
@@ -31,14 +33,11 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.Font;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.util.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.List;
@@ -328,29 +327,26 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (TextUtils.getFormattedText(chat).toLowerCase().contains("recalc")) {
             if (calcDone) {
                 calcReq = true;
-                Minecraft.getInstance().gui.getChat().addMessage(Component.literal("§eDungeons Guide :::: Recalculating Route..."));
+                Minecraft.getInstance().gui.getChat().addClientSystemMessage(Component.literal("§eDungeons Guide :::: Recalculating Route..."));
             } else {
                 calcReq = true;
-                Minecraft.getInstance().gui.getChat().addMessage(Component.literal("§eDungeons Guide :::: Currently Calculating Route..."));
+                Minecraft.getInstance().gui.getChat().addClientSystemMessage(Component.literal("§eDungeons Guide :::: Currently Calculating Route..."));
             }
         }
     }
 
     @Override
-    public void drawScreen(float partialTicks) {
-        super.drawScreen(partialTicks);
+    public void drawScreen(RenderHUDEvent event) {
+        super.drawScreen(event);
         if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
         if (FeatureRegistry.SOLVER_BOX.disableText()) return;
-        FontRenderer fr = Minecraft.getInstance().font;
-        GlStateManager.enableBlend();
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        fr.drawString("Type \"recalc\" in chat to recalculate the solution", 0, 0, 0xFFFFFFFF);
+        Font fr = Minecraft.getInstance().font;
+        event.graphics.text(fr, "Type \"recalc\" in chat to recalculate the solution", 0, 0, 0xFFFFFFFF, false);
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
         if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
         if (bugged) return;
         if (!calcDone) return;
@@ -368,22 +364,22 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
                 BlockPos highlight = pos2.offset(dir);
                 AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(Mth.clamp(Minecraft.getInstance().player.blockPosition().distSqr(highlight), 100, 255) / 255);
-                RenderUtils.highlightBoxAColor(new AABB(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, partialTicks, false);
+                RenderUtils.highlightBoxAColor(new AABB(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, event.partialTicks, false);
             }
 
             if (pathFound != null) {
-                RenderUtils.drawLines(pathFound, FeatureRegistry.SOLVER_BOX.getLineColor(), (float) FeatureRegistry.SOLVER_BOX.getLineWidth(), partialTicks, true);
+                RenderUtils.drawLines(pathFound, FeatureRegistry.SOLVER_BOX.getLineColor(), (float) FeatureRegistry.SOLVER_BOX.getLineWidth(), event.partialTicks, true);
             }
         } else {
             if (totalPath != null) {
-                RenderUtils.drawLines(totalPath, FeatureRegistry.SOLVER_BOX.getLineColor(), (float) FeatureRegistry.SOLVER_BOX.getLineWidth(), partialTicks, false);
+                RenderUtils.drawLines(totalPath, FeatureRegistry.SOLVER_BOX.getLineColor(), (float) FeatureRegistry.SOLVER_BOX.getLineWidth(), event.partialTicks, false);
             }
             if (totalPushedBlocks != null) {
                 for (int i = 0; i < totalPushedBlocks.size(); i++) {
                     BlockPos pos = totalPushedBlocks.get(i);
-                    RenderUtils.highlightBoxAColor(new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1),  FeatureRegistry.SOLVER_BOX.getTargetColor(), partialTicks, false);
+                    RenderUtils.highlightBoxAColor(new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1),  FeatureRegistry.SOLVER_BOX.getTargetColor(), event.partialTicks, false);
                     RenderUtils.drawTextAtWorld("#"+i, pos.getX()+0.5f, pos.getY() +0.5f, pos.getZ() + 0.5f, i != step ?
-                            RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor2()) : RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor()), 0.1f, false, false, partialTicks);
+                            RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor2()) : RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor()), 0.1f, false, false, event.partialTicks);
                 }
             }
         }

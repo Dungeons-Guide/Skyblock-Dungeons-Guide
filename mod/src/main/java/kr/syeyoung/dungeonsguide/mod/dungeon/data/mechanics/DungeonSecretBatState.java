@@ -63,7 +63,7 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
         if (didKillBat) {
             return SecretStatus.FOUND;
         }
-        Vec3 spawn = new Vec3(bpos);
+        Vec3 spawn = Vec3.atLowerCornerOf(bpos);
         for (Integer killed : DungeonActionContext.getKilleds()) {
             if (DungeonActionContext.getSpawnLocation().get(killed) == null) continue;
             if (DungeonActionContext.getSpawnLocation().get(killed).squareDistanceTo(spawn) < 100) {
@@ -85,7 +85,7 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
         if (didKillBat) return;
 
         BlockPos bpos = data.secretPoint.getBlockPos(dungeonRoom);
-        Vec3 pos = new Vec3(bpos);
+        Vec3 pos = Vec3.atLowerCornerOf(bpos);
         for (Map.Entry<Integer, Vec3> integerVec3Entry : DungeonActionContext.getSpawnLocation().entrySet()) {
             if (integerVec3Entry.getValue().distanceToSqr(pos) < 100) {
                 Entity e = Minecraft.getInstance().level.getEntity(integerVec3Entry.getKey());

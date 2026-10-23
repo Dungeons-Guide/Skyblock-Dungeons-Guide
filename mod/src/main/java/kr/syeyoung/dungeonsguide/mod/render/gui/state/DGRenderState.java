@@ -16,48 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.gui.renderer.state;
+package kr.syeyoung.dungeonsguide.mod.render.gui.state;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import lombok.AllArgsConstructor;
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
 /**
- * An element vanilla extraction code produced, drawn in DG's image with DG's clip (D102).
+ * Something DG draws into a StencilImage. Recorded by RenderingContext, executed by DGGuiRenderer.
  */
-@AllArgsConstructor
-public class VanillaElementState implements DGRenderState {
-    private final GuiElementRenderState element;
-    private final Rectangle scissor;
-    private final boolean stencilMask;
+public interface DGRenderState {
+    RenderPipeline pipeline();
 
-    @Override
-    public RenderPipeline pipeline() {
-        return element.pipeline();
-    }
+    // resolved when DGGuiRenderer executes, so the lightmap is the ui one
+    TextureSetup textureSetup();
 
-    @Override
-    public TextureSetup textureSetup() {
-        return element.textureSetup();
-    }
+    // gl coordinates (origin bottom left) in image pixels, null for no scissor
+    @Nullable Rectangle scissor();
 
-    @Override
-    public @Nullable Rectangle scissor() {
-        return scissor;
-    }
+    // drawn while a stencil mask is being written: no color output
+    boolean stencilMask();
 
-    @Override
-    public boolean stencilMask() {
-        return stencilMask;
-    }
-
-    @Override
-    public void buildVertices(VertexConsumer consumer) {
-        element.buildVertices(consumer);
-    }
+    void buildVertices(VertexConsumer consumer);
 }

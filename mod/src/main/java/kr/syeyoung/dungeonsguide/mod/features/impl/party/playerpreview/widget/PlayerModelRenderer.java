@@ -77,10 +77,11 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
 
     @Override
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
-        GlStateManager.enableDepth();
-        GlStateManager.color(1, 1, 1, 1.0F);
-        GuiInventory.drawEntityOnScreen(45, 150, 60, (float) -relMouseX+75, 0, fakePlayer);
-        GlStateManager.disableDepth();
+        // TODO: 3D previews are built later (D124), 1.8.9 drew the player model here:
+//        GlStateManager.enableDepth();
+//        GlStateManager.color(1, 1, 1, 1.0F);
+//        GuiInventory.drawEntityOnScreen(45, 150, 60, (float) -relMouseX+75, 0, fakePlayer);
+//        GlStateManager.disableDepth();
 
         String toDraw = fakePlayer.getName();
         List<ActiveCosmetic> activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayer().get(

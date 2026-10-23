@@ -48,7 +48,7 @@ public class ActionClick extends AbstractAction {
     public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event) {
         if (clicked) return;
         if (target.getBlockPos(dungeonRoom).equals(event.pos) &&
-                (predicate == null || predicate.apply(event.entityLiving.getHeldItem()))) {
+                (predicate == null || predicate.apply(event.entityPlayer.getMainHandItem()))) {
             clicked = true;
         }
     }

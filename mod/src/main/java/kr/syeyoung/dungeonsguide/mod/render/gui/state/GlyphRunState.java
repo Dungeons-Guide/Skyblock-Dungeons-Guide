@@ -16,37 +16,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.gui.renderer.state;
+package kr.syeyoung.dungeonsguide.mod.render.gui.state;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import lombok.AllArgsConstructor;
+import net.minecraft.client.gui.font.TextRenderable;
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.util.LightCoordsUtil;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
+import org.joml.Matrix4f;
 
 import java.awt.*;
+import java.util.List;
 
 /**
- * Solid colored quad. Corners in order, transformed by pose.
+ * Vanilla glyphs (D79) that share a pipeline and a texture.
  */
 @AllArgsConstructor
-public class RectState implements DGRenderState {
+public class GlyphRunState implements DGRenderState {
     private final Matrix3x2f pose;
-    private final float[] corners; // x0, y0, x1, y1, x2, y2, x3, y3
-    private final int color;
+    private final List<TextRenderable> glyphs;
     private final Rectangle scissor;
     private final boolean stencilMask;
 
     @Override
     public RenderPipeline pipeline() {
-        return RenderPipelines.GUI;
+        return glyphs.get(0).guiPipeline();
     }
 
     @Override
     public TextureSetup textureSetup() {
-        return TextureSetup.noTexture();
+        return TextureSetup.singleTextureWithLightmap(glyphs.get(0).textureView(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST));
     }
 
     @Override
@@ -61,7 +65,8 @@ public class RectState implements DGRenderState {
 
     @Override
     public void buildVertices(VertexConsumer consumer) {
-        for (int i = 0; i < 4; i++)
-            consumer.addVertexWith2DPose(pose, corners[i * 2], corners[i * 2 + 1]).setColor(color);
+        Matrix4f pose4 = new Matrix4f().mul(pose);
+        for (TextRenderable glyph : glyphs)
+            glyph.render(pose4, consumer, LightCoordsUtil.FULL_BRIGHT, true);
     }
 }

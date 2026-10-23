@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import net.minecraft.client.Minecraft;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
@@ -184,8 +185,8 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
         if (!FeatureRegistry.SOLVER_TICTACTOE.isEnabled()) return;
         if (chosePos != -1) {
             BlockPos block = board.getOffsetPointList().get(chosePos).getBlockPos(getDungeonRoom());
@@ -203,7 +204,7 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
             }
             RenderUtils.highlightBoxAColor(new AABB(block.getX(), block.getY(), block.getZ(), block.getX()+1, block.getY() + 1, block.getZ() + 1),
                     whoseturn ? FeatureRegistry.SOLVER_TICTACTOE.getTargetColor()
-                            : FeatureRegistry.SOLVER_TICTACTOE.getTargetColor2(), partialTicks, true);
+                            : FeatureRegistry.SOLVER_TICTACTOE.getTargetColor2(), event.partialTicks, true);
         }
     }
 

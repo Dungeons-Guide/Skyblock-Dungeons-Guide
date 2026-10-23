@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
@@ -36,7 +38,6 @@ import net.minecraft.world.level.block.LeverBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -286,8 +287,8 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawScreen(float partialTicks) {
-        super.drawScreen(partialTicks);
+    public void drawScreen(RenderHUDEvent event) {
+        super.drawScreen(event);
     }
 
     @Override
@@ -325,15 +326,15 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
         if (!FeatureRegistry.SOLVER_WATERPUZZLE.isEnabled()) return;
         if (!argumentsFulfilled) return;
         for (int y = 0; y < nodes.length; y++) {
             for (int x = 0; x < nodes[y].length; x++) {
                 Simulator.Node n = nodes[y][x];
                 if (n.getNodeType().isWater()) {
-                    RenderUtils.highlightBlock(ptMapping.get(new Simulator.Pt(x,y)), new Color(0, 255, 0, 50), partialTicks, true);
+                    RenderUtils.highlightBlock(ptMapping.get(new Simulator.Pt(x,y)), new Color(0, 255, 0, 50), event.partialTicks, true);
                 }
             }
         }
@@ -354,12 +355,11 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                     // target:
 
                     if (i == idx) {
-                        GlStateManager.color(1,1,1,1);
                         RenderUtils.drawLine(
-                                Minecraft.getInstance().player.getPositionEyes(partialTicks),
-                                new Vec3(pos).add(0.5, 0, 0.5),
+                                Minecraft.getInstance().player.getEyePosition(event.partialTicks),
+                                Vec3.atLowerCornerOf(pos).add(0.5, 0, 0.5),
                                 Color.green,
-                                partialTicks,
+                                event.partialTicks,
                                 false);
                     }
 
@@ -368,7 +368,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                     double time = (target-System.currentTimeMillis()) / 1000.0 + 0.051;
                     if (time < 0) time = 0;
                     RenderUtils.drawTextAtWorld(String.format("%.1f", time)+"s", pos.getX()+0.5f, pos.getY()+(i - idx)*0.2f - 0.5f, pos.getZ()+0.5f,
-                            (i == idx) && target < System.currentTimeMillis() ? 0xFF00FF00 : 0xFFFF5500, 0.05f, false, false, partialTicks);
+                            (i == idx) && target < System.currentTimeMillis() ? 0xFF00FF00 : 0xFFFF5500, 0.05f, false, false, event.partialTicks);
                 }
                 culMoves += moves;
             }

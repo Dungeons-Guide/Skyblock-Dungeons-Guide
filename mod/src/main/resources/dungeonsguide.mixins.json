@@ -10,6 +10,7 @@
     "GameRendererMixin",
     "GlCommandEncoderMixin",
     "KeyboardHandlerMixin",
+    "LevelRendererMixin",
     "LivingEntityMixin",
     "MinecraftMixin",
     "MouseHandlerMixin",

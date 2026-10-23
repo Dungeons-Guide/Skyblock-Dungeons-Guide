@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -104,15 +105,15 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
     }
 
     @Override
-    public void drawWorld(float partialTicks) {
-        super.drawWorld(partialTicks);
+    public void drawWorld(RenderWorldEvent event) {
+        super.drawWorld(event);
         if (!FeatureRegistry.DEBUG.isEnabled()) return;
         try {
             BlockPos pos = new BlockPos(205,77, 205);
-            RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, false);
+            RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), event.partialTicks, false);
             for (BlockPos pos2 : progressBar) {
                 RenderUtils.highlightBlock(pos2, LegacyBlock.SEA_LANTERN.is(w.getBlockState(pos2)) ?
-                            new Color(0, 255, 0, 50) : new Color(255,0,0, 50), partialTicks, false);
+                            new Color(0, 255, 0, 50) : new Color(255,0,0, 50), event.partialTicks, false);
             }
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);

@@ -20,10 +20,11 @@ package kr.syeyoung.dungeonsguide.mod.events.impl;
 
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 import lombok.AllArgsConstructor;
-import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionContext;
 
 @AllArgsConstructor
 public class RenderWorldEvent extends DGEvent {
     public final float partialTicks;
-    public final LevelRenderContext context;
+    // fired during level extraction: handlers record DG world states, nothing draws here (D123)
+    public final LevelExtractionContext context;
 }
