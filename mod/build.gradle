@@ -28,7 +28,6 @@ repositories {
 }
 
 configurations {
-    // libraries shipped inside the mod jar (jar-in-jar), see afterEvaluate below
     bundled
     implementation.extendsFrom bundled
 
