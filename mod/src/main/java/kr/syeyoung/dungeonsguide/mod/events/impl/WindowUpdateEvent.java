@@ -23,12 +23,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
 import net.minecraft.network.play.server.S30PacketWindowItems;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
-public class WindowUpdateEvent extends Event {
+public class WindowUpdateEvent extends DGEvent {
     S30PacketWindowItems windowItems;
     S2FPacketSetSlot packetSetSlot;
 }

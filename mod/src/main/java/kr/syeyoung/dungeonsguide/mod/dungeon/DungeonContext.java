@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon;
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonSpecificDataProvider;
@@ -48,7 +49,6 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.common.MinecraftForge;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -157,7 +157,7 @@ public class DungeonContext {
         if (scaffoldParser != null && bossRoomEnterSeconds == -1 && !roomBoundary.contains(scaffoldParser.getDungeonMapLayout().worldPointToMapPoint(Minecraft.getMinecraft().thePlayer.getPositionVector()))) {
             bossRoomEnterSeconds = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000;
             bossroomSpawnPos = Minecraft.getMinecraft().thePlayer.getPosition();
-            MinecraftForge.EVENT_BUS.post(new BossroomEnterEvent());
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new BossroomEnterEvent());
             recorder.createEvent(new DungeonNodataEvent("BOSSROOM_ENTER"));
             DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(getDungeonName());
             if (doorFinder != null) {

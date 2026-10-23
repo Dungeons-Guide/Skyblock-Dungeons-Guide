@@ -35,7 +35,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;

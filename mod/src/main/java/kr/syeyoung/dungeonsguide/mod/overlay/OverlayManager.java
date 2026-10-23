@@ -36,8 +36,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.profiler.Profiler;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -251,7 +251,7 @@ public class OverlayManager {
     private int lastX, lastY;
 
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = ListenerPriority.FIRST)
     public void handleMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) throws IOException {
             int i = Mouse.getEventX();
             int j = this.mc.displayHeight - Mouse.getEventY();
@@ -305,7 +305,7 @@ public class OverlayManager {
             lastY = j;
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = ListenerPriority.FIRST)
     public void handleKeyboardInput(GuiScreenEvent.KeyboardInputEvent.Pre keyboardInputEvent) throws IOException {
         if (Keyboard.getEventKeyState()) {
             if (Keyboard.isRepeatEvent())

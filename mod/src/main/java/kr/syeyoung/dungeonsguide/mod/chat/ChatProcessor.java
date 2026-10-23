@@ -25,8 +25,8 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -88,7 +88,7 @@ public class ChatProcessor {
     }
 
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
+    @SubscribeEvent(priority = ListenerPriority.FIRST, receiveCanceled = true)
     public void onMessage(ClientChatReceivedEvent chatReceivedEvent) {
         if (chatReceivedEvent.type == 2) return;
         String txt = chatReceivedEvent.message.getFormattedText();
@@ -117,7 +117,7 @@ public class ChatProcessor {
     }
 
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SubscribeEvent(priority = ListenerPriority.LAST)
     public void cancelMessage(ClientChatReceivedEvent chatReceivedEvent) {
         if (chatReceivedEvent.getResult() == Event.Result.DENY)
             chatReceivedEvent.setCanceled(true);

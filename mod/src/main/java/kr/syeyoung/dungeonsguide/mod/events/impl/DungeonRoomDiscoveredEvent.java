@@ -22,9 +22,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 @AllArgsConstructor @Getter @Setter
-public class DungeonRoomDiscoveredEvent extends Event {
+public class DungeonRoomDiscoveredEvent extends DGEvent {
     private DungeonRoom dungeonRoom;
 }

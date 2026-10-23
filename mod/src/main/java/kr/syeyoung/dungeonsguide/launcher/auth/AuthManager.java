@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.launcher.auth;
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.launcher.Main;
@@ -28,7 +29,6 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthenticationUnavaila
 import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.PrivacyPolicyRequiredException;
 import kr.syeyoung.dungeonsguide.launcher.loader.RemoteLoader;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -123,7 +123,7 @@ public class AuthManager {
             byte[] encSecret = DgAuthUtil.checkSessionAuthenticityAndReturnEncryptedSecret(token);
             currentToken = DgAuthUtil.verifyAuth(token, encSecret);
             Minecraft.getMinecraft().addScheduledTask(() -> {
-                MinecraftForge.EVENT_BUS.post(new AuthChangedEvent(currentToken));
+                DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new AuthChangedEvent(currentToken));
             });
 
 

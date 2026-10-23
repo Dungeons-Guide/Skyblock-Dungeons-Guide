@@ -22,11 +22,11 @@ import kr.syeyoung.dungeonsguide.mod.stomp.StompClient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
-public class StompConnectedEvent extends Event {
+public class StompConnectedEvent extends DGEvent {
     private StompClient stompInterface;
 }

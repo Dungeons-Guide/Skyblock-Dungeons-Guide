@@ -18,14 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.Cancelable;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
-@AllArgsConstructor
-public class PlayerInteractEntityEvent extends Event {
+public class PlayerInteractEntityEvent extends DGEvent implements Cancelable {
 
     @Getter @Setter
     private boolean attack;
@@ -34,8 +33,12 @@ public class PlayerInteractEntityEvent extends Event {
     @Getter @Setter
     private Entity entity;
 
-    @Override
-    public boolean isCancelable() {
-        return true;
+    @Getter @Setter
+    private boolean canceled;
+
+    public PlayerInteractEntityEvent(boolean attack, boolean interactAt, Entity entity) {
+        this.attack = attack;
+        this.interactAt = interactAt;
+        this.entity = entity;
     }
 }

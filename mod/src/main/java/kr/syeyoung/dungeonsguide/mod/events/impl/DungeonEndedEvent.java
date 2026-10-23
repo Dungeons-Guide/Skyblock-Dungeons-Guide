@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
+import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
-public class DungeonEndedEvent extends Event {
+public class DungeonEndedEvent extends DGEvent {
 }

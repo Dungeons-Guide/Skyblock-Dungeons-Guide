@@ -43,8 +43,8 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -243,7 +243,7 @@ public class CosmeticsManager {
     }
 
     private final ThreadLocal<Stack<List<ReplacementContext>>> contextThreadLocal = new ThreadLocal<>();
-    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
+    @SubscribeEvent(priority = ListenerPriority.FIRST, receiveCanceled = true)
     public void onChatDetect(ClientChatReceivedEvent clientChatReceivedEvent) {
         try {
             if (clientChatReceivedEvent.type == 2) return;
@@ -264,7 +264,7 @@ public class CosmeticsManager {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    @SubscribeEvent(priority = ListenerPriority.LAST, receiveCanceled = true)
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         try {
             Stack<List<ReplacementContext>> threadCtx = contextThreadLocal.get();
@@ -434,7 +434,7 @@ public class CosmeticsManager {
     }
 
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SubscribeEvent(priority = ListenerPriority.LAST)
     public void nameFormat(PlayerEvent.NameFormat nameFormat) {
         List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.get(nameFormat.entityPlayer.getGameProfile().getId());
         boolean dg =
