@@ -27,16 +27,13 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui.PartyFinderParty;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.nbt.CompoundTag;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 public class FeatureGoodParties extends SimpleFeature {
     public FeatureGoodParties() {
@@ -58,12 +55,11 @@ public class FeatureGoodParties extends SimpleFeature {
         int ySize = j + (((ChestMenu)(((ContainerScreen) Minecraft.getInstance().screen).getMenu())).getContainer().getContainerSize() / 9) * 18;
         int left = (rendered.gui.width - 176) / 2;
         int top = (rendered.gui.height - ySize ) / 2;
-        GlStateManager.pushMatrix();
-        GlStateManager.disableDepth();
-        GlStateManager.disableLighting();
-        GlStateManager.colorMask(true, true, true, false);
-        GlStateManager.translate(left, top, 0);
-        FontRenderer fr = Minecraft.getInstance().font;
+        // D126: drawn through the event's RenderingContext
+        RenderingContext context = rendered.context;
+        context.pose().pushMatrix();
+        context.pose().translate(left, top);
+        Font fr = Minecraft.getInstance().font;
         try {
 
             for (int i1 = 0; i1 < Integer.min(54, cont.slots.size()); i1++) {
@@ -80,25 +76,22 @@ public class FeatureGoodParties extends SimpleFeature {
                 int x = s.x;
                 int y = s.y;
                 if (!party.canJoin) {
-                    Gui.drawRect(x, y, x + 16, y + 16, 0x77AA0000);
+                    context.drawRect(x, y, x + 16, y + 16, 0x77AA0000);
                 } else {
 
 
-                    GlStateManager.enableBlend();
-                    GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                     if (party.note.toLowerCase().contains("car")) {
-                        fr.drawStringWithShadow("C", x + 1, y + 1, 0xFFFF0000);
+                        context.drawString("C", x + 1, y + 1, 0xFFFF0000, true);
                     } else if (party.note.toLowerCase().replace(" ", "").contains("s/s+")) {
-                        fr.drawStringWithShadow("S+", x + 1, y + 1, 0xFFFFFF00);
+                        context.drawString("S+", x + 1, y + 1, 0xFFFFFF00, true);
                     } else if (party.note.toLowerCase().contains("s+")) {
-                        fr.drawStringWithShadow("S+", x + 1, y + 1, 0xFF00FF00);
+                        context.drawString("S+", x + 1, y + 1, 0xFF00FF00, true);
                     } else if (party.note.toLowerCase().contains(" s") || party.note.toLowerCase().contains(" s ")) {
-                        fr.drawStringWithShadow("S", x + 1, y + 1, 0xFFFFFF00);
+                        context.drawString("S", x + 1, y + 1, 0xFFFFFF00, true);
                     } else if (party.note.toLowerCase().contains("rush")) {
-                        fr.drawStringWithShadow("R", x + 1, y + 1, 0xFFFF0000);
+                        context.drawString("R", x + 1, y + 1, 0xFFFF0000, true);
                     }
-                    fr.drawStringWithShadow("§e"+Integer.max(party.requiredClassLevel, party.requiredDungeonLevel), x + 1, y + fr.FONT_HEIGHT, 0xFFFFFFFF);
+                    context.drawString("§e"+Integer.max(party.requiredClassLevel, party.requiredDungeonLevel), x + 1, y + fr.lineHeight, 0xFFFFFFFF, true);
                 }
 
 
@@ -107,9 +100,6 @@ public class FeatureGoodParties extends SimpleFeature {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
-        GlStateManager.colorMask(true, true, true, true);
-        GlStateManager.popMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.enableLighting();
+        context.pose().popMatrix();
     }
 }

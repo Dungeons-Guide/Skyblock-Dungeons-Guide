@@ -40,6 +40,7 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.FormattedText;
@@ -211,6 +212,43 @@ public class RenderingContext {
             }
         });
         drawGlyphs(glyphs);
+    }
+
+    private static final Identifier EXPERIENCE_BAR_BACKGROUND_SPRITE = Identifier.withDefaultNamespace("hud/experience_bar_background");
+    private static final Identifier EXPERIENCE_BAR_PROGRESS_SPRITE = Identifier.withDefaultNamespace("hud/experience_bar_progress");
+
+    // 1.8.9's RenderUtils.renderBar: the xp bar's halves at 1:1 from 1.8.9's icons.png, here from vanilla's xp bar sprites
+    public void renderBar(float x, float y, float xSize, float completed) {
+        float fCompleted = (float)Math.round(completed / 0.05F) * 0.05F;
+        float notCompleted = 1.0F - fCompleted;
+        drawVanilla(graphics -> {
+            float width;
+            if (fCompleted < 0.5F) {
+                width = (0.5F - fCompleted) * xSize;
+                barPiece(graphics, EXPERIENCE_BAR_BACKGROUND_SPRITE, xSize * fCompleted, x + xSize * fCompleted, y, width);
+            }
+
+            if (fCompleted < 1.0F) {
+                width = Math.min(xSize * notCompleted, xSize / 2.0F);
+                barPiece(graphics, EXPERIENCE_BAR_BACKGROUND_SPRITE, 182.0F - xSize / 2.0F + Math.max(xSize * (fCompleted - 0.5F), 0.0F),
+                        x + xSize / 2.0F + Math.max(xSize * (fCompleted - 0.5F), 0.0F), y, width);
+            }
+
+            if (fCompleted > 0.0F) {
+                width = Math.min(xSize * fCompleted, xSize / 2.0F);
+                barPiece(graphics, EXPERIENCE_BAR_PROGRESS_SPRITE, 0.0F, x, y, width);
+            }
+
+            if (fCompleted > 0.5F) {
+                width = Math.min(xSize * (fCompleted - 0.5F), xSize / 2.0F);
+                barPiece(graphics, EXPERIENCE_BAR_PROGRESS_SPRITE, 182.0F - xSize / 2.0F, x + xSize / 2.0F, y, width);
+            }
+        });
+    }
+
+    private static void barPiece(GuiGraphicsExtractor graphics, Identifier sprite, float u, float x, float y, float width) {
+        if (Math.round(width) <= 0) return;
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, 182, 5, Math.round(u), 0, Math.round(x), Math.round(y), Math.round(width), 5);
     }
 
     // what 1.8.9's FontRenderer.drawSplitString did, wrapped at wrapWidth with formatting carried to the next line

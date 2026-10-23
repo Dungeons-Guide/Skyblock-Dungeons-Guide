@@ -53,8 +53,8 @@ public class WidgetProfileViewer extends AnnotatedWidget {
         actualPV.setValue(null);
 
         visiblePage.setValue("fetching");
-        PlayerManager.INSTANCE.ping(gameProfile.getId());
-        ApiFetcher.fetchMostRecentProfileAsync(gameProfile.getId().toString())
+        PlayerManager.INSTANCE.ping(gameProfile.id());
+        ApiFetcher.fetchMostRecentProfileAsync(gameProfile.id().toString())
                 .whenComplete((a,e) -> {
                     if (e != null) {
                         e.printStackTrace();

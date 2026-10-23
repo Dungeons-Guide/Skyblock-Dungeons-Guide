@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview;
 
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenOpenEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenMouseEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ComponentHoverEvent;
 import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessResult;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
@@ -40,13 +40,11 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,7 +73,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         ChatProcessor.INSTANCE.subscribe(((txt, messageContext) -> {
             if (isEnabled() && txt.contains("§r§ejoined the dungeon group! (§r§b")) {
                 String username = TextUtils.stripColor(txt).split(" ")[3];
-                if (username.equalsIgnoreCase(mc.getSession().getUsername())) {
+                if (username.equalsIgnoreCase(mc.getUser().getName())) {
                     PartyManager.INSTANCE.requestPartyList(context -> {
                         if (context == null) {
                             ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cBugged Dungeon Party "));
@@ -119,23 +117,22 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
     private OverlayWidget widget;
 
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void onGuiPostRender(ScreenMouseEvent mouseInputEvent) {
-        if (!(mc.screen instanceof GuiChat)) {
+    public void onComponentHover(ComponentHoverEvent event) {
+        if (!(mc.screen instanceof ChatScreen)) {
             return;
         }
-        ScaledResolution scaledResolution = new ScaledResolution(mc);
 
-        Component ichatcomponent = getHoveredComponent(scaledResolution);
+        Style hoveredStyle = event.style;
         GameProfile gameProfile = null;
-        if (ichatcomponent !=  null && ichatcomponent.getStyle().getHoverEvent() instanceof HoverEventRenderPlayer) {
-            gameProfile = ((HoverEventRenderPlayer) ichatcomponent.getStyle().getHoverEvent()).getGameProfile();
+        if (hoveredStyle !=  null && hoveredStyle.getHoverEvent() instanceof HoverEventRenderPlayer) {
+            gameProfile = ((HoverEventRenderPlayer) hoveredStyle.getHoverEvent()).getGameProfile();
         }
         if (gameProfile != null && widget == null) {
-            int mouseX = Mouse.getX();
-            int mouseY = (Minecraft.getInstance().getWindow().getHeight() - Mouse.getY());
+            int mouseX = (int) mc.mouseHandler.xpos();
+            int mouseY = (int) mc.mouseHandler.ypos();
 
-            double width = 220 * scaledResolution.getScaleFactor();
-            double height = 220 * scaledResolution.getScaleFactor();
+            double width = 220 * mc.getWindow().getGuiScale();
+            double height = 220 * mc.getWindow().getGuiScale();
             widget = new OverlayWidget(
                     new WidgetProfileViewer(gameProfile, () -> {
                         if (widget != null) {
@@ -152,30 +149,9 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
     }
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onGuiClose(ScreenOpenEvent event) {
-        if (!(event.gui instanceof GuiChat) && widget != null) {
+        if (!(event.gui instanceof ChatScreen) && widget != null) {
             OverlayManager.getInstance().removeOverlay(widget);
             widget = null;
         }
     }
-
-
-    public Component getHoveredComponent(ScaledResolution scaledResolution) {
-        Component ichatcomponent = null;
-//        if (Loader.isModLoaded("hychat")) {
-//            try {
-//                ChatManager chatManager = HyChat.getInstance().getChatManager();
-//                GuiChatBox guiChatBox = chatManager.getFocusedChat();
-//
-//                int x = guiChatBox.getX(scaledResolution);
-//                int y = guiChatBox.getY(scaledResolution);
-//                ichatcomponent = guiChatBox.chatArray.getHoveredComponent(guiChatBox.getSelectedTab().getChatLines(), Mouse.getX(), Mouse.getY(), x, y);
-//            } catch (Exception t) {
-//            }
-//        }
-//        if (ichatcomponent == null) {
-            ichatcomponent = Minecraft.getInstance().gui.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
-//        }
-        return ichatcomponent;
-    }
-
 }

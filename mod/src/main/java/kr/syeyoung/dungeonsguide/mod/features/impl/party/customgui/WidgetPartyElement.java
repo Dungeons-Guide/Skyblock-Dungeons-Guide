@@ -34,6 +34,7 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.resources.Identifier;
@@ -88,7 +89,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
             String note = party.note;
             boolean notFound = false;
             boolean cantJoin = !party.canJoin;
-            if (itemstack.getValue().getItem() == Item.getItemFromBlock(Blocks.bedrock)) {
+            if (itemstack.getValue().is(Items.BEDROCK)) {
                 cantJoin = true;
                 notFound = true;
             }

@@ -217,34 +217,6 @@ public class RenderUtils {
         GL11.glTexParameteri(3553, 10240, 9728);
         GlStateManager.disableBlend();
     }
-    public static void renderBar(float x, float y, float xSize, float completed) {
-        Minecraft.getInstance().getTextureManager().bindTexture(icons);
-        completed = (float)Math.round(completed / 0.05F) * 0.05F;
-        float notCompleted = 1.0F - completed;
-        int displayNum = 0;
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        float width = 0.0F;
-        if (completed < 0.5F && (displayNum == 1 || displayNum == 0)) {
-            width = (0.5F - completed) * xSize;
-            drawTexturedRect(x + xSize * completed, y, width, 5.0F, xSize * completed / 256.0F, xSize / 2.0F / 256.0F, 0.2890625F, 0.30859375F, 9728);
-        }
-
-        if (completed < 1.0F && (displayNum == 2 || displayNum == 0)) {
-            width = Math.min(xSize * notCompleted, xSize / 2.0F);
-            drawTexturedRect(x + xSize / 2.0F + Math.max(xSize * (completed - 0.5F), 0.0F), y, width, 5.0F, (182.0F - xSize / 2.0F + Math.max(xSize * (completed - 0.5F), 0.0F)) / 256.0F, 0.7109375F, 0.2890625F, 0.30859375F, 9728);
-        }
-
-        if (completed > 0.0F && (displayNum == 3 || displayNum == 0)) {
-            width = Math.min(xSize * completed, xSize / 2.0F);
-            drawTexturedRect(x, y, width, 5.0F, 0.0F, width / 256.0F, 0.30859375F, 0.328125F, 9728);
-        }
-
-        if (completed > 0.5F && (displayNum == 4 || displayNum == 0)) {
-            width = Math.min(xSize * (completed - 0.5F), xSize / 2.0F);
-            drawTexturedRect(x + xSize / 2.0F, y, width, 5.0F, (182.0F - xSize / 2.0F) / 256.0F, (182.0F - xSize / 2.0F + width) / 256.0F, 0.30859375F, 0.328125F, 9728);
-        }
-
-    }
 
     public static void drawUnfilledBox(int left, int top, int right, int bottom, int color, boolean chroma)
     {
