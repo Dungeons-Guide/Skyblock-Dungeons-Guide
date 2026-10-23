@@ -25,7 +25,6 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
@@ -66,21 +65,19 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void renderworldLast(RenderWorldEvent event) {
         if (toHighlight == null) return;
-        GlStateManager.disableAlpha();
         Color c =  new Color(0x3300FF00, true);
         for (BlockPos spot : toHighlight) {
              RenderUtils.highlightBox(
 //                     spot
-                     AABB.fromBounds(spot.getX() / 2.0 - 0.25, spot.getY() / 2.0 - 0.25, spot.getZ() / 2.0 - 0.25,
+                     new AABB(spot.getX() / 2.0 - 0.25, spot.getY() / 2.0 - 0.25, spot.getZ() / 2.0 - 0.25,
                              spot.getX() / 2.0 + 0.25, spot.getY() / 2.0 + 0.25, spot.getZ() / 2.0 + 0.25)
                      , c, event.partialTicks, true);
         }
-        GlStateManager.enableAlpha();
     }
 
     @Override
     public boolean checkIfBlocked(int x, int y, int z) {
-        return !Minecraft.getInstance().level.isAirBlock(new BlockPos(x,y,z));
+        return !Minecraft.getInstance().level.isEmptyBlock(new BlockPos(x,y,z));
 //
 //        int maxX = (int) Math.floor(x/2.0);
 //        int maxY = (int) Math.floor(y/2.0);

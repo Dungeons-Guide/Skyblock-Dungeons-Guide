@@ -39,7 +39,6 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.world.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
@@ -161,10 +160,9 @@ public class FeaturePathfinderDebug extends SimpleFeature {
                 cnt++;
                 Color c = Color.getHSBColor(cnt / ((float)precalcs.size() * pfDebugPts.size()), 1.0f, 1.0f);
 
-                GlStateManager.disableDepth();
+                // TODO: 1.8.9 turned depth off around this, so the first run of strips was see-through; the engine decides depth per run here
                 ClassicPathDisplayEngine.drawLinesPathfindNode(res.getNodeList(),
-                        new AColor(c.getRGB(),true), 3.0f, event.partialTicks);
-                GlStateManager.enableDepth();
+                        new AColor(c.getRGB(),true), 3.0f, event);
 
                 PathfindResult.PathfindNode n = res.getNodeList().get(0);
 
@@ -181,7 +179,8 @@ public class FeaturePathfinderDebug extends SimpleFeature {
                 );
 
                 for (PathfindResult.PathfindNode pose : res.getNodeList()) {
-                    if (pose.getType() != null && pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getInstance().player.getPosition()) < 100) {
+                    // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
+                    if (pose.getType() != null && pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getInstance().player.blockPosition()) < 100) {
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(),
                                 0xFF000000 | c.getRGB(), 0.02f, false, true, event.partialTicks);
                     }

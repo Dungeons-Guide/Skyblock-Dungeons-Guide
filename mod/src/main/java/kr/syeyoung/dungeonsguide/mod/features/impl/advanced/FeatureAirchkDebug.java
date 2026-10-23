@@ -24,6 +24,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.MinecraftWorld;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -53,13 +55,13 @@ public class FeatureAirchkDebug extends SimpleFeature {
             event.setCanceled(true);
             // reset
             Vec3 vec = new Vec3(event.pos.getX() + 0.5, event.pos.getY() + 0.5, event.pos.getZ() + 0.5);
-            AABB check = AABB.fromBounds(
-                    vec.xCoord - 3.1, vec.yCoord + 1.1, vec.zCoord -3.1,
-                    vec.xCoord + 3.1, vec.yCoord - 3.6, vec.zCoord + 3.1
+            AABB check = new AABB(
+                    vec.x - 3.1, vec.y + 1.1, vec.z -3.1,
+                    vec.x + 3.1, vec.y - 3.6, vec.z + 3.1
             );
 
             this.spots =
-                    RaytraceHelper.findMovespots(event.world, event.pos, a -> check.isVecInside(a), 3)
+                    RaytraceHelper.findMovespots(new MinecraftWorld(Minecraft.getInstance().level), event.pos, a -> check.contains(a), 3)
             ;
             System.out.println(spots);
         } else {

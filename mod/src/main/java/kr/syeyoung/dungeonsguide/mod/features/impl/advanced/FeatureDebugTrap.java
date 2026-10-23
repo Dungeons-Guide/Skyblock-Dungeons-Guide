@@ -29,6 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ambient.Bat;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +75,13 @@ public class FeatureDebugTrap extends TextHUDFeature {
     @Override
     public TextSpan getText() {
 
-        List<Entity> bats = Minecraft.getInstance().level.getEntities(Bat.class, e -> true);
+        // the loaded chunk area around the player (D114)
+        Minecraft mc = Minecraft.getInstance();
+        ChunkPos center = mc.player.chunkPosition();
+        int loadedRadius = mc.options.getEffectiveRenderDistance() * 16;
+        AABB loaded = new AABB(center.getMinBlockX() - loadedRadius, mc.level.getMinY(), center.getMinBlockZ() - loadedRadius,
+                center.getMaxBlockX() + 1 + loadedRadius, mc.level.getMaxY() + 1, center.getMaxBlockZ() + 1 + loadedRadius);
+        List<Bat> bats = mc.level.getEntitiesOfClass(Bat.class, loaded, e -> true);
 
 
         TextSpan actualBit = new TextSpan(new NullTextStyle(), "");

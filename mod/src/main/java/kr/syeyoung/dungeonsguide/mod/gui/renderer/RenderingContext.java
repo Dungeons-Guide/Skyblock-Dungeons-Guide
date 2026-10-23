@@ -117,6 +117,61 @@ public class RenderingContext {
                 (float) (x1 + nx), (float) (y1 + ny), (float) (x1 - nx), (float) (y1 - ny), color);
     }
 
+    // 1.8.9's RenderUtils.drawRect with an AColor
+    public void drawRect(double left, double top, double right, double bottom, AColor color) {
+        double i;
+        if (left < right) {
+            i = left;
+            left = right;
+            right = i;
+        }
+
+        if (top < bottom) {
+            i = top;
+            top = bottom;
+            bottom = i;
+        }
+
+        if (!color.isChroma() && (color.getRGB() >> 24 & 255) == 0) return;
+        if (!color.isChroma()) {
+            drawRect(left, top, right, bottom, color.getRGB());
+        } else {
+            // TODO: 1.8.9 shaded chroma between the corners, the rect takes the (left, top) corner's color here
+            drawRect(left, top, right, bottom, RenderUtils.getColorAt(left, top, color));
+        }
+    }
+
+    // 1.8.9's RenderUtils.drawUnfilledBox with an int color and the rainbow chroma; width replaces the glLineWidth callers set beforehand
+    public void drawUnfilledBox(double left, double top, double right, double bottom, double width, int color, boolean chroma) {
+        double i;
+        if (left < right) {
+            i = left;
+            left = right;
+            right = i;
+        }
+
+        if (top < bottom) {
+            i = top;
+            top = bottom;
+            bottom = i;
+        }
+
+        if (!chroma && (color >> 24 & 255) == 0) return;
+        if (!chroma) {
+            drawLine(left, bottom, right, bottom, width, color);
+            drawLine(right, bottom, right, top, width, color);
+            drawLine(right, top, left, top, width, color);
+            drawLine(left, top, left, bottom, width, color);
+        } else {
+            float blah = (System.currentTimeMillis()  / 10) % 360;
+            // TODO: 1.8.9 shaded chroma between the corners, each edge takes its start corner's color here
+            drawLine(left, bottom, right, bottom, width, Color.HSBtoRGB((((blah + 20) % 360) / 360.0f), 1, 1));
+            drawLine(right, bottom, right, top, width, Color.HSBtoRGB((((blah + 40) % 360)  / 360.0f), 1, 1));
+            drawLine(right, top, left, top, width, Color.HSBtoRGB((((blah + 20) % 360) / 360.0f), 1, 1));
+            drawLine(left, top, left, bottom, width, Color.HSBtoRGB(blah / 360.0f, 1, 1));
+        }
+    }
+
     // 1.8.9's RenderUtils.drawUnfilledBox, a line loop; width replaces the glLineWidth callers set beforehand
     public void drawUnfilledBox(double left, double top, double right, double bottom, double width, AColor color) {
         double i;
