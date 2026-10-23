@@ -42,11 +42,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
-/**
- * Writes what the server sends as chat / action bar / titles, to measure for D104 (dgdebug chatcapture).
- * One json object per line: time, type, the component as json, and the 1.8.9 style legacy string.
- * Writes only while the feature is enabled.
- */
 public class FeatureChatCapture extends SimpleFeature {
     public FeatureChatCapture() {
         super("Debug", "Chat Capture", "Writes what the server sends as chat / action bar / titles while /dgdebug chatcapture is on", "debug.chatcapture", false);
