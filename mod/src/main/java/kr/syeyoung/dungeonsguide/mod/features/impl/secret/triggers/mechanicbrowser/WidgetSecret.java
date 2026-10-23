@@ -46,6 +46,7 @@ public class WidgetSecret extends AnnotatedWidget {
         super(Identifier.parse("dungeonsguide:gui/features/mechanic_browser/secret.gui"));
         secretName.setValue(name+" §7("+ dungeonMechanicState.getCurrentState() +", "+
                 (dungeonMechanicState.getRepresentingPoint() != null ?
+                        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
                         String.format("%.1f", Math.sqrt(dungeonMechanicState.getRepresentingPoint().getBlockPos(room).distSqr(Minecraft.getInstance().player.blockPosition()))) : "")
                 +"m)");
         this.id = name;
@@ -59,6 +60,7 @@ public class WidgetSecret extends AnnotatedWidget {
         super.onMount();
         secretName.setValue(id+" §7("+ mechanic.getCurrentState() +", "+
                 (mechanic.getRepresentingPoint() != null ?
+                        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
                         String.format("%.1f", Math.sqrt(mechanic.getRepresentingPoint().getBlockPos(room).distSqr(Minecraft.getInstance().player.blockPosition()))) : "")
                 +"m)");
     }

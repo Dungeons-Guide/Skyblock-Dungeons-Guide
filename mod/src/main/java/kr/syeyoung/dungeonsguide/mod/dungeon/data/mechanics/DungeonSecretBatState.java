@@ -97,6 +97,7 @@ public class DungeonSecretBatState implements DungeonMechanicState, ISecret {
         }
 
         // can't find the bat!!!
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         if (bpos.distSqr(Minecraft.getInstance().player.blockPosition()) < 49) {
             nearbyTicks++;
         }

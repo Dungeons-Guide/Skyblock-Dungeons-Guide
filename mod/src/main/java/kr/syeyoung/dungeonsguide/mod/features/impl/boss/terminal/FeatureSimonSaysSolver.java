@@ -58,6 +58,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
             return;
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         if (Minecraft.getInstance().player.blockPosition().distToLowCornerSqr(110,120,94) > 400) return;
 
 

@@ -84,6 +84,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
             List<ArmorStand> armor = level.getEntitiesOfClass(ArmorStand.class, roomBox, new Predicate<ArmorStand>() {
                 @Override
                 public boolean apply(@Nullable ArmorStand input) {
+                    // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
                     BlockPos pos = input.blockPosition();
                     // TODO: D5 entity name stopgap (D116)
                     return low.getX() < pos.getX() && pos.getX() < high.getX()
@@ -93,6 +94,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
 
             if (armor != null) {
                 this.chest = null;
+                // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
                 BlockPos pos = armor.get(0).blockPosition();
                 for (BlockPos allInBox : BlockPos.betweenClosed(pos.offset(-1, 0, -1), pos.offset(1, 0, 1))) {
                     BlockState b = w.getBlockState(allInBox);

@@ -54,6 +54,7 @@ public class FeatureBoxSkelemaster extends SimpleFeature  {
         
         if (!SkyblockStatus.isOnDungeon()) return;
 
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         final BlockPos player = Minecraft.getInstance().player.blockPosition();
         int val = this.<Integer>getParameter("radius").getValue();
         final int sq = val * val;
@@ -67,6 +68,7 @@ public class FeatureBoxSkelemaster extends SimpleFeature  {
         List<ArmorStand> skeletonList = mc.level.getEntitiesOfClass(ArmorStand.class, loaded, new Predicate<ArmorStand>() {
             @Override
             public boolean test(@Nullable ArmorStand input) {
+                // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
                 if (player.distSqr(input.blockPosition()) > sq) return false;
                 if (!input.isCustomNameVisible()) return false;
                 // TODO: D5 entity name stopgap (D116)

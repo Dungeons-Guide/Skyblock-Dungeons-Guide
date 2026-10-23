@@ -149,6 +149,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
                     .ifPresent(a -> {
                         a.highlight(new Color(0,255,255,50), id +" ("+(
                                 dungeonRoom.getMechanics().get(id).getRepresentingPoint() != null ?
+                                // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
                                 String.format("%.1f", Math.sqrt((dungeonRoom.getMechanics().get(id)).getRepresentingPoint().getBlockPos(dungeonRoom).distSqr(Minecraft.getInstance().player.blockPosition()))) : "")
                                 +"m)", partialTicks);
                     });

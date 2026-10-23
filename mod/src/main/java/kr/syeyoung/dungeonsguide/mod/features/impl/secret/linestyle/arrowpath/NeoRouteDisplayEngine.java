@@ -278,6 +278,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
 
 
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         float distance = (float) Math.sqrt(target.distSqr(Minecraft.getInstance().player.blockPosition()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         float scale = 0.45f * multiplier;
@@ -291,6 +292,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         if (settings.getDestinationSize() != 0) {
             RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, (float) settings.getDestinationSize(), true, false, partialTicks);
+            // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
             RenderUtils.drawTextAtWorld(String.format("%.2f", Math.sqrt(target.distSqr(Minecraft.getInstance().player.blockPosition()))) + "m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, (float) settings.getDestinationSize(), true, false, partialTicks);
         }
 
@@ -317,6 +319,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                             pose.getType() != PathfindResult.PathfindNode.NodeType.ENDERPEARL &&
                             pose.getType() != PathfindResult.PathfindNode.NodeType.ETHERWARP &&
                             pose.getType() != PathfindResult.PathfindNode.NodeType.SUPERBOOM &&
+                            // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
                             pose.distanceSq(Minecraft.getInstance().player.blockPosition()) < 100) {
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }

@@ -41,6 +41,7 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
     @Nullable
     static Vector2d getVector2d(DGWorld w, Collection<ArmorStand> armorStand, Set<Vector2d> directions) {
         ArmorStand mort = armorStand.iterator().next();
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         BlockPos pos = mort.blockPosition();
         pos = pos.offset(0, 3, 0);
         for (int i = 0; i < 5; i++) {
@@ -79,6 +80,7 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
 
         if (!armorStand.isEmpty()) {
             ArmorStand mort = armorStand.iterator().next();
+            // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
             BlockPos pos = mort.blockPosition();
             pos = pos.offset(0, 3, 0);
             for (int i = 0; i < 5; i++) {

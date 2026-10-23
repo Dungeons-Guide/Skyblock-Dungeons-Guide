@@ -119,6 +119,7 @@ public class FeatureSingleTargetPathfind extends SimpleFeature {
             return;
         }
 
+        // TODO: 1.8.9's getPosition() floored (x, y + 0.5, z), (x + 0.5, y + 0.5, z + 0.5) for the local player; blockPosition() floors (x, y, z)
         BlockPos pos = Minecraft.getInstance().player.blockPosition();
 
         double lowestCost = 99999999999999.0;
