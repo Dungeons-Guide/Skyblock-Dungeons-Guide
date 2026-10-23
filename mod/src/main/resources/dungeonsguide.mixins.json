@@ -3,6 +3,16 @@
   "package": "kr.syeyoung.dungeonsguide.mod.mixin",
   "compatibilityLevel": "JAVA_25",
   "client": [
+    "ConnectionMixin",
+    "EntityRenderDispatcherMixin",
+    "FogRendererMixin",
+    "KeyboardHandlerMixin",
+    "LivingEntityMixin",
+    "MinecraftMixin",
+    "MouseHandlerMixin",
+    "MultiPlayerGameModeMixin",
+    "PlayerMixin",
+    "SoundManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

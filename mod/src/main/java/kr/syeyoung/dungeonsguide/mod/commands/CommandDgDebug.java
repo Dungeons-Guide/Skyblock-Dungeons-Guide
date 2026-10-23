@@ -19,6 +19,13 @@
 package kr.syeyoung.dungeonsguide.mod.commands;
 
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RegisterCommandEvent;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import kr.syeyoung.dungeonsguide.mod.config.onboarding.OnboardingCard;
 import kr.syeyoung.dungeonsguide.mod.config.onboarding.OnboardingPage;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.*;
@@ -58,9 +65,6 @@ import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -81,57 +85,95 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class CommandDgDebug extends CommandBase {
-    @Override
-    public String getCommandName() {
-        return "dgdebug";
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
+
+public class CommandDgDebug {
+    @SubscribeEvent
+    public void onRegisterCommand(RegisterCommandEvent event) {
+        event.dispatcher.register(build("dgdebug"));
     }
 
-    @Override
-    public String getCommandUsage(ICommandSender sender) {
+    private LiteralArgumentBuilder<FabricClientCommandSource> build(String name) {
+        LiteralArgumentBuilder<FabricClientCommandSource> root = literal(name).executes(ctx -> run());
 
-        return "dgdebug";
+        for (String sub : new String[] {
+                "freeze",
+                "scoreboard",
+                "scoreboardclean",
+                "tablist",
+                "saverooms",
+                "loadrooms",
+                "brand",
+                "process",
+                "process2",
+                "calculatestonks",
+                "calculatenearests",
+                "groupunknowns",
+                "groupprocess",
+                "nodupeprocess",
+                "removedoors",
+                "check",
+                "check2",
+                "reloaddungeon",
+                "partyid",
+                "loc",
+                "saverun",
+                "closecontext",
+                "re",
+                "dumpsettings",
+                "testgui",
+                "clearprofile",
+                "pfall",
+                "reloadshader",
+                "randomroutine"
+        })
+            root.then(literal(sub).executes(ctx -> run(sub)));
+
+        root.then(literal("pfresdebug").then(argument("action", StringArgumentType.word())
+                .executes(ctx -> run("pfresdebug", word(ctx, "action")))
+                .then(argument("arg", StringArgumentType.word())
+                        .executes(ctx -> run("pfresdebug", word(ctx, "action"), word(ctx, "arg"))))));
+        root.then(literal("mockdungeonstart")
+                .executes(ctx -> run("mockdungeonstart"))
+                .then(argument("floor", StringArgumentType.word())
+                        .executes(ctx -> run("mockdungeonstart", word(ctx, "floor")))));
+        root.then(literal("pathfind").then(argument("arg1", StringArgumentType.word()).then(argument("arg2", StringArgumentType.word())
+                .executes(ctx -> run("pathfind", word(ctx, "arg1"), word(ctx, "arg2"))))));
+        root.then(literal("removedoorschematic").then(argument("arg", StringArgumentType.word())
+                .executes(ctx -> run("removedoorschematic", word(ctx, "arg")))));
+        root.then(literal("requeststaticresource").then(argument("resource", StringArgumentType.word())
+                .executes(ctx -> run("requeststaticresource", word(ctx, "resource")))));
+        root.then(literal("transferschematic")
+                .executes(ctx -> run("transferschematic"))
+                .then(argument("ignoreAir", StringArgumentType.word())
+                        .executes(ctx -> run("transferschematic", word(ctx, "ignoreAir")))));
+        root.then(literal("readmap").then(argument("arg1", StringArgumentType.word()).then(argument("arg2", StringArgumentType.word())
+                .then(argument("arg3", StringArgumentType.word()).then(argument("arg4", StringArgumentType.word())
+                        .executes(ctx -> run("readmap", word(ctx, "arg1"), word(ctx, "arg2"), word(ctx, "arg3"), word(ctx, "arg4")))))))));
+        for (String sub : new String[] {"fullbright", "gimmebright"})
+            root.then(literal(sub)
+                    .executes(ctx -> run(sub))
+                    .then(argument("value", StringArgumentType.word())
+                            .executes(ctx -> run(sub, word(ctx, "value")))));
+        root.then(literal("partycollection").then(argument("otherPlayerName", StringArgumentType.word())
+                .then(argument("fragbot", StringArgumentType.word()).then(argument("offline", StringArgumentType.word())
+                        .executes(ctx -> run("partycollection", word(ctx, "otherPlayerName"), word(ctx, "fragbot"), word(ctx, "offline")))))));
+        root.then(literal("help").executes(ctx -> run("help")));
+        return root;
     }
 
-    //List of subcommands for tab support
-    private static final String[] SUBCOMMANDS = {
-            "scoreboard",
-            "scoreboardclean",
-            "tablist",
-            "mockdungeonstart",
-            "saverooms",
-            "loadrooms",
-            "brand",
-            "pathfind",
-            "process",
-            "check",
-            "reloaddungeon",
-            "partyid",
-            "loc",
-            "saverun",
-            "requeststaticresource",
-            "createfakeroom",
-            "closecontext",
-            "dumpsettings",
-            "readmap",
-            "testgui",
-            "clearprofile",
-            "fullbright",
-            "gimmebright",
-            "pfall",
-            "partycollection"
-    };
-
-    @Override
-    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
-        if (args.length == 1) {
-            return CommandBase.getListOfStringsMatchingLastWord(args, SUBCOMMANDS);
-        }
-        return Collections.emptyList();
+    private static String word(CommandContext<FabricClientCommandSource> ctx, String name) {
+        return StringArgumentType.getString(ctx, name);
     }
 
-    @Override
-    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
+    // args are laid out like the 1.8.9 command arguments, args[0] being the subcommand
+    private int run(String... args) {
+        processCommand(args);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private void processCommand(String[] args) {
         if (args.length == 0) {
             return;
         }
@@ -388,11 +430,6 @@ public class CommandDgDebug extends CommandBase {
                 }
             }
         }
-    }
-
-    @Override
-    public int getRequiredPermissionLevel() {
-        return 0;
     }
 
     //BEGIN COMMANDS FROM ARGS[0]

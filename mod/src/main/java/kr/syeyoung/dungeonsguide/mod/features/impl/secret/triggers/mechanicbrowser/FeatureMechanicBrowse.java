@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.triggers.mechanicbrowser;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenOpenEvent;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
@@ -46,8 +47,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -139,7 +139,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
 
 
     @DGEventHandler
-    public void drawWorld(RenderWorldLastEvent event) {
+    public void drawWorld(RenderWorldEvent event) {
         float partialTicks = event.partialTicks;
         
         if (!SkyblockStatus.isOnDungeon()) return;
@@ -175,7 +175,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
     }
 
     @DGEventHandler
-    public void onOpen(GuiOpenEvent event) {
+    public void onOpen(ScreenOpenEvent event) {
         if (event.gui instanceof GuiChat) {
             if (widget != null)
                 OverlayManager.getInstance().addOverlay(lastOpen = widget);

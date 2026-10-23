@@ -18,6 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.mod.commands;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ClientTickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RegisterCommandEvent;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -42,144 +48,86 @@ import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
-public class CommandDungeonsGuide extends CommandBase {
+public class CommandDungeonsGuide {
 
-    @Override
-    public String getCommandName() {
-        return "dungeonsguide";
-    }
-
-    @Override
-    public String getCommandUsage(ICommandSender sender) {
-        return "dungeonsguide";
-    }
-
-    @Override
-    public List<String> getCommandAliases() {
-        return new ArrayList<String>() {{
-            add("dg"); //per issue #400
-            add("dungeonguide"); //because people keep saying "dungeon guide" the singular
-            add("deegee"); //in case another mod/server somehow uses a command "/dg" and no one wants to type out the entire name "dungeonsguide"
-            add("던전가이드"); //easter egg
-            add("던전안내"); //easter egg
-            // for each new alias, make a new line, then: add("[INSERT YOUR ALIAS HERE]");
-            // Shoutout to coobird for the anonymous inner class idea: stackoverflow.com/a/1005083
-        }};
-    }
-
-    //List of subcommands for tab support
-    private static final String[] SUBCOMMANDS = {
-            "reparty",
-            "gui",
-            "v3",
-            "pvall",
-            "asktojoin",
-            "atj",
-            "pv",
-            "purge",
-            "pbroadcast",
-            "partymax",
-            "unload",
-            "aliases"
+    private static final String[] NAMES = {
+            "dungeonsguide",
+            "dg", //per issue #400
+            "dungeonguide", //because people keep saying "dungeon guide" the singular
+            "deegee", //in case another mod/server somehow uses a command "/dg" and no one wants to type out the entire name "dungeonsguide"
+            "던전가이드", //easter egg
+            "던전안내" //easter egg
+            // for each new alias, add a new line
     };
 
-    @Override
-    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
-        if (args.length == 1) {
-            return CommandBase.getListOfStringsMatchingLastWord(args, SUBCOMMANDS);
-        }
-        return Collections.emptyList();
+    @SubscribeEvent
+    public void onRegisterCommand(RegisterCommandEvent event) {
+        for (String name : NAMES)
+            event.dispatcher.register(build(name));
     }
 
-    @Override
-    public void processCommand(ICommandSender sender, String[] args) {
+    private LiteralArgumentBuilder<FabricClientCommandSource> build(String name) {
+        LiteralArgumentBuilder<FabricClientCommandSource> root = literal(name)
+                .executes(ctx -> run(() -> target = new ConfigGuiScreenAdapter(null)));
 
-        if (args.length == 0) {
-            target = new ConfigGuiScreenAdapter(null);
-            return;
-        }
+        root.then(literal("reparty").executes(ctx -> run(this::repartyCommand)));
+        root.then(literal("gui").executes(ctx -> run(() -> target = new ConfigGuiScreenAdapter(null, new GlobalHUDScale(new HUDLocationConfig(null))))));
+        root.then(literal("pv").then(argument("ign", StringArgumentType.word())
+                .executes(ctx -> run(() -> pvCommand(StringArgumentType.getString(ctx, "ign"), ctx.getSource())))));
+        root.then(literal("pvall").executes(ctx -> run(this::pvAllCommand)));
+        for (String sub : new String[] {"asktojoin", "atj"})
+            root.then(literal(sub).executes(ctx -> run(this::askToJoinCommand)));
+        root.then(literal("purge").executes(ctx -> run(this::purgeCommand)));
+        root.then(literal("pbroadcast").then(argument("payload", StringArgumentType.greedyString())
+                .executes(ctx -> run(() -> pBroadcastCommand(new String[] {"pbroadcast", StringArgumentType.getString(ctx, "payload")})))));
+        for (String sub : new String[] {"partymax", "pm"})
+            root.then(literal(sub)
+                    .executes(ctx -> run(() -> partyMaxCommand(new String[] {sub})))
+                    .then(argument("number", StringArgumentType.word())
+                            .executes(ctx -> run(() -> partyMaxCommand(new String[] {sub, StringArgumentType.getString(ctx, "number")})))));
+        root.then(literal("unload").executes(ctx -> run(this::unloadCommand)));
+        for (String sub : new String[] {"setuiscale", "setscale", "uiscale", "scale"})
+            root.then(literal(sub)
+                    .executes(ctx -> run(() -> setUIScale(new String[] {sub})))
+                    .then(argument("scale", StringArgumentType.word())
+                            .executes(ctx -> run(() -> setUIScale(new String[] {sub, StringArgumentType.getString(ctx, "scale")})))));
+        root.then(literal("aliases").executes(ctx -> run(this::aliasesCommand)));
+        root.then(literal("help").executes(ctx -> run(this::helpCommand)));
+        return root;
+    }
 
-        String subcommand = args[0].toLowerCase();
+    private int run(Runnable runnable) {
+        runnable.run();
+        return Command.SINGLE_SUCCESS;
+    }
 
-        switch (subcommand) {
-            case "reparty":
-                repartyCommand();
-                break;
+    private void aliasesCommand() {
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide aliases§7::"));
+        ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/dungeonsguide"));
+        ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/dungeonguide"));
+        ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/deegee"));
+    }
 
-            case "gui":
-                target = new ConfigGuiScreenAdapter(null, new GlobalHUDScale(new HUDLocationConfig(null)));
-                break;
-            case "pv":
-                pvCommand(args[1], sender); //args[1] is the player name
-                break;
-
-            case "pvall":
-                pvAllCommand();
-                break;
-
-            case "asktojoin":
-            case "atj":
-                askToJoinCommand();
-                break;
-
-            case "purge":
-                purgeCommand();
-                break;
-
-            case "pbroadcast":
-                pBroadcastCommand(args);
-                break;
-
-            case "partymax":
-            case "pm":
-                partyMaxCommand(args);
-                break;
-
-            case "unload":
-                unloadCommand();
-                break;
-
-            case "setuiscale":
-            case "setscale":
-            case "uiscale":
-            case "scale":
-                setUIScale(args);
-                break;
-
-            case "aliases":
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide aliases§7::"));
-                ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/dungeonsguide"));
-                ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/dungeonguide"));
-                ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/deegee"));
-                break;
-
-            default:
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg scale [scale] §7-§fSets the Global HUD scale (Also disables Minecraft default HUD scale for you as well if you haven't already.)"));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg help §7-§fShows command help"));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg reparty §7-§f Reparty."));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg asktojoin or /dg atj §7-§f Toggle ask to join §cRequires Discord Rich Presence enabled. (/dg -> Advanced)"));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg partymax [number] or /dg pm [number] §7-§f Sets the party max §7(maximum amount people in party, for discord rpc)"));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg pv [ign] §7-§f Profile Viewer"));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg pvall §7-§f Profile Viewer For all people on party"));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg purge §7-§f Purge api cache."));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg unload §7-§f Unload Current Version of Dungeons Guide, to load the new version"));
-                break;
-        }
+    private void helpCommand() {
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg scale [scale] §7-§fSets the Global HUD scale (Also disables Minecraft default HUD scale for you as well if you haven't already.)"));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg help §7-§fShows command help"));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg reparty §7-§f Reparty."));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg asktojoin or /dg atj §7-§f Toggle ask to join §cRequires Discord Rich Presence enabled. (/dg -> Advanced)"));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg partymax [number] or /dg pm [number] §7-§f Sets the party max §7(maximum amount people in party, for discord rpc)"));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg pv [ign] §7-§f Profile Viewer"));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg pvall §7-§f Profile Viewer For all people on party"));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg purge §7-§f Purge api cache."));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg unload §7-§f Unload Current Version of Dungeons Guide, to load the new version"));
     }
 
     private void setUIScale(String[] args) {
@@ -212,9 +160,9 @@ public class CommandDungeonsGuide extends CommandBase {
     private GuiScreen target;
 
     @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent e) {
+    public void onTick(ClientTickEvent e) {
         try {
-            if (target != null && e.phase == TickEvent.Phase.START) {
+            if (target != null && e.phase == ClientTickEvent.Phase.START) {
                 Minecraft.getMinecraft().displayGuiScreen(target);
                 target = null;
             }
@@ -222,11 +170,6 @@ public class CommandDungeonsGuide extends CommandBase {
             FeatureCollectDiagnostics.queueSendLogAsync(t);
             t.printStackTrace();
         }
-    }
-
-    @Override
-    public int getRequiredPermissionLevel() {
-        return 0;
     }
 
     private void repartyCommand() {
@@ -265,12 +208,12 @@ public class CommandDungeonsGuide extends CommandBase {
         }
     }
 
-    private void pvCommand(String ign, ICommandSender sender) {
+    private void pvCommand(String ign, FabricClientCommandSource sender) {
         try {
             ApiFetcher.fetchUUIDAsync(ign)
                     .thenAccept(a -> {
                         assert a.orElse(null) != null;
-                        sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + ign + "§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(
+                        sender.sendFeedback(new ChatComponentText("§eDungeons Guide §7:: §e" + ign + "§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(
                                 new HoverEventRenderPlayer(
                                         new GameProfile(FeatureViewPlayerStatsOnJoin.fromString(a.orElse(null)), ign)
                                 )))));

@@ -18,6 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingDeathEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
@@ -32,10 +35,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -95,12 +95,12 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     }
 
     @Override
-    public void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event) {
+    public void onPostGuiRender(ScreenRenderEvent.Post event) {
 
     }
 
     @Override
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
+    public void onEntityUpdate(LivingTickEvent updateEvent) {
 
     }
 

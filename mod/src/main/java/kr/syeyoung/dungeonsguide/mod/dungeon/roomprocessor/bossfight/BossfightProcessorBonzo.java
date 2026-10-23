@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -26,7 +27,6 @@ import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,7 +105,7 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     // §e﴾ §c§lBonzo§r §e71k§c❤ §e﴿
     // §e﴾ §c§lBonzo§r §a250k§c❤ §e﴿
     // Now I'm convinced name format is always the same
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
+    public void onEntityUpdate(LivingTickEvent updateEvent) {
         if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lBonzo§r") && updateEvent.entityLiving instanceof EntityArmorStand) {
             bonzoStand = (EntityArmorStand) updateEvent.entityLiving;
         }

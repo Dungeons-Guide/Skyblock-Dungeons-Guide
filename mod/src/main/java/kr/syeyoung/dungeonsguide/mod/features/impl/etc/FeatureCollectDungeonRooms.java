@@ -18,6 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.WorldUnloadEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingDeathEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.EntityEnterWorldEvent;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -70,13 +74,9 @@ import net.minecraft.util.*;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -198,7 +198,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onEntitySpawn(EntityJoinWorldEvent event) {
+    public void onEntitySpawn(EntityEnterWorldEvent event) {
         if (event.entity instanceof EntityArmorStand) {
             return;
         }
@@ -259,7 +259,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @DGEventHandler(ignoreDisabled = true)
-    public void onChat(ClientChatReceivedEvent event) {
+    public void onChat(ChatReceivedEvent event) {
         if (event.type == 2) return;
         if (!event.message.getFormattedText().contains(":")) {
             // this is not user message.
@@ -312,7 +312,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onEntityAttributeUpdate(LivingEvent.LivingUpdateEvent event) {
+    public void onEntityAttributeUpdate(LivingTickEvent event) {
         if (event.entityLiving instanceof EntityArmorStand) {
             return;
         }
@@ -471,7 +471,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onWorldLoad(WorldEvent.Unload event) {
+    public void onWorldLoad(WorldUnloadEvent event) {
         try {
             Gson gson = new GsonBuilder()
                     .disableHtmlEscaping()
@@ -717,7 +717,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
 
     @DGEventHandler
-    public void onRender(RenderWorldLastEvent event) {
+    public void onRender(RenderWorldEvent event) {
         if (!FeatureRegistry.DEBUG.isEnabled()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
 

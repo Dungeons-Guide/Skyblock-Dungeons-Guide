@@ -42,7 +42,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 
 import java.awt.*;
 import java.io.File;
@@ -139,7 +139,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void renderworldLast(RenderWorldLastEvent event) {
+    public void renderworldLast(RenderWorldEvent event) {
 
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null) return;

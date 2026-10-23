@@ -46,5 +46,7 @@ public class FabricEntrypoint implements ClientModInitializer {
         }
 
         new DungeonsGuide().init(Main.getConfigDir());
+
+        FabricEventBridge.register();
     }
 }

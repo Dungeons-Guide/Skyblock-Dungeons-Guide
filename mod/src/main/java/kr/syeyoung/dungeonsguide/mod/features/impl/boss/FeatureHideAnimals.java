@@ -27,7 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.entity.passive.*;
-import net.minecraftforge.client.event.RenderLivingEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderLivingEvent;
 
 
 public class FeatureHideAnimals extends SimpleFeature  {

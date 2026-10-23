@@ -48,7 +48,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -229,7 +229,7 @@ public class DungeonContext {
     @Getter
     private boolean defeated = false;
 
-    public void onChat(ClientChatReceivedEvent event) {
+    public void onChat(ChatReceivedEvent event) {
         IChatComponent component = event.message;
         String formatted = component.getFormattedText();
         if (formatted.contains("$DG-Comm")) {

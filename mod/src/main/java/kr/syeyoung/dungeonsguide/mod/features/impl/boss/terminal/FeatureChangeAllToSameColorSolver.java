@@ -18,6 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenOpenEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenMouseEvent;
 
 
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
@@ -36,9 +39,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ItemTooltipEvent;
 import org.lwjgl.input.Mouse;
 
 import java.awt.event.MouseEvent;
@@ -60,7 +61,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     private int targetColor;
 
     @DGEventHandler
-    public void onGuiOpen(GuiOpenEvent event) {
+    public void onGuiOpen(ScreenOpenEvent event) {
         if (!isEnabled()) return;
         isCorrectGui = false;
         if (event.gui instanceof GuiChest) {
@@ -143,7 +144,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
+    public void onGuiPostRender(ScreenRenderEvent.Post rendered) {
         if (!isCorrectGui) return;
         if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) {
             isCorrectGui = false;
@@ -184,7 +185,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
+    public void onMouseInput(ScreenMouseEvent.Pre mouseInputEvent) {
         if (!isEnabled()) return;
         if (Mouse.getEventButton() == -1) return;
         if (!isCorrectGui) return;

@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ClientTickEvent;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
@@ -33,8 +34,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.Collection;
 import java.util.Set;
@@ -53,8 +52,8 @@ public class SkyblockStatus {
 
 
     @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent ev) {
-        if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
+    public void onTick(ClientTickEvent ev) {
+        if (ev.phase != ClientTickEvent.Phase.START) return;
 
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
         boolean isOnDungeonPrev = isOnDungeon();

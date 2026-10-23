@@ -18,6 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.overlay;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenMouseEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenKeyboardEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenInitEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.gui.RootDom;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
@@ -34,8 +38,7 @@ import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.profiler.Profiler;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
@@ -79,7 +82,7 @@ public class OverlayManager {
     }
 
     @SubscribeEvent()
-    public void guiResize(GuiScreenEvent.InitGuiEvent.Post post){
+    public void guiResize(ScreenInitEvent.Post post){
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("Dungeons Guide Overlay Lauout");
         try {
@@ -100,9 +103,7 @@ public class OverlayManager {
     }
 
     @SubscribeEvent
-    public void renderOverlay(RenderGameOverlayEvent.Post postRender) {
-        if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
-            return;
+    public void renderOverlay(RenderHUDEvent.Post postRender) {
 
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("Dungeons Guide - RenderGameOverlayEvent.Post :: Overlay");
@@ -117,7 +118,7 @@ public class OverlayManager {
     }
 
     @SubscribeEvent
-    public void renderGui(GuiScreenEvent.DrawScreenEvent.Post postRender) {
+    public void renderGui(ScreenRenderEvent.Post postRender) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("Dungeons Guide - DrawScreenEvent.Post :: Overlay");
         try {
@@ -252,7 +253,7 @@ public class OverlayManager {
 
 
     @SubscribeEvent(priority = ListenerPriority.FIRST)
-    public void handleMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) throws IOException {
+    public void handleMouseInput(ScreenMouseEvent.Pre mouseInputEvent) throws IOException {
             int i = Mouse.getEventX();
             int j = this.mc.displayHeight - Mouse.getEventY();
             int k = Mouse.getEventButton();
@@ -306,7 +307,7 @@ public class OverlayManager {
     }
 
     @SubscribeEvent(priority = ListenerPriority.FIRST)
-    public void handleKeyboardInput(GuiScreenEvent.KeyboardInputEvent.Pre keyboardInputEvent) throws IOException {
+    public void handleKeyboardInput(ScreenKeyboardEvent.Pre keyboardInputEvent) throws IOException {
         if (Keyboard.getEventKeyState()) {
             if (Keyboard.isRepeatEvent())
                 this.keyHeld(Keyboard.getEventKey(), Keyboard.getEventCharacter());

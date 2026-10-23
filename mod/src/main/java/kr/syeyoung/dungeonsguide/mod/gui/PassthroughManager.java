@@ -23,8 +23,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.profiler.Profiler;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.FogColorsEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
@@ -40,7 +40,7 @@ public class PassthroughManager {
     private int fogColor = 0;
 
     @SubscribeEvent
-    public void onFogColour(EntityViewRenderEvent.FogColors event) {
+    public void onFogColour(FogColorsEvent event) {
         fogColor = 0xff000000
                     | ((int) (event.red * 255) & 0xFF) << 16
                     | ((int) (event.green * 255) & 0xFF) << 8
@@ -49,8 +49,7 @@ public class PassthroughManager {
 
 
     @SubscribeEvent(priority = ListenerPriority.FIRST)
-    public void onGameRenderOverlay(RenderGameOverlayEvent.Pre event) {
-        if (event.type != RenderGameOverlayEvent.ElementType.ALL) return;
+    public void onGameRenderOverlay(RenderHUDEvent.Pre event) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("Dungeons Guide - RenderGameOverlayEvent :: Passthrough");
 

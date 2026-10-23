@@ -37,7 +37,6 @@ import kr.syeyoung.dungeonsguide.mod.events.EventBus;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.AnnotatedListenerHelper;
 import kr.syeyoung.dungeonsguide.mod.events.listenerlist.BasicEventBus;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
-import kr.syeyoung.dungeonsguide.mod.events.listener.PacketInjector;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -64,9 +63,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.command.ICommand;
 import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.common.ProgressManager;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -153,10 +150,6 @@ public class DungeonsGuide {
         AnnotatedListenerHelper.registerListeners(eventBus, object);
     }
 
-    public void registerCommands(ICommand command) {
-        ClientCommandHandler.instance.registerCommand(command);
-    }
-
     public ExecutorService registerExecutorService(ExecutorService executorService) {
         return executorService;
     }
@@ -165,7 +158,6 @@ public class DungeonsGuide {
         return executorService;
     }
 
-    private PacketInjector packetInjector;
     public void init(File f) {
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 5);
 
@@ -235,15 +227,11 @@ public class DungeonsGuide {
         commandDungeonsGuide = new CommandDungeonsGuide();
         CommandDgDebug command = new CommandDgDebug();
 
-        registerCommands(commandDungeonsGuide);
-        registerCommands(command);
-
         registerEventsForge(command);
         registerEventsForge(commandDungeonsGuide);
 
         registerEventsForge(commandReparty = new CommandReparty());
 
-        registerEventsForge(packetInjector = new PacketInjector());
         registerEventsForge(new PacketListener());
         registerEventsForge(new Keybinds());
 
@@ -266,9 +254,6 @@ public class DungeonsGuide {
             e.printStackTrace();
         }
 
-        if (FeatureRegistry.ETC_REPARTY.isEnabled()) {
-            registerCommands(commandReparty);
-        }
         DiscordIntegrationManager.INSTANCE.isLoaded();
 
         for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
@@ -284,10 +269,6 @@ public class DungeonsGuide {
 
 
         Minecraft.getMinecraft().refreshResources();
-
-        // Fix Parallel universe not working when player joins hypickle before dg loads
-        if (Minecraft.getMinecraft().getNetHandler() != null)
-            Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler", packetInjector);
 
         if (firstTimeUsingDG) {
             GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")), null, false));

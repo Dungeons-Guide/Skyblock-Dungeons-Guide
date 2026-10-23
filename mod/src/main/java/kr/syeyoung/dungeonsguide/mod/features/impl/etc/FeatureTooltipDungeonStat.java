@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ItemTooltipEvent;
 
 public class FeatureTooltipDungeonStat extends SimpleFeature {
     public FeatureTooltipDungeonStat() {

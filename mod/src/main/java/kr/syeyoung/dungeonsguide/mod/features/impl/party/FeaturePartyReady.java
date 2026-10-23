@@ -32,7 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 import java.util.*;
 
@@ -123,7 +123,7 @@ public class FeaturePartyReady extends TextHUDFeature {
 
 
     @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+    public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
         String txt = clientChatReceivedEvent.message.getFormattedText();
         System.out.println(txt);
         if (!txt.startsWith("§r§9Party §8>")) return;

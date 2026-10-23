@@ -30,8 +30,8 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.init.Items;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -78,7 +78,7 @@ public class FeatureStonkDebug extends SimpleFeature {
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void renderworldLast(RenderWorldLastEvent event) {
+    public void renderworldLast(RenderWorldEvent event) {
         if (spots == null) return;
         int cnt = spots.size();
         int i = 0;

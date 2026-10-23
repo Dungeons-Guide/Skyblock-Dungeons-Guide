@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 
 
 public class FeatureBoxRealLivid extends SimpleFeature {
@@ -42,7 +42,7 @@ public class FeatureBoxRealLivid extends SimpleFeature {
     AColor color = null;
 
     @DGEventHandler
-    public void drawWorld(RenderWorldLastEvent event) {
+    public void drawWorld(RenderWorldEvent event) {
         float partialTicks = event.partialTicks;
         if (!SkyblockStatus.isOnDungeon()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;

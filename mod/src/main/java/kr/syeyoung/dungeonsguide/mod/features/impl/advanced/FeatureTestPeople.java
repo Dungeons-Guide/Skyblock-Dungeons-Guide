@@ -50,7 +50,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -239,7 +239,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
     }
 
     @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+    public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
         String txt = clientChatReceivedEvent.message.getFormattedText();
         if (!txt.startsWith("§r§9Party §8>")) return;
 

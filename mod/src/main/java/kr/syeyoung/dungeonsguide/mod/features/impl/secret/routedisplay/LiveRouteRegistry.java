@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingDeathEvent;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
@@ -16,10 +17,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -97,7 +97,7 @@ public class LiveRouteRegistry extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onWorldRenderLast(RenderWorldLastEvent event) {
+    public void onWorldRenderLast(RenderWorldEvent event) {
         RoomRouteHandler roomRouteHandler = getRoomHandler(getRoomIn());
         if (roomRouteHandler == null) return;
         roomRouteHandler.onWorldRenderLast(event);
@@ -125,6 +125,7 @@ public class LiveRouteRegistry extends SimpleFeature {
 
     public TextureAtlasSprite sprite;
 
+    // TODO: 1.8.9 hack to get the arrow sprite into the block atlas. 26.1 has no stitch event, decided later
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onTextureStitch(TextureStitchEvent.Pre event) {
          sprite = event.map.registerSprite(new ResourceLocation("dungeonsguide", "arrow"));

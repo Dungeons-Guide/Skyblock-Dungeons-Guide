@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlaySoundEvent;
 
 public class FeatureDecreaseExplosionSound extends SimpleFeature {
     public FeatureDecreaseExplosionSound() {

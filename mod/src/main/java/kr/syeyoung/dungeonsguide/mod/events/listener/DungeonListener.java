@@ -18,6 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.listener;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.WorldUnloadEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.LivingDeathEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.EntityEnterWorldEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
@@ -70,19 +75,12 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -96,7 +94,7 @@ public class DungeonListener {
 
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Unload event) {
+    public void onWorldLoad(WorldUnloadEvent event) {
         TabList.INSTANCE.clear();
         TeamManager.INSTANCE.clear();
         ScoreboardManager.INSTANCE.clear();
@@ -106,7 +104,7 @@ public class DungeonListener {
     }
 
     @SubscribeEvent
-    public void onPostDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
+    public void onPostDraw(ScreenRenderEvent.Post e) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
 
@@ -145,7 +143,7 @@ public class DungeonListener {
     }
 
     @SubscribeEvent
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent e) {
+    public void onEntityUpdate(LivingTickEvent e) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
@@ -177,8 +175,8 @@ public class DungeonListener {
 
 
     @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent ev) {
-        if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
+    public void onTick(ClientTickEvent ev) {
+        if (ev.phase != ClientTickEvent.Phase.START) return;
         DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DGTickEvent());
 
         if (SkyblockStatus.isOnSkyblock() || SkyblockStatus.isOnDungeon()) {
@@ -236,8 +234,8 @@ public class DungeonListener {
     private WeakReference<DungeonRoom> lastRoom = null;
 
     @SubscribeEvent
-    public void onTickDetectRoomTransfer(TickEvent.ClientTickEvent ev) {
-        if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
+    public void onTickDetectRoomTransfer(ClientTickEvent ev) {
+        if (ev.phase != ClientTickEvent.Phase.START) return;
 
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
@@ -261,9 +259,7 @@ public class DungeonListener {
     }
 
     @SubscribeEvent
-    public void onRender(RenderGameOverlayEvent.Post postRender) {
-        if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
-            return;
+    public void onRender(RenderHUDEvent.Post postRender) {
 
         if (!SkyblockStatus.isOnDungeon()) return;
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
@@ -329,7 +325,7 @@ public class DungeonListener {
         }
     }
     @SubscribeEvent(receiveCanceled = true, priority = ListenerPriority.FIRST)
-    public void onChatReceived(ClientChatReceivedEvent clientChatReceivedEvent) {
+    public void onChatReceived(ChatReceivedEvent clientChatReceivedEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
         if (clientChatReceivedEvent.type != 2 && clientChatReceivedEvent.message.getFormattedText().contains("§6> §e§lEXTRA STATS §6<")) {
@@ -382,7 +378,7 @@ public class DungeonListener {
 
 
     @SubscribeEvent
-    public void onWorldRender(RenderWorldLastEvent renderWorldLastEvent) {
+    public void onWorldRender(RenderWorldEvent renderWorldLastEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
         try {
 
@@ -655,7 +651,7 @@ public class DungeonListener {
     private final Map<Integer, Vec3> entityIdToPosMap = new HashMap<>();
 
     @SubscribeEvent
-    public void onEntitySpawn(EntityJoinWorldEvent spawn) {
+    public void onEntitySpawn(EntityEnterWorldEvent spawn) {
 //        if (spawn.entity instanceof EntityBat)
 //            System.out.println(spawn.entity +" Spawned!! dist: "+spawn.entity.getDistanceToEntity(Minecraft.getMinecraft().thePlayer));
 

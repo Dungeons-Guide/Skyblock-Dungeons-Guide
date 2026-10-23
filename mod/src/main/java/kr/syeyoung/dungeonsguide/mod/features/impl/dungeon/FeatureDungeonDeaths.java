@@ -38,7 +38,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -138,7 +138,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
         this.deaths.clear();
     }
     @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+    public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) return;
         if (!SkyblockStatus.isOnDungeon()) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,7 +40,7 @@ public class FeatureDetectFreeze extends SimpleFeature {
     }
 
     @DGEventHandler(ignoreDisabled = true, triggerOutOfSkyblock = true)
-    public void onTick(TickEvent.ClientTickEvent tickEvent) {
+    public void onTick(DGTickEvent tickEvent) {
         lastTick = System.currentTimeMillis() + 3000;
     }
 

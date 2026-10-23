@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 public class FeatureAutoAcceptReparty extends SimpleFeature {
     public FeatureAutoAcceptReparty() {
@@ -34,7 +34,7 @@ public class FeatureAutoAcceptReparty extends SimpleFeature {
     private String lastDisband;
 
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+    public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.message.getFormattedText().endsWith("§ehas disbanded the party!§r")) {
             lastDisband = null;
             String[] texts = TextUtils.stripColor(clientChatReceivedEvent.message.getFormattedText()).split(" ");

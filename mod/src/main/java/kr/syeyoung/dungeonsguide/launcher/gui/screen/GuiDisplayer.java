@@ -18,10 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.launcher.gui.screen;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenOpenEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 
@@ -36,7 +36,7 @@ public class GuiDisplayer {
     private boolean isMcLoaded;
 
     @SubscribeEvent(priority = ListenerPriority.LAST)
-    public void onGuiOpen(GuiOpenEvent guiOpenEvent) {
+    public void onGuiOpen(ScreenOpenEvent guiOpenEvent) {
         isMcLoaded = true;
         if (Minecraft.getMinecraft().currentScreen == guiScreensToShow.peek()) {
             guiScreensToShow.poll();

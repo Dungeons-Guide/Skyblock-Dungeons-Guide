@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenOpenEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenMouseEvent;
 import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessResult;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
@@ -43,8 +45,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Mouse;
 
@@ -118,7 +118,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
     private OverlayWidget widget;
 
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void onGuiPostRender(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
+    public void onGuiPostRender(ScreenMouseEvent mouseInputEvent) {
         if (!(mc.currentScreen instanceof GuiChat)) {
             return;
         }
@@ -150,7 +150,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         }
     }
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void onGuiClose(GuiOpenEvent event) {
+    public void onGuiClose(ScreenOpenEvent event) {
         if (!(event.gui instanceof GuiChat) && widget != null) {
             OverlayManager.getInstance().removeOverlay(widget);
             widget = null;

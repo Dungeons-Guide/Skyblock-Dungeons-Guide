@@ -41,8 +41,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerNameFormatEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -244,7 +244,7 @@ public class CosmeticsManager {
 
     private final ThreadLocal<Stack<List<ReplacementContext>>> contextThreadLocal = new ThreadLocal<>();
     @SubscribeEvent(priority = ListenerPriority.FIRST, receiveCanceled = true)
-    public void onChatDetect(ClientChatReceivedEvent clientChatReceivedEvent) {
+    public void onChatDetect(ChatReceivedEvent clientChatReceivedEvent) {
         try {
             if (clientChatReceivedEvent.type == 2) return;
             List<ReplacementContext> total = new ArrayList<>();
@@ -265,7 +265,7 @@ public class CosmeticsManager {
     }
 
     @SubscribeEvent(priority = ListenerPriority.LAST, receiveCanceled = true)
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+    public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
         try {
             Stack<List<ReplacementContext>> threadCtx = contextThreadLocal.get();
             if (threadCtx == null) return;
@@ -435,7 +435,7 @@ public class CosmeticsManager {
 
 
     @SubscribeEvent(priority = ListenerPriority.LAST)
-    public void nameFormat(PlayerEvent.NameFormat nameFormat) {
+    public void nameFormat(PlayerNameFormatEvent nameFormat) {
         List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.get(nameFormat.entityPlayer.getGameProfile().getId());
         boolean dg =
                 FeatureRegistry.DG_INDICATOR.isEnabled() &&

@@ -19,106 +19,87 @@
 package kr.syeyoung.dungeonsguide.mod.events.listener;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import io.netty.channel.*;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PacketProcessedEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RawPacketReceivedEvent;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.client.C02PacketUseEntity;
-import net.minecraft.network.play.client.C0EPacketClickWindow;
-import net.minecraft.network.play.client.C0FPacketConfirmTransaction;
-import net.minecraft.network.play.server.*;
-import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-@ChannelHandler.Sharable
-public class PacketInjector extends ChannelDuplexHandler {
+// called from ConnectionMixin before minecraft or any other mod handles the packet,
+// so dg sees exactly what the server sent
+public class PacketInjector {
 
-    private static Set<Class> targetedPackets = new HashSet<>();
+    private static final Set<Class> targetedPackets = new HashSet<>();
     static {
-        targetedPackets.add(S04PacketEntityEquipment.class);
-        targetedPackets.add(S45PacketTitle.class);
-        targetedPackets.add(S38PacketPlayerListItem.class);
-        targetedPackets.add(S30PacketWindowItems.class);
-        targetedPackets.add(S2FPacketSetSlot.class);
-        targetedPackets.add(S23PacketBlockChange.class);
-        targetedPackets.add(S22PacketMultiBlockChange.class);
-        targetedPackets.add(S3BPacketScoreboardObjective.class);
-        targetedPackets.add(S3CPacketUpdateScore.class);
-        targetedPackets.add(S3DPacketDisplayScoreboard.class);
-        targetedPackets.add(S3EPacketTeams.class);
-        targetedPackets.add(S34PacketMaps.class);
-        targetedPackets.add(S21PacketChunkData.class);
-        targetedPackets.add(S26PacketMapChunkBulk.class);
-        targetedPackets.add(S13PacketDestroyEntities.class);
-        targetedPackets.add(S0DPacketCollectItem.class);
+        targetedPackets.add(ClientboundSetEquipmentPacket.class); // S04PacketEntityEquipment
+        targetedPackets.add(ClientboundSetTitleTextPacket.class); // S45PacketTitle
+        targetedPackets.add(ClientboundSetSubtitleTextPacket.class); // S45PacketTitle
+        targetedPackets.add(ClientboundSetTitlesAnimationPacket.class); // S45PacketTitle
+        targetedPackets.add(ClientboundClearTitlesPacket.class); // S45PacketTitle
+        targetedPackets.add(ClientboundPlayerInfoUpdatePacket.class); // S38PacketPlayerListItem
+        targetedPackets.add(ClientboundPlayerInfoRemovePacket.class); // S38PacketPlayerListItem
+        targetedPackets.add(ClientboundContainerSetContentPacket.class); // S30PacketWindowItems
+        targetedPackets.add(ClientboundContainerSetSlotPacket.class); // S2FPacketSetSlot
+        targetedPackets.add(ClientboundBlockUpdatePacket.class); // S23PacketBlockChange
+        targetedPackets.add(ClientboundSectionBlocksUpdatePacket.class); // S22PacketMultiBlockChange
+        targetedPackets.add(ClientboundSetObjectivePacket.class); // S3BPacketScoreboardObjective
+        targetedPackets.add(ClientboundSetScorePacket.class); // S3CPacketUpdateScore
+        targetedPackets.add(ClientboundResetScorePacket.class); // S3CPacketUpdateScore
+        targetedPackets.add(ClientboundSetDisplayObjectivePacket.class); // S3DPacketDisplayScoreboard
+        targetedPackets.add(ClientboundSetPlayerTeamPacket.class); // S3EPacketTeams
+        targetedPackets.add(ClientboundMapItemDataPacket.class); // S34PacketMaps
+        targetedPackets.add(ClientboundLevelChunkWithLightPacket.class); // S21PacketChunkData, S26PacketMapChunkBulk
+        targetedPackets.add(ClientboundForgetLevelChunkPacket.class); // S21PacketChunkData (unload)
+        targetedPackets.add(ClientboundRemoveEntitiesPacket.class); // S13PacketDestroyEntities
+        targetedPackets.add(ClientboundTakeItemEntityPacket.class); // S0DPacketCollectItem
     }
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        Packet packet = (Packet) msg;
-        boolean doStuff = targetedPackets.contains(msg.getClass());
-        try {
-            if (doStuff) {
-                RawPacketReceivedEvent receivedEvent = new RawPacketReceivedEvent(packet);
-                DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(receivedEvent);
-                packet = receivedEvent.packet;
+
+    // netty thread. returns the packet minecraft should handle
+    public static Packet<?> onPacketReceived(Packet<?> packet) {
+        if (packet instanceof ClientboundBundlePacket bundlePacket) {
+            boolean replaced = false;
+            List<Packet<? super ClientGamePacketListener>> subPackets = new ArrayList<>();
+            for (Packet<? super ClientGamePacketListener> subPacket : bundlePacket.subPackets()) {
+                Packet<? super ClientGamePacketListener> result = (Packet<? super ClientGamePacketListener>) onPacketReceived(subPacket);
+                if (result != subPacket) replaced = true;
+                subPackets.add(result);
             }
+            return replaced ? new ClientboundBundlePacket(subPackets) : packet;
+        }
+
+        if (!targetedPackets.contains(packet.getClass())) return packet;
+        try {
+            RawPacketReceivedEvent receivedEvent = new RawPacketReceivedEvent(packet);
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(receivedEvent);
+            packet = receivedEvent.packet;
         } catch (Exception t) {
             FeatureCollectDiagnostics.queueSendLogAsync(t);
             t.printStackTrace();
         }
 
-        // Hopefully this works? idk
-        Packet finalPacket = packet;
-        if (doStuff)
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new PacketProcessedEvent.Pre(finalPacket));
-            });
-        super.channelRead(ctx, packet);
-        if (doStuff)
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new PacketProcessedEvent.Post(finalPacket));
-            });
+        Packet<?> finalPacket = packet;
+        Minecraft.getInstance().execute(() -> {
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new PacketProcessedEvent.Pre(finalPacket));
+        });
+        return packet;
     }
 
-    @Override
-    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        Packet packet = (Packet) msg;
-        if (packet instanceof C02PacketUseEntity) {
-            C02PacketUseEntity packet2 = (C02PacketUseEntity) packet;
-            PlayerInteractEntityEvent piee;
-            if (packet2.getAction() == C02PacketUseEntity.Action.ATTACK)
-                piee = new PlayerInteractEntityEvent(true, false, packet2.getEntityFromWorld(Minecraft.getMinecraft().theWorld));
-            else
-                piee = new PlayerInteractEntityEvent(false, packet2.getAction() == C02PacketUseEntity.Action.INTERACT_AT, ((C02PacketUseEntity) packet).getEntityFromWorld(Minecraft.getMinecraft().theWorld));
-            try {
-                if (DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(piee)) return;
-            } catch (Exception e) {
-                FeatureCollectDiagnostics.queueSendLogAsync(e);
-                e.printStackTrace();
-            }
+    // netty thread, after minecraft scheduled handling the packet
+    public static void afterPacketReceived(Packet<?> packet) {
+        if (packet instanceof ClientboundBundlePacket bundlePacket) {
+            for (Packet<? super ClientGamePacketListener> subPacket : bundlePacket.subPackets())
+                afterPacketReceived(subPacket);
+            return;
         }
-        super.write(ctx, msg, promise);
-    }
-
-
-    @SubscribeEvent
-    public void onServerConnect(FMLNetworkEvent.ClientConnectedToServerEvent event) {
-        event.manager.channel().pipeline().addBefore("packet_handler", "dg_packet_handler", this);
-    }
-
-    public void cleanup() {
-        try {
-            if (Minecraft.getMinecraft().getNetHandler() != null)
-                Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().remove("dg_packet_handler");
-        } catch (Exception e) {
-
-        }
+        if (!targetedPackets.contains(packet.getClass())) return;
+        Minecraft.getInstance().execute(() -> {
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new PacketProcessedEvent.Post(packet));
+        });
     }
 }

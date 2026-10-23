@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyl
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 import java.util.UUID;
 
@@ -57,7 +57,7 @@ public class FeatureWatcherWarning extends TextHUDFeature {
 
 
     @DGEventHandler()
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+    public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.message.getFormattedText().equals("§r§c[BOSS] The Watcher§r§f: That will be enough for now.§r"))  {
             warning = System.currentTimeMillis() + 2500;
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

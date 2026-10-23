@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenOpenEvent;
 
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -43,7 +44,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Arrays;
@@ -137,7 +137,7 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
         }
     }
     @DGEventHandler(triggerOutOfSkyblock = true)
-    public void onGuiClose(GuiOpenEvent event) {
+    public void onGuiClose(ScreenOpenEvent event) {
         if (!(event.gui instanceof GuiChat) && widgetFeatureWrapper != null && widgetFeatureWrapper.tooltip != null) {
             PopupMgr.getPopupMgr(widgetFeatureWrapper.getDomElement()).closePopup(widgetFeatureWrapper.mouseTooltip, null);
             widgetFeatureWrapper.mouseTooltip = null;

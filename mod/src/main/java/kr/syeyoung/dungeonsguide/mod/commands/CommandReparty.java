@@ -22,35 +22,33 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
+import com.mojang.brigadier.Command;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RegisterCommandEvent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
 
 import java.util.stream.Collectors;
 
-public class CommandReparty extends CommandBase {
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
+
+public class CommandReparty {
     private String command;
     public CommandReparty() {
         command = FeatureRegistry.ETC_REPARTY.<String>getParameter("command").getValue();
         command = command.replace(" ", "");
     }
 
-    @Override
-    public String getCommandName() {
-        return command;
-    }
-
-    @Override
-    public String getCommandUsage(ICommandSender sender) {
-        return command;
-    }
-
-    @Override
-    public void processCommand(ICommandSender sender, String[] args) {
-        if (!requestReparty(false)) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cRepartying..."));
-        }
+    // only registered while the reparty feature is enabled, like 1.8.9
+    @SubscribeEvent
+    public void onRegisterCommand(RegisterCommandEvent event) {
+        if (!FeatureRegistry.ETC_REPARTY.isEnabled()) return;
+        event.dispatcher.register(literal(command).executes(ctx -> {
+            if (!requestReparty(false)) {
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cRepartying..."));
+            }
+            return Command.SINGLE_SUCCESS;
+        }));
     }
 
     private boolean reparting = false;
@@ -95,10 +93,5 @@ public class CommandReparty extends CommandBase {
             }, false);
         });
         return true;
-    }
-
-    @Override
-    public int getRequiredPermissionLevel() {
-        return 0;
     }
 }

@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 import java.util.Objects;
 
@@ -55,7 +55,7 @@ public class FeatureEpicCountdown extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void processChat(ClientChatReceivedEvent receivedEvent) {
+    public void processChat(ChatReceivedEvent receivedEvent) {
         String txt = receivedEvent.message.getFormattedText();
 
         // TODO: make a good chat remover with configurable chats, search chats recieved and stuff, but not for now

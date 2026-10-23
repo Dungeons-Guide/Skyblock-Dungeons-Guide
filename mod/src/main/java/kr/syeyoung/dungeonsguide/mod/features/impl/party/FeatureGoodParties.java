@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 
 
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
@@ -33,7 +34,6 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -43,7 +43,7 @@ public class FeatureGoodParties extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
+    public void onGuiPostRender(ScreenRenderEvent.Post rendered) {
         
         if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) return;
         GuiChest chest = (GuiChest) Minecraft.getMinecraft().currentScreen;

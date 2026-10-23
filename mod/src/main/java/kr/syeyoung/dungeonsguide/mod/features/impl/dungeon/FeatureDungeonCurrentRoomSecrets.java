@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import lombok.Getter;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
     public FeatureDungeonCurrentRoomSecrets() {
@@ -79,7 +79,7 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
     }
 
     @DGEventHandler
-    public void onChat(ClientChatReceivedEvent chat) {
+    public void onChat(ChatReceivedEvent chat) {
         if (chat.type != 2) return;
         String text = chat.message.getFormattedText();
         if (!text.contains("/")) return;
