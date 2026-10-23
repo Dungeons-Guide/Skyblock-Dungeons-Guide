@@ -40,6 +40,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.client.input.MouseButtonEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ItemTooltipEvent;
 
 import java.awt.event.MouseEvent;
@@ -179,9 +180,22 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onMouseInput(ScreenMouseEvent.Pre mouseInputEvent) {
+    public void onMouseClick(ScreenMouseEvent.Click mouseInputEvent) {
+        onMouseButton(mouseInputEvent, mouseInputEvent.buttonEvent);
+    }
+
+    @DGEventHandler
+    public void onMouseRelease(ScreenMouseEvent.Release mouseInputEvent) {
+        onMouseButton(mouseInputEvent, mouseInputEvent.buttonEvent);
+    }
+
+    @DGEventHandler
+    public void onMouseDrag(ScreenMouseEvent.Drag mouseInputEvent) {
+        onMouseButton(mouseInputEvent, mouseInputEvent.buttonEvent);
+    }
+
+    private void onMouseButton(ScreenMouseEvent mouseInputEvent, MouseButtonEvent buttonEvent) {
         if (!isEnabled()) return;
-        if ((mouseInputEvent.buttonEvent == null ? -1 : mouseInputEvent.buttonEvent.button()) == -1) return;
         if (!isCorrectGui) return;
 
         ContainerScreen chest = (ContainerScreen) Minecraft.getInstance().screen;
@@ -197,7 +211,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
             int solutionSlotId = (row - 1) * 3 + column - 3;
             int clicks = solution[solutionSlotId];
 
-            if ((clicks > 0 && (mouseInputEvent.buttonEvent == null ? -1 : mouseInputEvent.buttonEvent.button()) == 0) || (clicks < 0 && (mouseInputEvent.buttonEvent == null ? -1 : mouseInputEvent.buttonEvent.button()) == 1)) {
+            if ((clicks > 0 && buttonEvent.button() == 0) || (clicks < 0 && buttonEvent.button() == 1)) {
                 // correct.
 
             } else {

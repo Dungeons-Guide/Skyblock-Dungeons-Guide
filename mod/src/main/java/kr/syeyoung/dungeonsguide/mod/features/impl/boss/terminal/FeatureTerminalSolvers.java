@@ -34,6 +34,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.client.input.MouseButtonEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ItemTooltipEvent;
 
 import java.util.ArrayList;
@@ -129,9 +130,22 @@ public class FeatureTerminalSolvers extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onMouseInput(ScreenMouseEvent.Pre mouseInputEvent) {
+    public void onMouseClick(ScreenMouseEvent.Click mouseInputEvent) {
+        onMouseButton(mouseInputEvent, mouseInputEvent.buttonEvent);
+    }
+
+    @DGEventHandler
+    public void onMouseRelease(ScreenMouseEvent.Release mouseInputEvent) {
+        onMouseButton(mouseInputEvent, mouseInputEvent.buttonEvent);
+    }
+
+    @DGEventHandler
+    public void onMouseDrag(ScreenMouseEvent.Drag mouseInputEvent) {
+        onMouseButton(mouseInputEvent, mouseInputEvent.buttonEvent);
+    }
+
+    private void onMouseButton(ScreenMouseEvent mouseInputEvent, MouseButtonEvent buttonEvent) {
         if (!isEnabled()) return;
-        if ((mouseInputEvent.buttonEvent == null ? -1 : mouseInputEvent.buttonEvent.button()) == -1) return;
         if (solutionProvider == null) return;
         if (solution == null) return;
         if (solution.getCurrSlots() == null) {
