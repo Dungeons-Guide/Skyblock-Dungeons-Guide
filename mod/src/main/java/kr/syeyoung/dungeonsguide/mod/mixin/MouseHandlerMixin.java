@@ -44,7 +44,7 @@ public class MouseHandlerMixin {
     // 1.8.9: GuiScreenEvent.MouseInputEvent for moves
     @WrapOperation(method = "onMove", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;mouseMoved(DD)V"))
     private void dungeonsguide$onScreenMouseMove(Screen screen, double x, double y, Operation<Void> original) {
-        if (FabricEventBridge.fire(new ScreenMouseEvent.Pre(screen, ScreenMouseEvent.Action.MOVE, null, x, y, 0, 0, 0, 0))) return;
+        if (FabricEventBridge.fire(new ScreenMouseEvent.Move(screen, x, y))) return;
         original.call(screen, x, y);
     }
 }

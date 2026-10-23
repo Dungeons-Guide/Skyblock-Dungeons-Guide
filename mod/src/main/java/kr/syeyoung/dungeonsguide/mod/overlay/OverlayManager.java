@@ -268,75 +268,104 @@ public class OverlayManager {
 
 
     @SubscribeEvent(priority = ListenerPriority.FIRST)
-    public void handleMouseInput(ScreenMouseEvent.Pre mouseInputEvent) {
-            int i = GuiScreenAdapter.getMouseX();
-            int j = GuiScreenAdapter.getMouseY();
+    public void handleMouseClick(ScreenMouseEvent.Click mouseInputEvent) {
+        int i = GuiScreenAdapter.getMouseX();
+        int j = GuiScreenAdapter.getMouseY();
 
-            switch (mouseInputEvent.action) {
-                case CLICK:
-                    if (this.mc.options.touchscreen().get() && this.touchValue++ > 0) {
-                        return;
-                    }
+        if (this.mc.options.touchscreen().get() && this.touchValue++ > 0) {
+            return;
+        }
 
-                    this.eventButton = mouseInputEvent.buttonEvent.button();
-                    this.lastMouseEvent = Util.getMillis();
-                    if (this.mouseClicked(i, j, this.eventButton))
-                        mouseInputEvent.setCanceled(true);
-                    break;
-                case RELEASE:
-                    if (this.mc.options.touchscreen().get() && --this.touchValue > 0) {
-                        return;
-                    }
+        this.eventButton = mouseInputEvent.buttonEvent.button();
+        this.lastMouseEvent = Util.getMillis();
+        if (this.mouseClicked(i, j, this.eventButton))
+            mouseInputEvent.setCanceled(true);
 
-                    this.eventButton = -1;
-                    this.mouseReleased(i, j, mouseInputEvent.buttonEvent.button());
-                    break;
-                case DRAG:
-                    if (this.eventButton != -1 && this.lastMouseEvent > 0L) {
-                        long l = Util.getMillis() - this.lastMouseEvent;
-                        this.mouseClickMove(i, j, this.eventButton, l);
-                    }
-                    break;
-                case MOVE:
-                    if (lastX != i || lastY != j) {
-                        view.setCursor(EnumCursor.DEFAULT);
-                        this.mouseMove(i, j);
-                    }
-                    break;
-                case SCROLL:
-                    // D97: lwjgl2's dwheel was 120 per notch
-                    int wheel = (int) (mouseInputEvent.scrollY * 120);
-                    if (wheel != 0) {
-                        try {
-                            boolean cancel = view.mouseScrolled0(i, j, i, j, wheel);
-                            if (cancel) mouseInputEvent.setCanceled(true);
-                        } catch (Exception e) {
-                            FeatureCollectDiagnostics.queueSendLogAsync(e);
-                            e.printStackTrace();
-                        }
-                    }
-                    break;
-            }
-            lastX = i;
-            lastY = j;
+        lastX = i;
+        lastY = j;
     }
 
     @SubscribeEvent(priority = ListenerPriority.FIRST)
-    public void handleKeyboardInput(ScreenKeyboardEvent.Pre keyboardInputEvent) {
-        switch (keyboardInputEvent.action) {
-            case PRESS:
-                if (pressedKeys.add(keyboardInputEvent.keyEvent.key()))
-                    this.keyTyped(keyboardInputEvent.keyEvent);
-                else
-                    this.keyHeld(keyboardInputEvent.keyEvent);
-                break;
-            case RELEASE:
-                pressedKeys.remove(keyboardInputEvent.keyEvent.key());
-                this.keyReleased(keyboardInputEvent.keyEvent);
-                break;
-            case CHAR:
-                this.charTyped(keyboardInputEvent.characterEvent);
-                break;
+    public void handleMouseRelease(ScreenMouseEvent.Release mouseInputEvent) {
+        int i = GuiScreenAdapter.getMouseX();
+        int j = GuiScreenAdapter.getMouseY();
+
+        if (this.mc.options.touchscreen().get() && --this.touchValue > 0) {
+            return;
         }
+
+        this.eventButton = -1;
+        this.mouseReleased(i, j, mouseInputEvent.buttonEvent.button());
+
+        lastX = i;
+        lastY = j;
+    }
+
+    @SubscribeEvent(priority = ListenerPriority.FIRST)
+    public void handleMouseDrag(ScreenMouseEvent.Drag mouseInputEvent) {
+        int i = GuiScreenAdapter.getMouseX();
+        int j = GuiScreenAdapter.getMouseY();
+
+        if (this.eventButton != -1 && this.lastMouseEvent > 0L) {
+            long l = Util.getMillis() - this.lastMouseEvent;
+            this.mouseClickMove(i, j, this.eventButton, l);
+        }
+
+        lastX = i;
+        lastY = j;
+    }
+
+    @SubscribeEvent(priority = ListenerPriority.FIRST)
+    public void handleMouseMove(ScreenMouseEvent.Move mouseInputEvent) {
+        int i = GuiScreenAdapter.getMouseX();
+        int j = GuiScreenAdapter.getMouseY();
+
+        if (lastX != i || lastY != j) {
+            view.setCursor(EnumCursor.DEFAULT);
+            this.mouseMove(i, j);
+        }
+
+        lastX = i;
+        lastY = j;
+    }
+
+    @SubscribeEvent(priority = ListenerPriority.FIRST)
+    public void handleMouseScroll(ScreenMouseEvent.Scroll mouseInputEvent) {
+        int i = GuiScreenAdapter.getMouseX();
+        int j = GuiScreenAdapter.getMouseY();
+
+        // D97: lwjgl2's dwheel was 120 per notch
+        int wheel = (int) (mouseInputEvent.scrollY * 120);
+        if (wheel != 0) {
+            try {
+                boolean cancel = view.mouseScrolled0(i, j, i, j, wheel);
+                if (cancel) mouseInputEvent.setCanceled(true);
+            } catch (Exception e) {
+                FeatureCollectDiagnostics.queueSendLogAsync(e);
+                e.printStackTrace();
+            }
+        }
+
+        lastX = i;
+        lastY = j;
+    }
+
+    @SubscribeEvent(priority = ListenerPriority.FIRST)
+    public void handleKeyPress(ScreenKeyboardEvent.Press.Pre keyboardInputEvent) {
+        if (pressedKeys.add(keyboardInputEvent.keyEvent.key()))
+            this.keyTyped(keyboardInputEvent.keyEvent);
+        else
+            this.keyHeld(keyboardInputEvent.keyEvent);
+    }
+
+    @SubscribeEvent(priority = ListenerPriority.FIRST)
+    public void handleKeyRelease(ScreenKeyboardEvent.Release.Pre keyboardInputEvent) {
+        pressedKeys.remove(keyboardInputEvent.keyEvent.key());
+        this.keyReleased(keyboardInputEvent.keyEvent);
+    }
+
+    @SubscribeEvent(priority = ListenerPriority.FIRST)
+    public void handleCharType(ScreenKeyboardEvent.Char.Pre keyboardInputEvent) {
+        this.charTyped(keyboardInputEvent.characterEvent);
     }
 }

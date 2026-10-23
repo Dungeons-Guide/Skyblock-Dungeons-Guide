@@ -137,26 +137,26 @@ public class FabricEventBridge {
                     fireDrawing(screenImage, graphics, context -> new ScreenRenderEvent.Post(s, graphics, mouseX, mouseY, tickProgress, context)));
 
             ScreenMouseEvents.allowMouseClick(screen).register((s, event) ->
-                    !fire(new ScreenMouseEvent.Pre(s, ScreenMouseEvent.Action.CLICK, event, event.x(), event.y(), 0, 0, 0, 0)));
+                    !fire(new ScreenMouseEvent.Click(s, event)));
             ScreenMouseEvents.allowMouseRelease(screen).register((s, event) ->
-                    !fire(new ScreenMouseEvent.Pre(s, ScreenMouseEvent.Action.RELEASE, event, event.x(), event.y(), 0, 0, 0, 0)));
+                    !fire(new ScreenMouseEvent.Release(s, event)));
             ScreenMouseEvents.allowMouseDrag(screen).register((s, event, dragX, dragY) ->
-                    !fire(new ScreenMouseEvent.Pre(s, ScreenMouseEvent.Action.DRAG, event, event.x(), event.y(), dragX, dragY, 0, 0)));
+                    !fire(new ScreenMouseEvent.Drag(s, event, dragX, dragY)));
             ScreenMouseEvents.allowMouseScroll(screen).register((s, mouseX, mouseY, scrollX, scrollY) ->
-                    !fire(new ScreenMouseEvent.Pre(s, ScreenMouseEvent.Action.SCROLL, null, mouseX, mouseY, 0, 0, scrollX, scrollY)));
+                    !fire(new ScreenMouseEvent.Scroll(s, mouseX, mouseY, scrollX, scrollY)));
 
             ScreenKeyboardEvents.allowKeyPress(screen).register((s, event) ->
-                    !fire(new ScreenKeyboardEvent.Pre(s, ScreenKeyboardEvent.Action.PRESS, event, null)));
+                    !fire(new ScreenKeyboardEvent.Press.Pre(s, event)));
             ScreenKeyboardEvents.afterKeyPress(screen).register((s, event) ->
-                    fire(new ScreenKeyboardEvent.Post(s, ScreenKeyboardEvent.Action.PRESS, event, null)));
+                    fire(new ScreenKeyboardEvent.Press.Post(s, event)));
             ScreenKeyboardEvents.allowKeyRelease(screen).register((s, event) ->
-                    !fire(new ScreenKeyboardEvent.Pre(s, ScreenKeyboardEvent.Action.RELEASE, event, null)));
+                    !fire(new ScreenKeyboardEvent.Release.Pre(s, event)));
             ScreenKeyboardEvents.afterKeyRelease(screen).register((s, event) ->
-                    fire(new ScreenKeyboardEvent.Post(s, ScreenKeyboardEvent.Action.RELEASE, event, null)));
+                    fire(new ScreenKeyboardEvent.Release.Post(s, event)));
             ScreenKeyboardEvents.allowCharType(screen).register((s, event) ->
-                    !fire(new ScreenKeyboardEvent.Pre(s, ScreenKeyboardEvent.Action.CHAR, null, event)));
+                    !fire(new ScreenKeyboardEvent.Char.Pre(s, event)));
             ScreenKeyboardEvents.afterCharType(screen).register((s, event) ->
-                    fire(new ScreenKeyboardEvent.Post(s, ScreenKeyboardEvent.Action.CHAR, null, event)));
+                    fire(new ScreenKeyboardEvent.Char.Post(s, event)));
         });
     }
 
