@@ -245,6 +245,7 @@ public class FeatureRegistry {
     public static final FeatureDebuggableMap ADVANCED_DEBUGGABLE_MAP = register(new FeatureDebuggableMap());
     public static final FeatureRoomCoordDisplay ADVANCED_COORDS = register(new FeatureRoomCoordDisplay());
     public static final FeatureDebugTrap ADVANCED_BAT = register(new FeatureDebugTrap());
+    public static final FeatureChatCapture DEBUG_CHAT_CAPTURE = register(new FeatureChatCapture());
 
     public static final SimpleFeature DEBUG_BLOCK_CACHING = register(new SimpleFeature("Debug","Enable block getBlockCaching", "Cache all world.getBlockState callls", "debug.blockcache"));
 
