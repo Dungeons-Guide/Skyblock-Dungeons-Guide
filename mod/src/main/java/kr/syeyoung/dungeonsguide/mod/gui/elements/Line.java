@@ -116,6 +116,7 @@ public class Line extends AnnotatedExportOnlyWidget implements Layouter, Rendere
             return;
         }
 
+        // TODO: stipple is redone on the cpu every frame, walking every pixel and one quad per dash. decided later
         // glLineStipple: bit i (from the lsb) of the pattern covers factor pixels, repeating every 16 * factor pixels
         double scale = horizontal ? buildContext.getAbsBounds().getWidth() / w : buildContext.getAbsBounds().getHeight() / h;
         double length = horizontal ? w : h;
