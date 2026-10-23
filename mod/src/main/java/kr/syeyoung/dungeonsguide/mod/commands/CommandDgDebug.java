@@ -1442,7 +1442,6 @@ public class CommandDgDebug {
         }
     }
 
-    // D104: records what the server sends as chat / action bar / titles
     @DGCommand("dgdebug itemcapture")
     public void itemCaptureCommand() {
         try {
