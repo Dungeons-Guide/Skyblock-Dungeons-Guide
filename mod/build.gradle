@@ -84,6 +84,8 @@ sourceSets.main.java {
 }
 
 loom {
+    accessWidenerPath = file("src/main/resources/dungeonsguide.classtweaker")
+
     runs {
         client {
             ideConfigGenerated = true

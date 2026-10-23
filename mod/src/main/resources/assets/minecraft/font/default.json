@@ -1,0 +1,19 @@
+{
+    "providers": [
+        {
+            "type": "bitmap",
+            "file": "dungeonsguide:font/icons.png",
+            "ascent": 7,
+            "height": 8,
+            "chars": [
+                ""
+            ]
+        },
+        {
+            "type": "space",
+            "advances": {
+                "": 2
+            }
+        }
+    ]
+}
