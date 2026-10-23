@@ -18,17 +18,22 @@
 package kr.syeyoung.dungeonsguide.mod.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import kr.syeyoung.dungeonsguide.mod.cosmetics.CustomNetworkPlayerInfo;
+import com.llamalad7.mixinextras.sugar.Local;
+import kr.syeyoung.dungeonsguide.launcher.FabricEventBridge;
+import kr.syeyoung.dungeonsguide.mod.events.impl.TabListNameFormatEvent;
 import net.minecraft.client.gui.components.PlayerTabOverlay;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(PlayerTabOverlay.class)
 public class PlayerTabOverlayMixin {
-    // 1.8.9 replaced vanilla's tab entries with CustomNetworkPlayerInfo, 26.1 decorates the name vanilla built
+    // 1.8.9 replaced vanilla's tab entries with CustomNetworkPlayerInfo, 26.1 lets listeners replace the name vanilla built
     @ModifyReturnValue(method = "getNameForDisplay", at = @At("RETURN"))
-    private Component dungeonsguide$tabName(Component name) {
-        return CustomNetworkPlayerInfo.getDisplayName(name);
+    private Component dungeonsguide$tabName(Component name, @Local(argsOnly = true) PlayerInfo info) {
+        TabListNameFormatEvent event = new TabListNameFormatEvent(info, name);
+        FabricEventBridge.fire(event);
+        return event.displayName;
     }
 }

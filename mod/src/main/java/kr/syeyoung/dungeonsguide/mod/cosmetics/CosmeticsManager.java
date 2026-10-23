@@ -25,10 +25,13 @@ import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.SurgicalReplacer;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGPlayerJoinEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGPlayerQuitEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.TabListEntryEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.TabListNameFormatEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
@@ -379,7 +382,7 @@ public class CosmeticsManager {
     }
 
 
-    // 1.8.9 replaced vanilla's tab entries with CustomNetworkPlayerInfo here; on 26.1 PlayerTabOverlayMixin decorates the tab names
+    // 1.8.9 replaced vanilla's tab entries with CustomNetworkPlayerInfo here; on 26.1 onTabListNameFormat decorates the tab names
     @SubscribeEvent
     public void onTabListAdd(TabListEntryEvent.Add event) {
         GameProfile profile = event.getPlayerInfo().getProfile();
@@ -395,6 +398,56 @@ public class CosmeticsManager {
         GameProfile profile = event.getPlayerInfo().getProfile();
         if (profile.id().version() == 4) {
             PlayerManager.INSTANCE.unsubscribe(profile.id());
+        }
+    }
+
+    // 1.8.9's CustomNetworkPlayerInfo.getDisplayName. its displayName was the packet's display name, formatted its text;
+    // vanilla's tab name covers both
+    @SubscribeEvent
+    public void onTabListNameFormat(TabListNameFormatEvent event) {
+        String rawPlayerString = TextUtils.getFormattedText(event.displayName);
+
+        String actualName = null;
+        List<ActiveCosmetic> activeCosmetics;
+        for (String s : rawPlayerString.split(" ")) {
+            String strippped = TextUtils.stripColor(s);
+            if (strippped.startsWith("[")) continue;
+            actualName = strippped;
+            break;
+        }
+
+        if (actualName == null) return;
+
+        // 1.8.9's nameIdCache, the parallel universe tab list
+        UUID uuid = TabList.INSTANCE.getPlayer(actualName);
+        boolean dg = FeatureRegistry.DG_INDICATOR.isEnabled() && PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(uuid, false);
+
+
+        activeCosmetics = getActiveCosmeticByPlayerNameLowerCase().get(actualName.toLowerCase());
+        if (activeCosmetics == null && dg) {
+            event.displayName = Component.literal("\ued00" + rawPlayerString);
+            return;
+        } else if (activeCosmetics == null) return;
+
+        CosmeticData color=null;
+        for (ActiveCosmetic activeCosmetic : activeCosmetics) {
+            CosmeticData cosmeticData = getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
+            if (cosmeticData == null) continue;
+            if (cosmeticData.getCosmeticType().equals("ncolor")) color = cosmeticData;
+        }
+
+//        FontRenderer
+        if (color != null) { // ᨠ
+            String coloredName = color.getData() + actualName;
+            if (dg) {
+                event.displayName = Component.literal("\ued00" + rawPlayerString.replace(actualName, coloredName));
+            } else {
+                event.displayName = Component.literal(rawPlayerString.replace(actualName, coloredName));
+            }
+        } else {
+            if (dg) {
+                event.displayName = Component.literal("\ued00" + rawPlayerString);
+            }
         }
     }
 
