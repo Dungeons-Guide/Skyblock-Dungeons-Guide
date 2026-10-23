@@ -26,38 +26,77 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 
-// like 1.8.9 subscribers of the base class get both Pre and Post
+// like 1.8.9 subscribers of an action get both Pre and Post
 public abstract class ScreenKeyboardEvent extends DGEvent implements Cancelable {
     public final Screen gui;
-    public final Action action;
-    // set for PRESS and RELEASE
-    public final KeyEvent keyEvent;
-    // set for CHAR
-    public final CharacterEvent characterEvent;
 
     @Getter @Setter
     private boolean canceled;
 
-    public enum Action {
-        PRESS, RELEASE, CHAR
-    }
-
-    protected ScreenKeyboardEvent(Screen gui, Action action, KeyEvent keyEvent, CharacterEvent characterEvent) {
+    protected ScreenKeyboardEvent(Screen gui) {
         this.gui = gui;
-        this.action = action;
-        this.keyEvent = keyEvent;
-        this.characterEvent = characterEvent;
     }
 
-    public static class Pre extends ScreenKeyboardEvent {
-        public Pre(Screen gui, Action action, KeyEvent keyEvent, CharacterEvent characterEvent) {
-            super(gui, action, keyEvent, characterEvent);
+    public abstract static class Press extends ScreenKeyboardEvent {
+        public final KeyEvent keyEvent;
+
+        protected Press(Screen gui, KeyEvent keyEvent) {
+            super(gui);
+            this.keyEvent = keyEvent;
+        }
+
+        public static class Pre extends Press {
+            public Pre(Screen gui, KeyEvent keyEvent) {
+                super(gui, keyEvent);
+            }
+        }
+
+        public static class Post extends Press {
+            public Post(Screen gui, KeyEvent keyEvent) {
+                super(gui, keyEvent);
+            }
         }
     }
 
-    public static class Post extends ScreenKeyboardEvent {
-        public Post(Screen gui, Action action, KeyEvent keyEvent, CharacterEvent characterEvent) {
-            super(gui, action, keyEvent, characterEvent);
+    public abstract static class Release extends ScreenKeyboardEvent {
+        public final KeyEvent keyEvent;
+
+        protected Release(Screen gui, KeyEvent keyEvent) {
+            super(gui);
+            this.keyEvent = keyEvent;
+        }
+
+        public static class Pre extends Release {
+            public Pre(Screen gui, KeyEvent keyEvent) {
+                super(gui, keyEvent);
+            }
+        }
+
+        public static class Post extends Release {
+            public Post(Screen gui, KeyEvent keyEvent) {
+                super(gui, keyEvent);
+            }
+        }
+    }
+
+    public abstract static class Char extends ScreenKeyboardEvent {
+        public final CharacterEvent characterEvent;
+
+        protected Char(Screen gui, CharacterEvent characterEvent) {
+            super(gui);
+            this.characterEvent = characterEvent;
+        }
+
+        public static class Pre extends Char {
+            public Pre(Screen gui, CharacterEvent characterEvent) {
+                super(gui, characterEvent);
+            }
+        }
+
+        public static class Post extends Char {
+            public Post(Screen gui, CharacterEvent characterEvent) {
+                super(gui, characterEvent);
+            }
         }
     }
 }
