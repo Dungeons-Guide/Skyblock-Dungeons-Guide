@@ -30,6 +30,9 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 import java.util.Objects;
@@ -96,6 +99,8 @@ public class FeatureEpicCountdown extends SimpleFeature {
     }
 
     private static final String GO_TEXT = "GO!!!";
+    // dungeonsguide/sounds.json
+    private static final SoundEvent READY_SET_GO = SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath("dungeonsguide", "readysetgo"));
     private String lastSec;
 
     @DGEventHandler
@@ -128,7 +133,7 @@ public class FeatureEpicCountdown extends SimpleFeature {
         if (actualSecondsLeft <= 0) {
             if(!Objects.equals(lastSec, GO_TEXT)){
                 lastSec = GO_TEXT;
-                Minecraft.getInstance().gui.displayTitle(lastSec, "", 2, 25, 15);
+                Minecraft.getInstance().gui.setTitle(Component.literal(lastSec));
             }
             return;
         }
@@ -137,12 +142,12 @@ public class FeatureEpicCountdown extends SimpleFeature {
 
         if(!Objects.equals(string, lastSec)){
             if(actualSecondsLeft == 3   && sfxenabled){
-                Minecraft.getInstance().player.playSound("skyblock_dungeons_guide:readysetgo", 1F, 1F);
+                Minecraft.getInstance().player.playSound(READY_SET_GO, 1F, 1F);
             }
             if(actualSecondsLeft > 5){
-                Minecraft.getInstance().gui.displayTitle(string, "", 1, 10, 8);
+                Minecraft.getInstance().gui.setTitle(Component.literal(string));
             }else{
-                Minecraft.getInstance().gui.displayTitle(string, "", 1, 6, 4);
+                Minecraft.getInstance().gui.setTitle(Component.literal(string));
             }
             lastSec = string;
         }

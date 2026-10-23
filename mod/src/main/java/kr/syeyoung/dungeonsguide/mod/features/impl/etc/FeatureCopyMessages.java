@@ -40,6 +40,7 @@ public class FeatureCopyMessages extends SimpleFeature {
         
         if (clientChatReceivedEvent.type == 2) return;
 
-        clientChatReceivedEvent.message.append(Component.literal("   §7[Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.SuggestCommand(TextUtils.stripColor(TextUtils.getFormattedText(clientChatReceivedEvent.message)))).withHoverEvent(new HoverEvent.ShowText(Component.literal("§eCopy Message")))));
+        // TODO: 1.8.9 appended to every chat message; 26.1 has no modify hook for player chat (FabricEventBridge), so signed player chat gets no [Copy]
+        clientChatReceivedEvent.message = clientChatReceivedEvent.message.copy().append(Component.literal("   §7[Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.SuggestCommand(TextUtils.stripColor(TextUtils.getFormattedText(clientChatReceivedEvent.message)))).withHoverEvent(new HoverEvent.ShowText(Component.literal("§eCopy Message")))));
     }
 }

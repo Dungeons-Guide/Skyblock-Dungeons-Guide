@@ -84,6 +84,8 @@ sourceSets.main.java {
     // built on the room editor's MPanel
     exclude "kr/syeyoung/dungeonsguide/mod/gui/elements/CompatLayer.java"
     exclude "kr/syeyoung/dungeonsguide/mod/features/impl/party/playerpreview/datarenders/DataRendererEditor.java"
+    // dungeon room collector, uploads 1.8.9 formats
+    exclude "kr/syeyoung/dungeonsguide/mod/features/impl/etc/FeatureCollectDungeonRooms.java"
 }
 
 loom {
