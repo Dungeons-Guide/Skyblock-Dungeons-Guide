@@ -25,41 +25,60 @@ import lombok.Setter;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 
+// TODO: no Move yet, 26.1 has no fabric event for mouse moves inside screens. decided when porting input
 public abstract class ScreenMouseEvent extends DGEvent implements Cancelable {
     public final Screen gui;
-    public final Action action;
-    // null for SCROLL
-    public final MouseButtonEvent buttonEvent;
     public final double mouseX;
     public final double mouseY;
-    public final double dragX;
-    public final double dragY;
-    public final double scrollX;
-    public final double scrollY;
 
     @Getter @Setter
     private boolean canceled;
 
-    // TODO: no MOVE yet, 26.1 has no fabric event for mouse moves inside screens. decided when porting input
-    public enum Action {
-        CLICK, RELEASE, DRAG, SCROLL
-    }
-
-    protected ScreenMouseEvent(Screen gui, Action action, MouseButtonEvent buttonEvent, double mouseX, double mouseY, double dragX, double dragY, double scrollX, double scrollY) {
+    protected ScreenMouseEvent(Screen gui, double mouseX, double mouseY) {
         this.gui = gui;
-        this.action = action;
-        this.buttonEvent = buttonEvent;
         this.mouseX = mouseX;
         this.mouseY = mouseY;
-        this.dragX = dragX;
-        this.dragY = dragY;
-        this.scrollX = scrollX;
-        this.scrollY = scrollY;
     }
 
-    public static class Pre extends ScreenMouseEvent {
-        public Pre(Screen gui, Action action, MouseButtonEvent buttonEvent, double mouseX, double mouseY, double dragX, double dragY, double scrollX, double scrollY) {
-            super(gui, action, buttonEvent, mouseX, mouseY, dragX, dragY, scrollX, scrollY);
+    public static class Click extends ScreenMouseEvent {
+        public final MouseButtonEvent buttonEvent;
+
+        public Click(Screen gui, MouseButtonEvent buttonEvent) {
+            super(gui, buttonEvent.x(), buttonEvent.y());
+            this.buttonEvent = buttonEvent;
+        }
+    }
+
+    public static class Release extends ScreenMouseEvent {
+        public final MouseButtonEvent buttonEvent;
+
+        public Release(Screen gui, MouseButtonEvent buttonEvent) {
+            super(gui, buttonEvent.x(), buttonEvent.y());
+            this.buttonEvent = buttonEvent;
+        }
+    }
+
+    public static class Drag extends ScreenMouseEvent {
+        public final MouseButtonEvent buttonEvent;
+        public final double dragX;
+        public final double dragY;
+
+        public Drag(Screen gui, MouseButtonEvent buttonEvent, double dragX, double dragY) {
+            super(gui, buttonEvent.x(), buttonEvent.y());
+            this.buttonEvent = buttonEvent;
+            this.dragX = dragX;
+            this.dragY = dragY;
+        }
+    }
+
+    public static class Scroll extends ScreenMouseEvent {
+        public final double scrollX;
+        public final double scrollY;
+
+        public Scroll(Screen gui, double mouseX, double mouseY, double scrollX, double scrollY) {
+            super(gui, mouseX, mouseY);
+            this.scrollX = scrollX;
+            this.scrollY = scrollY;
         }
     }
 }
