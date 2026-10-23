@@ -73,8 +73,23 @@ public class DGRenderTypes {
             .withCull(false)
             .withDepthStencilState(NO_DEPTH)
             .build();
+    // plain (straight alpha) textures
+    private static final RenderPipeline TEXTURED_QUAD_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+            .withLocation(Identifier.fromNamespaceAndPath("dungeonsguide", "pipeline/textured_quad"))
+            .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
+            .withCull(false)
+            .withDepthStencilState(new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false))
+            .build();
+    private static final RenderPipeline TEXTURED_QUAD_SEE_THROUGH_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+            .withLocation(Identifier.fromNamespaceAndPath("dungeonsguide", "pipeline/textured_quad_see_through"))
+            .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
+            .withCull(false)
+            .withDepthStencilState(NO_DEPTH)
+            .build();
     private static final Map<Identifier, RenderType> IMAGE = new HashMap<>();
     private static final Map<Identifier, RenderType> IMAGE_SEE_THROUGH = new HashMap<>();
+    private static final Map<Identifier, RenderType> TEXTURED_QUAD = new HashMap<>();
+    private static final Map<Identifier, RenderType> TEXTURED_QUAD_SEE_THROUGH = new HashMap<>();
 
     public static RenderType filledSeeThrough() {
         return FILLED_SEE_THROUGH;
@@ -96,5 +111,15 @@ public class DGRenderTypes {
     public static RenderType imageSeeThrough(Identifier texture) {
         return IMAGE_SEE_THROUGH.computeIfAbsent(texture, t -> RenderType.create("dungeonsguide_image_see_through",
                 RenderSetup.builder(IMAGE_SEE_THROUGH_PIPELINE).withTexture("Sampler0", t).sortOnUpload().createRenderSetup()));
+    }
+
+    public static RenderType texturedQuad(Identifier texture) {
+        return TEXTURED_QUAD.computeIfAbsent(texture, t -> RenderType.create("dungeonsguide_textured_quad",
+                RenderSetup.builder(TEXTURED_QUAD_PIPELINE).withTexture("Sampler0", t).sortOnUpload().createRenderSetup()));
+    }
+
+    public static RenderType texturedQuadSeeThrough(Identifier texture) {
+        return TEXTURED_QUAD_SEE_THROUGH.computeIfAbsent(texture, t -> RenderType.create("dungeonsguide_textured_quad_see_through",
+                RenderSetup.builder(TEXTURED_QUAD_SEE_THROUGH_PIPELINE).withTexture("Sampler0", t).sortOnUpload().createRenderSetup()));
     }
 }

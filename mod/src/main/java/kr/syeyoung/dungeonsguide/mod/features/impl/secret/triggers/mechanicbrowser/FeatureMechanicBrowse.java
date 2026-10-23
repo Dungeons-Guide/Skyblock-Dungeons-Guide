@@ -33,6 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.IPathDisplayEngine;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
@@ -42,14 +43,10 @@ import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.util.Mth;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.List;
@@ -84,26 +81,23 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
     }
 
     @Override
-    public void drawDemo(float partialTicks) {
+    public void drawDemo(RenderingContext context, float partialTicks) {
         double scale = FeatureMechanicBrowse.this.<Double>getParameter("scale").getValue();
-        GlStateManager.scale(scale, scale, 1.0);
+        context.pose().scale((float) scale, (float) scale);
 
         GUIPosition bigDim = getFeatureRect();
         Dimension effectiveDim = new Dimension((int) (bigDim.getWidth() / scale),(int)( bigDim.getHeight() / scale));
 
-        FontRenderer fr = Minecraft.getInstance().font;
-        Gui.drawRect(0, 0, effectiveDim.width, fr.FONT_HEIGHT + 4, 0xFF444444);
-        Gui.drawRect(1, 1, effectiveDim.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
-        GlStateManager.enableBlend();
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        fr.drawString("Selected: ", 2,2, 0xFFAAAAAA);
-        fr.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
-        fr.drawString("Open Chat to Select Secrets", 2, fr.FONT_HEIGHT + 5, 0xFFAAAAAA);
+        Font fr = Minecraft.getInstance().font;
+        context.drawRect(0, 0, effectiveDim.width, fr.lineHeight + 4, 0xFF444444);
+        context.drawRect(1, 1, effectiveDim.width - 1, fr.lineHeight + 3, 0xFF262626);
+        context.drawString("Selected: ", 2,2, 0xFFAAAAAA, false);
+        context.drawString("Nothing", fr.width("Selected: ") + 2,2, 0xFFAA0000, false);
+        context.drawString("Open Chat to Select Secrets", 2, fr.lineHeight + 5, 0xFFAAAAAA, false);
     }
 
     @Override
-    public void drawHUD(float partialTicks) {
+    public void drawHUD(RenderingContext renderingContext, float partialTicks) {
         if (!SkyblockStatus.isOnDungeon()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null || DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser() == null) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
@@ -116,25 +110,22 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         if (roomRouteHandler == null) return;
 
         double scale = FeatureMechanicBrowse.this.<Double>getParameter("scale").getValue();
-        GlStateManager.scale(scale, scale, 1.0);
+        renderingContext.pose().scale((float) scale, (float) scale);
 
         GUIPosition bigDim = getFeatureRect();
         Dimension effectiveDim = new Dimension((int) (bigDim.getWidth() / scale),(int)( bigDim.getHeight() / scale));
 
-        FontRenderer fr = Minecraft.getInstance().font;
-        Gui.drawRect(0, 0, effectiveDim.width, fr.FONT_HEIGHT + 4, 0xFF444444);
-        Gui.drawRect(1, 1, effectiveDim.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
-        GlStateManager.enableBlend();
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        fr.drawString("Selected: ", 2,2, 0xFFAAAAAA);
+        Font fr = Minecraft.getInstance().font;
+        renderingContext.drawRect(0, 0, effectiveDim.width, fr.lineHeight + 4, 0xFF444444);
+        renderingContext.drawRect(1, 1, effectiveDim.width - 1, fr.lineHeight + 3, 0xFF262626);
+        renderingContext.drawString("Selected: ", 2,2, 0xFFAAAAAA, false);
         if (roomRouteHandler.getPath("MECH-BROWSER") == null)
-            fr.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
+            renderingContext.drawString("Nothing", fr.width("Selected: ") + 2,2, 0xFFAA0000, false);
         else {
             IPathDisplayEngine<?> route = roomRouteHandler.getPath("MECH-BROWSER");
-            fr.drawString(route.getActionRoute().toString(), fr.getStringWidth("Selected: ") + 2,2, 0xFFFFFF00);
+            renderingContext.drawString(route.getActionRoute().toString(), fr.width("Selected: ") + 2,2, 0xFFFFFF00, false);
         }
-        fr.drawString("Open Chat to Select Secrets", 2, fr.FONT_HEIGHT + 5, 0xFFAAAAAA);
+        renderingContext.drawString("Open Chat to Select Secrets", 2, fr.lineHeight + 5, 0xFFAAAAAA, false);
     }
 
 
@@ -158,7 +149,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
                     .ifPresent(a -> {
                         a.highlight(new Color(0,255,255,50), id +" ("+(
                                 dungeonRoom.getMechanics().get(id).getRepresentingPoint() != null ?
-                                String.format("%.1f", Mth.sqrt_double((dungeonRoom.getMechanics().get(id)).getRepresentingPoint().getBlockPos(dungeonRoom).distanceSq(Minecraft.getInstance().player.getPosition()))) : "")
+                                String.format("%.1f", Math.sqrt((dungeonRoom.getMechanics().get(id)).getRepresentingPoint().getBlockPos(dungeonRoom).distSqr(Minecraft.getInstance().player.blockPosition()))) : "")
                                 +"m)", partialTicks);
                     });
         }
@@ -176,7 +167,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
 
     @DGEventHandler
     public void onOpen(ScreenOpenEvent event) {
-        if (event.gui instanceof GuiChat) {
+        if (event.gui instanceof ChatScreen) {
             if (widget != null)
                 OverlayManager.getInstance().addOverlay(lastOpen = widget);
         } else {

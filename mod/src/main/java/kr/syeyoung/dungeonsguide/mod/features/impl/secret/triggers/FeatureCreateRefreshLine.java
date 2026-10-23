@@ -91,7 +91,7 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
 
             Entity e = Minecraft.getInstance().getCameraEntity();
 
-            double vectorV = VectorUtils.distSquared(e.getViewVector(partialTicks), e.getEyePosition(partialTicks), new Vec3(target).addVector(0.5,0.5,0.5));
+            double vectorV = VectorUtils.distSquared(e.getViewVector(partialTicks), e.getEyePosition(partialTicks), new Vec3(target).add(0.5,0.5,0.5));
 
             if (vectorV < smallestTan) {
                 smallest = value2;

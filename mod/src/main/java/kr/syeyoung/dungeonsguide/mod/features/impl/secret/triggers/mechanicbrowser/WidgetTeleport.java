@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
@@ -46,6 +47,6 @@ public class WidgetTeleport extends AnnotatedWidget {
     public void navigate() {
         BlockPos pos = dungeonRoom.getMechanics().get(mechanic).getRepresentingPoint().getBlockPos(dungeonRoom);
 //        Minecraft.getInstance().player.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
-        MinecraftServer.getServer().getEntityWorld().getClosestPlayer(0,0,0,1000000000).setPositionAndUpdate(pos.getX(),pos.getY(),pos.getZ());
+        Minecraft.getInstance().getSingleplayerServer().overworld().getNearestPlayer(0,0,0,1000000000, false).teleportTo(pos.getX(),pos.getY(),pos.getZ());
     }
 }

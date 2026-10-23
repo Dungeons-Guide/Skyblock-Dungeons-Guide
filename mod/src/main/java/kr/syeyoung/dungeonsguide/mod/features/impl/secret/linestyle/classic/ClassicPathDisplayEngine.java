@@ -15,20 +15,17 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
+import kr.syeyoung.dungeonsguide.mod.render.world.DGWorldRenderer;
+import kr.syeyoung.dungeonsguide.mod.render.world.state.BlockModelState;
+import kr.syeyoung.dungeonsguide.mod.render.world.state.LineStripState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import org.lwjgl.opengl.GL11;
+import org.joml.Matrix4f;
 
 import java.awt.*;
 import java.util.*;
@@ -126,7 +123,8 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
     }
 
     @Override
-    public void renderActionRoute(float partialTicks) {
+    public void renderActionRoute(RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         if (actionRoute.isCalculating()) return;
 
         DungeonRoom dungeonRoom = actionRoute.getDungeonRoom();
@@ -135,64 +133,69 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         if (current -1 >= 0) {
             AbstractAction abstractAction = actions.get(current - 1);
             if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.position()) >= 25))) {
-                drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
+                drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, event);
             }
         }
 
         AbstractAction currentAction = actionRoute.getCurrentAction();
-        renderAction(currentAction, dungeonRoom, partialTicks);
+        renderAction(currentAction, dungeonRoom, event);
     }
 
-    public void renderAction(AbstractAction currentAction, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderAction(AbstractAction currentAction, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         if (currentAction instanceof AbstractActionMove) {
-            drawActionMove((AbstractActionMove) currentAction, dungeonRoom, partialTicks);
+            drawActionMove((AbstractActionMove) currentAction, dungeonRoom, event);
         } else if (currentAction instanceof ActionClick) {
-            renderActionClick((ActionClick) currentAction, dungeonRoom, partialTicks);
+            renderActionClick((ActionClick) currentAction, dungeonRoom, event);
         } else if (currentAction instanceof ActionClickSet) {
-            renderActionClickSet((ActionClickSet) currentAction, dungeonRoom, partialTicks);
+            renderActionClickSet((ActionClickSet) currentAction, dungeonRoom, event);
         } else if (currentAction instanceof ActionStonkClick) {
-            renderActionStonkClick((ActionStonkClick) currentAction, dungeonRoom, partialTicks);
+            renderActionStonkClick((ActionStonkClick) currentAction, dungeonRoom, event);
         } else if (currentAction instanceof ActionKill) {
-            renderActionKill((ActionKill) currentAction, dungeonRoom, partialTicks);
+            renderActionKill((ActionKill) currentAction, dungeonRoom, event);
         } else if (currentAction instanceof ActionInteract) {
-            renderActionInteract((ActionInteract) currentAction, dungeonRoom ,partialTicks);
+            renderActionInteract((ActionInteract) currentAction, dungeonRoom , event);
         } else if (currentAction instanceof ActionDropItem) {
-            renderActionDropItem((ActionDropItem) currentAction, dungeonRoom, partialTicks);
+            renderActionDropItem((ActionDropItem) currentAction, dungeonRoom, event);
         } else if (currentAction instanceof ActionBreakWithSuperBoom) {
-            renderActionBreakWithSuperboom((ActionBreakWithSuperBoom) currentAction, dungeonRoom, partialTicks);
+            renderActionBreakWithSuperboom((ActionBreakWithSuperBoom) currentAction, dungeonRoom, event);
         } else if (currentAction instanceof AtomicAction) {
             int atomicActionCurrent = ((AtomicAction) currentAction).getCurrent();
             List<AbstractAction> atomicActionActions = ((AtomicAction) currentAction).getActions();
             if (atomicActionCurrent -1 >= 0) {
                 AbstractAction abstractAction = atomicActionActions.get(atomicActionCurrent - 1);
                 if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.position()) >= 25))) {
-                    drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
+                    drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, event);
                 }
             }
-            renderAction(((AtomicAction) currentAction).getCurrentAction(), dungeonRoom, partialTicks);
+            renderAction(((AtomicAction) currentAction).getCurrentAction(), dungeonRoom, event);
         }
     }
 
 
-    public void renderActionKill(ActionKill actionKill, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionKill(ActionKill actionKill, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         BlockPos pos = actionKill.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
         RenderUtils.drawTextAtWorld("Spawn", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionInteract(ActionInteract actionInteract, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionInteract(ActionInteract actionInteract, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         BlockPos pos = actionInteract.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
         RenderUtils.drawTextAtWorld("Interact", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionDropItem(ActionDropItem dropItem, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionDropItem(ActionDropItem dropItem, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         BlockPos pos = dropItem.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, true);
         RenderUtils.drawTextAtWorld("Drop Item", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionClickSet(ActionClickSet actionClickSet, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionClickSet(ActionClickSet actionClickSet, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         float xAcc = 0;
         float yAcc = 0;
         float zAcc = 0;
@@ -208,55 +211,34 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         RenderUtils.drawTextAtWorld("Click", xAcc / size, yAcc / size, zAcc / size, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionClick(ActionClick actionClick, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionClick(ActionClick actionClick, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         BlockPos pos = actionClick.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, false);
         RenderUtils.drawTextAtWorld("Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionStonkClick(ActionStonkClick actionStonkClick, DungeonRoom dungeonRoom, float partialTicks) {
+    public void renderActionStonkClick(ActionStonkClick actionStonkClick, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         BlockPos pos = actionStonkClick.getTarget().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, false);
         RenderUtils.drawTextAtWorld("Stonk&Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    public void renderActionBreakWithSuperboom(ActionBreakWithSuperBoom superBoom, DungeonRoom dungeonRoom, float partialTicks) {
-        Minecraft.getInstance().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-
+    public void renderActionBreakWithSuperboom(ActionBreakWithSuperBoom superBoom, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         BlockPos blockpos = superBoom.getTarget().getOffsetPointList().get(0).getBlockPos(dungeonRoom);
 
-        Entity viewing_from = Minecraft.getInstance().getCameraEntity();
-
-        double x_fix = viewing_from.xOld + ((viewing_from.getX() - viewing_from.xOld) * partialTicks);
-        double y_fix = viewing_from.yOld + ((viewing_from.getY() - viewing_from.yOld) * partialTicks);
-        double z_fix = viewing_from.zOld + ((viewing_from.getZ() - viewing_from.zOld) * partialTicks);
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
-        GlStateManager.disableLighting();
-        GlStateManager.enableAlpha();
-        GlStateManager.disableDepth();
-        GlStateManager.depthMask(false);
-        GlStateManager.enableBlend();
-
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer vertexBuffer = tessellator.getWorldRenderer();
-        vertexBuffer.begin(7, DefaultVertexFormats.BLOCK);
-
-        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRenderer();
-        blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getInstance().level,
-                blockrendererdispatcher.getBlockModelShapes().getModelForState(Blocks.tnt.getDefaultState()),
-                Blocks.tnt.getDefaultState(), blockpos, vertexBuffer, false);
-        tessellator.draw();
-
-        GlStateManager.enableLighting();
-        GlStateManager.popMatrix();
+        // 1.8.9 rendered the tnt model with depth off
+        DGWorldRenderer.record(new BlockModelState(Blocks.TNT.defaultBlockState(),
+                new Matrix4f().translate(blockpos.getX(), blockpos.getY(), blockpos.getZ()), false));
 
         RenderUtils.highlightBlock(blockpos, new Color(0, 255,255,50), partialTicks, true);
         RenderUtils.drawTextAtWorld("Superboom", blockpos.getX() + 0.5f, blockpos.getY() + 0.5f, blockpos.getZ() + 0.5f, 0xFFFFFF00, 0.03f, false, false, partialTicks);
     }
 
-    public void drawActionMove(AbstractActionMove actionMove, DungeonRoom dungeonRoom, float partialTicks) {
+    public void drawActionMove(AbstractActionMove actionMove, DungeonRoom dungeonRoom, RenderWorldEvent event) {
+        float partialTicks = event.partialTicks;
         ActionMoveContext context = executorWeakHashMap.get(actionMove);
 
         BlockPos target = actionMove.getBeaconTargetPos(dungeonRoom);
@@ -265,7 +247,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
 
 
 
-        float distance = Mth.sqrt_double(target.distanceSq(Minecraft.getInstance().player.getPosition()));
+        float distance = (float) Math.sqrt(target.distSqr(Minecraft.getInstance().player.blockPosition()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         float scale = 0.45f * multiplier;
         scale *= 25.0 / 6.0;
@@ -275,27 +257,27 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         }
         RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, 1f, true, false, partialTicks);
 
-        RenderUtils.drawTextAtWorld(String.format("%.2f",Mth.sqrt_double(target.distanceSq(Minecraft.getInstance().player.getPosition())))+"m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
+        RenderUtils.drawTextAtWorld(String.format("%.2f",Math.sqrt(target.distSqr(Minecraft.getInstance().player.blockPosition())))+"m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
             if (poses != null){
-                drawLinesPathfindNode(poses.getNodeList(), classicPathEngineLineProperties.getLineColor(), (float) classicPathEngineLineProperties.getLineWidth(), partialTicks);
+                drawLinesPathfindNode(poses.getNodeList(), classicPathEngineLineProperties.getLineColor(), (float) classicPathEngineLineProperties.getLineWidth(), event);
 
                 int cnt = 0;
                 int warp = 0;
                 for (PathfindResult.PathfindNode pose : poses.getNodeList()) {
                     cnt ++;
-                    if (pose.getType() != null && pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getInstance().player.getPosition()) < 100) {
+                    if (pose.getType() != null && pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getInstance().player.blockPosition()) < 100) {
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }
 
                     if (warp == 1) {
-                        BlockPos pos = new BlockPos(Math.floor(pose.getX()), Math.floor(pose.getY()) -1 , Math.floor(pose.getZ()));
-                        RenderUtils.highlightBox(Blocks.stone.getSelectedBoundingBox(null, pos).expand(0.003, 0.003, 0.003), Color.green, partialTicks, true);
+                        BlockPos pos = BlockPos.containing(pose.getX(), Math.floor(pose.getY()) -1 , pose.getZ());
+                        RenderUtils.highlightBox(new AABB(pos).inflate(0.003), Color.green, partialTicks, true);
                         warp = flag2 ? 0 : 2;
                     }
                     if (pose.getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP &&
-                            ((flag2 && Minecraft.getInstance().player.getDistanceSq(pose.getX(), pose.getY(), pose.getZ()) < 25) || (!flag2 && cnt < 2)) && warp < 2) {
+                            ((flag2 && Minecraft.getInstance().player.distanceToSqr(pose.getX(), pose.getY(), pose.getZ()) < 25) || (!flag2 && cnt < 2)) && warp < 2) {
                         warp = 1;
                     }
 
@@ -304,86 +286,45 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         }
 
         if (actionMove instanceof ActionMoveSpot)
-            LineRenderUtils.renderDebug((ActionMoveSpot) actionMove, dungeonRoom, partialTicks);
+            LineRenderUtils.renderDebug((ActionMoveSpot) actionMove, dungeonRoom, event);
         else if (actionMove instanceof ActionMove)
-            LineRenderUtils.renderDebug((ActionMove) actionMove, dungeonRoom, partialTicks);
+            LineRenderUtils.renderDebug((ActionMove) actionMove, dungeonRoom, event);
     }
 
 
 
-    public static void drawLinesPathfindNode(List<PathfindResult.PathfindNode> poses, AColor colour, float thickness, float partialTicks) {
+    public static void drawLinesPathfindNode(List<PathfindResult.PathfindNode> poses, AColor colour, float thickness, RenderWorldEvent event) {
         if (poses.size() == 0) return;
-        Entity render = Minecraft.getInstance().getCameraEntity();
-        WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
-        double realX = render.xOld + (render.getX() - render.xOld) * partialTicks;
-        double realY = render.yOld + (render.getY() - render.yOld) * partialTicks;
-        double realZ = render.zOld + (render.getZ() - render.zOld) * partialTicks;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-realX, -realY, -realZ);
-        GlStateManager.disableTexture2D();
-        GlStateManager.disableLighting();
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GL11.glLineWidth(thickness);
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-
-        if ((poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK ) && poses.get(0).distanceSq(Minecraft.getInstance().player.getPosition()) < 100) {
-            GlStateManager.disableDepth();
-            GlStateManager.depthMask(false);
-        }
-
-
-//        GlStateManager.color(colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue()/ 255f, colour.getAlpha() / 255f);
-        GlStateManager.color(1,1,1,1);
-        worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+        // 1.8.9 drew a line strip per run of node types, with depth off for stonk walks near the player
+        boolean depth = !((poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK ) && poses.get(0).distanceSq(Minecraft.getInstance().player.blockPosition()) < 100);
+        List<Vec3> points = new ArrayList<>();
+        List<Integer> colors = new ArrayList<>();
         int num = 0;
 
         PathfindResult.PathfindNode lastNode = null;
         for (PathfindResult.PathfindNode pos:poses) {
             int i = RenderUtils.getColorAt(num++ * 10,0, colour);
-            worldRenderer.pos(pos.getX(), pos.getY(), pos.getZ()).color(
-                    ((i >> 16) &0xFF)/255.0f,
-                    ((i >> 8) &0xFF)/255.0f,
-                    (i &0xFF)/255.0f,
-                    ((i >> 24) &0xFF)/255.0f
-            ).endVertex();
+            points.add(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
+            colors.add(i);
 
             if (lastNode != null && lastNode.getType() != pos.getType()) {
-                Tessellator.getInstance().draw();
-                worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+                recordLineStrip(points, colors, thickness, depth);
+                points = new ArrayList<>();
+                colors = new ArrayList<>();
 
+                depth = !((pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK)&& pos.distanceSq(Minecraft.getInstance().player.blockPosition()) < 100);
 
-                if ((pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK)&& pos.distanceSq(Minecraft.getInstance().player.getPosition()) < 100) {
-                    GlStateManager.disableDepth();
-                    GlStateManager.depthMask(false);
-                } else {
-                    GlStateManager.enableDepth();
-                    GlStateManager.depthMask(true);
-                }
-
-                worldRenderer.pos(pos.getX(), pos.getY(), pos.getZ()).color(
-                        ((i >> 16) &0xFF)/255.0f,
-                        ((i >> 8) &0xFF)/255.0f,
-                        (i &0xFF)/255.0f,
-                        ((i >> 24) &0xFF)/255.0f
-                ).endVertex();
+                points.add(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
+                colors.add(i);
             }
             lastNode = pos;
 
         }
-        Tessellator.getInstance().draw();
+        recordLineStrip(points, colors, thickness, depth);
+    }
 
-        GlStateManager.translate(realX, realY, realZ);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.enableTexture2D();
-        GlStateManager.enableDepth();
-        GlStateManager.depthMask(true);
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        GlStateManager.popMatrix();
-        GL11.glLineWidth(1);
+    private static void recordLineStrip(List<Vec3> points, List<Integer> colors, float thickness, boolean depth) {
+        DGWorldRenderer.record(new LineStripState(points, colors.stream().mapToInt(Integer::intValue).toArray(), thickness, false, depth));
     }
 }
