@@ -85,6 +85,12 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import net.minecraft.network.chat.Component;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import java.nio.charset.StandardCharsets;
 import java.io.IOException;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.RoomDataConverter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
@@ -1440,7 +1446,35 @@ public class CommandDgDebug {
     @DGCommand("dgdebug itemcapture")
     public void itemCaptureCommand() {
         try {
-            File file = FeatureRegistry.DEBUG_ITEM_CAPTURE.capture();
+            // writes the held item and the open container's slots as their component json, to measure Hypixel's 26.1
+            // item layout (custom_data, profile, lore) for D125
+            Minecraft mc = Minecraft.getInstance();
+            DynamicOps<JsonElement> ops = mc.level.registryAccess().createSerializationContext(JsonOps.INSTANCE);
+
+            JsonObject capture = new JsonObject();
+            capture.addProperty("time", System.currentTimeMillis());
+            ItemStack held = mc.player.getMainHandItem();
+            capture.add("held", held.isEmpty() ? null : ItemStack.CODEC.encodeStart(ops, held).getOrThrow());
+
+            AbstractContainerMenu menu = mc.player.containerMenu;
+            if (mc.screen != null) capture.addProperty("screen", mc.screen.getTitle().getString());
+            JsonArray slots = new JsonArray();
+            for (Slot slot : menu.slots) {
+                if (!slot.hasItem()) continue;
+                JsonObject entry = new JsonObject();
+                entry.addProperty("slot", slot.index);
+                ItemStack stack = slot.getItem();
+                entry.add("item", stack.isEmpty() ? null : ItemStack.CODEC.encodeStart(ops, stack).getOrThrow());
+                slots.add(entry);
+            }
+            capture.add("slots", slots);
+
+            File dir = new File(Main.getConfigDir(), "itemcapture");
+            dir.mkdirs();
+            File file = new File(dir, System.currentTimeMillis() + ".json");
+            try (Writer writer = new FileWriter(file, StandardCharsets.UTF_8)) {
+                writer.write(new Gson().toJson(capture));
+            }
             ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fItems captured to " + file.getAbsolutePath()));
         } catch (IOException e) {
             e.printStackTrace();
