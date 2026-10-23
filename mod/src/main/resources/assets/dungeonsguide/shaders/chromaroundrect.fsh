@@ -1,9 +1,16 @@
-#version 120
-uniform float radius;
-uniform vec2 halfSize;
-uniform vec2 centerPos;
-uniform float smoothness;
-varying vec4 color;
+#version 330
+
+// same block as roundrect
+layout(std140) uniform RoundRect {
+    float radius;
+    vec2 halfSize;
+    vec2 centerPos;
+    float smoothness;
+};
+
+in vec4 color;
+
+out vec4 fragColor;
 
 vec3 hsv2rgb(vec3 c)
 {
@@ -19,5 +26,5 @@ float roundedBoxSDF(vec2 CenterPosition, vec2 Size, float Radius) {
 void main() {
     float distance 		= roundedBoxSDF(gl_FragCoord.xy - centerPos, halfSize, radius);
     float smoothedAlpha = smoothstep(-smoothness,0.0, -distance);
-    gl_FragColor = vec4(hsv2rgb(color.rgb), color.a) * vec4(1.0, 1.0, 1.0, smoothedAlpha);
+    fragColor = vec4(hsv2rgb(color.rgb), color.a) * vec4(1.0, 1.0, 1.0, smoothedAlpha);
 }

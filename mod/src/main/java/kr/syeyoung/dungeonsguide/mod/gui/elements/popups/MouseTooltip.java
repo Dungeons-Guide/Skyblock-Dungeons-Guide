@@ -21,17 +21,16 @@ package kr.syeyoung.dungeonsguide.mod.gui.elements.popups;
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.DomElement;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
-import net.minecraft.client.Minecraft;
-import org.lwjgl.input.Mouse;
 
 import java.util.Collections;
 import java.util.List;
+import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
 
 public class MouseTooltip extends Widget {
     private final AbsLocationPopup absLocationPopup;
 
-    private final BindableAttribute<Double> x = new BindableAttribute<>(Double.class, (double)Mouse.getX());
-    private final BindableAttribute<Double> y = new BindableAttribute<>(Double.class, Minecraft.getMinecraft().displayHeight - (double)Mouse.getY());
+    private final BindableAttribute<Double> x = new BindableAttribute<>(Double.class, (double) GuiScreenAdapter.getMouseX());
+    private final BindableAttribute<Double> y = new BindableAttribute<>(Double.class, (double) GuiScreenAdapter.getMouseY());
 
     public MouseTooltip(Widget content) {
         absLocationPopup = new AbsLocationPopup(x,y, content, false);

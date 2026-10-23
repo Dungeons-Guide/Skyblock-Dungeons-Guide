@@ -216,7 +216,7 @@ public class RichText extends Widget implements Layouter, Renderer {
                 x = 0;
             for (FlatTextSpan lineElement : richLine.getLineElements()) {
                 lineElement.textStyle.getFontRenderer()
-                                .render(lineElement, x, y + richLine.getBaseline() - lineElement.getBaseline()
+                                .render(context, lineElement, x, y + richLine.getBaseline() - lineElement.getBaseline()
                                         + lineElement.textStyle.getTopAscent() * lineElement.textStyle.getSize(), currentScale);
                 x += lineElement.getWidth();
             }

@@ -27,8 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Arrays;
 import java.util.List;
@@ -54,18 +52,11 @@ public class Stencil extends AnnotatedExportOnlyWidget implements Renderer {
         DomElement theThingToDraw = buildContext.getChildren().get(0);
         DomElement stencil = buildContext.getChildren().get(1);
 
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
-        GL11.glClearStencil(0);
-        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
+        context.beginStencilMask();
 
-        GL11.glStencilMask(0xFF);
-        GL11.glColorMask(false, false, false, false);
-        GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
-
-        GlStateManager.pushMatrix();
+        context.pose().pushMatrix();
         Rect original = stencil.getRelativeBound();
-        GlStateManager.translate(original.getX(), original.getY(), 0);
+        context.pose().translate((float) (original.getX()), (float) (original.getY()));
 
         double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
         double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();
@@ -80,16 +71,14 @@ public class Stencil extends AnnotatedExportOnlyWidget implements Renderer {
 
         stencil.getRenderer().doRender(
                 partialTicks,context, stencil);
-        GlStateManager.popMatrix();
+        context.pose().popMatrix();
 
 
-        GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-        GL11.glColorMask(true, true, true, true);
+        context.beginStencilMasked(1);
 
 
         original = theThingToDraw.getRelativeBound();
-        GlStateManager.translate(original.getX(), original.getY(), 0);
+        context.pose().translate((float) (original.getX()), (float) (original.getY()));
 
         absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
         absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();
@@ -105,6 +94,6 @@ public class Stencil extends AnnotatedExportOnlyWidget implements Renderer {
         theThingToDraw.getRenderer().doRender(
                 partialTicks,context, theThingToDraw);
 
-        GL11.glDisable(GL11.GL_STENCIL_TEST);
+        context.endStencil();
     }
 }

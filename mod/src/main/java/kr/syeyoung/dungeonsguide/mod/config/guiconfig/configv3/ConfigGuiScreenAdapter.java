@@ -22,20 +22,20 @@ import kr.syeyoung.dungeonsguide.mod.config.Config;
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screens.Screen;
 
 public class ConfigGuiScreenAdapter extends GuiScreenAdapter {
-    public ConfigGuiScreenAdapter(GuiScreen parent) {
-        super(new GlobalHUDScale(new MainConfigWidget()), parent);
+    public ConfigGuiScreenAdapter(Screen parent) {
+        super(new GlobalHUDScale(new MainConfigWidget()), parent, true, true);
     }
-    public ConfigGuiScreenAdapter(GuiScreen parent, Widget widget) {
-        super(widget, parent);
+    public ConfigGuiScreenAdapter(Screen parent, Widget widget) {
+        super(widget, parent, true, true);
     }
 
 
     @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
+    public void removed() {
+        super.removed();
 
         Config.scheduleConfigSave();
     }

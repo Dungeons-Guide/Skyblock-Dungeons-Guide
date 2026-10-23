@@ -18,23 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.shaders;
 
-import net.minecraft.client.renderer.GlStateManager;
-
 public class SingleColorShader implements Shader{
-    private float r, g, b, a;
+    private final int color;
 
     // argb
     public SingleColorShader(int color) {
-        r = ((color >> 16) & 0xFF) / 255.0f;
-        g = ((color >> 8) & 0xFF) / 255.0f;
-        b = ((color) & 0xFF) / 255.0f;
-        a = ((color >> 24) & 0xFF) / 255.0f;
+        this.color = color;
     }
     @Override
-    public void useShader() {
-        GlStateManager.color(r,g,b,a);
+    public int getColor(double x, double y) {
+        return color;
     }
-
-    @Override
-    public void freeShader() {}
 }

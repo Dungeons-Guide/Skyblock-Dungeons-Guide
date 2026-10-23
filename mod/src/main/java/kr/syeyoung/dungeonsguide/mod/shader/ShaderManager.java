@@ -18,110 +18,56 @@
 
 package kr.syeyoung.dungeonsguide.mod.shader;
 
-import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.shaders.UniformType;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
-import org.apache.commons.io.IOUtils;
-import org.lwjgl.opengl.GL20;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
+/**
+ * DG's shaders as render pipelines, one per shader (D78). Sources are assets/dungeonsguide/shaders/*.vsh / *.fsh,
+ * shaders that only had a fragment part use vanilla's gui vertex shader, which does what the fixed function pipeline did.
+ */
 public class ShaderManager {
     private static final Map<String, ShaderProgram> shaders = new HashMap<>();
 
-    public static void onResourceReload() {
-        for (ShaderProgram value : shaders.values()) {
-            value.close();
-        }
-        Set<String> keySet = new HashSet<>(shaders.keySet());
-        shaders.clear();
-        for (String s : keySet) {
-            loadShader(s);
-        }
+    static {
+        register("shaders/roundrect", Identifier.withDefaultNamespace("core/gui"), "RoundRect");
+        register("shaders/chromaroundrect", Identifier.fromNamespaceAndPath("dungeonsguide", "chromaroundrect"), "RoundRect");
+        register("shaders/chromacircle", Identifier.withDefaultNamespace("core/gui"), "ChromaCircle");
+        register("shaders/donut", Identifier.withDefaultNamespace("core/gui"), "Donut");
+        register("shaders/etherwarppreview", Identifier.withDefaultNamespace("core/gui"), "EtherwarpPreview");
+        // TODO: shaders/repeat (repeat.fsh, RepeatUniforms) is only used by world rendering, its pipeline comes with the world rendering port (D81)
     }
 
-    public static void unload() {
-        for (ShaderProgram value : shaders.values()) {
-            value.close();
-        }
+    private static void register(String name, Identifier vertexShader, String uniformBlock) {
+        String shaderName = name.substring("shaders/".length());
+        RenderPipeline pipeline = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+                .withLocation(Identifier.fromNamespaceAndPath("dungeonsguide", "pipeline/" + shaderName))
+                .withVertexShader(vertexShader)
+                .withFragmentShader(Identifier.fromNamespaceAndPath("dungeonsguide", shaderName))
+                .withUniform(uniformBlock, UniformType.UNIFORM_BUFFER)
+                .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
+                // shapes like the etherwarp preview's triangle fans come in any winding
+                .withCull(false)
+                .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
+                .build();
+        shaders.put(name, new ShaderProgram(name, pipeline));
+    }
+
+    // dgdebug reloadshader. vanilla reloads shader sources with resources, this drops the compiled programs
+    public static void onResourceReload() {
+        RenderSystem.getDevice().clearPipelineCache();
     }
 
     public static ShaderProgram getShader(String str) {
-        if (shaders.containsKey(str)) return shaders.get(str);
-        return loadShader(str);
-    }
-
-    private static ShaderProgram loadShader(String name) {
-        int vertex = -1;
-        String sourceVert = getShaderSource(name+".vert");
-        String sourceFrag = getShaderSource(name + ".frag");
-        if (sourceVert == null && sourceFrag == null) {
-            shaders.put(name, null); // shortcut
-            return null;
-        }
-        if (sourceVert != null) {
-            vertex = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
-            System.out.println(sourceVert);
-            GL20.glShaderSource(vertex, sourceVert);
-            GL20.glCompileShader(vertex);
-
-            if (GL20.glGetShaderi(vertex, 35713) == 0) {
-                System.err.println(GL20.glGetShaderInfoLog(vertex, 100));
-                GL20.glDeleteShader(vertex);
-                return null;
-            }
-        }
-
-        int fragment = -1;
-        if (sourceFrag != null) {
-            fragment = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
-            System.out.println(sourceFrag);
-            GL20.glShaderSource(fragment, sourceFrag);
-            GL20.glCompileShader(fragment);
-
-            if (GL20.glGetShaderi(fragment, 35713) == 0) {
-                System.err.println(GL20.glGetShaderInfoLog(fragment, 100));
-                if (vertex != -1)
-                    GL20.glDeleteShader(vertex);
-                GL20.glDeleteShader(fragment);
-                return null;
-            }
-        }
-
-
-        int program = GL20.glCreateProgram();
-        if (vertex != -1) GL20.glAttachShader(program, vertex);
-        if (fragment != -1) GL20.glAttachShader(program, fragment);
-
-        GL20.glLinkProgram(program);
-
-        if (vertex != -1) GL20.glDeleteShader(vertex);
-        if (fragment != -1) GL20.glDeleteShader(fragment);
-
-        if (GL20.glGetProgrami(program, 35714) == 0) {
-            System.err.println(GL20.glGetProgramInfoLog(program, 100));
-            return null;
-        }
-        GL20.glValidateProgram(program);
-        if (GL20.glGetProgrami(program, 35715) == 0) {
-            System.err.println(GL20.glGetProgramInfoLog(program, 100));
-            return null;
-        }
-        ShaderProgram shaderProgram = new ShaderProgram(name, program);
-        shaders.put(name, shaderProgram);
-        return shaderProgram;
-    }
-
-    private static String getShaderSource(String name) {
-        Identifier location = Identifier.parse("dungeonsguide:"+name);
-        try (InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(location).getInputStream()) {
-            return IOUtils.toString(is);
-        } catch (Exception e) {
-        }
-        return null;
+        return shaders.get(str);
     }
 }

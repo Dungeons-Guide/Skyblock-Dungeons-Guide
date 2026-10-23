@@ -28,8 +28,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Collections;
 import java.util.List;
@@ -106,34 +104,34 @@ public class Line extends AnnotatedExportOnlyWidget implements Layouter, Rendere
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         double w = buildContext.getSize().getWidth(), h = buildContext.getSize().getHeight();
 
-        GlStateManager.color(r,g,b,a);
-        GlStateManager.disableTexture2D();
-        GL11.glLineWidth((float) (thickness.getValue() *
-                    Double.max(
-                            buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight(),
-                            buildContext.getAbsBounds().getWidth()/buildContext.getSize().getWidth()
-                    ))
-        );
+        int color = this.color.getValue();
+        boolean horizontal = direction.getValue() == Orientation.HORIZONTAL;
+        // 1.8.9 used glLineWidth in pixels (thickness * scale), so the quad is thickness wide in local units
+        double thickness = this.thickness.getValue();
 
         Short pattern = this.pattern.getValue();
-        if (pattern != null) {
-            GL11.glLineStipple(factor.getValue(), pattern);
-            GL11.glEnable(GL11.GL_LINE_STIPPLE);
+        if (pattern == null) {
+            if (horizontal) context.drawLine(0, h / 2.0, w, h / 2.0, thickness, color);
+            else context.drawLine(w / 2.0, 0, w / 2.0, h, thickness, color);
+            return;
         }
 
-        GL11.glBegin(GL11.GL_LINES);
-        if (direction.getValue() == Orientation.HORIZONTAL) {
-            GL11.glVertex2d(0,h/2.0f);
-            GL11.glVertex2d(w, h/2.0f);
-        } else {
-            GL11.glVertex2d(w/2.0f,0);
-            GL11.glVertex2d(w/2.0f, h);
-        }
-        GL11.glEnd();
-        GlStateManager.enableTexture2D();
-
-        if (pattern != null) {
-            GL11.glDisable(GL11.GL_LINE_STIPPLE);
+        // TODO: stipple is redone on the cpu every frame, walking every pixel and one quad per dash. decided later
+        // glLineStipple: bit i (from the lsb) of the pattern covers factor pixels, repeating every 16 * factor pixels
+        double scale = horizontal ? buildContext.getAbsBounds().getWidth() / w : buildContext.getAbsBounds().getHeight() / h;
+        double length = horizontal ? w : h;
+        int pixels = (int) Math.ceil(length * scale);
+        int factor = this.factor.getValue();
+        int start = -1;
+        for (int pixel = 0; pixel <= pixels; pixel++) {
+            boolean on = pixel < pixels && ((pattern >> ((pixel / factor) % 16)) & 1) == 1;
+            if (on && start == -1) start = pixel;
+            if (!on && start != -1) {
+                double from = start / scale, to = Math.min(pixel / scale, length);
+                if (horizontal) context.drawLine(from, h / 2.0, to, h / 2.0, thickness, color);
+                else context.drawLine(w / 2.0, from, w / 2.0, to, thickness, color);
+                start = -1;
+            }
         }
     }
 }

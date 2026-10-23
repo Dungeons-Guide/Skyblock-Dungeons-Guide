@@ -19,132 +19,37 @@
 package kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.fonts;
 
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.FlatTextSpan;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.shaders.Shader;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.styles.ITextStyle;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.resources.Identifier;
-import org.apache.commons.io.IOUtils;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.font.TextRenderable;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DG's rich text on top of vanilla's Font: glyph metrics and drawing come from vanilla (D79).
+ * Vanilla's font is 8 units tall at text size 8.
+ */
 public class DefaultFontRenderer implements FontRenderer {
     public static DefaultFontRenderer DEFAULT_RENDERER = new DefaultFontRenderer();
 
-    private static final Identifier[] unicodePageLocations = new Identifier[256];
-    protected int[] charWidth = new int[256];
-    public int FONT_HEIGHT = 9;
-    protected byte[] glyphData = new byte[65536];
-    protected final Identifier locationFontTexture = Identifier.parse("textures/font/ascii.png");
-
-    public DefaultFontRenderer() {
-        readGlyphSizes();
+    private static Font font() {
+        return Minecraft.getInstance().font;
     }
 
-    public void onResourceManagerReload() {
-        this.readFontTexture();
-        this.readGlyphSizes();
-    }
-
-    private void readFontTexture() {
-        BufferedImage bufferedimage;
-        try {
-            bufferedimage = TextureUtil.readBufferedImage(
-                    Minecraft.getMinecraft().getResourceManager().getResource(this.locationFontTexture).getInputStream());
-        } catch (IOException var17) {
-            throw new RuntimeException(var17);
-        }
-
-        int i = bufferedimage.getWidth();
-        int j = bufferedimage.getHeight();
-        int[] aint = new int[i * j];
-        bufferedimage.getRGB(0, 0, i, j, aint, 0, i);
-        int k = j / 16;
-        int l = i / 16;
-        int i1 = 1;
-        float f = 8.0F / (float)l;
-
-        for(int j1 = 0; j1 < 256; ++j1) {
-            int k1 = j1 % 16;
-            int l1 = j1 / 16;
-            if (j1 == 32) {
-                this.charWidth[j1] = 3 + i1;
-            }
-
-            int i2;
-            for(i2 = l - 1; i2 >= 0; --i2) {
-                int j2 = k1 * l + i2;
-                boolean flag = true;
-
-                for(int k2 = 0; k2 < k && flag; ++k2) {
-                    int l2 = (l1 * l + k2) * i;
-                    if ((aint[j2 + l2] >> 24 & 255) != 0) {
-                        flag = false;
-                    }
-                }
-
-                if (!flag) {
-                    break;
-                }
-            }
-
-            ++i2;
-            this.charWidth[j1] = (int)(0.5 + (double)((float)i2 * f)) + i1;
-        }
-
-    }
-
-    private void readGlyphSizes() {
-        InputStream inputstream = null;
-
-        try {
-            inputstream = Minecraft.getMinecraft().getResourceManager().getResource(Identifier.parse("font/glyph_sizes.bin")).getInputStream();
-            inputstream.read(this.glyphData);
-        } catch (IOException var6) {
-            throw new RuntimeException(var6);
-        } finally {
-            IOUtils.closeQuietly(inputstream);
-        }
-
-    }
-
-    private Identifier getUnicodePageLocation(int page) {
-        if (unicodePageLocations[page] == null) {
-            unicodePageLocations[page] = Identifier.parse(String.format("textures/font/unicode_page_%02x.png", page));
-        }
-
-        return unicodePageLocations[page];
+    private static Style styleOf(ITextStyle textStyle) {
+        return Style.EMPTY.withBold(textStyle.isBold()).withItalic(textStyle.isItalics());
     }
 
     @Override
     public double getWidth(char text, ITextStyle textStyle) {
-        double val;
         if (text == '\n') return 0;
-        if (text == ' ') {
-            val = 4;
-        } else {
-            int i = "ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵžȇ\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■\u0000".indexOf(text);
-            if (text > 0 && i != -1) {
-                val = this.charWidth[i];
-            } else if (this.glyphData[text] != 0) {
-                int texStart = this.glyphData[text] >>> 4;
-                int texEnd = (this.glyphData[text] & 15) + 1;
-                val = (texEnd - texStart) / 2.0 + 1;
-            } else {
-                val = 0;
-            }
-        }
-        return (val + (textStyle.isBold() ? 1 : 0)) * textStyle.getSize() / 8;
+        return font().getSplitter().stringWidth(FormattedCharSequence.forward(String.valueOf(text), styleOf(textStyle))) * textStyle.getSize() / 8;
     }
 
     @Override
@@ -152,166 +57,55 @@ public class DefaultFontRenderer implements FontRenderer {
         return 7 * textStyle.getSize() / 8.0;
     }
 
-    public void render(WorldRenderer worldRenderer, FlatTextSpan lineElement, double x, double y, boolean isShadow) {
-        double startX = x;
-        if (isShadow) lineElement.textStyle.getShadowShader().useShader();
-
-        if (!isShadow) lineElement.textStyle.getTextShader().useShader();
-        GlStateManager.enableTexture2D();
-        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        for (char c : lineElement.value) {
-            double offset = renderChar(worldRenderer, x, y+1, c, lineElement.textStyle);
-            if (lineElement.textStyle.isBold()) {
-                renderChar(worldRenderer, x+1, y+1, c, lineElement.textStyle);
-                offset += 1;
-            }
-            x+= offset;
-        }
-        draw(worldRenderer);
-        if (!isShadow) lineElement.textStyle.getTextShader().freeShader();
-
-        GlStateManager.disableTexture2D();
-        double baseline = getBaselineHeight(lineElement.textStyle);
-        if (lineElement.textStyle.isStrikeThrough()) {
-            if (!isShadow) lineElement.textStyle.getStrikeThroughShader().useShader();
-            worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            worldRenderer.pos(startX, y + baseline/2, 0).endVertex();
-            worldRenderer.pos(startX, y + baseline/2+1, 0).endVertex();
-            worldRenderer.pos(x, y +baseline/2+1, 0).endVertex();
-            worldRenderer.pos(x, y + baseline/2, 0).endVertex();
-            draw(worldRenderer);
-            if (!isShadow) lineElement.textStyle.getStrikeThroughShader().freeShader();
-        }
-        if (lineElement.textStyle.isUnderline()) {
-            if (!isShadow) lineElement.textStyle.getUnderlineShader().useShader();
-            worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            worldRenderer.pos(startX, y + baseline, 0).endVertex();
-            worldRenderer.pos(startX, y + baseline+1, 0).endVertex();
-            worldRenderer.pos(x, y + baseline+1, 0).endVertex();
-            worldRenderer.pos(x, y + baseline, 0).endVertex();
-            draw(worldRenderer);
-            if (!isShadow) lineElement.textStyle.getUnderlineShader().freeShader();
-        }
-
-        if (isShadow) lineElement.textStyle.getShadowShader().freeShader();
-        GlStateManager.enableTexture2D(); // probably it expects it to be on
-    }
-
     @Override
-    public void render(FlatTextSpan lineElement, double x, double y, double currentScale) {
-        lastBound = null;
-        WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableAlpha();
+    public void render(RenderingContext context, FlatTextSpan lineElement, double x, double y, double currentScale) {
         if (lineElement.textStyle.hasBackground()) {
-            lineElement.textStyle.getBackgroundShader().useShader();
-            worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            worldRenderer.pos(x, y, 0).endVertex();
-            worldRenderer.pos(x, y + lineElement.textStyle.getSize(), 0).endVertex();
-            worldRenderer.pos(x + lineElement.getWidth(), y + lineElement.textStyle.getSize(), 0).endVertex();
-            worldRenderer.pos(x + lineElement.getWidth(), y, 0).endVertex();
-            draw(worldRenderer);
-            lineElement.textStyle.getBackgroundShader().freeShader();
+            context.drawRect(x, y, x + lineElement.getWidth(), y + lineElement.textStyle.getSize(),
+                    lineElement.textStyle.getBackgroundShader().getColor(x, y));
         }
         y += lineElement.textStyle.getTopAscent();
 
         if (lineElement.textStyle.isShadow())
-            render(worldRenderer, lineElement, x+1,y+1, true);
-        render(worldRenderer, lineElement, x,y, false);
+            render(context, lineElement, x+1,y+1, true);
+        render(context, lineElement, x,y, false);
     }
 
+    private void render(RenderingContext context, FlatTextSpan lineElement, double x, double y, boolean isShadow) {
+        ITextStyle textStyle = lineElement.textStyle;
+        // the shadow pass draws everything in the shadow color
+        Shader textShader = isShadow ? textStyle.getShadowShader() : textStyle.getTextShader();
 
+        List<TextRenderable> glyphs = new ArrayList<>();
+        font().prepareText(FormattedCharSequence.forward(new String(lineElement.value), styleOf(textStyle)), 0, 0, textShader.getColor(x, y), false, false, 0)
+                .visit(new Font.GlyphVisitor() {
+                    @Override
+                    public void acceptGlyph(TextRenderable.Styled glyph) {
+                        glyphs.add(glyph);
+                    }
 
-    private double renderChar(WorldRenderer worldRenderer, double x, double y, char ch, ITextStyle textStyle) {
-        if (ch == '\n') return 0;
-        if (ch == ' ') {
-            return 4.0F * textStyle.getSize() / 8.0;
-        } else {
-            int i = "ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵžȇ\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■\u0000".indexOf(ch);
-            return i != -1 ? this.renderDefaultChar(worldRenderer, x, y, i, textStyle) : this.renderUnicodeChar(worldRenderer, x, y, ch, textStyle);
+                    @Override
+                    public void acceptEffect(TextRenderable effect) {
+                        glyphs.add(effect);
+                    }
+                });
+
+        double scale = textStyle.getSize() / 8.0;
+        context.pose().pushMatrix();
+        // 1.8.9 drew glyphs one unit down
+        context.pose().translate((float) x, (float) (y + 1));
+        context.pose().scale((float) scale, (float) scale);
+        context.drawGlyphs(glyphs);
+        context.pose().popMatrix();
+
+        double endX = x + lineElement.getWidth();
+        double baseline = getBaselineHeight(textStyle);
+        if (textStyle.isStrikeThrough()) {
+            Shader shader = isShadow ? textShader : textStyle.getStrikeThroughShader();
+            context.drawRect(x, y + baseline/2, endX, y + baseline/2+1, shader.getColor(x, y));
         }
-    }
-
-
-    private void draw(WorldRenderer renderer) {
-        renderer.finishDrawing();
-        if (renderer.getVertexCount() > 0) {
-            VertexFormat vertexformat = renderer.getVertexFormat();
-            int i = vertexformat.getNextOffset();
-            ByteBuffer bytebuffer = renderer.getByteBuffer();
-            List<VertexFormatElement> list = vertexformat.getElements();
-
-            int i1;
-            for(i1 = 0; i1 < list.size(); ++i1) {
-                VertexFormatElement vertexformatelement = (VertexFormatElement)list.get(i1);
-                vertexformatelement.getUsage().preDraw(vertexformat, i1, i, bytebuffer);
-            }
-
-            GL11.glDrawArrays(renderer.getDrawMode(), 0, renderer.getVertexCount());
-            i1 = 0;
-
-            for(int j1 = list.size(); i1 < j1; ++i1) {
-                VertexFormatElement vertexFormatElement1 = (VertexFormatElement)list.get(i1);
-                vertexFormatElement1.getUsage().postDraw(vertexformat, i1, i, bytebuffer);
-            }
-        }
-
-        renderer.reset();
-    }
-
-    private Identifier lastBound;
-    public void bindTexture(WorldRenderer worldRenderer, Identifier resourceLocation) {
-        if (resourceLocation.equals(lastBound)) return;
-        lastBound = resourceLocation;
-        draw(worldRenderer);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
-        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-    }
-
-    private double renderDefaultChar(WorldRenderer worldRenderer, double posX, double posY, int ch, ITextStyle textStyle) {
-        int texX = ch % 16 * 8;
-        int texY = ch / 16 * 8;
-        int italicsAddition = textStyle.isItalics() ? 1 : 0;
-        bindTexture(worldRenderer, this.locationFontTexture);
-        double texWidth = (this.charWidth[ch]);
-        double charWidth = (texWidth-1) * textStyle.getSize() / 8.0;
-        double charHeight = textStyle.getSize();
-        // char width contains the gap between next char
-
-
-        worldRenderer.pos(posX + (float)italicsAddition, posY, 0.0F).tex((float)texX / 128.0F, (float)texY / 128.0F).endVertex();
-        worldRenderer.pos(posX - (float)italicsAddition, posY + charHeight - 0.01F, 0.0F).tex((float)texX / 128.0F, ((float)texY + 7.99F) / 128.0F).endVertex();
-        worldRenderer.pos(posX + charWidth - (float)italicsAddition - 0.01F , posY+ charHeight - 0.01F, 0.0F).tex(((float)texX + texWidth - 1.01F) / 128.0F, ((float)texY + 7.99F) / 128.0F).endVertex();
-        worldRenderer.pos(posX  + charWidth + (float)italicsAddition - 0.01F, posY , 0.0F).tex(((float)texX + texWidth - 1.01F) / 128.0F, (float)texY / 128.0F).endVertex();
-
-        return texWidth * textStyle.getSize() / 8.0;
-    }
-    private double renderUnicodeChar(WorldRenderer worldRenderer, double posX, double posY, char ch, ITextStyle textStyle) {
-        if (this.glyphData[ch] == 0) {
-            return 0.0F;
-        } else {
-            int i = ch / 256;
-            bindTexture(worldRenderer, this.getUnicodePageLocation(i));
-            float xStart = (float)(this.glyphData[ch] >>> 4);
-            float xEnd = (float)((this.glyphData[ch] & 15) + 1);
-
-            float texX = (float)(ch % 16 * 16) + xStart;
-            float texY = (float)((ch & 255) / 16 * 16);
-            float texWidth = xEnd - xStart - 0.02F;
-            float italicSlope = textStyle.isItalics() ? 1.0F : 0.0F;
-
-            double charWidth = texWidth * textStyle.getSize() / 16.0;
-            double charHeight = textStyle.getSize();
-
-            worldRenderer.pos(posX + italicSlope, posY, 0.0F)
-                    .tex(texX / 256.0F, texY / 256.0F).endVertex();
-            worldRenderer.pos(posX - italicSlope, posY + charHeight - 0.01F, 0.0F)
-                    .tex(texX / 256.0F, (texY + 15.98F) / 256.0F).endVertex();
-            worldRenderer.pos(posX + charWidth - italicSlope, posY + charHeight - 0.01F, 0.0F)
-                    .tex((texX + texWidth) / 256.0F, (texY+15.98F) / 256.0F).endVertex();
-            worldRenderer.pos(posX + charWidth + italicSlope, posY, 0.0F)
-                    .tex((texX + texWidth) / 256.0F, (texY) / 256.0F).endVertex();
-            return charWidth + textStyle.getSize() / 8.0;
+        if (textStyle.isUnderline()) {
+            Shader shader = isShadow ? textShader : textStyle.getUnderlineShader();
+            context.drawRect(x, y + baseline, endX, y + baseline+1, shader.getColor(x, y));
         }
     }
 }

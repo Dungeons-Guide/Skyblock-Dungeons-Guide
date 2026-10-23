@@ -18,24 +18,25 @@
 
 package kr.syeyoung.dungeonsguide.mod.gui;
 
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.GpuTexture;
+import com.mojang.blaze3d.textures.GpuTextureView;
+import com.mojang.blaze3d.textures.TextureFormat;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import kr.syeyoung.dungeonsguide.mod.events.impl.FogColorsEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.RenderHUDEvent;
-import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
+
 
 public class PassthroughManager {
 
     public static PassthroughManager INSTANCE = new PassthroughManager();
+    private GpuTexture texture;
     @Getter
-    private Framebuffer framebuffer;
+    private GpuTextureView textureView;
 
     @Getter
     private int fogColor = 0;
@@ -49,43 +50,23 @@ public class PassthroughManager {
     }
 
 
-    @SubscribeEvent(priority = ListenerPriority.FIRST)
-    public void onGameRenderOverlay(RenderHUDEvent.Pre event) {
+    // 1.8.9 copied the world at RenderGameOverlayEvent.Pre. on 26.1 the hud is extracted before the world renders,
+    // so the copy happens in the render phase right before DG's gui draws (GameRendererMixin)
+    public void captureWorld() {
         ProfilerFiller profiler = Profiler.get();
-        profiler.push("Dungeons Guide - RenderGameOverlayEvent :: Passthrough");
+        profiler.push("Dungeons Guide - Passthrough");
 
-        int width = Minecraft.getMinecraft().displayWidth;
-        int height = Minecraft.getMinecraft().displayHeight;
+        RenderTarget mainRenderTarget = Minecraft.getInstance().getMainRenderTarget();
+        int width = mainRenderTarget.width;
+        int height = mainRenderTarget.height;
 
-        GlStateManager.matrixMode(GL11.GL_PROJECTION);
-        GlStateManager.loadIdentity();
-        GlStateManager.ortho(0.0D, width, height, 0.0D, 1, 10);
-        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-        GlStateManager.loadIdentity();
-        GlStateManager.translate(0.0F, 0.0F, 0);
-
-        if (framebuffer == null) {
-            framebuffer = new Framebuffer(width, height, false);
-            framebuffer.setFramebufferFilter(GL11.GL_NEAREST);
+        if (texture == null || texture.getWidth(0) != width || texture.getHeight(0) != height) {
+            if (textureView != null) textureView.close();
+            if (texture != null) texture.close();
+            texture = RenderSystem.getDevice().createTexture(() -> "Dungeons Guide passthrough", GpuTexture.USAGE_COPY_DST | GpuTexture.USAGE_TEXTURE_BINDING, TextureFormat.RGBA8, width, height, 1, 1);
+            textureView = RenderSystem.getDevice().createTextureView(texture);
         }
-        if (framebuffer.framebufferWidth != width || framebuffer.framebufferHeight != height) {
-            framebuffer.createBindFramebuffer(width, height);
-            Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(false);
-        }
-
-
-        GL11.glPushMatrix();
-        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, Minecraft.getMinecraft().getFramebuffer().framebufferObject);
-        GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, framebuffer.framebufferObject);
-        GL30.glBlitFramebuffer(0, 0, width, height,
-                0, 0, framebuffer.framebufferWidth, framebuffer.framebufferHeight,
-                GL11.GL_COLOR_BUFFER_BIT, GL11.GL_NEAREST
-        );
-
-        GlStateManager.enableDepth();
-        GL11.glPopMatrix();
-
-        Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(false);
+        RenderSystem.getDevice().createCommandEncoder().copyTextureToTexture(mainRenderTarget.getColorTexture(), texture, 0, 0, 0, 0, 0, width, height);
 
         profiler.pop();
     }

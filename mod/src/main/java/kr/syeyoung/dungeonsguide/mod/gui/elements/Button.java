@@ -30,7 +30,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Passthrough;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.resources.Identifier;
 
 @Passthrough(exportName = "_", bindName = "wgtNormal", type = Widget.class)
@@ -76,7 +75,7 @@ public class Button extends AnnotatedWidget implements Renderer {
             value = normal.getValue();
         }
         Rect original = value.getRelativeBound();
-        GlStateManager.translate(original.getX(), original.getY(), 0);
+        context.pose().translate((float) (original.getX()), (float) (original.getY()));
 
         double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
         double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();

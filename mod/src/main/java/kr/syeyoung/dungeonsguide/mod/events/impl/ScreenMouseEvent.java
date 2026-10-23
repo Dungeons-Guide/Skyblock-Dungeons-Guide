@@ -25,7 +25,6 @@ import lombok.Setter;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 
-// TODO: no Move yet, 26.1 has no fabric event for mouse moves inside screens. decided when porting input
 public abstract class ScreenMouseEvent extends DGEvent implements Cancelable {
     public final Screen gui;
     public final double mouseX;
@@ -79,6 +78,13 @@ public abstract class ScreenMouseEvent extends DGEvent implements Cancelable {
             super(gui, mouseX, mouseY);
             this.scrollX = scrollX;
             this.scrollY = scrollY;
+        }
+    }
+
+    // comes from MouseHandlerMixin, fabric has no event for mouse moves inside screens
+    public static class Move extends ScreenMouseEvent {
+        public Move(Screen gui, double mouseX, double mouseY) {
+            super(gui, mouseX, mouseY);
         }
     }
 }

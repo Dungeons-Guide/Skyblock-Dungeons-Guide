@@ -31,11 +31,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.OnlyChildrenRenderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
+import net.minecraft.client.Minecraft;
 import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectPositioner;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import lombok.Getter;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -134,9 +133,9 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
         public void doRender(float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
             if (enable)
                 renderingContext.drawRect(0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0x40000000);
-            GlStateManager.pushMatrix();
+            renderingContext.pose().pushMatrix();
             super.doRender(partialTicks, renderingContext, buildContext);
-            GlStateManager.popMatrix();
+            renderingContext.pose().popMatrix();
             if (!enable) return;
             if (((HUDWidgetWrapper)buildContext.getWidget()).isHover)
                 renderingContext.drawRect(0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0x33FFFFFF);
@@ -148,7 +147,7 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
         if (childHandled) return false;
         if (!enable) return false;
-        if (Mouse.isButtonDown(0))
+        if (Minecraft.getInstance().mouseHandler.isLeftPressed())
             getDomElement().setCursor(EnumCursor.CLOSED_HAND);
         else
             getDomElement().setCursor(EnumCursor.OPEN_HAND);

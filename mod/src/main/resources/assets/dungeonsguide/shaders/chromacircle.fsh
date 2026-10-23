@@ -1,12 +1,17 @@
-#version 120
+#version 330
 
 #define TWO_PI 6.28318530718
 
-uniform float radius;
-uniform vec2 centerPos;
-uniform float smoothness;
-uniform float value;
+layout(std140) uniform ChromaCircle {
+    float radius;
+    vec2 centerPos;
+    float smoothness;
+    float value;
+};
 
+in vec4 vertexColor;
+
+out vec4 fragColor;
 
 vec3 hsv2rgb(vec3 c) {
     vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
@@ -23,5 +28,5 @@ void main() {
 
     vec3 col = hsv2rgb(vec3(angle, saturation, value));
 
-    gl_FragColor = vec4(col,clampd);
+    fragColor = vec4(col,clampd);
 }
