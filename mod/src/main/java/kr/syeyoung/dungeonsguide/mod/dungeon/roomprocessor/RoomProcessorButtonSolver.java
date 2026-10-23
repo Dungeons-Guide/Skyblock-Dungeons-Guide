@@ -44,7 +44,7 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
         woods = new BlockPos[12];
         for (int i = 0; i < ops.getOffsetPointList().size(); i++) {
             buttons[i] = ops.getOffsetPointList().get(i).getBlockPos(dungeonRoom);
-            woods[i] = buttons[i].add(0,-1,0);
+            woods[i] = buttons[i].offset(0,-1,0);
         }
     }
 
@@ -104,7 +104,7 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
         if (bugged) return;
-        if (Minecraft.getInstance().player.getPosition().distanceSq(woods[6]) > 100) return;
+        if (Minecraft.getInstance().player.blockPosition().distSqr(woods[6]) > 100) return;
 
 
         for (int i = 0; i < woods.length; i++) {

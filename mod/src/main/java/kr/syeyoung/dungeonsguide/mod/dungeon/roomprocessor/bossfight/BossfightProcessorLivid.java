@@ -21,8 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import lombok.Getter;
-import net.minecraft.block.BlockColored;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.RemotePlayer;
@@ -36,6 +36,7 @@ import net.minecraft.util.Tuple;
 import java.util.*;
 
 @Getter
+// TODO: D5 entity name stopgap (D116), the getFormattedText(entity.getName()) reads
 public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     private String realLividName = "Hockey";
     private String prefix = "§c";
@@ -79,12 +80,12 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     private int correctLivid = 14;
     @Override
     public void onEntityUpdate(LivingTickEvent updateEvent) {
-        correctLivid = Minecraft.getInstance().level.getChunkFromBlockCoords(new BlockPos(5, 108, 42)).getBlockMetadata(new BlockPos(5, 108, 42));
+        correctLivid = LegacyBlock.meta(Minecraft.getInstance().level.getBlockState(new BlockPos(5, 108, 42)));
         realLividName = lividMetadata.get(correctLivid);
         prefix = lividColorPrefix.get(realLividName);
-        if (updateEvent.entityLiving.getName().startsWith(realLividName) && updateEvent.entityLiving instanceof RemotePlayer) {
+        if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).startsWith(realLividName) && updateEvent.entityLiving instanceof RemotePlayer) {
             realLivid = (RemotePlayer) updateEvent.entityLiving;
-        } else if (updateEvent.entityLiving.getName().startsWith(prefix+"﴾ ") && updateEvent.entityLiving instanceof ArmorStand) {
+        } else if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).startsWith(prefix+"﴾ ") && updateEvent.entityLiving instanceof ArmorStand) {
             lividStand = (ArmorStand) updateEvent.entityLiving;
         }
     }
@@ -96,7 +97,7 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
         long health = 0;
         if (lividStand != null) {
             try {
-                String name = TextUtils.stripColor(lividStand.getName());
+                String name = TextUtils.stripColor(TextUtils.getFormattedText(lividStand.getName()));
                 String healthPart = name.split(" ")[2];
                 health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
             } catch (Exception e) {e.printStackTrace();}
@@ -119,7 +120,7 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     @Override
     public MarkerData convertToMarker(Entity entity) {
         if (entity instanceof RemotePlayer) {
-            String name = entity.getName();
+            String name = TextUtils.getFormattedText(entity.getName());
             int idx = 0;
             if (name.equals("Livid ")) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, 46);

@@ -15,14 +15,16 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.TSPCache;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.precalculation.TSPCacheRegistry;
 import lombok.Getter;
 import net.minecraft.world.phys.AABB;
-import sun.misc.Cleaner;
 
 import java.io.IOException;
+import java.lang.ref.Cleaner;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class RoomPresetPathPlanner {
+    // sun.misc.Cleaner is gone after java 8
+    private static final Cleaner CLEANER = Cleaner.create();
     private RoomPreset preset;
     private DungeonRoomInfo dungeonRoomInfo;
     @Getter
@@ -65,11 +67,11 @@ public class RoomPresetPathPlanner {
 
         try {
             IPathfinder pathfinder = precalculation.createPathfinder(dungeonRoom.getRoomMatcher().getRotation());
-            PathfinderExecutor executor1 = new PathfinderExecutor(pathfinder, BoundingBox.of(AABB.fromBounds(0,0,0,0,0,0)),
+            PathfinderExecutor executor1 = new PathfinderExecutor(pathfinder, BoundingBox.of(new AABB(0,0,0,0,0,0)),
                     ((GeneralRoomProcessor)dungeonRoom.getRoomProcessor()).getPathfinderWorld());
             executor1.doStep();
 
-            Cleaner.create(executor1, pathfinder::close); // WELLLLLL... well... well...
+            CLEANER.register(executor1, pathfinder::close); // WELLLLLL... well... well...
 
             return executor1;
         } catch (IOException e) {

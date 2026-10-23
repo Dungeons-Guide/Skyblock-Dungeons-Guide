@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.B
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.world.level.block.Block;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -61,9 +61,9 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void tick() {
         super.tick();
-        c1b = match(getChamber().getEntityAt(ArmorStand.class,b1.add(0, -1, 0)));
-        c2b = match(getChamber().getEntityAt(ArmorStand.class,b2.add(0, -1, 0)));
-        c3b = match(getChamber().getEntityAt(ArmorStand.class,b3.add(0, -1, 0)));
+        c1b = match(getChamber().getEntityAt(ArmorStand.class,b1.offset(0, -1, 0)));
+        c2b = match(getChamber().getEntityAt(ArmorStand.class,b2.offset(0, -1, 0)));
+        c3b = match(getChamber().getEntityAt(ArmorStand.class,b3.offset(0, -1, 0)));
     }
 
     @Override
@@ -83,17 +83,17 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
     public void onSendData() {
         super.onSendData();
         CompoundTag nbt = new CompoundTag();
-        nbt.setByte("a", (byte) 6);
-        nbt.setByte("f", (byte) Block.getIdFromBlock(getChamber().getBlock(0,3,3).getBlock()));
-        nbt.setByte("s", (byte) Block.getIdFromBlock(getChamber().getBlock(0,3,2).getBlock()));
-        nbt.setByte("t", (byte) Block.getIdFromBlock(getChamber().getBlock(0,3,1).getBlock()));
+        nbt.putByte("a", (byte) 6);
+        nbt.putByte("f", (byte) LegacyBlock.legacyId(getChamber().getBlock(0,3,3)));
+        nbt.putByte("s", (byte) LegacyBlock.legacyId(getChamber().getBlock(0,3,2)));
+        nbt.putByte("t", (byte) LegacyBlock.legacyId(getChamber().getBlock(0,3,1)));
         getSolver().communicate(nbt);
     }
 
     @Override
     public void onDataReceive(CompoundTag compound) {
-        if (7 == compound.getByte("a")) {
-            answer = compound.getInteger("b");
+        if (7 == compound.getByteOr("a", (byte) 0)) {
+            answer = compound.getIntOr("b", 0);
             b3b = (byte) (answer / 10000);
             b2b = (byte) ((answer % 10000) / 100);
             b1b = (byte) (answer % 100);

@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.goldenpath;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
@@ -71,13 +72,13 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
         while (!lastLoc.equals(target)) {
             boolean solution2 = false;
             for (int i =0; i<vectors.length; i++) {
-                BlockPos target2 = lastLoc.add(vectors[i].x, 0, vectors[i].y);
+                BlockPos target2 = lastLoc.offset(vectors[i].x, 0, vectors[i].y);
                 if (visited.contains(target2)) continue;
                 if (target2.getX() < 0 || target2.getZ() < 0 || target2.getX() > 8 || target2.getZ() > 5) continue;
 
                 visited.add(target2);
-                if (getChamber().getBlock(target2.getX(), 0, target2.getZ()).getBlock() == Blocks.hardened_clay
-                || getChamber().getBlock(target2.getX(), 0, target2.getZ()).getBlock() == Blocks.stained_hardened_clay) {
+                if (LegacyBlock.HARDENED_CLAY.is(getChamber().getBlock(target2.getX(), 0, target2.getZ()))
+                || LegacyBlock.STAINED_HARDENED_CLAY.is(getChamber().getBlock(target2.getX(), 0, target2.getZ()))) {
                     lastLoc = target2;
 
                     blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()));
@@ -134,7 +135,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
             blocksolution.addFirst(getChamber().getBlockPos(4,1,0));
             for (Character c:actual.toCharArray()) {
                 int dir = Integer.parseInt(c+"") % 4;
-                lastLoc = lastLoc.add(vectors[dir].x, 0, vectors[dir].y);
+                lastLoc = lastLoc.offset(vectors[dir].x, 0, vectors[dir].y);
                 blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()));
             }
         }

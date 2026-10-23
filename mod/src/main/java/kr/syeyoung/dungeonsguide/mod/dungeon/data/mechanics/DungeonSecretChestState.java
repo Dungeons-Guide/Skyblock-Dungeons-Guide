@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.PrecalculatedStonk;
@@ -68,10 +69,11 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
     public void tick(DungeonRoom dungeonRoom) {
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
         BlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
-        if (blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest) {
-            ChestBlockEntity chest = (ChestBlockEntity) dungeonRoom.getContext().getWorld().getTileEntity(pos);
+        if (LegacyBlock.CHEST.is(blockState) || LegacyBlock.TRAPPED_CHEST.is(blockState)) {
+            ChestBlockEntity chest = (ChestBlockEntity) dungeonRoom.getContext().getWorld().getBlockEntity(pos);
             if (chest != null) {
-                if (chest.numPlayersUsing > 0) {
+                // 1.8.9 read the open count, 26.1 only exposes the lid animation (D118)
+                if (chest.getOpenNess(1.0f) > 0) {
                     lastMeasuredChestStatus = LastMeasuredChestStatus.OPENED;
                 } else {
                     if (lastMeasuredChestStatus == LastMeasuredChestStatus.WASNT_THERE)
@@ -92,15 +94,16 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
         BlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
         if (lastMeasuredChestStatus != LastMeasuredChestStatus.WASNT_THERE)
-            return (lastMeasuredChestStatus == LastMeasuredChestStatus.OPENED || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
+            return (lastMeasuredChestStatus == LastMeasuredChestStatus.OPENED || LegacyBlock.AIR.is(blockState)) ? SecretStatus.FOUND : SecretStatus.CREATED;
 
-        if (blockState.getBlock() == Blocks.air) {
+        if (LegacyBlock.AIR.is(blockState)) {
             return SecretStatus.DEFINITELY_NOT;
-        } else if (blockState.getBlock() != Blocks.chest && blockState.getBlock() != Blocks.trapped_chest) {
+        } else if (!LegacyBlock.CHEST.is(blockState) && !LegacyBlock.TRAPPED_CHEST.is(blockState)) {
             return SecretStatus.ERROR;
         } else {
-            ChestBlockEntity chest = (ChestBlockEntity) dungeonRoom.getContext().getWorld().getTileEntity(pos);
-            if (chest != null && chest.numPlayersUsing > 0) {
+            ChestBlockEntity chest = (ChestBlockEntity) dungeonRoom.getContext().getWorld().getBlockEntity(pos);
+            // 1.8.9 read the open count, 26.1 only exposes the lid animation (D118)
+            if (chest != null && chest.getOpenNess(1.0f) > 0) {
                 return SecretStatus.FOUND;
             } else {
                 return SecretStatus.CREATED;

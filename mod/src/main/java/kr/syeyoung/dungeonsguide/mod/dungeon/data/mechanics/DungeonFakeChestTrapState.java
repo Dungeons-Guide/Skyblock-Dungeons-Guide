@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
@@ -34,6 +35,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 
 import java.awt.*;
@@ -108,17 +110,17 @@ public class DungeonFakeChestTrapState implements DungeonMechanicState {
 
     public boolean isBlocking(DungeonRoom dungeonRoom) {
         for (OffsetPoint offsetPoint : data.tnts.getOffsetPointList()) {
-            if (offsetPoint.getBlock(dungeonRoom) != Blocks.air) return true;
+            if (!LegacyBlock.AIR.is(offsetPoint.getBlock(dungeonRoom))) return true;
         }
         return false;
     }
 
     @Override
     public String getCurrentState() {
-        Block b = Blocks.air;
+        BlockState b = Blocks.AIR.defaultBlockState();
         if (!data.tnts.getOffsetPointList().isEmpty())
             b = data.tnts.getOffsetPointList().get(0).getBlock(room);
-        return b == Blocks.air ? "triggered" : "untriggered";
+        return LegacyBlock.AIR.is(b) ? "triggered" : "untriggered";
     }
 
     @Override

@@ -14,7 +14,6 @@ import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.util.LongHashMap;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,9 +55,9 @@ public class DPTSP {
         this.pathPlanner = new RoomPresetPathPlanner(dungeonRoom.getContext().getPreset().getRoomPreset(dungeonRoom.getDungeonRoomInfo().getUuid()));
         this.dag = dag;
         this.start = start;
-        this.startX = start.xCoord;
-        this.startY = start.yCoord;
-        this.startZ = start.zCoord;
+        this.startX = start.x;
+        this.startY = start.y;
+        this.startZ = start.z;
         this.dungeonRoom = dungeonRoom;
 
         setup();

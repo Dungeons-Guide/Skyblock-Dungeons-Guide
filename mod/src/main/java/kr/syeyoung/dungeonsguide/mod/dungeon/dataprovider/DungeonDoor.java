@@ -20,51 +20,51 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider;
 
 import com.google.common.collect.Sets;
 import lombok.Getter;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.World;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
 
 import java.util.Set;
 
 @Getter
 public class DungeonDoor {
-    private final World w;
+    private final DGWorld w;
     private final BlockPos position;
     private final EDungeonDoorType type;
     private boolean isZDir;
 
-    private static final Set<Block> legalBlocks = Sets.newHashSet(Blocks.coal_block, Blocks.barrier, Blocks.monster_egg, Blocks.air, Blocks.stained_hardened_clay);
+    private static final Set<LegacyBlock> legalBlocks = Sets.newHashSet(LegacyBlock.COAL_BLOCK, LegacyBlock.BARRIER, LegacyBlock.MONSTER_EGG, LegacyBlock.AIR, LegacyBlock.STAINED_HARDENED_CLAY);
 
-    public DungeonDoor(World world, BlockPos pos, EDungeonDoorType type) {
+    public DungeonDoor(DGWorld world, BlockPos pos, EDungeonDoorType type) {
         this.w = world;
         this.position = pos;
-        Block itShouldBeAll = world.getChunkFromBlockCoords(pos).getBlock(pos);
+        BlockState itShouldBeAll = world.getBlockState(pos);
 
-        if (type == EDungeonDoorType.WITHER && itShouldBeAll == Blocks.air) type = EDungeonDoorType.WITHER_FAIRY;
+        if (type == EDungeonDoorType.WITHER && itShouldBeAll.isAir()) type = EDungeonDoorType.WITHER_FAIRY;
         this.type = type;
         boolean exist = type.isExist();
 
         for (int x = -1; x<=1; x++) {
             for (int y = -1; y<=1; y++) {
                 for (int z = -1; z<=1; z++) {
-                    BlockPos pos2 = pos.add(x,y,z);
-                    Block block = world.getChunkFromBlockCoords(pos2).getBlock(pos2);
-                    if (itShouldBeAll != block) exist = false;
+                    BlockPos pos2 = pos.offset(x,y,z);
+                    BlockState block = world.getBlockState(pos2);
+                    // 1.8.9 compared blocks without meta
+                    if (LegacyBlock.legacyId(itShouldBeAll) != LegacyBlock.legacyId(block)) exist = false;
                 }
             }
         }
         if (exist) {
-            BlockPos ZCheck = pos.add(0,0,2);
-            isZDir = world.getChunkFromBlockCoords(ZCheck).getBlock(ZCheck) == Blocks.air;
+            BlockPos ZCheck = pos.offset(0,0,2);
+            isZDir = world.isAir(ZCheck);
 
             if (isZDir) {
                 for (int x = -1; x<=1; x++) {
                     for (int y = -1; y<=1; y++) {
                         for (int z = -2; z<=2; z+=4) {
-                            BlockPos pos2 = pos.add(x,y,z);
-                            Block block = world.getChunkFromBlockCoords(pos2).getBlock(pos2);
-                            if (block != Blocks.air) exist = false;
+                            BlockPos pos2 = pos.offset(x,y,z);
+                            if (!world.isAir(pos2)) exist = false;
                         }
                     }
                 }
@@ -72,9 +72,8 @@ public class DungeonDoor {
                 for (int x = -2; x<=2; x+=4) {
                     for (int y = -1; y<=1; y++) {
                         for (int z = -1; z<=1; z++) {
-                            BlockPos pos2 = pos.add(x,y,z);
-                            Block block = world.getChunkFromBlockCoords(pos2).getBlock(pos2);
-                            if (block != Blocks.air) exist = false;
+                            BlockPos pos2 = pos.offset(x,y,z);
+                            if (!world.isAir(pos2)) exist = false;
                         }
                     }
                 }

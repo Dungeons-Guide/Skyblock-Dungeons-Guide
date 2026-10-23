@@ -29,6 +29,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
 
+// TODO: D5 entity name stopgap (D116), the getFormattedText(entity.getName()) reads
 public class BossfightProcessorProf extends GeneralBossfightProcessor {
     public BossfightProcessorProf(boolean isMasterMode) {
         super(isMasterMode ? "MASTERMODE_CATACOMBS_FLOOR_THREE" : "CATACOMBS_FLOOR_THREE");
@@ -76,7 +77,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
         {
             long health = 0;
             if (profStand != null) {
-                String name = TextUtils.stripColor(profStand.getName());
+                String name = TextUtils.stripColor(TextUtils.getFormattedText(profStand.getName()));
                 String healthPart = name.split(" ")[3];
                 health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
             }
@@ -86,7 +87,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
             {
                 long health = 0;
                 if (healthyGuard != null) {
-                    String name = TextUtils.stripColor(healthyGuard.getName());
+                    String name = TextUtils.stripColor(TextUtils.getFormattedText(healthyGuard.getName()));
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
@@ -95,7 +96,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
             {
                 long health = 0;
                 if (chaosGuard != null) {
-                    String name = TextUtils.stripColor(chaosGuard.getName());
+                    String name = TextUtils.stripColor(TextUtils.getFormattedText(chaosGuard.getName()));
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
@@ -104,7 +105,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
             {
                 long health = 0;
                 if (laserGuard != null) {
-                    String name = TextUtils.stripColor(laserGuard.getName());
+                    String name = TextUtils.stripColor(TextUtils.getFormattedText(laserGuard.getName()));
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
@@ -113,7 +114,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
             {
                 long health = 0;
                 if (reinforcedGuard != null) {
-                    String name = TextUtils.stripColor(reinforcedGuard.getName());
+                    String name = TextUtils.stripColor(TextUtils.getFormattedText(reinforcedGuard.getName()));
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
@@ -136,40 +137,40 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
     @Override
     public void onEntityUpdate(LivingTickEvent updateEvent) {
         if (updateEvent.entityLiving instanceof ArmorStand) {
-            if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lThe Professor§r"))
+            if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).startsWith("§e﴾ §c§lThe Professor§r"))
                 profStand = (ArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§cHealthy Guardian"))
+            else if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).startsWith("§cHealthy Guardian"))
                 healthyGuard = (ArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§cChaos Guardian"))
+            else if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).startsWith("§cChaos Guardian"))
                 chaosGuard = (ArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§cLaser Guardian"))
+            else if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).startsWith("§cLaser Guardian"))
                 laserGuard = (ArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§cReinforced Guardian"))
+            else if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).startsWith("§cReinforced Guardian"))
                 reinforcedGuard = (ArmorStand) updateEvent.entityLiving;
         }
         if (updateEvent.entityLiving instanceof Guardian) {
-            boolean xB = Math.abs(updateEvent.entityLiving.posX - 14.5) < 0.01;
-            boolean xS = Math.abs(updateEvent.entityLiving.posX - -11.5) < 0.01;
-            boolean zB = Math.abs(updateEvent.entityLiving.posZ - 14.5) < 0.01;
-            boolean zS = Math.abs(updateEvent.entityLiving.posZ - -11.5) < 0.01;
-            boolean yE = Math.abs(updateEvent.entityLiving.posY - 72.5) < 0.01;
+            boolean xB = Math.abs(updateEvent.entityLiving.getX() - 14.5) < 0.01;
+            boolean xS = Math.abs(updateEvent.entityLiving.getX() - -11.5) < 0.01;
+            boolean zB = Math.abs(updateEvent.entityLiving.getZ() - 14.5) < 0.01;
+            boolean zS = Math.abs(updateEvent.entityLiving.getZ() - -11.5) < 0.01;
+            boolean yE = Math.abs(updateEvent.entityLiving.getY() - 72.5) < 0.01;
 
             if (getCurrentPhase().equals("fight-3")) {
-                if (profStand != null && profStand.getPosition().distanceSq(updateEvent.entityLiving.getPosition().add(0, 2, 0)) < 5) {
-                    mapping.put(updateEvent.entityLiving.getEntityId(), 23);
+                if (profStand != null && profStand.blockPosition().distSqr(updateEvent.entityLiving.blockPosition().offset(0, 2, 0)) < 5) {
+                    mapping.put(updateEvent.entityLiving.getId(), 23);
                 }
             }
 
             if (yE && xB && zB) {
-                mapping.put(updateEvent.entityLiving.getEntityId(), 18);
+                mapping.put(updateEvent.entityLiving.getId(), 18);
             } else if (yE && xB && zS) {
-                mapping.put(updateEvent.entityLiving.getEntityId(), 19);
+                mapping.put(updateEvent.entityLiving.getId(), 19);
             } else if (yE && xS && zB) {
-                mapping.put(updateEvent.entityLiving.getEntityId(), 17);
+                mapping.put(updateEvent.entityLiving.getId(), 17);
             } else if (yE && xS && zS) {
-                mapping.put(updateEvent.entityLiving.getEntityId(), 20);
-            } else if (!mapping.containsKey(updateEvent.entityLiving.getEntityId())) {
-                mapping.put(updateEvent.entityLiving.getEntityId(), ((Guardian) updateEvent.entityLiving).isElder() ? 21 : 22);
+                mapping.put(updateEvent.entityLiving.getId(), 20);
+            } else if (!mapping.containsKey(updateEvent.entityLiving.getId())) {
+                mapping.put(updateEvent.entityLiving.getId(), ((Guardian) updateEvent.entityLiving).isElder() ? 21 : 22);
             }
         }
     }
@@ -180,12 +181,12 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
     @Override
     public MarkerData convertToMarker(Entity entity) {
         if (entity instanceof RemotePlayer) {
-            if ("The Professor".equals(entity.getName())) {
+            if ("The Professor".equals(TextUtils.getFormattedText(entity.getName()))) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, 16);
             }
         } else if (entity instanceof Guardian) {
             if (entity.isInvisible()) return null;
-            Integer val = mapping.get(entity.getEntityId());
+            Integer val = mapping.get(entity.getId());
             if (val == null) return null;
             return MarkerData.fromEntity(entity, val == 23 ? MarkerData.MobType.BOSS : val > 20 ? MarkerData.MobType.ENEMIES : MarkerData.MobType.MINIBOSS, val); // Rogue
         }

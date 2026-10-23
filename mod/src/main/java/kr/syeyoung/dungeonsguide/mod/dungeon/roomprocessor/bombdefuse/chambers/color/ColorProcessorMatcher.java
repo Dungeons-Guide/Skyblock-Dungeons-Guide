@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.color;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BombDefuseChamberGenerator;
@@ -28,9 +29,9 @@ public class ColorProcessorMatcher implements BombDefuseChamberGenerator {
     @Override
     public boolean match(BDChamber left, BDChamber right) {
         return
-                right.getBlock(0,1,1).getBlock() == Blocks.stonebrick &&
-                right.getBlock(0,1,2).getBlock() == Blocks.stonebrick &&
-                right.getBlock(0,1,3).getBlock() == Blocks.stonebrick;
+                LegacyBlock.STONEBRICK.is(right.getBlock(0,1,1)) &&
+                LegacyBlock.STONEBRICK.is(right.getBlock(0,1,2)) &&
+                LegacyBlock.STONEBRICK.is(right.getBlock(0,1,3));
     }
 
     @Override

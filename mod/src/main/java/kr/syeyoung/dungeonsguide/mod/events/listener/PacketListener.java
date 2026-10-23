@@ -20,6 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.events.listener;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.bossbar.BossBar;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.bossbar.BossBarManager;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.map.MapDataManager;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
@@ -33,6 +35,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.BossEvent;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 
@@ -205,6 +208,34 @@ public class PacketListener {
                     TabList.INSTANCE.updateEntry(neu);
                 }
             }
+        } else if (packet instanceof ClientboundBossEventPacket) {
+            // 1.8.9's BossStatus was set from the boss entity, 26.1 sends boss bars as packets
+            ((ClientboundBossEventPacket) packet).dispatch(new ClientboundBossEventPacket.Handler() {
+                @Override
+                public void add(UUID id, Component name, float progress, BossEvent.BossBarColor color, BossEvent.BossBarOverlay overlay, boolean darkenScreen, boolean playMusic, boolean createWorldFog) {
+                    BossBar bossBar = new BossBar(id);
+                    bossBar.setName(copy(name));
+                    bossBar.setProgress(progress);
+                    BossBarManager.INSTANCE.addBossBar(bossBar);
+                }
+
+                @Override
+                public void remove(UUID id) {
+                    BossBarManager.INSTANCE.removeBossBar(id);
+                }
+
+                @Override
+                public void updateProgress(UUID id, float progress) {
+                    BossBar bossBar = BossBarManager.INSTANCE.getBossBar(id);
+                    if (bossBar != null) bossBar.setProgress(progress);
+                }
+
+                @Override
+                public void updateName(UUID id, Component name) {
+                    BossBar bossBar = BossBarManager.INSTANCE.getBossBar(id);
+                    if (bossBar != null) bossBar.setName(copy(name));
+                }
+            });
         } else if (packet instanceof ClientboundPlayerInfoRemovePacket) {
             // 1.8.9's S38 REMOVE_PLAYER
             for (UUID profileId : ((ClientboundPlayerInfoRemovePacket) packet).profileIds()) {

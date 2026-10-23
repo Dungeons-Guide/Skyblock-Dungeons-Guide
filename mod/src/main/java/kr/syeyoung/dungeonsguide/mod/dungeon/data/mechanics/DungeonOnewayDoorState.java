@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
@@ -98,9 +99,9 @@ public class DungeonOnewayDoorState implements DungeonMechanicState, WorldMutati
     public boolean isBlocking(DungeonRoom dungeonRoom) {
 
         for (OffsetPoint offsetPoint : data.secretPoint.getOffsetPointList()) {
-            if (offsetPoint.getBlock(dungeonRoom) != Blocks.air) {
+            if (!LegacyBlock.AIR.is(offsetPoint.getBlock(dungeonRoom))) {
                 BlockPos blockPos = offsetPoint.getBlockPos(dungeonRoom);
-                if (Minecraft.getInstance().level != null && !Minecraft.getInstance().level.getEntitiesWithinAABB(FallingBlockEntity.class, new AABB(
+                if (Minecraft.getInstance().level != null && !Minecraft.getInstance().level.getEntitiesOfClass(FallingBlockEntity.class, new AABB(
                             blockPos.getX(), blockPos.getY() - 4, blockPos.getZ(),
                             blockPos.getX() + 1, blockPos.getY() + 1, blockPos.getZ() + 1
                 )).isEmpty()) return false;

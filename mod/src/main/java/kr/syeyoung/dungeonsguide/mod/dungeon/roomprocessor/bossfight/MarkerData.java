@@ -18,12 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.resources.Identifier;
 
 @Data @AllArgsConstructor
+// TODO: D5 entity name stopgap (D116), the getFormattedText(entity.getName()) reads
 public class MarkerData {
     private String name;
     private MobType type;
@@ -43,7 +45,7 @@ public class MarkerData {
     private float currYaw;
 
     public static MarkerData fromEntity(Entity entity, MobType type, int index) {
-        return new MarkerData(entity.getName(), type, index, 16, 16,
-                entity.prevPosX, entity.prevPosZ, entity.posX, entity.posZ, entity.prevRotationYaw, entity.rotationYaw);
+        return new MarkerData(TextUtils.getFormattedText(entity.getName()), type, index, 16, 16,
+                entity.xo, entity.zo, entity.getX(), entity.getZ(), entity.yRotO, entity.getYRot());
     }
 }

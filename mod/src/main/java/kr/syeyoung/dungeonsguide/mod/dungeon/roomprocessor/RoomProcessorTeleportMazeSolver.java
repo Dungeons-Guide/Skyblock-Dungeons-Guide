@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -27,10 +28,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.World;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -61,21 +63,21 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
 
 
 
-        World w = getDungeonRoom().getContext().getWorld();
+        DGWorld w = getDungeonRoom().getContext().getWorld();
         LocalPlayer entityPlayerSP = Minecraft.getInstance().player;
-        BlockPos pos2 = new BlockPos(Math.floor(entityPlayerSP.posX), Math.floor(entityPlayerSP.posY), Math.floor(entityPlayerSP.posZ));
-        Block b = w.getChunkFromBlockCoords(pos2).getBlock(pos2);
-        Vec3 lookVec = entityPlayerSP.getLookVec();
+        BlockPos pos2 = BlockPos.containing(entityPlayerSP.getX(), entityPlayerSP.getY(), entityPlayerSP.getZ());
+        BlockState b = w.getBlockState(pos2);
+        Vec3 lookVec = entityPlayerSP.getLookAngle();
 
         if (times % 4 == 1) {
-            posX1 = entityPlayerSP.posX;
-            posZ1 = entityPlayerSP.posZ;
-            slope1 = lookVec.zCoord / lookVec.xCoord;
+            posX1 = entityPlayerSP.getX();
+            posZ1 = entityPlayerSP.getZ();
+            slope1 = lookVec.z / lookVec.x;
             times ++;
         } else if (times % 4 == 3) {
-            posX2 = entityPlayerSP.posX;
-            posZ2 = entityPlayerSP.posZ;
-            slope2 = lookVec.zCoord / lookVec.xCoord;
+            posX2 = entityPlayerSP.getX();
+            posZ2 = entityPlayerSP.getZ();
+            slope2 = lookVec.z / lookVec.x;
 
             double yInt1 = posZ1 - posX1 * slope1;
             double yInt2 = posZ2 - posX2 * slope2;
@@ -86,16 +88,16 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
             times++;
         }
 
-        if (b == Blocks.stone_slab || b == Blocks.stone_slab2) {
+        if (LegacyBlock.STONE_SLAB.is(b) || LegacyBlock.STONE_SLAB2.is(b)) {
             boolean teleport = false;
             if (lastPlayerLocation == null) {
                 return;
             }
-            if (lastPlayerLocation.distanceSq(pos2) < 3) {
+            if (lastPlayerLocation.distSqr(pos2) < 3) {
                 return;
             }
-            for (BlockPos allInBox : BlockPos.getAllInBox(lastPlayerLocation, pos2)) {
-                if (w.getChunkFromBlockCoords(allInBox).getBlock(allInBox.add(0,1,0)) == Blocks.iron_bars) {
+            for (BlockPos allInBox : BlockPos.betweenClosed(lastPlayerLocation, pos2)) {
+                if (LegacyBlock.IRON_BARS.is(w.getBlockState(allInBox.offset(0,1,0)))) {
                     teleport = true;
                     break;
                 }
@@ -108,17 +110,17 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
                 times++;
                 }
 
-                for (BlockPos allInBox : BlockPos.getAllInBox(pos2.add(-1, 0, -1), pos2.add(1, 0, 1))) {
-                    if (w.getChunkFromBlockCoords(allInBox).getBlock(allInBox) == Blocks.end_portal_frame) {
+                for (BlockPos allInBox : BlockPos.betweenClosed(pos2.offset(-1, 0, -1), pos2.offset(1, 0, 1))) {
+                    if (LegacyBlock.END_PORTAL_FRAME.is(w.getBlockState(allInBox))) {
                         if (!visitedPortals.contains(allInBox))
-                        visitedPortals.add(allInBox);
+                        visitedPortals.add(allInBox.immutable());
                         break;
                     }
                 }
-                for (BlockPos allInBox : BlockPos.getAllInBox(lastPlayerLocation.add(-1, -1, -1), lastPlayerLocation.add(1, 1, 1))) {
-                    if (w.getChunkFromBlockCoords(allInBox).getBlock(allInBox) == Blocks.end_portal_frame) {
+                for (BlockPos allInBox : BlockPos.betweenClosed(lastPlayerLocation.offset(-1, -1, -1), lastPlayerLocation.offset(1, 1, 1))) {
+                    if (LegacyBlock.END_PORTAL_FRAME.is(w.getBlockState(allInBox))) {
                         if (!visitedPortals.contains(allInBox))
-                        visitedPortals.add(allInBox);
+                        visitedPortals.add(allInBox.immutable());
                         break;
                     }
                 }
@@ -133,11 +135,11 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
         super.drawWorld(partialTicks);
         if (!FeatureRegistry.SOLVER_TELEPORT.isEnabled()) return;
         for (BlockPos bpos:visitedPortals) {
-            RenderUtils.highlightBoxAColor( AABB.fromBounds(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX()+1, bpos.getY() + 1, bpos.getZ() + 1),  FeatureRegistry.SOLVER_TELEPORT.getTargetColor2(), partialTicks, true);
+            RenderUtils.highlightBoxAColor( new AABB(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX()+1, bpos.getY() + 1, bpos.getZ() + 1),  FeatureRegistry.SOLVER_TELEPORT.getTargetColor2(), partialTicks, true);
         }
 
         if (intersection != null) {
-            RenderUtils.highlightBoxAColor( AABB.fromBounds(intersection.getX(), intersection.getY(), intersection.getZ(), intersection.getX()+1, intersection.getY() + 1, intersection.getZ() + 1),   FeatureRegistry.SOLVER_TELEPORT.getTargetColor(), partialTicks, false);
+            RenderUtils.highlightBoxAColor( new AABB(intersection.getX(), intersection.getY(), intersection.getZ(), intersection.getX()+1, intersection.getY() + 1, intersection.getZ() + 1),   FeatureRegistry.SOLVER_TELEPORT.getTargetColor(), partialTicks, false);
         }
     }
     public static class Generator implements RoomProcessorGenerator<RoomProcessorTeleportMazeSolver> {

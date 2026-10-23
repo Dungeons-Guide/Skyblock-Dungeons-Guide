@@ -18,6 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.level.Level;
+import net.minecraft.client.Minecraft;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
@@ -60,11 +64,14 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
     public void findSilverFishAndDoStuff() {
         final BlockPos low = getDungeonRoom().getRoomBounds().getMin();
         final BlockPos high = getDungeonRoom().getRoomBounds().getMax();
-        List<Silverfish> silverfishs = getDungeonRoom().getContext().getWorld().getEntities(Silverfish.class, new Predicate<Silverfish>() {
+        Level level = Minecraft.getInstance().level;
+        // the room's bounds (D114)
+        AABB roomBox = new AABB(low.getX(), level.getMinY(), low.getZ(), high.getX() + 1, level.getMaxY() + 1, high.getZ() + 1);
+        List<Silverfish> silverfishs = level.getEntitiesOfClass(Silverfish.class, roomBox, new Predicate<Silverfish>() {
             @Override
             public boolean apply(@Nullable Silverfish input) {
                 if (input.isInvisible()) return false;
-                BlockPos pos = input.getPosition();
+                BlockPos pos = input.blockPosition();
                 return low.getX() < pos.getX() && pos.getX() < high.getX()
                         && low.getZ() < pos.getZ() && pos.getZ() < high.getZ();
             }
@@ -97,7 +104,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
             for (int x =0; x < width; x++) {
                 OffsetPoint op = ops.getOffsetPointList().get(y * width + x);
                 map2[y][x] = op;
-                map[y][x] = op.getBlock(getDungeonRoom()) == Blocks.air ? 0 : 1;
+                map[y][x] = LegacyBlock.AIR.is(op.getBlock(getDungeonRoom())) ? 0 : 1;
             }
         }
         endNode.addAll(endNodes.getOffsetPointList());
@@ -105,17 +112,17 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
 
     public void tick() {
         super.tick();
-        if (err || silverfish.isDead) {
+        if (err || silverfish.isRemoved()) {
             findSilverFishAndDoStuff();
             if (err) return;
         }
-        if (silverfish.getPosition().equals(lastSilverfishLoc)) {
+        if (silverfish.blockPosition().equals(lastSilverfishLoc)) {
             if (sameTick < 10) {
                 sameTick ++;
                 return;
             } else if (sameTick == 10) {
                 sameTick ++;
-                Point silverfish = getPointOfSilverFishOnMap(this.silverfish.getPosition());
+                Point silverfish = getPointOfSilverFishOnMap(this.silverfish.blockPosition());
                 List<Point> tempSol = solve(map, silverfish.x, silverfish.y, new Predicate<Point>() {
                     @Override
                     public boolean apply(@Nullable Point input) {
@@ -134,7 +141,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
             sameTick = 0;
         }
 
-        lastSilverfishLoc = silverfish.getPosition();
+        lastSilverfishLoc = silverfish.blockPosition();
     }
 
 

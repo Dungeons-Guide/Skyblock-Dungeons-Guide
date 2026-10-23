@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.creeper;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
@@ -54,7 +55,7 @@ public class CreeperLeftProcessor extends GeneralDefuseChamberProcessor {
         answer = 0;
         for (int i = 0; i < poses.length; i++) {
             BlockPos pos = poses[i];
-            if (getChamber().getRoom().getContext().getWorld().getBlockState(pos).getBlock() == Blocks.air) {
+            if (LegacyBlock.AIR.is(getChamber().getRoom().getContext().getWorld().getBlockState(pos))) {
                 answer |= (1 << i);
             }
         }
@@ -82,15 +83,15 @@ public class CreeperLeftProcessor extends GeneralDefuseChamberProcessor {
     public void onSendData() {
         if (answer == -1) return;
         CompoundTag nbt = new CompoundTag();
-        nbt.setByte("a", (byte) 2);
-        nbt.setInteger("b", answer);
+        nbt.putByte("a", (byte) 2);
+        nbt.putInt("b", answer);
         getSolver().communicate(nbt);
     }
 
     @Override
     public void onDataReceive(CompoundTag compound) {
-        if (2 == compound.getByte("a")) {
-            answer = compound.getInteger("b");
+        if (2 == compound.getByteOr("a", (byte) 0)) {
+            answer = compound.getIntOr("b", 0);
         }
     }
 }

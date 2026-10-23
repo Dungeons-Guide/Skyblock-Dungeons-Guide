@@ -33,7 +33,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.World;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 import java.io.IOException;
@@ -123,7 +123,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
         private Map<String, String> phaseMap = new HashMap<>();
     }
 
-    private World world;
+    private DGWorld world;
 
     public void addPhase(PhaseData phaseData) {
         if (phaseData == null) return;

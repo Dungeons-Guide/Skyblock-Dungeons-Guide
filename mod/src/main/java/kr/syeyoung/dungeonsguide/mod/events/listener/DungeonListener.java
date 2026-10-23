@@ -57,7 +57,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
@@ -68,8 +67,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ambient.Bat;
-import net.minecraft.network.play.server.S21PacketChunkData;
-import net.minecraft.network.play.server.S26PacketMapChunkBulk;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.phys.AABB;
@@ -98,6 +95,7 @@ import net.minecraft.util.Tuple;
 import java.util.HashSet;
 import java.util.Set;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.MinecraftWorld;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.bossbar.BossBarManager;
 
 public class DungeonListener {
 
@@ -107,6 +105,7 @@ public class DungeonListener {
         TabList.INSTANCE.clear();
         TeamManager.INSTANCE.clear();
         ScoreboardManager.INSTANCE.clear();
+        BossBarManager.INSTANCE.clear();
         Config.scheduleConfigSave();
         DungeonActionContext.getSpawnLocation().clear();
         DungeonActionContext.getKilleds().clear();

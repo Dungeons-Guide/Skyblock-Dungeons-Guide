@@ -20,13 +20,17 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.catacombs;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonSpecificDataProvider;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.World;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
 import org.jetbrains.annotations.Nullable;
 
-import javax.vecmath.Vector2d;
+import org.joml.Vector2d;
 import java.util.Collection;
 import java.util.Set;
 
@@ -35,14 +39,14 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1 , 0));
 
     @Nullable
-    static Vector2d getVector2d(World w, Collection<ArmorStand> armorStand, Set<Vector2d> directions) {
+    static Vector2d getVector2d(DGWorld w, Collection<ArmorStand> armorStand, Set<Vector2d> directions) {
         ArmorStand mort = armorStand.iterator().next();
-        BlockPos pos = mort.getPosition();
-        pos = pos.add(0, 3, 0);
+        BlockPos pos = mort.blockPosition();
+        pos = pos.offset(0, 3, 0);
         for (int i = 0; i < 5; i++) {
             for (Vector2d vector2d: directions) {
-                BlockPos test = pos.add(vector2d.x * i, 0, vector2d.y * i);
-                if (w.getChunkFromBlockCoords(test).getBlock(test) == Blocks.iron_bars) {
+                BlockPos test = BlockPos.containing(pos.getX() + vector2d.x * i, pos.getY(), pos.getZ() + vector2d.y * i);
+                if (LegacyBlock.IRON_BARS.is(w.getBlockState(test))) {
                     return vector2d;
                 }
             }
@@ -50,8 +54,15 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
         return null;
     }
 
-    public static Collection<ArmorStand> getMorts(World w){
-        return w.getEntities(ArmorStand.class, input -> input.getName().equals("§bMort"));
+    public static Collection<ArmorStand> getMorts(DGWorld w){
+        // the loaded chunk area around the player (D114)
+        Minecraft mc = Minecraft.getInstance();
+        ChunkPos center = mc.player.chunkPosition();
+        int radius = mc.options.getEffectiveRenderDistance() * 16;
+        AABB loaded = new AABB(center.getMinBlockX() - radius, mc.level.getMinY(), center.getMinBlockZ() - radius,
+                center.getMaxBlockX() + 1 + radius, mc.level.getMaxY() + 1, center.getMaxBlockZ() + 1 + radius);
+        // TODO: D5 entity name stopgap (D116)
+        return mc.level.getEntitiesOfClass(ArmorStand.class, loaded, input -> TextUtils.getFormattedText(input.getName()).equals("§bMort"));
     }
 
     /**
@@ -63,18 +74,18 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
      * @param dungeonName dungeon type e.g. master mode, currently unused
      * @return Block pos of the dungeon entrance
      */
-    public BlockPos findDoor(World w, String dungeonName) {
+    public BlockPos findDoor(DGWorld w, String dungeonName) {
         Collection<ArmorStand> armorStand = getMorts(w);
 
         if (!armorStand.isEmpty()) {
             ArmorStand mort = armorStand.iterator().next();
-            BlockPos pos = mort.getPosition();
-            pos = pos.add(0, 3, 0);
+            BlockPos pos = mort.blockPosition();
+            pos = pos.offset(0, 3, 0);
             for (int i = 0; i < 5; i++) {
                 for (Vector2d vector2d:directions) {
-                    BlockPos test = pos.add(vector2d.x * i, 0, vector2d.y * i);
-                    if (w.getChunkFromBlockCoords(test).getBlock(test) == Blocks.iron_bars) {
-                        return pos.add(vector2d.x * (i + 2), -2, vector2d.y * (i+2));
+                    BlockPos test = BlockPos.containing(pos.getX() + vector2d.x * i, pos.getY(), pos.getZ() + vector2d.y * i);
+                    if (LegacyBlock.IRON_BARS.is(w.getBlockState(test))) {
+                        return BlockPos.containing(pos.getX() + vector2d.x * (i + 2), pos.getY() - 2, pos.getZ() + vector2d.y * (i+2));
                     }
                 }
             }
@@ -82,7 +93,7 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
         return null;
     }
 
-    public Vector2d findDoorOffset(World w, String dungeonName) {
+    public Vector2d findDoorOffset(DGWorld w, String dungeonName) {
         Collection<ArmorStand> armorStand = getMorts(w);
 
         if (!armorStand.isEmpty()) {

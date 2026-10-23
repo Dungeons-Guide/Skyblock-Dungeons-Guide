@@ -18,19 +18,21 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.maze;
 
+import net.minecraft.world.level.block.state.BlockState;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import net.minecraft.world.level.block.Block;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -51,13 +53,13 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
     public void drawScreen(float partialTicks) {
         if (Minecraft.getInstance().hitResult == null ) return;
         HitResult pos = Minecraft.getInstance().hitResult;
-        if (pos.typeOfHit != HitResult.MovingObjectType.BLOCK) return;
+        if (pos.getType() != HitResult.Type.BLOCK) return;
 
-        Block b = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos.getBlockPos()).getBlock();
+        BlockState b = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(((BlockHitResult) pos).getBlockPos());
 
         FontRenderer fr = Minecraft.getInstance().font;
         ScaledResolution sr = new ScaledResolution(Minecraft.getInstance());
-        String str = "Press "+ FeatureRegistry.SOLVER_BOMBDEFUSE.<InputConstants.Key>getParameter("key").getValue().getDisplayName().getString() + " to request open "+b.getLocalizedName();
+        String str = "Press "+ FeatureRegistry.SOLVER_BOMBDEFUSE.<InputConstants.Key>getParameter("key").getValue().getDisplayName().getString() + " to request open "+b.getBlock().getName().getString();
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -68,14 +70,14 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
     public void onSendData() {
         if (Minecraft.getInstance().hitResult == null ) return;
         HitResult pos = Minecraft.getInstance().hitResult;
-        if (pos.typeOfHit != HitResult.MovingObjectType.BLOCK) return;
+        if (pos.getType() != HitResult.Type.BLOCK) return;
 
-        BlockPos block = pos.getBlockPos();
-        Block b = getChamber().getRoom().getContext().getWorld().getBlockState(block).getBlock();
+        BlockPos block = ((BlockHitResult) pos).getBlockPos();
+        BlockState b = getChamber().getRoom().getContext().getWorld().getBlockState(block);
 
         CompoundTag nbt = new CompoundTag();
-        nbt.setByte("a", (byte) 5);
-        nbt.setInteger("b", Block.getIdFromBlock(b));
+        nbt.putByte("a", (byte) 5);
+        nbt.putInt("b", LegacyBlock.legacyId(b));
         getSolver().communicate(nbt);
     }
 }

@@ -74,9 +74,9 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
             offsetPoint = new OffsetPoint(33- offsetPoint.getX(), offsetPoint.getY(), 33 - offsetPoint.getZ());
             BlockPos opposite =offsetPoint.getBlockPos(getDungeonRoom());
             BlockPos dir = new BlockPos(real.getPosition().subtract(opposite));
-            dir = new BlockPos(Mth.clamp_int(dir.getX() / 10, -1, 1), 0, Mth.clamp_int(dir.getZ() / 10, -1, 1));
+            dir = new BlockPos(Mth.clamp(dir.getX() / 10, -1, 1), 0, Mth.clamp(dir.getZ() / 10, -1, 1));
 
-            this.basePt = new Vec3(opposite.add(dir.getX() * 6 + dir.getZ(), 3, dir.getZ() * 6 - dir.getX()));
+            this.basePt = new Vec3(opposite.offset(dir.getX() * 6 + dir.getZ(), 3, dir.getZ() * 6 - dir.getX()));
 
             if (dir.getX() > 0) this.dir = 270;
             else if (dir.getX() < 0) this.dir = 90;
@@ -90,17 +90,17 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
         if (getDungeonRoom().getDungeonRoomInfo().getProperties().containsKey("warning-pos")) {
             OffsetPoint offsetPoint = (OffsetPoint) getDungeonRoom().getDungeonRoomInfo().getProperties().get("warning-pos");
             Vec3 pos = new Vec3(offsetPoint.getBlockPos(getDungeonRoom()));
-            pos = pos.addVector(0.5, 0, 0.5);
+            pos = pos.add(0.5, 0, 0.5);
             String dirStr = (String) getDungeonRoom().getDungeonRoomInfo().getProperties().get("warning-dir");
             Direction dirFacing = Direction.byName(dirStr);
             if (dirFacing != null) {
                 int rot = getDungeonRoom().getRoomMatcher().getRotation();
                 for (int i = 0; i < 4-rot; i++)
-                    dirFacing = dirFacing.rotateY();
-                pos = pos.addVector(dirFacing.getFrontOffsetX() * 0.5, dirFacing.getFrontOffsetY() * 0.5, dirFacing.getFrontOffsetZ() * 0.5);
-                dir = (2-dirFacing.getHorizontalIndex())* 90; // don't ask me why
-                dirFacing = dirFacing.rotateY();
-                pos = pos.addVector(dirFacing.getFrontOffsetX() * 0.5, dirFacing.getFrontOffsetY() * 0.5, dirFacing.getFrontOffsetZ() * 0.5);
+                    dirFacing = dirFacing.getClockWise();
+                pos = pos.add(dirFacing.getStepX() * 0.5, dirFacing.getStepY() * 0.5, dirFacing.getStepZ() * 0.5);
+                dir = (2-dirFacing.get2DDataValue())* 90; // don't ask me why
+                dirFacing = dirFacing.getClockWise();
+                pos = pos.add(dirFacing.getStepX() * 0.5, dirFacing.getStepY() * 0.5, dirFacing.getStepZ() * 0.5);
 
             }
 
@@ -118,7 +118,7 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
         {
             RenderManager renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
 
-            Vector3f renderPos = RenderUtils.getRenderPos((float)basePt.xCoord,(float) basePt.yCoord, (float)basePt.zCoord, partialTicks);
+            Vector3f renderPos = RenderUtils.getRenderPos((float)basePt.x,(float) basePt.y, (float)basePt.z, partialTicks);
 
 
 

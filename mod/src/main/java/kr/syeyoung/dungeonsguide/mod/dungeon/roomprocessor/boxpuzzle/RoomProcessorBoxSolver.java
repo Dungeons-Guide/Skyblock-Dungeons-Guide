@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.boxpuzzle;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -33,8 +34,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.util.*;
-import net.minecraft.world.World;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -76,7 +78,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     }
 
     private byte[][] buildCurrentState() {
-        World w = getDungeonRoom().getContext().getWorld();
+        DGWorld w = getDungeonRoom().getContext().getWorld();
         byte[][] board = new byte[poses.length][poses[0].length];
         for (int y = 0; y < poses.length; y++) {
             for (int x = 0; x < poses[0].length; x++) {
@@ -85,8 +87,8 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                     continue;
                 }
                 BlockPos pos = poses[y][x];
-                Block b = w.getChunkFromBlockCoords(pos).getBlock(pos);
-                if (b == Blocks.air)
+                BlockState b = w.getBlockState(pos);
+                if (LegacyBlock.AIR.is(b))
                     board[y][x] = 0;
                 else
                     board[y][x] = 1;
@@ -187,7 +189,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         }
 
         Point player = getPlayerPos(currBoard);
-        boolean currYState = Minecraft.getInstance().player.getPosition().getY() < 68;
+        boolean currYState = Minecraft.getInstance().player.blockPosition().getY() < 68;
         if (((currYState && !player.equals(lastPlayer)) || (currYState != yState) || (moved) || pathFindReq) && solution != null) {
             Point target = null;
             if (step < solution.size()) {
@@ -197,7 +199,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             List<Point> semi_pathFound = pathfind(currBoard, player, target);
             pathFound = new LinkedList<BlockPos>();
             for (Point point : semi_pathFound) {
-                pathFound.add(poses[point.y][point.x].add(0,-1,0));
+                pathFound.add(poses[point.y][point.x].offset(0,-1,0));
             }
 
             lastPlayer = player;
@@ -221,7 +223,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             List<Point> semi_pathFound = pathfind(currBoard, player, target);
             for (int i1 = semi_pathFound.size() - 1; i1 >= 0; i1--) {
                 Point point = semi_pathFound.get(i1);
-                totalPath.add(poses[point.y][point.x].add(0, -1, 0));
+                totalPath.add(poses[point.y][point.x].offset(0, -1, 0));
             }
 
             player = target;
@@ -233,9 +235,9 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 BlockPos pos = poses[fromY][fromX];
                 BlockPos pos2 = poses[boxMove.y][boxMove.x];
                 BlockPos dir = pos.subtract(pos2);
-                dir = new BlockPos(Mth.clamp_int(dir.getX(), -1,1), 0, Mth.clamp_double(dir.getZ(), -1, 1));
+                dir = new BlockPos(Mth.clamp(dir.getX(), -1,1), 0, Mth.clamp(dir.getZ(), -1, 1));
 
-                BlockPos highlight = pos2.add(dir);
+                BlockPos highlight = pos2.offset(dir);
                 totalPushedBlocks.add(highlight);
             }
         }
@@ -243,13 +245,13 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
     private boolean yState = true;
     public Point getPlayerPos(byte[][] map) {
-        BlockPos playerPos = Minecraft.getInstance().player.getPosition();
+        BlockPos playerPos = Minecraft.getInstance().player.blockPosition();
         int minDir = Integer.MAX_VALUE;
         Point pt = null;
         for (int y = 0; y < poses.length; y++) {
             for (int x = 0; x < poses[0].length; x++) {
                 if (map[y][x] == 1) continue;
-                int dir = (int) poses[y][x].distanceSq(playerPos);
+                int dir = (int) poses[y][x].distSqr(playerPos);
                 if (dir < minDir) {
                     minDir = dir;
                     pt = new Point(x,y);
@@ -353,7 +355,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (bugged) return;
         if (!calcDone) return;
         if (solution == null) return;
-        if (Minecraft.getInstance().player.getPosition().getY() < 68) {
+        if (Minecraft.getInstance().player.blockPosition().getY() < 68) {
             if (step < solution.size()) {
                 BoxPuzzleSolvingThread.BoxMove boxMove = solution.get(step);
                 int fromX = boxMove.x - boxMove.dx;
@@ -362,11 +364,11 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 BlockPos pos = poses[fromY][fromX];
                 BlockPos pos2 = poses[boxMove.y][boxMove.x];
                 BlockPos dir = pos.subtract(pos2);
-                dir = new BlockPos(Mth.clamp_int(dir.getX(), -1, 1), 0, Mth.clamp_double(dir.getZ(), -1, 1));
+                dir = new BlockPos(Mth.clamp(dir.getX(), -1, 1), 0, Mth.clamp(dir.getZ(), -1, 1));
 
-                BlockPos highlight = pos2.add(dir);
-                AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(Mth.clamp_double(Minecraft.getInstance().player.getPosition().distanceSq(highlight), 100, 255) / 255);
-                RenderUtils.highlightBoxAColor(AABB.fromBounds(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, partialTicks, false);
+                BlockPos highlight = pos2.offset(dir);
+                AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(Mth.clamp(Minecraft.getInstance().player.blockPosition().distSqr(highlight), 100, 255) / 255);
+                RenderUtils.highlightBoxAColor(new AABB(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, partialTicks, false);
             }
 
             if (pathFound != null) {
@@ -379,7 +381,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             if (totalPushedBlocks != null) {
                 for (int i = 0; i < totalPushedBlocks.size(); i++) {
                     BlockPos pos = totalPushedBlocks.get(i);
-                    RenderUtils.highlightBoxAColor(AABB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1),  FeatureRegistry.SOLVER_BOX.getTargetColor(), partialTicks, false);
+                    RenderUtils.highlightBoxAColor(new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1),  FeatureRegistry.SOLVER_BOX.getTargetColor(), partialTicks, false);
                     RenderUtils.drawTextAtWorld("#"+i, pos.getX()+0.5f, pos.getY() +0.5f, pos.getZ() + 0.5f, i != step ?
                             RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor2()) : RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor()), 0.1f, false, false, partialTicks);
                 }

@@ -23,7 +23,7 @@ import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
-import javax.vecmath.Vector2d;
+import org.joml.Vector2d;
 import java.awt.*;
 
 @AllArgsConstructor @Getter
@@ -56,19 +56,19 @@ public class DungeonMapLayout {
     }
     public Point worldPointToRoomPoint(Vec3 worldPoint) {
         if (worldMin == null) return null;
-        return new Point((int) Math.floor((worldPoint.xCoord - worldMin.getX()) / 32.0), (int) Math.floor((worldPoint.zCoord - worldMin.getZ()) / 32.0));
+        return new Point((int) Math.floor((worldPoint.x - worldMin.getX()) / 32.0), (int) Math.floor((worldPoint.z - worldMin.getZ()) / 32.0));
     }
 
 
     public Point worldPointToMapPoint(Vec3 worldPoint) {
         if (worldMin == null) return null;
-        return new Point(originPoint.x + (int) ((worldPoint.xCoord - worldMin.getX()) / 32.0f * (unitRoomSize.width + mapRoomGap)) - mapRoomGap / 2, originPoint.y + (int) ((worldPoint.zCoord - worldMin.getZ()) / 32.0f * (unitRoomSize.height + mapRoomGap)) - mapRoomGap / 2);
+        return new Point(originPoint.x + (int) ((worldPoint.x - worldMin.getX()) / 32.0f * (unitRoomSize.width + mapRoomGap)) - mapRoomGap / 2, originPoint.y + (int) ((worldPoint.z - worldMin.getZ()) / 32.0f * (unitRoomSize.height + mapRoomGap)) - mapRoomGap / 2);
     }
 
     public Vector2d worldPointToMapPointFLOAT(Vec3 worldPoint) {
         if (worldMin == null) return null;
-        double x = originPoint.x + ((worldPoint.xCoord - worldMin.getX()) / 32.0f * (unitRoomSize.width + mapRoomGap)) - mapRoomGap / 2.0;
-        double y = originPoint.y + ((worldPoint.zCoord - worldMin.getZ()) / 32.0f * (unitRoomSize.height + mapRoomGap)) - mapRoomGap / 2.0;
+        double x = originPoint.x + ((worldPoint.x - worldMin.getX()) / 32.0f * (unitRoomSize.width + mapRoomGap)) - mapRoomGap / 2.0;
+        double y = originPoint.y + ((worldPoint.z - worldMin.getZ()) / 32.0f * (unitRoomSize.height + mapRoomGap)) - mapRoomGap / 2.0;
         return new Vector2d(x, y);
     }
 

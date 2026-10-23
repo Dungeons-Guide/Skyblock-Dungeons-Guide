@@ -18,11 +18,11 @@ public class TSPCache {
     private Comparator<Vec3> vec3Comparator = new Comparator<Vec3>() {
         @Override
         public int compare(Vec3 o1, Vec3 o2) {
-            int comp = Double.compare(o1.xCoord, o2.xCoord);
+            int comp = Double.compare(o1.x, o2.x);
             if (comp != 0) return comp;
-            comp = Double.compare(o1.yCoord, o2.yCoord);
+            comp = Double.compare(o1.y, o2.y);
             if (comp != 0) return comp;
-            return Double.compare(o1.zCoord, o2.zCoord);
+            return Double.compare(o1.z, o2.z);
         }
     };
     private GeneralRoomProcessor generalRoomProcessor;
@@ -57,7 +57,7 @@ public class TSPCache {
             int mid = (high + low) / 2;
 
             Vec3 elem = locationsInCache.get(mid);
-            if (elem.xCoord == pos.xCoord && elem.yCoord == pos.yCoord && elem.zCoord == pos.zCoord) {
+            if (elem.x == pos.x && elem.y == pos.y && elem.z == pos.z) {
                 return mid;
             }
 

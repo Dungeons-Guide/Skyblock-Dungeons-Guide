@@ -55,7 +55,7 @@ public class ActionInteract extends AbstractAction {
         if (spawnLoc == null) {
             return;
         }
-        if (target.getBlockPos(dungeonRoom).distanceSq(spawnLoc.xCoord, spawnLoc.yCoord, spawnLoc.zCoord) > radius * radius) {
+        if (target.getBlockPos(dungeonRoom).distToLowCornerSqr(spawnLoc.x, spawnLoc.y, spawnLoc.z) > radius * radius) {
             return;
         }
         if (!predicate.test(event.getEntity())) {

@@ -92,7 +92,7 @@ public class PrecalculatedPathfinder implements IPathfinder {
 
     @Override
     public PathfindResult getRoute(Vec3 from) {
-        double dx = from.xCoord - roomXMin / 2.0, dz = from.zCoord - roomZMin / 2.0, dy = from.yCoord - roomYMin/2.0;
+        double dx = from.x - roomXMin / 2.0, dz = from.z - roomZMin / 2.0, dy = from.y - roomYMin/2.0;
         for (int i = 0; i < rotation; i++) {
             double tempX = dx;
             dx = -dz;
@@ -113,19 +113,19 @@ public class PrecalculatedPathfinder implements IPathfinder {
         CachedPathfindNode curr = getNode(nodeX, nodeY, nodeZ);
         float gScore = curr.gScore;
         if (curr.nodeType == null) return null;
-        Vec3 nextPos = new Vec3(((int)Math.round(from.xCoord * 2)) / 2.0,((int)Math.round(from.yCoord * 2)) / 2.0 + 0.05,((int)Math.round(from.zCoord * 2)) / 2.0);
+        Vec3 nextPos = new Vec3(((int)Math.round(from.x * 2)) / 2.0,((int)Math.round(from.y * 2)) / 2.0 + 0.05,((int)Math.round(from.z * 2)) / 2.0);
         int cnt = 0;
         while(curr.nodeType != null && curr.nodeType != PathfindResult.PathfindNode.NodeType.DESTINATION) {
-            route.addLast(new PathfindResult.PathfindNode(nextPos.xCoord, nextPos.yCoord, nextPos.zCoord, curr.nodeType));
+            route.addLast(new PathfindResult.PathfindNode(nextPos.x, nextPos.y, nextPos.z, curr.nodeType));
 
             OffsetVec3 offsetVec31 = new OffsetVec3(curr.x / 2.0, curr.y / 2.0, curr.z / 2.0);
-            nextPos = offsetVec31.toRotatedRelBlockPos(rotation, roomZLen, roomXLen).addVector(roomXMin / 2.0, roomYMin / 2.0 + 0.05, roomZMin / 2.0);
+            nextPos = offsetVec31.toRotatedRelBlockPos(rotation, roomZLen, roomXLen).add(roomXMin / 2.0, roomYMin / 2.0 + 0.05, roomZMin / 2.0);
 
             curr = getNode(curr.x, curr.y, curr.z);
             cnt ++;
             if (cnt > 1000) break;
         };
-        route.addLast(new PathfindResult.PathfindNode(nextPos.xCoord, nextPos.yCoord, nextPos.zCoord, curr.nodeType));
+        route.addLast(new PathfindResult.PathfindNode(nextPos.x, nextPos.y, nextPos.z, curr.nodeType));
 
         return new PathfindResult(route, gScore);
     }
@@ -177,7 +177,7 @@ public class PrecalculatedPathfinder implements IPathfinder {
 
     @Override
     public double getCost(Vec3 from) {
-        double dx = from.xCoord - roomXMin / 2.0, dz = from.zCoord - roomZMin / 2.0, dy = from.yCoord - roomYMin/2.0;
+        double dx = from.x - roomXMin / 2.0, dz = from.z - roomZMin / 2.0, dy = from.y - roomYMin/2.0;
         for (int i = 0; i < rotation; i++) {
             double tempX = dx;
             dx = -dz;

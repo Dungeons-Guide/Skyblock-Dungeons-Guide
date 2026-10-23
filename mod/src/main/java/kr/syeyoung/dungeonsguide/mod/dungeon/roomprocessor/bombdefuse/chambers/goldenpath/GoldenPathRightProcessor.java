@@ -24,10 +24,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.B
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.world.level.block.Blocks;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.level.Level;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.World;
 
 import java.awt.*;
 import java.util.LinkedList;
@@ -77,18 +78,19 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
             blocksolution.addFirst(getChamber().getBlockPos(4,1,0));
             for (Character c:actual.toCharArray()) {
                 int dir = Integer.parseInt(c+"") % 4;
-                lastLoc = lastLoc.add(vectors[dir].x, 0, vectors[dir].y);
+                lastLoc = lastLoc.offset(vectors[dir].x, 0, vectors[dir].y);
                 blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()));
             }
 
-            World w = getChamber().getRoom().getContext().getWorld();
+            // 1.8.9 wrote to the client world
+            Level w = Minecraft.getInstance().level;
             for (int x = 0; x <9; x++) {
                 for (int z =0; z < 6; z++) {
                     BlockPos pos = getChamber().getBlockPos(x,1,z);
                     if (blocksolution.contains(pos)) {
-                        w.setBlockState(pos, Blocks.light_weighted_pressure_plate.getDefaultState());
+                        w.setBlockAndUpdate(pos, LegacyBlock.LIGHT_WEIGHTED_PRESSURE_PLATE.state(0));
                     } else {
-                        w.setBlockState(pos, Blocks.wooden_pressure_plate.getDefaultState());
+                        w.setBlockAndUpdate(pos, LegacyBlock.WOODEN_PRESSURE_PLATE.state(0));
                     }
                 }
             }

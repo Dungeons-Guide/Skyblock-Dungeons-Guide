@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
@@ -35,7 +36,7 @@ public class ActionBreakWithSuperBoom extends AbstractAction {
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
-        return target.getOffsetPointList().get(0).getBlock(dungeonRoom) == Blocks.air;
+        return LegacyBlock.AIR.is(target.getOffsetPointList().get(0).getBlock(dungeonRoom));
     }
 
     public ActionBreakWithSuperBoom(OffsetPointSet target) {

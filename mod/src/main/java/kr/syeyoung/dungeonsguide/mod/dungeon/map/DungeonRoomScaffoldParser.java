@@ -33,7 +33,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
-import javax.vecmath.Vector2d;
+import org.joml.Vector2d;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
@@ -235,7 +235,7 @@ public class DungeonRoomScaffoldParser {
         }
 
 
-        return new DungeonRoom(ayConnected, shape, unit1, dungeonMapLayout.roomPointToWorldPoint(new Point(minX, minY)), dungeonMapLayout.roomPointToWorldPoint(new Point(maxX + 1, maxY + 1)).add(-1, 0, -1), context, doorsAndStates);
+        return new DungeonRoom(ayConnected, shape, unit1, dungeonMapLayout.roomPointToWorldPoint(new Point(minX, minY)), dungeonMapLayout.roomPointToWorldPoint(new Point(maxX + 1, maxY + 1)).offset(-1, 0, -1), context, doorsAndStates);
 
     }
 

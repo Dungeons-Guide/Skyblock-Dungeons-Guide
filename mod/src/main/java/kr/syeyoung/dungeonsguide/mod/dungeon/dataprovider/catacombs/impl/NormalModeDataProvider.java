@@ -22,14 +22,14 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.catacombs.CatacombsDataProvider;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.*;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.World;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
 import net.minecraft.network.chat.Component;
 
 public class NormalModeDataProvider extends CatacombsDataProvider {
 
 
     @Override
-    public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
+    public BossfightProcessor createBossfightProcessor(DGWorld w, String dungeonName) {
         String floor = dungeonName.substring(14).trim();
         ChatTransmitter.sendDebugChat(Component.literal("Floor: " +floor+ " Building boss fight processor"));
         switch (floor) {

@@ -27,6 +27,7 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 
 import java.util.*;
 
+// TODO: D5 entity name stopgap (D116), the getFormattedText(entity.getName()) reads
 public class BossfightProcessorScarf extends GeneralBossfightProcessor {
     public BossfightProcessorScarf(boolean isMasterMode) {
         super(isMasterMode ? "MASTERMODE_CATACOMBS_FLOOR_TWO" : "CATACOMBS_FLOOR_TWO");
@@ -65,7 +66,7 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
         {
             long health = 0;
             if (scarfStand != null) {
-                String name = TextUtils.stripColor(scarfStand.getName());
+                String name = TextUtils.stripColor(TextUtils.getFormattedText(scarfStand.getName()));
                 String healthPart = name.split(" ")[2];
                 health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
             }
@@ -75,7 +76,7 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
             {
                 long health = 0;
                 if (priestStand != null) {
-                    String name = TextUtils.stripColor(priestStand.getName());
+                    String name = TextUtils.stripColor(TextUtils.getFormattedText(priestStand.getName()));
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
@@ -84,7 +85,7 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
             {
                 long health = 0;
                 if (berserkStand != null) {
-                    String name = TextUtils.stripColor(berserkStand.getName());
+                    String name = TextUtils.stripColor(TextUtils.getFormattedText(berserkStand.getName()));
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
@@ -93,7 +94,7 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
             {
                 long health = 0;
                 if (mageStand != null) {
-                    String name = TextUtils.stripColor(mageStand.getName());
+                    String name = TextUtils.stripColor(TextUtils.getFormattedText(mageStand.getName()));
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
@@ -102,7 +103,7 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
             {
                 long health = 0;
                 if (archerStand != null) {
-                    String name = TextUtils.stripColor(archerStand.getName());
+                    String name = TextUtils.stripColor(TextUtils.getFormattedText(archerStand.getName()));
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
@@ -125,15 +126,15 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
     @Override
     public void onEntityUpdate(LivingTickEvent updateEvent) {
         if (updateEvent.entityLiving instanceof ArmorStand) {
-            if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lScarf§r"))
+            if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).startsWith("§e﴾ §c§lScarf§r"))
                 scarfStand = (ArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Archer"))
+            else if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).contains("§6§4§lUndead Archer"))
                 archerStand = (ArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Mage"))
+            else if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).contains("§6§4§lUndead Mage"))
                 mageStand = (ArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Priest"))
+            else if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).contains("§6§4§lUndead Priest"))
                 priestStand = (ArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Warrior"))
+            else if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).contains("§6§4§lUndead Warrior"))
                 berserkStand = (ArmorStand) updateEvent.entityLiving;
         }
     }
@@ -141,11 +142,11 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
     @Override
     public MarkerData convertToMarker(Entity entity) {
         if (entity instanceof RemotePlayer) {
-            if ("Scarf ".equals(entity.getName())) {
+            if ("Scarf ".equals(TextUtils.getFormattedText(entity.getName()))) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, 8);
             }
-            Collection<Property> obj = ((RemotePlayer) entity).getGameProfile().getProperties().get("textures");
-            String texture = obj.stream().findFirst().map(Property::getValue).orElse(null);
+            Collection<Property> obj = ((RemotePlayer) entity).getGameProfile().properties().get("textures");
+            String texture = obj.stream().findFirst().map(Property::value).orElse(null);
             if (texture.equals("ewogICJ0aW1lc3RhbXAiIDogMTU4OTk5NDg1NjMyMCwKICAicHJvZmlsZUlkIiA6ICJkYTQ5OGFjNGU5Mzc0ZTVjYjYxMjdiMzgwODU1Nzk4MyIsCiAgInByb2ZpbGVOYW1lIiA6ICJOaXRyb2hvbGljXzIiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWFlZjU2Y2QwNGQwMzlhMzRjZDZmMTZlMDIzYjZlNjNmY2M3MmYzN2Y3NTk1YTJjOWU0YTE5Zjk0ZTI3M2I0MiIKICAgIH0KICB9Cn0=")) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, 9); // priest
             } else if (texture.equals("eyJ0aW1lc3RhbXAiOjE1NzkxMDg2MTYxMjYsInByb2ZpbGVJZCI6IjJjMTA2NGZjZDkxNzQyODI4NGUzYmY3ZmFhN2UzZTFhIiwicHJvZmlsZU5hbWUiOiJOYWVtZSIsInNpZ25hdHVyZVJlcXVpcmVkIjp0cnVlLCJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODBiYzI5ODg5M2FhMGZhYmQ1MjUwY2RjNTMxYmE4MmVhN2M3MmQwYzE5N2E4NzA4NTIzNGE5NDYzNTEwZmY1MCJ9fX0=")) {

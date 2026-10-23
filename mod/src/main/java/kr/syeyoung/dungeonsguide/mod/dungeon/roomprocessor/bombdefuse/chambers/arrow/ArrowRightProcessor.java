@@ -59,7 +59,7 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
     public void tick() {
         super.tick();
         for (int i = 0; i < 9; i++)
-            currentAnswers[i] = match(getChamber().getEntityAt(ArmorStand.class, grid[i].add(0, -1, 0)));
+            currentAnswers[i] = match(getChamber().getEntityAt(ArmorStand.class, grid[i].offset(0, -1, 0)));
     }
 
     @Override
@@ -82,13 +82,13 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
 
     @Override
     public void onDataReceive(CompoundTag compound) {
-        if (3 == compound.getByte("a")) {
-            answer = compound.getInteger("b");
+        if (3 == compound.getByteOr("a", (byte) 0)) {
+            answer = compound.getIntOr("b", 0);
             for (int i = 8; i >= 0; i--) {
                 correctAnswers[i] = answer % 10;
                 answer = answer / 10;
             }
-            answer = compound.getInteger("b");
+            answer = compound.getIntOr("b", 0);
         }
     }
 

@@ -31,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
+import net.minecraft.world.level.saveddata.maps.MapDecorationTypes;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,13 +64,13 @@ public class MapPlayerProcessor {
             waitDelay++;
             return;
         }
-        ItemStack stack = mc.player.inventory.getStackInSlot(8);
+        ItemStack stack = mc.player.getInventory().getItem(8);
 
         if (stack == null || !(stack.getItem() instanceof MapItem)) {
             return;
         }
 
-        MapItemSavedData mapData = ((MapItem) stack.getItem()).getMapData(stack, mc.level);
+        MapItemSavedData mapData = MapItem.getSavedData(stack, mc.level);
 
         if (mapData != null && mapIconToPlayerMap.size() < context.getPlayers().size()) {
             getPlayersFromMap(mapData);
@@ -79,26 +80,28 @@ public class MapPlayerProcessor {
 
 
     private void getPlayersFromMap(MapItemSavedData mapdata) {
-        int lim = Minecraft.getInstance().options.renderDistanceChunks * 16;
+        int lim = Minecraft.getInstance().options.renderDistance().get() * 16;
         lim = lim * lim;
 
         if (context.getScaffoldParser() == null) return;
-        for (Map.Entry<String, MapDecoration> stringVec4bEntry : mapdata.mapDecorations.entrySet()) {
+        // decorations is widened by the class tweaker (D119)
+        for (Map.Entry<String, MapDecoration> stringVec4bEntry : mapdata.decorations.entrySet()) {
             String mapDecString = stringVec4bEntry.getKey();
             MapDecoration vec4 = stringVec4bEntry.getValue();
-            if (vec4.func_176110_a() == 1) continue;
+            // 1.8.9's icon type 1, the green one
+            if (vec4.type().is(MapDecorationTypes.FRAME)) continue;
 
             if (!mapIconToPlayerMap.containsValue(mapDecString)) {
-                int x = vec4.func_176112_b() / 2 + 64;
-                int y = vec4.func_176113_c() / 2 + 64;
+                int x = vec4.x() / 2 + 64;
+                int y = vec4.y() / 2 + 64;
                 BlockPos worldPos = context.getScaffoldParser().getDungeonMapLayout().mapPointToWorldPoint(new Point(x, y));
-                if (Minecraft.getInstance().player.getDistanceSq(worldPos) > lim) continue; // too far away
+                if (worldPos.distToLowCornerSqr(Minecraft.getInstance().player.getX(), Minecraft.getInstance().player.getY(), Minecraft.getInstance().player.getZ()) > lim) continue; // too far away
                 String potentialPlayer = null;
 
                 int players = 0;
 
                 for (String player : context.getPlayers()) {
-                    if (player.equals(Minecraft.getInstance().player.getName())) continue;
+                    if (player.equals(Minecraft.getInstance().player.getGameProfile().name())) continue;
                     if (!mapIconToPlayerMap.containsKey(player) && isPlayerNear(player, worldPos)) {
                         potentialPlayer = player;
                         players++;
@@ -113,10 +116,10 @@ public class MapPlayerProcessor {
     }
 
     private boolean isPlayerNear(String player, BlockPos mapPos) {
-        Player entityPlayer = mc.level.getPlayerEntityByName(player);
+        Player entityPlayer = mc.level.players().stream().filter(p -> p.getGameProfile().name().equals(player)).findFirst().orElse(null);
 
         if (entityPlayer != null && !entityPlayer.isInvisible()) {
-            BlockPos pos = entityPlayer.getPosition();
+            BlockPos pos = entityPlayer.blockPosition();
             int dx = mapPos.getX() - pos.getX();
             int dz = mapPos.getZ() - pos.getZ();
             return dx * dx + dz * dz < 256; // deviation is within 16 blocks

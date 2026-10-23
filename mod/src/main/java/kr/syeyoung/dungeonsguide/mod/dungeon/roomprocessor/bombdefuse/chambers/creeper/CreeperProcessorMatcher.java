@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.creeper;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BombDefuseChamberGenerator;
@@ -30,7 +31,7 @@ public class CreeperProcessorMatcher implements BombDefuseChamberGenerator {
         int airs = 0;
         for (int x = 0; x < 3; x ++) {
             for (int y = 0; y < 3; y++) {
-                if (right.getBlock(3 + x, 1, y + 1).getBlock() != Blocks.stone) return false;
+                if (!LegacyBlock.STONE.is(right.getBlock(3 + x, 1, y + 1))) return false;
             }
         }
         return true;

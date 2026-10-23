@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.LivingDeathEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
@@ -49,7 +50,6 @@ import lombok.Setter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.entity.Entity;
@@ -188,11 +188,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
             ChatTransmitter.sendDebugChat(Component.literal(TextUtils.getFormattedText(chat).replace('§', '&') + " - received"));
         }
         if (!TextUtils.getFormattedText(chat).contains("/")) return;
-        BlockPos pos = Minecraft.getInstance().player.getPosition();
+        BlockPos pos = Minecraft.getInstance().player.blockPosition();
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        Point pt1 = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(pos.add(2, 0, 2));
-        Point pt2 = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(pos.add(-2, 0, -2));
+        Point pt1 = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(pos.offset(2, 0, 2));
+        Point pt2 = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(pos.offset(-2, 0, -2));
         if (!pt1.equals(pt2)) {
             stack = 0;
             secrets2 = -1;
@@ -243,7 +243,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void onEntityUpdate(LivingTickEvent updateEvent) {
         if (updateEvent.entityLiving instanceof ArmorStand &&
                 updateEvent.entityLiving.getName() != null &&
-                updateEvent.entityLiving.getName().contains("Mimic") &&
+                // TODO: D5 entity name stopgap (D116)
+                TextUtils.getFormattedText(updateEvent.entityLiving.getName()).contains("Mimic") &&
                 !dungeonRoom.getContext().isGotMimic()) {
             dungeonRoom.getContext().setGotMimic(true);
 //            ChatProcessor.sendChatMessage("/pc $DG-Mimic");
@@ -259,7 +260,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
         if (event.pos != null) {
             BlockState iBlockState = event.world.getBlockState(event.pos);
-            if (iBlockState.getBlock() == Blocks.chest || iBlockState.getBlock() == Blocks.trapped_chest)
+            if (LegacyBlock.CHEST.is(iBlockState) || LegacyBlock.TRAPPED_CHEST.is(iBlockState))
                 lastChest = event.pos;
         }
 
@@ -292,7 +293,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 //                }
 //            }
 //            try {
-//                if (ec != null && event.pos != null && Minecraft.getInstance().level.getBlockState(event.pos).getBlock() == Blocks.sponge) {
+//                if (ec != null && event.pos != null && LegacyBlock.SPONGE.is(Minecraft.getInstance().level.getBlockState(event.pos))) {
 //                    int nextId = 1;
 //                    while (ec.getRoom().getDungeonRoomInfo().getMechanics().containsKey("ent-" + nextId)) nextId++;
 //                    DungeonRoomDoor2State.DungeonRoomDoor2Data door2 = new DungeonRoomDoor2State.DungeonRoomDoor2Data();
@@ -353,7 +354,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     }
 
-    public static final BlockState STONE = Blocks.stone.getStateFromMeta(2);
+    public static final BlockState STONE = LegacyBlock.STONE.state(2);
     @Override
     public void onBlockUpdate(BlockUpdateEvent blockUpdateEvent) {
         for (Tuple<BlockPos, BlockState> updatedBlock : blockUpdateEvent.getUpdatedBlocks()) {

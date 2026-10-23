@@ -20,10 +20,11 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.boss.BossStatus;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.bossbar.BossBar;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.bossbar.BossBarManager;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
-import net.minecraft.world.entity.monster.skeleton.Skeleton;
+import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -223,7 +224,9 @@ public class BossfightProcessorMasterModeNecron extends GeneralBossfightProcesso
             maxHealth = 1_400_000_000;
         }
         if (name.equals("")) return Collections.emptyList();
-        healths.add(new HealthData(name, (int) (BossStatus.healthScale * maxHealth),maxHealth , this.getCurrentPhase().startsWith("fight-")));
+        BossBar bossBar = BossBarManager.INSTANCE.getBossBarByName(name);
+        float healthScale = bossBar == null ? 0 : bossBar.getProgress();
+        healths.add(new HealthData(name, (int) (healthScale * maxHealth),maxHealth , this.getCurrentPhase().startsWith("fight-")));
         return healths;
     }
 
@@ -236,10 +239,9 @@ public class BossfightProcessorMasterModeNecron extends GeneralBossfightProcesso
     public MarkerData convertToMarker(Entity entity) {
         if (entity instanceof EndCrystal) {
             return MarkerData.fromEntity(entity, MarkerData.MobType.CRYSTALS, 53);
-        } else if (entity instanceof Skeleton) {
-            if (((Skeleton) entity).getSkeletonType() == 1) {
-                return MarkerData.fromEntity(entity, MarkerData.MobType.ENEMIES, 56);
-            }
+        } else if (entity instanceof WitherSkeleton) {
+            // 1.8.9's skeleton type 1 is its own class on 26.1
+            return MarkerData.fromEntity(entity, MarkerData.MobType.ENEMIES, 56);
         } else if (entity instanceof WitherBoss) {
             int idx = -1;
             if (Arrays.asList("maxor-fight").contains(getCurrentPhase())) {

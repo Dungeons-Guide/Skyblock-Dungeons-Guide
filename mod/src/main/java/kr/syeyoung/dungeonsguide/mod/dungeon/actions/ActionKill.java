@@ -59,9 +59,9 @@ public class ActionKill extends AbstractAction {
     public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event) {
         if (killed) return;
 
-        Vec3 spawnLoc = DungeonActionContext.getSpawnLocation().get(event.entity.getEntityId());
+        Vec3 spawnLoc = DungeonActionContext.getSpawnLocation().get(event.entity.getId());
         if (spawnLoc == null) return;
-        if (target.getBlockPos(dungeonRoom).distanceSq(spawnLoc.xCoord, spawnLoc.yCoord, spawnLoc.zCoord) > radius * radius) return;
+        if (target.getBlockPos(dungeonRoom).distToLowCornerSqr(spawnLoc.x, spawnLoc.y, spawnLoc.z) > radius * radius) return;
         if (!predicate.test(event.entity)) return;
         killed = true;
     }

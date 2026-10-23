@@ -56,7 +56,7 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
         super.tick();
         if (answer != -1) return;
         for (int i = 0; i < 9; i++)
-            answers[i] = match(getChamber().getEntityAt(ArmorStand.class, grid[i].add(0, -1, 0)));
+            answers[i] = match(getChamber().getEntityAt(ArmorStand.class, grid[i].offset(0, -1, 0)));
 
         answer = 0;
         for (int i =0; i < 9; i++) {
@@ -88,20 +88,20 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
     public void onSendData() {
         if (answer == -1) return;
         CompoundTag nbt = new CompoundTag();
-        nbt.setByte("a", (byte) 3);
-        nbt.setInteger("b", answer);
+        nbt.putByte("a", (byte) 3);
+        nbt.putInt("b", answer);
         getSolver().communicate(nbt);
     }
 
     @Override
     public void onDataReceive(CompoundTag compound) {
-        if (3 == compound.getByte("a")) {
-            answer = compound.getInteger("b");
+        if (3 == compound.getByteOr("a", (byte) 0)) {
+            answer = compound.getIntOr("b", 0);
             for (int i = 8; i >= 0; i--) {
                 answers[i] = answer % 10;
                 answer = answer / 10;
             }
-            answer = compound.getInteger("b");
+            answer = compound.getIntOr("b", 0);
         }
     }
 

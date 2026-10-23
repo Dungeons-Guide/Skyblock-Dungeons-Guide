@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
+// TODO: D5 entity name stopgap (D116), the getFormattedText(entity.getName()) reads
 public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     public BossfightProcessorBonzo(boolean isMasterMode) {
         super(isMasterMode ? "MASTERMODE_CATACOMBS_FLOOR_ONE" : "CATACOMBS_FLOOR_ONE");
@@ -70,7 +71,7 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
         List<HealthData> healths = new ArrayList<HealthData>();
         long health = 0;
         if (bonzoStand != null) {
-            String name = TextUtils.stripColor(bonzoStand.getName());
+            String name = TextUtils.stripColor(TextUtils.getFormattedText(bonzoStand.getName()));
             String healthPart = name.split(" ")[2];
             health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
         }
@@ -92,9 +93,9 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     @Override
     public MarkerData convertToMarker(Entity entity) {
         if (entity instanceof RemotePlayer) {
-            if ("Undead ".equals(entity.getName())) {
+            if ("Undead ".equals(TextUtils.getFormattedText(entity.getName()))) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.ENEMIES, 4);
-            } else if ("Bonzo ".equals(entity.getName())){
+            } else if ("Bonzo ".equals(TextUtils.getFormattedText(entity.getName()))){
                 return MarkerData.fromEntity(entity, MarkerData.MobType.ENEMIES, Arrays.asList("start", "fight-1", "first-defeat").contains(getCurrentPhase()) ? 0 : 1);
             }
         }
@@ -106,7 +107,7 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     // §e﴾ §c§lBonzo§r §a250k§c❤ §e﴿
     // Now I'm convinced name format is always the same
     public void onEntityUpdate(LivingTickEvent updateEvent) {
-        if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lBonzo§r") && updateEvent.entityLiving instanceof ArmorStand) {
+        if (TextUtils.getFormattedText(updateEvent.entityLiving.getName()).startsWith("§e﴾ §c§lBonzo§r") && updateEvent.entityLiving instanceof ArmorStand) {
             bonzoStand = (ArmorStand) updateEvent.entityLiving;
         }
     }
