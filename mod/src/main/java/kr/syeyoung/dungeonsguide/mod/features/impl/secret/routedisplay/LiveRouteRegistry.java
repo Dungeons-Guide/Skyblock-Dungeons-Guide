@@ -56,7 +56,7 @@ public class LiveRouteRegistry extends SimpleFeature {
 
         Optional<DungeonRoom> dungeonRoomOpt = Optional.ofNullable(context)
                 .map(DungeonContext::getScaffoldParser)
-                .map(a->a.getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector()))
+                .map(a->a.getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.getPositionVector()))
                 .map(a -> DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getRoomMap().get(a))
                 .filter(a -> a.getRoomProcessor() != null);
         if (!dungeonRoomOpt.isPresent()) {
@@ -71,7 +71,7 @@ public class LiveRouteRegistry extends SimpleFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (SkyblockStatus.isOnDungeon() && context != null) {
 
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return null;
             }

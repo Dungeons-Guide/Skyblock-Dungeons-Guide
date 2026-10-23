@@ -21,8 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.chat;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ClientTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiNewChat;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Tuple;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
@@ -37,13 +37,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.network.chat.Component;
 
 public class ChatProcessor {
     public static final ChatProcessor INSTANCE = new ChatProcessor();
 
     private static final Logger logger = LogManager.getLogger("DG-ChatProcessor");
     private ChatProcessor() {
-        Logger l = LogManager.getLogger(GuiNewChat.class);
+        Logger l = LogManager.getLogger(ChatComponent.class);
         if (l instanceof SimpleLogger) {
             ((SimpleLogger) l).setLevel(Level.OFF);
         } else if (l instanceof org.apache.logging.log4j.core.Logger) {
@@ -55,11 +57,19 @@ public class ChatProcessor {
     private Queue<Tuple<String, Runnable>> chatQueue = new ConcurrentLinkedQueue<>();
 
 
+    // 1.8.9's EntityPlayerSP.sendChatMessage sent commands as chat, 26.1 sends them separately
+    public static void sendChatMessage(String message) {
+        if (message.startsWith("/"))
+            Minecraft.getInstance().getConnection().sendCommand(message.substring(1));
+        else
+            Minecraft.getInstance().getConnection().sendChat(message);
+    }
+
     public void subscribe(ChatSubscriber chatSubscribed) {
         chatSubscriberQueue.add(chatSubscribed);
     }
     public void addToChatQueue(String chat, Runnable onSend, boolean noDupe) {
-        if (noDupe && chatQueue.stream().anyMatch(a -> a.getFirst().trim().equalsIgnoreCase(chat.trim()))) return;
+        if (noDupe && chatQueue.stream().anyMatch(a -> a.getA().trim().equalsIgnoreCase(chat.trim()))) return;
         chatQueue.add(new Tuple<>(chat, onSend));
     }
 
@@ -69,14 +79,14 @@ public class ChatProcessor {
     @SubscribeEvent
     public void onTick(ClientTickEvent clientTickEvent) {
         try {
-            if (clientTickEvent.phase == ClientTickEvent.Phase.START && Minecraft.getMinecraft().thePlayer != null && minimumNext < System.currentTimeMillis()) {
+            if (clientTickEvent.phase == ClientTickEvent.Phase.START && Minecraft.getInstance().player != null && minimumNext < System.currentTimeMillis()) {
                 if (!chatQueue.isEmpty()) {
                     Tuple<String, Runnable> tuple = chatQueue.poll();
-                    Minecraft.getMinecraft().thePlayer.sendChatMessage(tuple.getFirst());
-                    if (tuple.getSecond() != null)
-                        tuple.getSecond().run();
+                    sendChatMessage(tuple.getA());
+                    if (tuple.getB() != null)
+                        tuple.getB().run();
                     minimumNext = System.currentTimeMillis() + 700;
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("Sending " + tuple.getFirst() + " Secretly"));
+                    ChatTransmitter.sendDebugChat(Component.literal("Sending " + tuple.getA() + " Secretly"));
                 }
 
             }
@@ -90,7 +100,7 @@ public class ChatProcessor {
     @SubscribeEvent(priority = ListenerPriority.FIRST, receiveCanceled = true)
     public void onMessage(ChatReceivedEvent chatReceivedEvent) {
         if (chatReceivedEvent.type == 2) return;
-        String txt = chatReceivedEvent.message.getFormattedText();
+        String txt = TextUtils.getFormattedText(chatReceivedEvent.message);
         logger.info("[CHAT] {}", txt);
 
         int processed = 0;

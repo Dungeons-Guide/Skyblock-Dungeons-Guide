@@ -31,7 +31,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.World;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
@@ -39,6 +39,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     private final Map<String, PhaseData> phases = new HashMap<String, PhaseData>();
@@ -107,7 +108,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     @Override
     public List<MarkerData> getMarkers() {
         List<MarkerData> markerData = new ArrayList<>();
-        for (Entity entity : Minecraft.getMinecraft().theWorld.getLoadedEntityList()) {
+        for (Entity entity : Minecraft.getInstance().level.getLoadedEntityList()) {
             if (!(entity instanceof EntityLivingBase)) continue;
             if (((EntityLivingBase) entity).getHealth() <= 0) continue;
             MarkerData markerData1 = convertToMarker(entity);
@@ -152,13 +153,13 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(Component chat) {
         if (currentPhase == null) return;
 
         for (String nextPhase : currentPhase.getNextPhases()) {
             PhaseData phaseData = phases.get(nextPhase);
             if (phaseData == null) continue;
-            if (phaseData.signatureMsgs.contains(chat.getFormattedText().replace(" ", ""))) {
+            if (phaseData.signatureMsgs.contains(TextUtils.getFormattedText(chat).replace(" ", ""))) {
                     currentPhase = phaseData;
                     onPhaseChange();
                     return;
@@ -167,7 +168,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     }
 
     @Override
-    public void actionbarReceived(IChatComponent chat) {}
+    public void actionbarReceived(Component chat) {}
 
     @Override
     public void tick() {}

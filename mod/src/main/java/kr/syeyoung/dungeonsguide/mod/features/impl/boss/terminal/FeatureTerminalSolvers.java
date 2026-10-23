@@ -80,13 +80,13 @@ public class FeatureTerminalSolvers extends SimpleFeature {
     public void onTick(DGTickEvent tickEvent) {
         if (!isEnabled()) return;
         if (solutionProvider == null) return;
-        if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) {
+        if (!(Minecraft.getInstance().screen instanceof GuiChest)) {
             solution = null;
             solutionProvider = null;
             clicked.clear();
             return;
         }
-        ContainerChest cc = (ContainerChest) ((GuiChest) Minecraft.getMinecraft().currentScreen).inventorySlots;
+        ContainerChest cc = (ContainerChest) ((GuiChest) Minecraft.getInstance().screen).inventorySlots;
 
         solution = solutionProvider.provideSolution(cc, clicked);
     }
@@ -94,7 +94,7 @@ public class FeatureTerminalSolvers extends SimpleFeature {
     @DGEventHandler
     public void onGuiPostRender(ScreenRenderEvent.Post rendered) {
         if (solutionProvider == null) return;
-        if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) {
+        if (!(Minecraft.getInstance().screen instanceof GuiChest)) {
             solution = null;
             solutionProvider = null;
             clicked.clear();
@@ -104,7 +104,7 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         if (solution != null) {
             int i = 222;
             int j = i - 108;
-            int ySize = j + (((ContainerChest)(((GuiChest) Minecraft.getMinecraft().currentScreen).inventorySlots)).getLowerChestInventory().getSizeInventory() / 9) * 18;
+            int ySize = j + (((ContainerChest)(((GuiChest) Minecraft.getInstance().screen).inventorySlots)).getLowerChestInventory().getSizeInventory() / 9) * 18;
             int left = (rendered.gui.width - 176) / 2;
             int top = (rendered.gui.height - ySize ) / 2;
             GlStateManager.pushMatrix();
@@ -142,14 +142,14 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         if (solution.getCurrSlots() == null) {
             return;
         }
-        GuiChest chest = (GuiChest) Minecraft.getMinecraft().currentScreen;
+        GuiChest chest = (GuiChest) Minecraft.getInstance().screen;
 
         Slot s = chest.getSlotUnderMouse();
         if (solution.getCurrSlots().contains(s)) {
             clicked.add(s);
             // swap with middle click
 //            mouseInputEvent.setCanceled(true);
-//            Minecraft.getMinecraft().playerController.windowClick(chest.inventorySlots.windowId, s.slotNumber, 0, 4, Minecraft.getMinecraft().thePlayer);
+//            Minecraft.getInstance().gameMode.windowClick(chest.inventorySlots.windowId, s.slotNumber, 0, 4, Minecraft.getInstance().player);
         } else {
             if (block)
                 mouseInputEvent.setCanceled(true);

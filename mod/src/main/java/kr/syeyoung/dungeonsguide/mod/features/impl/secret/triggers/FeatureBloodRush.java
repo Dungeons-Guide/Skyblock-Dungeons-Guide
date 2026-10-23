@@ -33,12 +33,13 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.chat.MutableComponent;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.network.chat.Component;
 
 public class FeatureBloodRush extends SimpleFeature {
     public FeatureBloodRush() {
@@ -53,7 +54,7 @@ public class FeatureBloodRush extends SimpleFeature {
         if (keyBindPressedEvent.getKey().equals(this.<InputConstants.Key>getParameter("key").getValue())) {
             setEnabled(!isEnabled());
             try {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Blood Rush to §e"+(FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled() ? "on":"off")));
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fToggled Blood Rush to §e"+(FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled() ? "on":"off")));
             } catch (Exception ignored) {}
         }
     }

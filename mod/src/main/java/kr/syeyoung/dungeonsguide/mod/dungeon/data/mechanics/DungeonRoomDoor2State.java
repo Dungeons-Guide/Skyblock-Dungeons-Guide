@@ -77,8 +77,8 @@ public class DungeonRoomDoor2State implements DungeonMechanicState {
 //        return doorfinder.getType().isKeyRequired() ? "key" : "normal";
         Vector2d id = getIdentifier(room);
         for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : room.getDoorsAndStates()) {
-            if (doorsAndState.getFirst().equals(id) && doorsAndState.getSecond() != EDungeonDoorType.NONE) {
-                return doorsAndState.getSecond().isKeyRequired() ? "key" : "normal";
+            if (doorsAndState.getA().equals(id) && doorsAndState.getB() != EDungeonDoorType.NONE) {
+                return doorsAndState.getB().isKeyRequired() ? "key" : "normal";
             }
         }
         return "no-spawn";
@@ -87,8 +87,8 @@ public class DungeonRoomDoor2State implements DungeonMechanicState {
     public boolean isHeadtoBlood(DungeonRoom dungeonRoom) {
         Vector2d id = getIdentifier(dungeonRoom);
         for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : dungeonRoom.getDoorsAndStates()) {
-            if (doorsAndState.getFirst().equals(id)) {
-                return doorsAndState.getSecond().isHeadToBlood();
+            if (doorsAndState.getA().equals(id)) {
+                return doorsAndState.getB().isHeadToBlood();
             }
         }
         return false;

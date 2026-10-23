@@ -29,7 +29,7 @@ import java.util.List;
 public class DataRendererSetUrOwn implements IDataRenderer {
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         fr.drawString("§aCustomize at /dg", 0,0,-1);
         fr.drawString("§a-> Dungeon Party", 0,fr.FONT_HEIGHT,-1);
         fr.drawString("§a-> View player stats when join", 0,fr.FONT_HEIGHT*2,-1);
@@ -44,7 +44,7 @@ public class DataRendererSetUrOwn implements IDataRenderer {
 
     @Override
     public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         fr.drawString("§aCustomize at /dg", 0,0,-1);
         fr.drawString("§a-> Dungeon Party", 0,fr.FONT_HEIGHT,-1);
         fr.drawString("§a-> View player stats when join", 0,fr.FONT_HEIGHT*2,-1);
@@ -53,6 +53,6 @@ public class DataRendererSetUrOwn implements IDataRenderer {
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT*4);
+        return new Dimension(100, Minecraft.getInstance().font.FONT_HEIGHT*4);
     }
 }

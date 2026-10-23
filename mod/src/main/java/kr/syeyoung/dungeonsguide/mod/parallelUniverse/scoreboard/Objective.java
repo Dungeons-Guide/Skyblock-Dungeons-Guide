@@ -21,7 +21,9 @@ package kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.minecraft.scoreboard.IScoreObjectiveCriteria;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.numbers.NumberFormat;
+import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 
 import java.util.*;
 
@@ -30,9 +32,11 @@ public class Objective {
     @Getter
     private final String objectiveName;
     @Getter @Setter
-    private String displayName;
+    private Component displayName;
     @Getter @Setter
-    private IScoreObjectiveCriteria.EnumRenderType displayType;
+    private ObjectiveCriteria.RenderType displayType;
+    @Getter @Setter
+    private NumberFormat numberFormat;
     private SortedSet<Score> scores = new TreeSet<>(Comparator.comparingInt(Score::getScore).reversed());
     private Map<String, Score> currentObjects = new HashMap<>();
 
@@ -40,9 +44,9 @@ public class Objective {
         return Collections.unmodifiableSortedSet(scores);
     }
 
-    public void updateScore(String playerName, int score) {
+    public void updateScore(String playerName, int score, Component display, NumberFormat numberFormat) {
         removeScore(playerName);
-        addScore(playerName, score);
+        addScore(playerName, score, display, numberFormat);
     }
 
     public void removeScore(String playerName) {
@@ -51,9 +55,9 @@ public class Objective {
             scores.remove(scoreObj);
         }
     }
-    public void addScore(String playerName, int score) {
+    public void addScore(String playerName, int score, Component display, NumberFormat numberFormat) {
         if (!currentObjects.containsKey(playerName)) {
-            Score scoreObj = new Score(playerName, score);
+            Score scoreObj = new Score(playerName, score, display, numberFormat);
             currentObjects.put(playerName, scoreObj);
             scores.add(scoreObj);
         }

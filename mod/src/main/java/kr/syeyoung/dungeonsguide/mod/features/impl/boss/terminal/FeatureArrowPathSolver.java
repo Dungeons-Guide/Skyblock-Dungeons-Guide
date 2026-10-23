@@ -74,8 +74,8 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
 
-        if (depth && Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(-2,120,75) > 400) return;
-        if (!depth && Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(-2,120,75) > 25) return;
+        if (depth && Minecraft.getInstance().player.getPosition().distanceSq(-2,120,75) > 400) return;
+        if (!depth && Minecraft.getInstance().player.getPosition().distanceSq(-2,120,75) > 25) return;
 
         for (int y = 0; y < 5; y++){
             for (int x = 0; x < 5; x++) {
@@ -99,7 +99,7 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
 
 
-        if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(-2,120,75) > 400) return;
+        if (Minecraft.getInstance().player.getPosition().distanceSq(-2,120,75) > 400) return;
 
         if (System.currentTimeMillis() < nextUpdate) return;
         World w = dc.getWorld();

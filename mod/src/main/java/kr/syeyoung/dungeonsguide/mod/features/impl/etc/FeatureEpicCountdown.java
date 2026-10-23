@@ -56,7 +56,7 @@ public class FeatureEpicCountdown extends SimpleFeature {
 
     @DGEventHandler
     public void processChat(ChatReceivedEvent receivedEvent) {
-        String txt = receivedEvent.message.getFormattedText();
+        String txt = TextUtils.getFormattedText(receivedEvent.message);
 
         // TODO: make a good chat remover with configurable chats, search chats recieved and stuff, but not for now
         if(cleanChat){
@@ -128,7 +128,7 @@ public class FeatureEpicCountdown extends SimpleFeature {
         if (actualSecondsLeft <= 0) {
             if(!Objects.equals(lastSec, GO_TEXT)){
                 lastSec = GO_TEXT;
-                Minecraft.getMinecraft().ingameGUI.displayTitle(lastSec, "", 2, 25, 15);
+                Minecraft.getInstance().gui.displayTitle(lastSec, "", 2, 25, 15);
             }
             return;
         }
@@ -137,12 +137,12 @@ public class FeatureEpicCountdown extends SimpleFeature {
 
         if(!Objects.equals(string, lastSec)){
             if(actualSecondsLeft == 3   && sfxenabled){
-                Minecraft.getMinecraft().thePlayer.playSound("skyblock_dungeons_guide:readysetgo", 1F, 1F);
+                Minecraft.getInstance().player.playSound("skyblock_dungeons_guide:readysetgo", 1F, 1F);
             }
             if(actualSecondsLeft > 5){
-                Minecraft.getMinecraft().ingameGUI.displayTitle(string, "", 1, 10, 8);
+                Minecraft.getInstance().gui.displayTitle(string, "", 1, 10, 8);
             }else{
-                Minecraft.getMinecraft().ingameGUI.displayTitle(string, "", 1, 6, 4);
+                Minecraft.getInstance().gui.displayTitle(string, "", 1, 6, 4);
             }
             lastSec = string;
         }

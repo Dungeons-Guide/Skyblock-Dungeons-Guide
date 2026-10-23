@@ -23,11 +23,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.Arrays;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
     public RoomProcessorButtonSolver(DungeonRoom dungeonRoom) {
@@ -73,14 +74,14 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(Component chat) {
         super.chatReceived(chat);
         if (bugged) return;
 
         if (clickedButton == -1) return;
         if (clicked + 500 < System.currentTimeMillis()) return;
 
-        String msg = chat.getFormattedText();
+        String msg = TextUtils.getFormattedText(chat);
         if (msg.equals("§r§cThis button doesn't seem to do anything...§r")) {
             result[clickedButton] = -1;
             clickedButton = -1;
@@ -103,7 +104,7 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
         if (bugged) return;
-        if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(woods[6]) > 100) return;
+        if (Minecraft.getInstance().player.getPosition().distanceSq(woods[6]) > 100) return;
 
 
         for (int i = 0; i < woods.length; i++) {

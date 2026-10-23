@@ -24,15 +24,15 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
 public interface RoomProcessor {
     void tick();
     void drawScreen(float partialTicks);
     void drawWorld(float partialTicks);
-    void chatReceived(IChatComponent chat);
-    void actionbarReceived(IChatComponent chat);
+    void chatReceived(Component chat);
+    void actionbarReceived(Component chat);
 
     boolean readGlobalChat();
 

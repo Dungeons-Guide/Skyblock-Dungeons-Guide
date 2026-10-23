@@ -91,8 +91,8 @@ public class GUIPosition {
         } else  {
             guiPosition.yOffset = widgetLoc.getY() + widgetLoc.getHeight() - screenHeight;
         }
-        double realScreenWidth = Minecraft.getMinecraft().displayWidth;
-        double realScreenHeight = Minecraft.getMinecraft().displayHeight;
+        double realScreenWidth = Minecraft.getInstance().getWindow().getWidth();
+        double realScreenHeight = Minecraft.getInstance().getWindow().getHeight();
 
         guiPosition.xOffset = guiPosition.getXOffset() * realScreenWidth / screenWidth;
         guiPosition.yOffset = guiPosition.getYOffset() * realScreenHeight / screenHeight;
@@ -101,8 +101,8 @@ public class GUIPosition {
     }
 
     public Rect position(double screenWidth0, double screenHeight0, Size widgetSize) {
-        double screenWidth = Minecraft.getMinecraft().displayWidth;
-        double screenHeight = Minecraft.getMinecraft().displayHeight;
+        double screenWidth = Minecraft.getInstance().getWindow().getWidth();
+        double screenHeight = Minecraft.getInstance().getWindow().getHeight();
         double x = 0;
         double xOff = xOffset * screenWidth0 / screenWidth;
         double yOff = yOffset * screenHeight0 / screenHeight;

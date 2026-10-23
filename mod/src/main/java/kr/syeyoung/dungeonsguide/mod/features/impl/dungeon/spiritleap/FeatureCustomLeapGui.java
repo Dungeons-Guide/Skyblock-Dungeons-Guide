@@ -77,10 +77,10 @@ public class FeatureCustomLeapGui extends SimpleFeature {
             widgetSpiritLeap = new WidgetSpiritLeap();
 
             Scaler scaler = new Scaler();
-            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getInstance()).getScaleFactor());
             scaler.child.setValue(widgetSpiritLeap);
-            int x = (int) (Math.max(0, Minecraft.getMinecraft().displayWidth / 2 - 200 * scaler.scale.getValue()));
-            int y = (int) (Math.max(0, Minecraft.getMinecraft().displayHeight / 2 - 200 * scaler.scale.getValue()) + 100);
+            int x = (int) (Math.max(0, Minecraft.getInstance().getWindow().getWidth() / 2 - 200 * scaler.scale.getValue()));
+            int y = (int) (Math.max(0, Minecraft.getInstance().getWindow().getHeight() / 2 - 200 * scaler.scale.getValue()) + 100);
             guiScreenAdapter = new GuiScreenAdapterChestOverride(scaler, x, y);
         }
         guiScreenAdapter.setGuiChest((GuiChest) event.gui);

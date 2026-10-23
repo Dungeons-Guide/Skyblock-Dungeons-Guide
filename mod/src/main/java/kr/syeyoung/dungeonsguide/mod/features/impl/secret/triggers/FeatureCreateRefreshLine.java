@@ -89,7 +89,7 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
             if (((ClassicPathEngineLineProperties) value2.getSettings()).getLineRefreshRate() != -1 &&
                     ((ClassicPathEngineLineProperties) value2.getSettings()).isPathfind() && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled()) continue;
 
-            Entity e = Minecraft.getMinecraft().getRenderViewEntity();
+            Entity e = Minecraft.getInstance().getCameraEntity();
 
             double vectorV = VectorUtils.distSquared(e.getLook(partialTicks), e.getPositionEyes(partialTicks), new Vec3(target).addVector(0.5,0.5,0.5));
 
@@ -106,13 +106,13 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
     public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (!SkyblockStatus.isOnDungeon() || context == null) return;
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP thePlayer = Minecraft.getInstance().player;
         if (thePlayer == null) return;
         if (context.getScaffoldParser() == null) return;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom currentRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (currentRoom == null) return;
-        if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) return;
+        if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getInstance().player.getPositionVector())) return;
         RoomRouteHandler handler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(currentRoom);
 
         if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getKeybind().equals(keyInputEvent.getKey()) && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {

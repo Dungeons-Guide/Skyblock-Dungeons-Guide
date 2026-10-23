@@ -124,7 +124,7 @@ public class FeaturePartyReady extends TextHUDFeature {
 
     @DGEventHandler()
     public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
-        String txt = clientChatReceivedEvent.message.getFormattedText();
+        String txt = TextUtils.getFormattedText(clientChatReceivedEvent.message);
         System.out.println(txt);
         if (!txt.startsWith("§r§9Party §8>")) return;
 

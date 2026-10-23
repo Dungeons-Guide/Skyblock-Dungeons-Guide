@@ -85,7 +85,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         ActionMoveContext ctx = executorWeakHashMap.get(actionMove);
 
         if (ctx.executor == null) ctx.executor = pathPlanner.loadPrecalculatedByHash(actionMove.getPathfindRequest(dungeonRoom).getHash(), dungeonRoom);
-        if (ctx.executor != null) ctx.executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
+        if (ctx.executor != null) ctx.executor.setTarget(Minecraft.getInstance().player.getPositionVector());
     }
 
     private void tickAction(AbstractAction action) {
@@ -106,14 +106,14 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                 forceRefresh(actionMove);
             }
             if (ctx.executor != null && (ctx.poses == null || !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled())) {
-                ctx.poses = ctx.executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
+                ctx.poses = ctx.executor.getRoute(Minecraft.getInstance().player.getPositionVector());
                 if (ctx.poses != null)
                     ctx.segment = transformPathfindResult(ctx.poses.getNodeList(), settings.getWidth(), settings.getSmooth());
             }
 
             if (ctx.executor != null) {
                 if (!FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() && ctx.executor.isComplete()) {
-                    ctx.executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
+                    ctx.executor.setTarget(Minecraft.getInstance().player.getPositionVector());
                 }
             }
             return;
@@ -137,7 +137,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         List<AbstractAction> actions = actionRoute.getActions();
         if (current -1 >= 0) {
             AbstractAction abstractAction = actions.get(current - 1);
-            if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) >= 25))) {
+            if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.getPositionVector()) >= 25))) {
                 drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
             }
         }
@@ -168,7 +168,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             List<AbstractAction> atomicActionActions = ((AtomicAction) currentAction).getActions();
             if (atomicActionCurrent -1 >= 0) {
                 AbstractAction abstractAction = atomicActionActions.get(atomicActionCurrent - 1);
-                if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) >= 25))) {
+                if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.getPositionVector()) >= 25))) {
                     drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
                 }
             }
@@ -219,12 +219,12 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         RenderUtils.drawTextAtWorld("Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
 
         Vec3 from = new Vec3(pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5);
-        Vec3 eyePos = Minecraft.getMinecraft().thePlayer.getPositionEyes(partialTicks);
+        Vec3 eyePos = Minecraft.getInstance().player.getPositionEyes(partialTicks);
         Vec3 lookVec = from.subtract(eyePos).normalize();
 
-        if (Minecraft.getMinecraft().thePlayer.getLook(partialTicks).dotProduct(lookVec) < 0.7) return;
+        if (Minecraft.getInstance().player.getLook(partialTicks).dotProduct(lookVec) < 0.7) return;
 
-        MovingObjectPosition objectPosition = Minecraft.getMinecraft().objectMouseOver;
+        MovingObjectPosition objectPosition = Minecraft.getInstance().hitResult;
         if (objectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
             BlockPos blockPos = objectPosition.getBlockPos();
             for (Map.Entry<String, DungeonMechanicState> stringDungeonMechanicStateEntry : dungeonRoom.getMechanics().entrySet()) {
@@ -267,7 +267,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
 
 
-        float distance = MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()));
+        float distance = MathHelper.sqrt_double(target.distanceSq(Minecraft.getInstance().player.getPosition()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         float scale = 0.45f * multiplier;
         scale *= (float) settings.getDestinationSize();
@@ -280,19 +280,19 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
         if (settings.getDestinationSize() != 0) {
             RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, (float) settings.getDestinationSize(), true, false, partialTicks);
-            RenderUtils.drawTextAtWorld(String.format("%.2f", MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) + "m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, (float) settings.getDestinationSize(), true, false, partialTicks);
+            RenderUtils.drawTextAtWorld(String.format("%.2f", MathHelper.sqrt_double(target.distanceSq(Minecraft.getInstance().player.getPosition()))) + "m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, (float) settings.getDestinationSize(), true, false, partialTicks);
         }
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
             if (poses != null){
                 drawLinesPathfindNode(context.segment, settings.getBackground(), settings.getArrow(), partialTicks);
 
-                Vec3 pos = Minecraft.getMinecraft().thePlayer.getPositionVector();
+                Vec3 pos = Minecraft.getInstance().player.getPositionVector();
                 if (settings.isEnableEtherwarpTracer()) {
                     for (PathSegment segment : context.segment) {
                         if (segment.nodeType == PathfindResult.PathfindNode.NodeType.ETHERWARP && segment.from.squareDistanceTo(pos) < settings.getEtherwarpTracerDist()) {
                             RenderUtils.drawLinesVec3(Arrays.asList(
-                                    Minecraft.getMinecraft().thePlayer.getPositionEyes(partialTicks),
+                                    Minecraft.getInstance().player.getPositionEyes(partialTicks),
                                     segment.to.addVector(0, -0.5, 0)), settings.getEtherwarpTracerColor(), settings.getEtherwarpTracerWidth(), partialTicks, false);
                         }
                     }
@@ -306,7 +306,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
                             pose.getType() != PathfindResult.PathfindNode.NodeType.ENDERPEARL &&
                             pose.getType() != PathfindResult.PathfindNode.NodeType.ETHERWARP &&
                             pose.getType() != PathfindResult.PathfindNode.NodeType.SUPERBOOM &&
-                            pose.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+                            pose.distanceSq(Minecraft.getInstance().player.getPosition()) < 100) {
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }
                     if (last != null && last.getType() == PathfindResult.PathfindNode.NodeType.SUPERBOOM) {
@@ -486,8 +486,8 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
 
 
     private static void highlightSuperboom(List<BlockPos> blockPos, float partialTicks, AColor color) {
-        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
-        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
+        RenderManager renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
+        Entity render = Minecraft.getInstance().getCameraEntity();
         double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
         double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
         double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
@@ -505,7 +505,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         GlStateManager.disableCull();
 
         GlStateManager.enableTexture2D();
-        Minecraft.getMinecraft().getTextureManager().bindTexture(Identifier.parse("minecraft:textures/blocks/tnt_side.png"));
+        Minecraft.getInstance().getTextureManager().bindTexture(Identifier.parse("minecraft:textures/blocks/tnt_side.png"));
         GlStateManager.color(1, 1, 1, 1.0F);
         Tessellator tesselator = Tessellator.getInstance();
         WorldRenderer vertexBuffer = tesselator.getWorldRenderer();
@@ -555,7 +555,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         GlStateManager.color(1,1,1,1);
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
-        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+        RenderManager renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
 
         boolean flag = renderManager.getDistanceToCamera(segment.from.xCoord, segment.from.yCoord, segment.from.zCoord) > 0.25;
         Vec3 fixedFrom = flag ? segment.from.addVector(0, 1.5, 0) : segment.from;
@@ -587,7 +587,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             }
             Tessellator.getInstance().draw();
 
-            TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
+            TextureManager textureManager = Minecraft.getInstance().getTextureManager();
             GlStateManager.enableTexture2D();
             textureManager.bindTexture(TextureMap.locationBlocksTexture);
 
@@ -634,7 +634,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         GlStateManager.enableTexture2D();
 
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(abilities);
+        Minecraft.getInstance().getTextureManager().bindTexture(abilities);
 
         GuiScreen.drawScaledCustomSizeModalRect(
                 -size /2, -size /2, (iconIdx % 8)*32 + 0.5f , (iconIdx/8)*32 + 0.5f ,  31, 31, size, size, 512, 512
@@ -690,7 +690,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         }
         Tessellator.getInstance().draw();
 
-        TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
+        TextureManager textureManager = Minecraft.getInstance().getTextureManager();
         GlStateManager.enableTexture2D();
         textureManager.bindTexture(TextureMap.locationBlocksTexture);
 
@@ -725,7 +725,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
         animate = animate - Math.floor(animate);
         animate *= -1;
 
-        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
+        Entity render = Minecraft.getInstance().getCameraEntity();
 
         double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
         double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
@@ -749,7 +749,7 @@ public class NeoRouteDisplayEngine implements IPathDisplayEngine<NeoRouteDisplay
             if (nodeType == PathfindResult.PathfindNode.NodeType.ETHERWARP) {
                 boolean path = true;
                 if (settings.isEtherwarpTracerDisableEtherwarpRoute() && settings.isEnableEtherwarpTracer()) {
-                    if (Minecraft.getMinecraft().thePlayer.getPositionVector().squareDistanceTo(poses.get(st).from) < settings.getEtherwarpTracerDist()) path = false;
+                    if (Minecraft.getInstance().player.getPositionVector().squareDistanceTo(poses.get(st).from) < settings.getEtherwarpTracerDist()) path = false;
                 }
                 drawIcon(40, poses.get(st), colour, texture, partialTicks, animate, path);
             } else if (nodeType == PathfindResult.PathfindNode.NodeType.ENDERPEARL)

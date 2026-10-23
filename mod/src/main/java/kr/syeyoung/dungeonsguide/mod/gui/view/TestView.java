@@ -40,7 +40,7 @@ public class TestView extends AnnotatedImportOnlyWidget {
     @Override
     public void onMount() {
         super.onMount();
-        bindableAttribute.setValue(Minecraft.getMinecraft().thePlayer.getName());
+        bindableAttribute.setValue(Minecraft.getInstance().player.getName());
     }
 
     @On(functionName = "buttonClick")

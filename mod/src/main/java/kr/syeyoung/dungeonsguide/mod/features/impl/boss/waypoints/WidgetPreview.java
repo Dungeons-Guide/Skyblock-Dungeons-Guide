@@ -67,8 +67,8 @@ public class WidgetPreview extends Widget implements Renderer {
     public static void drawTextAtWorld(String text, float x, float y, float z, int color, float scale, boolean increase, boolean renderBlackBox, float partialTicks) {
         float lScale = scale;
 
-        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
-        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+        RenderManager renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
+        FontRenderer fontRenderer = Minecraft.getInstance().font;
 
         Vector3f renderPos = new Vector3f(x,y,z);
 
@@ -122,7 +122,7 @@ public class WidgetPreview extends Widget implements Renderer {
     public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         GL11.glViewport(
                 (int) buildContext.getAbsBounds().getX(),
-                (int) (Minecraft.getMinecraft().displayHeight - buildContext.getAbsBounds().getY() - buildContext.getAbsBounds().getHeight()),
+                (int) (Minecraft.getInstance().getWindow().getHeight() - buildContext.getAbsBounds().getY() - buildContext.getAbsBounds().getHeight()),
                 (int) buildContext.getAbsBounds().getWidth(),
                 (int) buildContext.getAbsBounds().getHeight());
 
@@ -156,11 +156,11 @@ public class WidgetPreview extends Widget implements Renderer {
         vertexBuffer.begin(7, DefaultVertexFormats.BLOCK);
 
         GlStateManager.enableTexture2D();
-        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRenderer();
 
         PreviewWorld previewWorld = new PreviewWorld(Blocks.chest.getStateFromMeta(1), new BlockPos(2,2,4));
 
-        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        Minecraft.getInstance().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
         for (int x = 0; x < 5; x++) {
             for (int z = 0; z < 5; z++) {
                 BlockState toDraw = (x+z) % 2 == 0 ? Blocks.snow.getBlockState() : Blocks.coal_block.getBlockState();;
@@ -217,7 +217,7 @@ public class WidgetPreview extends Widget implements Renderer {
 
 
 
-        GL11.glViewport(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+        GL11.glViewport(0,0,Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight());
 
     }
 }

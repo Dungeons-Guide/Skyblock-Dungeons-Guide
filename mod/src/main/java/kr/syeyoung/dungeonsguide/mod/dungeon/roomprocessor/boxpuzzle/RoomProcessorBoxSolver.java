@@ -42,6 +42,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.network.chat.Component;
 
 public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
@@ -144,7 +146,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (calcDone2) {
             BoxPuzzleSolvingThread.Route semi_solution = puzzleSolvingThread.solution;
             if (semi_solution == null) {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: §cCouldn't find solution involving less than 20 box moves within 3m concurrent possibility"));
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §eBox Solver §7:: §cCouldn't find solution involving less than 20 box moves within 3m concurrent possibility"));
                 step = 0;
                 calcDone2 = false;
                 pathFindReq = true;
@@ -154,7 +156,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 return;
             } else{
                 solution = semi_solution.boxMoves;
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: Solution Found!"));
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §eBox Solver §7:: Solution Found!"));
             }
             step = 0;
             lastState = currBoard;
@@ -182,7 +184,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         }
 
         Point player = getPlayerPos(currBoard);
-        boolean currYState = Minecraft.getMinecraft().thePlayer.getPosition().getY() < 68;
+        boolean currYState = Minecraft.getInstance().player.getPosition().getY() < 68;
         if (((currYState && !player.equals(lastPlayer)) || (currYState != yState) || (moved) || pathFindReq) && solution != null) {
             Point target = null;
             if (step < solution.size()) {
@@ -238,7 +240,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
     private boolean yState = true;
     public Point getPlayerPos(byte[][] map) {
-        BlockPos playerPos = Minecraft.getMinecraft().thePlayer.getPosition();
+        BlockPos playerPos = Minecraft.getInstance().player.getPosition();
         int minDir = Integer.MAX_VALUE;
         Point pt = null;
         for (int y = 0; y < poses.length; y++) {
@@ -316,15 +318,15 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(Component chat) {
         if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
-        if (chat.getFormattedText().toLowerCase().contains("recalc")) {
+        if (TextUtils.getFormattedText(chat).toLowerCase().contains("recalc")) {
             if (calcDone) {
                 calcReq = true;
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: Recalculating Route..."));
+                Minecraft.getInstance().gui.getChat().addMessage(Component.literal("§eDungeons Guide :::: Recalculating Route..."));
             } else {
                 calcReq = true;
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: Currently Calculating Route..."));
+                Minecraft.getInstance().gui.getChat().addMessage(Component.literal("§eDungeons Guide :::: Currently Calculating Route..."));
             }
         }
     }
@@ -334,7 +336,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         super.drawScreen(partialTicks);
         if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
         if (FeatureRegistry.SOLVER_BOX.disableText()) return;
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -348,7 +350,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (bugged) return;
         if (!calcDone) return;
         if (solution == null) return;
-        if (Minecraft.getMinecraft().thePlayer.getPosition().getY() < 68) {
+        if (Minecraft.getInstance().player.getPosition().getY() < 68) {
             if (step < solution.size()) {
                 BoxPuzzleSolvingThread.BoxMove boxMove = solution.get(step);
                 int fromX = boxMove.x - boxMove.dx;
@@ -360,7 +362,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 dir = new BlockPos(MathHelper.clamp_int(dir.getX(), -1, 1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
 
                 BlockPos highlight = pos2.add(dir);
-                AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(MathHelper.clamp_double(Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(highlight), 100, 255) / 255);
+                AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(MathHelper.clamp_double(Minecraft.getInstance().player.getPosition().distanceSq(highlight), 100, 255) / 255);
                 RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, partialTicks, false);
             }
 

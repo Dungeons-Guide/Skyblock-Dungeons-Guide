@@ -119,7 +119,7 @@ public class FineGridStonkingBFS implements IPathfinder {
         if (blockState.getBlock() == Blocks.air) return true;
         if (blockState.getBlock() == Blocks.quartz_ore) return true;
         if (!blockState.getBlock().canCollideCheck(blockState, false)) return true;
-        if (blockState.getBlock().getCollisionBoundingBox(Minecraft.getMinecraft().theWorld, new BlockPos(0,0,0), blockState) == null) return true;
+        if (blockState.getBlock().getCollisionBoundingBox(Minecraft.getInstance().level, new BlockPos(0,0,0), blockState) == null) return true;
         return false;
     }
 

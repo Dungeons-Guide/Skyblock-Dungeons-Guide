@@ -18,7 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.parallelUniverse.map;
 
-import net.minecraft.world.storage.MapData;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,16 +27,17 @@ import java.util.Map;
 
 public class MapDataManager {
     public static final MapDataManager INSTANCE = new MapDataManager();
-    private Map<Integer, MapData> mapDataMap = new HashMap<>();
+    private Map<Integer, MapItemSavedData> mapDataMap = new HashMap<>();
 
-    public MapData createMapData(int mapId) {
+    // 26.1 maps are created with the packet's scale / lock and the current dimension, like the client does
+    public MapItemSavedData createMapData(int mapId, byte scale, boolean locked) {
         if (!mapDataMap.containsKey(mapId))
-            mapDataMap.put(mapId, new MapData("map_"+mapId));
+            mapDataMap.put(mapId, MapItemSavedData.createForClient(scale, locked, Minecraft.getInstance().level.dimension()));
         return mapDataMap.get(mapId);
 
     }
 
-    public MapData getMapData(int mapId) {
+    public MapItemSavedData getMapData(int mapId) {
         return mapDataMap.get(mapId);
     }
 
@@ -43,7 +45,7 @@ public class MapDataManager {
         mapDataMap.clear();
     }
 
-    public Map<Integer, MapData> getMapDataMap() {
+    public Map<Integer, MapItemSavedData> getMapDataMap() {
         return Collections.unmodifiableMap(mapDataMap);
     }
 }

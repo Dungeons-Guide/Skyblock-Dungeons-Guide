@@ -76,7 +76,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         ActionMoveContext ctx = executorWeakHashMap.get(actionMove);
 
         if (ctx.executor == null) ctx.executor = pathPlanner.loadPrecalculatedByHash(actionMove.getPathfindRequest(dungeonRoom).getHash(), dungeonRoom);
-        if (ctx.executor != null) ctx.executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
+        if (ctx.executor != null) ctx.executor.setTarget(Minecraft.getInstance().player.getPositionVector());
     }
 
     private void tickAction(AbstractAction action) {
@@ -98,12 +98,12 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
                 forceRefresh(actionMove);
             }
             if (ctx.executor != null && (ctx.poses == null || !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled())) {
-                ctx.poses = ctx.executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
+                ctx.poses = ctx.executor.getRoute(Minecraft.getInstance().player.getPositionVector());
             }
 
             if (ctx.tick == 0 && classicPathEngineLineProperties.isPathfind() && ctx.executor != null) {
                 if (classicPathEngineLineProperties.getLineRefreshRate() != -1 && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() && ctx.executor.isComplete()) {
-                    ctx.executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
+                    ctx.executor.setTarget(Minecraft.getInstance().player.getPositionVector());
                 }
             }
             return;
@@ -134,7 +134,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         List<AbstractAction> actions = actionRoute.getActions();
         if (current -1 >= 0) {
             AbstractAction abstractAction = actions.get(current - 1);
-            if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) >= 25))) {
+            if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.getPositionVector()) >= 25))) {
                 drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
             }
         }
@@ -165,7 +165,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
             List<AbstractAction> atomicActionActions = ((AtomicAction) currentAction).getActions();
             if (atomicActionCurrent -1 >= 0) {
                 AbstractAction abstractAction = atomicActionActions.get(atomicActionCurrent - 1);
-                if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) >= 25))) {
+                if(((abstractAction instanceof AbstractActionMove && ((AbstractActionMove) abstractAction).getTargetVec3().getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.getPositionVector()) >= 25))) {
                     drawActionMove((AbstractActionMove) abstractAction, dungeonRoom, partialTicks);
                 }
             }
@@ -221,11 +221,11 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
     }
 
     public void renderActionBreakWithSuperboom(ActionBreakWithSuperBoom superBoom, DungeonRoom dungeonRoom, float partialTicks) {
-        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        Minecraft.getInstance().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 
         BlockPos blockpos = superBoom.getTarget().getOffsetPointList().get(0).getBlockPos(dungeonRoom);
 
-        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
+        Entity viewing_from = Minecraft.getInstance().getCameraEntity();
 
         double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
         double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
@@ -243,8 +243,8 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         WorldRenderer vertexBuffer = tessellator.getWorldRenderer();
         vertexBuffer.begin(7, DefaultVertexFormats.BLOCK);
 
-        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-        blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld,
+        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRenderer();
+        blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getInstance().level,
                 blockrendererdispatcher.getBlockModelShapes().getModelForState(Blocks.tnt.getDefaultState()),
                 Blocks.tnt.getDefaultState(), blockpos, vertexBuffer, false);
         tessellator.draw();
@@ -265,7 +265,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
 
 
 
-        float distance = MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()));
+        float distance = MathHelper.sqrt_double(target.distanceSq(Minecraft.getInstance().player.getPosition()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         float scale = 0.45f * multiplier;
         scale *= 25.0 / 6.0;
@@ -275,7 +275,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         }
         RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, 1f, true, false, partialTicks);
 
-        RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
+        RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(target.distanceSq(Minecraft.getInstance().player.getPosition())))+"m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
             if (poses != null){
@@ -285,7 +285,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
                 int warp = 0;
                 for (PathfindResult.PathfindNode pose : poses.getNodeList()) {
                     cnt ++;
-                    if (pose.getType() != null && pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+                    if (pose.getType() != null && pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getInstance().player.getPosition()) < 100) {
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }
 
@@ -295,7 +295,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
                         warp = flag2 ? 0 : 2;
                     }
                     if (pose.getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP &&
-                            ((flag2 && Minecraft.getMinecraft().thePlayer.getDistanceSq(pose.getX(), pose.getY(), pose.getZ()) < 25) || (!flag2 && cnt < 2)) && warp < 2) {
+                            ((flag2 && Minecraft.getInstance().player.getDistanceSq(pose.getX(), pose.getY(), pose.getZ()) < 25) || (!flag2 && cnt < 2)) && warp < 2) {
                         warp = 1;
                     }
 
@@ -313,7 +313,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
 
     public static void drawLinesPathfindNode(List<PathfindResult.PathfindNode> poses, AColor colour, float thickness, float partialTicks) {
         if (poses.size() == 0) return;
-        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
+        Entity render = Minecraft.getInstance().getCameraEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
         double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
@@ -330,7 +330,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
         GL11.glLineWidth(thickness);
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
-        if ((poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK ) && poses.get(0).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+        if ((poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK ) && poses.get(0).distanceSq(Minecraft.getInstance().player.getPosition()) < 100) {
             GlStateManager.disableDepth();
             GlStateManager.depthMask(false);
         }
@@ -356,7 +356,7 @@ public class ClassicPathDisplayEngine implements IPathDisplayEngine<ClassicPathE
                 worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
 
 
-                if ((pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK)&& pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+                if ((pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK)&& pos.distanceSq(Minecraft.getInstance().player.getPosition()) < 100) {
                     GlStateManager.disableDepth();
                     GlStateManager.depthMask(false);
                 } else {

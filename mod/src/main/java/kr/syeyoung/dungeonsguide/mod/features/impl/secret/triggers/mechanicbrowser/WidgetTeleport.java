@@ -45,7 +45,7 @@ public class WidgetTeleport extends AnnotatedWidget {
     @On(functionName = "navigate")
     public void navigate() {
         BlockPos pos = dungeonRoom.getMechanics().get(mechanic).getRepresentingPoint().getBlockPos(dungeonRoom);
-//        Minecraft.getMinecraft().thePlayer.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
+//        Minecraft.getInstance().player.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
         MinecraftServer.getServer().getEntityWorld().getClosestPlayer(0,0,0,1000000000).setPositionAndUpdate(pos.getX(),pos.getY(),pos.getZ());
     }
 }

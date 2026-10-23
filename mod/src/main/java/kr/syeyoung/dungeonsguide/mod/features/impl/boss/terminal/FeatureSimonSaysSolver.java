@@ -57,7 +57,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
             return;
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
-        if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(110,120,94) > 400) return;
+        if (Minecraft.getInstance().player.getPosition().distanceSq(110,120,94) > 400) return;
 
 
         if (orderClick.size() >= 1)

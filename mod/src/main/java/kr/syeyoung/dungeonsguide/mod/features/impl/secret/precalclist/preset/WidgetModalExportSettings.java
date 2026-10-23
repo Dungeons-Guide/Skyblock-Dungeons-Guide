@@ -158,11 +158,11 @@ public class WidgetModalExportSettings extends AnnotatedImportOnlyWidget {
 
                 if (includePrecalc) {
                     for (Tuple<String, File> srcFile : files) {
-                        FileInputStream fis = new FileInputStream(srcFile.getSecond());
-                        ZipEntry zipEntry = new ZipEntry("precalculations/"+srcFile.getFirst()+".pfres");
+                        FileInputStream fis = new FileInputStream(srcFile.getB());
+                        ZipEntry zipEntry = new ZipEntry("precalculations/"+srcFile.getA()+".pfres");
                         zipOut.putNextEntry(zipEntry);
 
-                        Files.copy(srcFile.getSecond().toPath(), zipOut);
+                        Files.copy(srcFile.getB().toPath(), zipOut);
 
                         fis.close();
 

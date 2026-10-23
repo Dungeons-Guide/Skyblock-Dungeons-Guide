@@ -276,10 +276,10 @@ public class FeatureDungeonMap2 extends AbstractHUDFeature {
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
             if (name == null) continue;
 
-            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
+            EntityPlayer entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
 
             overlays.add(new MapOverlayPlayer(playerInfo,
-                    entityplayer == Minecraft.getMinecraft().thePlayer ? mapConfiguration.getSelfSettings() : mapConfiguration.getTeammateSettings()));
+                    entityplayer == Minecraft.getInstance().player ? mapConfiguration.getSelfSettings() : mapConfiguration.getTeammateSettings()));
         }
 
         return overlays;

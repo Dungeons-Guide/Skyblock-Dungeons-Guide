@@ -97,6 +97,6 @@ public class PartyContext {
         return username.equalsIgnoreCase(partyOwner);
     }
     public boolean isSelfSolo() {
-        return hasLeader(Minecraft.getMinecraft().getSession().getUsername()) && getPartyRawMembers().size() == 1;
+        return hasLeader(Minecraft.getInstance().getSession().getUsername()) && getPartyRawMembers().size() == 1;
     }
 }

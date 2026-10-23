@@ -38,7 +38,7 @@ public class DataRendererTalismans extends DataRendererTalismanBase {
                 str = r.getColor() + rawData[r.getIndex()] +" "+ str;
             }
 
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         if (rawData == null)
             fr.drawString("§eTalis §cAPI DISABLED", 0,0,-1);
         else
@@ -53,20 +53,20 @@ public class DataRendererTalismans extends DataRendererTalismanBase {
             str = r.getColor() + (r.getIndex()+5)*2+" "+str;
         }
 
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         fr.drawString("§eTalis §f" + str, 0,0,-1);
         return new Dimension(100, fr.FONT_HEIGHT);
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT);
+        return new Dimension(100, Minecraft.getInstance().font.FONT_HEIGHT);
     }
 
     @Override
     public List<String> onHover(PlayerProfile playerProfile) {
         int[] rawData = getTalismanRarityTallies(playerProfile).orElse(null);
         if (rawData == null) return null;
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getInstance());
         List<String> list = new ArrayList<>();
 
         for (Rarity r : Rarity.values()) {

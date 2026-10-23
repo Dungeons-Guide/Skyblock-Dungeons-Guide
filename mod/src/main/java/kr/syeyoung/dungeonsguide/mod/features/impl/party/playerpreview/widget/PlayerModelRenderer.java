@@ -41,7 +41,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.ChatFormatting;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -126,7 +126,7 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
 
 
         String profileName = "on §6" + this.fakePlayer.getSkyblockProfile().getProfileName();
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         fr.drawString(profileName, (90 - fr.getStringWidth(profileName)) / 2, 15, -1);
         fr.drawString(toDraw, (90 - fr.getStringWidth(toDraw)) / 2, 10 - (fr.FONT_HEIGHT / 2), -1);
     }
@@ -155,13 +155,13 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
             }
         }
         if (toHover != null) {
-            List<String> list = toHover.getTooltip(Minecraft.getMinecraft().thePlayer,
-                    Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
+            List<String> list = toHover.getTooltip(Minecraft.getInstance().player,
+                    Minecraft.getInstance().options.advancedItemTooltips);
             for (int i = 0; i < list.size(); ++i) {
                 if (i == 0) {
                     list.set(i, toHover.getRarity().rarityColor + list.get(i));
                 } else {
-                    list.set(i, EnumChatFormatting.GRAY + list.get(i));
+                    list.set(i, ChatFormatting.GRAY + list.get(i));
                 }
             }
             actualTooltip.setTooltip(list);

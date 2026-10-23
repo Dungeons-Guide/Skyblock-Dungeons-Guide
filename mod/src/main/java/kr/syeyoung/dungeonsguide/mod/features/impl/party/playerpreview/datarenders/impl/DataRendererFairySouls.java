@@ -29,20 +29,20 @@ import java.util.List;
 public class DataRendererFairySouls implements IDataRenderer {
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         fr.drawString("§eFairy Souls §f"+playerProfile.getFairySouls(), 0,0,-1);
         return new Dimension(100, fr.FONT_HEIGHT);
     }
 
     @Override
     public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         fr.drawString("§eFairy Souls §f300", 0,0,-1);
         return new Dimension(100, fr.FONT_HEIGHT);
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT);
+        return new Dimension(100, Minecraft.getInstance().font.FONT_HEIGHT);
     }
 
     @Override

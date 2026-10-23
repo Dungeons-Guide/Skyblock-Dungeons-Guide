@@ -19,7 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams;
 
 import lombok.*;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 
 import java.util.*;
 
@@ -27,15 +28,16 @@ import java.util.*;
 public class Team {
     @Getter
     private final String teamName;
+    // the server's components, deep copies (D106)
     @Getter @Setter
-    private String prefix;
+    private Component prefix;
     @Getter @Setter
-    private String suffix;
+    private Component suffix;
     @Getter @Setter
-    private String displayName;
+    private Component displayName;
 
     @Getter @Setter
-    private EnumChatFormatting color;
+    private ChatFormatting color;
     @Getter @Setter
     private NameTagVisibility nameTagVisibility;
 

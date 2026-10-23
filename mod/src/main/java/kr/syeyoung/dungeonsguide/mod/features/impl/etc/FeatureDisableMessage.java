@@ -29,6 +29,7 @@ import lombok.Data;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 import java.util.regex.Pattern;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 public class FeatureDisableMessage extends SimpleFeature {
     @Data
@@ -69,7 +70,7 @@ public class FeatureDisableMessage extends SimpleFeature {
         if (clientChatReceivedEvent.type == 2) return;
         
         if (!SkyblockStatus.isOnSkyblock()) return;
-        String msg = clientChatReceivedEvent.message.getFormattedText();
+        String msg = TextUtils.getFormattedText(clientChatReceivedEvent.message);
         for (MessageData md:PRE_DEFINED) {
             if (this.<Boolean>getParameter(md.key).getValue() && md.pattern.matcher(msg).matches()) {
                 clientChatReceivedEvent.setCanceled(true);

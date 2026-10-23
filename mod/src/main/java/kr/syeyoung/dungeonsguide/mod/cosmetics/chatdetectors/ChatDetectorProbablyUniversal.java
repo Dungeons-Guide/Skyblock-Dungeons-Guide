@@ -21,10 +21,10 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.event.ClickEvent;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,14 +32,14 @@ import java.util.List;
 
 public class ChatDetectorProbablyUniversal implements IChatDetector {
     @Override
-    public List<ReplacementContext> getReplacementContext(IChatComponent chatComponent) {
-        String formatted = chatComponent.getFormattedText();
+    public List<ReplacementContext> getReplacementContext(Component chatComponent) {
+        String formatted = TextUtils.getFormattedText(chatComponent);
         if (!formatted.contains(": ")) return null;
 
 
         boolean correspondingEvFound = false;
-        for (IChatComponent iChatComponent : chatComponent) {
-            ClickEvent ev = iChatComponent.getChatStyle().getChatClickEvent();
+        for (Component iChatComponent : chatComponent) {
+            ClickEvent ev = iChatComponent.getStyle().getClickEvent();
             if (ev != null) {
                 if (ev.getValue().startsWith("/msg")) correspondingEvFound = true;
                 if (ev.getValue().startsWith("/socialoptions")) correspondingEvFound = true;
@@ -61,7 +61,7 @@ public class ChatDetectorProbablyUniversal implements IChatDetector {
                 }
                 continue label;
             }
-            if (potentialName.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername()))
+            if (potentialName.equalsIgnoreCase(Minecraft.getInstance().getSession().getUsername()))
                 return Collections.singletonList(new ReplacementContext(
                         name.length() - backLen, potentialName, null
                 ));

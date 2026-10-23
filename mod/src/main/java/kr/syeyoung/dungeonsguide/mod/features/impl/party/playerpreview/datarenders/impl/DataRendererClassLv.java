@@ -40,7 +40,7 @@ public class DataRendererClassLv implements IDataRenderer {
     }
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         ClassSpecificData<PlayerProfile.PlayerClassData> dungeonStatDungeonSpecificData = playerProfile.getPlayerClassData().get(dungeonClass);
         boolean selected = playerProfile.getSelectedClass() == dungeonClass;
         if (dungeonStatDungeonSpecificData == null) {
@@ -63,7 +63,7 @@ public class DataRendererClassLv implements IDataRenderer {
 
     @Override
     public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         fr.drawString(dungeonClass.getFamiliarName(), 0,0, 0xFF55ffff);
         fr.drawString("99", fr.getStringWidth(dungeonClass.getFamiliarName()+" "),0,0xFFFFFFFF);
         fr.drawString("★", fr.getStringWidth(dungeonClass.getFamiliarName()+" 99 "),0,0xFFAAAAAA);
@@ -72,7 +72,7 @@ public class DataRendererClassLv implements IDataRenderer {
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT*2);
+        return new Dimension(100, Minecraft.getInstance().font.FONT_HEIGHT*2);
     }
 
     @Override

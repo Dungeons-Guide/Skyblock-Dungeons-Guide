@@ -40,7 +40,7 @@ public class DataRendererDungeonLv implements IDataRenderer {
     }
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         DungeonSpecificData<DungeonStat> dungeonStatDungeonSpecificData = playerProfile.getDungeonStats().get(dungeonType);
         if (dungeonStatDungeonSpecificData == null) {
             fr.drawString(dungeonType.getFamiliarName(), 0,0, 0xFFFF5555);
@@ -58,7 +58,7 @@ public class DataRendererDungeonLv implements IDataRenderer {
 
     @Override
     public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         fr.drawString(dungeonType.getFamiliarName(), 0,0, 0xFFFF5555);
         fr.drawString("99", fr.getStringWidth(dungeonType.getFamiliarName()+" "),0,0xFFFFFFFF);
         RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,1.0f);
@@ -66,7 +66,7 @@ public class DataRendererDungeonLv implements IDataRenderer {
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT*2);
+        return new Dimension(100, Minecraft.getInstance().font.FONT_HEIGHT*2);
     }
 
     @Override

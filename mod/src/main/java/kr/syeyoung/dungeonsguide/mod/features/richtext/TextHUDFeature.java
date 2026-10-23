@@ -91,7 +91,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature {
     }
 
     public static FontRenderer getFontRenderer() {
-        return Minecraft.getMinecraft().fontRendererObj;
+        return Minecraft.getInstance().font;
     }
 
     @RequiredArgsConstructor

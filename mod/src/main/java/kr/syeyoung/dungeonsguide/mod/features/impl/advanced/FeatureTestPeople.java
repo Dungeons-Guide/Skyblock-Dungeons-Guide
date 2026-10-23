@@ -94,7 +94,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
         System.out.println("Broadcast was a self broadcast with: " + username);
         PartyManager.INSTANCE.getPartyContext().addDgUser(username);
 
-//                String actualPayload = "ACK" + random + ":" + username + ":" + Minecraft.getMinecraft().getSession().getUsername();
+//                String actualPayload = "ACK" + random + ":" + username + ":" + Minecraft.getInstance().getSession().getUsername();
 //                StompManager.getInstance().send(new StompPayload().header("destination", "/app/party.broadcast").payload(
 //                        new JSONObject().put("partyID", PartyManager.INSTANCE.getPartyContext().getPartyID())
 //                                .put("payload", actualPayload).toString()
@@ -103,7 +103,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 //            } else if (payload.startsWith("ACK")){
 //                String ACKnick = payload.substring(3);
 //                String[] nicks = ACKnick.split(":");
-//                if(Objects.equals(nicks[0], Minecraft.getMinecraft().getSession().getUsername())) {
+//                if(Objects.equals(nicks[0], Minecraft.getInstance().getSession().getUsername())) {
 //                    FeatureTestPeople.addACK(new Tuple<String, String>(nicks[1], nicks[2]));
 //                }
     }
@@ -127,7 +127,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
         }
         logger.info("Sending self broadcast");
 //        int control = (new Random()).nextInt(1000);
-        String actualPayload = "C:" + Minecraft.getMinecraft().getSession().getUsername() + ":" + 222;
+        String actualPayload = "C:" + Minecraft.getInstance().getSession().getUsername() + ":" + 222;
         StompManager.getInstance().send(new StompPayload().header("destination", "/app/party.broadcast").payload(
                 new JSONObject().put("partyID", PartyManager.INSTANCE.getPartyContext().getPartyID())
                         .put("payload", actualPayload).toString()
@@ -192,7 +192,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
         ItemStack stack = new ItemStack(Items.skull, 1, 3);
 
         executor.submit(() -> {
-            EntityPlayer playerEntityByName = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(username);
+            EntityPlayer playerEntityByName = Minecraft.getInstance().level.getPlayerEntityByName(username);
             if(playerEntityByName == null || playerEntityByName.getGameProfile() == null) {
                 stack.setTagCompound(new NBTTagCompound());
                 stack.getTagCompound().setTag("SkullOwner", new NBTTagString(username));
@@ -202,10 +202,10 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
             // this line should trick mineshaft to caching the player skin
             // im doing this bc just setting SkullOwner downloads the skin on the main thread
             // thus causing a lag spike
-            Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = Minecraft.getMinecraft().getSkinManager().loadSkinFromCache(playerEntityByName.getGameProfile());
+            Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = Minecraft.getInstance().getSkinManager().loadSkinFromCache(playerEntityByName.getGameProfile());
 
             if (map.containsKey(MinecraftProfileTexture.Type.SKIN)) {
-                Minecraft.getMinecraft().getSkinManager().loadSkin((MinecraftProfileTexture)map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
+                Minecraft.getInstance().getSkinManager().loadSkin((MinecraftProfileTexture)map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
             }
 
 
@@ -240,7 +240,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 
     @DGEventHandler()
     public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
-        String txt = clientChatReceivedEvent.message.getFormattedText();
+        String txt = TextUtils.getFormattedText(clientChatReceivedEvent.message);
         if (!txt.startsWith("§r§9Party §8>")) return;
 
         String chat = TextUtils.stripColor(txt.substring(txt.indexOf(":") + 1)).trim().toLowerCase();
@@ -309,7 +309,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
             String name = getPlayerNameWithChecks(tabListEntry);
             if (name == null) continue;
 
-            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
+            EntityPlayer entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
 
 
             if (entityplayer != null && (!entityplayer.isInvisible())) {
@@ -337,17 +337,17 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
         if(toDraw == null && !cachedProfiles.containsKey(stack.getName())){
             cachedProfiles.put(stack.getName(), false);
             new Thread(DungeonsGuide.THREAD_GROUP, () -> {
-                Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = Minecraft.getMinecraft().getSkinManager().loadSkinFromCache(stack);
+                Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = Minecraft.getInstance().getSkinManager().loadSkinFromCache(stack);
 
                 if (map.containsKey(MinecraftProfileTexture.Type.SKIN)) {
 
                     MinecraftProfileTexture profileTexture =  map.get(MinecraftProfileTexture.Type.SKIN);
 
                     final Identifier resourceLocation = Identifier.parse("skins/" + profileTexture.getHash());
-                    ITextureObject iTextureObject = Minecraft.getMinecraft().getTextureManager().getTexture(resourceLocation);
+                    ITextureObject iTextureObject = Minecraft.getInstance().getTextureManager().getTexture(resourceLocation);
                     if (iTextureObject == null) {
 
-                        String skinCacheDir = ReflectionHelper.getPrivateValue(SkinManager.class, Minecraft.getMinecraft().getSkinManager(), "field_152796_d", "skinCacheDir");
+                        String skinCacheDir = ReflectionHelper.getPrivateValue(SkinManager.class, Minecraft.getInstance().getSkinManager(), "field_152796_d", "skinCacheDir");
 
                         File file = new File(skinCacheDir, profileTexture.getHash().length() > 2 ? profileTexture.getHash().substring(0, 2) : "xx");
                         File file2 = new File(file, profileTexture.getHash());
@@ -368,7 +368,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
                                 }
                             }
                         });
-                        Minecraft.getMinecraft().getTextureManager().loadTexture(resourceLocation, threadDownloadImageData);
+                        Minecraft.getInstance().getTextureManager().loadTexture(resourceLocation, threadDownloadImageData);
                     }
                 }
 
@@ -407,8 +407,8 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
             Gui.drawRect(15 + xOffset, 5 + y, fr.getStringWidth(partyRawMember + genPlayerText(partyRawMember)) + 20 + xOffset, 15 + y, getColorTextColor(partyRawMember));
 
             RenderHelper.enableStandardItemLighting();
-            renderItem(Minecraft.getMinecraft().theWorld.getPlayerEntityByName(partyRawMember).getGameProfile(), 0, y + 1);
-//            Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(getSkullByUserName(partyRawMember), 0, y + 1);
+            renderItem(Minecraft.getInstance().level.getPlayerEntityByName(partyRawMember).getGameProfile(), 0, y + 1);
+//            Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(getSkullByUserName(partyRawMember), 0, y + 1);
             RenderHelper.disableStandardItemLighting();
 
             fr.drawString(partyRawMember, 15 + xOffset, y + 5, 0xffffff);
@@ -420,7 +420,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 
                 GlStateManager.translate(xOffset + 5, y + 3.5F, 200F);
                 GlStateManager.scale(0.32F, 0.32F, 1F);
-                Minecraft.getMinecraft().getTextureManager().bindTexture(logoLoc);
+                Minecraft.getInstance().getTextureManager().bindTexture(logoLoc);
                 Gui.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 32, 32, 32, 32);
             }
 
@@ -433,7 +433,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
     }
 
     private boolean isDgUser(String partyRawMember) {
-        if (Objects.equals(partyRawMember, Minecraft.getMinecraft().getSession().getUsername())) return true;
+        if (Objects.equals(partyRawMember, Minecraft.getInstance().getSession().getUsername())) return true;
         return PartyManager.INSTANCE.getPartyContext().isDgUser(partyRawMember);
     }
 
@@ -452,7 +452,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
     String genPlayerText(String username) {
 
         if (SkyblockStatus.isOnDungeon()) {
-            if (Objects.equals(username, Minecraft.getMinecraft().getSession().getUsername())) {
+            if (Objects.equals(username, Minecraft.getInstance().getSession().getUsername())) {
                 return ": In Dungeon";
             } else if (isPlayerInDungeon(username)) {
                 return ": In Dungeon";

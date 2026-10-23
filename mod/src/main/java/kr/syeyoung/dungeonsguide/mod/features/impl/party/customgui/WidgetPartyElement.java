@@ -32,7 +32,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.ChatFormatting;
 import net.minecraft.resources.Identifier;
 
 import java.util.List;
@@ -150,12 +150,12 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
 
     public MinecraftTooltip createTooltip() {
         if (party == null) return new MinecraftTooltip();
-        List<String> toHover = party.itemStack.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
+        List<String> toHover = party.itemStack.getTooltip(Minecraft.getInstance().player, Minecraft.getInstance().options.advancedItemTooltips);
         for (int i = 0; i < toHover.size(); ++i) {
             if (i == 0) {
                 toHover.set(i, party.itemStack.getRarity().rarityColor + toHover.get(i));
             } else {
-                toHover.set(i, EnumChatFormatting.GRAY + toHover.get(i));
+                toHover.set(i, ChatFormatting.GRAY + toHover.get(i));
             }
         }
 

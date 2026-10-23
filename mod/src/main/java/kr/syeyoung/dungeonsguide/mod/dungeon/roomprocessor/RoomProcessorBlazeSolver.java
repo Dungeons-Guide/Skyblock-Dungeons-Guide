@@ -111,7 +111,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
         Vec3 pos = next.getPositionEyes(partialTicks);
         RenderUtils.drawTextAtWorld("NEXT", (float)pos.xCoord, (float)pos.yCoord, (float)pos.zCoord, 0xFFFF0000, 0.5f, true, false, partialTicks);
 
-        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
+        Entity viewing_from = Minecraft.getInstance().getCameraEntity();
 
         double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
         double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
@@ -140,7 +140,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
             GlStateManager.translate(-x_fix, -y_fix, -z_fix);
 
             GlStateManager.colorMask(false, false, false, false);
-            Minecraft.getMinecraft().getRenderManager().doRenderEntity(entity, x,y,z,f,partialTicks, true);
+            Minecraft.getInstance().getEntityRenderDispatcher().doRenderEntity(entity, x,y,z,f,partialTicks, true);
             GlStateManager.colorMask(true, true, true, true);
 
             GlStateManager.popMatrix();
@@ -172,7 +172,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
                 GlStateManager.scale(1.1f, 1.1f, 1.1f);
 
                 GlStateManager.colorMask(false, false, false, false);
-                Minecraft.getMinecraft().getRenderManager().doRenderEntity(entity, 0, -0.7, 0, f, partialTicks, true);
+                Minecraft.getInstance().getEntityRenderDispatcher().doRenderEntity(entity, 0, -0.7, 0, f, partialTicks, true);
                 GlStateManager.colorMask(true, true, true, true);
 
                 GlStateManager.popMatrix();

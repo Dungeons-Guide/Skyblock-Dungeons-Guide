@@ -79,7 +79,7 @@ public class VersionInfo {
                 if (latestUpdate.getId() == loader.getUpdateId()) return;
 
                 Scaler scaler = new Scaler();
-                scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+                scaler.scale.setValue((double) new ScaledResolution(Minecraft.getInstance()).getScaleFactor());
                 scaler.child.setValue(new WidgetUpdateLog(
                         latestUpdate.getName(), latestUpdate.getUpdateLog(), true
                 ));
@@ -122,7 +122,7 @@ public class VersionInfo {
                 logger.info("Update Required!!");
 
                 Scaler scaler = new Scaler();
-                scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+                scaler.scale.setValue((double) new ScaledResolution(Minecraft.getInstance()).getScaleFactor());
                 scaler.child.setValue(new WidgetUpdateLog(
                         latestUpdate.getName(), latestUpdate.getUpdateLog(), autoupdate
                 ));

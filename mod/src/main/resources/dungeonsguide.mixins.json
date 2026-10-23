@@ -3,6 +3,7 @@
   "package": "kr.syeyoung.dungeonsguide.mod.mixin",
   "compatibilityLevel": "JAVA_25",
   "client": [
+    "ClientChunkCacheMixin",
     "ConnectionMixin",
     "EntityRenderDispatcherMixin",
     "FogRendererMixin",

@@ -245,6 +245,7 @@ public class FeatureRegistry {
     public static final FeatureDebuggableMap ADVANCED_DEBUGGABLE_MAP = register(new FeatureDebuggableMap());
     public static final FeatureRoomCoordDisplay ADVANCED_COORDS = register(new FeatureRoomCoordDisplay());
     public static final FeatureDebugTrap ADVANCED_BAT = register(new FeatureDebugTrap());
+    public static final FeatureChatCapture DEBUG_CHAT_CAPTURE = register(new FeatureChatCapture());
 
     public static final SimpleFeature DEBUG_BLOCK_CACHING = register(new SimpleFeature("Debug","Enable block getBlockCaching", "Cache all world.getBlockState callls", "debug.blockcache"));
 
@@ -322,7 +323,6 @@ public class FeatureRegistry {
     public static final FeatureDecreaseExplosionSound ETC_EXPLOSION_SOUND = register(new FeatureDecreaseExplosionSound());
 
     public static final FeatureUpdateAlarm ETC_TEST = register(new FeatureUpdateAlarm());
-    public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("Misc", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
     public static final SimpleFeature DG_INDICATOR = register(new SimpleFeature("Misc", "DG Indicator", "Indicator for people who uses dg on tab and nametag", "misc.dgindicator", true));
 
     public static final FeaturePressAnyKeyToCloseChest DUNGEON_CLOSECHEST = register(new FeaturePressAnyKeyToCloseChest());

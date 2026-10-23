@@ -150,7 +150,7 @@ public class DiscordIntegrationManager implements IPCListener {
         JSONObject data = packet.getJson().getJSONObject("data");
         JDiscordRelation relation = JDiscordRelation.parse(data);
         JDiscordRelation old = relationMap.put(relation.getDiscordUser().getIdLong(), relation);
-        Minecraft.getMinecraft().addScheduledTask(() -> {
+        Minecraft.getInstance().execute(() -> {
             DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DiscordUserUpdateEvent(old, relation));
         });
     }
@@ -164,7 +164,7 @@ public class DiscordIntegrationManager implements IPCListener {
                         .getString("id")),
                 data.getJSONObject("user")
                         .getString("avatar"));
-        Minecraft.getMinecraft().addScheduledTask(() -> {
+        Minecraft.getInstance().execute(() -> {
             DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DiscordUserJoinRequestEvent(user));
         });
     }
@@ -172,7 +172,7 @@ public class DiscordIntegrationManager implements IPCListener {
         JSONObject data = packet.getJson().getJSONObject("data");
         if (!data.getJSONObject("activity").getString("application_id").equals("816298079732498473"))
             return;
-        Minecraft.getMinecraft().addScheduledTask(() -> {
+        Minecraft.getInstance().execute(() -> {
             DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new DiscordUserInvitedEvent(
                     new User(data.getJSONObject("user")
                             .getString("username"),

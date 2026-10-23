@@ -76,11 +76,11 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     public void onTick(DGTickEvent tickEvent) {
         if (!isEnabled()) return;
         if (!isCorrectGui) return;
-        if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) {
+        if (!(Minecraft.getInstance().screen instanceof GuiChest)) {
             isCorrectGui = false;
             return;
         }
-        ContainerChest cc = (ContainerChest) ((GuiChest) Minecraft.getMinecraft().currentScreen).inventorySlots;
+        ContainerChest cc = (ContainerChest) ((GuiChest) Minecraft.getInstance().screen).inventorySlots;
         int[] currSlot = new int[9];
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
@@ -146,7 +146,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     @DGEventHandler
     public void onGuiPostRender(ScreenRenderEvent.Post rendered) {
         if (!isCorrectGui) return;
-        if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) {
+        if (!(Minecraft.getInstance().screen instanceof GuiChest)) {
             isCorrectGui = false;
             return;
         }
@@ -154,7 +154,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
         if (solution != null) {
             int i = 222;
             int j = i - 108;
-            ContainerChest container = (ContainerChest) (((GuiChest) Minecraft.getMinecraft().currentScreen).inventorySlots);
+            ContainerChest container = (ContainerChest) (((GuiChest) Minecraft.getInstance().screen).inventorySlots);
             IInventory inventory  = container.getLowerChestInventory();
             int ySize = j + (inventory.getSizeInventory() / 9) * 18;
             int left = (rendered.gui.width - 176) / 2;
@@ -172,7 +172,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
                     Slot currSlot = container.getSlot(slotId);
                     int rx = currSlot.xDisplayPosition;
                     int ry = currSlot.yDisplayPosition;
-                    Minecraft.getMinecraft().fontRendererObj
+                    Minecraft.getInstance().font
                             .drawString(String.valueOf(clicks), rx, ry, 0xFF00FF00);
                 }
             }
@@ -190,7 +190,7 @@ public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
         if (Mouse.getEventButton() == -1) return;
         if (!isCorrectGui) return;
 
-        GuiChest chest = (GuiChest) Minecraft.getMinecraft().currentScreen;
+        GuiChest chest = (GuiChest) Minecraft.getInstance().screen;
 
 //        if (Mouse.getEventButton())
 

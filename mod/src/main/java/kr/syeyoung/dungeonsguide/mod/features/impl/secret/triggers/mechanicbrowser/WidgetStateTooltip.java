@@ -52,9 +52,9 @@ public class WidgetStateTooltip extends AnnotatedWidget {
             widgetList.add(new WidgetState(dungeonRoom, mechanicId, s));
         }
 
-        if ((Minecraft.getMinecraft().playerController.getCurrentGameType() == WorldSettings.GameType.CREATIVE
-                || Minecraft.getMinecraft().playerController.getCurrentGameType() == WorldSettings.GameType.SPECTATOR)&&
-                Minecraft.getMinecraft().isIntegratedServerRunning()) {
+        if ((Minecraft.getInstance().gameMode.getCurrentGameType() == WorldSettings.GameType.CREATIVE
+                || Minecraft.getInstance().gameMode.getCurrentGameType() == WorldSettings.GameType.SPECTATOR)&&
+                Minecraft.getInstance().hasSingleplayerServer()) {
             widgetList.add(new WidgetTeleport(dungeonRoom, mechanicId));
         }
 

@@ -68,7 +68,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -84,17 +84,19 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import net.minecraft.network.chat.Component;
+import java.io.IOException;
 
 public class CommandDgDebug {
     @DGCommand("dgdebug")
     @DGCommand("dgdebug help")
     public void showHelp() {
-        ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand."));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
+        ChatTransmitter.addToQueue(Component.literal("ain't gonna find much anything here"));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand."));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
     }
 
     @DGCommand("dgdebug freeze")
@@ -271,7 +273,7 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug mockdungeonstart {time}")
     public void mockDungeonStartCommand(int time) {
-        if (!Minecraft.getMinecraft().isSingleplayer()) {
+        if (!Minecraft.getInstance().isSingleplayer()) {
             ChatTransmitter.addToQueue("This only works in singlepauer", false);
             return;
         }
@@ -305,7 +307,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug saverooms")
     public void saveRoomsCommand() {
         DungeonRoomInfoRegistry.saveAll(new File(Main.getConfigDir(), "roomdatas"));
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata"));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata"));
     }
 
     @DGCommand("dgdebug process2")
@@ -313,8 +315,8 @@ public class CommandDgDebug {
 
         GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(new OnboardingPage("pages/front.gui")), null, false);
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                Minecraft.getMinecraft().displayGuiScreen(adapter);
+            Minecraft.getInstance().execute(() -> {
+                Minecraft.getInstance().setScreen(adapter);
             });
         }).start();
         String features = "advanced.coords,dungeon.map2,secret.actionview,bossfight.health,bossfight.spiritbear,bossfight.spiritbowdisplay,bossfight.terracota,bossfight.phasedisplay,party.list,party.readylist,secret.fairysoulwarn,dungen.watcherwarn,dungeon.lowhealthwarn,dungeon.stats.score,dungeon.stats.tombs,dungeon.stats.totaltombs,dungeon.stats.secretsroom,dungeon.stats.secrets,dungeon.stats.igtime,dungeon.stats.realtime,dungeon.stats.milestone,dungeon.stats.deaths,dungeon.roomname,etc.abilitycd2,qol.cooldown";
@@ -372,20 +374,20 @@ public class CommandDgDebug {
     public void loadRoomsCommand() {
         try {
             DungeonRoomInfoRegistry.loadAll(new File(Main.getConfigDir(), "roomdatas"));
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully loaded roomdatas"));
+            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fSuccessfully loaded roomdatas"));
             return;
         } catch (BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException |
                  NoSuchAlgorithmException | IOException | IllegalBlockSizeException |
                  NoSuchPaddingException e) {
             e.printStackTrace();
         }
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cAn error has occurred while loading roomdata"));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cAn error has occurred while loading roomdata"));
     }
 
     @DGCommand("dgdebug brand")
     public void brandCommand() {
-        String serverBrand = Minecraft.getMinecraft().thePlayer.getClientBrand();
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
+        String serverBrand = Minecraft.getInstance().player.getClientBrand();
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §e" + serverBrand));
     }
 
     @DGCommand("dgdebug removedoors")
@@ -1050,7 +1052,7 @@ public class CommandDgDebug {
     public static class MechanicNameSuggestor implements SuggestionProvider<FabricClientCommandSource> {
         public CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> commandContext, SuggestionsBuilder suggestionsBuilder) {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return suggestionsBuilder.buildFuture();
             }
@@ -1067,7 +1069,7 @@ public class CommandDgDebug {
     public static class StateSuggestor implements SuggestionProvider<FabricClientCommandSource> {
         public CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> commandContext, SuggestionsBuilder suggestionsBuilder) {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return suggestionsBuilder.buildFuture();
             }
@@ -1091,7 +1093,7 @@ public class CommandDgDebug {
                                 @CommandParam(value = "state", suggestionProvider = StateSuggestor.class) String state) {
         try {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return;
             }
@@ -1260,12 +1262,12 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug partyid")
     public void partyIdCommand() {
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: " + Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(null)));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fInternal Party id: " + Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(null)));
     }
 
     @DGCommand("dgdebug loc")
     public void locCommand() {
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fYou're in " + SkyblockStatus.getLocationName()));
+        ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fYou're in " + SkyblockStatus.getLocationName()));
     }
 
     @DGCommand("dgdebug saverun")
@@ -1279,7 +1281,7 @@ public class CommandDgDebug {
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null) {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't find dungeon to save!"));
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cCouldn't find dungeon to save!"));
                 return;
             }
             DungeonEventHolder dungeonEventHolder = new DungeonEventHolder();
@@ -1292,9 +1294,9 @@ public class CommandDgDebug {
             oos.writeObject(dungeonEventHolder);
             oos.flush();
             oos.close();
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved dungeon run to " + runFile.getAbsolutePath()));
+            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fSuccessfully saved dungeon run to " + runFile.getAbsolutePath()));
         } catch (Exception e) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cAn error occured while writing rundata " + e.getMessage()));
+            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cAn error occured while writing rundata " + e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -1303,7 +1305,7 @@ public class CommandDgDebug {
     public void requestStaticResource(String uuid) {
         UUID uid = UUID.fromString(uuid);
         StaticResourceCache.INSTANCE.getResource(uid).thenAccept(a -> {
-            ChatTransmitter.addToQueue(new ChatComponentText(a.getResourceID() + ": " + a.getValue() + ": " + a.isExists()));
+            ChatTransmitter.addToQueue(Component.literal(a.getResourceID() + ": " + a.getValue() + ": " + a.isExists()));
         });
     }
 
@@ -1380,7 +1382,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug readmap {fromX} {fromY}")
     public void readMapCommand(int fromX, int fromY) {
         try {
-            ChatTransmitter.addToQueue(new ChatComponentText(MapUtils.readDigit(MapUtils.getColors(), fromX, fromY) + "-"));
+            ChatTransmitter.addToQueue(Component.literal(MapUtils.readDigit(MapUtils.getColors(), fromX, fromY) + "-"));
 /*                int cntY = Integer.parseInt(args[3]);
                 int target = Integer.parseInt(args[4]);
                 StringBuilder sb = new StringBuilder("{");
@@ -1405,28 +1407,44 @@ public class CommandDgDebug {
     public void testGuiCommand() {
         GuiScreenAdapter adapter = new GuiScreenAdapter(new TestView());
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                Minecraft.getMinecraft().displayGuiScreen(adapter);
+            Minecraft.getInstance().execute(() -> {
+                Minecraft.getInstance().setScreen(adapter);
             });
         }).start();
     }
 
+    // D104: records what the server sends as chat / action bar / titles
+    @DGCommand("dgdebug chatcapture")
+    public void chatCaptureCommand() {
+        try {
+            if (FeatureRegistry.DEBUG_CHAT_CAPTURE.isCapturing()) {
+                FeatureRegistry.DEBUG_CHAT_CAPTURE.stop();
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fChat capture stopped: " + FeatureRegistry.DEBUG_CHAT_CAPTURE.getFile().getAbsolutePath()));
+            } else {
+                FeatureRegistry.DEBUG_CHAT_CAPTURE.start();
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fCapturing chat to " + FeatureRegistry.DEBUG_CHAT_CAPTURE.getFile().getAbsolutePath()));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @DGCommand("dgdebug clearprofile")
     public void clearProfileCommand() {
-        Minecraft.getMinecraft().mcProfiler.clearProfiling();
+        Minecraft.getInstance().mcProfiler.clearProfiling();
     }
 
     @DGCommand("dgdebug fullbright {gamma}")
     @DGCommand("dgdebug gimmebright {gamma}")
     public void fullBrightCommand(int gamma) {
-        Minecraft.getMinecraft().gameSettings.setOptionFloatValue(GameSettings.Options.GAMMA, gamma);
+        Minecraft.getInstance().options.setOptionFloatValue(GameSettings.Options.GAMMA, gamma);
     }
 
     @DGCommand("dgdebug pfall")
     public void pFallCommand() {
         try {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return;
             }
@@ -1451,7 +1469,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug partycollection {otherPlayerName} {fragbot} {offline}")
     public void partyCollectionCommand(String otherPlayerName, String fragbot, String offline) {
 
-        String sourcePlayer = Minecraft.getMinecraft().thePlayer.getName();
+        String sourcePlayer = Minecraft.getInstance().player.getName();
         String targetPlayer = otherPlayerName;
         String thirdPlayer = fragbot;
         String offlinePlayer = offline;

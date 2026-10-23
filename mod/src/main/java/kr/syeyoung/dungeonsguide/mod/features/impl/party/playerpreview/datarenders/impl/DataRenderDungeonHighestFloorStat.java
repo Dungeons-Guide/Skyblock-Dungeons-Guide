@@ -41,7 +41,7 @@ public class DataRenderDungeonHighestFloorStat implements IDataRenderer {
 
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
 
         boolean flag = false;
         DungeonSpecificData<DungeonStat> dungeonStatDungeonSpecificData = playerProfile.getDungeonStats().get(dungeonType);
@@ -66,7 +66,7 @@ public class DataRenderDungeonHighestFloorStat implements IDataRenderer {
 
     @Override
     public Dimension renderDummy() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getInstance().font;
         String floorName = (dungeonType == DungeonType.CATACOMBS ? "F" : "M") + "9";
 
 
@@ -77,7 +77,7 @@ public class DataRenderDungeonHighestFloorStat implements IDataRenderer {
 
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT*2);
+        return new Dimension(100, Minecraft.getInstance().font.FONT_HEIGHT*2);
     }
 
     @Override

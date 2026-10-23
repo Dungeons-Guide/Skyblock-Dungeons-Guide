@@ -22,11 +22,12 @@ import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.chat.MutableComponent;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.Set;
+import net.minecraft.network.chat.Component;
 
 
 // This class is responsible for matching the world to hand held map.
@@ -51,14 +52,14 @@ public class DungeonMapConstantRetriever {
         BlockPos worldMin = obtainWorldMin(mapData, firstRoom, mapOriginPoint, mapDoorDimension,
                 mapDoorDirection, worldDoorDirection, worldDoorLocation);
 
-        ChatTransmitter.sendDebugChat(new ChatComponentText("door Pos:" + worldDoorDirection));
+        ChatTransmitter.sendDebugChat(Component.literal("door Pos:" + worldDoorDirection));
 
 
-        ChatTransmitter.sendDebugChat(new ChatComponentText("Found Green room:" + firstRoom));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("World Min:" + worldMin));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("Dimension:" + unitRoomSize));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("top Left:" + mapOriginPoint));
-        ChatTransmitter.sendDebugChat(new ChatComponentText("door dimension:" + mapDoorDimension));
+        ChatTransmitter.sendDebugChat(Component.literal("Found Green room:" + firstRoom));
+        ChatTransmitter.sendDebugChat(Component.literal("World Min:" + worldMin));
+        ChatTransmitter.sendDebugChat(Component.literal("Dimension:" + unitRoomSize));
+        ChatTransmitter.sendDebugChat(Component.literal("top Left:" + mapOriginPoint));
+        ChatTransmitter.sendDebugChat(Component.literal("door dimension:" + mapDoorDimension));
         return new DungeonMapLayout(unitRoomSize, mapRoomGap, mapOriginPoint, worldMin);
     }
 

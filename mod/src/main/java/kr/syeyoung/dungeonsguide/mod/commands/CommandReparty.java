@@ -26,11 +26,12 @@ import com.mojang.brigadier.Command;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RegisterCommandEvent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.chat.MutableComponent;
 
 import java.util.stream.Collectors;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
+import net.minecraft.network.chat.Component;
 
 public class CommandReparty {
     private String command;
@@ -45,7 +46,7 @@ public class CommandReparty {
         if (!FeatureRegistry.ETC_REPARTY.isEnabled()) return;
         event.dispatcher.register(literal(command).executes(ctx -> {
             if (!requestReparty(false)) {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cRepartying..."));
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cRepartying..."));
             }
             return Command.SINGLE_SUCCESS;
         }));
@@ -63,30 +64,30 @@ public class CommandReparty {
         PartyManager.INSTANCE.requestPartyList(pc -> {
             if (pc == null) {
                 if (!noerror)
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou are not in a Party!"));
+                    ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cYou are not in a Party!"));
                 reparting = false;
                 return;
             }
-            if (!pc.hasLeader(Minecraft.getMinecraft().getSession().getUsername())) {
+            if (!pc.hasLeader(Minecraft.getInstance().getSession().getUsername())) {
                 if (!noerror)
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou're not the leader"));
+                    ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cYou're not the leader"));
                 reparting = false;
                 return;
             }
             if (pc.isSelfSolo()) {
                 if (!noerror)
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou can not reparty yourself"));
+                    ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cYou can not reparty yourself"));
                 reparting = false;
                 return;
             }
-            String members = pc.getPartyRawMembers().stream().filter(a -> !a.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername())).collect(Collectors.joining(" "));
+            String members = pc.getPartyRawMembers().stream().filter(a -> !a.equalsIgnoreCase(Minecraft.getInstance().getSession().getUsername())).collect(Collectors.joining(" "));
             String command = "/p invite "+members;
 
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eDisbanding Party..."));
+            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §eDisbanding Party..."));
             ChatProcessor.INSTANCE.addToChatQueue("/p disband", () -> {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eRunning invite command §f"+command));
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §eRunning invite command §f"+command));
                 ChatProcessor.INSTANCE.addToChatQueue(command, () -> {
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eSuccessfully repartied!§f"));
+                    ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §eSuccessfully repartied!§f"));
 
                     reparting = false;
                 }, false);

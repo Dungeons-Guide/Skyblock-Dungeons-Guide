@@ -33,7 +33,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -71,7 +71,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(Component chat) {
 
     }
 
@@ -81,7 +81,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     }
 
     @Override
-    public void actionbarReceived(IChatComponent chat) {
+    public void actionbarReceived(Component chat) {
 
     }
     @Override
@@ -105,8 +105,8 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     }
 
     protected void drawPressKey() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+        FontRenderer fr = Minecraft.getInstance().font;
+        ScaledResolution sr = new ScaledResolution(Minecraft.getInstance());
         String str = "Press "+ FeatureRegistry.SOLVER_BOMBDEFUSE.<InputConstants.Key>getParameter("key").getValue().getDisplayName().getString() + " to save and send solution";
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -117,7 +117,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     @Override
     public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
         if (keyInputEvent.getKey().equals(FeatureRegistry.SOLVER_BOMBDEFUSE.<InputConstants.Key>getParameter("key").getValue())) {
-            if (!getChamber().isWithinAbsolute(Minecraft.getMinecraft().thePlayer.getPosition())) {
+            if (!getChamber().isWithinAbsolute(Minecraft.getInstance().player.getPosition())) {
                 return;
             }
             onSendData();

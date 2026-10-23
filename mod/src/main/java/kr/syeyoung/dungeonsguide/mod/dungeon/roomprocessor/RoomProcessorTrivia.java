@@ -29,8 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONObject;
 
@@ -52,23 +52,23 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
 
     private boolean parseDialog = false;
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(Component chat) {
         super.chatReceived(chat);
         if (!FeatureRegistry.SOLVER_KAHOOT.isEnabled()) return;
-        String ch2 = chat.getUnformattedText();
+        String ch2 = chat.getString();
         if (parseDialog) {
             parseDialog = false;
             parseDialog();
         }
-        if (chat.getFormattedText().contains("§r§6§lQuestion ")) {
+        if (TextUtils.getFormattedText(chat).contains("§r§6§lQuestion ")) {
             questionDialogStart = true;
             questionDialog.clear();
         }
-        if (questionDialogStart && (chat.getFormattedText().startsWith("§r§f   ") || chat.getFormattedText().trim().startsWith("§r§6 "))) {
-            questionDialog.add(chat.getFormattedText());
+        if (questionDialogStart && (TextUtils.getFormattedText(chat).startsWith("§r§f   ") || TextUtils.getFormattedText(chat).trim().startsWith("§r§6 "))) {
+            questionDialog.add(TextUtils.getFormattedText(chat));
         }
 
-        if (chat.getFormattedText().contains("§r§6 ⓒ")) {
+        if (TextUtils.getFormattedText(chat).contains("§r§6 ⓒ")) {
             questionDialogStart = false;
             parseDialog = true;
         }
@@ -106,11 +106,11 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
                 else theRealAnswer = semi_answers;
             }
             if (theRealAnswer == null)
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! (no question found)"));
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! (no question found)"));
             else if (theRealAnswer.length() >1)
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! ("+theRealAnswer+")"));
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! ("+theRealAnswer+")"));
             else
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: "+theRealAnswer+"§f is the correct answer!"));
+                ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §eTrivia §7:: "+theRealAnswer+"§f is the correct answer!"));
             correctAnswer = theRealAnswer;
         });
     }
@@ -118,7 +118,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     private String takeCareOfPlaceHolders(String input) {
         String str = input;
         if (str.contains("$year")) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §fuses §eInventiveTalent§7(https://github.com/InventivetalentDev)§e's Skyblock Api §fto fetch current skyblock year!"));
+            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §fuses §eInventiveTalent§7(https://github.com/InventivetalentDev)§e's Skyblock Api §fto fetch current skyblock year!"));
             try {
                 str = str.replace("$year", SkyblockUtils.getSkyblockYear()+"");
             } catch (IOException e) {

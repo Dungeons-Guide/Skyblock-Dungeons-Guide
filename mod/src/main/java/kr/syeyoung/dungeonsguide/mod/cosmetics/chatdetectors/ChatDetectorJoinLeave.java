@@ -20,15 +20,15 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors;
 
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.Collections;
 import java.util.List;
 
 public class ChatDetectorJoinLeave implements IChatDetector {
     @Override
-    public List<ReplacementContext> getReplacementContext(IChatComponent chatComponent) {
-        String formatted = chatComponent.getFormattedText();
+    public List<ReplacementContext> getReplacementContext(Component chatComponent) {
+        String formatted = TextUtils.getFormattedText(chatComponent);
         if (formatted.startsWith("§aFriend > §r")) {
             if (formatted.endsWith("§r§eleft.§r") || formatted.endsWith("§r§ejoined.§r")) {
                 String strip = TextUtils.stripColor(formatted);

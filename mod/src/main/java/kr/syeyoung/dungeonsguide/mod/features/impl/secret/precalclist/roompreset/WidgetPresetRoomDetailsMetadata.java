@@ -93,7 +93,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
 
                 WidgetViewPreset.calculator.submit(() -> {
                     roomInfo.rematchWithRoomPreset();
-                    Minecraft.getMinecraft().addScheduledTask(() -> {
+                    Minecraft.getInstance().execute(() -> {
                         details.refresh();
                     });
                 });
@@ -116,7 +116,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
                     }
 
                     roomInfo.rematchWithRoomPreset();
-                    Minecraft.getMinecraft().addScheduledTask(() -> {
+                    Minecraft.getInstance().execute(() -> {
                         details.refresh();
                     });
                 });
@@ -139,7 +139,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
                     }
 
                     roomInfo.rematchWithRoomPreset();
-                    Minecraft.getMinecraft().addScheduledTask(() -> {
+                    Minecraft.getInstance().execute(() -> {
                         details.refresh();
                     });
                 });
@@ -162,7 +162,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
             }
 
             roomInfo.rematchWithRoomPreset();
-            Minecraft.getMinecraft().addScheduledTask(() -> {
+            Minecraft.getInstance().execute(() -> {
                 details.refresh();
             });
         });
@@ -176,7 +176,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
 
         WidgetViewPreset.calculator.submit(() -> {
             roomInfo.rematchWithRoomPreset();
-            Minecraft.getMinecraft().addScheduledTask(() -> {
+            Minecraft.getInstance().execute(() -> {
                 details.refresh();
             });
         });
@@ -195,7 +195,7 @@ public class WidgetPresetRoomDetailsMetadata extends AnnotatedImportOnlyWidget {
 
                 WidgetViewPreset.calculator.submit(() -> {
                     roomInfo.rematchWithRoomPreset();
-                    Minecraft.getMinecraft().addScheduledTask(() -> {
+                    Minecraft.getInstance().execute(() -> {
                         details.refresh();
                     });
                 });

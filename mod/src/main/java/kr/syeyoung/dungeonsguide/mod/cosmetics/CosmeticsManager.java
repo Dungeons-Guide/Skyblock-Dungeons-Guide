@@ -39,8 +39,8 @@ import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerNameFormatEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
@@ -197,8 +197,8 @@ public class CosmeticsManager {
 
                 activeCosmeticMap.put(cosmeticData.getActivityUID(), cosmeticData);
                 try {
-                    if (Minecraft.getMinecraft().theWorld != null) {
-                        EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(cosmeticData.getPlayerUID());
+                    if (Minecraft.getInstance().level != null) {
+                        EntityPlayer entityPlayer = Minecraft.getInstance().level.getPlayerEntityByUUID(cosmeticData.getPlayerUID());
                         if (entityPlayer != null) entityPlayer.refreshDisplayName();
                     }
                 } catch (Exception exception) {
@@ -277,7 +277,7 @@ public class CosmeticsManager {
 
             List<ReplacementContext> replacementContexts = threadCtx.pop();
 
-            LinkedList<IChatComponent> chatComponents = SurgicalReplacer.linearifyMoveColorCharToStyle(clientChatReceivedEvent.message);
+            LinkedList<Component> chatComponents = SurgicalReplacer.linearifyMoveColorCharToStyle(clientChatReceivedEvent.message);
             for (ReplacementContext replacementContext : replacementContexts) {
                 if (replacementContext.getUsername().isEmpty()) continue;
                 List<ActiveCosmetic> activeCosmetics = getActiveCosmeticByPlayerNameLowerCase()
@@ -310,8 +310,8 @@ public class CosmeticsManager {
 
 
                 StringBuilder sb = new StringBuilder();
-                for (IChatComponent chatComponent : chatComponents) {
-                    String str = chatComponent.getUnformattedText();
+                for (Component chatComponent : chatComponents) {
+                    String str = chatComponent.getString();
                     sb.append(str);
                 }
 
@@ -328,10 +328,10 @@ public class CosmeticsManager {
                         .min(Comparator.comparingInt(a -> Math.abs(a - replacementContext.getNearIdx()))).orElse(-1);
 
                 if (idx == -1) {
-                    List<IChatComponent> components = SurgicalReplacer.inject(chatComponents,
+                    List<Component> components = SurgicalReplacer.inject(chatComponents,
                             SurgicalReplacer.linearifyMoveColorCharToStyle(
-                                    new ChatComponentText(prefix+" ")
-                                            .setChatStyle(SurgicalReplacer.getChatStyleAt(chatComponents, 0))
+                                    Component.literal(prefix+" ")
+                                            .setStyle(SurgicalReplacer.getChatStyleAt(chatComponents, 0))
                             ),
                             0, 0);
                     clientChatReceivedEvent.message = SurgicalReplacer.combine(components);
@@ -360,16 +360,16 @@ public class CosmeticsManager {
                 if (color != null)
                     chatComponents = SurgicalReplacer.inject(chatComponents,
                             SurgicalReplacer.linearifyMoveColorCharToStyle(
-                                    new ChatComponentText(color+replacementContext.getUsername())
-                                            .setChatStyle(SurgicalReplacer.getChatStyleAt(chatComponents, idx))
+                                    Component.literal(color+replacementContext.getUsername())
+                                            .setStyle(SurgicalReplacer.getChatStyleAt(chatComponents, idx))
                             ),
                             idx, replacementContext.getUsername().length());
 
                 if (prefix != null)
                     chatComponents = SurgicalReplacer.inject(chatComponents,
                             SurgicalReplacer.linearifyMoveColorCharToStyle(
-                                    new ChatComponentText(prefix+" ")
-                                            .setChatStyle(SurgicalReplacer.getChatStyleAt(chatComponents, 0))
+                                    Component.literal(prefix+" ")
+                                            .setStyle(SurgicalReplacer.getChatStyleAt(chatComponents, 0))
                             ),
                             startingSearch, 0);
             }
@@ -386,9 +386,9 @@ public class CosmeticsManager {
     public void onTabList(PlayerListItemPacketEvent packetPlayerListItem) {
         S38PacketPlayerListItem asd = packetPlayerListItem.getPacketPlayerListItem();
         if (asd.getAction() == S38PacketPlayerListItem.Action.ADD_PLAYER) {
-            if (Minecraft.getMinecraft().getNetHandler() == null) return;
+            if (Minecraft.getInstance().getConnection() == null) return;
 
-            Map<UUID, NetworkPlayerInfo> playerInfoMap = ReflectionHelper.getPrivateValue(NetHandlerPlayClient.class, Minecraft.getMinecraft().getNetHandler(), "playerInfoMap", "field_147310_i","i");
+            Map<UUID, NetworkPlayerInfo> playerInfoMap = ReflectionHelper.getPrivateValue(NetHandlerPlayClient.class, Minecraft.getInstance().getConnection(), "playerInfoMap", "field_147310_i","i");
             List<UUID> pingTarget = new ArrayList<>();
             for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
                 playerInfoMap.remove(entry.getProfile().getId());
@@ -414,8 +414,8 @@ public class CosmeticsManager {
 
     private void refresh(UUID uuid) {
         try {
-            if (Minecraft.getMinecraft().theWorld != null) {
-                EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(uuid);
+            if (Minecraft.getInstance().level != null) {
+                EntityPlayer entityPlayer = Minecraft.getInstance().level.getPlayerEntityByUUID(uuid);
                 if (entityPlayer != null) entityPlayer.refreshDisplayName();
             }
         } catch (Exception exception) {
@@ -442,7 +442,7 @@ public class CosmeticsManager {
                 PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(nameFormat.entityPlayer.getGameProfile().getId(), false);
 
         MarkedChatComponent markedChatComponent = null;
-        for (IChatComponent entityPlayerPrefix : nameFormat.entityPlayer.getPrefixes()) {
+        for (Component entityPlayerPrefix : nameFormat.entityPlayer.getPrefixes()) {
             if (entityPlayerPrefix instanceof MarkedChatComponent) {
                 markedChatComponent = (MarkedChatComponent) entityPlayerPrefix;
                 break;

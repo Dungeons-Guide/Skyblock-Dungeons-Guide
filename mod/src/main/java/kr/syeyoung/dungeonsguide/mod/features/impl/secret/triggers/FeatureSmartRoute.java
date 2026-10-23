@@ -65,13 +65,13 @@ public class FeatureSmartRoute extends SimpleFeature {
 
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (!SkyblockStatus.isOnDungeon() || context == null) return;
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) return;
             if (context.getScaffoldParser() == null) return;
             Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
             DungeonRoom currentRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
             if (currentRoom == null) return;
-            if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) return;
+            if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getInstance().player.getPositionVector())) return;
             RoomRouteHandler handler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(currentRoom);
             if (handler == null) return;
 

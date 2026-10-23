@@ -189,7 +189,7 @@ public class DungeonsGuide {
         }
 
         Config.f = configFile;
-        Minecraft.getMinecraft().getFramebuffer().enableStencil();
+        Minecraft.getInstance().getFramebuffer().enableStencil();
 
         registerEventsForge(this);
 

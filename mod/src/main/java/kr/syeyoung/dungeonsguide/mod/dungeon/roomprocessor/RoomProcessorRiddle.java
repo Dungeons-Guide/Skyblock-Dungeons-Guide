@@ -29,8 +29,8 @@ import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,10 +54,10 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
     );
 
     @Override
-    public void chatReceived(IChatComponent chat) {
+    public void chatReceived(Component chat) {
         super.chatReceived(chat);
         if (!FeatureRegistry.SOLVER_RIDDLE.isEnabled()) return;
-        String ch2 = chat.getUnformattedText();
+        String ch2 = chat.getString();
         if (!ch2.startsWith("§e[NPC] ")) {
             return;
         }
@@ -70,7 +70,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
             }
         }
         if (foundMatch) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eRiddle §7:: "+ch2.split(":")[0].trim()+" §fhas the reward!"));
+            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §eRiddle §7:: "+ch2.split(":")[0].trim()+" §fhas the reward!"));
             final String name = TextUtils.stripColor(ch2.split(":")[0]).replace("[NPC] ","").trim();
             final BlockPos low = getDungeonRoom().getRoomBounds().getMin();
             final BlockPos high = getDungeonRoom().getRoomBounds().getMax();

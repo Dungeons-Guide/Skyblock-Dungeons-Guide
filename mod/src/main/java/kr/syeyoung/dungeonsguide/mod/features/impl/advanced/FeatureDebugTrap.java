@@ -73,7 +73,7 @@ public class FeatureDebugTrap extends TextHUDFeature {
     @Override
     public TextSpan getText() {
 
-        List<Entity> bats = Minecraft.getMinecraft().theWorld.getEntities(EntityBat.class, e -> true);
+        List<Entity> bats = Minecraft.getInstance().level.getEntities(EntityBat.class, e -> true);
 
 
         TextSpan actualBit = new TextSpan(new NullTextStyle(), "");

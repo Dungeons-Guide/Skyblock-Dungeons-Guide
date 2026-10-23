@@ -159,7 +159,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
         if (!necron.getCurrentPhase().startsWith("goldor-terminals")) return;
 
 
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP thePlayer = Minecraft.getInstance().player;
 
         Set<TabListEntry> playerList = getPlayerListCached();
 
@@ -173,7 +173,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
             if (name == null) continue;
-            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
+            EntityPlayer entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
             if (entityplayer == null) continue;
 
             for (List<WaypointData> value : waypoints.values()) {
@@ -188,10 +188,10 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
     @DGEventHandler
     public void onMessage(ChatReceivedEvent event) {
-        String txt = event.message.getFormattedText();
+        String txt = TextUtils.getFormattedText(event.message);
         String player = TextUtils.stripColor(txt.split(" ")[0]);
         if (txt.contains("§r§a completed a device! (§r§c")) {
-            EntityPlayer player1 = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(player);
+            EntityPlayer player1 = Minecraft.getInstance().level.getPlayerEntityByName(player);
             if (player1 == null) {
                 System.out.println("umm no player found named "+player);
                 return;
@@ -213,7 +213,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
             completedTerminals.put(minDistId, player);
         } else if (txt.contains("§r§a activated a lever! (§r§c")) {
-            EntityPlayer player1 = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(player);
+            EntityPlayer player1 = Minecraft.getInstance().level.getPlayerEntityByName(player);
             if (player1 == null) {
                 System.out.println("umm no player found named "+player);
                 return;
@@ -234,7 +234,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
             completedTerminals.put(minDistId, player);
         } else if (txt.contains("§r§a activated a terminal! (§r§c")) {
-            EntityPlayer player1 = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(player);
+            EntityPlayer player1 = Minecraft.getInstance().level.getPlayerEntityByName(player);
             if (player1 == null) {
                 System.out.println("umm no player found named "+player);
                 return;

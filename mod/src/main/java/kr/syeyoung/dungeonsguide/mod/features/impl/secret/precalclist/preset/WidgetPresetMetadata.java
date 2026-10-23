@@ -196,7 +196,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
                         }
                     } finally {
                         FeatureRegistry.NOTIFICATIONS.getRootWidget().removeNotification(uid);
-                        Minecraft.getMinecraft().addScheduledTask(() -> {
+                        Minecraft.getInstance().execute(() -> {
                             parent.recalc();
                         });
                     }
@@ -238,7 +238,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
                 }
             } finally {
                 FeatureRegistry.NOTIFICATIONS.getRootWidget().removeNotification(uid);
-                Minecraft.getMinecraft().addScheduledTask(() -> {
+                Minecraft.getInstance().execute(() -> {
                     parent.recalc();
                 });
             }

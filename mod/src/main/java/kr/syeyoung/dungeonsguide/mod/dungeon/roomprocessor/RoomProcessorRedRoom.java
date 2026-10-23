@@ -116,7 +116,7 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
 
         FeatureWarningOnPortal featureWarningOnPortal = FeatureRegistry.BOSSFIGHT_WARNING_ON_PORTAL;
         {
-            RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+            RenderManager renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
 
             Vector3f renderPos = RenderUtils.getRenderPos((float)basePt.xCoord,(float) basePt.yCoord, (float)basePt.zCoord, partialTicks);
 

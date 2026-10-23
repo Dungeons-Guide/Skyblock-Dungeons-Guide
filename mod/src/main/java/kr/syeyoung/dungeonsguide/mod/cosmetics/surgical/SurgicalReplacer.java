@@ -18,16 +18,16 @@
 
 package kr.syeyoung.dungeonsguide.mod.cosmetics.surgical;
 
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 
 import java.util.*;
 
 public class SurgicalReplacer {
 
-    public static List<ChatComponentText> getChatStyleOf(String str, ChatStyle parentStyle) {
+    public static List<MutableComponent> getChatStyleOf(String str, Style parentStyle) {
         boolean randomStyle = parentStyle.getObfuscated();
         boolean boldStyle = parentStyle.getBold();
         boolean strikethroughStyle = parentStyle.getStrikethrough();
@@ -37,7 +37,7 @@ public class SurgicalReplacer {
         boolean isLegalColor = true;
         char[] charArr = str.toCharArray();
 
-        List<ChatComponentText> list = new LinkedList<>();
+        List<MutableComponent> list = new LinkedList<>();
 
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < charArr.length; i++) {
@@ -45,36 +45,36 @@ public class SurgicalReplacer {
             if (c0 == 167 && i + 1 < charArr.length) {
                 if (stringBuilder.length() != 0) {
                     if (isLegalColor) {
-                        ChatComponentText chatComponents = new ChatComponentText(
+                        MutableComponent chatComponents = Component.literal(
                                 stringBuilder.toString());
-                        chatComponents.setChatStyle(new ChatStyle()
-                                .setBold(boldStyle)
-                                .setObfuscated(randomStyle)
-                                .setStrikethrough(strikethroughStyle)
-                                .setUnderlined(underlineStyle)
-                                .setItalic(italicStyle)
-                                .setColor(EnumChatFormatting.func_175744_a("0123456789abcdefklmnor".indexOf(possibleLastColorChar)))
-                                .setChatHoverEvent(parentStyle.getChatHoverEvent())
-                                .setChatClickEvent(parentStyle.getChatClickEvent()));
+                        chatComponents.setStyle(Style.EMPTY
+                                .withBold(boldStyle)
+                                .withObfuscated(randomStyle)
+                                .withStrikethrough(strikethroughStyle)
+                                .withUnderlined(underlineStyle)
+                                .withItalic(italicStyle)
+                                .withColor(ChatFormatting.getById("0123456789abcdefklmnor".indexOf(possibleLastColorChar)))
+                                .withHoverEvent(parentStyle.getHoverEvent())
+                                .withClickEvent(parentStyle.getClickEvent()));
                         list.add(chatComponents);
                         stringBuilder = new StringBuilder();
                     } else {
-                        ChatComponentText chatComponents = new ChatComponentText(
+                        MutableComponent chatComponents = Component.literal(
                                 "§"+possibleLastColorChar+
                                         (randomStyle ? "§k" : "")+
                                         (boldStyle ? "§l" : "")+
                                         (italicStyle ? "§o" : "")+
                                         (underlineStyle ? "§n" : "")+
                                         (strikethroughStyle ? "§m" : "") +stringBuilder.toString());
-                        chatComponents.setChatStyle(new ChatStyle()
-                                .setBold(boldStyle)
-                                .setObfuscated(randomStyle)
-                                .setStrikethrough(strikethroughStyle)
-                                .setUnderlined(underlineStyle)
-                                .setItalic(italicStyle)
-                                .setColor(EnumChatFormatting.WHITE)
-                                .setChatHoverEvent(parentStyle.getChatHoverEvent())
-                                .setChatClickEvent(parentStyle.getChatClickEvent()));
+                        chatComponents.setStyle(Style.EMPTY
+                                .withBold(boldStyle)
+                                .withObfuscated(randomStyle)
+                                .withStrikethrough(strikethroughStyle)
+                                .withUnderlined(underlineStyle)
+                                .withItalic(italicStyle)
+                                .withColor(ChatFormatting.WHITE)
+                                .withHoverEvent(parentStyle.getHoverEvent())
+                                .withClickEvent(parentStyle.getClickEvent()));
                         list.add(chatComponents);
                         stringBuilder = new StringBuilder();
                     }
@@ -118,64 +118,64 @@ public class SurgicalReplacer {
             }
         }
         if (isLegalColor) {
-            ChatComponentText chatComponents = new ChatComponentText(
+            MutableComponent chatComponents = Component.literal(
                     stringBuilder.toString());
-            chatComponents.setChatStyle(new ChatStyle()
-                    .setBold(boldStyle)
-                    .setObfuscated(randomStyle)
-                    .setStrikethrough(strikethroughStyle)
-                    .setUnderlined(underlineStyle)
-                    .setItalic(italicStyle)
-                    .setColor(EnumChatFormatting.func_175744_a("0123456789abcdefklmnor".indexOf(possibleLastColorChar)))
-                    .setChatHoverEvent(parentStyle.getChatHoverEvent())
-                    .setChatClickEvent(parentStyle.getChatClickEvent()));
+            chatComponents.setStyle(Style.EMPTY
+                    .withBold(boldStyle)
+                    .withObfuscated(randomStyle)
+                    .withStrikethrough(strikethroughStyle)
+                    .withUnderlined(underlineStyle)
+                    .withItalic(italicStyle)
+                    .withColor(ChatFormatting.getById("0123456789abcdefklmnor".indexOf(possibleLastColorChar)))
+                    .withHoverEvent(parentStyle.getHoverEvent())
+                    .withClickEvent(parentStyle.getClickEvent()));
             list.add(chatComponents);
         } else {
-            ChatComponentText chatComponents = new ChatComponentText(
+            MutableComponent chatComponents = Component.literal(
                     "§"+possibleLastColorChar+
                             (randomStyle ? "§k" : "")+
                             (boldStyle ? "§b" : "")+
                             (italicStyle ? "§o" : "")+
                             (underlineStyle ? "§n" : "")+
                             (strikethroughStyle ? "§m" : "") +stringBuilder.toString());
-            chatComponents.setChatStyle(new ChatStyle()
-                    .setBold(boldStyle)
-                    .setObfuscated(randomStyle)
-                    .setStrikethrough(strikethroughStyle)
-                    .setUnderlined(underlineStyle)
-                    .setItalic(italicStyle)
-                    .setColor(EnumChatFormatting.WHITE)
-                    .setChatHoverEvent(parentStyle.getChatHoverEvent())
-                    .setChatClickEvent(parentStyle.getChatClickEvent()));
+            chatComponents.setStyle(Style.EMPTY
+                    .withBold(boldStyle)
+                    .withObfuscated(randomStyle)
+                    .withStrikethrough(strikethroughStyle)
+                    .withUnderlined(underlineStyle)
+                    .withItalic(italicStyle)
+                    .withColor(ChatFormatting.WHITE)
+                    .withHoverEvent(parentStyle.getHoverEvent())
+                    .withClickEvent(parentStyle.getClickEvent()));
             list.add(chatComponents);
         }
         return list;
     }
 
-    public static LinkedList<IChatComponent> linearifyMoveColorCharToStyle(IChatComponent iChatComponent) {
-        LinkedList<IChatComponent> chatComponents = new LinkedList<>();
-        for (IChatComponent component : iChatComponent) {
-            if (component instanceof ChatComponentText) {
-                chatComponents.addAll(getChatStyleOf(((ChatComponentText) component).getChatComponentText_TextValue(), component.getChatStyle().createDeepCopy()));
+    public static LinkedList<Component> linearifyMoveColorCharToStyle(Component iChatComponent) {
+        LinkedList<Component> chatComponents = new LinkedList<>();
+        for (Component component : iChatComponent) {
+            if (component instanceof MutableComponent) {
+                chatComponents.addAll(getChatStyleOf(((MutableComponent) component).getChatComponentText_TextValue(), component.getStyle()));
             } else {
-                IChatComponent neuCopy = component.createCopy();
+                Component neuCopy = component.createCopy();
                 neuCopy.getSiblings().clear();
-                chatComponents.add(neuCopy.setChatStyle(component.getChatStyle().createDeepCopy()));
+                chatComponents.add(neuCopy.setStyle(component.getStyle()));
             }
         }
         return chatComponents;
     }
 
-    public static ChatStyle getChatStyleAt(List<IChatComponent> chatComponents, int idx) {
+    public static Style getChatStyleAt(List<Component> chatComponents, int idx) {
         int i = 0;
-        for (IChatComponent chatComponent : chatComponents) {
+        for (Component chatComponent : chatComponents) {
             i += chatComponent.getUnformattedTextForChat().length();
-            if (i > idx) return chatComponent.getChatStyle().createDeepCopy();
+            if (i > idx) return chatComponent.getStyle();
         }
         return null;
     }
-    public static LinkedList<IChatComponent> inject(LinkedList<IChatComponent> linearified, List<IChatComponent> toInjectLinearified, int idx, int len) {
-        LinkedList<IChatComponent> clone = new LinkedList<>();
+    public static LinkedList<Component> inject(LinkedList<Component> linearified, List<Component> toInjectLinearified, int idx, int len) {
+        LinkedList<Component> clone = new LinkedList<>();
         int currLen = 0;
         boolean injected = false;
         while (!linearified.isEmpty()) {
@@ -184,7 +184,7 @@ public class SurgicalReplacer {
                 injected = true;
             }
 
-            IChatComponent toProcess = linearified.poll();
+            Component toProcess = linearified.poll();
             int procLen = toProcess.getUnformattedTextForChat().length();
 
             if (currLen + procLen <= idx) {
@@ -194,17 +194,17 @@ public class SurgicalReplacer {
             }
 
             if (currLen + procLen > idx && currLen < idx) {
-                ChatComponentText chatComponents = new ChatComponentText(
+                MutableComponent chatComponents = Component.literal(
                         toProcess.getUnformattedTextForChat().substring(0, idx - currLen)
                 );
-                chatComponents.setChatStyle(toProcess.getChatStyle());
+                chatComponents.setStyle(toProcess.getStyle());
 
                 clone.add(chatComponents);
 
-                ChatComponentText next = new ChatComponentText(
+                MutableComponent next = Component.literal(
                         toProcess.getUnformattedTextForChat().substring(idx-currLen)
                 );
-                next.setChatStyle(toProcess.getChatStyle());
+                next.setStyle(toProcess.getStyle());
                 linearified.addFirst(next);
 
                 currLen = idx;
@@ -216,10 +216,10 @@ public class SurgicalReplacer {
                 continue;
             }
             if (currLen + procLen > idx + len && currLen < idx + len) {
-                ChatComponentText next = new ChatComponentText(
+                MutableComponent next = Component.literal(
                         toProcess.getUnformattedTextForChat().substring(idx + len - currLen)
                 );
-                next.setChatStyle(toProcess.getChatStyle());
+                next.setStyle(toProcess.getStyle());
                 clone.add(next);
                 currLen += procLen;
                 continue;
@@ -229,8 +229,8 @@ public class SurgicalReplacer {
         }
         return clone;
     }
-    public static IChatComponent combine(List<IChatComponent> components) {
-        ChatComponentText chatComponents =  new ChatComponentText("");
+    public static Component combine(List<Component> components) {
+        MutableComponent chatComponents =  Component.literal("");
         chatComponents.getSiblings().addAll(components);
         return chatComponents;
     }

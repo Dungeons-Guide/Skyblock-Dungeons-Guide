@@ -34,7 +34,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.ChatFormatting;
 
 import java.util.Collections;
 import java.util.List;
@@ -75,11 +75,11 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
                 Gui.drawRect(x + 1, y + 1, x + 17, y + 17, 0xFF666666);
                 GlStateManager.color(1, 1, 1, 1.0F);
 
-                Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(playerProfile.getInventory()[(i + 9) % 36], (i % 9) * 18 + 2, (i / 9) * 18 + 2);
+                Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(playerProfile.getInventory()[(i + 9) % 36], (i % 9) * 18 + 2, (i / 9) * 18 + 2);
             }
         } else {
             Gui.drawRect(1, 1, 162, 72, 0xFF666666);
-            Minecraft.getMinecraft().fontRendererObj.drawSplitString("Player has disabled Inventory API", 6, 6, 142, -1);
+            Minecraft.getInstance().font.drawSplitString("Player has disabled Inventory API", 6, 6, 142, -1);
         }
     }
 
@@ -102,13 +102,13 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
 
 
             if (toHoverStack != null) {
-                List<String> list = toHoverStack.getTooltip(Minecraft.getMinecraft().thePlayer,
-                        Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
+                List<String> list = toHoverStack.getTooltip(Minecraft.getInstance().player,
+                        Minecraft.getInstance().options.advancedItemTooltips);
                 for (int i = 0; i < list.size(); ++i) {
                     if (i == 0) {
                         list.set(i, toHoverStack.getRarity().rarityColor + list.get(i));
                     } else {
-                        list.set(i, EnumChatFormatting.GRAY + list.get(i));
+                        list.set(i, ChatFormatting.GRAY + list.get(i));
                     }
                 }
                 toHover= list;

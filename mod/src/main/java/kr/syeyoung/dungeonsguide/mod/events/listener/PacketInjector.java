@@ -36,8 +36,8 @@ import java.util.Set;
 public class PacketInjector {
 
     private static final Set<Class> targetedPackets = new HashSet<>();
+    // S04 was only there for the spirit boots fix (D107), chunk packets only for block updates, now ClientChunkCacheMixin (D105)
     static {
-        targetedPackets.add(ClientboundSetEquipmentPacket.class); // S04PacketEntityEquipment
         targetedPackets.add(ClientboundSetTitleTextPacket.class); // S45PacketTitle
         targetedPackets.add(ClientboundSetSubtitleTextPacket.class); // S45PacketTitle
         targetedPackets.add(ClientboundSetTitlesAnimationPacket.class); // S45PacketTitle
@@ -54,8 +54,6 @@ public class PacketInjector {
         targetedPackets.add(ClientboundSetDisplayObjectivePacket.class); // S3DPacketDisplayScoreboard
         targetedPackets.add(ClientboundSetPlayerTeamPacket.class); // S3EPacketTeams
         targetedPackets.add(ClientboundMapItemDataPacket.class); // S34PacketMaps
-        targetedPackets.add(ClientboundLevelChunkWithLightPacket.class); // S21PacketChunkData, S26PacketMapChunkBulk
-        targetedPackets.add(ClientboundForgetLevelChunkPacket.class); // S21PacketChunkData (unload)
         targetedPackets.add(ClientboundRemoveEntitiesPacket.class); // S13PacketDestroyEntities
         targetedPackets.add(ClientboundTakeItemEntityPacket.class); // S0DPacketCollectItem
     }

@@ -68,7 +68,7 @@ public class FeatureDungeonRoomName extends TextHUDFeature {
 
     @Override
     public TextSpan getText() {
-        EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP player = Minecraft.getInstance().player;
 
         Point roomPt = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(player.getPositionVector());
         DungeonRoom dungeonRoom = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getRoomMap().get(roomPt);

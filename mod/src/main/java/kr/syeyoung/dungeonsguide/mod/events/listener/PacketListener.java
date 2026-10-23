@@ -19,11 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.events.listener;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.mod.dungeon.world.CachedWorld;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.map.MapDataManager;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
@@ -32,15 +28,12 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.NameTagVisibility;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.Team;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.*;
-import net.minecraft.util.EnumChatFormatting;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.*;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldProviderSurface;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.storage.MapData;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 
 import java.util.*;
@@ -48,130 +41,125 @@ import java.util.*;
 public class PacketListener {
 
     @SubscribeEvent
-    public void onPacketReceive(RawPacketReceivedEvent event) {
-        try {
-            Packet packet = event.packet;
-            if (SkyblockStatus.isOnSkyblock()
-                    && packet instanceof S04PacketEntityEquipment
-                    && FeatureRegistry.FIX_SPIRIT_BOOTS.isEnabled()) { // Inventory packet name
-                S04PacketEntityEquipment packet2 = (S04PacketEntityEquipment) packet;
-                if (Minecraft.getMinecraft().thePlayer != null && packet2.getEntityID() == Minecraft.getMinecraft().thePlayer.getEntityId()) {
-                    packet2 = new S04PacketEntityEquipment(packet2.getEntityID(), packet2.getEquipmentSlot() + 1, packet2.getItemStack());
-                    packet = packet2;
-                }
-            }
-            event.packet = packet;
-        } catch (Exception e) {
-            FeatureCollectDiagnostics.queueSendLogAsync(e);
-            e.printStackTrace();
+    public void packetProcessPost(PacketProcessedEvent.Post post) {
+        Packet<?> packet = post.packet;
+        if (packet instanceof ClientboundContainerSetContentPacket) {
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new WindowUpdateEvent((ClientboundContainerSetContentPacket) packet, null));
+        } else if (packet instanceof ClientboundContainerSetSlotPacket) {
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new WindowUpdateEvent( null, (ClientboundContainerSetSlotPacket) packet));
+        } else if (packet instanceof ClientboundBlockUpdatePacket) {
+            BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Post();
+            blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(
+                    ((ClientboundBlockUpdatePacket) packet).getPos(), ((ClientboundBlockUpdatePacket) packet).getBlockState()));
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(blockUpdateEvent);
+        } else if (packet instanceof ClientboundSectionBlocksUpdatePacket) {
+            BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Post();
+            ((ClientboundSectionBlocksUpdatePacket) packet).runUpdates((pos, state) -> blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(pos.immutable(), state)));
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(blockUpdateEvent);
+        } else if (packet instanceof ClientboundSetTitleTextPacket || packet instanceof ClientboundSetSubtitleTextPacket
+                || packet instanceof ClientboundSetTitlesAnimationPacket || packet instanceof ClientboundClearTitlesPacket) {
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new TitleEvent(packet));
+        } else if (packet instanceof ClientboundPlayerInfoUpdatePacket) {
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new PlayerListItemPacketEvent((ClientboundPlayerInfoUpdatePacket) packet));
+        } else if (packet instanceof ClientboundMapItemDataPacket) {
+            ClientboundMapItemDataPacket mapPacket = (ClientboundMapItemDataPacket) packet;
+            MapItemSavedData mapData = MapDataManager.INSTANCE.createMapData(mapPacket.mapId().id(), mapPacket.scale(), mapPacket.locked());
+            try {
+                mapPacket.applyToMap(mapData);
+            } catch (Exception ignored) {} // hypixel seem to be sending bad map datas.
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new MapUpdateEvent(mapPacket.mapId().id(), mapData));
         }
     }
 
-    @SubscribeEvent
-    public void packetProcessPost(PacketProcessedEvent.Post post) {
-        Packet packet = post.packet;
-        if (packet instanceof S30PacketWindowItems) {
-            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new WindowUpdateEvent((S30PacketWindowItems) packet, null));
-        } else if (packet instanceof S2FPacketSetSlot) {
-            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new WindowUpdateEvent( null, (S2FPacketSetSlot) packet));
-        } else if (packet instanceof S23PacketBlockChange) {
-            BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Post();
-            blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(
-                    ((S23PacketBlockChange) packet).getBlockPosition(), ((S23PacketBlockChange) packet).getBlockState()));
-            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(blockUpdateEvent);
-        } else if (packet instanceof S22PacketMultiBlockChange) {
-            BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Post();
-            for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : ((S22PacketMultiBlockChange) packet).getChangedBlocks()) {
-                blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(changedBlock.getPos(), changedBlock.getBlockState()));
-            }
-            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(blockUpdateEvent);
-        } else if (packet instanceof S45PacketTitle) {
-            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new TitleEvent((S45PacketTitle) packet));
-        } else if (packet instanceof S38PacketPlayerListItem) {
-            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new PlayerListItemPacketEvent((S38PacketPlayerListItem) packet));
-        }else if (packet instanceof S34PacketMaps) {
-            MapData mapData = MapDataManager.INSTANCE.createMapData(((S34PacketMaps) packet).getMapId());
-            try {
-                ((S34PacketMaps) packet).setMapdataTo(mapData);
-            } catch (Exception ignored) {} // hypixel seem to be sending bad map datas.
-            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new MapUpdateEvent(((S34PacketMaps) packet).getMapId(), mapData));
-        }
+    // the parallel universe keeps what the server sent, so text is copied before vanilla or other mods get the packet (D106)
+    private static Component copy(Component component) {
+        return component == null ? null : TextUtils.copyComponent(component);
     }
 
     @SubscribeEvent
     public void onPrePacketProcess(PacketProcessedEvent.Pre event) {
-        Packet packet =event.packet;
-        if (event.packet instanceof S23PacketBlockChange) {
+        Packet<?> packet = event.packet;
+        if (packet instanceof ClientboundBlockUpdatePacket) {
             BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Pre();
             blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(
-                    ((S23PacketBlockChange) event.packet).getBlockPosition(),
-                    ((S23PacketBlockChange) event.packet).getBlockState()));
+                    ((ClientboundBlockUpdatePacket) packet).getPos(),
+                    ((ClientboundBlockUpdatePacket) packet).getBlockState()));
             DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(blockUpdateEvent);
-        } else if (event.packet instanceof S22PacketMultiBlockChange) {
+        } else if (packet instanceof ClientboundSectionBlocksUpdatePacket) {
             BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Pre();
-            for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : ((S22PacketMultiBlockChange) event.packet).getChangedBlocks()) {
-                blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(changedBlock.getPos(), changedBlock.getBlockState()));
-            }
+            ((ClientboundSectionBlocksUpdatePacket) packet).runUpdates((pos, state) -> blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(pos.immutable(), state)));
             DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(blockUpdateEvent);
-        } else if (packet instanceof S3BPacketScoreboardObjective) {
-            S3BPacketScoreboardObjective objectivePkt = (S3BPacketScoreboardObjective) packet;
-            if (objectivePkt.func_149338_e() == 2) {
-                Objective objective = ScoreboardManager.INSTANCE.getObjective(objectivePkt.func_149339_c());
+        } else if (packet instanceof ClientboundSetObjectivePacket) {
+            ClientboundSetObjectivePacket objectivePkt = (ClientboundSetObjectivePacket) packet;
+            if (objectivePkt.getMethod() == ClientboundSetObjectivePacket.METHOD_CHANGE) {
+                Objective objective = ScoreboardManager.INSTANCE.getObjective(objectivePkt.getObjectiveName());
                 if (objective != null) {
-                    objective.setDisplayName(objectivePkt.func_149337_d());
-                    objective.setDisplayType(objectivePkt.func_179817_d());
+                    objective.setDisplayName(copy(objectivePkt.getDisplayName()));
+                    objective.setDisplayType(objectivePkt.getRenderType());
+                    objective.setNumberFormat(objectivePkt.getNumberFormat().orElse(null));
                 }
-            } else if (objectivePkt.func_149338_e() == 1) {
-                ScoreboardManager.INSTANCE.removeObjective(objectivePkt.func_149339_c());
-            } else if (objectivePkt.func_149338_e() == 0) {
-                Objective objective = new Objective(objectivePkt.func_149339_c());
-                objective.setDisplayName(objectivePkt.func_149337_d());
-                objective.setDisplayType(objectivePkt.func_179817_d());
+            } else if (objectivePkt.getMethod() == ClientboundSetObjectivePacket.METHOD_REMOVE) {
+                ScoreboardManager.INSTANCE.removeObjective(objectivePkt.getObjectiveName());
+            } else if (objectivePkt.getMethod() == ClientboundSetObjectivePacket.METHOD_ADD) {
+                Objective objective = new Objective(objectivePkt.getObjectiveName());
+                objective.setDisplayName(copy(objectivePkt.getDisplayName()));
+                objective.setDisplayType(objectivePkt.getRenderType());
+                objective.setNumberFormat(objectivePkt.getNumberFormat().orElse(null));
                 ScoreboardManager.INSTANCE.addObjective(objective);
             }
-        } else if (packet instanceof S3CPacketUpdateScore) {
-            S3CPacketUpdateScore score = (S3CPacketUpdateScore) packet;
-            Objective objective = ScoreboardManager.INSTANCE.getObjective(score.getObjectiveName());
+        } else if (packet instanceof ClientboundSetScorePacket) {
+            ClientboundSetScorePacket score = (ClientboundSetScorePacket) packet;
+            Objective objective = ScoreboardManager.INSTANCE.getObjective(score.objectiveName());
             if (objective != null) {
-                if (score.getScoreAction() == S3CPacketUpdateScore.Action.CHANGE) {
-                    objective.updateScore(score.getPlayerName(), score.getScoreValue());
-                } else if (score.getScoreAction() == S3CPacketUpdateScore.Action.REMOVE) {
-                    objective.removeScore(score.getPlayerName());
-                }
+                objective.updateScore(score.owner(), score.score(), copy(score.display().orElse(null)), score.numberFormat().orElse(null));
             }
-        } else if (packet instanceof S3DPacketDisplayScoreboard) {
-            S3DPacketDisplayScoreboard board = (S3DPacketDisplayScoreboard) packet;
-            ScoreboardManager.INSTANCE.displayScoreboard(board.func_149371_c(), board.func_149370_d());
-        } else if (packet instanceof S3EPacketTeams) {
-            S3EPacketTeams pkt = (S3EPacketTeams) packet;
-            if (pkt.getAction() == 0) {
+        } else if (packet instanceof ClientboundResetScorePacket) {
+            // 1.8.9's S3C REMOVE. no objective means every objective
+            ClientboundResetScorePacket reset = (ClientboundResetScorePacket) packet;
+            if (reset.objectiveName() == null) {
+                ScoreboardManager.INSTANCE.removeScoreFromAll(reset.owner());
+            } else {
+                Objective objective = ScoreboardManager.INSTANCE.getObjective(reset.objectiveName());
+                if (objective != null) objective.removeScore(reset.owner());
+            }
+        } else if (packet instanceof ClientboundSetDisplayObjectivePacket) {
+            ClientboundSetDisplayObjectivePacket board = (ClientboundSetDisplayObjectivePacket) packet;
+            ScoreboardManager.INSTANCE.displayScoreboard(board.getSlot().id(), board.getObjectiveName());
+        } else if (packet instanceof ClientboundSetPlayerTeamPacket) {
+            ClientboundSetPlayerTeamPacket pkt = (ClientboundSetPlayerTeamPacket) packet;
+            // 1.8.9 actions: 0 create, 1 remove, 2 update, 3 player add, 4 player remove
+            if (pkt.getTeamAction() == ClientboundSetPlayerTeamPacket.Action.ADD) {
                 // CREATE
                 Team team = new Team(pkt.getName());
-                team.setDisplayName(pkt.getDisplayName());
-                team.setPrefix(pkt.getPrefix());
-                team.setSuffix(pkt.getSuffix());
-                team.setNameTagVisibility(NameTagVisibility.of(pkt.getNameTagVisibility()));
-                team.setColor(EnumChatFormatting.func_175744_a(pkt.getColor()));
+                if (pkt.getParameters().isPresent()) {
+                    ClientboundSetPlayerTeamPacket.Parameters parameters = pkt.getParameters().get();
+                    team.setDisplayName(copy(parameters.getDisplayName()));
+                    team.setPrefix(copy(parameters.getPlayerPrefix()));
+                    team.setSuffix(copy(parameters.getPlayerSuffix()));
+                    team.setNameTagVisibility(NameTagVisibility.of(parameters.getNametagVisibility().getSerializedName()));
+                    team.setColor(parameters.getColor());
+                }
 
                 for (String player : pkt.getPlayers()) {
                     team.addTeamMember(player);
                 }
 
                 TeamManager.INSTANCE.createTeam(team);
-            } else if (pkt.getAction() == 1) {
+            } else if (pkt.getTeamAction() == ClientboundSetPlayerTeamPacket.Action.REMOVE) {
                 // REMOVE
                 TeamManager.INSTANCE.removeTeam(pkt.getName());
-            } else if (pkt.getAction() == 2) {
+            } else if (pkt.getParameters().isPresent()) {
                 // UPDATE
                 Team team = TeamManager.INSTANCE.getTeamByName(pkt.getName());
                 if (team != null) {
-                    team.setDisplayName(pkt.getDisplayName());
-                    team.setPrefix(pkt.getPrefix());
-                    team.setSuffix(pkt.getSuffix());
-                    team.setNameTagVisibility(NameTagVisibility.of(pkt.getNameTagVisibility()));
-                    team.setColor(EnumChatFormatting.func_175744_a(pkt.getColor()));
+                    ClientboundSetPlayerTeamPacket.Parameters parameters = pkt.getParameters().get();
+                    team.setDisplayName(copy(parameters.getDisplayName()));
+                    team.setPrefix(copy(parameters.getPlayerPrefix()));
+                    team.setSuffix(copy(parameters.getPlayerSuffix()));
+                    team.setNameTagVisibility(NameTagVisibility.of(parameters.getNametagVisibility().getSerializedName()));
+                    team.setColor(parameters.getColor());
                 }
-            } else if (pkt.getAction() == 3) {
+            } else if (pkt.getPlayerAction() == ClientboundSetPlayerTeamPacket.Action.ADD) {
                 // PLAYER UPDATE
                 Team team = TeamManager.INSTANCE.getTeamByName(pkt.getName());
                 if (team != null) {
@@ -179,7 +167,7 @@ public class PacketListener {
                         team.addTeamMember(player);
                     }
                 }
-            } else if (pkt.getAction() == 4) {
+            } else if (pkt.getPlayerAction() == ClientboundSetPlayerTeamPacket.Action.REMOVE) {
                 // PLAYER REMOVE
                 Team team = TeamManager.INSTANCE.getTeamByName(pkt.getName());
                 if (team != null) {
@@ -188,75 +176,44 @@ public class PacketListener {
                     }
                 }
             }
-        }  else if (packet instanceof S38PacketPlayerListItem) {
-            S38PacketPlayerListItem pkt = (S38PacketPlayerListItem) packet;
-            S38PacketPlayerListItem.Action action = pkt.getAction();
-            if (action == S38PacketPlayerListItem.Action.ADD_PLAYER) {
-                for (S38PacketPlayerListItem.AddPlayerData entry : pkt.getEntries()) {
-                    TabListEntry tabListEntry = new TabListEntry(entry.getProfile(), entry.getGameMode());
-                    tabListEntry.setPing(entry.getPing());
-                    tabListEntry.setDisplayName(entry.getDisplayName());
+        }  else if (packet instanceof ClientboundPlayerInfoUpdatePacket) {
+            // 1.8.9 sent one action per packet, 26.1 sends a set of them
+            ClientboundPlayerInfoUpdatePacket pkt = (ClientboundPlayerInfoUpdatePacket) packet;
+            EnumSet<ClientboundPlayerInfoUpdatePacket.Action> actions = pkt.actions();
+            for (ClientboundPlayerInfoUpdatePacket.Entry entry : pkt.entries()) {
+                if (actions.contains(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER)) {
+                    // the profile is an immutable record on 26.1
+                    TabListEntry tabListEntry = new TabListEntry(entry.profile(), entry.gameMode());
+                    tabListEntry.setPing(entry.latency());
+                    tabListEntry.setDisplayName(copy(entry.displayName()));
                     TabList.INSTANCE.updateEntry(tabListEntry);
+                    continue;
                 }
-            } else if (action == S38PacketPlayerListItem.Action.REMOVE_PLAYER) {
-                for (S38PacketPlayerListItem.AddPlayerData entry : pkt.getEntries()) {
-                    TabList.INSTANCE.removeEntry(entry.getProfile().getId());
+                TabListEntry existing = TabList.INSTANCE.getEntry(entry.profileId());
+                if (existing == null) continue;
+                if (actions.contains(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LATENCY)) {
+                    existing.setPing(entry.latency());
                 }
-            } else if (action == S38PacketPlayerListItem.Action.UPDATE_LATENCY) {
-                for (S38PacketPlayerListItem.AddPlayerData entry : pkt.getEntries()) {
-                    TabListEntry entry1 = TabList.INSTANCE.getEntry(entry.getProfile().getId());
-                    if (entry1 != null) entry1.setPing(entry.getPing());
+                if (actions.contains(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME)) {
+                    existing.setDisplayName(copy(entry.displayName()));
                 }
-            } else if (action == S38PacketPlayerListItem.Action.UPDATE_DISPLAY_NAME) {
-                for (S38PacketPlayerListItem.AddPlayerData entry : pkt.getEntries()) {
-                    TabListEntry entry1 = TabList.INSTANCE.getEntry(entry.getProfile().getId());
-                    if (entry1 != null) entry1.setDisplayName(entry.getDisplayName());
-                }
-            } else if (action == S38PacketPlayerListItem.Action.UPDATE_GAME_MODE) {
-                for (S38PacketPlayerListItem.AddPlayerData entry : pkt.getEntries()) {
-                    TabListEntry entry1 = TabList.INSTANCE.getEntry(entry.getProfile().getId());
-                    if (entry1 == null) return;
-                    TabListEntry neu = new TabListEntry(entry1.getGameProfile(), entry.getGameMode());
-                    neu.setPing(entry1.getPing());
-                    neu.setDisplayName(entry1.getDisplayName());
+                if (actions.contains(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_GAME_MODE)) {
+                    TabListEntry neu = new TabListEntry(existing.getGameProfile(), entry.gameMode());
+                    neu.setPing(existing.getPing());
+                    neu.setDisplayName(existing.getDisplayName());
 
                     TabList.INSTANCE.updateEntry(neu);
                 }
             }
-        } else if (packet instanceof S21PacketChunkData) {
-            try {
-                if (((S21PacketChunkData) packet).getExtractedSize() == 0) return;
-                WorldProvider provider = new WorldProviderSurface();
-                if (Minecraft.getMinecraft().theWorld != null) provider = Minecraft.getMinecraft().theWorld.provider;
-
-                Chunk c = new Chunk(new CachedWorld(null, provider), ((S21PacketChunkData) packet).getChunkX(), ((S21PacketChunkData) packet).getChunkZ());
-                c.fillChunk(((S21PacketChunkData) packet).getExtractedDataBytes(), ((S21PacketChunkData) packet).getExtractedSize(), ((S21PacketChunkData) packet).func_149274_i());
-                ChunkUpdateEvent chunkUpdateEvent = new ChunkUpdateEvent(Collections.singletonList(c));
-                DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(chunkUpdateEvent);
-            } catch (Exception e) {
-                e.printStackTrace();
+        } else if (packet instanceof ClientboundPlayerInfoRemovePacket) {
+            // 1.8.9's S38 REMOVE_PLAYER
+            for (UUID profileId : ((ClientboundPlayerInfoRemovePacket) packet).profileIds()) {
+                TabList.INSTANCE.removeEntry(profileId);
             }
-        } else if (packet instanceof S26PacketMapChunkBulk) {
-            try {
-                WorldProvider provider = new WorldProviderSurface();
-                if (Minecraft.getMinecraft().theWorld != null) provider = Minecraft.getMinecraft().theWorld.provider;
-
-                List<Chunk> set = new ArrayList<>();
-                for (int i = 0; i < ((S26PacketMapChunkBulk) packet).getChunkCount(); i++) {
-                    Chunk c = new Chunk(new CachedWorld(null, provider), ((S26PacketMapChunkBulk) packet).getChunkX(i), ((S26PacketMapChunkBulk) packet).getChunkZ(i));
-                    c.fillChunk(((S26PacketMapChunkBulk) packet).getChunkBytes(i), ((S26PacketMapChunkBulk) packet).getChunkSize(i), true);
-                    set.add(c);
-                }
-                ChunkUpdateEvent chunkUpdateEvent = new ChunkUpdateEvent(set);
-                DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(chunkUpdateEvent);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (packet instanceof S13PacketDestroyEntities) {
-            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new EntityExitWorldEvent(((S13PacketDestroyEntities) packet).getEntityIDs()));
-        } else if (packet instanceof S0DPacketCollectItem) {
-            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new ItemPickupEvent(((S0DPacketCollectItem) packet).getCollectedItemEntityID(), ((S0DPacketCollectItem) packet).getEntityID()));
+        } else if (packet instanceof ClientboundRemoveEntitiesPacket) {
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new EntityExitWorldEvent(((ClientboundRemoveEntitiesPacket) packet).getEntityIds().toIntArray()));
+        } else if (packet instanceof ClientboundTakeItemEntityPacket) {
+            DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new ItemPickupEvent(((ClientboundTakeItemEntityPacket) packet).getItemId(), ((ClientboundTakeItemEntityPacket) packet).getPlayerId()));
         }
     }
-
 }

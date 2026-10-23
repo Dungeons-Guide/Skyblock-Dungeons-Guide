@@ -64,6 +64,9 @@ import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.*;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.network.chat.Component;
+import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 
 public class GeneralRoomProcessor implements RoomProcessor {
 
@@ -111,13 +114,13 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void drawScreen(float partialTicks) {
         // TODO: room editor is not in the first 26.1 build
 //        if (FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && FeatureRegistry.DEBUG.isEnabled()) {
-//            FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+//            FontRenderer fr = Minecraft.getInstance().font;
 
-//            if (Minecraft.getMinecraft().objectMouseOver == null) return;
-//            Entity en = Minecraft.getMinecraft().objectMouseOver.entityHit;
+//            if (Minecraft.getInstance().hitResult == null) return;
+//            Entity en = Minecraft.getInstance().hitResult.entityHit;
 //            if (en == null) return;
 
-//            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+//            ScaledResolution sr = new ScaledResolution(Minecraft.getInstance());
 //            if (DungeonActionContext.getSpawnLocation().containsKey(en.getEntityId())) {
 //                GlStateManager.enableBlend();
 //                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -139,8 +142,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
     @Override
-    public void chatReceived(IChatComponent chat) {
-        if (lastChest != null && chat.getFormattedText().equals("§r§cThis chest has already been searched!§r")) {
+    public void chatReceived(Component chat) {
+        if (lastChest != null && TextUtils.getFormattedText(chat).equals("§r§cThis chest has already been searched!§r")) {
             for (DungeonMechanicState mechanic : getDungeonRoom().getMechanics().values()) {
                 if (mechanic instanceof DungeonSecretChestState) {
                     DungeonSecretChestState chest = (DungeonSecretChestState) mechanic;
@@ -158,14 +161,14 @@ public class GeneralRoomProcessor implements RoomProcessor {
             }
             lastChest = null;
         }
-        if (chat.getFormattedText().equals("§r§aYou found a Secret Redstone Key!§r")) {
+        if (TextUtils.getFormattedText(chat).equals("§r§aYou found a Secret Redstone Key!§r")) {
             for (DungeonMechanicState value : getDungeonRoom().getMechanics().values()) {
                 if (value instanceof DungeonRedstoneKeyState) {
                     ((DungeonRedstoneKeyState) value).setDidClickOnRedstoneKey(true);
                 }
             }
         }
-        if (chat.getFormattedText().equals("§e[NPC] Wizard§f: §rOh my lovely crystal ball, mi so happy§r")) {
+        if (TextUtils.getFormattedText(chat).equals("§e[NPC] Wizard§f: §rOh my lovely crystal ball, mi so happy§r")) {
             for (DungeonMechanicState value : getDungeonRoom().getMechanics().values()) {
                 if (value instanceof DungeonWizardState) {
                     ((DungeonWizardState) value).setDidCompleteQuest(true);
@@ -177,13 +180,13 @@ public class GeneralRoomProcessor implements RoomProcessor {
     private int stack = 0;
     private long secrets2 = 0;
     @Override
-    public void actionbarReceived(IChatComponent chat) {
+    public void actionbarReceived(Component chat) {
         if (!SkyblockStatus.isOnDungeon()) return;
         if (dungeonRoom.getTotalSecrets() == -1) {
-            ChatTransmitter.sendDebugChat(new ChatComponentText(chat.getFormattedText().replace('§', '&') + " - received"));
+            ChatTransmitter.sendDebugChat(Component.literal(TextUtils.getFormattedText(chat).replace('§', '&') + " - received"));
         }
-        if (!chat.getFormattedText().contains("/")) return;
-        BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
+        if (!TextUtils.getFormattedText(chat).contains("/")) return;
+        BlockPos pos = Minecraft.getInstance().player.getPosition();
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         Point pt1 = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(pos.add(2, 0, 2));
@@ -195,7 +198,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         }
         BlockPos pos2 = dungeonRoom.getRoomBounds().getMin().add(5, 0, 5);
 
-        String text = chat.getFormattedText();
+        String text = TextUtils.getFormattedText(chat);
         int secretsIndex = text.indexOf("Secrets");
         int secrets = 0;
         if (secretsIndex != -1) {
@@ -219,7 +222,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         if (stack == 4 && dungeonRoom.getTotalSecrets() != secrets) {
             dungeonRoom.setTotalSecrets(secrets);
             if (FeatureRegistry.DUNGEON_INTERMODCOMM.isEnabled())
-                Minecraft.getMinecraft().thePlayer.sendChatMessage("/pchat $DG-Comm " + pos2.getX() + "/" + pos2.getZ() + " " + secrets);
+                ChatProcessor.sendChatMessage("/pchat $DG-Comm " + pos2.getX() + "/" + pos2.getZ() + " " + secrets);
         }
     }
 
@@ -241,7 +244,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 updateEvent.entityLiving.getName().contains("Mimic") &&
                 !dungeonRoom.getContext().isGotMimic()) {
             dungeonRoom.getContext().setGotMimic(true);
-//            Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-Mimic");
+//            ChatProcessor.sendChatMessage("/pc $DG-Mimic");
         }
     }
 
@@ -287,7 +290,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 //                }
 //            }
 //            try {
-//                if (ec != null && event.pos != null && Minecraft.getMinecraft().theWorld.getBlockState(event.pos).getBlock() == Blocks.sponge) {
+//                if (ec != null && event.pos != null && Minecraft.getInstance().level.getBlockState(event.pos).getBlock() == Blocks.sponge) {
 //                    int nextId = 1;
 //                    while (ec.getRoom().getDungeonRoomInfo().getMechanics().containsKey("ent-" + nextId)) nextId++;
 //                    DungeonRoomDoor2State.DungeonRoomDoor2Data door2 = new DungeonRoomDoor2State.DungeonRoomDoor2Data();
@@ -352,8 +355,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void onBlockUpdate(BlockUpdateEvent blockUpdateEvent) {
         for (Tuple<BlockPos, IBlockState> updatedBlock : blockUpdateEvent.getUpdatedBlocks()) {
-            if (updatedBlock.getSecond().equals(STONE)) continue;
-            pathfinderWorld.resetBlock(updatedBlock.getFirst());
+            if (updatedBlock.getB().equals(STONE)) continue;
+            pathfinderWorld.resetBlock(updatedBlock.getA());
         }
     }
 

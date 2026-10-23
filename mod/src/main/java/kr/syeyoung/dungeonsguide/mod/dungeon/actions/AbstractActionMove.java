@@ -102,7 +102,7 @@ public abstract class AbstractActionMove extends AbstractAction {
     //    @Override
 //    public boolean isComplete(DungeonRoom dungeonRoom) {
 //        return targets.stream().flatMap(a -> a.getOffsetPointSet().stream()).anyMatch(
-//                a-> a.getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) < 0.625
+//                a-> a.getPos(dungeonRoom).squareDistanceTo(Minecraft.getInstance().player.getPositionVector()) < 0.625
 //        );
 //    }
 

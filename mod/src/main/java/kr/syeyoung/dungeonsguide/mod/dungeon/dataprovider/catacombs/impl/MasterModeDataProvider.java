@@ -21,8 +21,9 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.catacombs.impl;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.catacombs.CatacombsDataProvider;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.*;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
 
 public class MasterModeDataProvider extends CatacombsDataProvider {
 
@@ -30,7 +31,7 @@ public class MasterModeDataProvider extends CatacombsDataProvider {
     @Override
     public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
         String floor = dungeonName.substring(14).trim();
-        ChatTransmitter.sendDebugChat(new ChatComponentText("Floor: Master mode " +floor+ " Building boss fight processor"));
+        ChatTransmitter.sendDebugChat(Component.literal("Floor: Master mode " +floor+ " Building boss fight processor"));
         if (floor.equals("M5")) {
             return new BossfightProcessorLivid(true);
         } else if (floor.equals("M1")) {

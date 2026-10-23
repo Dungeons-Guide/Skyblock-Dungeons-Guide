@@ -59,7 +59,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return false;
 
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP thePlayer = Minecraft.getInstance().player;
         if (context.getScaffoldParser() == null) return false;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
@@ -75,7 +75,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return new TextSpan(new NullTextStyle(), "");
 
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP thePlayer = Minecraft.getInstance().player;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) {
@@ -94,7 +94,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
 
             OffsetVec3 offsetPoint = new OffsetVec3(dungeonRoom, thePlayer.getPositionVector());
 
-            return new TextSpan(getStyle("coord"), "X: " +String.format("%.2f",  offsetPoint.getXCoord()) + " Y: " + String.format("%.2f",  offsetPoint.getYCoord()) + " Z: " + String.format("%.2f",  offsetPoint.getZCoord()) + " Facing: " + FeatureRoomCoordDisplay.facing[real] + " In? "+dungeonRoom.getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector()));
+            return new TextSpan(getStyle("coord"), "X: " +String.format("%.2f",  offsetPoint.getXCoord()) + " Y: " + String.format("%.2f",  offsetPoint.getYCoord()) + " Z: " + String.format("%.2f",  offsetPoint.getZCoord()) + " Facing: " + FeatureRoomCoordDisplay.facing[real] + " In? "+dungeonRoom.getRoomBounds().isFullyWithin(Minecraft.getInstance().player.getPositionVector()));
         }
     }
 

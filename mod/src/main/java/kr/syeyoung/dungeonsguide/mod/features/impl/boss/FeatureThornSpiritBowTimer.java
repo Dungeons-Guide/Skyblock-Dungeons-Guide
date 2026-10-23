@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 public class FeatureThornSpiritBowTimer extends TextHUDFeature {
@@ -70,7 +70,7 @@ public class FeatureThornSpiritBowTimer extends TextHUDFeature {
     @DGEventHandler()
     public void onChat(ChatReceivedEvent clientChatReceivedEvent) {
         if (!(SkyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
-        String text = clientChatReceivedEvent.message.getFormattedText();
+        String text = TextUtils.getFormattedText(clientChatReceivedEvent.message);
         if (text.equals("§r§a§lThe §r§5§lSpirit Bow §r§a§lhas dropped!§r")) {
             time = System.currentTimeMillis() + 16000;
         } else if (text.startsWith("§r§c[BOSS] Thorn§r§f: ")) {
@@ -94,8 +94,8 @@ public class FeatureThornSpiritBowTimer extends TextHUDFeature {
     @DGEventHandler
     public void onTitle(TitleEvent event) {
         if (!(SkyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
-        IChatComponent text = event.getPacketTitle().getMessage();
-        if (text != null && text.getFormattedText() != null && text.getFormattedText().contains("picked up")) {
+        Component text = event.getPacketTitle().getMessage();
+        if (text != null && TextUtils.getFormattedText(text) != null && TextUtils.getFormattedText(text).contains("picked up")) {
             time = System.currentTimeMillis() + 21000;
         }
     }

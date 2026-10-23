@@ -93,6 +93,8 @@ import java.util.zip.GZIPOutputStream;
 import net.minecraft.resources.Identifier;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.network.chat.Component;
 
 public class FeatureCollectDungeonRooms extends SimpleFeature {
     public FeatureCollectDungeonRooms() {
@@ -110,7 +112,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         public void onApprove() {
             FeatureCollectDungeonRooms.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDungeonRooms.this.setEnabled(true);
-            Minecraft.getMinecraft().displayGuiScreen(null);
+            Minecraft.getInstance().setScreen(null);
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         }
 
@@ -118,7 +120,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         public void onDeny() {
             FeatureCollectDungeonRooms.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDungeonRooms.this.setEnabled(false);
-            Minecraft.getMinecraft().displayGuiScreen(null);
+            Minecraft.getInstance().setScreen(null);
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         }
     }
@@ -127,7 +129,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     public void init() {
         if (!this.<Boolean>getParameter("prompted").getValue()) {
             Scaler scaler = new Scaler();
-            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getInstance()).getScaleFactor());
             scaler.child.setValue(new FeatureCollectDungeonRooms.WidgetUserApproval());
             GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler, null, false));
         }
@@ -142,7 +144,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         private int id;
         public String name;
         private String playerSkin;
-        private IChatComponent armorstand;
+        private Component armorstand;
         private transient ItemStack[] armoritems = new ItemStack[5];
         private Map<String, Double> attributes = new HashMap<>();
 
@@ -190,7 +192,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         @Data @AllArgsConstructor
         public static class ChatMessage {
             private long time;
-            private IChatComponent chat;
+            private Component chat;
         }
 
 
@@ -244,7 +246,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     @DGEventHandler(ignoreDisabled = true)
     public void playerInteract(PlayerInteractEvent event) {
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
-        IBlockState blockState = Minecraft.getMinecraft().theWorld.getBlockState(event.pos);
+        IBlockState blockState = Minecraft.getInstance().level.getBlockState(event.pos);
         if (blockState == null) return;
         if (!(blockState.getBlock() == Blocks.lever || blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest || blockState.getBlock() == Blocks.skull)) {
             return;
@@ -263,10 +265,10 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     @DGEventHandler(ignoreDisabled = true)
     public void onChat(ChatReceivedEvent event) {
         if (event.type == 2) return;
-        if (!event.message.getFormattedText().contains(":")) {
+        if (!TextUtils.getFormattedText(event.message).contains(":")) {
             // this is not user message.
-            if (Minecraft.getMinecraft().thePlayer == null) return;
-            Vec3 pos = Minecraft.getMinecraft().thePlayer.getPositionVector();
+            if (Minecraft.getInstance().player == null) return;
+            Vec3 pos = Minecraft.getInstance().player.getPositionVector();
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
@@ -288,7 +290,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (secret != lastNo || total != totalSecret) {
             lastNo = secret;
             totalSecret = total;
-            Vec3 pos = Minecraft.getMinecraft().thePlayer.getPositionVector();
+            Vec3 pos = Minecraft.getInstance().player.getPositionVector();
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
@@ -298,18 +300,18 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
             if (roomInfo == null) return;
 
-            roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), new ChatComponentText("SECRET UPDATE: "+secret+"/"+total)));
+            roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), Component.literal("SECRET UPDATE: "+secret+"/"+total)));
         }
 
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null || dungeonContext.getScaffoldParser() == null) return;
-        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector());
+        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.getPositionVector());
         DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
         if (dungeonRoom == null) return;
         RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
         if (roomInfo == null) return;
-        if (roomInfo.playerTrajactory.size() == 0 || roomInfo.playerTrajactory.getLast().getPos() == null || roomInfo.playerTrajactory.getLast().getPos().squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) > 0.1f) {
-            roomInfo.playerTrajactory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, Minecraft.getMinecraft().thePlayer.getPositionVector(), System.currentTimeMillis()));
+        if (roomInfo.playerTrajactory.size() == 0 || roomInfo.playerTrajactory.getLast().getPos() == null || roomInfo.playerTrajactory.getLast().getPos().squareDistanceTo(Minecraft.getInstance().player.getPositionVector()) > 0.1f) {
+            roomInfo.playerTrajactory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, Minecraft.getInstance().player.getPositionVector(), System.currentTimeMillis()));
         }
     }
 
@@ -364,71 +366,73 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         }
     }
 
-    @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
-    public void onChunkLoad(ChunkUpdateEvent chunkUpdateEvent) {
-        Set<Tuple<BlockPos, IBlockState>> updates = new HashSet<>();
-        for (Chunk updatedChunk : chunkUpdateEvent.getUpdatedChunks()) {
-            if (updatedChunk.isEmpty()) continue;
-            if (initialChunkDataMap.containsKey(updatedChunk.getChunkCoordIntPair())) {
-                // that's block update!
+    // TODO: chunk resends come as BlockUpdateEvent now (D105), this diffed them itself and also kept each chunk's first loaded blocks
+    //  as the room's initial state for the schematic export. the initial state part is decided with the feature port
+//    @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
+//    public void onChunkLoad(ChunkUpdateEvent chunkUpdateEvent) {
+//        Set<Tuple<BlockPos, IBlockState>> updates = new HashSet<>();
+//        for (Chunk updatedChunk : chunkUpdateEvent.getUpdatedChunks()) {
+//            if (updatedChunk.isEmpty()) continue;
+//            if (initialChunkDataMap.containsKey(updatedChunk.getChunkCoordIntPair())) {
+//                // that's block update!
 
-                ChunkData prevChunk = initialChunkDataMap.get(updatedChunk.getChunkCoordIntPair());
-                ExtendedBlockStorage[] prev = prevChunk.getInitialBlockStorages();
-                ExtendedBlockStorage[] neu = updatedChunk.getBlockStorageArray();
-                for (int i = 0; i < prev.length; i++) {
-                    ExtendedBlockStorage prevSt = prev[i];
-                    ExtendedBlockStorage neuSt = neu[i];
-                    if (prevSt == null && neuSt != null) {
-                        for (int x = 0; x < 16; x++) {
-                            for (int y = 0; y < 16; y++) {
-                                for (int z = 0; z < 16; z++) {
-                                    IBlockState blockState = neuSt.get(x,y,z);
-                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x,  i * 16 + y, prevChunk.z * 16 + z);
-                                    updates.add(new Tuple<>(pos, blockState));
-                                }
-                            }
-                        }
-                    } else if (prevSt != null && neuSt == null) {
-                        IBlockState air = Blocks.air.getDefaultState();
-                        for (int x = 0; x < 16; x++) {
-                            for (int y = 0; y < 16; y++) {
-                                for (int z = 0; z < 16; z++) {
-                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
-                                    updates.add(new Tuple<>(pos, air));
-                                }
-                            }
-                        }
-                    } else if (prevSt == null && neuSt == null) {
-                    } else {
-                        for (int x = 0; x < 16; x++) {
-                            for (int y = 0; y < 16; y++) {
-                                for (int z = 0; z < 16; z++) {
-                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
-                                    IBlockState prevState = prevSt.get(x,y,z);
-                                    IBlockState neuState = neuSt.get(x,y,z);
-                                    if (!neuState.equals(prevState)) {
-                                        updates.add(new Tuple<>(pos, neuState));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+//                ChunkData prevChunk = initialChunkDataMap.get(updatedChunk.getChunkCoordIntPair());
+//                ExtendedBlockStorage[] prev = prevChunk.getInitialBlockStorages();
+//                ExtendedBlockStorage[] neu = updatedChunk.getBlockStorageArray();
+//                for (int i = 0; i < prev.length; i++) {
+//                    ExtendedBlockStorage prevSt = prev[i];
+//                    ExtendedBlockStorage neuSt = neu[i];
+//                    if (prevSt == null && neuSt != null) {
+//                        for (int x = 0; x < 16; x++) {
+//                            for (int y = 0; y < 16; y++) {
+//                                for (int z = 0; z < 16; z++) {
+//                                    IBlockState blockState = neuSt.get(x,y,z);
+//                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x,  i * 16 + y, prevChunk.z * 16 + z);
+//                                    updates.add(new Tuple<>(pos, blockState));
+//                                }
+//                            }
+//                        }
+//                    } else if (prevSt != null && neuSt == null) {
+//                        IBlockState air = Blocks.air.getDefaultState();
+//                        for (int x = 0; x < 16; x++) {
+//                            for (int y = 0; y < 16; y++) {
+//                                for (int z = 0; z < 16; z++) {
+//                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
+//                                    updates.add(new Tuple<>(pos, air));
+//                                }
+//                            }
+//                        }
+//                    } else if (prevSt == null && neuSt == null) {
+//                    } else {
+//                        for (int x = 0; x < 16; x++) {
+//                            for (int y = 0; y < 16; y++) {
+//                                for (int z = 0; z < 16; z++) {
+//                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
+//                                    IBlockState prevState = prevSt.get(x,y,z);
+//                                    IBlockState neuState = neuSt.get(x,y,z);
+//                                    if (!neuState.equals(prevState)) {
+//                                        updates.add(new Tuple<>(pos, neuState));
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
 
-                continue;
-            }
-            ChunkData chunkData = new ChunkData();
-            chunkData.x = updatedChunk.xPosition;
-            chunkData.z = updatedChunk.zPosition;
-            chunkData.initialBlockStorages = updatedChunk.getBlockStorageArray();
-            initialChunkDataMap.put(new ChunkCoordIntPair(chunkData.x, chunkData.z), chunkData);
-        }
-        if (!updates.isEmpty()) {
-            BlockUpdateEvent.Pre pre = new BlockUpdateEvent.Pre();
-            pre.setUpdatedBlocks(updates);
-            onBlockUpdate(pre);
-        }
-    }
+//                continue;
+//            }
+//            ChunkData chunkData = new ChunkData();
+//            chunkData.x = updatedChunk.xPosition;
+//            chunkData.z = updatedChunk.zPosition;
+//            chunkData.initialBlockStorages = updatedChunk.getBlockStorageArray();
+//            initialChunkDataMap.put(new ChunkCoordIntPair(chunkData.x, chunkData.z), chunkData);
+//        }
+//        if (!updates.isEmpty()) {
+//            BlockUpdateEvent.Pre pre = new BlockUpdateEvent.Pre();
+//            pre.setUpdatedBlocks(updates);
+//            onBlockUpdate(pre);
+//        }
+//    }
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onBlockUpdate(BlockUpdateEvent.Pre blockUpdateEvent) {
@@ -436,11 +440,11 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
         Map<DungeonRoom, List<Tuple<BlockPos, IBlockState>>> updatePerRoom = blockUpdateEvent.getUpdatedBlocks().stream()
                 .filter(a -> {
-                    Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(a.getFirst());
+                    Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(a.getA());
                     return dungeonContext.getScaffoldParser().getRoomMap().get(roompt) != null;
                 })
                 .collect(Collectors.groupingBy(a -> {
-                            Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(a.getFirst());
+                            Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(a.getA());
                             return dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
                         }));
 
@@ -450,7 +454,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             }
             RoomInfo roomInfo = roomInfoMap.get(dungeonRoomListEntry.getKey());
             if (roomInfo  == null) continue;
-            roomInfo.blockUpdates.add(new RoomInfo.BlockUpdate(dungeonRoomListEntry.getValue().stream().map(it -> new RoomInfo.BlockUpdate.BlockUpdateData(it.getFirst(), it.getSecond())).collect(Collectors.toList()), System.currentTimeMillis()));
+            roomInfo.blockUpdates.add(new RoomInfo.BlockUpdate(dungeonRoomListEntry.getValue().stream().map(it -> new RoomInfo.BlockUpdate.BlockUpdateData(it.getA(), it.getB())).collect(Collectors.toList()), System.currentTimeMillis()));
             roomInfo.minX = dungeonRoomListEntry.getKey().getRoomBounds().getMin().getX();
             roomInfo.minZ = dungeonRoomListEntry.getKey().getRoomBounds().getMin().getZ();
 
@@ -532,7 +536,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                             return null;
                         }
                     })
-                    .registerTypeAdapter(IChatComponent.class, new IChatComponent.Serializer())
+                    .registerTypeAdapter(Component.class, new Component.Serializer())
                     .create();
             String correlationId = Optional.ofNullable(PartyManager.INSTANCE.getPartyContext())
                     .map(PartyContext::getPartyID)
@@ -723,14 +727,14 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (!FeatureRegistry.DEBUG.isEnabled()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
 
-        Entity hovered = Minecraft.getMinecraft().pointedEntity;
+        Entity hovered = Minecraft.getInstance().pointedEntity;
         if (hovered == null) return;
         EntityData entityData = entityDataMap.get(hovered.getEntityId());
         if (entityData == null) {
             RenderUtils.drawTextAtWorld("??Unknown??", (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
         } else {
             if (entityData.getArmorstand() != null)
-                RenderUtils.drawTextAtWorld(entityData.getArmorstand().getFormattedText(), (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
+                RenderUtils.drawTextAtWorld(TextUtils.getFormattedText(entityData.getArmorstand()), (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
             RenderUtils.drawTextAtWorld(entityData.getType(), (float) hovered.posX, (float) hovered.posY+3.2f, (float) hovered.posZ, 0xFF00FF00, 0.02f, false, true, event.partialTicks);
             Vec3 pos = entityData.getTrajectory().getFirst().getPos();
             RenderUtils.renderBeaconBeam(

@@ -58,9 +58,9 @@ public class SkinFetcher {
         CompletableFuture<SkinSet> skinSet2 = new CompletableFuture<>();
         currentReq.put(gameProfile.getId().toString(), skinSet2);
             ApiFetcher.ex.submit(() -> {
-                GameProfile gameProfile1 = Minecraft.getMinecraft().getSessionService().fillProfileProperties(gameProfile, true);
+                GameProfile gameProfile1 = Minecraft.getInstance().getSessionService().fillProfileProperties(gameProfile, true);
 
-                Minecraft.getMinecraft().getSkinManager().loadProfileTextures(gameProfile1, new SkinManager.SkinAvailableCallback() {
+                Minecraft.getInstance().getSkinManager().loadProfileTextures(gameProfile1, new SkinManager.SkinAvailableCallback() {
                     public void skinAvailable(MinecraftProfileTexture.Type p_180521_1_, Identifier location, MinecraftProfileTexture profileTexture) {
                         switch (p_180521_1_) {
                             case SKIN:
