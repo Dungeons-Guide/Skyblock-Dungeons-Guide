@@ -18,11 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.commands;
 
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ClientTickEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.RegisterCommandEvent;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.launcher.Main;
@@ -53,14 +50,12 @@ import net.minecraft.util.ChatStyle;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 import org.json.JSONObject;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 public class CommandDungeonsGuide {
 
-    private static final String[] NAMES = {
+    // registered as redirects to /dg
+    public static final String[] ALIASES = {
             "dungeonsguide",
-            "dg", //per issue #400
             "dungeonguide", //because people keep saying "dungeon guide" the singular
             "deegee", //in case another mod/server somehow uses a command "/dg" and no one wants to type out the entire name "dungeonsguide"
             "던전가이드", //easter egg
@@ -68,55 +63,26 @@ public class CommandDungeonsGuide {
             // for each new alias, add a new line
     };
 
-    @SubscribeEvent
-    public void onRegisterCommand(RegisterCommandEvent event) {
-        for (String name : NAMES)
-            event.dispatcher.register(build(name));
+    @DGCommand("dg")
+    public void openConfig() {
+        target = new ConfigGuiScreenAdapter(null);
     }
 
-    private LiteralArgumentBuilder<FabricClientCommandSource> build(String name) {
-        LiteralArgumentBuilder<FabricClientCommandSource> root = literal(name)
-                .executes(ctx -> run(() -> target = new ConfigGuiScreenAdapter(null)));
-
-        root.then(literal("reparty").executes(ctx -> run(this::repartyCommand)));
-        root.then(literal("gui").executes(ctx -> run(() -> target = new ConfigGuiScreenAdapter(null, new GlobalHUDScale(new HUDLocationConfig(null))))));
-        root.then(literal("pv").then(argument("ign", StringArgumentType.word())
-                .executes(ctx -> run(() -> pvCommand(StringArgumentType.getString(ctx, "ign"), ctx.getSource())))));
-        root.then(literal("pvall").executes(ctx -> run(this::pvAllCommand)));
-        for (String sub : new String[] {"asktojoin", "atj"})
-            root.then(literal(sub).executes(ctx -> run(this::askToJoinCommand)));
-        root.then(literal("purge").executes(ctx -> run(this::purgeCommand)));
-        root.then(literal("pbroadcast").then(argument("payload", StringArgumentType.greedyString())
-                .executes(ctx -> run(() -> pBroadcastCommand(new String[] {"pbroadcast", StringArgumentType.getString(ctx, "payload")})))));
-        for (String sub : new String[] {"partymax", "pm"})
-            root.then(literal(sub)
-                    .executes(ctx -> run(() -> partyMaxCommand(new String[] {sub})))
-                    .then(argument("number", StringArgumentType.word())
-                            .executes(ctx -> run(() -> partyMaxCommand(new String[] {sub, StringArgumentType.getString(ctx, "number")})))));
-        root.then(literal("unload").executes(ctx -> run(this::unloadCommand)));
-        for (String sub : new String[] {"setuiscale", "setscale", "uiscale", "scale"})
-            root.then(literal(sub)
-                    .executes(ctx -> run(() -> setUIScale(new String[] {sub})))
-                    .then(argument("scale", StringArgumentType.word())
-                            .executes(ctx -> run(() -> setUIScale(new String[] {sub, StringArgumentType.getString(ctx, "scale")})))));
-        root.then(literal("aliases").executes(ctx -> run(this::aliasesCommand)));
-        root.then(literal("help").executes(ctx -> run(this::helpCommand)));
-        return root;
+    @DGCommand("dg gui")
+    public void openGuiConfig() {
+        target = new ConfigGuiScreenAdapter(null, new GlobalHUDScale(new HUDLocationConfig(null)));
     }
 
-    private int run(Runnable runnable) {
-        runnable.run();
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private void aliasesCommand() {
+    @DGCommand("dg aliases")
+    public void showAlias() {
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide aliases§7::"));
         ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/dungeonsguide"));
         ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/dungeonguide"));
         ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/deegee"));
     }
 
-    private void helpCommand() {
+    @DGCommand("dg {text}")
+    public void showHelp(@CommandParam(value = "text", stringType = CommandParam.EnumStringType.GREEDY) String text) {
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg scale [scale] §7-§fSets the Global HUD scale (Also disables Minecraft default HUD scale for you as well if you haven't already.)"));
@@ -130,28 +96,27 @@ public class CommandDungeonsGuide {
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg unload §7-§f Unload Current Version of Dungeons Guide, to load the new version"));
     }
 
-    private void setUIScale(String[] args) {
-        if (args.length != 2) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cUsage: /dg " + args[0] + " [scale]"));
-            return;
-        }
-        try {
-            Double.parseDouble(args[1]);
-        } catch ( NumberFormatException e ) {
-            if (args[1] instanceof String && (args[1].toLowerCase().equals("reset") || args[1].toLowerCase().equals("r"))) {
-                FeatureRegistry.GLOBAL_HUD_SCALE.<Double>getParameter("scale").setValue(1d);
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eGlobal HUD scale successfully reset to 1."));
-            } else {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cSorry, but " + args[1] + " is not a valid GUI scale. Try again."));
-            }
-            return;
-        }
-        Double theScale = Double.parseDouble(args[1]);
+    @DGCommand("dg scale reset")
+    @DGCommand("dg setscale reset")
+    @DGCommand("dg uiscale reset")
+    @DGCommand("dg setuiscale reset")
+    public void resetUIScale() {
+        FeatureRegistry.GLOBAL_HUD_SCALE.<Double>getParameter("scale").setValue(1d);
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eGlobal HUD scale successfully reset to 1."));
+    }
+
+    @DGCommand("dg scale {scale}")
+    @DGCommand("dg setuiscale {scale}")
+    @DGCommand("dg setscale {scale}")
+    @DGCommand("dg uiscale {scale}")
+    public void setUIScale(@CommandParam(value = "scale", min = 0.5, max = 10) double theScale, CommandContext<FabricClientCommandSource> context) {
+        String alias = context.getNodes().get(1).getNode().getName();
+
         if (theScale < 0.01 || theScale > (Math.PI + Math.E)) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cSorry, but while " + args[1] + " is a valid number, it is not a suitable GUI scale. Try again, §eor reset your Global HUD scale with §6/dg " + args[0] + " reset§e."));
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cSorry, but while " + theScale + " is a valid number, it is not a suitable GUI scale. Try again, §eor reset your Global HUD scale with §6/dg " + alias + " reset§e."));
             return;
         }
-        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §aSuccessfully set your Global HUD scale to " + args[1] + ". §eTo reset your Global HUD scale, run §6/dg " + args[0] + " reset§e."));
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §aSuccessfully set your Global HUD scale to " + theScale + ". §eTo reset your Global HUD scale, run §6/dg " + alias + " reset§e."));
         FeatureRegistry.GLOBAL_HUD_SCALE.<Boolean>getParameter("mc").setValue(false);
         FeatureRegistry.GLOBAL_HUD_SCALE.<Double>getParameter("scale").setValue(theScale);
     }
@@ -172,13 +137,15 @@ public class CommandDungeonsGuide {
         }
     }
 
-    private void repartyCommand() {
+    @DGCommand("dg reparty")
+    public void repartyCommand() {
         if (!DungeonsGuide.getDungeonsGuide().getCommandReparty().requestReparty(false)) {
             ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cRepartying..."));
         }
     }
 
-    private void pvAllCommand() {
+    @DGCommand("dg pvall")
+    public void pvAllCommand() {
         PartyManager.INSTANCE.requestPartyList(context -> {
             if (context == null) {
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou are not in a party!"));
@@ -188,7 +155,9 @@ public class CommandDungeonsGuide {
         });
     }
 
-    private void askToJoinCommand() {
+    @DGCommand("dg atj")
+    @DGCommand("dg asktojoin")
+    public void askToJoinCommand() {
         if (!DiscordIntegrationManager.INSTANCE.isLoaded()) {
             ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cDiscord GameSDK has been disabled, or it failed to load!"));
             return;
@@ -208,7 +177,9 @@ public class CommandDungeonsGuide {
         }
     }
 
-    private void pvCommand(String ign, FabricClientCommandSource sender) {
+    @DGCommand("dg pv {ign}")
+    public void pvCommand(String ign, CommandContext<FabricClientCommandSource> ctx) {
+        FabricClientCommandSource sender = ctx.getSource();
         try {
             ApiFetcher.fetchUUIDAsync(ign)
                     .thenAccept(a -> {
@@ -224,7 +195,8 @@ public class CommandDungeonsGuide {
         }
     }
 
-    private void purgeCommand() {
+    @DGCommand("dg purge")
+    public void purgeCommand() {
         ApiFetcher.purgeCache();
         CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
         cosmeticsManager.requestPerms();
@@ -238,11 +210,10 @@ public class CommandDungeonsGuide {
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
     }
 
-    private void pBroadcastCommand(String[] args) {
+    @DGCommand("dg pbroadcast {payload}")
+    public void pBroadcastCommand(@CommandParam(value = "payload", stringType = CommandParam.EnumStringType.GREEDY) String payload) {
         try {
-            String[] payload = new String[args.length - 1];
-            System.arraycopy(args, 1, payload, 0, payload.length);
-            String actualPayload = String.join(" ", payload).replace("$C$", "§");
+            String actualPayload = payload.replace("$C$", "§");
             StompManager.getInstance().send(new StompPayload().header("destination", "/app/party.broadcast").payload(
                     new JSONObject().put("partyID", PartyManager.INSTANCE.getPartyContext().getPartyID())
                             .put("payload", actualPayload).toString()
@@ -255,26 +226,21 @@ public class CommandDungeonsGuide {
 
     }
 
-    private void partyMaxCommand(String[] args) {
-        if (args.length == 1) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fCurrent party max is §e" + PartyManager.INSTANCE.getMaxParty()));
-        } else if (args.length == 2) {
-            try {
-                int partyMax = Integer.parseInt(args[1]);
-                if (partyMax < 2) {
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cparty max can't be smaller than 2"));
-                    return;
-                }
-
-                PartyManager.INSTANCE.setMaxParty(partyMax);
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully set the party max to §e" + PartyManager.INSTANCE.getMaxParty()));
-            } catch (Exception e) {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §c" + args[1] + " is not valid number."));
-            }
-        }
+    @DGCommand("dg pm")
+    @DGCommand("dg partymax")
+    public void showPartyMax() {
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fCurrent party max is §e" + PartyManager.INSTANCE.getMaxParty()));
     }
 
-    private void unloadCommand() {
+    @DGCommand("dg pm {max}")
+    @DGCommand("dg partymax {max}")
+    public void setPartyMax(@CommandParam(value = "max", min = 2, max = 10000) int max) {
+        PartyManager.INSTANCE.setMaxParty(max);
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully set the party max to §e" + PartyManager.INSTANCE.getMaxParty()));
+    }
+
+    @DGCommand("dg unload")
+    public void unloadCommand() {
         Main.getMain().unloadWithoutStacktraceReference();
     }
 }
