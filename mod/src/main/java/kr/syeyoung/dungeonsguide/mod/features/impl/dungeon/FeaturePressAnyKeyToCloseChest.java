@@ -32,6 +32,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.Container;
+import net.minecraft.client.input.MouseButtonEvent;
 
 public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
     public FeaturePressAnyKeyToCloseChest() {
@@ -64,11 +65,24 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void onMouseInput(ScreenMouseEvent.Pre mouseInputEvent) {
+    public void onMouseClick(ScreenMouseEvent.Click mouseInputEvent) {
+        onMouseButton(mouseInputEvent, mouseInputEvent.buttonEvent);
+    }
+
+    @DGEventHandler
+    public void onMouseRelease(ScreenMouseEvent.Release mouseInputEvent) {
+        onMouseButton(mouseInputEvent, mouseInputEvent.buttonEvent);
+    }
+
+    @DGEventHandler
+    public void onMouseDrag(ScreenMouseEvent.Drag mouseInputEvent) {
+        onMouseButton(mouseInputEvent, mouseInputEvent.buttonEvent);
+    }
+
+    private void onMouseButton(ScreenMouseEvent mouseInputEvent, MouseButtonEvent buttonEvent) {
         Screen screen = Minecraft.getInstance().screen;
         
         if (!SkyblockStatus.isOnDungeon()) return;
-        if ((mouseInputEvent.buttonEvent == null ? -1 : mouseInputEvent.buttonEvent.button()) == -1) return;
 
         if (screen instanceof ContainerScreen){
             String title = ((ContainerScreen)screen).getTitle().getString();
