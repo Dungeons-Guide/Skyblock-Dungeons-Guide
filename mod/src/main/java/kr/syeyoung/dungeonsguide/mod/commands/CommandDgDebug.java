@@ -85,7 +85,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import net.minecraft.network.chat.Component;
-import kr.syeyoung.dungeonsguide.mod.utils.ItemCapture;
 import java.io.IOException;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.RoomDataConverter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
@@ -1441,7 +1440,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug itemcapture")
     public void itemCaptureCommand() {
         try {
-            File file = ItemCapture.capture();
+            File file = FeatureRegistry.DEBUG_ITEM_CAPTURE.capture();
             ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fItems captured to " + file.getAbsolutePath()));
         } catch (IOException e) {
             e.printStackTrace();

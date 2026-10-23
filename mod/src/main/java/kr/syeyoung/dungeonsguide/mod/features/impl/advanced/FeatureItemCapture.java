@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package kr.syeyoung.dungeonsguide.mod.utils;
+package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -24,6 +24,7 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
@@ -39,10 +40,14 @@ import java.nio.charset.StandardCharsets;
  * Writes the held item and the open container's slots as their component json, to measure Hypixel's 26.1 item
  * layout (custom_data, profile, lore) for D125 (dgdebug itemcapture).
  */
-public class ItemCapture {
+public class FeatureItemCapture extends SimpleFeature {
     private static final Gson GSON = new Gson();
 
-    public static File capture() throws IOException {
+    public FeatureItemCapture() {
+        super("Debug", "Item Capture", "Writes the held item and the open container's slots as component json on /dgdebug itemcapture", "debug.itemcapture", false);
+    }
+
+    public File capture() throws IOException {
         Minecraft mc = Minecraft.getInstance();
         DynamicOps<JsonElement> ops = mc.level.registryAccess().createSerializationContext(JsonOps.INSTANCE);
 
