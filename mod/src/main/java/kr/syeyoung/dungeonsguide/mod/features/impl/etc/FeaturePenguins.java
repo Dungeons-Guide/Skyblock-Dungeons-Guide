@@ -43,7 +43,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderPlayerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -61,12 +61,12 @@ public class FeaturePenguins extends SimpleFeature {
     }
 
     private void tryLoading(String modelName, String location, TextureStitchEvent.Pre event) {
-        ResourceLocation modelResourceLocation = new ResourceLocation(location);
+        Identifier modelResourceLocation = Identifier.parse(location);
         try {
             OBJModel objModel = (OBJModel) OBJLoader.instance.loadModel(modelResourceLocation);
             objModel = (OBJModel) objModel.process(new ImmutableMap.Builder<String, String>().put("flip-v", "true").build());
             for (String obj : objModel.getMatLib().getMaterialNames()) {
-                ResourceLocation resourceLocation = objModel.getMatLib().getMaterial(obj).getTexture().getTextureLocation();
+                Identifier resourceLocation = objModel.getMatLib().getMaterial(obj).getTexture().getTextureLocation();
                 event.map.registerSprite(resourceLocation);
             }
             objModels.put(modelName, objModel);

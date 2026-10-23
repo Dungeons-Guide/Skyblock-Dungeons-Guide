@@ -34,13 +34,15 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
+import com.mojang.blaze3d.platform.InputConstants;
+import org.lwjgl.glfw.GLFW;
 
 public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "enabled")
@@ -60,7 +62,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
     public final BindableAttribute<String> disableable = new BindableAttribute<>(String.class);
 
     public WidgetEditableStyleGroupStyleLine(boolean disableable, String name, boolean isEnabled, Supplier<Object> defaultValueSup, Consumer<Object> setter) {
-        super(new ResourceLocation("dungeonsguide:gui/config/text/editableStyleline.gui"));
+        super(Identifier.parse("dungeonsguide:gui/config/text/editable_styleline.gui"));
 
         this.disableable.setValue(disableable ? "show" : "hide");
 
@@ -145,7 +147,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
         public final BindableAttribute<AColor> aColorBindableAttribute = new BindableAttribute<>(AColor.class);
 
         public ColorEditWidget(BindableAttribute<AColor> color) {
-            super(new ResourceLocation("dungeonsguide:gui/config/text/editableColor.gui"));
+            super(Identifier.parse("dungeonsguide:gui/config/text/editable_color.gui"));
 
             aColorBindableAttribute.exportTo(color);
         }
@@ -216,7 +218,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
         }
 
         public DoubleEditWidget(BindableAttribute<Double> featureParameter, double min, double max) {
-            super(new ResourceLocation("dungeonsguide:gui/config/text/editableNumber.gui"));
+            super(Identifier.parse("dungeonsguide:gui/config/text/editable_number.gui"));
             this.min = min;
             this.max = max;
             truth.exportTo(featureParameter);
@@ -235,8 +237,8 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
 
         @On(functionName = "inc")
         public void inc() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-            double newT = truth.getValue() + (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            double newT = truth.getValue() + (InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) ? 1 : 0.1);
             if (newT > max) newT = max;
             truth.setValue(newT);
             value.setValue(String.format("%f", truth.getValue()));
@@ -244,8 +246,8 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
 
         @On(functionName = "dec")
         public void dec() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-            double newT = truth.getValue() - (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            double newT = truth.getValue() - (InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) ? 1 : 0.1);
             if (newT < min) newT = min;
             truth.setValue(newT);
             value.setValue(String.format("%f", truth.getValue()));
@@ -258,10 +260,10 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
         @Bind(variableName = "enabled")
         public final BindableAttribute<Boolean> isEnabled = new BindableAttribute<>(Boolean.class);
         public BooleanEditWidget(BindableAttribute<Boolean> featureParameter) {
-            super(new ResourceLocation("dungeonsguide:gui/config/text/editableCheckmark.gui"));
+            super(Identifier.parse("dungeonsguide:gui/config/text/editable_checkmark.gui"));
             isEnabled.exportTo(featureParameter);
             isEnabled.addOnUpdate((old,neu) -> {
-                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             });
         }
     }

@@ -84,7 +84,7 @@ public class AuthManager {
         scheduler.scheduleAtFixedRate(() -> {
             boolean shouldReAuth = false;
             if (getToken().isUserVerified()
-                    && !getToken().getUUID().equals(Minecraft.getMinecraft().getSession().getProfile().getId().toString())) {
+                    && !getToken().getUUID().equals(Minecraft.getInstance().getUser().getProfileId().toString())) {
                 shouldReAuth = true;
                 if (Main.getMain().getCurrentLoader() instanceof RemoteLoader)
                     Main.getMain().unloadWithoutStacktraceReference();
@@ -122,7 +122,7 @@ public class AuthManager {
             String token = DgAuthUtil.requestAuth();
             byte[] encSecret = DgAuthUtil.checkSessionAuthenticityAndReturnEncryptedSecret(token);
             currentToken = DgAuthUtil.verifyAuth(token, encSecret);
-            Minecraft.getMinecraft().addScheduledTask(() -> {
+            Minecraft.getInstance().execute(() -> {
                 DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new AuthChangedEvent(currentToken));
             });
 

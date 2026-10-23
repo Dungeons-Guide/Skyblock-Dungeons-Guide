@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class WidgetTeleport extends AnnotatedWidget {
 
@@ -36,7 +36,7 @@ public class WidgetTeleport extends AnnotatedWidget {
     private String  mechanic;
 
     public WidgetTeleport(DungeonRoom dungeonRoom, String mechanic) {
-        super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/state.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/mechanic_browser/state.gui"));
         state.setValue("§eTeleport To");
         this.dungeonRoom = dungeonRoom;
         this.mechanic = mechanic;

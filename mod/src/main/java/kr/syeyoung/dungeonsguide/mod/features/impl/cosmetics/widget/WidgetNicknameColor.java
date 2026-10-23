@@ -29,8 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.awt.*;
 import java.io.IOException;
@@ -38,6 +37,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetNicknameColor extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "preview")
@@ -52,7 +53,7 @@ public class WidgetNicknameColor extends AnnotatedImportOnlyWidget {
     private CosmeticData currentSelected;
 
     public WidgetNicknameColor() {
-        super(new ResourceLocation("dungeonsguide:gui/config/cosmetics/nicknameColor.gui"));
+        super(Identifier.parse("dungeonsguide:gui/config/cosmetics/nickname_color.gui"));
 
 
         ArrayList<Widget> list = new ArrayList<>();
@@ -61,7 +62,7 @@ public class WidgetNicknameColor extends AnnotatedImportOnlyWidget {
         for (CosmeticData value : cosmeticsManager.getCosmeticDataMap().values()) {
             if (value.getCosmeticType().equals("ncolor")) {
                 list.add(new WidgetColorButton(cosmeticsManager.getPerms().contains(value.getReqPerm()), value.getData().substring(1), () -> {
-                    Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                    Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                     currentSelected = value;
                     update();
                 }));
@@ -104,7 +105,7 @@ public class WidgetNicknameColor extends AnnotatedImportOnlyWidget {
                 || (currentSelected != null && !cosmeticsManager.getPerms().contains(currentSelected.getReqPerm()));
         if (disable) return;
 
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         if (previouslySelected != null) {
             List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getMinecraft().getSession().getProfile().getId(), (a) -> new ArrayList<>());
@@ -124,14 +125,14 @@ public class WidgetNicknameColor extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "clear")
     public void onClear() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         currentSelected = null;
         update();
     }
 
     @On(functionName = "shop")
     public void openShop() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         try {
             Desktop.getDesktop().browse(new URI("https://store.dungeons.guide/"));
         } catch (IOException | URISyntaxException e) {

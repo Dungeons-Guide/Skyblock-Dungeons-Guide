@@ -9,13 +9,14 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.awt.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetPathfindCredits extends AnnotatedImportOnlyWidget {
 
@@ -26,7 +27,7 @@ public class WidgetPathfindCredits extends AnnotatedImportOnlyWidget {
 
 
     public WidgetPathfindCredits() {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/frontpage/pathfindcredits.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/requestcalculation/frontpage/pathfindcredits.gui"));
 
         reload();
     }
@@ -43,7 +44,7 @@ public class WidgetPathfindCredits extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "reload")
     public void reload() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         credits.setValue("Loading...");
         ApiFetcher.ex.submit(this::doReload);
     }
@@ -51,7 +52,7 @@ public class WidgetPathfindCredits extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "purchaseCredits")
     public void purchaseCredits() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         try {
             Desktop.getDesktop().browse(new URL("https://store.dungeons.guide/category/pathfinding").toURI());
         } catch (IOException e) {

@@ -20,8 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.events.impl;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.util.Tuple;
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
@@ -30,7 +30,7 @@ import java.util.Set;
 
 public abstract class BlockUpdateEvent extends DGEvent {
     @Getter @Setter
-    private Set<Tuple<BlockPos, IBlockState>> updatedBlocks = new HashSet<>();
+    private Set<Tuple<BlockPos, BlockState>> updatedBlocks = new HashSet<>();
 
     public static class Pre extends BlockUpdateEvent {}
     public static class Post extends BlockUpdateEvent {}

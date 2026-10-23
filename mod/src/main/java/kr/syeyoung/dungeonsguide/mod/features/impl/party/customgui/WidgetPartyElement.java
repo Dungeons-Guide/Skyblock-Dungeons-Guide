@@ -29,14 +29,15 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
     private final int slot;
@@ -69,7 +70,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
     private PartyFinderParty party;
 
     public WidgetPartyElement(WidgetPartyFinder widgetPartyFinder, int slot) {
-        super(new ResourceLocation("dungeonsguide:gui/features/partyFinder/party_element.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/party_finder/party_element.gui"));
         this.slot = slot;
         this.widgetPartyFinder = widgetPartyFinder;
         WidgetHoverTooltip hoverTooltip;
@@ -165,7 +166,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "click")
     public void onClick() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(slot, 0, 0);
     }
 

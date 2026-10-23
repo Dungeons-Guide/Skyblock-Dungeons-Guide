@@ -30,7 +30,7 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,7 +57,7 @@ public class ImageTexture {
     private String url;
     private BufferedImage image;
     private DynamicTexture previewTexture;
-    private ResourceLocation resourceLocation;
+    private Identifier resourceLocation;
 
     private int width;
     private int height;

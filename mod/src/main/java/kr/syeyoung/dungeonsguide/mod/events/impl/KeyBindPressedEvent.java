@@ -22,10 +22,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
+import com.mojang.blaze3d.platform.InputConstants;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 public class KeyBindPressedEvent extends DGEvent {
-    private int key;
+    private InputConstants.Key key;
 }

@@ -18,13 +18,14 @@ import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class OnboardingCard extends AnnotatedWidget {
     @Getter
@@ -59,7 +60,7 @@ public class OnboardingCard extends AnnotatedWidget {
 
 
     public OnboardingCard() {
-        super(new ResourceLocation("dungeonsguide:gui/onboarding/card.gui"));
+        super(Identifier.parse("dungeonsguide:gui/onboarding/card.gui"));
 
         parserElementBindableAttribute.addOnUpdate((old, neu) -> {
             settings = new OnboardingCardSettings();
@@ -176,7 +177,7 @@ public class OnboardingCard extends AnnotatedWidget {
         isPressed = false;
         if (!getDomElement().getAbsBounds().contains(absMouseX, absMouseY)) return;
         // do stuff
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         if (selected.getValue())
             controller.getValue().unselect(id.getValue());

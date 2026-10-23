@@ -26,7 +26,7 @@ import lombok.AllArgsConstructor;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,8 +86,8 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     private EntityArmorStand bonzoStand;
 
 
-    private static final ResourceLocation UNDEAD = new ResourceLocation("dungeonsguide:map/bossfight/f1/undead.png");
-    private static final ResourceLocation BONZO = new ResourceLocation("dungeonsguide:map/bossfight/f1/bonzo.png");
+    private static final Identifier UNDEAD = Identifier.parse("dungeonsguide:map/bossfight/f1/undead.png");
+    private static final Identifier BONZO = Identifier.parse("dungeonsguide:map/bossfight/f1/bonzo.png");
 
     @Override
     public MarkerData convertToMarker(Entity entity) {

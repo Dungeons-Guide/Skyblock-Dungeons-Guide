@@ -11,7 +11,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +27,7 @@ public class WidgetAbilitySettings extends Widget implements Renderer {
         return Collections.emptyList();
     }
 
-    public static final ResourceLocation abilities = new ResourceLocation("dungeonsguide:textures/features/precalclist/abilities.png");
+    public static final Identifier abilities = Identifier.parse("dungeonsguide:textures/features/precalclist/abilities.png");
 
 
     private void renderIndex(int x, int y, int index, int width, int height, int type) {

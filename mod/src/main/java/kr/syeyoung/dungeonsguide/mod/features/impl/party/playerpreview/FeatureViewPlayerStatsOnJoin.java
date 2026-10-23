@@ -29,9 +29,9 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.DataRendererEditor;
+// import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.DataRendererEditor;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget.WidgetProfileViewer;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.CompatLayer;
+// import kr.syeyoung.dungeonsguide.mod.gui.elements.CompatLayer;
 import kr.syeyoung.dungeonsguide.mod.overlay.AbsPosPositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
@@ -67,8 +67,9 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         super("Dungeon Party", "View player stats when join", "view player rendering when joining/someone joins the party", "partykicker.viewstats", true);
         addParameter("datarenderers", new FeatureParameter<List<String>>("datarenderers", "DataRenderers", "Datarenderssdasd", new ArrayList<>(Arrays.asList(
                 "catalv", "selected_class_lv", "dungeon_catacombs_higheststat", "dungeon_master_catacombs_higheststat", "skill_combat_lv", "skill_foraging_lv", "skill_mining_lv", "fairysouls", "dummy"
-        )), TCStringList.INSTANCE)
-                .setWidgetGenerator(param -> new CompatLayer(new DataRendererEditor(FeatureViewPlayerStatsOnJoin.this))));
+        )), TCStringList.INSTANCE));
+                // TODO: the data renderer editor is built on the room editor's MPanel, not in the first 26.1 build
+//                .setWidgetGenerator(param -> new CompatLayer(new DataRendererEditor(FeatureViewPlayerStatsOnJoin.this))));
 
 
         ChatProcessor.INSTANCE.subscribe(((txt, messageContext) -> {

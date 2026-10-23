@@ -20,9 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.util.Vec3;
-
-import javax.vecmath.Vector2d;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Vector2d;
 
 public class VectorUtils {
     // Ior rooms, different coordinate system is used. Y Increases as marker goes down. X is the same.
@@ -44,8 +43,8 @@ public class VectorUtils {
 
     public static double distSquared(Vec3 lookVec, Vec3 posVec, Vec3 objectVec) {
         Vec3 v = objectVec.subtract(posVec);
-        double t = v.dotProduct(lookVec);
-        Vec3 p = posVec.addVector(lookVec.xCoord * t, lookVec.yCoord * t, lookVec.zCoord * t);
-        return p.squareDistanceTo(objectVec) / p.squareDistanceTo(posVec);
+        double t = v.dot(lookVec);
+        Vec3 p = posVec.add(lookVec.x * t, lookVec.y * t, lookVec.z * t);
+        return p.distanceToSqr(objectVec) / p.distanceToSqr(posVec);
     }
 }

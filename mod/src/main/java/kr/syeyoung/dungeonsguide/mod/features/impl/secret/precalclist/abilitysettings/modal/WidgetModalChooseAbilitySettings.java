@@ -13,11 +13,12 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetModalChooseAbilitySettings extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "list")
@@ -25,7 +26,7 @@ public class WidgetModalChooseAbilitySettings extends AnnotatedImportOnlyWidget 
     @Bind(variableName = "api")
     public final BindableAttribute<Column> api = new BindableAttribute<>(Column.class);
     public WidgetModalChooseAbilitySettings() {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/abilityedit/modal_choose_algorithm.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/abilityedit/modal_choose_algorithm.gui"));
 
         List<Widget> optionsList = new ArrayList<>();
         for (AlgorithmSetting option : AlgorithmSettingRegistry.getAlgorithmSettings()) {
@@ -36,7 +37,7 @@ public class WidgetModalChooseAbilitySettings extends AnnotatedImportOnlyWidget 
 
     @On(functionName = "createNew")
     public void create() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
 
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(500, 400, "Create New Algorithm Setting", new WidgetCreateAbilitySettings(AlgorithmSettingRegistry.STANDARD_DEFAULT_ALGORITHM_SETTING), true), (a) -> {
@@ -53,7 +54,7 @@ public class WidgetModalChooseAbilitySettings extends AnnotatedImportOnlyWidget 
 
     @On(functionName = "cancel")
     public void cancel() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         PopupMgr.getPopupMgr(getDomElement()).closePopup(null);
     }
 }

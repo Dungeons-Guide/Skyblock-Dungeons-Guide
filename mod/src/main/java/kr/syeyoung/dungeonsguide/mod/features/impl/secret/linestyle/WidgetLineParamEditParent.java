@@ -31,13 +31,14 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetLineParamEditParent extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "parentToggle")
@@ -63,7 +64,7 @@ public class WidgetLineParamEditParent extends AnnotatedImportOnlyWidget {
 
     private WidgetLinePropertiesEditor editor;
     public WidgetLineParamEditParent(WidgetLinePropertiesEditor editor, PathfindLineProperties lineProperties) {
-        super(new ResourceLocation("dungeonsguide:gui/features/lineProperties/paramEditor.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/line_properties/param_editor.gui"));
         this.editor = editor;
 
         if (lineProperties.getParent() == null || !lineProperties.isGlobal()) {
@@ -113,7 +114,7 @@ public class WidgetLineParamEditParent extends AnnotatedImportOnlyWidget {
         private int idx;
         private Consumer<PathDisplayEngineSettingRegistration<?>> onUpdate;
         public CycleWidget(List<PathDisplayEngineSettingRegistration<?>> values, int defaultIndex, Consumer<PathDisplayEngineSettingRegistration<?>> onUpdate) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/stringChoice.gui"));
+            super(Identifier.parse("dungeonsguide:gui/config/parameter/string_choice.gui"));
             this.idx = defaultIndex;
             this.values = values;
             this.onUpdate = onUpdate;
@@ -122,14 +123,14 @@ public class WidgetLineParamEditParent extends AnnotatedImportOnlyWidget {
 
         @On(functionName = "inc")
         public void inc() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             idx = (idx + 1) % values.size();
             value.setValue(values.get(idx).getName());
             onUpdate.accept(values.get(idx));
         }
         @On(functionName = "dec")
         public void dec() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             idx = (values.size() + idx - 1) % values.size();
             value.setValue(values.get(idx).getName());
             onUpdate.accept(values.get(idx));

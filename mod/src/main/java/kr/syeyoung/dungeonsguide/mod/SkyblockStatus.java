@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.HypixelJoinedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.SkyblockJoinedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.SkyblockLeftEvent;
-import kr.syeyoung.dungeonsguide.mod.fakeserver.DungeonServerLaunchUtils;
+// import kr.syeyoung.dungeonsguide.mod.fakeserver.DungeonServerLaunchUtils;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
@@ -122,7 +122,8 @@ public class SkyblockStatus {
     private static final Set<String> SKYBLOCK_IN_ALL_LANGUAGES = Sets.newHashSet("SKYBLOCK");
 
     public void updateStatus() {
-        forceIsOnDungeon = DungeonServerLaunchUtils.isDungeonIntegratedServerRunning() && Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().theWorld != null || forceIsOnDungeon2;
+        // TODO: fakeserver is not in the first 26.1 build. was: DungeonServerLaunchUtils.isDungeonIntegratedServerRunning() && Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().theWorld != null || forceIsOnDungeon2
+        forceIsOnDungeon = forceIsOnDungeon2;
         if (forceIsOnDungeon) {
             locationName = "TEST DG";
         }

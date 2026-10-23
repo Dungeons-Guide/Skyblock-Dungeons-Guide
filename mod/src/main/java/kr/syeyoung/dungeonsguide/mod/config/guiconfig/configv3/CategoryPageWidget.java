@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +40,7 @@ public class CategoryPageWidget extends AnnotatedImportOnlyWidget {
     private String category;
 
     public CategoryPageWidget(String category) {
-        super(new ResourceLocation("dungeonsguide:gui/config/categorypage.gui"));
+        super(Identifier.parse("dungeonsguide:gui/config/categorypage.gui"));
         items.setValue(buildMenu(category));
         this.category = category;
         List<Widget> widgets;

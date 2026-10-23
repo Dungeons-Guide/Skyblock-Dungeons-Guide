@@ -239,7 +239,8 @@ public class FeatureRegistry {
     public static final FeatureEtherwarpDebug DEBUG_ETHER = register(new FeatureEtherwarpDebug());
     public static final FeaturePathfinderDebug DEBUG_PFRES = register(new FeaturePathfinderDebug());
     public static final FeatureCompareRoom COMPARE_ROOM = register(new FeatureCompareRoom());
-    public static final FeatureRoomEdit ADVANCED_ROOMEDIT = register(new FeatureRoomEdit());
+    // TODO: room editor is not in the first 26.1 build
+//    public static final FeatureRoomEdit ADVANCED_ROOMEDIT = register(new FeatureRoomEdit());
     public static final FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM = register(new FeatureRoomDebugInfo());
     public static final FeatureDebuggableMap ADVANCED_DEBUGGABLE_MAP = register(new FeatureDebuggableMap());
     public static final FeatureRoomCoordDisplay ADVANCED_COORDS = register(new FeatureRoomCoordDisplay());

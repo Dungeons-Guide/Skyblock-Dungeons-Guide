@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map;
 
 import lombok.Data;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 @Data
 public class BossfightRenderSettings {
@@ -28,7 +28,7 @@ public class BossfightRenderSettings {
     private int maxX;
     private int maxZ;
     private String location;
-    private transient ResourceLocation resourceLocation;
+    private transient Identifier resourceLocation;
     private int textureWidth;
     private int textureHeight;
 }

@@ -28,9 +28,11 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
+import net.minecraft.resources.Identifier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
+import com.mojang.blaze3d.platform.InputConstants;
+import org.lwjgl.glfw.GLFW;
 
 public class TCDouble implements FeatureTypeHandler<Double> {
     public static final TCDouble INSTANCE = new TCDouble();
@@ -64,7 +66,7 @@ public class TCDouble implements FeatureTypeHandler<Double> {
         }
 
         public DoubleEditWidget(FeatureParameter<Double> featureParameter, double min, double max) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/number.gui"));
+            super(Identifier.parse("dungeonsguide:gui/config/parameter/number.gui"));
             this.truth = featureParameter.getValue();
             this.min = min;
             this.max = max;
@@ -82,16 +84,16 @@ public class TCDouble implements FeatureTypeHandler<Double> {
 
         @On(functionName = "inc")
         public void inc() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-            truth += (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            truth += (InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) ? 1 : 0.1);
             if (truth > max) truth = max;
             value.setValue(String.format("%f", truth));
         }
 
         @On(functionName = "dec")
         public void dec() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-            truth -= (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            truth -= (InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) ? 1 : 0.1);
             if (truth < min) truth = min;
             value.setValue(String.format("%f", truth));
         }

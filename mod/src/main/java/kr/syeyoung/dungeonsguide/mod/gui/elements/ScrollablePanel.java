@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Passthrough;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 @Passthrough(exportName = "_", bindName = "_", type = Widget.class)
 public class ScrollablePanel extends AnnotatedWidget {
@@ -82,7 +82,7 @@ public class ScrollablePanel extends AnnotatedWidget {
 
     }
     public ScrollablePanel() {
-        super(new ResourceLocation("dungeonsguide:gui/elements/scrollablePanel.gui"));
+        super(Identifier.parse("dungeonsguide:gui/elements/scrollable_panel.gui"));
 
         contentSize.addOnUpdate((old, neu) -> {
             contentWidth.setValue(Math.max(0, neu.getWidth() - viewportWidth.getValue()));

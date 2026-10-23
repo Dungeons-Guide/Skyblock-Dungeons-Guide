@@ -41,18 +41,18 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRoute
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.BlockPos;
-import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import com.mojang.blaze3d.platform.InputConstants;
 
 public class FeatureSingleTargetPathfind extends SimpleFeature {
     public FeatureSingleTargetPathfind() {
         super("Pathfinding & Secrets.Display One", "Auto pathfind to new secret", "Auto browse best secret upon entering the room. if enabled. (click configure to see more options)", "secret.autouponenter", false);
-        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to navigate to next best secret", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
+        addParameter("key", new FeatureParameter<InputConstants.Key>("key", "Key", "Press to navigate to next best secret", InputConstants.UNKNOWN, TCKeybind.INSTANCE));
         addParameter("nextAuto", new FeatureParameter<Boolean>("nextAuto", "Auto Pathfind to next secret", "Auto browse best next secret after current one completes.\nthe first pathfinding of first secret needs to be triggered first in order for this option to work", false, TCBoolean.INSTANCE));
     }
 
@@ -60,7 +60,7 @@ public class FeatureSingleTargetPathfind extends SimpleFeature {
 
     @DGEventHandler(ignoreDisabled = true)
     public void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent) {
-        if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue()) {
+        if (keyBindPressedEvent.getKey().equals(this.<InputConstants.Key>getParameter("key").getValue())) {
 
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (!SkyblockStatus.isOnDungeon() || context == null) return;

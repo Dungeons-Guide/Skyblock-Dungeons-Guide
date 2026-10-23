@@ -21,12 +21,13 @@ package kr.syeyoung.dungeonsguide.mod.events.impl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.network.play.server.S38PacketPlayerListItem;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 public class PlayerListItemPacketEvent extends DGEvent {
-    private S38PacketPlayerListItem packetPlayerListItem;
+    // 1.8.9: S38PacketPlayerListItem. removals are a separate packet on 26.1
+    private ClientboundPlayerInfoUpdatePacket packetPlayerListItem;
 }

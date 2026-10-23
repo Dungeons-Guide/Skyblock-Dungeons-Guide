@@ -28,9 +28,11 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
+import net.minecraft.resources.Identifier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
+import com.mojang.blaze3d.platform.InputConstants;
+import org.lwjgl.glfw.GLFW;
 
 public class TCInteger implements FeatureTypeHandler<Integer> {
     public static final TCInteger INSTANCE = new TCInteger();
@@ -57,7 +59,7 @@ public class TCInteger implements FeatureTypeHandler<Integer> {
         public final BindableAttribute<String> value = new BindableAttribute<>(String.class);
         private int truth;
         public IntegerEditWidget(FeatureParameter<Integer> featureParameter) {
-            super(new ResourceLocation("dungeonsguide:gui/config/parameter/number.gui"));
+            super(Identifier.parse("dungeonsguide:gui/config/parameter/number.gui"));
             this.truth = featureParameter.getValue();
             value.setValue(String.valueOf(truth));
             value.addOnUpdate((old,neu) -> {
@@ -70,14 +72,14 @@ public class TCInteger implements FeatureTypeHandler<Integer> {
 
         @On(functionName = "inc")
         public void inc() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-            truth +=(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 5 : 1);
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            truth +=(InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) ? 5 : 1);
             value.setValue(String.valueOf(truth));
         }
         @On(functionName = "dec")
         public void dec() {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-            truth -=(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 5 : 1);
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            truth -=(InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) ? 5 : 1);
             value.setValue(String.valueOf(truth));
         }
     }

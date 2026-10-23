@@ -60,7 +60,6 @@ import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
@@ -91,6 +90,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
+import net.minecraft.resources.Identifier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class FeatureCollectDungeonRooms extends SimpleFeature {
     public FeatureCollectDungeonRooms() {
@@ -101,7 +103,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
     public class WidgetUserApproval extends AnnotatedImportOnlyWidget {
         public WidgetUserApproval() {
-            super(new ResourceLocation("dungeonsguide:gui/collect_rooms_approval.gui"));
+            super(Identifier.parse("dungeonsguide:gui/collect_rooms_approval.gui"));
         }
 
         @On(functionName = "approve")
@@ -109,7 +111,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             FeatureCollectDungeonRooms.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDungeonRooms.this.setEnabled(true);
             Minecraft.getMinecraft().displayGuiScreen(null);
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         }
 
         @On(functionName = "deny")
@@ -117,7 +119,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             FeatureCollectDungeonRooms.this.<Boolean>getParameter("prompted").setValue(true);
             FeatureCollectDungeonRooms.this.setEnabled(false);
             Minecraft.getMinecraft().displayGuiScreen(null);
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         }
     }
 

@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.launcher;
 
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -32,12 +31,6 @@ public class FabricEntrypoint implements ClientModInitializer {
         Main.configDir = FabricLoader.getInstance().getConfigDir().resolve("dungeonsguide").toFile();
         if (!Main.configDir.exists())
             Main.configDir.mkdirs();
-
-        try {
-            GLCursors.setupCursors();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         try {
             AuthManager.getInstance().init();

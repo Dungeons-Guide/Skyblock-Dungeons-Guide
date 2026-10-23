@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class WidgetConstColor extends AnnotatedImportOnlyWidget implements Renderer {
     @Bind(variableName = "color")
@@ -38,7 +38,7 @@ public class WidgetConstColor extends AnnotatedImportOnlyWidget implements Rende
     private AColor realColor;
 
     public WidgetConstColor(boolean show, AColor derivedColor) {
-        super(new ResourceLocation("dungeonsguide:gui/config/text/constColor.gui"));
+        super(Identifier.parse("dungeonsguide:gui/config/text/const_color.gui"));
         isEmpty.setValue(show ? "show" : "hide");
         this.realColor = derivedColor;
     }

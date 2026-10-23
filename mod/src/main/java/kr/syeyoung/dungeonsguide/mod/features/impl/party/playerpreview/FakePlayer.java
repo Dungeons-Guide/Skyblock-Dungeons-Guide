@@ -34,7 +34,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Team;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.World;
 
 public class FakePlayer extends EntityOtherPlayerMP {
@@ -123,11 +123,11 @@ public class FakePlayer extends EntityOtherPlayerMP {
         return this.skinSet == null ? DefaultPlayerSkin.getSkinType(getGameProfile().getId()) : this.skinSet.getSkinType();
     }
 
-    public ResourceLocation getLocationSkin() {
+    public Identifier getLocationSkin() {
         return Objects.firstNonNull(skinSet.getSkinLoc(), DefaultPlayerSkin.getDefaultSkin(getGameProfile().getId()));
     }
 
-    public ResourceLocation getLocationCape() {
+    public Identifier getLocationCape() {
         return skinSet.getCapeLoc();
     }
 

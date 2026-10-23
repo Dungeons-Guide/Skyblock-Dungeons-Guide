@@ -37,7 +37,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 
@@ -85,7 +85,7 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
 
     private DungeonRoom dungeonRoom;
     public WidgetMechanicBrowser(DungeonRoom dungeonRoom) {
-        super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/browser.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/mechanic_browser/browser.gui"));
         scale.setValue(FeatureRegistry.SECRET_BROWSE.getScale());
         RoomRouteHandler roomRouteHandler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(dungeonRoom);
 

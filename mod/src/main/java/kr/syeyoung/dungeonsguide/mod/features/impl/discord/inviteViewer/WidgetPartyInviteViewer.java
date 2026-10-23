@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -35,7 +35,7 @@ public class WidgetPartyInviteViewer extends AnnotatedWidget {
     public final BindableAttribute<Column> columnApi = new BindableAttribute<>(Column.class);
 
     public WidgetPartyInviteViewer() {
-        super(new ResourceLocation("dungeonsguide:gui/features/discordParty/partyInviteList.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/discord_party/party_invite_list.gui"));
     }
 
     private final Set<String> joinReqUid = Collections.synchronizedSet( new HashSet<>());

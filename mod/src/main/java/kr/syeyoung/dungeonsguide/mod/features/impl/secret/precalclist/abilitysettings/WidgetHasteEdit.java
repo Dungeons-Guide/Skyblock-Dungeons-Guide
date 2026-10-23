@@ -6,11 +6,12 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetHasteEdit extends AnnotatedImportOnlyWidget {
 
@@ -21,7 +22,7 @@ public class WidgetHasteEdit extends AnnotatedImportOnlyWidget {
 
     private final BindableAttribute<Integer> currentHaste = new BindableAttribute<>(Integer.class);
     public WidgetHasteEdit(BindableAttribute<Integer> hasteBindableAttribute) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/abilityedit/hasteedit.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/abilityedit/hasteedit.gui"));
         BindableAttribute<Boolean> disabled = new BindableAttribute<>(Boolean.class, false);
 
         currentHaste.exportTo(hasteBindableAttribute);
@@ -44,7 +45,7 @@ public class WidgetHasteEdit extends AnnotatedImportOnlyWidget {
     }
 
     private void updateHaste(int i) {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         for (BindableAttribute<Boolean> booleanBindableAttribute : hasteSelected) {
             booleanBindableAttribute.setValue(false);

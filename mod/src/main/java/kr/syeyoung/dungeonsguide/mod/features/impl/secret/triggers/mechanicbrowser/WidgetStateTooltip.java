@@ -27,7 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.WorldSettings;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class WidgetStateTooltip extends AnnotatedWidget {
     public final BindableAttribute<Double> scale = new BindableAttribute<>(Double.class);
     private DungeonMechanicState mechanic;
     public WidgetStateTooltip(DungeonRoom dungeonRoom, DungeonMechanicState mechanic, String mechanicId) {
-        super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/tooltip.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/mechanic_browser/tooltip.gui"));
         scale.setValue(FeatureRegistry.SECRET_BROWSE.getScale());
         this.mechanic = mechanic;
 

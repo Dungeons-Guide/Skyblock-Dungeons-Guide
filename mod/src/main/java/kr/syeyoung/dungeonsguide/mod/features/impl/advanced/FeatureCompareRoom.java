@@ -26,20 +26,21 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.util.ChatComponentText;
-import org.lwjgl.input.Keyboard;
+import com.mojang.blaze3d.platform.InputConstants;
+import org.lwjgl.glfw.GLFW;
 
 public class FeatureCompareRoom extends SimpleFeature {
 
     public FeatureCompareRoom() {
         super("Debug", "Compare", "Toggles compare mode", "debug.compare", false);
 
-        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle", Keyboard.KEY_R, TCKeybind.INSTANCE));
+        addParameter("key", new FeatureParameter<InputConstants.Key>("key", "Key", "Press to toggle", InputConstants.Type.KEYSYM.getOrCreate(GLFW.GLFW_KEY_R), TCKeybind.INSTANCE));
     }
     public boolean toggleCompareStatus = false;
 
     @DGEventHandler
     public void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent) {
-        if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue() && isEnabled()) {
+        if (keyBindPressedEvent.getKey().equals(this.<InputConstants.Key>getParameter("key").getValue()) && isEnabled()) {
             toggleCompareStatus = !toggleCompareStatus;
             try {
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Compare to §e"+(toggleCompareStatus ? "on":"off")));

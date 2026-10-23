@@ -24,8 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,6 +34,8 @@ import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
     private PathfindPreset preset;
@@ -64,7 +65,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
     private BindableAttribute<AlgorithmSetting> algorithmSettingBindableAttribute = new BindableAttribute<>(AlgorithmSetting.class);
 
     public WidgetPresetMetadata(PathfindPreset preset, WidgetViewPreset widgetViewPreset) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/presetview/metadata.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/presetview/metadata.gui"));
         this.preset = preset;
         this.parent = widgetViewPreset;
 
@@ -85,7 +86,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "changeName")
     public void changeName() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         ModalAsk modalMessage = new ModalAsk("Please enter the new preset name in below box", "Enter new name here", preset.getPresetName());
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Choose new name for preset", modalMessage, true), (a) -> {
@@ -98,7 +99,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "clone")
     public void clonePreset() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         PathfindPreset preset1 = preset.clone();
         PathfindPresetRegistry.getINSTANCE().register(preset1);
@@ -109,7 +110,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "delete")
     public void delete() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         if (preset == PathfindPresetRegistry.DEFAULT_PRESET) {
             ModalMessage modalMessage = new ModalMessage("Default preset can not be deleted");
@@ -137,7 +138,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "apply")
     public void apply() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         parent.getPresetList().apply(preset);
     }
@@ -145,7 +146,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "editAbilitySettings")
     public void editAbilitySettings() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
 
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(400, 300, "Choose New Default Algorithm Setting", new WidgetModalChooseAbilitySettings(), true), (a) -> {
@@ -159,7 +160,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "export")
     public void export() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
 
 
@@ -169,7 +170,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "unlinkUnused")
     public void unlinkUnused() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         ModalConfirm modalMessage = new ModalConfirm("This will unlink all UNUSED precalculations in this PRESET.\nThis operation can not be undone");
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Are you sure?", modalMessage, true), (a) -> {
             if (a == null) return;
@@ -206,7 +207,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "autolink")
     public void autolink() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         UUID uid = UUID.randomUUID();
         WidgetNotificationProgress progress = new WidgetNotificationProgress(
@@ -246,7 +247,7 @@ public class WidgetPresetMetadata  extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "requestMissing")
     public void requestMissing() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         UUID uid = UUID.randomUUID();
         WidgetNotificationProgress progress = new WidgetNotificationProgress(

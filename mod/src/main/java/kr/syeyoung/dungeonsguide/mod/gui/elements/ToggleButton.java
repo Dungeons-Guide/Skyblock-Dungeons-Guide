@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Passthrough;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 @Passthrough(exportName = "_on", bindName = "wgtOn", type = Widget.class)
 @Passthrough(exportName = "_off", bindName = "wgtOff", type = Widget.class)
@@ -57,7 +57,7 @@ public class ToggleButton extends AnnotatedWidget implements Renderer {
 
 
     public ToggleButton() {
-        super(new ResourceLocation("dungeonsguide:gui/elements/toggleButton.gui"));
+        super(Identifier.parse("dungeonsguide:gui/elements/toggle_button.gui"));
 
         enabled.addOnUpdate((old, neu) -> {
             txtEnabled.setValue(String.valueOf(neu));

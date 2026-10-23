@@ -20,8 +20,7 @@ package kr.syeyoung.dungeonsguide.launcher.gui.screen;
 
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenOpenEvent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screens.Screen;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
 
@@ -32,32 +31,32 @@ public class GuiDisplayer {
     public static GuiDisplayer INSTANCE = new GuiDisplayer();
     private GuiDisplayer() {}
 
-    private Queue<GuiScreen> guiScreensToShow = new LinkedList<>();
+    private Queue<Screen> guiScreensToShow = new LinkedList<>();
     private boolean isMcLoaded;
 
     @SubscribeEvent(priority = ListenerPriority.LAST)
     public void onGuiOpen(ScreenOpenEvent guiOpenEvent) {
         isMcLoaded = true;
-        if (Minecraft.getMinecraft().currentScreen == guiScreensToShow.peek()) {
+        if (Minecraft.getInstance().screen == guiScreensToShow.peek()) {
             guiScreensToShow.poll();
         }
         if (!guiScreensToShow.isEmpty()) {
-            GuiScreen gui = guiScreensToShow.peek();
+            Screen gui = guiScreensToShow.peek();
             if (gui == null) return;
             guiOpenEvent.gui = gui;
         }
     }
 
-    public void displayGui(GuiScreen specialGuiScreen) {
+    public void displayGui(Screen specialGuiScreen) {
         if (specialGuiScreen == null) return;
         if (!guiScreensToShow.contains(specialGuiScreen))
             guiScreensToShow.add(specialGuiScreen);
-        if (isMcLoaded && Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+        if (isMcLoaded && Minecraft.getInstance().isSameThread()) {
             if (guiScreensToShow.size() == 1)
-                Minecraft.getMinecraft().displayGuiScreen(guiScreensToShow.peek());
+                Minecraft.getInstance().setScreen(guiScreensToShow.peek());
         } else if (isMcLoaded) {
             if (guiScreensToShow.size() == 1)
-                Minecraft.getMinecraft().addScheduledTask(() -> Minecraft.getMinecraft().displayGuiScreen(guiScreensToShow.peek()));
+                Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(guiScreensToShow.peek()));
         }
     }
 }

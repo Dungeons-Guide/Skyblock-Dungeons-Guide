@@ -9,7 +9,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class WidgetPresetRoomDetailsUnused extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<Column> api = new BindableAttribute(Column.class);
 
     public WidgetPresetRoomDetailsUnused(WidgetPresetRoomDetails parent, AdditionalInfoCaculatedDungeonRoomInfo roomInfo) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/roompresetview/secretview.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/roompresetview/secretview.gui"));
 
         this.parent = parent;
         this.roomInfo = roomInfo;

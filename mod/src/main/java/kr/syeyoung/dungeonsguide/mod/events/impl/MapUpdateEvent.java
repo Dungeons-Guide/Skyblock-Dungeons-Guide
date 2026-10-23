@@ -21,9 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.events.impl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.network.play.server.S2FPacketSetSlot;
-import net.minecraft.network.play.server.S30PacketWindowItems;
-import net.minecraft.world.storage.MapData;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 
 @Data
@@ -31,5 +29,5 @@ import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 @AllArgsConstructor
 public class MapUpdateEvent extends DGEvent {
     private int mapId;
-    private MapData mapData;
+    private MapItemSavedData mapData;
 }

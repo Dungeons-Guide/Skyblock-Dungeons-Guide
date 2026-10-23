@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.events.impl;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import kr.syeyoung.dungeonsguide.mod.events.Cancelable;
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 

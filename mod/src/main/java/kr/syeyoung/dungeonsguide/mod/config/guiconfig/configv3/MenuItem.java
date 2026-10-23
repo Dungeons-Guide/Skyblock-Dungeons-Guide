@@ -25,11 +25,12 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.IOException;
 import java.util.function.Supplier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class MenuItem extends AnnotatedImportOnlyWidget {
 
@@ -40,21 +41,21 @@ public class MenuItem extends AnnotatedImportOnlyWidget {
 
     private Supplier<Widget> pageCreator;
     public MenuItem(String category, Supplier<Widget> creator) {
-        super(new ResourceLocation("dungeonsguide:gui/config/menuitem.gui"));
+        super(Identifier.parse("dungeonsguide:gui/config/menuitem.gui"));
         this.pageCreator = creator;
 
         bindableAttribute.setValue(category);
         try {
-            String target = "dungeonsguide:textures/config/categoryIcon/"+category.toLowerCase()
+            String target = "dungeonsguide:textures/config/category_icon/"+category.toLowerCase()
                     .replace("&","").replace(" ","_")+".png";
-            if (Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(target)) != null)
+            if (Minecraft.getInstance().getResourceManager().getResourceOrThrow(Identifier.parse(target)) != null)
                 image.setValue(target);
         } catch (IOException e) {}
     }
 
     @On(functionName = "click")
     public void openPage() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         Navigator.getNavigator(getDomElement()).openPage(pageCreator.get());
     }
 }

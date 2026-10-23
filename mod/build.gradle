@@ -81,6 +81,9 @@ sourceSets.main.java {
     exclude "kr/syeyoung/dungeonsguide/mod/dungeon/roomedit/**"
     exclude "kr/syeyoung/dungeonsguide/mod/fakeserver/**"
     exclude "kr/syeyoung/dungeonsguide/mod/features/impl/advanced/FeatureRoomEdit.java"
+    // built on the room editor's MPanel
+    exclude "kr/syeyoung/dungeonsguide/mod/gui/elements/CompatLayer.java"
+    exclude "kr/syeyoung/dungeonsguide/mod/features/impl/party/playerpreview/datarenders/DataRendererEditor.java"
 }
 
 loom {

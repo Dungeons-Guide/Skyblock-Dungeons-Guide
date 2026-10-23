@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.launcher.auth;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
@@ -30,7 +29,7 @@ import kr.syeyoung.dungeonsguide.launcher.auth.token.PrivacyPolicyRequiredToken;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.http.AuthServerException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.http.ResponseParsingException;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Session;
+import net.minecraft.client.User;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
@@ -98,7 +97,7 @@ public class DgAuthUtil {
     }
 
     public static String requestAuth() throws IOException {
-        GameProfile profile = Minecraft.getMinecraft().getSession().getProfile();
+        User user = Minecraft.getInstance().getUser();
 
         HttpsURLConnection connection = (HttpsURLConnection) new URL(Main.DOMAIN + "/auth/v2/requestAuth").openConnection();
         connection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
@@ -110,7 +109,7 @@ public class DgAuthUtil {
         connection.setDoInput(true);
         connection.setDoOutput(true);
 
-        connection.getOutputStream().write(("{\"uuid\":\""+profile.getId().toString()+"\",\"nickname\":\""+profile.getName()+"\"}").getBytes());
+        connection.getOutputStream().write(("{\"uuid\":\""+user.getProfileId().toString()+"\",\"nickname\":\""+user.getName()+"\"}").getBytes());
 
         return getResponse(connection, String.class);
     }
@@ -134,9 +133,9 @@ public class DgAuthUtil {
 
         String hash = calculateServerHash(sharedSecret, publicKey);
 
-        Session session = Minecraft.getMinecraft().getSession();
-        MinecraftSessionService yggdrasilMinecraftSessionService = Minecraft.getMinecraft().getSessionService();
-        yggdrasilMinecraftSessionService.joinServer(session.getProfile(), session.getToken(), hash);
+        User user = Minecraft.getInstance().getUser();
+        MinecraftSessionService yggdrasilMinecraftSessionService = Minecraft.getInstance().services().sessionService();
+        yggdrasilMinecraftSessionService.joinServer(user.getProfileId(), user.getAccessToken(), hash);
 
         return result;
     }

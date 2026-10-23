@@ -24,14 +24,14 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
 public class Image extends Widget implements Renderer {
-    public final ResourceLocation location;
+    public final Identifier location;
     public final int uvX;
     public final int uvY ;
     public final int textureWidth;

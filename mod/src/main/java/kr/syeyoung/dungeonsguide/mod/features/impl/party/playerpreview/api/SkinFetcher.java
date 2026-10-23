@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +61,7 @@ public class SkinFetcher {
                 GameProfile gameProfile1 = Minecraft.getMinecraft().getSessionService().fillProfileProperties(gameProfile, true);
 
                 Minecraft.getMinecraft().getSkinManager().loadProfileTextures(gameProfile1, new SkinManager.SkinAvailableCallback() {
-                    public void skinAvailable(MinecraftProfileTexture.Type p_180521_1_, ResourceLocation location, MinecraftProfileTexture profileTexture) {
+                    public void skinAvailable(MinecraftProfileTexture.Type p_180521_1_, Identifier location, MinecraftProfileTexture profileTexture) {
                         switch (p_180521_1_) {
                             case SKIN:
                                 skinSet.setSkinLoc(location);
@@ -93,8 +93,8 @@ public class SkinFetcher {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SkinSet {
-        private ResourceLocation skinLoc;
-        private ResourceLocation capeLoc;
+        private Identifier skinLoc;
+        private Identifier capeLoc;
         private String skinType;
     }
 }

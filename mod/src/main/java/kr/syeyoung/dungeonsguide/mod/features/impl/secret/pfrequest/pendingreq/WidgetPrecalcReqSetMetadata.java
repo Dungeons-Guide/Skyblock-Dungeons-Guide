@@ -7,7 +7,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.PathfindPrec
 import kr.syeyoung.dungeonsguide.mod.gui.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +28,7 @@ public class WidgetPrecalcReqSetMetadata extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> presetName = new BindableAttribute<>(String.class);
 
     public WidgetPrecalcReqSetMetadata(PathfindPrecalculationRequestSet requestSet) {
-        super(new ResourceLocation("dungeonsguide:gui/features/requestcalculation/pendingreq/metadata.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/requestcalculation/pendingreq/metadata.gui"));
 
 
         precalcReqs.setValue(requestSet.getRequestList().size()+"");

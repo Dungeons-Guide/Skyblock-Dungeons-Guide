@@ -33,8 +33,10 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenKeyboardEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenMouseEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenRenderEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.WorldLoadEvent;
+import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -58,6 +60,15 @@ public class FabricEventBridge {
     private static ChatReceivedEvent lastGameMessage;
 
     public static void register() {
+        // glfw is not up yet when onInitializeClient runs
+        ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
+            try {
+                GLCursors.setupCursors();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
         ClientTickEvents.START_CLIENT_TICK.register(client -> fire(new ClientTickEvent(ClientTickEvent.Phase.START)));
         ClientTickEvents.END_CLIENT_TICK.register(client -> fire(new ClientTickEvent(ClientTickEvent.Phase.END)));
 

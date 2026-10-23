@@ -9,8 +9,9 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class WidgetPreset extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "backgroundColor")
@@ -28,7 +29,7 @@ public class WidgetPreset extends AnnotatedImportOnlyWidget {
     private PathfindPreset preset;
 
     public WidgetPreset(PathfindPreset preset, WidgetPrecalcList presetList) {
-        super(new ResourceLocation("dungeonsguide:gui/features/precalclist/preset.gui"));
+        super(Identifier.parse("dungeonsguide:gui/features/precalclist/preset.gui"));
         this.name.setValue(preset.getPresetName());
         this.backgroundColor.setValue(preset.getPresetId().equals(FeatureRegistry.SECRET_PRECALC_LIST.getSelectedPresetId()) ? 0xFF005756 : 0xFF505050);
         this.buttonTxt.setValue(preset.isEditable() ? "Edit/View" : "View");
@@ -42,7 +43,7 @@ public class WidgetPreset extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "edit")
     public void edit() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
         this.presetList.edit(this);
     }

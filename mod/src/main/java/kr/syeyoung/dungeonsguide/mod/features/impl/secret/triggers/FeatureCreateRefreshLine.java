@@ -41,20 +41,20 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
-import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.util.LinkedHashMap;
+import com.mojang.blaze3d.platform.InputConstants;
 
 public class FeatureCreateRefreshLine extends SimpleFeature {
     public FeatureCreateRefreshLine() {
         super("Pathfinding & Secrets", "Refresh pathfind line or Trigger pathfind", "A keybind for creating or refresh pathfind lines for pathfind contexts that doesn't have line, or contexts that has refresh rate set to -1.\nPress settings to edit the key", "secret.refreshPathfind", true);
         this.parameters = new LinkedHashMap<>();
-        addParameter("key", new FeatureParameter<Integer>("key", "Key","Press to refresh or create pathfind line", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
+        addParameter("key", new FeatureParameter<InputConstants.Key>("key", "Key","Press to refresh or create pathfind line", InputConstants.UNKNOWN, TCKeybind.INSTANCE));
         addParameter("pathfind", new FeatureParameter<Boolean>("pathfind", "Enable Pathfinding", "Force Enable pathfind for future actions when used", false, TCBoolean.INSTANCE));
         addParameter("refreshrate", new FeatureParameter<Integer>("refreshrate", "Line Refreshrate", "Ticks to wait per line refresh, to be overriden. If the line already has pathfind enabled, this value does nothing. Specify it to -1 to don't refresh line at all", 10, TCInteger.INSTANCE));
     }
-    public int getKeybind() {return this.<Integer>getParameter("key").getValue();}
+    public InputConstants.Key getKeybind() {return this.<InputConstants.Key>getParameter("key").getValue();}
     public boolean isPathfind() {
         return this.<Boolean>getParameter("pathfind").getValue();
     }
@@ -115,7 +115,7 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
         if (!currentRoom.getRoomBounds().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) return;
         RoomRouteHandler handler = FeatureRegistry.SECRET_ROUTE_REGISTRY.getRoomHandler(currentRoom);
 
-        if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getKeybind() == keyInputEvent.getKey() && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {
+        if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getKeybind().equals(keyInputEvent.getKey()) && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {
             IPathDisplayEngine engine = getBestFit(handler, 0);
             if (engine == null) return;
             ActionRoute actionRoute = engine.getActionRoute();

@@ -28,11 +28,11 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.BossfightRenderSettings;
 import lombok.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.World;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
 
@@ -55,15 +55,15 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     @Override
     public BossfightRenderSettings getMapRenderSettings() {
         try {
-            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("dungeonsguide:map/bossfight/"+name+".json"));
+            Resource resource = Minecraft.getInstance().getResourceManager().getResourceOrThrow(Identifier.parse("dungeonsguide:map/bossfight/"+name.toLowerCase()+".json"));
             if (resource != null) {
-                resource.getInputStream();
-                try (InputStreamReader inputStreamReader = new InputStreamReader(resource.getInputStream())) {
+                resource.open();
+                try (InputStreamReader inputStreamReader = new InputStreamReader(resource.open())) {
                     settings = new Gson()
                             .fromJson(inputStreamReader, BossfightRenderSettingSettings.class);
                     if (settings.getResources() != null)
                         for (BossfightRenderSettings value : settings.getResources().values()) {
-                            value.setResourceLocation(new ResourceLocation(value.getLocation()));
+                            value.setResourceLocation(Identifier.parse(value.getLocation()));
                         }
 
                 }
@@ -81,15 +81,15 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
         this.name = name;
 
         try {
-            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("dungeonsguide:map/bossfight/"+name+".json"));
+            Resource resource = Minecraft.getInstance().getResourceManager().getResourceOrThrow(Identifier.parse("dungeonsguide:map/bossfight/"+name.toLowerCase()+".json"));
             if (resource != null) {
-                resource.getInputStream();
-                try (InputStreamReader inputStreamReader = new InputStreamReader(resource.getInputStream())) {
+                resource.open();
+                try (InputStreamReader inputStreamReader = new InputStreamReader(resource.open())) {
                     settings = new Gson()
                             .fromJson(inputStreamReader, BossfightRenderSettingSettings.class);
                     if (settings.getResources() != null)
                         for (BossfightRenderSettings value : settings.getResources().values()) {
-                            value.setResourceLocation(new ResourceLocation(value.getLocation()));
+                            value.setResourceLocation(Identifier.parse(value.getLocation()));
                         }
 
                 }

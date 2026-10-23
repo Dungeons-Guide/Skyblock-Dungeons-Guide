@@ -43,10 +43,11 @@ import org.lwjgl.opengl.GL14;
 import javax.vecmath.Vector3f;
 import java.awt.*;
 import java.util.List;
+import net.minecraft.resources.Identifier;
 
 public class RenderUtils {
-    public static final ResourceLocation icons = new ResourceLocation("textures/gui/icons.png");
-    private static final ResourceLocation beaconBeam = new ResourceLocation("textures/entity/beacon_beam.png");
+    public static final Identifier icons = Identifier.parse("textures/gui/icons.png");
+    private static final Identifier beaconBeam = Identifier.parse("textures/entity/beacon_beam.png");
 
 
     public static void renderBeaconBeam(double x, double y, double z, AColor aColor, float partialTicks) {

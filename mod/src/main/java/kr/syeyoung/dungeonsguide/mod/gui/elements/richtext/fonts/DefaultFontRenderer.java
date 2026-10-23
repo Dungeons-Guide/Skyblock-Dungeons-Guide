@@ -28,7 +28,7 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -41,11 +41,11 @@ import java.util.List;
 public class DefaultFontRenderer implements FontRenderer {
     public static DefaultFontRenderer DEFAULT_RENDERER = new DefaultFontRenderer();
 
-    private static final ResourceLocation[] unicodePageLocations = new ResourceLocation[256];
+    private static final Identifier[] unicodePageLocations = new Identifier[256];
     protected int[] charWidth = new int[256];
     public int FONT_HEIGHT = 9;
     protected byte[] glyphData = new byte[65536];
-    protected final ResourceLocation locationFontTexture = new ResourceLocation("textures/font/ascii.png");
+    protected final Identifier locationFontTexture = Identifier.parse("textures/font/ascii.png");
 
     public DefaultFontRenderer() {
         readGlyphSizes();
@@ -108,7 +108,7 @@ public class DefaultFontRenderer implements FontRenderer {
         InputStream inputstream = null;
 
         try {
-            inputstream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("font/glyph_sizes.bin")).getInputStream();
+            inputstream = Minecraft.getMinecraft().getResourceManager().getResource(Identifier.parse("font/glyph_sizes.bin")).getInputStream();
             inputstream.read(this.glyphData);
         } catch (IOException var6) {
             throw new RuntimeException(var6);
@@ -118,9 +118,9 @@ public class DefaultFontRenderer implements FontRenderer {
 
     }
 
-    private ResourceLocation getUnicodePageLocation(int page) {
+    private Identifier getUnicodePageLocation(int page) {
         if (unicodePageLocations[page] == null) {
-            unicodePageLocations[page] = new ResourceLocation(String.format("textures/font/unicode_page_%02x.png", page));
+            unicodePageLocations[page] = Identifier.parse(String.format("textures/font/unicode_page_%02x.png", page));
         }
 
         return unicodePageLocations[page];
@@ -259,8 +259,8 @@ public class DefaultFontRenderer implements FontRenderer {
         renderer.reset();
     }
 
-    private ResourceLocation lastBound;
-    public void bindTexture(WorldRenderer worldRenderer, ResourceLocation resourceLocation) {
+    private Identifier lastBound;
+    public void bindTexture(WorldRenderer worldRenderer, Identifier resourceLocation) {
         if (resourceLocation.equals(lastBound)) return;
         lastBound = resourceLocation;
         draw(worldRenderer);
