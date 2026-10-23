@@ -4,3 +4,4 @@ accessible field net/minecraft/client/renderer/GameRenderer fogRenderer Lnet/min
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen hoveredSlot Lnet/minecraft/world/inventory/Slot;
 accessible field net/minecraft/client/resources/sounds/AbstractSoundInstance volume F
 accessible field net/minecraft/client/resources/sounds/AbstractSoundInstance pitch F
+accessible field net/minecraft/client/OptionInstance value Ljava/lang/Object;

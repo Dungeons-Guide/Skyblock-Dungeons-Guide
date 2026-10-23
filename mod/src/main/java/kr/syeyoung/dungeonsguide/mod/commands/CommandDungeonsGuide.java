@@ -44,7 +44,7 @@ import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
@@ -123,7 +123,7 @@ public class CommandDungeonsGuide {
     }
 
     @Setter
-    private GuiScreen target;
+    private Screen target;
 
     @SubscribeEvent
     public void onTick(ClientTickEvent e) {

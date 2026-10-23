@@ -27,7 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.resources.Identifier;
 
 public class WidgetConstColor extends AnnotatedImportOnlyWidget implements Renderer {
@@ -55,7 +54,7 @@ public class WidgetConstColor extends AnnotatedImportOnlyWidget implements Rende
 
         Rect original = value.getRelativeBound();
         if (original == null) return;
-        GlStateManager.translate(original.getX(), original.getY(), 0);
+        context.pose().translate((float) (original.getX()), (float) (original.getY()));
 
         double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
         double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();

@@ -47,7 +47,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.GlobalHUDScale;
@@ -63,7 +62,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.settings.GameSettings;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.CompoundTag;
@@ -403,661 +402,666 @@ public class CommandDgDebug {
 
     @DGCommand("dgdebug removedoors")
     public void removedoors() throws Exception {
-        File fileRoot = Main.getConfigDir();
-        File dir = new File(fileRoot, "grouped2");
-        File outdir = new File(fileRoot, "grouped3");
+        // TODO: processes the room collector's .dgrun files (1.8.9 schematics), commented out with the collector (D130)
+//        File fileRoot = Main.getConfigDir();
+//        File dir = new File(fileRoot, "grouped2");
+//        File outdir = new File(fileRoot, "grouped3");
 
 
-        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
+//        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
 
-        while (fileIter.hasNext()) {
+//        while (fileIter.hasNext()) {
 
-            try {
-                File f = fileIter.next();
-                Gson gson = new Gson();
-                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
+//            try {
+//                File f = fileIter.next();
+//                Gson gson = new Gson();
+//                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
 
 
-                CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
-                        jsonObject.get("schematic").getAsString()
-                )));
-                byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
-                byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
-                int shape = jsonObject.get("shape").getAsShort();
-                int len = compound.getShortOr("Length", (short) 0);
-                int wid = compound.getShortOr("Width", (short) 0);
-                // formula y *len*width + z * width + x
+//                CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+//                        jsonObject.get("schematic").getAsString()
+//                )));
+//                byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
+//                byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
+//                int shape = jsonObject.get("shape").getAsShort();
+//                int len = compound.getShortOr("Length", (short) 0);
+//                int wid = compound.getShortOr("Width", (short) 0);
+//                // formula y *len*width + z * width + x
 
-                for (int x = 0; x <= 11; x ++) {
-                    for (int z = 0; z <= 11; z++) {
-                        if ((x % 2 == 1) == (z % 2 == 1)) continue;
+//                for (int x = 0; x <= 11; x ++) {
+//                    for (int z = 0; z <= 11; z++) {
+//                        if ((x % 2 == 1) == (z % 2 == 1)) continue;
 
-                        int rx = x * 16;
-                        int rz = z * 16;
+//                        int rx = x * 16;
+//                        int rz = z * 16;
 
-                        if (rx >= wid+6) continue;
-                        if (rz >= len+6) continue;
+//                        if (rx >= wid+6) continue;
+//                        if (rz >= len+6) continue;
 
-                        if (x % 2 == 1) {
-                            if (z == 0) {
-                            } else if ((shape >>(((z/2)-1) *4 +(x/2)) & 0x1) > 0 &&
-                                    (shape >>(((z/2)) *4 +(x/2)) & 0x1) > 0) {
-                                continue;
-                            }
-                        } else {
-                            if (x == 0) {
-                            } else if ((shape >>((z/2) *4 +(x/2) - 1) & 0x1) > 0 &&
-                                    (shape >>((z/2) *4 +(x/2)) & 0x1) > 0) {
-                                continue;
-                            }
-                        }
+//                        if (x % 2 == 1) {
+//                            if (z == 0) {
+//                            } else if ((shape >>(((z/2)-1) *4 +(x/2)) & 0x1) > 0 &&
+//                                    (shape >>(((z/2)) *4 +(x/2)) & 0x1) > 0) {
+//                                continue;
+//                            }
+//                        } else {
+//                            if (x == 0) {
+//                            } else if ((shape >>((z/2) *4 +(x/2) - 1) & 0x1) > 0 &&
+//                                    (shape >>((z/2) *4 +(x/2)) & 0x1) > 0) {
+//                                continue;
+//                            }
+//                        }
 
-                        int f1 = 13;
-                        // paste the one with TERRACOTA or COAL or MORE AIR INSIDE
-                        for (int rrx = rx-1; rrx <= rx + 1; rrx ++) {
-                            for (int rrz = rz - 1; rrz <= rz +1; rrz ++) {
-                                for (int y = 69; y <= 72; y++) {
-                                    int i = rrx + rrz * wid + y * wid * len;
-                                    if (rrx >= wid) continue;
-                                    if (rrz >= len) continue;
-                                    if (rrx < 0) continue;
-                                    if (rrz < 0) continue;
+//                        int f1 = 13;
+//                        // paste the one with TERRACOTA or COAL or MORE AIR INSIDE
+//                        for (int rrx = rx-1; rrx <= rx + 1; rrx ++) {
+//                            for (int rrz = rz - 1; rrz <= rz +1; rrz ++) {
+//                                for (int y = 69; y <= 72; y++) {
+//                                    int i = rrx + rrz * wid + y * wid * len;
+//                                    if (rrx >= wid) continue;
+//                                    if (rrz >= len) continue;
+//                                    if (rrx < 0) continue;
+//                                    if (rrz < 0) continue;
 
-                                    if (blocks[i] == 0 || blocks[i] == (byte)173 || (blocks[i] == (byte)159 && meta[i] == 14)) {
-                                    } else {
-                                        f1 = 0;
-                                    }
-                                }
-                            }
-                        }
+//                                    if (blocks[i] == 0 || blocks[i] == (byte)173 || (blocks[i] == (byte)159 && meta[i] == 14)) {
+//                                    } else {
+//                                        f1 = 0;
+//                                    }
+//                                }
+//                            }
+//                        }
 
-                        if (f1 < 12) continue;
+//                        if (f1 < 12) continue;
 
-                        if (x % 2 == 1) {
-                            // going in Z dir
-                            for (int rrx = rx-2; rrx <= rx + 2; rrx ++) {
-                                for (int rrz = rz - 3; rrz <= rz +3; rrz ++) {
-                                    for (int y = 66; y <= 73; y++) {
-                                        int i = rrx + rrz * wid + y * wid * len;
-                                        if (rrx >= wid) continue;
-                                        if (rrz >= len) continue;
-                                        if (rrx < 0) continue;
-                                        if (rrz < 0) continue;
+//                        if (x % 2 == 1) {
+//                            // going in Z dir
+//                            for (int rrx = rx-2; rrx <= rx + 2; rrx ++) {
+//                                for (int rrz = rz - 3; rrz <= rz +3; rrz ++) {
+//                                    for (int y = 66; y <= 73; y++) {
+//                                        int i = rrx + rrz * wid + y * wid * len;
+//                                        if (rrx >= wid) continue;
+//                                        if (rrz >= len) continue;
+//                                        if (rrx < 0) continue;
+//                                        if (rrz < 0) continue;
 
-                                        if (Math.abs(rrx - rx) == 2 || y >= 72 || y < 69) {
-                                            blocks[i] = (byte) 153;
-                                            meta[i] = 14;
-                                        }
+//                                        if (Math.abs(rrx - rx) == 2 || y >= 72 || y < 69) {
+//                                            blocks[i] = (byte) 153;
+//                                            meta[i] = 14;
+//                                        }
 
-                                        if (Math.abs(rrz - rz) <= 1 && Math.abs(rrx - rx) <= 1 && (y >= 69 && y <= 72)) {
-                                            blocks[i] = (byte) 19;
-                                            meta[i] = 14;
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            // going in X dir
-                            for (int rrx = rx-3; rrx <= rx + 3; rrx ++) {
-                                for (int rrz = rz - 2; rrz <= rz +2; rrz ++) {
-                                    for (int y = 66; y <= 73; y++) {
-                                        int i = rrx + rrz * wid + y * wid * len;
-                                        if (rrx >= wid) continue;
-                                        if (rrz >= len) continue;
-                                        if (rrx < 0) continue;
-                                        if (rrz < 0) continue;
+//                                        if (Math.abs(rrz - rz) <= 1 && Math.abs(rrx - rx) <= 1 && (y >= 69 && y <= 72)) {
+//                                            blocks[i] = (byte) 19;
+//                                            meta[i] = 14;
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        } else {
+//                            // going in X dir
+//                            for (int rrx = rx-3; rrx <= rx + 3; rrx ++) {
+//                                for (int rrz = rz - 2; rrz <= rz +2; rrz ++) {
+//                                    for (int y = 66; y <= 73; y++) {
+//                                        int i = rrx + rrz * wid + y * wid * len;
+//                                        if (rrx >= wid) continue;
+//                                        if (rrz >= len) continue;
+//                                        if (rrx < 0) continue;
+//                                        if (rrz < 0) continue;
 
-                                        if (Math.abs(rrz - rz) == 2 || y >= 72 || y < 69) {
-                                            blocks[i] = (byte) 153;
-                                            meta[i] = 15;
-                                        }
+//                                        if (Math.abs(rrz - rz) == 2 || y >= 72 || y < 69) {
+//                                            blocks[i] = (byte) 153;
+//                                            meta[i] = 15;
+//                                        }
 
-                                        if (Math.abs(rrz - rz) <= 1 && Math.abs(rrx - rx) <= 1 && (y >= 69 && y <= 72)) {
-                                            blocks[i] = (byte) 19;
-                                            meta[i] = 15;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                compound.putByteArray("Blocks", blocks);
-                compound.putByteArray("Data", meta);
+//                                        if (Math.abs(rrz - rz) <= 1 && Math.abs(rrx - rx) <= 1 && (y >= 69 && y <= 72)) {
+//                                            blocks[i] = (byte) 19;
+//                                            meta[i] = 15;
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                compound.putByteArray("Blocks", blocks);
+//                compound.putByteArray("Data", meta);
 
-                String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound);
-                jsonObject.remove("schematic");
-                jsonObject.addProperty("schematic", schm);
+//                String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound);
+//                jsonObject.remove("schematic");
+//                jsonObject.addProperty("schematic", schm);
 
-                JsonWriter writer = new JsonWriter(new OutputStreamWriter(Files.newOutputStream(new File(outdir, f.getName()).toPath())));
-                gson.toJson(jsonObject, writer);
-                writer.flush();
-                writer.close();
+//                JsonWriter writer = new JsonWriter(new OutputStreamWriter(Files.newOutputStream(new File(outdir, f.getName()).toPath())));
+//                gson.toJson(jsonObject, writer);
+//                writer.flush();
+//                writer.close();
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
 
     @DGCommand("dgdebug removedoorschematic {file}")
     public void removedoorsSchematic(@CommandParam(value = "file", stringType = CommandParam.EnumStringType.GREEDY) String file) throws Exception {
-        File fileRoot = Main.getConfigDir();
-        File dir = new File(fileRoot, "schematics");
+        // TODO: processes the room collector's .dgrun files (1.8.9 schematics), commented out with the collector (D130)
+//        File fileRoot = Main.getConfigDir();
+//        File dir = new File(fileRoot, "schematics");
 
-        File outdir = new File(fileRoot, "schematics");
-
-
-//        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
-
-        File f = new File(dir, file);
-            try (FileInputStream fis = new FileInputStream(f)){
-                CompoundTag compound = NbtIo.readCompressed(fis);
-                byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
-                byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
-                int shape = 1;
-                int len = compound.getShortOr("Length", (short) 0);
-                int wid = compound.getShortOr("Width", (short) 0);
-                // formula y *len*width + z * width + x
-
-                for (int x = 0; x <= 11; x ++) {
-                    for (int z = 0; z <= 11; z++) {
-                        if ((x % 2 == 1) == (z % 2 == 1)) continue;
-
-                        int rx = x * 16;
-                        int rz = z * 16;
-
-                        if (rx >= wid+6) continue;
-                        if (rz >= len+6) continue;
-
-                        if (x % 2 == 1) {
-                            if (z == 0) {
-                            } else if ((shape >>(((z/2)-1) *4 +(x/2)) & 0x1) > 0 &&
-                                    (shape >>(((z/2)) *4 +(x/2)) & 0x1) > 0) {
-                                continue;
-                            }
-                        } else {
-                            if (x == 0) {
-                            } else if ((shape >>((z/2) *4 +(x/2) - 1) & 0x1) > 0 &&
-                                    (shape >>((z/2) *4 +(x/2)) & 0x1) > 0) {
-                                continue;
-                            }
-                        }
-
-                        int f1 = 13;
-                        // paste the one with TERRACOTA or COAL or MORE AIR INSIDE
-                        for (int rrx = rx-1; rrx <= rx + 1; rrx ++) {
-                            for (int rrz = rz - 1; rrz <= rz +1; rrz ++) {
-                                for (int y = 69; y <= 72; y++) {
-                                    int i = rrx + rrz * wid + y * wid * len;
-                                    if (rrx >= wid) continue;
-                                    if (rrz >= len) continue;
-                                    if (rrx < 0) continue;
-                                    if (rrz < 0) continue;
-
-                                    if (blocks[i] == 0 || blocks[i] == (byte)173 || (blocks[i] == (byte)159 && meta[i] == 14)) {
-                                    } else {
-                                        f1 = 0;
-                                    }
-                                }
-                            }
-                        }
-
-                        if (f1 < 12) continue;
-
-                        if (x % 2 == 1) {
-                            // going in Z dir
-                            for (int rrx = rx-2; rrx <= rx + 2; rrx ++) {
-                                for (int rrz = rz - 3; rrz <= rz +3; rrz ++) {
-                                    for (int y = 66; y <= 73; y++) {
-                                        int i = rrx + rrz * wid + y * wid * len;
-                                        if (rrx >= wid) continue;
-                                        if (rrz >= len) continue;
-                                        if (rrx < 0) continue;
-                                        if (rrz < 0) continue;
-
-                                        if (Math.abs(rrx - rx) == 2 || y >= 72 || y < 69) {
-                                            blocks[i] = (byte) 153;
-                                            meta[i] = 14;
-                                        }
-
-                                        if (Math.abs(rrz - rz) <= 1 && Math.abs(rrx - rx) <= 1 && (y >= 69 && y <= 72)) {
-                                            blocks[i] = (byte) 19;
-                                            meta[i] = 14;
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            // going in X dir
-                            for (int rrx = rx-3; rrx <= rx + 3; rrx ++) {
-                                for (int rrz = rz - 2; rrz <= rz +2; rrz ++) {
-                                    for (int y = 66; y <= 73; y++) {
-                                        int i = rrx + rrz * wid + y * wid * len;
-                                        if (rrx >= wid) continue;
-                                        if (rrz >= len) continue;
-                                        if (rrx < 0) continue;
-                                        if (rrz < 0) continue;
-
-                                        if (Math.abs(rrz - rz) == 2 || y >= 72 || y < 69) {
-                                            blocks[i] = (byte) 153;
-                                            meta[i] = 15;
-                                        }
-
-                                        if (Math.abs(rrz - rz) <= 1 && Math.abs(rrx - rx) <= 1 && (y >= 69 && y <= 72)) {
-                                            blocks[i] = (byte) 19;
-                                            meta[i] = 15;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                compound.putByteArray("Blocks", blocks);
-                compound.putByteArray("Data", meta);
+//        File outdir = new File(fileRoot, "schematics");
 
 
-                OutputStream outputStream = Files.newOutputStream(new File(outdir, "fixed-"+f.getName()).toPath());
+////        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
 
-                NbtIo.writeCompressed(compound, outputStream);
+//        File f = new File(dir, file);
+//            try (FileInputStream fis = new FileInputStream(f)){
+//                CompoundTag compound = NbtIo.readCompressed(fis);
+//                byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
+//                byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
+//                int shape = 1;
+//                int len = compound.getShortOr("Length", (short) 0);
+//                int wid = compound.getShortOr("Width", (short) 0);
+//                // formula y *len*width + z * width + x
 
-                outputStream.flush();
-                outputStream.close();
+//                for (int x = 0; x <= 11; x ++) {
+//                    for (int z = 0; z <= 11; z++) {
+//                        if ((x % 2 == 1) == (z % 2 == 1)) continue;
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//                        int rx = x * 16;
+//                        int rz = z * 16;
+
+//                        if (rx >= wid+6) continue;
+//                        if (rz >= len+6) continue;
+
+//                        if (x % 2 == 1) {
+//                            if (z == 0) {
+//                            } else if ((shape >>(((z/2)-1) *4 +(x/2)) & 0x1) > 0 &&
+//                                    (shape >>(((z/2)) *4 +(x/2)) & 0x1) > 0) {
+//                                continue;
+//                            }
+//                        } else {
+//                            if (x == 0) {
+//                            } else if ((shape >>((z/2) *4 +(x/2) - 1) & 0x1) > 0 &&
+//                                    (shape >>((z/2) *4 +(x/2)) & 0x1) > 0) {
+//                                continue;
+//                            }
+//                        }
+
+//                        int f1 = 13;
+//                        // paste the one with TERRACOTA or COAL or MORE AIR INSIDE
+//                        for (int rrx = rx-1; rrx <= rx + 1; rrx ++) {
+//                            for (int rrz = rz - 1; rrz <= rz +1; rrz ++) {
+//                                for (int y = 69; y <= 72; y++) {
+//                                    int i = rrx + rrz * wid + y * wid * len;
+//                                    if (rrx >= wid) continue;
+//                                    if (rrz >= len) continue;
+//                                    if (rrx < 0) continue;
+//                                    if (rrz < 0) continue;
+
+//                                    if (blocks[i] == 0 || blocks[i] == (byte)173 || (blocks[i] == (byte)159 && meta[i] == 14)) {
+//                                    } else {
+//                                        f1 = 0;
+//                                    }
+//                                }
+//                            }
+//                        }
+
+//                        if (f1 < 12) continue;
+
+//                        if (x % 2 == 1) {
+//                            // going in Z dir
+//                            for (int rrx = rx-2; rrx <= rx + 2; rrx ++) {
+//                                for (int rrz = rz - 3; rrz <= rz +3; rrz ++) {
+//                                    for (int y = 66; y <= 73; y++) {
+//                                        int i = rrx + rrz * wid + y * wid * len;
+//                                        if (rrx >= wid) continue;
+//                                        if (rrz >= len) continue;
+//                                        if (rrx < 0) continue;
+//                                        if (rrz < 0) continue;
+
+//                                        if (Math.abs(rrx - rx) == 2 || y >= 72 || y < 69) {
+//                                            blocks[i] = (byte) 153;
+//                                            meta[i] = 14;
+//                                        }
+
+//                                        if (Math.abs(rrz - rz) <= 1 && Math.abs(rrx - rx) <= 1 && (y >= 69 && y <= 72)) {
+//                                            blocks[i] = (byte) 19;
+//                                            meta[i] = 14;
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        } else {
+//                            // going in X dir
+//                            for (int rrx = rx-3; rrx <= rx + 3; rrx ++) {
+//                                for (int rrz = rz - 2; rrz <= rz +2; rrz ++) {
+//                                    for (int y = 66; y <= 73; y++) {
+//                                        int i = rrx + rrz * wid + y * wid * len;
+//                                        if (rrx >= wid) continue;
+//                                        if (rrz >= len) continue;
+//                                        if (rrx < 0) continue;
+//                                        if (rrz < 0) continue;
+
+//                                        if (Math.abs(rrz - rz) == 2 || y >= 72 || y < 69) {
+//                                            blocks[i] = (byte) 153;
+//                                            meta[i] = 15;
+//                                        }
+
+//                                        if (Math.abs(rrz - rz) <= 1 && Math.abs(rrx - rx) <= 1 && (y >= 69 && y <= 72)) {
+//                                            blocks[i] = (byte) 19;
+//                                            meta[i] = 15;
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                compound.putByteArray("Blocks", blocks);
+//                compound.putByteArray("Data", meta);
+
+
+//                OutputStream outputStream = Files.newOutputStream(new File(outdir, "fixed-"+f.getName()).toPath());
+
+//                NbtIo.writeCompressed(compound, outputStream);
+
+//                outputStream.flush();
+//                outputStream.close();
+
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
 
     }
 
 
     @DGCommand("dgdebug nodupeprocess")
     public void removedupe() throws Exception  {
+        // TODO: processes the room collector's .dgrun files (1.8.9 schematics), commented out with the collector (D130)
 
-        File fileRoot = Main.getConfigDir();
-        File dir = new File(fileRoot, "grouped");
-        File outdir = new File(fileRoot, "grouped2");
+//        File fileRoot = Main.getConfigDir();
+//        File dir = new File(fileRoot, "grouped");
+//        File outdir = new File(fileRoot, "grouped2");
 
-        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
+//        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
 
-        while (fileIter.hasNext()) {
-            try {
-                File f = fileIter.next();
-                Gson gson = new Gson();
-                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
+//        while (fileIter.hasNext()) {
+//            try {
+//                File f = fileIter.next();
+//                Gson gson = new Gson();
+//                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
 
 
-                CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
-                        jsonObject.get("schematic").getAsString()
-                )));
-                byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
-                byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
+//                CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+//                        jsonObject.get("schematic").getAsString()
+//                )));
+//                byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
+//                byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
 
-                JsonArray jsonElements = new JsonArray();
-                Set<String> updated = new HashSet<>();
-                for (JsonElement _blockupdates : jsonObject.getAsJsonArray("blockupdates")) {
-                    JsonObject blockupdates = _blockupdates.getAsJsonObject();
-                    JsonArray realUpdatedBlocks = new JsonArray();
-                    for (JsonElement updatedBlocks : blockupdates.getAsJsonArray("updatedBlocks")) {
-                        JsonArray blockData = updatedBlocks.getAsJsonArray();
-                        int x = blockData.get(0).getAsInt() - jsonObject.get("minX").getAsInt();
-                        int y = blockData.get(1).getAsInt();
-                        int z = blockData.get(2).getAsInt() - jsonObject.get("minZ").getAsInt();
-                        String block = blockData.get(3).getAsString().split(":")[0];
+//                JsonArray jsonElements = new JsonArray();
+//                Set<String> updated = new HashSet<>();
+//                for (JsonElement _blockupdates : jsonObject.getAsJsonArray("blockupdates")) {
+//                    JsonObject blockupdates = _blockupdates.getAsJsonObject();
+//                    JsonArray realUpdatedBlocks = new JsonArray();
+//                    for (JsonElement updatedBlocks : blockupdates.getAsJsonArray("updatedBlocks")) {
+//                        JsonArray blockData = updatedBlocks.getAsJsonArray();
+//                        int x = blockData.get(0).getAsInt() - jsonObject.get("minX").getAsInt();
+//                        int y = blockData.get(1).getAsInt();
+//                        int z = blockData.get(2).getAsInt() - jsonObject.get("minZ").getAsInt();
+//                        String block = blockData.get(3).getAsString().split(":")[0];
 
-                        if (updated.contains(x+":"+y+":"+z+":"+block)) continue;
-                        updated.add(x+":"+y+":"+z+":"+block);
-                        realUpdatedBlocks.add(blockData);
-                    }
+//                        if (updated.contains(x+":"+y+":"+z+":"+block)) continue;
+//                        updated.add(x+":"+y+":"+z+":"+block);
+//                        realUpdatedBlocks.add(blockData);
+//                    }
 
-                    if (realUpdatedBlocks.size() > 0) {
-                        blockupdates.remove("updatedBlocks");
-                        blockupdates.add("updatedBlocks", realUpdatedBlocks);
-                        jsonElements.add(blockupdates);
-                    }
-                }
+//                    if (realUpdatedBlocks.size() > 0) {
+//                        blockupdates.remove("updatedBlocks");
+//                        blockupdates.add("updatedBlocks", realUpdatedBlocks);
+//                        jsonElements.add(blockupdates);
+//                    }
+//                }
 
-                jsonObject.remove("blockupdates");
-                jsonObject.add("blockupdates", jsonElements);
+//                jsonObject.remove("blockupdates");
+//                jsonObject.add("blockupdates", jsonElements);
 
-                JsonWriter writer = new JsonWriter(new OutputStreamWriter(Files.newOutputStream(new File(outdir, f.getName()).toPath())));
-                gson.toJson(jsonObject, writer);
-                writer.flush();
-                writer.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//                JsonWriter writer = new JsonWriter(new OutputStreamWriter(Files.newOutputStream(new File(outdir, f.getName()).toPath())));
+//                gson.toJson(jsonObject, writer);
+//                writer.flush();
+//                writer.close();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
 
     }
 
     @DGCommand("dgdebug groupunknowns")
     public void groupunknowns() throws Exception {
+        // TODO: processes the room collector's .dgrun files (1.8.9 schematics), commented out with the collector (D130)
 
-        File fileRoot = Main.getConfigDir();
-        File dir = new File(fileRoot, "compressed");
-        File outdir = new File(fileRoot, "unk_grouped");
-        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
+//        File fileRoot = Main.getConfigDir();
+//        File dir = new File(fileRoot, "compressed");
+//        File outdir = new File(fileRoot, "unk_grouped");
+//        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
 
-        while (fileIter.hasNext()) {
-            try {
-                File f = fileIter.next();
-                if (!f.getParentFile().getName().startsWith("The")) continue;
-                Gson gson = new Gson();
-                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
-                if (jsonObject == null) continue;
-                if (!jsonObject.get("uuid").getAsString().equalsIgnoreCase(jsonObject.get("name").getAsString())) {
-                    continue;
-                }
-                System.out.println("Processing: " + f.getCanonicalPath());
-                int color = jsonObject.get("color").getAsInt();
-                int size = jsonObject.get("shape").getAsInt();
-                if (size != 1) continue;
-                if (color == 18) {
-                    // red
-                    File target = new File(outdir, "blood/"+jsonObject.get("dungeon").getAsString());
-                    target.mkdirs();
-                    Files.copy(f.toPath(), new File(target, f.getName()).toPath());
-                } else if (color == 30) {
-                    // ent
-                    File target = new File(outdir, "entrance/"+jsonObject.get("dungeon").getAsString());
-                    target.mkdirs();
-                    Files.copy(f.toPath(), new File(target, f.getName()).toPath());
-                } else if (color == 74) {
-                    // miniboss
-                    File target = new File(outdir, "miniboss/"+jsonObject.get("dungeon").getAsString());
-                    target.mkdirs();
-                    Files.copy(f.toPath(), new File(target, f.getName()).toPath());
-                } else if (color == 63) {
-                    // smth i haven't visited yeet
-                    // check
+//        while (fileIter.hasNext()) {
+//            try {
+//                File f = fileIter.next();
+//                if (!f.getParentFile().getName().startsWith("The")) continue;
+//                Gson gson = new Gson();
+//                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
+//                if (jsonObject == null) continue;
+//                if (!jsonObject.get("uuid").getAsString().equalsIgnoreCase(jsonObject.get("name").getAsString())) {
+//                    continue;
+//                }
+//                System.out.println("Processing: " + f.getCanonicalPath());
+//                int color = jsonObject.get("color").getAsInt();
+//                int size = jsonObject.get("shape").getAsInt();
+//                if (size != 1) continue;
+//                if (color == 18) {
+//                    // red
+//                    File target = new File(outdir, "blood/"+jsonObject.get("dungeon").getAsString());
+//                    target.mkdirs();
+//                    Files.copy(f.toPath(), new File(target, f.getName()).toPath());
+//                } else if (color == 30) {
+//                    // ent
+//                    File target = new File(outdir, "entrance/"+jsonObject.get("dungeon").getAsString());
+//                    target.mkdirs();
+//                    Files.copy(f.toPath(), new File(target, f.getName()).toPath());
+//                } else if (color == 74) {
+//                    // miniboss
+//                    File target = new File(outdir, "miniboss/"+jsonObject.get("dungeon").getAsString());
+//                    target.mkdirs();
+//                    Files.copy(f.toPath(), new File(target, f.getName()).toPath());
+//                } else if (color == 63) {
+//                    // smth i haven't visited yeet
+//                    // check
 
-                    CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
-                            jsonObject.get("schematic").getAsString()
-                    )));
-                    byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
-                    byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
+//                    CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+//                            jsonObject.get("schematic").getAsString()
+//                    )));
+//                    byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
+//                    byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
 
-                    int len = compound.getShortOr("Length", (short) 0);
-                    int wid = compound.getShortOr("Width", (short) 0);
+//                    int len = compound.getShortOr("Length", (short) 0);
+//                    int wid = compound.getShortOr("Width", (short) 0);
 
-                    int air = 0;
-                    for (int i = 1; i <= 31; i++) {
-                        if (blocks[1 + i * wid + 70 * wid * len] == 0)
-                            air++;
-                        if (blocks[1 + i * wid + 70 * wid * len] == (byte)173)
-                            air += 3;
-                        if (blocks[31 + i * wid + 70 * wid * len] == 0)
-                            air++;
-                        if (blocks[31 + i * wid + 70 * wid * len] == (byte)173)
-                            air += 3;
-                        if (blocks[i + 1 * wid + 70 * wid * len] == 0)
-                            air++;
-                        if (blocks[i + 1 * wid + 70 * wid * len] == (byte)173)
-                            air += 3;
-                        if (blocks[i + 31 * wid + 70 * wid * len] == 0)
-                            air++;
-                        if (blocks[i + 31 * wid + 70 * wid * len] == (byte)173)
-                            air += 3;
-                    }
-                    if (air == 3) {
+//                    int air = 0;
+//                    for (int i = 1; i <= 31; i++) {
+//                        if (blocks[1 + i * wid + 70 * wid * len] == 0)
+//                            air++;
+//                        if (blocks[1 + i * wid + 70 * wid * len] == (byte)173)
+//                            air += 3;
+//                        if (blocks[31 + i * wid + 70 * wid * len] == 0)
+//                            air++;
+//                        if (blocks[31 + i * wid + 70 * wid * len] == (byte)173)
+//                            air += 3;
+//                        if (blocks[i + 1 * wid + 70 * wid * len] == 0)
+//                            air++;
+//                        if (blocks[i + 1 * wid + 70 * wid * len] == (byte)173)
+//                            air += 3;
+//                        if (blocks[i + 31 * wid + 70 * wid * len] == 0)
+//                            air++;
+//                        if (blocks[i + 31 * wid + 70 * wid * len] == (byte)173)
+//                            air += 3;
+//                    }
+//                    if (air == 3) {
 
-                        File target = new File(outdir, "rare/"+jsonObject.get("dungeon").getAsString());
-                        target.mkdirs();
-                        Files.copy(f.toPath(), new File(target, f.getName()).toPath());
-                    } else {
+//                        File target = new File(outdir, "rare/"+jsonObject.get("dungeon").getAsString());
+//                        target.mkdirs();
+//                        Files.copy(f.toPath(), new File(target, f.getName()).toPath());
+//                    } else {
 
-                        File target = new File(outdir, "uhhwaht/"+jsonObject.get("dungeon").getAsString());
-                        target.mkdirs();
-                        Files.copy(f.toPath(), new File(target, f.getName()).toPath());
-                    }
-                } else {
-                    File target = new File(outdir, "uhhwaht/"+jsonObject.get("dungeon").getAsString());
-                    target.mkdirs();
-                    Files.copy(f.toPath(), new File(target, f.getName()).toPath());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//                        File target = new File(outdir, "uhhwaht/"+jsonObject.get("dungeon").getAsString());
+//                        target.mkdirs();
+//                        Files.copy(f.toPath(), new File(target, f.getName()).toPath());
+//                    }
+//                } else {
+//                    File target = new File(outdir, "uhhwaht/"+jsonObject.get("dungeon").getAsString());
+//                    target.mkdirs();
+//                    Files.copy(f.toPath(), new File(target, f.getName()).toPath());
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
     @DGCommand("dgdebug groupprocess")
     public void groupprocess() throws Exception {
-        // This take about 7m to complete.  :30:35 to 39:19 -> Around 9min.
-        File fileRoot = Main.getConfigDir();
-        File dir = new File(fileRoot, "compressed");
-        File outdir = new File(fileRoot, "grouped");
-        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
+        // TODO: processes the room collector's .dgrun files (1.8.9 schematics), commented out with the collector (D130)
+//        // This take about 7m to complete.  :30:35 to 39:19 -> Around 9min.
+//        File fileRoot = Main.getConfigDir();
+//        File dir = new File(fileRoot, "compressed");
+//        File outdir = new File(fileRoot, "grouped");
+//        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
 
-        Map<String, JsonObject> roomMapping = new HashMap<>();
+//        Map<String, JsonObject> roomMapping = new HashMap<>();
 
-        while (fileIter.hasNext()) {
-            try {
-                File f = fileIter.next();
-                Gson gson = new Gson();
-                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
-                if (jsonObject == null) continue;
-                System.out.println("Processing: " + f.getCanonicalPath());
-                if (jsonObject.get("uuid").getAsString().equalsIgnoreCase(jsonObject.get("name").getAsString())) {
-                    continue;
-                }
-
-
-                CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
-                        jsonObject.get("schematic").getAsString()
-                )));
-                byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
-                byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
-                // to get
-
-                JsonArray jsonElements = new JsonArray();
-                Set<String> updated = new HashSet<>();
-                boolean chestpopulated = false;
-                for (JsonElement _blockupdates : jsonObject.getAsJsonArray("blockupdates")) {
-                    JsonObject blockupdates = _blockupdates.getAsJsonObject();
-                    JsonArray realUpdatedBlocks = new JsonArray();
-                    for (JsonElement updatedBlocks : blockupdates.getAsJsonArray("updatedBlocks")) {
-                        JsonArray blockData = updatedBlocks.getAsJsonArray();
-                        int x = blockData.get(0).getAsInt() - jsonObject.get("minX").getAsInt();
-                        int y = blockData.get(1).getAsInt();
-                        int z = blockData.get(2).getAsInt() - jsonObject.get("minZ").getAsInt();
-                        String block = blockData.get(3).getAsString().split(":")[0];
-
-                        int index = x + (y * compound.getShortOr("Length", (short) 0) + z) * compound.getShortOr("Width", (short) 0);
-                        if (index >= blocks.length) continue;
-                        if (index < 0) continue;
-                        String worldBlock = (blocks[index] & 0xFF)+"";
-                        if (block.equals(worldBlock)) continue;
-                        if (updated.contains(x+":"+y+":"+z+":"+block)) continue;
-                        if (block.equals("0") && blockupdates.getAsJsonArray("updatedBlocks").size() < 3) continue;
-                        if (block.equals("0") && blockupdates.getAsJsonArray("updatedBlocks").size() > 800) continue;
-                        if (block.equals("148")) continue; // trap plate
-                        if (x == 0 || z == 0 && (y < 66 || y > 73)) continue;
-                        if (x >=  compound.getShortOr("Width", (short) 0) || z >=  compound.getShortOr("Length", (short) 0)) continue;
-                        if (block.equals("45")) continue; // bricks... mages do be like..
-                        if (block.equals("79")) continue; // ice... apparently some1 uses frostworker
-                        updated.add(x+":"+y+":"+z+":"+block);
-                        realUpdatedBlocks.add(blockData);
-                        // redstone bloc / chest  / lever / tripwire / tripwire hook / button / trapped chest
-                        if (block.equals("152") || block.equals("54") || block.equals("69") || block.equals("132") || block.equals("131") || block.equals("77") || block.equals("146")) {
-                            blocks[index] = (byte) Integer.parseInt(block);
-                            meta[index] = (byte) Integer.parseInt(blockData.get(3).getAsString().split(":")[1]);
-                            chestpopulated = true;
-                        }
-                    }
-                    if (realUpdatedBlocks.size() > 0) {
-                        blockupdates.remove("updatedBlocks");
-                        blockupdates.add("updatedBlocks", realUpdatedBlocks);
-                        jsonElements.add(blockupdates);
-                    }
-                }
-                jsonObject.remove("blockupdates");
-                jsonObject.add("blockupdates", jsonElements);
+//        while (fileIter.hasNext()) {
+//            try {
+//                File f = fileIter.next();
+//                Gson gson = new Gson();
+//                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
+//                if (jsonObject == null) continue;
+//                System.out.println("Processing: " + f.getCanonicalPath());
+//                if (jsonObject.get("uuid").getAsString().equalsIgnoreCase(jsonObject.get("name").getAsString())) {
+//                    continue;
+//                }
 
 
-                if (chestpopulated) {
-                    compound.putByteArray("Blocks", blocks);
-                    compound.putByteArray("Data", meta);
+//                CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+//                        jsonObject.get("schematic").getAsString()
+//                )));
+//                byte[] blocks = compound.getByteArray("Blocks").orElse(new byte[0]);
+//                byte[] meta = compound.getByteArray("Data").orElse(new byte[0]);
+//                // to get
 
-                    String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound);
-                    jsonObject.remove("schematic");
-                    jsonObject.addProperty("schematic", schm);
-                }
+//                JsonArray jsonElements = new JsonArray();
+//                Set<String> updated = new HashSet<>();
+//                boolean chestpopulated = false;
+//                for (JsonElement _blockupdates : jsonObject.getAsJsonArray("blockupdates")) {
+//                    JsonObject blockupdates = _blockupdates.getAsJsonObject();
+//                    JsonArray realUpdatedBlocks = new JsonArray();
+//                    for (JsonElement updatedBlocks : blockupdates.getAsJsonArray("updatedBlocks")) {
+//                        JsonArray blockData = updatedBlocks.getAsJsonArray();
+//                        int x = blockData.get(0).getAsInt() - jsonObject.get("minX").getAsInt();
+//                        int y = blockData.get(1).getAsInt();
+//                        int z = blockData.get(2).getAsInt() - jsonObject.get("minZ").getAsInt();
+//                        String block = blockData.get(3).getAsString().split(":")[0];
 
-                DungeonRoomInfo dungeonRoomInfo = DungeonRoomInfoRegistry.getByUUID(UUID.fromString(jsonObject.get("uuid").getAsString()));
-
-                if (!roomMapping.containsKey(jsonObject.get("uuid").getAsString())) {
-                    roomMapping.put(jsonObject.get("uuid").getAsString(), jsonObject);
-                } else {
-                    // MERGE BLOCK UPDATES!
-                    JsonObject originalRoomMapping = roomMapping.get(jsonObject.get("uuid").getAsString());
-                    int originalRot = originalRoomMapping.get("rot").getAsInt();
-                    JsonArray toMergeInto = originalRoomMapping.getAsJsonArray("blockupdates");
-                    int thisRot = jsonObject.get("rot").getAsInt();
-
-
-                    CompoundTag compound2 = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
-                            originalRoomMapping.get("schematic").getAsString()
-                    )));
-                    byte[] blocks2 = compound2.getByteArray("Blocks").orElse(new byte[0]);
-                    byte[] meta2 = compound2.getByteArray("Data").orElse(new byte[0]);
-                    int len = compound.getShortOr("Length", (short) 0);
-                    int wid = compound.getShortOr("Width", (short) 0);
-
-                    boolean changed = false;
-
-                    for (JsonElement _blockUpdates : jsonElements) {
-                        JsonObject blockUpdate = _blockUpdates.getAsJsonObject();
-                        JsonArray transformedUpdatedBlocks = new JsonArray();
-                        for (JsonElement updatedBlocks : blockUpdate.getAsJsonArray("updatedBlocks")) {
-                            JsonArray blockData = updatedBlocks.getAsJsonArray();
-
-                            int x = blockData.get(0).getAsInt();
-                            int y = blockData.get(1).getAsInt();
-                            int z = blockData.get(2).getAsInt();
-                            String block = blockData.get(3).getAsString();
-
-                            x -= jsonObject.get("minX").getAsInt();
-                            z -= jsonObject.get("minZ").getAsInt();
-                            for (int i = 0; i < (thisRot - originalRot) + 4; i++) {
-                                int tempX = x;
-                                x = -z;
-                                z = tempX;
-                                if (i % 2 == 0) {
-                                    x += dungeonRoomInfo.getBlocks()[0].length - 1; // + Z
-                                } else {
-                                    x += dungeonRoomInfo.getBlocks().length - 1; // + X
-                                }
-                            }
-                            x += originalRoomMapping.get("minX").getAsInt();
-                            z += originalRoomMapping.get("minZ").getAsInt();
-                            JsonArray brueuru = new JsonArray();
-                            brueuru.add(new JsonPrimitive(x));
-                            brueuru.add(new JsonPrimitive(y));
-                            brueuru.add(new JsonPrimitive(z));
-                            brueuru.add(new JsonPrimitive(block));
-
-                            transformedUpdatedBlocks.add(brueuru);
-
-                            if (block.startsWith("152:") || block.startsWith("54:") || block.startsWith("69:") || block.startsWith("132:") || block.startsWith("131:") || block.startsWith("77:") || block.startsWith("146:")) {
-                                int i = x - originalRoomMapping.get("minX").getAsInt() + (z - originalRoomMapping.get("minZ").getAsInt()) * wid + y * wid * len;
-                                if (x - originalRoomMapping.get("minX").getAsInt() < 0 || z - originalRoomMapping.get("minZ").getAsInt() < 0 || y < 0 || x - originalRoomMapping.get("minX").getAsInt() >= wid || z - originalRoomMapping.get("minZ").getAsInt() >= len || y >= 256) continue;
-
-                                blocks2[i] = (byte) Integer.parseInt(block.split(":")[0]);
-                                meta2[i] = (byte) Integer.parseInt(block.split(":")[1]);
-                                changed = true;
-                            }
-                        }
-                        blockUpdate.remove("updatedBlocks");
-                        blockUpdate.add("updatedBlocks", transformedUpdatedBlocks);
-                        toMergeInto.add(blockUpdate);
-                    }
-
-                    // PREFER MOAR BLOCKS!!
-
-                    if (originalRot == thisRot) {
-
-                        // formula y *len*width + z * width + x
-
-                        for (int x = 0; x <= 11; x ++) {
-                            for (int z = 0; z <= 11; z++) {
-                                if ((x % 2 == 1) == (z % 2 == 1)) continue;
-
-                                int rx = x * 16;
-                                int rz = z * 16;
-
-                                if (rx >= wid+6) continue;
-                                if (rz >= len+6) continue;
-
-                                int f1 = 0, s1 = 0, mismatch = 0;
-                                // paste the one with TERRACOTA or COAL or MORE AIR INSIDE
-                                for (int rrx = rx-1; rrx <= rx + 1; rrx ++) {
-                                    for (int rrz = rz - 1; rrz <= rz +1; rrz ++) {
-                                        for (int y = 69; y <= 72; y++) {
-                                            int i = rrx + rrz * wid + y * wid * len;
-                                            if (rrx >= wid) continue;
-                                            if (rrz >= len) continue;
-                                            if (rrx < 0) continue;
-                                            if (rrz < 0) continue;
-
-                                            if (blocks[i] == 0 || blocks[i] == (byte)173 || (blocks[i] == (byte)159 && meta[i] == 14)) {
-                                                f1 ++;
-                                            }
-                                            if (blocks2[i] == 0 || blocks2[i] == (byte)173 || (blocks2[i] == (byte)159 && meta2[i] == 14)) {
-                                                s1 ++;
-                                            }
-                                            if (blocks[i] != blocks2[i]) mismatch++;
-                                        }
-                                    }
-                                }
-
-                                if (mismatch == 0) continue;
-
-                                if (f1 > s1) {
-                                    for (int rrx = rx-3; rrx <= rx + 3; rrx ++) {
-                                        for (int rrz = rz - 3; rrz <= rz +3; rrz ++) {
-                                            for (int y = 66; y <= 73; y++) {
-                                                if (rrx >= wid) continue;
-                                                if (rrz >= len) continue;
-                                                if (rrx < 0) continue;
-                                                if (rrz < 0) continue;
-
-                                                int i = rrx + rrz * wid + y * wid * len;
-                                                blocks2[i] = blocks[i];
-                                                meta2[i] = meta[i];
-                                            }
-                                        }
-                                    }
-                                    changed = true;
-                                }
-                            }
-                        }
-                    }
-                    if (changed) {
-                        compound2.putByteArray("Blocks", blocks2);
-                        compound2.putByteArray("Data", meta2);
-
-                        String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound2);
-                        originalRoomMapping.remove("schematic");
-                        originalRoomMapping.addProperty("schematic", schm);
-                    }
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//                        int index = x + (y * compound.getShortOr("Length", (short) 0) + z) * compound.getShortOr("Width", (short) 0);
+//                        if (index >= blocks.length) continue;
+//                        if (index < 0) continue;
+//                        String worldBlock = (blocks[index] & 0xFF)+"";
+//                        if (block.equals(worldBlock)) continue;
+//                        if (updated.contains(x+":"+y+":"+z+":"+block)) continue;
+//                        if (block.equals("0") && blockupdates.getAsJsonArray("updatedBlocks").size() < 3) continue;
+//                        if (block.equals("0") && blockupdates.getAsJsonArray("updatedBlocks").size() > 800) continue;
+//                        if (block.equals("148")) continue; // trap plate
+//                        if (x == 0 || z == 0 && (y < 66 || y > 73)) continue;
+//                        if (x >=  compound.getShortOr("Width", (short) 0) || z >=  compound.getShortOr("Length", (short) 0)) continue;
+//                        if (block.equals("45")) continue; // bricks... mages do be like..
+//                        if (block.equals("79")) continue; // ice... apparently some1 uses frostworker
+//                        updated.add(x+":"+y+":"+z+":"+block);
+//                        realUpdatedBlocks.add(blockData);
+//                        // redstone bloc / chest  / lever / tripwire / tripwire hook / button / trapped chest
+//                        if (block.equals("152") || block.equals("54") || block.equals("69") || block.equals("132") || block.equals("131") || block.equals("77") || block.equals("146")) {
+//                            blocks[index] = (byte) Integer.parseInt(block);
+//                            meta[index] = (byte) Integer.parseInt(blockData.get(3).getAsString().split(":")[1]);
+//                            chestpopulated = true;
+//                        }
+//                    }
+//                    if (realUpdatedBlocks.size() > 0) {
+//                        blockupdates.remove("updatedBlocks");
+//                        blockupdates.add("updatedBlocks", realUpdatedBlocks);
+//                        jsonElements.add(blockupdates);
+//                    }
+//                }
+//                jsonObject.remove("blockupdates");
+//                jsonObject.add("blockupdates", jsonElements);
 
 
-        for (Map.Entry<String, JsonObject> stringJsonObjectEntry : roomMapping.entrySet()) {
-            Gson gson = new Gson();
-            JsonWriter writer = new JsonWriter(new OutputStreamWriter(Files.newOutputStream(new File(outdir, stringJsonObjectEntry.getKey()+":"+ stringJsonObjectEntry.getValue().get("name").getAsString() +".dgrun").toPath())));
-            gson.toJson(stringJsonObjectEntry.getValue(), writer);
-            writer.flush();
-            writer.close();
-        }
+//                if (chestpopulated) {
+//                    compound.putByteArray("Blocks", blocks);
+//                    compound.putByteArray("Data", meta);
+
+//                    String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound);
+//                    jsonObject.remove("schematic");
+//                    jsonObject.addProperty("schematic", schm);
+//                }
+
+//                DungeonRoomInfo dungeonRoomInfo = DungeonRoomInfoRegistry.getByUUID(UUID.fromString(jsonObject.get("uuid").getAsString()));
+
+//                if (!roomMapping.containsKey(jsonObject.get("uuid").getAsString())) {
+//                    roomMapping.put(jsonObject.get("uuid").getAsString(), jsonObject);
+//                } else {
+//                    // MERGE BLOCK UPDATES!
+//                    JsonObject originalRoomMapping = roomMapping.get(jsonObject.get("uuid").getAsString());
+//                    int originalRot = originalRoomMapping.get("rot").getAsInt();
+//                    JsonArray toMergeInto = originalRoomMapping.getAsJsonArray("blockupdates");
+//                    int thisRot = jsonObject.get("rot").getAsInt();
+
+
+//                    CompoundTag compound2 = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+//                            originalRoomMapping.get("schematic").getAsString()
+//                    )));
+//                    byte[] blocks2 = compound2.getByteArray("Blocks").orElse(new byte[0]);
+//                    byte[] meta2 = compound2.getByteArray("Data").orElse(new byte[0]);
+//                    int len = compound.getShortOr("Length", (short) 0);
+//                    int wid = compound.getShortOr("Width", (short) 0);
+
+//                    boolean changed = false;
+
+//                    for (JsonElement _blockUpdates : jsonElements) {
+//                        JsonObject blockUpdate = _blockUpdates.getAsJsonObject();
+//                        JsonArray transformedUpdatedBlocks = new JsonArray();
+//                        for (JsonElement updatedBlocks : blockUpdate.getAsJsonArray("updatedBlocks")) {
+//                            JsonArray blockData = updatedBlocks.getAsJsonArray();
+
+//                            int x = blockData.get(0).getAsInt();
+//                            int y = blockData.get(1).getAsInt();
+//                            int z = blockData.get(2).getAsInt();
+//                            String block = blockData.get(3).getAsString();
+
+//                            x -= jsonObject.get("minX").getAsInt();
+//                            z -= jsonObject.get("minZ").getAsInt();
+//                            for (int i = 0; i < (thisRot - originalRot) + 4; i++) {
+//                                int tempX = x;
+//                                x = -z;
+//                                z = tempX;
+//                                if (i % 2 == 0) {
+//                                    x += dungeonRoomInfo.getBlocks()[0].length - 1; // + Z
+//                                } else {
+//                                    x += dungeonRoomInfo.getBlocks().length - 1; // + X
+//                                }
+//                            }
+//                            x += originalRoomMapping.get("minX").getAsInt();
+//                            z += originalRoomMapping.get("minZ").getAsInt();
+//                            JsonArray brueuru = new JsonArray();
+//                            brueuru.add(new JsonPrimitive(x));
+//                            brueuru.add(new JsonPrimitive(y));
+//                            brueuru.add(new JsonPrimitive(z));
+//                            brueuru.add(new JsonPrimitive(block));
+
+//                            transformedUpdatedBlocks.add(brueuru);
+
+//                            if (block.startsWith("152:") || block.startsWith("54:") || block.startsWith("69:") || block.startsWith("132:") || block.startsWith("131:") || block.startsWith("77:") || block.startsWith("146:")) {
+//                                int i = x - originalRoomMapping.get("minX").getAsInt() + (z - originalRoomMapping.get("minZ").getAsInt()) * wid + y * wid * len;
+//                                if (x - originalRoomMapping.get("minX").getAsInt() < 0 || z - originalRoomMapping.get("minZ").getAsInt() < 0 || y < 0 || x - originalRoomMapping.get("minX").getAsInt() >= wid || z - originalRoomMapping.get("minZ").getAsInt() >= len || y >= 256) continue;
+
+//                                blocks2[i] = (byte) Integer.parseInt(block.split(":")[0]);
+//                                meta2[i] = (byte) Integer.parseInt(block.split(":")[1]);
+//                                changed = true;
+//                            }
+//                        }
+//                        blockUpdate.remove("updatedBlocks");
+//                        blockUpdate.add("updatedBlocks", transformedUpdatedBlocks);
+//                        toMergeInto.add(blockUpdate);
+//                    }
+
+//                    // PREFER MOAR BLOCKS!!
+
+//                    if (originalRot == thisRot) {
+
+//                        // formula y *len*width + z * width + x
+
+//                        for (int x = 0; x <= 11; x ++) {
+//                            for (int z = 0; z <= 11; z++) {
+//                                if ((x % 2 == 1) == (z % 2 == 1)) continue;
+
+//                                int rx = x * 16;
+//                                int rz = z * 16;
+
+//                                if (rx >= wid+6) continue;
+//                                if (rz >= len+6) continue;
+
+//                                int f1 = 0, s1 = 0, mismatch = 0;
+//                                // paste the one with TERRACOTA or COAL or MORE AIR INSIDE
+//                                for (int rrx = rx-1; rrx <= rx + 1; rrx ++) {
+//                                    for (int rrz = rz - 1; rrz <= rz +1; rrz ++) {
+//                                        for (int y = 69; y <= 72; y++) {
+//                                            int i = rrx + rrz * wid + y * wid * len;
+//                                            if (rrx >= wid) continue;
+//                                            if (rrz >= len) continue;
+//                                            if (rrx < 0) continue;
+//                                            if (rrz < 0) continue;
+
+//                                            if (blocks[i] == 0 || blocks[i] == (byte)173 || (blocks[i] == (byte)159 && meta[i] == 14)) {
+//                                                f1 ++;
+//                                            }
+//                                            if (blocks2[i] == 0 || blocks2[i] == (byte)173 || (blocks2[i] == (byte)159 && meta2[i] == 14)) {
+//                                                s1 ++;
+//                                            }
+//                                            if (blocks[i] != blocks2[i]) mismatch++;
+//                                        }
+//                                    }
+//                                }
+
+//                                if (mismatch == 0) continue;
+
+//                                if (f1 > s1) {
+//                                    for (int rrx = rx-3; rrx <= rx + 3; rrx ++) {
+//                                        for (int rrz = rz - 3; rrz <= rz +3; rrz ++) {
+//                                            for (int y = 66; y <= 73; y++) {
+//                                                if (rrx >= wid) continue;
+//                                                if (rrz >= len) continue;
+//                                                if (rrx < 0) continue;
+//                                                if (rrz < 0) continue;
+
+//                                                int i = rrx + rrz * wid + y * wid * len;
+//                                                blocks2[i] = blocks[i];
+//                                                meta2[i] = meta[i];
+//                                            }
+//                                        }
+//                                    }
+//                                    changed = true;
+//                                }
+//                            }
+//                        }
+//                    }
+//                    if (changed) {
+//                        compound2.putByteArray("Blocks", blocks2);
+//                        compound2.putByteArray("Data", meta2);
+
+//                        String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound2);
+//                        originalRoomMapping.remove("schematic");
+//                        originalRoomMapping.addProperty("schematic", schm);
+//                    }
+
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+
+
+//        for (Map.Entry<String, JsonObject> stringJsonObjectEntry : roomMapping.entrySet()) {
+//            Gson gson = new Gson();
+//            JsonWriter writer = new JsonWriter(new OutputStreamWriter(Files.newOutputStream(new File(outdir, stringJsonObjectEntry.getKey()+":"+ stringJsonObjectEntry.getValue().get("name").getAsString() +".dgrun").toPath())));
+//            gson.toJson(stringJsonObjectEntry.getValue(), writer);
+//            writer.flush();
+//            writer.close();
+//        }
     }
 
     public static class MechanicNameSuggestor implements SuggestionProvider<FabricClientCommandSource> {
@@ -1154,44 +1158,44 @@ public class CommandDgDebug {
             for (DungeonMechanicData value : dungeonRoomInfo.getMechanics().values()) {
                 if (value instanceof DungeonSecretEssenceState.DungeonSecretEssenceData) {
                     OffsetPoint offsetPoint = ((DungeonSecretEssenceState.DungeonSecretEssenceData) value).getSecretPoint();
-                    if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.skull) {
+                    if (!LegacyBlock.SKULL.is(dungeonRoomInfo.getBlock(offsetPoint, 0))) {
                         System.out.println("setblock "+offsetPoint+" to skul on "+dungeonRoomInfo.getName());
-                        dungeonRoomInfo.setBlock(offsetPoint, Blocks.skull.getStateFromMeta(0));
+                        dungeonRoomInfo.setBlock(offsetPoint, LegacyBlock.SKULL.state(0));
                     }
                 } else if (value instanceof DungeonRedstoneKeyState.DungeonRedstoneKeyData) {
                     OffsetPoint offsetPoint = ((DungeonRedstoneKeyState.DungeonRedstoneKeyData) value).getSecretPoint();
-                    if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.skull) {
+                    if (!LegacyBlock.SKULL.is(dungeonRoomInfo.getBlock(offsetPoint, 0))) {
                         System.out.println("setblock "+offsetPoint+" to skul on "+dungeonRoomInfo.getName());
-                        dungeonRoomInfo.setBlock(offsetPoint, Blocks.skull.getStateFromMeta(0));
+                        dungeonRoomInfo.setBlock(offsetPoint, LegacyBlock.SKULL.state(0));
                     }
                 } else if (value instanceof DungeonWizardCrystalState.DungeonWizardCrystalData) {
                     OffsetPoint offsetPoint = ((DungeonWizardCrystalState.DungeonWizardCrystalData) value).getSecretPoint();
-                        if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.skull) {
+                        if (!LegacyBlock.SKULL.is(dungeonRoomInfo.getBlock(offsetPoint, 0))) {
                             System.out.println("setblock "+offsetPoint+" to skul on "+dungeonRoomInfo.getName());
-                            dungeonRoomInfo.setBlock(offsetPoint, Blocks.skull.getStateFromMeta(0));
+                            dungeonRoomInfo.setBlock(offsetPoint, LegacyBlock.SKULL.state(0));
                         }
                 } else if (value instanceof DungeonSecretChestState.DungeonSecretChestData) {
                     OffsetPoint offsetPoint = ((DungeonSecretChestState.DungeonSecretChestData) value).getSecretPoint();
-                        if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.chest) {
+                        if (!LegacyBlock.CHEST.is(dungeonRoomInfo.getBlock(offsetPoint, 0))) {
                             System.out.println("setblock "+offsetPoint+" to chest on "+dungeonRoomInfo.getName());
-                            dungeonRoomInfo.setBlock(offsetPoint, Blocks.chest.getStateFromMeta(0));
+                            dungeonRoomInfo.setBlock(offsetPoint, LegacyBlock.CHEST.state(0));
                         }
                 } else if (value instanceof DungeonOnewayLeverState.DungeonOnewayLeverData) {
                     OffsetPoint offsetPoint = ((DungeonOnewayLeverState.DungeonOnewayLeverData) value).getLeverPoint();
-                        if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.lever) {
+                        if (!LegacyBlock.LEVER.is(dungeonRoomInfo.getBlock(offsetPoint, 0))) {
                             System.out.println("setblock "+offsetPoint+" to lever on "+dungeonRoomInfo.getName());
-                            dungeonRoomInfo.setBlock(offsetPoint, Blocks.lever.getStateFromMeta(0));
+                            dungeonRoomInfo.setBlock(offsetPoint, LegacyBlock.LEVER.state(0));
                         }
                 } else if (value instanceof DungeonSecretDoubleChestState.DungeonSecretDoubleChestData) {
                     OffsetPoint offsetPoint = ((DungeonSecretDoubleChestState.DungeonSecretDoubleChestData) value).getSecretPoint();
-                        if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.chest) {
+                        if (!LegacyBlock.CHEST.is(dungeonRoomInfo.getBlock(offsetPoint, 0))) {
                             System.out.println("setblock "+offsetPoint+" to chest on "+dungeonRoomInfo.getName());
-                            dungeonRoomInfo.setBlock(offsetPoint, Blocks.chest.getStateFromMeta(0));
+                            dungeonRoomInfo.setBlock(offsetPoint, LegacyBlock.CHEST.state(0));
                         }
                     OffsetPoint offsetPoint2 = ((DungeonSecretDoubleChestState.DungeonSecretDoubleChestData) value).getSecretPoint2();
-                        if (dungeonRoomInfo.getBlock(offsetPoint2, 0).getBlock() != Blocks.chest) {
+                        if (!LegacyBlock.CHEST.is(dungeonRoomInfo.getBlock(offsetPoint2, 0))) {
                             System.out.println("setblock "+offsetPoint2+" to chest on "+dungeonRoomInfo.getName());
-                            dungeonRoomInfo.setBlock(offsetPoint2, Blocks.chest.getStateFromMeta(0));
+                            dungeonRoomInfo.setBlock(offsetPoint2, LegacyBlock.CHEST.state(0));
                         }
                 }
             }
@@ -1495,15 +1499,11 @@ public class CommandDgDebug {
         }
     }
 
-    @DGCommand("dgdebug clearprofile")
-    public void clearProfileCommand() {
-        Minecraft.getInstance().mcProfiler.clearProfiling();
-    }
-
     @DGCommand("dgdebug fullbright {gamma}")
     @DGCommand("dgdebug gimmebright {gamma}")
     public void fullBrightCommand(int gamma) {
-        Minecraft.getInstance().options.setOptionFloatValue(GameSettings.Options.GAMMA, gamma);
+        // 1.8.9 took any gamma; 26.1's option validates 0..1, so the value is written directly (class tweaker)
+        Minecraft.getInstance().options.gamma().value = (double) gamma;
     }
 
     @DGCommand("dgdebug pfall")
@@ -1535,7 +1535,7 @@ public class CommandDgDebug {
     @DGCommand("dgdebug partycollection {otherPlayerName} {fragbot} {offline}")
     public void partyCollectionCommand(String otherPlayerName, String fragbot, String offline) {
 
-        String sourcePlayer = Minecraft.getInstance().player.getName();
+        String sourcePlayer = Minecraft.getInstance().player.getGameProfile().name();
         String targetPlayer = otherPlayerName;
         String thirdPlayer = fragbot;
         String offlinePlayer = offline;

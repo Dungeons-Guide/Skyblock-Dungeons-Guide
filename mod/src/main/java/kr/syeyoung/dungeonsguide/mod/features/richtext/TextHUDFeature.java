@@ -41,7 +41,7 @@ import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 
 import java.util.*;
 
@@ -90,7 +90,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature {
             FeatureCollectDiagnostics.queueSendLogAsync(e);}
     }
 
-    public static FontRenderer getFontRenderer() {
+    public static Font getFontRenderer() {
         return Minecraft.getInstance().font;
     }
 
