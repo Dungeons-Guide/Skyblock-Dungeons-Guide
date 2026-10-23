@@ -145,13 +145,15 @@ public class DGGuiRenderer implements AutoCloseable {
         upload(steps);
 
         projection.setupOrtho(1000.0F, 11000.0F, target.getWidth(), target.getHeight(), true);
+        // written before the pass opens: buffer writes aren't allowed while a render pass is open
+        GpuBufferSlice projectionSlice = projectionBuffer.getBuffer(projection);
         GpuBufferSlice dynamicTransforms = RenderSystem.getDynamicUniforms()
                 .writeTransform(new Matrix4f().setTranslation(0.0F, 0.0F, -11000.0F), new Vector4f(1.0F, 1.0F, 1.0F, 1.0F), new Vector3f(), new Matrix4f());
 
         CommandEncoder encoder = RenderSystem.getDevice().createCommandEncoder();
         try (RenderPass renderPass = encoder.createRenderPass(() -> "Dungeons Guide gui", target.getColorView(), OptionalInt.of(0))) {
             RenderSystem.bindDefaultUniforms(renderPass);
-            renderPass.setUniform("Projection", projectionBuffer.getBuffer(projection));
+            renderPass.setUniform("Projection", projectionSlice);
             renderPass.setUniform("Fog", fog);
             renderPass.setUniform("DynamicTransforms", dynamicTransforms);
 

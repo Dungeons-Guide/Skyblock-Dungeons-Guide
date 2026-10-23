@@ -126,9 +126,10 @@ public class StencilImage implements AutoCloseable {
             return null;
         }
 
+        // vanilla's GuiRenderState drops elements without bounds; the composite covers the whole window
         @Override
         public @Nullable ScreenRectangle bounds() {
-            return null;
+            return new ScreenRectangle(0, 0, (int) Math.ceil(width), (int) Math.ceil(height));
         }
     }
 

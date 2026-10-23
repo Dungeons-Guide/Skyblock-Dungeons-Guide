@@ -123,7 +123,9 @@ public class AuthManager {
             byte[] encSecret = DgAuthUtil.checkSessionAuthenticityAndReturnEncryptedSecret(token);
             currentToken = DgAuthUtil.verifyAuth(token, encSecret);
             Minecraft.getInstance().execute(() -> {
-                DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new AuthChangedEvent(currentToken));
+                // 1.8.9 posted to Forge's EVENT_BUS, which dropped it while DG wasn't listening yet (first auth runs before DG init)
+                if (DungeonsGuide.getDungeonsGuide() != null)
+                    DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new AuthChangedEvent(currentToken));
             });
 
 
