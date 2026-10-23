@@ -19,15 +19,15 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.Slot;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.Slot;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WhatStartsWithSolutionProvider implements TerminalSolutionProvider{
     @Override
-    public TerminalSolution provideSolution(ContainerChest chest, List<Slot> clicked) {
+    public TerminalSolution provideSolution(ChestMenu chest, List<Slot> clicked) {
         String that = chest.getLowerChestInventory().getName().replace("What starts with: '", "").replace("'?", "").trim().toLowerCase();
 
         TerminalSolution ts = new TerminalSolution();
@@ -44,7 +44,7 @@ public class WhatStartsWithSolutionProvider implements TerminalSolutionProvider{
     }
 
     @Override
-    public boolean isApplicable(ContainerChest chest) {
+    public boolean isApplicable(ChestMenu chest) {
         return chest.getLowerChestInventory().getName().startsWith("What starts with: '");
     }
 }

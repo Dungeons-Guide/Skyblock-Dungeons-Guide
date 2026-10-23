@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics.dunegonmechanic;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 
 import java.util.List;
 

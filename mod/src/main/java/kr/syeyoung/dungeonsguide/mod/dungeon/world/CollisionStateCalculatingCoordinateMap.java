@@ -4,15 +4,20 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFence;
-import net.minecraft.block.BlockSkull;
-import net.minecraft.block.BlockStairs;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.world.level.block.Block;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
+import net.minecraft.world.level.block.AbstractSkullBlock;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,19 +26,19 @@ import java.util.List;
 import java.util.Set;
 
 public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<CollisionStateCalculatingCoordinateMap.CollisionState> {
-    private ICoordinateMap<IBlockState> map;
+    private ICoordinateMap<BlockState> map;
     private InstaBreakFactorCalculatingCoordinateMap instaBreakCalc;
 
     @Getter
     private int minX, minY, minZ, maxX, maxY, maxZ, lenX, lenY, lenZ;
 
-    private CoordinateMapWorld world;
+    private BlockAndTintGetter world;
 
     private Set<BlockPos> poses;
     private RoomBounds roomBounds;
-    public CollisionStateCalculatingCoordinateMap(ICoordinateMap<IBlockState> map, Set<BlockPos> poses, InstaBreakFactorCalculatingCoordinateMap instaBreakCalc, RoomBounds roomBounds) {
+    public CollisionStateCalculatingCoordinateMap(ICoordinateMap<BlockState> map, Set<BlockPos> poses, InstaBreakFactorCalculatingCoordinateMap instaBreakCalc, RoomBounds roomBounds) {
         this.map = map;
-        this.world = new CoordinateMapWorld(map);
+        this.world = new CoordinateMapWorld(map).asVanilla();
 
         this.minX = roomBounds.getMinX() * 2 + 2;
         this.minY = 0;
@@ -51,6 +56,12 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
         this.roomBounds = roomBounds;
     }
 
+    // 1.8.9's Block.canCollideCheck(state, true): everything but air, and liquid sources
+    private static boolean canCollideCheck(BlockState state) {
+        if (!state.getFluidState().isEmpty()) return state.getFluidState().isSource();
+        return !state.isAir();
+    }
+
     private static final float playerWidth = 0.25f;
     @Override
     public CollisionState getBlock(int x, int y, int z) {
@@ -59,31 +70,32 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
 
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
 
-        AxisAlignedBB bb = AxisAlignedBB
-                .fromBounds(wX - playerWidth, wY+0.06251, wZ - playerWidth,
+        AABB bb = new AABB(wX - playerWidth, wY+0.06251, wZ - playerWidth,
                         wX + playerWidth, wY +0.06251 + 1.8, wZ + playerWidth);
-        AxisAlignedBB pearlTest = AxisAlignedBB.fromBounds(
+        AABB pearlTest = new AABB(
                 wX - 0.5, wY - 0.5, wZ - 0.5, wX + 0.5, wY + 0.5, wZ+0.5
         );
 
-        int minX = MathHelper.floor_double(bb.minX);
-        int maxX = MathHelper.floor_double(bb.maxX + 1.0D);
-        int minY = MathHelper.floor_double(bb.minY);
-        int maxY = MathHelper.floor_double(bb.maxY + 1.0D);
-        int minZ = MathHelper.floor_double(bb.minZ);
-        int maxZ = MathHelper.floor_double(bb.maxZ + 1.0D);
+        int minX = Mth.floor(bb.minX);
+        int maxX = Mth.floor(bb.maxX + 1.0D);
+        int minY = Mth.floor(bb.minY);
+        int maxY = Mth.floor(bb.maxY + 1.0D);
+        int minZ = Mth.floor(bb.minZ);
+        int maxZ = Mth.floor(bb.maxZ + 1.0D);
 
-        AxisAlignedBB testBox = bb.offset(0, -0.5, 0);
+        AABB testBox = bb.move(0, -0.5, 0);
+        // 26.1: the blocks' collision shapes against the player box (D: VoxelShape ops), 1.8.9 collected box lists
+        VoxelShape playerShape = Shapes.create(bb);
+        VoxelShape testShape = Shapes.create(testBox);
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
-        java.util.List<AxisAlignedBB> list = new ArrayList<>();
-        List<AxisAlignedBB> list2 = new ArrayList<>();
-        int size = 0;
+        List<VoxelShape> collided = new ArrayList<>();
 
 //        boolean
         boolean stairs = false;
         boolean superboom = false;
         boolean foundstairat = false;
         boolean slabTop = false;
+        boolean isOnGround = false;
         int notstonkable = 0;
         for (int k1 = minX; k1 < maxX; ++k1) {
             for (int l1 = minZ; l1 < maxZ; ++l1) {
@@ -91,70 +103,65 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
                     blockPos.set(k1, i2, l1);
 
 
-                    IBlockState state = map.getBlock(k1, i2, l1);
+                    BlockState state = map.getBlock(k1, i2, l1);
                     Block block = state.getBlock();
-                    block.addCollisionBoxesToList(
-                            world, blockPos, state, testBox, list, null
-                    );
-                    block.addCollisionBoxesToList(
-                            world, blockPos, state, bb, list2, null
-                    );
+                    VoxelShape shape = state.getCollisionShape(world, blockPos).move(k1, i2, l1);
 
+                    // on ground: a box under the player box moved down, ending at or below the feet
+                    if (!isOnGround) {
+                        for (AABB box : Shapes.join(shape, testShape, BooleanOp.AND).toAabbs()) {
+                            if (box.maxY <= bb.minY) {
+                                isOnGround = true;
+                                break;
+                            }
+                        }
+                    }
 
-                    if (list2.size() != size) {
+                    VoxelShape hit = Shapes.join(shape, playerShape, BooleanOp.AND);
+                    if (!hit.isEmpty()) {
                         // collision!!
 
                         if (poses.contains(blockPos)) {
-                            for (int i = 0; i < Math.max(0, list2.size() - size); i++)
-                                list2.remove(size);
                             superboom = true;
                             continue label;
                         }
+                        collided.add(hit);
 
                         int breakFactor = instaBreakCalc.getBlock(k1, i2, l1).getFactor();
                         if (breakFactor > 0) {
-                            if (i2 == maxY - 1 && (state.getBlock() != Blocks.iron_bars && !(state.getBlock() instanceof BlockFence)) && !(state.getBlock() instanceof BlockSkull)) {
+                            if (i2 == maxY - 1 && (!LegacyBlock.IRON_BARS.is(state) && !(state.getBlock() instanceof FenceBlock)) && !(state.getBlock() instanceof AbstractSkullBlock)) {
                                 // head level no break
                                 notstonkable = 99;
                             } else {
                                 notstonkable+= breakFactor;
                             }
-                            if (state.getBlock() == Blocks.bedrock) {
+                            if (LegacyBlock.BEDROCK.is(state)) {
                                 notstonkable = 99;
                             }
                         }
 
                     }
-                    size = list2.size();
-                    if (block instanceof BlockStairs && i2 != minY - 1) {
+                    if (block instanceof StairBlock && i2 != minY - 1) {
                         stairs = true;
                     }
-                    if (block instanceof BlockStairs && i2 == minY) {
+                    if (block instanceof StairBlock && i2 == minY) {
                         foundstairat = true;
-                        slabTop = state.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.TOP;
+                        slabTop = state.getValue(StairBlock.HALF) == Half.TOP;
                     }
                 }
             }
         }
-        boolean isOnGround = false;
-        for (AxisAlignedBB axisAlignedBB : list) {
-            if (axisAlignedBB.maxY <= bb.minY) {
-                isOnGround = true;
-                break;
-            }
-        }
-        boolean blocked = !list2.isEmpty();
+        boolean blocked = !collided.isEmpty();
 
         int headcut = 0, bodycut = 0;
-        for (AxisAlignedBB axisAlignedBB : list2) {
-            if (axisAlignedBB.minY >= wY + 0.9f && axisAlignedBB.minY <= wY + 1.4f) headcut++;
-            if (axisAlignedBB.minY >= wY) bodycut++;
+        for (VoxelShape hit : collided) {
+            for (AABB axisAlignedBB : hit.toAabbs()) {
+                if (axisAlignedBB.minY >= wY + 0.9f && axisAlignedBB.minY <= wY + 1.4f) headcut++;
+                if (axisAlignedBB.minY >= wY) bodycut++;
+            }
         }
 
         // weirdest thing ever check.
-        list2.clear();
-        size = 0;
-
         if (!blocked && (x%2 == 0) != (z%2 == 0) && y %2 == 0 && isOnGround) {
             boolean stairFloor = false;
             boolean elligible = false;
@@ -162,18 +169,14 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
                 for (int l1 = minZ; l1 < maxZ; ++l1) {
                     blockPos.set(k1, minY - 1, l1);
 
-                    IBlockState state = map.getBlock(k1, minY - 1, l1);
+                    BlockState state = map.getBlock(k1, minY - 1, l1);
                     Block block = state.getBlock();
 
-                    block.addCollisionBoxesToList(
-                            world, blockPos, state, testBox, list2, null
-                    );
-                    if (size != list2.size()) {
+                    if (Shapes.joinIsNotEmpty(state.getCollisionShape(world, blockPos).move(k1, minY - 1, l1), testShape, BooleanOp.AND)) {
                         elligible = true;
-                    } else if (block instanceof BlockStairs) {
+                    } else if (block instanceof StairBlock) {
                         stairFloor = true;
                     }
-                    size = list2.size();
 
 
                     blockPos.set(k1, minY, l1);
@@ -181,7 +184,7 @@ public class CollisionStateCalculatingCoordinateMap implements ICoordinateMap<Co
                     state = map.getBlock(k1, minY, l1);
                     block = state.getBlock();
 
-                    if (block.canCollideCheck(state, true)) {
+                    if (canCollideCheck(state)) {
                         elligible = false;
                         break label;
                     }

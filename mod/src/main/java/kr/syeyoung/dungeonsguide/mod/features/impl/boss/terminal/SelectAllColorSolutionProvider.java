@@ -18,22 +18,22 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
-import net.minecraft.init.Items;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.DyeColor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SelectAllColorSolutionProvider implements TerminalSolutionProvider {
     @Override
-    public TerminalSolution provideSolution(ContainerChest chest, List<Slot> clicked) {
+    public TerminalSolution provideSolution(ChestMenu chest, List<Slot> clicked) {
         TerminalSolution ts = new TerminalSolution();
         ts.setCurrSlots(new ArrayList<Slot>());
         String name = chest.getLowerChestInventory().getName();
-        EnumDyeColor edc = null;
-        for (EnumDyeColor edc2 : EnumDyeColor.values()) {
+        DyeColor edc = null;
+        for (DyeColor edc2 : DyeColor.values()) {
             if (name.contains(edc2.getName().toUpperCase().replace("_"," "))) {
                 edc = edc2;
                 break;
@@ -54,7 +54,7 @@ public class SelectAllColorSolutionProvider implements TerminalSolutionProvider 
     }
 
     @Override
-    public boolean isApplicable(ContainerChest chest) {
+    public boolean isApplicable(ChestMenu chest) {
         return chest.getLowerChestInventory().getName().startsWith("Select all the ");
     }
 }

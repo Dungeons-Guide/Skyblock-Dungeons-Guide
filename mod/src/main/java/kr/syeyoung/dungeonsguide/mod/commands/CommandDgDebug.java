@@ -62,12 +62,12 @@ import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.init.Blocks;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -86,6 +86,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import net.minecraft.network.chat.Component;
 import java.io.IOException;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.RoomDataConverter;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
+import net.minecraft.world.level.block.state.BlockState;
+import java.io.File;
 
 public class CommandDgDebug {
     @DGCommand("dgdebug")
@@ -407,7 +411,7 @@ public class CommandDgDebug {
                 JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
 
 
-                NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
                 )));
                 byte[] blocks = compound.getByteArray("Blocks");
@@ -542,7 +546,7 @@ public class CommandDgDebug {
 
         File f = new File(dir, file);
             try (FileInputStream fis = new FileInputStream(f)){
-                NBTTagCompound compound = CompressedStreamTools.readCompressed(fis);
+                CompoundTag compound = NbtIo.readCompressed(fis);
                 byte[] blocks = compound.getByteArray("Blocks");
                 byte[] meta = compound.getByteArray("Data");
                 int shape = 1;
@@ -650,7 +654,7 @@ public class CommandDgDebug {
 
                 OutputStream outputStream = Files.newOutputStream(new File(outdir, "fixed-"+f.getName()).toPath());
 
-                CompressedStreamTools.writeCompressed(compound, outputStream);
+                NbtIo.writeCompressed(compound, outputStream);
 
                 outputStream.flush();
                 outputStream.close();
@@ -678,7 +682,7 @@ public class CommandDgDebug {
                 JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
 
 
-                NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
                 )));
                 byte[] blocks = compound.getByteArray("Blocks");
@@ -763,7 +767,7 @@ public class CommandDgDebug {
                     // smth i haven't visited yeet
                     // check
 
-                    NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                    CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                             jsonObject.get("schematic").getAsString()
                     )));
                     byte[] blocks = compound.getByteArray("Blocks");
@@ -834,7 +838,7 @@ public class CommandDgDebug {
                 }
 
 
-                NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                         jsonObject.get("schematic").getAsString()
                 )));
                 byte[] blocks = compound.getByteArray("Blocks");
@@ -907,7 +911,7 @@ public class CommandDgDebug {
                     int thisRot = jsonObject.get("rot").getAsInt();
 
 
-                    NBTTagCompound compound2 = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                    CompoundTag compound2 = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                             originalRoomMapping.get("schematic").getAsString()
                     )));
                     byte[] blocks2 = compound2.getByteArray("Blocks");
@@ -1052,7 +1056,7 @@ public class CommandDgDebug {
     public static class MechanicNameSuggestor implements SuggestionProvider<FabricClientCommandSource> {
         public CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> commandContext, SuggestionsBuilder suggestionsBuilder) {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return suggestionsBuilder.buildFuture();
             }
@@ -1069,7 +1073,7 @@ public class CommandDgDebug {
     public static class StateSuggestor implements SuggestionProvider<FabricClientCommandSource> {
         public CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> commandContext, SuggestionsBuilder suggestionsBuilder) {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return suggestionsBuilder.buildFuture();
             }
@@ -1093,7 +1097,7 @@ public class CommandDgDebug {
                                 @CommandParam(value = "state", suggestionProvider = StateSuggestor.class) String state) {
         try {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return;
             }
@@ -1413,6 +1417,24 @@ public class CommandDgDebug {
         }).start();
     }
 
+    // D109: converts the loaded 1.8.9 room data to format 2 and writes it with the legacy block table, to be copied into the resources
+    @DGCommand("dgdebug convertroomdata")
+    public void convertRoomDataCommand() {
+        try {
+            File out = new File(Main.getConfigDir(), "convertedroomdata");
+            BlockState[] table = RoomDataConverter.buildLegacyTable();
+            RoomDataConverter.writeTable(table, new File(out, "legacy_blocks.json"));
+            for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+                RoomDataConverter.convert(dungeonRoomInfo, table);
+            }
+            DungeonRoomInfoRegistry.saveAll(new File(out, "roomdata"));
+            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fConverted room data to " + out.getAbsolutePath()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §cRoom data conversion failed: " + e));
+        }
+    }
+
     // D104: records what the server sends as chat / action bar / titles
     @DGCommand("dgdebug chatcapture")
     public void chatCaptureCommand() {
@@ -1444,7 +1466,7 @@ public class CommandDgDebug {
     public void pFallCommand() {
         try {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return;
             }

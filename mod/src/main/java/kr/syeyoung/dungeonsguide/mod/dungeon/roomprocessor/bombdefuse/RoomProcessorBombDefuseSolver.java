@@ -48,9 +48,9 @@ import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEvent;
@@ -160,12 +160,12 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     BlockPos warning;
 
 
-    public void communicate(NBTTagCompound compound) {
+    public void communicate(CompoundTag compound) {
         if (bugged) return;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream w = new DataOutputStream(baos);
-            CompressedStreamTools.writeCompressed(compound, w);
+            NbtIo.writeCompressed(compound, w);
             w.flush();
             byte[] bytes = baos.toByteArray();
             String str = Base64.encodeBase64String(bytes);
@@ -199,7 +199,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                 String data = TextUtils.getFormattedText(component).substring(TextUtils.getFormattedText(component).indexOf("$DG-BD"));
                 String actual = TextUtils.stripColor(data).trim().split(" ")[1];
                 byte[] data2 = Base64.decodeBase64(actual);
-                NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(data2));
+                CompoundTag compound = NbtIo.readCompressed(new ByteArrayInputStream(data2));
 
                 for (ChamberSet ch:chambers) {
                     if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)

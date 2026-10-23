@@ -20,10 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.pathfinding.world;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.CollisionStateCalculatingCoordinateMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.PearlCalculatingCoordinateMap;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 
 public interface IPathfindWorld {
-    public IBlockState getActualBlock(int x, int y, int z);
+    public BlockState getActualBlock(int x, int y, int z);
     public CollisionStateCalculatingCoordinateMap.CollisionState getBlock(int x, int y, int z);
     public PearlCalculatingCoordinateMap.PearlLandType getPearl(int x, int y, int z);
     public boolean isInstabreak(int x, int y, int z);

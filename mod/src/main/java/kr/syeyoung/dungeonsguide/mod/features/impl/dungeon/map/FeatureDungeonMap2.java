@@ -54,9 +54,9 @@ import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.world.WorldSettings;
+import net.minecraft.world.level.GameType;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -179,7 +179,7 @@ public class FeatureDungeonMap2 extends AbstractHUDFeature {
     public static final Ordering<NetworkPlayerInfo> sorter = Ordering.from((compare1, compare2) -> {
         ScorePlayerTeam scorePlayerTeam = compare1.getPlayerTeam();
         ScorePlayerTeam scorePlayerTeam1 = compare2.getPlayerTeam();
-        return ComparisonChain.start().compareTrueFirst(compare1.getGameType() != WorldSettings.GameType.SPECTATOR, compare2.getGameType() != WorldSettings.GameType.SPECTATOR).compare(scorePlayerTeam != null ? scorePlayerTeam.getRegisteredName() : "", scorePlayerTeam1 != null ? scorePlayerTeam1.getRegisteredName() : "").compare(compare1.getGameProfile().getName(), compare2.getGameProfile().getName()).result();
+        return ComparisonChain.start().compareTrueFirst(compare1.getGameType() != GameType.GameType.SPECTATOR, compare2.getGameType() != GameType.GameType.SPECTATOR).compare(scorePlayerTeam != null ? scorePlayerTeam.getRegisteredName() : "", scorePlayerTeam1 != null ? scorePlayerTeam1.getRegisteredName() : "").compare(compare1.getGameProfile().getName(), compare2.getGameProfile().getName()).result();
     });
 
     @Override
@@ -276,7 +276,7 @@ public class FeatureDungeonMap2 extends AbstractHUDFeature {
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
             if (name == null) continue;
 
-            EntityPlayer entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
+            Player entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
 
             overlays.add(new MapOverlayPlayer(playerInfo,
                     entityplayer == Minecraft.getInstance().player ? mapConfiguration.getSelfSettings() : mapConfiguration.getTeammateSettings()));

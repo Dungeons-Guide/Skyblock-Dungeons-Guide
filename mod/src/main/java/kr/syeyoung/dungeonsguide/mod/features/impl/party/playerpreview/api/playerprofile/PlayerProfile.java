@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.play
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.dataclasses.*;
 import lombok.Data;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;

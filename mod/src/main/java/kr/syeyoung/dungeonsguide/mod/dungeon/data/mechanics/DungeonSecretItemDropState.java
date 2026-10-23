@@ -37,11 +37,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Items;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -72,14 +72,14 @@ public class DungeonSecretItemDropState implements DungeonMechanicState, ISecret
 
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
         boolean itemFound = false;
-        for (EntityItem entityItem : Minecraft.getInstance().level.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()))) {
+        for (ItemEntity entityItem : Minecraft.getInstance().level.getEntitiesWithinAABB(ItemEntity.class, new AABB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()))) {
             if (entityItem.getEntityItem().getItem() == Items.dye) continue;
             itemFound = true;
         }
 
         if (Minecraft.getInstance().player.getDistanceSq(pos) < 40) {
             nearbyTicks++;
-            List<EntityItem> items = Minecraft.getInstance().level.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()));
+            List<ItemEntity> items = Minecraft.getInstance().level.getEntitiesWithinAABB(ItemEntity.class, new AABB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(), pos.getZ()));
             if (itemFound) {
                 status = SecretStatus.DEFINITELY_NOT;
             } else if (status != SecretStatus.FOUND && nearbyTicks > 40) {

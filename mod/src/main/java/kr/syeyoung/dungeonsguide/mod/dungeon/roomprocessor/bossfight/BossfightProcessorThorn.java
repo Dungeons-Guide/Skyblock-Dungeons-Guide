@@ -22,14 +22,14 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.block.Block;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.boss.BossStatus;
-import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.entity.passive.*;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.World;
 
 import java.awt.*;
@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.minecraft.world.entity.ambient.Bat;
 
 public class BossfightProcessorThorn extends GeneralBossfightProcessor {
 
@@ -113,7 +114,7 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
     @Override
     public MarkerData convertToMarker(Entity entity) {
         if (entity.isInvisible()) return null;
-        if (entity instanceof EntityBat) {
+        if (entity instanceof Bat) {
             return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 28);
         } else if (entity instanceof EntitySheep) {
             return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 30);
@@ -125,9 +126,9 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
             return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 29);
         } else if (entity instanceof EntityRabbit) {
             return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 27);
-        } else if (entity instanceof EntityGhast) {
+        } else if (entity instanceof Ghast) {
             return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, 25);
-        } else if (entity instanceof EntityOtherPlayerMP) {
+        } else if (entity instanceof RemotePlayer) {
             if (entity.getName().equals("Spirit Bear"))
                 return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, 24);
         }

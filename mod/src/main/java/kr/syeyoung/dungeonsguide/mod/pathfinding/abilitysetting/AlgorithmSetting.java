@@ -1,12 +1,16 @@
 package kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting;
 
 import lombok.*;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.*;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ByteTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtIo;
 
 @Getter
 @Data
@@ -18,19 +22,19 @@ public class AlgorithmSetting implements Cloneable {
         private final ItemTool tool;
         private final int efficiency;
 
-        public NBTTagCompound serialize() {
-            NBTTagCompound tag = new NBTTagCompound();
+        public CompoundTag serialize() {
+            CompoundTag tag = new CompoundTag();
             tag.setString("level", tool.getRegistryName());
             tag.setInteger("efficiency", efficiency);
             return tag;
         }
 
-        public static ToolSettings deserialize(NBTBase base) {
-            if (base instanceof NBTTagByte) return null;
-            else if (base instanceof NBTTagCompound) {
+        public static ToolSettings deserialize(Tag base) {
+            if (base instanceof ByteTag) return null;
+            else if (base instanceof CompoundTag) {
                 return new ToolSettings(
-                        (ItemTool) Item.getByNameOrId(((NBTTagCompound) base).getString("level")),
-                        ((NBTTagCompound) base).getInteger("efficiency"));
+                        (ItemTool) Item.getByNameOrId(((CompoundTag) base).getString("level")),
+                        ((CompoundTag) base).getInteger("efficiency"));
             }
             throw new IllegalArgumentException("Invalid tool settings: "+base);
         }
@@ -71,7 +75,7 @@ public class AlgorithmSetting implements Cloneable {
     private final double shovelSpeed;
     private final double axeSpeed;
 
-    public AlgorithmSetting(NBTTagCompound nbt) {
+    public AlgorithmSetting(CompoundTag nbt) {
         if (nbt.getInteger("version") != 2) throw new IllegalArgumentException("Unexpected Algo Settings version: "+nbt.getInteger("version")+" / Expected: 2");
         this.pickaxe = ToolSettings.deserialize(nbt.getTag("pickaxe"));
         this.shovel = ToolSettings.deserialize(nbt.getTag("shovel"));
@@ -118,15 +122,15 @@ public class AlgorithmSetting implements Cloneable {
     }
 
 
-    public NBTTagCompound serializeToNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public CompoundTag serializeToNBT() {
+        CompoundTag nbt = new CompoundTag();
         nbt.setInteger("version", 2);
 
         nbt.setInteger("haste", hasteLevel);
 
-        nbt.setTag("pickaxe", pickaxe == null ? new NBTTagByte((byte)0) : pickaxe.serialize());
-        nbt.setTag("shovel", shovel == null ? new NBTTagByte((byte)0) : shovel.serialize());
-        nbt.setTag("axe", axe == null ? new NBTTagByte((byte)0) : axe.serialize());
+        nbt.setTag("pickaxe", pickaxe == null ? new ByteTag((byte)0) : pickaxe.serialize());
+        nbt.setTag("shovel", shovel == null ? new ByteTag((byte)0) : shovel.serialize());
+        nbt.setTag("axe", axe == null ? new ByteTag((byte)0) : axe.serialize());
         nbt.setBoolean("slowStonk", allowSlowStonkPath);
 
         nbt.setBoolean("stonkDown", stonkDown);
@@ -143,7 +147,7 @@ public class AlgorithmSetting implements Cloneable {
     }
 
     public static AlgorithmSetting deserialize(DataInputStream dataInputStream) throws IOException {
-        NBTTagCompound nbtTagCompound = CompressedStreamTools.read(dataInputStream, new NBTSizeTracker(10000));
+        CompoundTag nbtTagCompound = NbtIo.read(dataInputStream, new NBTSizeTracker(10000));
         return new AlgorithmSetting(nbtTagCompound);
     }
 

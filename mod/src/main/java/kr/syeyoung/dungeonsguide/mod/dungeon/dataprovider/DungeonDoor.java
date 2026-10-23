@@ -20,9 +20,9 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider;
 
 import com.google.common.collect.Sets;
 import lombok.Getter;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Set;

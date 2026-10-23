@@ -23,9 +23,9 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.LivingTickEvent;
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.AllArgsConstructor;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
         return "Bonzo";
     }
 
-    private EntityArmorStand bonzoStand;
+    private ArmorStand bonzoStand;
 
 
     private static final Identifier UNDEAD = Identifier.parse("dungeonsguide:map/bossfight/f1/undead.png");
@@ -91,7 +91,7 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
 
     @Override
     public MarkerData convertToMarker(Entity entity) {
-        if (entity instanceof EntityOtherPlayerMP) {
+        if (entity instanceof RemotePlayer) {
             if ("Undead ".equals(entity.getName())) {
                 return MarkerData.fromEntity(entity, MarkerData.MobType.ENEMIES, 4);
             } else if ("Bonzo ".equals(entity.getName())){
@@ -106,8 +106,8 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     // §e﴾ §c§lBonzo§r §a250k§c❤ §e﴿
     // Now I'm convinced name format is always the same
     public void onEntityUpdate(LivingTickEvent updateEvent) {
-        if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lBonzo§r") && updateEvent.entityLiving instanceof EntityArmorStand) {
-            bonzoStand = (EntityArmorStand) updateEvent.entityLiving;
+        if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lBonzo§r") && updateEvent.entityLiving instanceof ArmorStand) {
+            bonzoStand = (ArmorStand) updateEvent.entityLiving;
         }
     }
 }

@@ -29,8 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.entity.ambient.Bat;
+import net.minecraft.core.BlockPos;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,15 +55,15 @@ public class FeatureBoxBats extends SimpleFeature  {
         int val = this.<Integer>getParameter("radius").getValue();
         final int sq = val * val;
 
-        List<EntityBat> skeletonList = Minecraft.getInstance().level.getEntities(EntityBat.class, new Predicate<EntityBat>() {
+        List<Bat> skeletonList = Minecraft.getInstance().level.getEntities(Bat.class, new Predicate<Bat>() {
             @Override
-            public boolean apply(@Nullable EntityBat input) {
+            public boolean apply(@Nullable Bat input) {
                 if (input != null && input.isInvisible()) return false;
                 return input != null && input.getDistanceSq(player) < sq;
             }
         });
         AColor c = this.<AColor>getParameter("color").getValue();
-        for (EntityBat entitySkeleton : skeletonList) {
+        for (Bat entitySkeleton : skeletonList) {
             if (!entitySkeleton.isInvisible())
                 RenderUtils.highlightBox(entitySkeleton, c, partialTicks, true);
         }

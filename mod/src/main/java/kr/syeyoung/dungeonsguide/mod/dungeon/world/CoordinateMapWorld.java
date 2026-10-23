@@ -1,75 +1,61 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.world;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.*;
-import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
 
-public class CoordinateMapWorld extends World {
-    private ICoordinateMap<IBlockState> map;
+public class CoordinateMapWorld implements DGWorld {
+    private ICoordinateMap<BlockState> map;
 
-    public CoordinateMapWorld(ICoordinateMap<IBlockState> map) {
-        super(null, null, new WorldProviderSurface(), null, true);
+    public CoordinateMapWorld(ICoordinateMap<BlockState> map) {
         this.map = map;
     }
 
     @Override
-    protected IChunkProvider createChunkProvider() {
-        throw new UnsupportedOperationException("Yikes");
-    }
-
-    @Override
-    protected int getRenderDistanceChunks() {
-        throw new UnsupportedOperationException("Yikes");
-    }
-
-    @Override
-    public boolean extendedLevelsInChunkCache() {
-         throw new UnsupportedOperationException("Yikes");
-    }
-
-    @Override
-    public TileEntity getTileEntity(BlockPos pos) {
-        throw new UnsupportedOperationException("Yikes");
-    }
-
-    @Override
-    public int getCombinedLight(BlockPos pos, int lightValue) {
-        throw new UnsupportedOperationException("Yikes");
-    }
-
-    @Override
-    public IBlockState getBlockState(BlockPos pos) {
+    public BlockState getBlockState(BlockPos pos) {
         return map.getBlock(pos.getX(), pos.getY(), pos.getZ());
     }
 
+
     @Override
-    public int getLightFor(EnumSkyBlock type, BlockPos pos) {
-        throw new UnsupportedOperationException("Yikes");
+    public BlockState getBlock(int x, int y, int z) {
+        return map.getBlock(x, y, z);
     }
 
     @Override
-    public boolean isAirBlock(BlockPos pos) {
-        IBlockState blockState = getBlockState(pos);
-        return blockState == null || blockState.getBlock() == Blocks.air;
+    public boolean isInScope(int x, int y, int z) {
+        return map.isInScope(x, y, z);
     }
 
     @Override
-    public int getStrongPower(BlockPos pos, EnumFacing direction) {
-        throw new UnsupportedOperationException("Yikes");
+    public int getMinX() {
+        return map.getMinX();
     }
 
     @Override
-    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
-        if (pos.getY() >= 0 && pos.getY() < 256) {
-            return _default;
-        } else {
-            IBlockState blockState = map.getBlock(pos.getX(), pos.getY(), pos.getZ());
-
-            return blockState == null ? _default : blockState.getBlock().isSideSolid(this, pos, side);
-        }
+    public int getMinY() {
+        return map.getMinY();
     }
+
+    @Override
+    public int getMinZ() {
+        return map.getMinZ();
+    }
+
+    @Override
+    public int getMaxX() {
+        return map.getMaxX();
+    }
+
+    @Override
+    public int getMaxY() {
+        return map.getMaxY();
+    }
+
+    @Override
+    public int getMaxZ() {
+        return map.getMaxZ();
+    }
+
+    // 1.8.9 also overrode isSideSolid (the default inside y 0..256), 26.1 decides face solidity from the block shape
 }

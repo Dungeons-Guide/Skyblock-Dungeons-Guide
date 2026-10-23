@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.preset.RoomPresetPathPlanner;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.level.block.Blocks;
 
 @Data
 @EqualsAndHashCode(callSuper=false)

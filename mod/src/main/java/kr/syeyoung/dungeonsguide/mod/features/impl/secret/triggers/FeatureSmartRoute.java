@@ -43,7 +43,7 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.routedisplay.RoomRouteHandler;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.player.LocalPlayer;
 
 import java.awt.*;
 import java.util.Map;
@@ -65,7 +65,7 @@ public class FeatureSmartRoute extends SimpleFeature {
 
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (!SkyblockStatus.isOnDungeon() || context == null) return;
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) return;
             if (context.getScaffoldParser() == null) return;
             Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());

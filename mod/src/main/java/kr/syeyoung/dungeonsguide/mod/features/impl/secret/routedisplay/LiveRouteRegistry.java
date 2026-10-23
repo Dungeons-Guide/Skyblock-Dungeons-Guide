@@ -14,7 +14,7 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.linestyle.arrowpath.NeoRouteDisplayEngine;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderWorldEvent;
@@ -71,7 +71,7 @@ public class LiveRouteRegistry extends SimpleFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (SkyblockStatus.isOnDungeon() && context != null) {
 
-            EntityPlayerSP thePlayer = Minecraft.getInstance().player;
+            LocalPlayer thePlayer = Minecraft.getInstance().player;
             if (thePlayer == null) {
                 return null;
             }

@@ -23,9 +23,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 
 import java.awt.*;
 
@@ -81,14 +81,14 @@ public class CreeperLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void onSendData() {
         if (answer == -1) return;
-        NBTTagCompound nbt = new NBTTagCompound();
+        CompoundTag nbt = new CompoundTag();
         nbt.setByte("a", (byte) 2);
         nbt.setInteger("b", answer);
         getSolver().communicate(nbt);
     }
 
     @Override
-    public void onDataReceive(NBTTagCompound compound) {
+    public void onDataReceive(CompoundTag compound) {
         if (2 == compound.getByte("a")) {
             answer = compound.getInteger("b");
         }

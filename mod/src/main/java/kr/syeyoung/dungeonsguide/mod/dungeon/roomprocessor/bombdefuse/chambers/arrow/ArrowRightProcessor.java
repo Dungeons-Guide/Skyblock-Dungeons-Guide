@@ -24,11 +24,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.core.BlockPos;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +59,7 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
     public void tick() {
         super.tick();
         for (int i = 0; i < 9; i++)
-            currentAnswers[i] = match(getChamber().getEntityAt(EntityArmorStand.class, grid[i].add(0, -1, 0)));
+            currentAnswers[i] = match(getChamber().getEntityAt(ArmorStand.class, grid[i].add(0, -1, 0)));
     }
 
     @Override
@@ -81,7 +81,7 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void onDataReceive(NBTTagCompound compound) {
+    public void onDataReceive(CompoundTag compound) {
         if (3 == compound.getByte("a")) {
             answer = compound.getInteger("b");
             for (int i = 8; i >= 0; i--) {
@@ -92,13 +92,13 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
         }
     }
 
-    private int match(EntityArmorStand armorStand) {
+    private int match(ArmorStand armorStand) {
         if (armorStand == null) return -1;
         ItemStack item = armorStand.getInventory()[4];
         if (item == null) return -1;
-        NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
+        ListTag list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
         if (list == null) return -1;
-        String str = ((NBTTagCompound)list.get(0)).getString("Value");
+        String str = ((CompoundTag)list.get(0)).getString("Value");
         return !integers.containsKey(str) ? -1 : integers.get(str);
     }
 

@@ -33,10 +33,10 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 
 import java.util.*;
@@ -346,16 +346,16 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
 
     public void checkForCooldown(ItemStack itemStack) {
         if (itemStack == null) return;
-        NBTTagCompound nbt = itemStack.getTagCompound();
+        CompoundTag nbt = itemStack.getTagCompound();
         if (nbt == null) return;
-        NBTTagCompound extra = nbt.getCompoundTag("ExtraAttributes");
+        CompoundTag extra = nbt.getCompoundTag("ExtraAttributes");
         if (extra == null) return;
         String id = extra.getString("id");
         List<SkyblockAbility> skyblockAbility = skyblockAbilitiesByItemID.get(id);
 
-        NBTTagCompound display = nbt.getCompoundTag("display");
+        CompoundTag display = nbt.getCompoundTag("display");
         if (display == null) return;
-        NBTTagList lore = display.getTagList("Lore", 8);
+        ListTag lore = display.getTagList("Lore", 8);
         int thecd = -1;
         SkyblockAbility currentAbility = null;
         for (int i = 0; i < lore.tagCount(); i++) {
@@ -391,7 +391,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
 
     @DGEventHandler
     public void onTick(DGTickEvent event) {
-        EntityPlayerSP sp = Minecraft.getInstance().player;
+        LocalPlayer sp = Minecraft.getInstance().player;
         if (sp == null) return;
         if (sp.inventory == null || sp.inventory.armorInventory == null) return;
         for (ItemStack itemStack : sp.inventory.armorInventory) {

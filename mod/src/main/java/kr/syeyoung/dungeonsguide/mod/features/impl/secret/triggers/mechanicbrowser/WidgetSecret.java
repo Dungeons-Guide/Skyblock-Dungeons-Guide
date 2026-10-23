@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.resources.Identifier;
 
 import java.util.function.Consumer;
@@ -46,7 +46,7 @@ public class WidgetSecret extends AnnotatedWidget {
         super(Identifier.parse("dungeonsguide:gui/features/mechanic_browser/secret.gui"));
         secretName.setValue(name+" §7("+ dungeonMechanicState.getCurrentState() +", "+
                 (dungeonMechanicState.getRepresentingPoint() != null ?
-                        String.format("%.1f", MathHelper.sqrt_double(dungeonMechanicState.getRepresentingPoint().getBlockPos(room).distanceSq(Minecraft.getInstance().player.getPosition()))) : "")
+                        String.format("%.1f", Mth.sqrt_double(dungeonMechanicState.getRepresentingPoint().getBlockPos(room).distanceSq(Minecraft.getInstance().player.getPosition()))) : "")
                 +"m)");
         this.id = name;
         this.mechanic = dungeonMechanicState;
@@ -59,7 +59,7 @@ public class WidgetSecret extends AnnotatedWidget {
         super.onMount();
         secretName.setValue(id+" §7("+ mechanic.getCurrentState() +", "+
                 (mechanic.getRepresentingPoint() != null ?
-                        String.format("%.1f", MathHelper.sqrt_double(mechanic.getRepresentingPoint().getBlockPos(room).distanceSq(Minecraft.getInstance().player.getPosition()))) : "")
+                        String.format("%.1f", Mth.sqrt_double(mechanic.getRepresentingPoint().getBlockPos(room).distanceSq(Minecraft.getInstance().player.getPosition()))) : "")
                 +"m)");
     }
 

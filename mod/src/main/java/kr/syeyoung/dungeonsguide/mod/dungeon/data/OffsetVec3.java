@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import lombok.Data;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.phys.Vec3;
 
 import javax.vecmath.Vector2d;
 import java.io.Serializable;

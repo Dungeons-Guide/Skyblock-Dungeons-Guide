@@ -24,11 +24,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 import org.apache.commons.codec.binary.Hex;
 
 import java.io.DataOutputStream;
@@ -40,6 +39,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 
 @Getter @Setter
 public class PathfindRequest { // TODO: fix data flow.
@@ -153,8 +153,8 @@ public class PathfindRequest { // TODO: fix data flow.
 
         // export algorithm settings
         dataOutputStream.writeBytes("ALGO");
-        NBTTagCompound tagCompound = algorithmSetting.serializeToNBT();
-        CompressedStreamTools.write(tagCompound, dataOutputStream);
+        CompoundTag tagCompound = algorithmSetting.serializeToNBT();
+        NbtIo.write(tagCompound, dataOutputStream);
 
         // export targets
         dataOutputStream.writeBytes("TRGT");
@@ -174,9 +174,11 @@ public class PathfindRequest { // TODO: fix data flow.
             for (int y = 0; y < 256; y++) {
                 for (int z = 0; z < dungeonRoomInfo.getLength(); z++) {
                     for (int x = 0; x < dungeonRoomInfo.getWidth(); x++) {
-                        IBlockState blockState = driWorld.getBlockState(new BlockPos(x, y, z));
-                        dataOutputStream.write((byte) Block.getIdFromBlock(blockState.getBlock()));
-                        dataOutputStream.write((byte) blockState.getBlock().getMetaFromState(blockState));
+                        BlockState blockState = driWorld.getBlockState(new BlockPos(x, y, z));
+                        // the request format keeps 1.8.9 id / meta, converted rooms only hold states that came from them (D112)
+                        int legacy = Math.max(0, LegacyBlock.legacy(blockState));
+                        dataOutputStream.write((byte) (legacy >> 4));
+                        dataOutputStream.write((byte) (legacy & 15));
                     }
                 }
             }

@@ -20,8 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.map;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;

@@ -34,10 +34,10 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.core.BlockPos;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -67,9 +67,9 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
 
     public void tick(DungeonRoom dungeonRoom) {
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
-        IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
+        BlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
         if (blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest) {
-            TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
+            ChestBlockEntity chest = (ChestBlockEntity) dungeonRoom.getContext().getWorld().getTileEntity(pos);
             if (chest != null) {
                 if (chest.numPlayersUsing > 0) {
                     lastMeasuredChestStatus = LastMeasuredChestStatus.OPENED;
@@ -78,7 +78,7 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
                         lastMeasuredChestStatus = LastMeasuredChestStatus.UNOPEN;
                 }
             } else {
-                System.out.println("Expected TileEntityChest at " + pos + " to not be null");
+                System.out.println("Expected ChestBlockEntity at " + pos + " to not be null");
             }
         }
     }
@@ -90,7 +90,7 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
 
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
         BlockPos pos = data.secretPoint.getBlockPos(dungeonRoom);
-        IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
+        BlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
         if (lastMeasuredChestStatus != LastMeasuredChestStatus.WASNT_THERE)
             return (lastMeasuredChestStatus == LastMeasuredChestStatus.OPENED || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
 
@@ -99,7 +99,7 @@ public class DungeonSecretChestState implements DungeonMechanicState, ISecret {
         } else if (blockState.getBlock() != Blocks.chest && blockState.getBlock() != Blocks.trapped_chest) {
             return SecretStatus.ERROR;
         } else {
-            TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
+            ChestBlockEntity chest = (ChestBlockEntity) dungeonRoom.getContext().getWorld().getTileEntity(pos);
             if (chest != null && chest.numPlayersUsing > 0) {
                 return SecretStatus.FOUND;
             } else {

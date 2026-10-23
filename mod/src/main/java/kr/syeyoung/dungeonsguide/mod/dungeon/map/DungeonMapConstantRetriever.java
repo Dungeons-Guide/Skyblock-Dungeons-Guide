@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.map;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 
 import javax.vecmath.Vector2d;

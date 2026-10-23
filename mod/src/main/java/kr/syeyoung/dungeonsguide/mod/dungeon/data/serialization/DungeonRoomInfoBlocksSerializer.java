@@ -18,13 +18,16 @@ public class DungeonRoomInfoBlocksSerializer extends StdSerializer<int[][]> {
         gen.writeNumber(value.length);
         gen.writeNumber(value[0].length);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(value.length * value[0].length);
+        // D111: format 2 writes palette indices as 16 bit, marked by a 4th element. format 1 was one byte each
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(value.length * value[0].length * 2);
         for (int[] ints : value) {
             for (int anInt : ints) {
-                baos.write(anInt); // wait this waste 3 bytes!!! no, it doesn't.
+                baos.write((anInt >> 8) & 0xFF);
+                baos.write(anInt & 0xFF);
             }
         }
         gen.writeBinary(baos.toByteArray());
+        gen.writeNumber(2);
 
         gen.writeEndArray();
     }

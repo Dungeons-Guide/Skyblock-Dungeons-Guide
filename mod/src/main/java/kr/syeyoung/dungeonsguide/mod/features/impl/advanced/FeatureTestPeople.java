@@ -43,12 +43,12 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.tileentity.TileEntitySkullRenderer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -192,10 +192,10 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
         ItemStack stack = new ItemStack(Items.skull, 1, 3);
 
         executor.submit(() -> {
-            EntityPlayer playerEntityByName = Minecraft.getInstance().level.getPlayerEntityByName(username);
+            Player playerEntityByName = Minecraft.getInstance().level.getPlayerEntityByName(username);
             if(playerEntityByName == null || playerEntityByName.getGameProfile() == null) {
-                stack.setTagCompound(new NBTTagCompound());
-                stack.getTagCompound().setTag("SkullOwner", new NBTTagString(username));
+                stack.setTagCompound(new CompoundTag());
+                stack.getTagCompound().setTag("SkullOwner", new StringTag(username));
                 return;
             }
 
@@ -210,8 +210,8 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 
 
 
-            stack.setTagCompound(new NBTTagCompound());
-            stack.getTagCompound().setTag("SkullOwner", new NBTTagString(username));
+            stack.setTagCompound(new CompoundTag());
+            stack.getTagCompound().setTag("SkullOwner", new StringTag(username));
 
         });
 
@@ -309,7 +309,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
             String name = getPlayerNameWithChecks(tabListEntry);
             if (name == null) continue;
 
-            EntityPlayer entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
+            Player entityplayer = Minecraft.getInstance().level.getPlayerEntityByName(name);
 
 
             if (entityplayer != null && (!entityplayer.isInvisible())) {
@@ -332,7 +332,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 
         GameProfile toDraw = cachedProfiles.get(stack.getName()) ? stack : null;
 
-        TileEntitySkullRenderer.instance.renderSkull(x, y, -0.5F, EnumFacing.UP, 180.0F, 1, stack, -1);
+        TileEntitySkullRenderer.instance.renderSkull(x, y, -0.5F, Direction.UP, 180.0F, 1, stack, -1);
 
         if(toDraw == null && !cachedProfiles.containsKey(stack.getName())){
             cachedProfiles.put(stack.getName(), false);

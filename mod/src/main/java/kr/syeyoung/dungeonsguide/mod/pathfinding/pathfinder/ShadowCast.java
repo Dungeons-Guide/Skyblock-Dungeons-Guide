@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 
 import java.util.LinkedList;
 import java.util.List;

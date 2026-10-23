@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 
 import java.io.Serializable;
 

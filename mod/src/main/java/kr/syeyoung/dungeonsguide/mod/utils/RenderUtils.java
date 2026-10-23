@@ -20,9 +20,9 @@ package kr.syeyoung.dungeonsguide.mod.utils;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.dataprovider.DungeonDoor;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -30,12 +30,12 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.ambient.Bat;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.util.*;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -44,6 +44,11 @@ import javax.vecmath.Vector3f;
 import java.awt.*;
 import java.util.List;
 import net.minecraft.resources.Identifier;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.Mth;
 
 public class RenderUtils {
     public static final Identifier icons = Identifier.parse("textures/gui/icons.png");
@@ -91,7 +96,7 @@ public class RenderUtils {
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
         double time = System.currentTimeMillis() / 50 + (double)partialTicks;
-        double d1 = MathHelper.func_181162_h(-time * 0.2D - (double)MathHelper.floor_double(-time * 0.1D));
+        double d1 = Mth.func_181162_h(-time * 0.2D - (double)Mth.floor_double(-time * 0.1D));
 
         int c = getColorAt(x,y,z, aColor);
         float alpha = ((c >> 24) & 0xFF) / 255.0f;
@@ -247,14 +252,14 @@ public class RenderUtils {
         WorldRenderer wr = t.getWorldRenderer();
         wr.begin(GL11.GL_POLYGON, DefaultVertexFormats.POSITION);
         for (double i = 0.1; i < Math.PI*2; i+= delta) {
-            double cos = MathHelper.cos((float) i);
-            double sin = MathHelper.sin((float) i);
-            if (cos * MathHelper.cos((float) (i + delta)) <= 0) {
+            double cos = Mth.cos((float) i);
+            double sin = Mth.sin((float) i);
+            if (cos * Mth.cos((float) (i + delta)) <= 0) {
                 wr.pos(sin * radius + (sin > 0 ? 1 : -1) * (width/2.0 - radius),
                         cos * radius + (cos > 0 ? 1 : -1) * (height/2.0 - radius),0).endVertex();
                 wr.pos(sin * radius + (sin > 0 ? 1 : -1) * (width/2.0 - radius),
                         cos * radius + (cos > 0 ? -1 : 1) * (height/2.0 - radius),0).endVertex();
-            } else if (sin * MathHelper.sin((float) (i+delta)) <= 0) {
+            } else if (sin * Mth.sin((float) (i+delta)) <= 0) {
                 wr.pos(sin * radius + (sin > 0 ? 1 : -1) * (width/2.0 - radius),
                         cos * radius + (cos > 0 ? 1 : -1) * (height/2.0 - radius), 0).endVertex();
                 wr.pos(sin * radius + (sin > 0 ? -1 : 1) * (width/2.0 - radius),
@@ -823,7 +828,7 @@ public class RenderUtils {
     }
 
 
-    public static AxisAlignedBB highlightBlockStencil(BlockPos blockPos, float partialTicks, Color color, boolean depth) {
+    public static AABB highlightBlockStencil(BlockPos blockPos, float partialTicks, Color color, boolean depth) {
         RenderManager renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
         Entity render = Minecraft.getInstance().getCameraEntity();
         double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
@@ -871,13 +876,13 @@ public class RenderUtils {
             maxY = Math.max(maxY, pos.getY() + 1);
             minZ = Math.min(minZ, pos.getZ());
             maxZ = Math.max(maxZ, pos.getZ() + 1);
-            IBlockState iBlockState = Minecraft.getInstance().level.getBlockState(pos);
+            BlockState iBlockState = Minecraft.getInstance().level.getBlockState(pos);
             if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
-                TileEntity tileEntity = Minecraft.getInstance().level.getTileEntity(pos);
+                BlockEntity tileEntity = Minecraft.getInstance().level.getTileEntity(pos);
                 TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                 if (specialRenderer != null) {
                     specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
-                    for (EnumFacing value : EnumFacing.HORIZONTALS) {
+                    for (Direction value : Direction.HORIZONTALS) {
                         BlockPos newPos = pos.add(value.getDirectionVec());
                         iBlockState = Minecraft.getInstance().level.getBlockState(newPos);
 
@@ -916,7 +921,7 @@ public class RenderUtils {
 
         GlStateManager.popMatrix();
 
-        AxisAlignedBB bb= new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
+        AABB bb= new AABB(minX, minY, minZ, maxX, maxY, maxZ);
         RenderUtils.highlightBox(bb, color, partialTicks, false);
 
         GL11.glDisable(GL11.GL_STENCIL_TEST);
@@ -924,7 +929,7 @@ public class RenderUtils {
         GlStateManager.enableDepth();
         return bb;
     }
-    public static AxisAlignedBB highlightBlocksStencil(List<BlockPos> blockPos, float partialTicks, Color color, boolean depth) {
+    public static AABB highlightBlocksStencil(List<BlockPos> blockPos, float partialTicks, Color color, boolean depth) {
         RenderManager renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
         Entity render = Minecraft.getInstance().getCameraEntity();
         double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
@@ -971,13 +976,13 @@ public class RenderUtils {
             maxY = Math.max(maxY, pos.getY() + 1);
             minZ = Math.min(minZ, pos.getZ());
             maxZ = Math.max(maxZ, pos.getZ() + 1);
-            IBlockState iBlockState = Minecraft.getInstance().level.getBlockState(pos);
+            BlockState iBlockState = Minecraft.getInstance().level.getBlockState(pos);
             if (iBlockState.getBlock().hasTileEntity(iBlockState)) {
-                TileEntity tileEntity = Minecraft.getInstance().level.getTileEntity(pos);
+                BlockEntity tileEntity = Minecraft.getInstance().level.getTileEntity(pos);
                 TileEntitySpecialRenderer specialRenderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileEntity);
                 if (specialRenderer != null) {
                     specialRenderer.renderTileEntityAt(tileEntity,pos.getX(),pos.getY(),pos.getZ(), partialTicks, -1);
-                    for (EnumFacing value : EnumFacing.HORIZONTALS) {
+                    for (Direction value : Direction.HORIZONTALS) {
                         BlockPos newPos = pos.add(value.getDirectionVec());
                         iBlockState = Minecraft.getInstance().level.getBlockState(newPos);
 
@@ -1015,7 +1020,7 @@ public class RenderUtils {
 
         GlStateManager.popMatrix();
 
-        AxisAlignedBB bb= new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
+        AABB bb= new AABB(minX, minY, minZ, maxX, maxY, maxZ);
         RenderUtils.highlightBox(bb, color, partialTicks, false);
 
         GL11.glDisable(GL11.GL_STENCIL_TEST);
@@ -1024,7 +1029,7 @@ public class RenderUtils {
         return bb;
     }
 
-    public static void highlightBox(AxisAlignedBB  axisAlignedBB, Color c, float partialTicks, boolean depth) {
+    public static void highlightBox(AABB  axisAlignedBB, Color c, float partialTicks, boolean depth) {
         Entity viewing_from = Minecraft.getInstance().getCameraEntity();
 
         double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
@@ -1097,7 +1102,7 @@ public class RenderUtils {
         GlStateManager.popMatrix();
 
     }
-    public static void highlightBoxAColor(AxisAlignedBB  axisAlignedBB, AColor c, float partialTicks, boolean depth) {
+    public static void highlightBoxAColor(AABB  axisAlignedBB, AColor c, float partialTicks, boolean depth) {
         Entity viewing_from = Minecraft.getInstance().getCameraEntity();
 
         double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
@@ -1170,7 +1175,7 @@ public class RenderUtils {
         GlStateManager.popMatrix();
 
     }
-    public static void highlightBox(Entity entity, AxisAlignedBB  axisAlignedBB, AColor c, float partialTicks, boolean depth) {
+    public static void highlightBox(Entity entity, AABB  axisAlignedBB, AColor c, float partialTicks, boolean depth) {
         Entity viewing_from = Minecraft.getInstance().getCameraEntity();
 
         double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
@@ -1193,12 +1198,12 @@ public class RenderUtils {
         int rgb = RenderUtils.getColorAt(entity.posX * 10,entity.posY * 10,c);
         GlStateManager.color(((rgb >> 16) &0XFF)/ 255.0f, ((rgb>>8) &0XFF)/ 255.0f, (rgb & 0xff)/ 255.0f, ((rgb >> 24) & 0xFF) / 255.0f);
         if (axisAlignedBB == null) {
-            if (entity instanceof EntityArmorStand) {
-                axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
-            } else if (entity instanceof EntityBat) {
-                axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
+            if (entity instanceof ArmorStand) {
+                axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
+            } else if (entity instanceof Bat) {
+                axisAlignedBB = AABB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
             } else {
-                axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
+                axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
             }
         }
 
@@ -1258,7 +1263,7 @@ public class RenderUtils {
 
     }
 
-    public static void highlightBox(Entity entity, AxisAlignedBB  axisAlignedBB, Color c, float partialTicks, boolean depth) {
+    public static void highlightBox(Entity entity, AABB  axisAlignedBB, Color c, float partialTicks, boolean depth) {
         Entity viewing_from = Minecraft.getInstance().getCameraEntity();
 
         double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
@@ -1280,12 +1285,12 @@ public class RenderUtils {
         }
         GlStateManager.color(c.getRed()/ 255.0f, c.getGreen()/ 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);
         if (axisAlignedBB == null) {
-            if (entity instanceof EntityArmorStand) {
-                axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
-            } else if (entity instanceof EntityBat) {
-                axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
+            if (entity instanceof ArmorStand) {
+                axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
+            } else if (entity instanceof Bat) {
+                axisAlignedBB = AABB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
             } else {
-                axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
+                axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
             }
         }
 
@@ -1367,13 +1372,13 @@ public class RenderUtils {
             GlStateManager.depthMask(false);
         }
         GlStateManager.color(c.getRed()/ 255.0f, c.getGreen()/ 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);
-        AxisAlignedBB axisAlignedBB;
-        if (entity instanceof EntityArmorStand) {
-            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
-        } else if (entity instanceof EntityBat) {
-            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
+        AABB axisAlignedBB;
+        if (entity instanceof ArmorStand) {
+            axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
+        } else if (entity instanceof Bat) {
+            axisAlignedBB = AABB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
         } else {
-            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
+            axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
         }
 
         Vec3 renderPos = new Vec3(
@@ -1461,13 +1466,13 @@ public class RenderUtils {
         int rgb = RenderUtils.getColorAt(entity.posX % 20,entity.posY % 20,c);
         GlStateManager.color(((rgb >> 16) &0XFF)/ 255.0f, ((rgb>>8) &0XFF)/ 255.0f, (rgb & 0xff)/ 255.0f, ((rgb >> 24) & 0xFF) / 255.0f);
 
-        AxisAlignedBB axisAlignedBB;
-        if (entity instanceof EntityArmorStand) {
-            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
-        } else if (entity instanceof EntityBat) {
-            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
+        AABB axisAlignedBB;
+        if (entity instanceof ArmorStand) {
+            axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
+        } else if (entity instanceof Bat) {
+            axisAlignedBB = AABB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
         } else {
-            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
+            axisAlignedBB = AABB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
         }
 
         Vec3 renderPos = new Vec3(
@@ -1633,7 +1638,7 @@ public class RenderUtils {
     }
 
     public static Vector3f getRenderPos(float x, float y, float z, float partialTicks) {
-        EntityPlayerSP sp = Minecraft.getInstance().player;
+        LocalPlayer sp = Minecraft.getInstance().player;
         return new Vector3f(
                 x - (float) (sp.lastTickPosX + (sp.posX - sp.lastTickPosX) * partialTicks),
                 y - (float) (sp.lastTickPosY + (sp.posY - sp.lastTickPosY) * partialTicks),

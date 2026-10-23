@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import net.minecraft.util.BlockPos;
+import net.minecraft.core.BlockPos;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.*;

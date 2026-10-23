@@ -24,14 +24,14 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.HitResult;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -50,8 +50,8 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void drawScreen(float partialTicks) {
         if (Minecraft.getInstance().hitResult == null ) return;
-        MovingObjectPosition pos = Minecraft.getInstance().hitResult;
-        if (pos.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) return;
+        HitResult pos = Minecraft.getInstance().hitResult;
+        if (pos.typeOfHit != HitResult.MovingObjectType.BLOCK) return;
 
         Block b = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos.getBlockPos()).getBlock();
 
@@ -67,13 +67,13 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void onSendData() {
         if (Minecraft.getInstance().hitResult == null ) return;
-        MovingObjectPosition pos = Minecraft.getInstance().hitResult;
-        if (pos.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) return;
+        HitResult pos = Minecraft.getInstance().hitResult;
+        if (pos.typeOfHit != HitResult.MovingObjectType.BLOCK) return;
 
         BlockPos block = pos.getBlockPos();
         Block b = getChamber().getRoom().getContext().getWorld().getBlockState(block).getBlock();
 
-        NBTTagCompound nbt = new NBTTagCompound();
+        CompoundTag nbt = new CompoundTag();
         nbt.setByte("a", (byte) 5);
         nbt.setInteger("b", Block.getIdFromBlock(b));
         getSolver().communicate(nbt);

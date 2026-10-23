@@ -24,11 +24,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProces
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.core.BlockPos;
 
 public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
     public NumberRightProcessor(RoomProcessorBombDefuseSolver solver, BDChamber chamber) {
@@ -56,10 +56,10 @@ public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void tick() {
         super.tick();
-        a1 = match(getChamber().getEntityAt(EntityArmorStand.class,d1p));
-        a2 = match(getChamber().getEntityAt(EntityArmorStand.class,d2p));
-        a3 = match(getChamber().getEntityAt(EntityArmorStand.class,d3p));
-        a4 = match(getChamber().getEntityAt(EntityArmorStand.class,d4p));
+        a1 = match(getChamber().getEntityAt(ArmorStand.class,d1p));
+        a2 = match(getChamber().getEntityAt(ArmorStand.class,d2p));
+        a3 = match(getChamber().getEntityAt(ArmorStand.class,d3p));
+        a4 = match(getChamber().getEntityAt(ArmorStand.class,d4p));
     }
 
     @Override
@@ -77,7 +77,7 @@ public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void onDataReceive(NBTTagCompound compound) {
+    public void onDataReceive(CompoundTag compound) {
         if (1 == compound.getByte("a")) {
             answer = compound.getInteger("b");
             d1 = answer / 1000;
@@ -88,13 +88,13 @@ public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
         }
     }
 
-    private int match(EntityArmorStand armorStand) {
+    private int match(ArmorStand armorStand) {
         if (armorStand == null) {
             return -1;
         }
         ItemStack item = armorStand.getInventory()[4];
-        NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
-        String str = ((NBTTagCompound)list.get(0)).getString("Value");
+        ListTag list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
+        String str = ((CompoundTag)list.get(0)).getString("Value");
         return !integers.containsKey(str) ? -1 : integers.get(str);
     }
 

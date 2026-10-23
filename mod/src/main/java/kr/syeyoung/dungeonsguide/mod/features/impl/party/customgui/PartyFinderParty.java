@@ -21,9 +21,9 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,20 +51,20 @@ public class PartyFinderParty {
         return party;
     }
 
-    private static PartyFinderParty fromItemNbt(NBTTagCompound stackTagCompound) {
+    private static PartyFinderParty fromItemNbt(CompoundTag stackTagCompound) {
         if (stackTagCompound != null && stackTagCompound.hasKey("display", 10)) {
-            NBTTagCompound nbttagcompound = stackTagCompound.getCompoundTag("display");
+            CompoundTag nbttagcompound = stackTagCompound.getCompoundTag("display");
             String name = nbttagcompound.getString("Name");
 
             if (nbttagcompound.getTagId("Lore") == 9) {
-                NBTTagList nbttaglist1 = nbttagcompound.getTagList("Lore", 8);
+                ListTag nbttaglist1 = nbttagcompound.getTagList("Lore", 8);
                 return fromLore(name, nbttaglist1);
             }
         }
         return new PartyFinderParty();
     }
 
-    private static PartyFinderParty fromLore(String name, NBTTagList tagList) {
+    private static PartyFinderParty fromLore(String name, ListTag tagList) {
         PartyFinderParty party = new PartyFinderParty();
         for (int i = 0; i < tagList.tagCount(); i++) {
             String line = tagList.getStringTagAt(i);

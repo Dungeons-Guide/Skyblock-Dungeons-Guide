@@ -35,10 +35,10 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector3f;
@@ -74,7 +74,7 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
             offsetPoint = new OffsetPoint(33- offsetPoint.getX(), offsetPoint.getY(), 33 - offsetPoint.getZ());
             BlockPos opposite =offsetPoint.getBlockPos(getDungeonRoom());
             BlockPos dir = new BlockPos(real.getPosition().subtract(opposite));
-            dir = new BlockPos(MathHelper.clamp_int(dir.getX() / 10, -1, 1), 0, MathHelper.clamp_int(dir.getZ() / 10, -1, 1));
+            dir = new BlockPos(Mth.clamp_int(dir.getX() / 10, -1, 1), 0, Mth.clamp_int(dir.getZ() / 10, -1, 1));
 
             this.basePt = new Vec3(opposite.add(dir.getX() * 6 + dir.getZ(), 3, dir.getZ() * 6 - dir.getX()));
 
@@ -92,7 +92,7 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
             Vec3 pos = new Vec3(offsetPoint.getBlockPos(getDungeonRoom()));
             pos = pos.addVector(0.5, 0, 0.5);
             String dirStr = (String) getDungeonRoom().getDungeonRoomInfo().getProperties().get("warning-dir");
-            EnumFacing dirFacing = EnumFacing.byName(dirStr);
+            Direction dirFacing = Direction.byName(dirStr);
             if (dirFacing != null) {
                 int rot = getDungeonRoom().getRoomMatcher().getRotation();
                 for (int i = 0; i < 4-rot; i++)

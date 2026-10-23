@@ -22,14 +22,37 @@
 
 package kr.syeyoung.dungeonsguide.mod.pathfinding.world;
 
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.ChunkCache;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
+import lombok.Getter;
 
-public class EditableChunkCache extends ChunkCache {
-    public EditableChunkCache(World worldIn, BlockPos posFromIn, BlockPos posToIn, int subIn) {
-        super(worldIn, posFromIn, posToIn, subIn);
+// the chunks of a region of the level. 1.8.9 extended vanilla's ChunkCache, 26.1 has none, so it keeps its own chunk array
+public class EditableChunkCache {
+    @Getter
+    private final Level level;
+    @Getter
+    private final int chunkX;
+    @Getter
+    private final int chunkZ;
+    private final LevelChunk[][] chunkArray;
+
+    public EditableChunkCache(Level worldIn, BlockPos posFromIn, BlockPos posToIn, int subIn) {
+        this.level = worldIn;
+        // same bounds as 1.8.9's ChunkCache
+        this.chunkX = posFromIn.getX() - subIn >> 4;
+        this.chunkZ = posFromIn.getZ() - subIn >> 4;
+        int maxX = posToIn.getX() + subIn >> 4;
+        int maxZ = posToIn.getZ() + subIn >> 4;
+        this.chunkArray = new LevelChunk[maxX - this.chunkX + 1][maxZ - this.chunkZ + 1];
+        for (int x = this.chunkX; x <= maxX; x++) {
+            for (int z = this.chunkZ; z <= maxZ; z++) {
+                this.chunkArray[x - this.chunkX][z - this.chunkZ] = worldIn.getChunk(x, z);
+            }
+        }
     }
 
     public boolean isManaged(int cx, int cz) {
@@ -40,15 +63,49 @@ public class EditableChunkCache extends ChunkCache {
         return localZ >= 0 && localX >= 0 && localX < xWidth && localZ < zWidth;
     }
 
-    public void updateChunk(Chunk c) {
+    public void updateChunk(LevelChunk c) {
         int xWidth = this.chunkArray.length;
         int zWidth = this.chunkArray[0].length;
-        int localX = c.xPosition - this.chunkX;
-        int localZ = c.zPosition - this.chunkZ;
-        if (localZ < 0 || localX < 0 || localX >= xWidth || localZ >= zWidth) throw new IllegalArgumentException("This "+c.xPosition+"/"+c.zPosition+" chunk doesn't belong here "+this.chunkX+"/"+this.chunkZ+" width "+xWidth+"x"+zWidth);
+        int localX = c.getPos().x() - this.chunkX;
+        int localZ = c.getPos().z() - this.chunkZ;
+        if (localZ < 0 || localX < 0 || localX >= xWidth || localZ >= zWidth) throw new IllegalArgumentException("This "+c.getPos().x()+"/"+c.getPos().z()+" chunk doesn't belong here "+this.chunkX+"/"+this.chunkZ+" width "+xWidth+"x"+zWidth);
         this.chunkArray[localX][localZ] = c;
     }
     public void updateChunk(BlockPos p) {
-        updateChunk(this.worldObj.getChunkFromBlockCoords(p));
+        updateChunk(this.level.getChunkAt(p));
+    }
+
+    private LevelChunk getChunk(BlockPos pos) {
+        int localX = (pos.getX() >> 4) - this.chunkX;
+        int localZ = (pos.getZ() >> 4) - this.chunkZ;
+        if (localX < 0 || localZ < 0 || localX >= this.chunkArray.length || localZ >= this.chunkArray[localX].length) return null;
+        return this.chunkArray[localX][localZ];
+    }
+
+    // what 1.8.9's ChunkCache.getBlockState did: air outside the cached chunks
+    public BlockState getBlockState(BlockPos pos) {
+        LevelChunk chunk = getChunk(pos);
+        return chunk == null ? Blocks.AIR.defaultBlockState() : chunk.getBlockState(pos);
+    }
+
+    public BlockEntity getBlockEntity(BlockPos pos) {
+        LevelChunk chunk = getChunk(pos);
+        return chunk == null ? null : chunk.getBlockEntity(pos);
+    }
+
+    public int getMinX() {
+        return this.chunkX * 16;
+    }
+
+    public int getMinZ() {
+        return this.chunkZ * 16;
+    }
+
+    public int getMaxX() {
+        return (this.chunkX + this.chunkArray.length) * 16;
+    }
+
+    public int getMaxZ() {
+        return (this.chunkZ + this.chunkArray[0].length) * 16;
     }
 }

@@ -25,9 +25,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.*;
-import net.minecraft.world.storage.MapData;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector2d;
@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.phys.Vec3;
 
 public class WidgetDungeonMap extends Widget implements Renderer {
 
@@ -156,7 +157,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
         if (context == null || context.getScaffoldParser() == null) return;
         DungeonRoomScaffoldParser mapProcessor = context.getScaffoldParser();
 
-        MapData mapData = mapProcessor.getLatestMapData();
+        MapItemSavedData mapData = mapProcessor.getLatestMapData();
         Size featureSize = getDomElement().getSize();
         // TODO: redo chroma
         Gui.drawRect(0, 0, (int)featureSize.getWidth(), (int)featureSize.getHeight(), RenderUtils.getColorAt(0,0, mapConfiguration.getBackgroundColor()));
@@ -177,7 +178,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
     public void renderMap(float partialTicks, DungeonContext dungeonContext) {
         DungeonRoomScaffoldParser mapProcessor = dungeonContext.getScaffoldParser();
 
-        EntityPlayer p = Minecraft.getInstance().player;
+        Player p = Minecraft.getInstance().player;
 
 
         Size featureRect = getDomElement().getSize();

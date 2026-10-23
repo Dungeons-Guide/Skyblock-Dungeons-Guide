@@ -25,8 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.Widget;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -36,9 +35,9 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.util.glu.Project;
@@ -132,7 +131,7 @@ public class WidgetPreview extends Widget implements Renderer {
         GlStateManager.loadIdentity();
         Project.gluPerspective(70F,
                 (float) (buildContext.getSize().getWidth() / buildContext.getSize().getHeight())
-                , 0.05F, 4 * 16 * MathHelper.SQRT_2);
+                , 0.05F, 4 * 16 * Mth.SQRT_2);
 
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.pushMatrix();
@@ -173,7 +172,7 @@ public class WidgetPreview extends Widget implements Renderer {
             }
         }
 
-        IBlockState iBlockState = Blocks.command_block.getDefaultState();
+        BlockState iBlockState = Blocks.command_block.getDefaultState();
 
         blockrendererdispatcher.getBlockModelRenderer().renderModel(previewWorld,
                 blockrendererdispatcher.getBlockModelShapes().getModelForState(iBlockState),

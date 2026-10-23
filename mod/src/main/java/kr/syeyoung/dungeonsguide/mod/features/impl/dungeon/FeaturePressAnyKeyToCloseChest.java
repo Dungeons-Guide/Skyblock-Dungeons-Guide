@@ -30,8 +30,8 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.Container;
 import org.lwjgl.input.Mouse;
 
 public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
@@ -47,10 +47,10 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
         if (!SkyblockStatus.isOnDungeon()) return;
 
         if (screen instanceof GuiChest){
-            ContainerChest ch = (ContainerChest) ((GuiChest)screen).inventorySlots;
+            ChestMenu ch = (ChestMenu) ((GuiChest)screen).inventorySlots;
             if (!("Large Chest".equals(ch.getLowerChestInventory().getName())
                     || "Chest".equals(ch.getLowerChestInventory().getName()))) return;
-//            IInventory actualChest = ch.getLowerChestInventory();
+//            Container actualChest = ch.getLowerChestInventory();
 
 //            int priceSum = 0;
 //            for (int i = 0; i < actualChest.getSizeInventory(); i++) {
@@ -72,10 +72,10 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
         if (Mouse.getEventButton() == -1) return;
 
         if (screen instanceof GuiChest){
-            ContainerChest ch = (ContainerChest) ((GuiChest)screen).inventorySlots;
+            ChestMenu ch = (ChestMenu) ((GuiChest)screen).inventorySlots;
             if (!("Large Chest".equals(ch.getLowerChestInventory().getName())
                     || "Chest".equals(ch.getLowerChestInventory().getName()))) return;
-//            IInventory actualChest = ch.getLowerChestInventory();
+//            Container actualChest = ch.getLowerChestInventory();
 
 //            int priceSum = 0;
 //            for (int i = 0; i < actualChest.getSizeInventory(); i++) {

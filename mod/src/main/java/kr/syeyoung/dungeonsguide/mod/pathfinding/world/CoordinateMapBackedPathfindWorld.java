@@ -3,13 +3,13 @@ package kr.syeyoung.dungeonsguide.mod.pathfinding.world;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting.AlgorithmSetting;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.RoomBounds;
 import kr.syeyoung.dungeonsguide.mod.dungeon.world.*;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
 
 import java.util.Set;
 
 public class CoordinateMapBackedPathfindWorld implements IPathfindWorld {
-    private ICoordinateMap<IBlockState> backingWorld;
+    private ICoordinateMap<BlockState> backingWorld;
 
     private AlgorithmSetting algorithmSetting;
 
@@ -19,7 +19,7 @@ public class CoordinateMapBackedPathfindWorld implements IPathfindWorld {
 
     private RoomBounds roomBounds;
 
-    public CoordinateMapBackedPathfindWorld(ICoordinateMap<IBlockState> backingWorld, AlgorithmSetting algorithmSetting, RoomBounds roomBounds, Set<BlockPos> superboom) { // plan to remove roombounds.
+    public CoordinateMapBackedPathfindWorld(ICoordinateMap<BlockState> backingWorld, AlgorithmSetting algorithmSetting, RoomBounds roomBounds, Set<BlockPos> superboom) { // plan to remove roombounds.
         this.backingWorld = backingWorld;
 
         minx = roomBounds.getMinX() * 2 + 2; miny = 0; minz = roomBounds.getMinZ() * 2 + 2;
@@ -33,7 +33,7 @@ public class CoordinateMapBackedPathfindWorld implements IPathfindWorld {
     }
 
     @Override
-    public IBlockState getActualBlock(int x, int y, int z) {
+    public BlockState getActualBlock(int x, int y, int z) {
         return backingWorld.getBlock(x, y, z);
     }
 

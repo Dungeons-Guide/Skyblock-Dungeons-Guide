@@ -49,12 +49,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.*;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -63,6 +61,15 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.block.Block;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.DGWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.world.MinecraftWorld;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.EmptyLevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
+import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 
 @Getter
 public class DungeonRoom  {
@@ -86,7 +93,7 @@ public class DungeonRoom  {
     private Map<String, DungeonMechanicState> _mechanics = null;
 
     @Setter
-    private World cachedWorld;
+    private DGWorld cachedWorld;
     private WorldBackedCoordinateMap coordinateMap;
     private EditableChunkCache chunkCache;
 
@@ -161,9 +168,12 @@ public class DungeonRoom  {
     }
 
 
-    public World getCachedWorld() {
+    public DGWorld getCachedWorld() {
         if (this.cachedWorld != null) return cachedWorld;
 
+
+        // rooms read the real level, offline contexts use DRIWorld
+        Level level = ((MinecraftWorld) getContext().getWorld()).getLevel();
 
         int minZChunk = roomBounds.getMin().getZ() >> 4;
         int minXChunk = roomBounds.getMin().getX() >> 4;
@@ -176,25 +186,25 @@ public class DungeonRoom  {
                 && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16+15,0, z*16)) && !getRoomBounds().canAccessAbsolute(new BlockPos(x * 16,0, z*16+15))) {
                     continue;
                 }
-                Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
-                if (c.isEmpty()) {
-                    throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
+                LevelChunk c = level.getChunk(x,z);
+                if (c instanceof EmptyLevelChunk) {
+                    throw new IllegalStateException("LevelChunk not loaded: "+x+"/"+z);
                 }
                 boolean nonNull = false;
-                for (ExtendedBlockStorage extendedBlockStorage : c.getBlockStorageArray()) {
-                    if (extendedBlockStorage != null) {
+                for (LevelChunkSection section : c.getSections()) {
+                    if (!section.hasOnlyAir()) {
                         nonNull = true;
                         break;
                     }
                 }
                 if (!nonNull) {
-                    throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
+                    throw new IllegalStateException("LevelChunk not loaded: "+x+"/"+z);
                 }
             }
         }
 
-        this.chunkCache = new EditableChunkCache(getContext().getWorld(), roomBounds.getMin().add(-3, 0, -3), roomBounds.getMax().add(3,0,3), 0);
-        CachedWorld cachedWorld =  new CachedWorld(chunkCache, context.getWorld().provider);
+        this.chunkCache = new EditableChunkCache(level, roomBounds.getMin().add(-3, 0, -3), roomBounds.getMax().add(3,0,3), 0);
+        CachedWorld cachedWorld =  new CachedWorld(chunkCache);
 
         coordinateMap = new WorldBackedCoordinateMap(cachedWorld, roomBounds.getMin().getX()-3, 0, roomBounds.getMin().getZ()-3, roomBounds.getMax().getX()+3, 256, roomBounds.getMax().getZ()+3);
 
@@ -253,7 +263,7 @@ public class DungeonRoom  {
                 matchRoomAndSetupRoomProcessor();
                 matched = true;
             } catch (Exception e) {
-                if (e.getMessage() == null || !e.getMessage().contains("Chunk not loaded")) {
+                if (e.getMessage() == null || !e.getMessage().contains("LevelChunk not loaded")) {
                     FeatureCollectDiagnostics.queueSendLogAsync(e);
                     e.printStackTrace();
                 }
@@ -272,7 +282,7 @@ public class DungeonRoom  {
             try {
                 this.updateRoomProcessor();
             } catch (Exception e) {
-                if (e.getMessage() == null || !e.getMessage().contains("Chunk not loaded")) {
+                if (e.getMessage() == null || !e.getMessage().contains("LevelChunk not loaded")) {
                     FeatureCollectDiagnostics.queueSendLogAsync(e);
                     e.printStackTrace();
                 }
@@ -334,11 +344,12 @@ public class DungeonRoom  {
         }
     }
 
-    public Block getRelativeBlockAt(int x, int y, int z) {
+    // 26.1: the block state, checks go through LegacyBlock (D112)
+    public BlockState getRelativeBlockAt(int x, int y, int z) {
         // validate x y z's
         if (getRoomBounds().canAccessRelative(x,z)) {
-            BlockPos pos = new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
-            return getCachedWorld().getBlockState(pos).getBlock();
+            BlockPos pos = new BlockPos(x,y,z).offset(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
+            return getCachedWorld().getBlockState(pos);
         }
         return null;
     }
@@ -354,9 +365,10 @@ public class DungeonRoom  {
     public int getRelativeBlockDataAt(int x, int y, int z) {
         // validate x y z's
         if (getRoomBounds().canAccessRelative(x,z)) {
-            BlockPos pos = new BlockPos(x,y,z).add(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
-            IBlockState iBlockState = getCachedWorld().getBlockState(pos);
-            return iBlockState.getBlock().getMetaFromState(iBlockState);
+            BlockPos pos = new BlockPos(x,y,z).offset(roomBounds.getMin().getX(), roomBounds.getMin().getY(), roomBounds.getMin().getZ());
+            BlockState iBlockState = getCachedWorld().getBlockState(pos);
+            // 1.8.9's meta
+            return LegacyBlock.meta(iBlockState);
         }
         return -1;
     }

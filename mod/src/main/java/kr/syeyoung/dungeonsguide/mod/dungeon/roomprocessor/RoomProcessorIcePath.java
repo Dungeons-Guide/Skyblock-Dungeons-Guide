@@ -27,10 +27,10 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.EntitySilverfish;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Silverfish;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -60,9 +60,9 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
     public void findSilverFishAndDoStuff() {
         final BlockPos low = getDungeonRoom().getRoomBounds().getMin();
         final BlockPos high = getDungeonRoom().getRoomBounds().getMax();
-        List<EntitySilverfish> silverfishs = getDungeonRoom().getContext().getWorld().getEntities(EntitySilverfish.class, new Predicate<EntitySilverfish>() {
+        List<Silverfish> silverfishs = getDungeonRoom().getContext().getWorld().getEntities(Silverfish.class, new Predicate<Silverfish>() {
             @Override
-            public boolean apply(@Nullable EntitySilverfish input) {
+            public boolean apply(@Nullable Silverfish input) {
                 if (input.isInvisible()) return false;
                 BlockPos pos = input.getPosition();
                 return low.getX() < pos.getX() && pos.getX() < high.getX()

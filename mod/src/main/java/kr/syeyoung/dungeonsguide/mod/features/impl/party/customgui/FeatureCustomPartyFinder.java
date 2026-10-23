@@ -33,11 +33,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 public class FeatureCustomPartyFinder extends SimpleFeature {
     public FeatureCustomPartyFinder() {
@@ -79,9 +79,9 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
     private String conditionCheck(GuiScreen guiScreen) {
         if (!(guiScreen instanceof GuiChest)) return null;
         GuiChest chest = (GuiChest) guiScreen;
-        if (!(chest.inventorySlots instanceof ContainerChest)) return null;
-        ContainerChest containerChest = (ContainerChest) chest.inventorySlots;
-        IInventory lower = containerChest.getLowerChestInventory();
+        if (!(chest.inventorySlots instanceof ChestMenu)) return null;
+        ChestMenu containerChest = (ChestMenu) chest.inventorySlots;
+        Container lower = containerChest.getLowerChestInventory();
         if (lower == null) return null;
         return lower.getName();
     }
@@ -125,9 +125,9 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
         if (Minecraft.getInstance().screen instanceof GuiChest) {
             GuiChest chest = (GuiChest) Minecraft.getInstance().screen;
 
-            if (!(chest.inventorySlots instanceof ContainerChest)) return;
-            ContainerChest containerChest = (ContainerChest) chest.inventorySlots;
-            IInventory lower = containerChest.getLowerChestInventory();
+            if (!(chest.inventorySlots instanceof ChestMenu)) return;
+            ChestMenu containerChest = (ChestMenu) chest.inventorySlots;
+            Container lower = containerChest.getLowerChestInventory();
             if (lower == null || !lower.getName().equals("Catacombs Gate")) return;
 
             ItemStack item = null;
@@ -141,12 +141,12 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
             }
             if (item == null) return;
 
-            NBTTagCompound stackTagCompound = item.getTagCompound();
+            CompoundTag stackTagCompound = item.getTagCompound();
             if (stackTagCompound.hasKey("display", 10)) {
-                NBTTagCompound nbtTagCompound = stackTagCompound.getCompoundTag("display");
+                CompoundTag nbtTagCompound = stackTagCompound.getCompoundTag("display");
 
                 if (nbtTagCompound.getTagId("Lore") == 9) {
-                    NBTTagList nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
+                    ListTag nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
 
                     for (int i = 0; i < nbtTagList1.tagCount(); i++) {
                         String str = nbtTagList1.getStringTagAt(i);

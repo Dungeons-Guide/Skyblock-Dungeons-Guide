@@ -50,10 +50,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.data.WidgetList;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -62,20 +62,20 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSettings;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.WorldType;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.storage.ISaveFormat;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -118,7 +118,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
         OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new BlockPos(0,0,0));
 
-        NBTTagCompound compound = schematic;
+        CompoundTag compound = schematic;
         int w = compound.getShort("Width");
         int l = compound.getShort("Length");
         if (dungeonRoom.getRoomMatcher().getRotation() % 2 == 1) {
@@ -149,10 +149,10 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     }
 
 
-                    IBlockState blockState = b.getStateFromMeta(meta[index] & 0xFF);
+                    BlockState blockState = b.getStateFromMeta(meta[index] & 0xFF);
                     if (propertyDirection.isPresent()) {
-                        EnumFacing enumFacing = blockState.getValue(propertyDirection.get());
-                        if (!(enumFacing == EnumFacing.UP || enumFacing == EnumFacing.DOWN)) {
+                        Direction enumFacing = blockState.getValue(propertyDirection.get());
+                        if (!(enumFacing == Direction.UP || enumFacing == Direction.DOWN)) {
                             for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++)
                                 enumFacing = enumFacing.rotateY();
                             blockState = blockState.withProperty(propertyDirection.get(), enumFacing);
@@ -171,7 +171,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
 
         if (Minecraft.getInstance().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
-            NBTTagCompound compound = schematic;
+            CompoundTag compound = schematic;
             for (int x = 0; x < compound.getShort("Width") + 16; x+= 1) {
                 for (int y = 0; y < compound.getShort("Height"); y++) {
                     for (int z = 0; z < compound.getShort("Length") + 16; z+=1) {
@@ -203,8 +203,8 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
 
             WorldType.FLAT.onGUICreateWorldPress();
-            WorldSettings.GameType worldsettings$gametype = WorldSettings.GameType.CREATIVE;
-            WorldSettings worldsettings = new WorldSettings(0, worldsettings$gametype, false, false, WorldType.FLAT);
+            GameType.GameType worldsettings$gametype = GameType.GameType.CREATIVE;
+            GameType worldsettings = new GameType(0, worldsettings$gametype, false, false, WorldType.FLAT);
             worldsettings.setWorldName("3;minecraft:air");
             worldsettings.enableCommands();
 
@@ -236,12 +236,12 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
                     BlockPos pos = new BlockPos(x, y, z);
                     World w = MinecraftServer.getServer().getEntityWorld();
-                    Chunk c = w.getChunkFromBlockCoords(pos);
+                    LevelChunk c = w.getChunkFromBlockCoords(pos);
                     w.markBlockForUpdate(pos);
                     ExtendedBlockStorage[] storage= c.getBlockStorageArray();
                     ExtendedBlockStorage extendedblockstorage = storage[y >> 4];
 
-                    IBlockState block = dungeonRoomInfo.getBlock(x, y-70, z, 0);
+                    BlockState block = dungeonRoomInfo.getBlock(x, y-70, z, 0);
                     if (extendedblockstorage == null) {
                         if (block.getBlock() == Blocks.air) {
                             continue;
@@ -277,7 +277,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
         }
 
         if (Minecraft.getInstance().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
-            NBTTagCompound compound = schematic;
+            CompoundTag compound = schematic;
             for (int x = 0; x < compound.getShort("Width") + 16; x+= 1) {
                 for (int y = 0; y < compound.getShort("Height"); y++) {
                     for (int z = 0; z < compound.getShort("Length") + 16; z+=1) {
@@ -309,8 +309,8 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
 
             WorldType.FLAT.onGUICreateWorldPress();
-            WorldSettings.GameType worldsettings$gametype = WorldSettings.GameType.CREATIVE;
-            WorldSettings worldsettings = new WorldSettings(0, worldsettings$gametype, false, false, WorldType.FLAT);
+            GameType.GameType worldsettings$gametype = GameType.GameType.CREATIVE;
+            GameType worldsettings = new GameType(0, worldsettings$gametype, false, false, WorldType.FLAT);
             worldsettings.setWorldName("3;minecraft:air");
             worldsettings.enableCommands();
 
@@ -325,7 +325,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
                 BlockPos bPos = new BlockPos(pos.get(0).getAsInt()-minX, pos.get(1).getAsInt(), pos.get(2).getAsInt()-minZ);
                 String[] block = pos.get(3).getAsString().split(":");
                 Block b = Block.getBlockById(Integer.parseInt(block[0]));
-                IBlockState blockState = b.getStateFromMeta(Integer.parseInt(block[1]));
+                BlockState blockState = b.getStateFromMeta(Integer.parseInt(block[1]));
                 FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData data = new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(bPos, blockState);
                 list.add(data);
             }
@@ -346,9 +346,9 @@ public class FeatureRoomEdit  extends SimpleFeature {
         shape = jsonObject.get("shape").getAsShort();
         color = jsonObject.get("color").getAsByte();
 
-        NBTTagCompound compound;
+        CompoundTag compound;
         try {
-            compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+            compound = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
                     jsonObject.get("schematic").getAsString()
             )));
         } catch (IOException e) {
@@ -370,7 +370,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
                     BlockPos pos = new BlockPos(x, y, z);
                     World w = MinecraftServer.getServer().getEntityWorld();
-                    Chunk c = w.getChunkFromBlockCoords(pos);
+                    LevelChunk c = w.getChunkFromBlockCoords(pos);
                     w.markBlockForUpdate(pos);
                     ExtendedBlockStorage[] storage= c.getBlockStorageArray();
                     ExtendedBlockStorage extendedblockstorage = storage[y >> 4];
@@ -400,7 +400,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
 
         if (Minecraft.getInstance().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
-            NBTTagCompound compound = schematic;
+            CompoundTag compound = schematic;
             for (int x = 0; x < compound.getShort("Width") + 16; x+= 1) {
                 for (int y = 0; y < compound.getShort("Height"); y++) {
                     for (int z = 0; z < compound.getShort("Length") + 16; z+=1) {
@@ -432,8 +432,8 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
 
             WorldType.FLAT.onGUICreateWorldPress();
-            WorldSettings.GameType worldsettings$gametype = WorldSettings.GameType.CREATIVE;
-            WorldSettings worldsettings = new WorldSettings(0, worldsettings$gametype, false, false, WorldType.FLAT);
+            GameType.GameType worldsettings$gametype = GameType.GameType.CREATIVE;
+            GameType worldsettings = new GameType(0, worldsettings$gametype, false, false, WorldType.FLAT);
             worldsettings.setWorldName("3;minecraft:air");
             worldsettings.enableCommands();
 
@@ -453,9 +453,9 @@ public class FeatureRoomEdit  extends SimpleFeature {
         shape = 1;
         color = 63;
 
-        NBTTagCompound compound;
+        CompoundTag compound;
         try (FileInputStream fis = new FileInputStream(f)){
-            compound =  CompressedStreamTools.readCompressed(fis);
+            compound =  NbtIo.readCompressed(fis);
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -475,7 +475,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
                     int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
                     BlockPos pos = new BlockPos(x, y, z);
                     World w = MinecraftServer.getServer().getEntityWorld();
-                    Chunk c = w.getChunkFromBlockCoords(pos);
+                    LevelChunk c = w.getChunkFromBlockCoords(pos);
                     w.markBlockForUpdate(pos);
                     ExtendedBlockStorage[] storage= c.getBlockStorageArray();
                     ExtendedBlockStorage extendedblockstorage = storage[y >> 4];
@@ -616,7 +616,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
     private byte color;
     private int xWid, zWid;
     private boolean setup = false;
-    private NBTTagCompound schematic;
+    private CompoundTag schematic;
 
     @Getter
     private List<FeatureCollectDungeonRooms.RoomInfo.BlockUpdate> blockUpdates;
@@ -638,7 +638,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
                         RenderUtils.highlightBlock(updatedBlock.getPos(), new Color(0x33FFFF00, true), event.partialTicks, false);
                     int meta1 = updatedBlock.getBlock().getBlock().getMetaFromState(updatedBlock.getBlock());
                     Block block1 = updatedBlock.getBlock().getBlock();
-                    IBlockState blockstate2 = Minecraft.getInstance().level.getBlockState(updatedBlock.getPos());
+                    BlockState blockstate2 = Minecraft.getInstance().level.getBlockState(updatedBlock.getPos());
                     int meta2 = blockstate2.getBlock().getMetaFromState(blockstate2);
                     Block block2 = blockstate2.getBlock();
                     if (block1 == block2 && meta2 == meta1)

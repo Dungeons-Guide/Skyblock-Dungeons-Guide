@@ -24,11 +24,11 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RenderPlayerEvent;
 import org.lwjgl.opengl.GL11;
 
@@ -65,8 +65,8 @@ public class FeaturePlayerESP extends SimpleFeature {
         GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
 
-        EntityPlayer entity = renderPlayerEvent.entityPlayer;
-        InventoryPlayer inv = entity.inventory;
+        Player entity = renderPlayerEvent.entityPlayer;
+        Inventory inv = entity.inventory;
         ItemStack[] armor = inv.armorInventory;
         inv.armorInventory = new ItemStack[4];
         ItemStack[] hand = inv.mainInventory;

@@ -37,7 +37,7 @@ import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
@@ -198,7 +198,7 @@ public class CosmeticsManager {
                 activeCosmeticMap.put(cosmeticData.getActivityUID(), cosmeticData);
                 try {
                     if (Minecraft.getInstance().level != null) {
-                        EntityPlayer entityPlayer = Minecraft.getInstance().level.getPlayerEntityByUUID(cosmeticData.getPlayerUID());
+                        Player entityPlayer = Minecraft.getInstance().level.getPlayerEntityByUUID(cosmeticData.getPlayerUID());
                         if (entityPlayer != null) entityPlayer.refreshDisplayName();
                     }
                 } catch (Exception exception) {
@@ -415,7 +415,7 @@ public class CosmeticsManager {
     private void refresh(UUID uuid) {
         try {
             if (Minecraft.getInstance().level != null) {
-                EntityPlayer entityPlayer = Minecraft.getInstance().level.getPlayerEntityByUUID(uuid);
+                Player entityPlayer = Minecraft.getInstance().level.getPlayerEntityByUUID(uuid);
                 if (entityPlayer != null) entityPlayer.refreshDisplayName();
             }
         } catch (Exception exception) {
