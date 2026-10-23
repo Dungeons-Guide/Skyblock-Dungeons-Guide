@@ -123,6 +123,8 @@ tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
     // the port is compile error driven, show all of them
     options.compilerArgs += ["-Xmaxerrs", "100000"]
+    // command arguments are matched to method parameters by name (CommandRegistrationHelper), like the platform branch
+    options.compilerArgs += ["-parameters"]
 }
 
 signing {
