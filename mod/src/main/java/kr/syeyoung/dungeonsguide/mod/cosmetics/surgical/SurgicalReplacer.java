@@ -22,18 +22,20 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.chat.contents.PlainTextContents;
 
 import java.util.*;
 
 public class SurgicalReplacer {
 
     public static List<MutableComponent> getChatStyleOf(String str, Style parentStyle) {
-        boolean randomStyle = parentStyle.getObfuscated();
-        boolean boldStyle = parentStyle.getBold();
-        boolean strikethroughStyle = parentStyle.getStrikethrough();
-        boolean underlineStyle = parentStyle.getUnderlined();
-        boolean italicStyle = parentStyle.getItalic();
-        char possibleLastColorChar = parentStyle.getColor() == null ? 'f' : "0123456789abcdefklmnor".charAt(parentStyle.getColor().ordinal());
+        boolean randomStyle = parentStyle.isObfuscated();
+        boolean boldStyle = parentStyle.isBold();
+        boolean strikethroughStyle = parentStyle.isStrikethrough();
+        boolean underlineStyle = parentStyle.isUnderlined();
+        boolean italicStyle = parentStyle.isItalic();
+        char possibleLastColorChar = parentStyle.getColor() == null ? 'f' : legacyColorChar(parentStyle.getColor());
         boolean isLegalColor = true;
         char[] charArr = str.toCharArray();
 
@@ -152,15 +154,42 @@ public class SurgicalReplacer {
         return list;
     }
 
+    // 1.8.9's EnumChatFormatting ordinal into "0123456789abcdef"; 26.1 colors are TextColors
+    private static char legacyColorChar(TextColor color) {
+        for (ChatFormatting formatting : ChatFormatting.values()) {
+            if (formatting.isColor() && color.equals(TextColor.fromLegacyFormat(formatting))) return formatting.getChar();
+        }
+        return 'f';
+    }
+
+    // 1.8.9's IChatComponent iterator: the component itself, then deep copies of its siblings depth first,
+    // each with its parent's style applied (1.8.9's setParentStyle)
+    public static List<Component> iterate(Component component) {
+        List<Component> list = new ArrayList<>();
+        list.add(component);
+        for (Component sibling : component.getSiblings()) {
+            iterate(sibling, component.getStyle(), list);
+        }
+        return list;
+    }
+
+    private static void iterate(Component component, Style parentStyle, List<Component> list) {
+        Style style = component.getStyle().applyTo(parentStyle);
+        list.add(component.copy().setStyle(style));
+        for (Component sibling : component.getSiblings()) {
+            iterate(sibling, style, list);
+        }
+    }
+
     public static LinkedList<Component> linearifyMoveColorCharToStyle(Component iChatComponent) {
         LinkedList<Component> chatComponents = new LinkedList<>();
-        for (Component component : iChatComponent) {
-            if (component instanceof MutableComponent) {
-                chatComponents.addAll(getChatStyleOf(((MutableComponent) component).getChatComponentText_TextValue(), component.getStyle()));
+        for (Component component : iterate(iChatComponent)) {
+            // 1.8.9's ChatComponentText
+            if (component.getContents() instanceof PlainTextContents) {
+                chatComponents.addAll(getChatStyleOf(((PlainTextContents) component.getContents()).text(), component.getStyle()));
             } else {
-                Component neuCopy = component.createCopy();
-                neuCopy.getSiblings().clear();
-                chatComponents.add(neuCopy.setStyle(component.getStyle()));
+                Component neuCopy = MutableComponent.create(component.getContents());
+                chatComponents.add(((MutableComponent) neuCopy).setStyle(component.getStyle()));
             }
         }
         return chatComponents;
@@ -169,7 +198,7 @@ public class SurgicalReplacer {
     public static Style getChatStyleAt(List<Component> chatComponents, int idx) {
         int i = 0;
         for (Component chatComponent : chatComponents) {
-            i += chatComponent.getUnformattedTextForChat().length();
+            i += chatComponent.getString().length();
             if (i > idx) return chatComponent.getStyle();
         }
         return null;
@@ -185,7 +214,7 @@ public class SurgicalReplacer {
             }
 
             Component toProcess = linearified.poll();
-            int procLen = toProcess.getUnformattedTextForChat().length();
+            int procLen = toProcess.getString().length();
 
             if (currLen + procLen <= idx) {
                 clone.add(toProcess);
@@ -195,14 +224,14 @@ public class SurgicalReplacer {
 
             if (currLen + procLen > idx && currLen < idx) {
                 MutableComponent chatComponents = Component.literal(
-                        toProcess.getUnformattedTextForChat().substring(0, idx - currLen)
+                        toProcess.getString().substring(0, idx - currLen)
                 );
                 chatComponents.setStyle(toProcess.getStyle());
 
                 clone.add(chatComponents);
 
                 MutableComponent next = Component.literal(
-                        toProcess.getUnformattedTextForChat().substring(idx-currLen)
+                        toProcess.getString().substring(idx-currLen)
                 );
                 next.setStyle(toProcess.getStyle());
                 linearified.addFirst(next);
@@ -217,7 +246,7 @@ public class SurgicalReplacer {
             }
             if (currLen + procLen > idx + len && currLen < idx + len) {
                 MutableComponent next = Component.literal(
-                        toProcess.getUnformattedTextForChat().substring(idx + len - currLen)
+                        toProcess.getString().substring(idx + len - currLen)
                 );
                 next.setStyle(toProcess.getStyle());
                 clone.add(next);

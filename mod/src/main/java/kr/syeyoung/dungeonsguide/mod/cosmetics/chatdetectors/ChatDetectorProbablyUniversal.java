@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors;
 
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.SurgicalReplacer;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.ClickEvent;
@@ -38,12 +39,15 @@ public class ChatDetectorProbablyUniversal implements IChatDetector {
 
 
         boolean correspondingEvFound = false;
-        for (Component iChatComponent : chatComponent) {
+        for (Component iChatComponent : SurgicalReplacer.iterate(chatComponent)) {
             ClickEvent ev = iChatComponent.getStyle().getClickEvent();
-            if (ev != null) {
-                if (ev.getValue().startsWith("/msg")) correspondingEvFound = true;
-                if (ev.getValue().startsWith("/socialoptions")) correspondingEvFound = true;
-                if (ev.getValue().startsWith("/viewprofile")) correspondingEvFound = true;
+            // 1.8.9's ClickEvent.getValue(), the command of the run / suggest command events on 26.1
+            String value = ev instanceof ClickEvent.RunCommand runCommand ? runCommand.command()
+                    : ev instanceof ClickEvent.SuggestCommand suggestCommand ? suggestCommand.command() : null;
+            if (value != null) {
+                if (value.startsWith("/msg")) correspondingEvFound = true;
+                if (value.startsWith("/socialoptions")) correspondingEvFound = true;
+                if (value.startsWith("/viewprofile")) correspondingEvFound = true;
             }
         }
 
@@ -61,7 +65,7 @@ public class ChatDetectorProbablyUniversal implements IChatDetector {
                 }
                 continue label;
             }
-            if (potentialName.equalsIgnoreCase(Minecraft.getInstance().getSession().getUsername()))
+            if (potentialName.equalsIgnoreCase(Minecraft.getInstance().getUser().getName()))
                 return Collections.singletonList(new ReplacementContext(
                         name.length() - backLen, potentialName, null
                 ));

@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_25",
   "client": [
     "ClientChunkCacheMixin",
+    "ClientPacketListenerMixin",
     "ConnectionMixin",
     "EntityRenderDispatcherMixin",
     "FogRendererMixin",
@@ -18,6 +19,7 @@
     "MouseHandlerMixin",
     "MultiPlayerGameModeMixin",
     "PlayerMixin",
+    "PlayerTabOverlayMixin",
     "SoundManagerMixin"
   ],
   "injectors": {

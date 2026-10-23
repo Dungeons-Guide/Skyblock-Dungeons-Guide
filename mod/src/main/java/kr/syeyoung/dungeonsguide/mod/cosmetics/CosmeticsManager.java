@@ -24,28 +24,28 @@ import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.SurgicalReplacer;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGPlayerJoinEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGPlayerQuitEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerListItemPacketEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.TabListEntryEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.TabListNameFormatEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.client.network.NetworkPlayerInfo;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ChatReceivedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerNameFormatEvent;
 import kr.syeyoung.dungeonsguide.mod.events.ListenerPriority;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -68,8 +68,7 @@ public class CosmeticsManager {
     @Getter
     private Set<String> perms = new CopyOnWriteArraySet<>();
 
-    @Getter
-    private Map<String, UUID> nameIdCache = new HashMap<>();
+    // 1.8.9's nameIdCache (name -> uuid of tab players) is the parallel universe TabList's getPlayer on 26.1
 
     public void requestActiveCosmetics() {
         StompManager.getInstance().send(new StompPayload()
@@ -198,8 +197,9 @@ public class CosmeticsManager {
                 activeCosmeticMap.put(cosmeticData.getActivityUID(), cosmeticData);
                 try {
                     if (Minecraft.getInstance().level != null) {
-                        Player entityPlayer = Minecraft.getInstance().level.getPlayerEntityByUUID(cosmeticData.getPlayerUID());
-                        if (entityPlayer != null) entityPlayer.refreshDisplayName();
+                        // 1.8.9 refreshed Forge's cached display name; 26.1 builds it on every getDisplayName, nothing to refresh
+//                        Player entityPlayer = Minecraft.getInstance().level.getPlayerEntityByUUID(cosmeticData.getPlayerUID());
+//                        if (entityPlayer != null) entityPlayer.refreshDisplayName();
                     }
                 } catch (Exception exception) {
                     FeatureCollectDiagnostics.queueSendLogAsync(exception);exception.printStackTrace();}
@@ -382,32 +382,71 @@ public class CosmeticsManager {
     }
 
 
+    // 1.8.9 replaced vanilla's tab entries with CustomNetworkPlayerInfo here; on 26.1 onTabListNameFormat decorates the tab names
     @SubscribeEvent
-    public void onTabList(PlayerListItemPacketEvent packetPlayerListItem) {
-        S38PacketPlayerListItem asd = packetPlayerListItem.getPacketPlayerListItem();
-        if (asd.getAction() == S38PacketPlayerListItem.Action.ADD_PLAYER) {
-            if (Minecraft.getInstance().getConnection() == null) return;
+    public void onTabListAdd(TabListEntryEvent.Add event) {
+        GameProfile profile = event.getPlayerInfo().getProfile();
+        if (profile.id().version() == 4 && profile.name() != null) {
+            PlayerManager.INSTANCE.subscribeTo(profile.id());
+            // TODO: 1.8.9 pinged every player of one tab packet in one request, 26.1 fires per player
+            PlayerManager.INSTANCE.ping(Collections.singletonList(profile.id()));
+        }
+    }
 
-            Map<UUID, NetworkPlayerInfo> playerInfoMap = ReflectionHelper.getPrivateValue(NetHandlerPlayClient.class, Minecraft.getInstance().getConnection(), "playerInfoMap", "field_147310_i","i");
-            List<UUID> pingTarget = new ArrayList<>();
-            for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
-                playerInfoMap.remove(entry.getProfile().getId());
-                playerInfoMap.put(entry.getProfile().getId(), new CustomNetworkPlayerInfo(entry));
+    @SubscribeEvent
+    public void onTabListRemove(TabListEntryEvent.Remove event) {
+        GameProfile profile = event.getPlayerInfo().getProfile();
+        if (profile.id().version() == 4) {
+            PlayerManager.INSTANCE.unsubscribe(profile.id());
+        }
+    }
 
-                if (entry.getProfile().getId().version() == 4 && entry.getProfile().getName() != null) {
-                    PlayerManager.INSTANCE.subscribeTo(entry.getProfile().getId());
-                    pingTarget.add(entry.getProfile().getId());
+    // 1.8.9's CustomNetworkPlayerInfo.getDisplayName. its displayName was the packet's display name, formatted its text;
+    // vanilla's tab name covers both
+    @SubscribeEvent
+    public void onTabListNameFormat(TabListNameFormatEvent event) {
+        String rawPlayerString = TextUtils.getFormattedText(event.displayName);
 
-                    nameIdCache.put(entry.getProfile().getName(), entry.getProfile().getId());
-                }
+        String actualName = null;
+        List<ActiveCosmetic> activeCosmetics;
+        for (String s : rawPlayerString.split(" ")) {
+            String strippped = TextUtils.stripColor(s);
+            if (strippped.startsWith("[")) continue;
+            actualName = strippped;
+            break;
+        }
+
+        if (actualName == null) return;
+
+        // 1.8.9's nameIdCache, the parallel universe tab list
+        UUID uuid = TabList.INSTANCE.getPlayer(actualName);
+        boolean dg = FeatureRegistry.DG_INDICATOR.isEnabled() && PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(uuid, false);
+
+
+        activeCosmetics = getActiveCosmeticByPlayerNameLowerCase().get(actualName.toLowerCase());
+        if (activeCosmetics == null && dg) {
+            event.displayName = Component.literal("\ued00" + rawPlayerString);
+            return;
+        } else if (activeCosmetics == null) return;
+
+        CosmeticData color=null;
+        for (ActiveCosmetic activeCosmetic : activeCosmetics) {
+            CosmeticData cosmeticData = getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
+            if (cosmeticData == null) continue;
+            if (cosmeticData.getCosmeticType().equals("ncolor")) color = cosmeticData;
+        }
+
+//        FontRenderer
+        if (color != null) { // ᨠ
+            String coloredName = color.getData() + actualName;
+            if (dg) {
+                event.displayName = Component.literal("\ued00" + rawPlayerString.replace(actualName, coloredName));
+            } else {
+                event.displayName = Component.literal(rawPlayerString.replace(actualName, coloredName));
             }
-            PlayerManager.INSTANCE.ping(pingTarget);
-        } else if (asd.getAction() == S38PacketPlayerListItem.Action.REMOVE_PLAYER) {
-            for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
-                if (entry.getProfile().getId().version() == 4) {
-                    PlayerManager.INSTANCE.unsubscribe(entry.getProfile().getId());
-                    nameIdCache.remove(entry.getProfile().getName(), entry.getProfile().getId());
-                }
+        } else {
+            if (dg) {
+                event.displayName = Component.literal("\ued00" + rawPlayerString);
             }
         }
     }
@@ -415,8 +454,9 @@ public class CosmeticsManager {
     private void refresh(UUID uuid) {
         try {
             if (Minecraft.getInstance().level != null) {
-                Player entityPlayer = Minecraft.getInstance().level.getPlayerEntityByUUID(uuid);
-                if (entityPlayer != null) entityPlayer.refreshDisplayName();
+                // 1.8.9 refreshed Forge's cached display name; 26.1 builds it on every getDisplayName, nothing to refresh
+//                Player entityPlayer = Minecraft.getInstance().level.getPlayerEntityByUUID(uuid);
+//                if (entityPlayer != null) entityPlayer.refreshDisplayName();
             }
         } catch (Exception exception) {
             FeatureCollectDiagnostics.queueSendLogAsync(exception);
@@ -436,34 +476,22 @@ public class CosmeticsManager {
 
     @SubscribeEvent(priority = ListenerPriority.LAST)
     public void nameFormat(PlayerNameFormatEvent nameFormat) {
-        List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.get(nameFormat.entityPlayer.getGameProfile().getId());
+        List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.get(nameFormat.entityPlayer.getGameProfile().id());
         boolean dg =
                 FeatureRegistry.DG_INDICATOR.isEnabled() &&
-                PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(nameFormat.entityPlayer.getGameProfile().getId(), false);
+                PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(nameFormat.entityPlayer.getGameProfile().id(), false);
 
-        MarkedChatComponent markedChatComponent = null;
-        for (Component entityPlayerPrefix : nameFormat.entityPlayer.getPrefixes()) {
-            if (entityPlayerPrefix instanceof MarkedChatComponent) {
-                markedChatComponent = (MarkedChatComponent) entityPlayerPrefix;
-                break;
-            }
-        }
-
-        if (markedChatComponent == null) {
-            nameFormat.entityPlayer.addPrefix(markedChatComponent = new MarkedChatComponent("", ""));
-        }
-
-
+        // 1.8.9 kept one MarkedChatComponent in Forge's prefix list and set its text; 26.1's event starts without prefixes on every call
         String formatted = "";
         if (dg) {
             formatted += "\ued01";
         }
 
-        markedChatComponent.setFormatted(formatted);
-        markedChatComponent.setUnformatted(formatted);
 
-
-        if (activeCosmetics == null) return;
+        if (activeCosmetics == null) {
+            nameFormat.prefixes.add(Component.literal(formatted));
+            return;
+        }
         String color=null, rawPrefix=null, rawPrefixColor=null;
             for (ActiveCosmetic activeCosmetic : activeCosmetics) {
                 CosmeticData cosmeticData = getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
@@ -487,10 +515,9 @@ public class CosmeticsManager {
         }
 
         if (color != null)
-            nameFormat.displayname = color+nameFormat.username;
+            nameFormat.displayname = Component.literal(color+nameFormat.username);
 
         formatted += prefix+ " ";
-        markedChatComponent.setFormatted(formatted);
-        markedChatComponent.setUnformatted(formatted);
+        nameFormat.prefixes.add(Component.literal(formatted));
     }
 }

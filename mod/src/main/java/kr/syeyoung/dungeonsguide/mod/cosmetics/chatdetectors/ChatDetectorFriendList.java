@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors;
 
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.SurgicalReplacer;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.network.chat.Component;
 
@@ -30,7 +31,7 @@ public class ChatDetectorFriendList implements IChatDetector {
     public List<ReplacementContext> getReplacementContext(Component chatComponent) {
         boolean friend = false;
         int idx = 0;
-        for (Component iChatComponent : chatComponent) {
+        for (Component iChatComponent : SurgicalReplacer.iterate(chatComponent)) {
             idx++;
             if (iChatComponent.getString().startsWith(" §6Friends ")) {
                 friend = true;

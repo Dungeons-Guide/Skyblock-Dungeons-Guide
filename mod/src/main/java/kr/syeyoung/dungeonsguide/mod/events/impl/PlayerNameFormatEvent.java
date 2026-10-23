@@ -22,11 +22,16 @@ import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // client side. displayname is the name before team formatting, like 1.8.9 PlayerEvent.NameFormat
 public class PlayerNameFormatEvent extends DGEvent {
     public final Player entityPlayer;
     public final String username;
     public Component displayname;
+    // 1.8.9: Forge's player prefixes, put before the team-formatted name
+    public final List<Component> prefixes = new ArrayList<>();
 
     public PlayerNameFormatEvent(Player entityPlayer, String username, Component displayname) {
         this.entityPlayer = entityPlayer;
