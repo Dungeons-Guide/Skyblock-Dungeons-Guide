@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.Slot;
@@ -67,10 +67,10 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         solution = null;
         solutionProvider = null;
         clicked.clear();
-        if (event.gui instanceof GuiChest) {
-            ChestMenu cc = (ChestMenu) ((GuiChest) event.gui).inventorySlots;
-            if (provider.isApplicable(cc)) {
-                solution = provider.provideSolution(cc, clicked);
+        if (event.gui instanceof ContainerScreen) {
+            ContainerScreen screen = (ContainerScreen) event.gui;
+            if (provider.isApplicable(screen)) {
+                solution = provider.provideSolution(screen, clicked);
                 this.solutionProvider = provider;
             }
         }
@@ -80,21 +80,21 @@ public class FeatureTerminalSolvers extends SimpleFeature {
     public void onTick(DGTickEvent tickEvent) {
         if (!isEnabled()) return;
         if (solutionProvider == null) return;
-        if (!(Minecraft.getInstance().screen instanceof GuiChest)) {
+        if (!(Minecraft.getInstance().screen instanceof ContainerScreen)) {
             solution = null;
             solutionProvider = null;
             clicked.clear();
             return;
         }
-        ChestMenu cc = (ChestMenu) ((GuiChest) Minecraft.getInstance().screen).inventorySlots;
+        ContainerScreen screen = (ContainerScreen) Minecraft.getInstance().screen;
 
-        solution = solutionProvider.provideSolution(cc, clicked);
+        solution = solutionProvider.provideSolution(screen, clicked);
     }
 
     @DGEventHandler
     public void onGuiPostRender(ScreenRenderEvent.Post rendered) {
         if (solutionProvider == null) return;
-        if (!(Minecraft.getInstance().screen instanceof GuiChest)) {
+        if (!(Minecraft.getInstance().screen instanceof ContainerScreen)) {
             solution = null;
             solutionProvider = null;
             clicked.clear();
@@ -104,7 +104,7 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         if (solution != null) {
             int i = 222;
             int j = i - 108;
-            int ySize = j + (((ChestMenu)(((GuiChest) Minecraft.getInstance().screen).inventorySlots)).getLowerChestInventory().getSizeInventory() / 9) * 18;
+            int ySize = j + (((ChestMenu)(((ContainerScreen) Minecraft.getInstance().screen).getMenu())).getContainer().getContainerSize() / 9) * 18;
             int left = (rendered.gui.width - 176) / 2;
             int top = (rendered.gui.height - ySize ) / 2;
             GlStateManager.pushMatrix();
@@ -114,15 +114,15 @@ public class FeatureTerminalSolvers extends SimpleFeature {
             GlStateManager.translate(left, top, 0);
             if (solution.getCurrSlots() != null) {
                 for (Slot currSlot : solution.getCurrSlots()) {
-                    int x = currSlot.xDisplayPosition;
-                    int y = currSlot.yDisplayPosition;
+                    int x = currSlot.x;
+                    int y = currSlot.y;
                     Gui.drawRect(x, y, x + 16, y + 16, 0x7700FFFF);
                 }
             }
             if (solution.getNextSlots() != null) {
                 for (Slot nextSlot : solution.getNextSlots()) {
-                    int x = nextSlot.xDisplayPosition;
-                    int y = nextSlot.yDisplayPosition;
+                    int x = nextSlot.x;
+                    int y = nextSlot.y;
                     Gui.drawRect(x, y, x + 16, y + 16, 0x77FFFF00);
                 }
             }
@@ -142,9 +142,9 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         if (solution.getCurrSlots() == null) {
             return;
         }
-        GuiChest chest = (GuiChest) Minecraft.getInstance().screen;
+        ContainerScreen chest = (ContainerScreen) Minecraft.getInstance().screen;
 
-        Slot s = chest.getSlotUnderMouse();
+        Slot s = chest.hoveredSlot;
         if (solution.getCurrSlots().contains(s)) {
             clicked.add(s);
             // swap with middle click

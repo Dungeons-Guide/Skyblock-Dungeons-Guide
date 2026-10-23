@@ -61,7 +61,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
 
         LocalPlayer thePlayer = Minecraft.getInstance().player;
         if (context.getScaffoldParser() == null) return false;
-        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.position());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) {
             return false;
@@ -76,25 +76,25 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
         if (context == null) return new TextSpan(new NullTextStyle(), "");
 
         LocalPlayer thePlayer = Minecraft.getInstance().player;
-        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.position());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) {
             return new TextSpan(new NullTextStyle(), "");
         }
 
-        int facing = (int) (thePlayer.rotationYaw + 45) % 360;
+        int facing = (int) (thePlayer.getYRot() + 45) % 360;
         if (facing < 0) facing += 360;
         if (dungeonRoom.getRoomMatcher() == null) {
-            BlockPos offsetPoint = new BlockPos((int) thePlayer.posX - dungeonRoom.getRoomBounds().getMin().getX(),
-                    (int) thePlayer.posY-dungeonRoom.getRoomBounds().getMin().getY(),
-                    (int) thePlayer.posZ - dungeonRoom.getRoomBounds().getMin().getZ());
+            BlockPos offsetPoint = new BlockPos((int) thePlayer.getX() - dungeonRoom.getRoomBounds().getMin().getX(),
+                    (int) thePlayer.getY()-dungeonRoom.getRoomBounds().getMin().getY(),
+                    (int) thePlayer.getZ() - dungeonRoom.getRoomBounds().getMin().getZ());
             return new TextSpan(getStyle("coord"), "X: "+offsetPoint.getX()+" Y: "+offsetPoint.getY()+" Z: "+offsetPoint.getZ()+" Room Not Matched");
         } else {
             int real = (facing / 90 + dungeonRoom.getRoomMatcher().getRotation()) % 4;
 
-            OffsetVec3 offsetPoint = new OffsetVec3(dungeonRoom, thePlayer.getPositionVector());
+            OffsetVec3 offsetPoint = new OffsetVec3(dungeonRoom, thePlayer.position());
 
-            return new TextSpan(getStyle("coord"), "X: " +String.format("%.2f",  offsetPoint.getXCoord()) + " Y: " + String.format("%.2f",  offsetPoint.getYCoord()) + " Z: " + String.format("%.2f",  offsetPoint.getZCoord()) + " Facing: " + FeatureRoomCoordDisplay.facing[real] + " In? "+dungeonRoom.getRoomBounds().isFullyWithin(Minecraft.getInstance().player.getPositionVector()));
+            return new TextSpan(getStyle("coord"), "X: " +String.format("%.2f",  offsetPoint.getXCoord()) + " Y: " + String.format("%.2f",  offsetPoint.getYCoord()) + " Z: " + String.format("%.2f",  offsetPoint.getZCoord()) + " Facing: " + FeatureRoomCoordDisplay.facing[real] + " In? "+dungeonRoom.getRoomBounds().isFullyWithin(Minecraft.getInstance().player.position()));
         }
     }
 

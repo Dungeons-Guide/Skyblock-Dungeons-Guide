@@ -1,8 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.pathfinding.abilitysetting;
 
 import lombok.*;
-import net.minecraft.world.item.Item;
-import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.*;
 
 import java.io.DataInputStream;
@@ -17,14 +15,16 @@ import net.minecraft.nbt.NbtIo;
 @With
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AlgorithmSetting implements Cloneable {
+    // 1.8.9 tools only exist as saved values now (D125): the tool's registry name stays for compatibility,
+    // speed and harvest level are a stub at the highest of both versions
     @Data @AllArgsConstructor
     public static class ToolSettings {
-        private final ItemTool tool;
+        private final String tool;
         private final int efficiency;
 
         public CompoundTag serialize() {
             CompoundTag tag = new CompoundTag();
-            tag.setString("level", tool.getRegistryName());
+            tag.putString("level", tool);
             tag.putInt("efficiency", efficiency);
             return tag;
         }
@@ -33,19 +33,24 @@ public class AlgorithmSetting implements Cloneable {
             if (base instanceof ByteTag) return null;
             else if (base instanceof CompoundTag) {
                 return new ToolSettings(
-                        (ItemTool) Item.getByNameOrId(((CompoundTag) base).getString("level")),
-                        ((CompoundTag) base).getInteger("efficiency"));
+                        ((CompoundTag) base).getStringOr("level", ""),
+                        ((CompoundTag) base).getIntOr("efficiency", 0));
             }
             throw new IllegalArgumentException("Invalid tool settings: "+base);
         }
 
         public double getSpeed(int haste) {
             int val2 = efficiency;
-            Item.ToolMaterial toolMaterial = tool.getToolMaterial();
-            double efficiency2 = toolMaterial.getEfficiencyOnProperMaterial();
+            // 1.8.9's fastest tool material, gold
+            double efficiency2 = 12.0;
             efficiency2 += val2 * val2 + 1;
             efficiency2 *= haste * 0.2 + 1;
             return efficiency2;
+        }
+
+        // higher than any 1.8.9 or 26.1 tool material
+        public int getHarvestLevel() {
+            return 4;
         }
     }
 
@@ -76,23 +81,23 @@ public class AlgorithmSetting implements Cloneable {
     private final double axeSpeed;
 
     public AlgorithmSetting(CompoundTag nbt) {
-        if (nbt.getInteger("version") != 2) throw new IllegalArgumentException("Unexpected Algo Settings version: "+nbt.getInteger("version")+" / Expected: 2");
-        this.pickaxe = ToolSettings.deserialize(nbt.getTag("pickaxe"));
-        this.shovel = ToolSettings.deserialize(nbt.getTag("shovel"));
-        this.axe = ToolSettings.deserialize(nbt.getTag("axe"));
+        if (nbt.getIntOr("version", 0) != 2) throw new IllegalArgumentException("Unexpected Algo Settings version: "+nbt.getIntOr("version", 0)+" / Expected: 2");
+        this.pickaxe = ToolSettings.deserialize(nbt.get("pickaxe"));
+        this.shovel = ToolSettings.deserialize(nbt.get("shovel"));
+        this.axe = ToolSettings.deserialize(nbt.get("axe"));
 
-        this.hasteLevel = nbt.getInteger("haste");
-        this.stonkDown = nbt.getBoolean("stonkDown");
-        this.stonkTeleport = nbt.getBoolean("stonkTeleport");
-        this.stonkEChest = nbt.getBoolean("stonkEChest");
-        this.allowSlowStonkPath = nbt.hasKey("slowStonk") ? nbt.getBoolean("slowStonk") : true;
-        this.routeEtherwarp = nbt.getBoolean("routeEtherwarp");
-        this.maxStonk = nbt.getInteger("maxStonk");
-        this.enderpearl = nbt.getBoolean("enderpearl");
-        this.tntpearl = nbt.getBoolean("tntpearl");
-        this.etherwarpOffset = nbt.getDouble("etherwarpOffset");
-        this.etherwarpRadius = nbt.getInteger("etherwarpRadius");
-        this.etherwarpLeeway = nbt.getDouble("etherwarpLeeway");
+        this.hasteLevel = nbt.getIntOr("haste", 0);
+        this.stonkDown = nbt.getBooleanOr("stonkDown", false);
+        this.stonkTeleport = nbt.getBooleanOr("stonkTeleport", false);
+        this.stonkEChest = nbt.getBooleanOr("stonkEChest", false);
+        this.allowSlowStonkPath = nbt.getBooleanOr("slowStonk", true);
+        this.routeEtherwarp = nbt.getBooleanOr("routeEtherwarp", false);
+        this.maxStonk = nbt.getIntOr("maxStonk", 0);
+        this.enderpearl = nbt.getBooleanOr("enderpearl", false);
+        this.tntpearl = nbt.getBooleanOr("tntpearl", false);
+        this.etherwarpOffset = nbt.getDoubleOr("etherwarpOffset", 0);
+        this.etherwarpRadius = nbt.getIntOr("etherwarpRadius", 0);
+        this.etherwarpLeeway = nbt.getDoubleOr("etherwarpLeeway", 0);
 
         this.pickaxeSpeed = pickaxe == null ? -1 : pickaxe.getSpeed(hasteLevel);
         this.shovelSpeed = shovel == null ? -1 : shovel.getSpeed(hasteLevel) / 30.0;
@@ -147,7 +152,7 @@ public class AlgorithmSetting implements Cloneable {
     }
 
     public static AlgorithmSetting deserialize(DataInputStream dataInputStream) throws IOException {
-        CompoundTag nbtTagCompound = NbtIo.read(dataInputStream, new NBTSizeTracker(10000));
+        CompoundTag nbtTagCompound = NbtIo.read(dataInputStream, NbtAccounter.create(10000));
         return new AlgorithmSetting(nbtTagCompound);
     }
 

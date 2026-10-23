@@ -59,7 +59,7 @@ public class FeatureBoxStarMobs extends SimpleFeature {
             @Override
             public boolean apply(@Nullable ArmorStand input) {
                 if (player.distanceSq(input.getPosition()) > sq) return false;
-                if (!input.getAlwaysRenderNameTag()) return false;
+                if (!input.isCustomNameVisible()) return false;
                 return input.getName().contains("✯") && input.getName().contains(" ");
             }
         });

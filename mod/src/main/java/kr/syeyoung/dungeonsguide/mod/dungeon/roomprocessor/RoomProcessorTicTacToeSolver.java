@@ -66,7 +66,7 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
                     if (frames.isEmpty()) board[y][x] = 0;
                     else {
                         ItemStack displayedItem = frames.get(0).getItem();
-                        if (displayedItem == null || displayedItem.getItem() == null || !(displayedItem.getItem() instanceof MapItem)) {
+                        if (displayedItem.isEmpty() || displayedItem.getItem() == null || !(displayedItem.getItem() instanceof MapItem)) {
                             board[y][x] = 0;
                             continue;
                         }

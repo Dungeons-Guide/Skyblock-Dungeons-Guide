@@ -27,8 +27,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.G
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
+import com.mojang.authlib.properties.Property;
+import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
 
 import java.util.HashMap;
@@ -95,11 +98,12 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
 
     private int match(ArmorStand armorStand) {
         if (armorStand == null) return -1;
-        ItemStack item = armorStand.getInventory()[4];
-        if (item == null) return -1;
-        ListTag list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
-        if (list == null) return -1;
-        String str = ((CompoundTag)list.get(0)).getString("Value");
+        ItemStack item = armorStand.getItemBySlot(EquipmentSlot.HEAD);
+        if (item.isEmpty()) return -1;
+        // 1.8.9's SkullOwner.Properties.textures, the profile component on 26.1 (D125)
+        ResolvableProfile profile = item.get(DataComponents.PROFILE);
+        if (profile == null) return -1;
+        String str = profile.partialProfile().properties().get("textures").stream().findFirst().map(Property::value).orElse("");
         return !integers.containsKey(str) ? -1 : integers.get(str);
     }
 

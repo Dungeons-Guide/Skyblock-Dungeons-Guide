@@ -341,7 +341,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
         if (FeatureRegistry.SOLVER_BOX.disableText()) return;
         Font fr = Minecraft.getInstance().font;
-        event.graphics.text(fr, "Type \"recalc\" in chat to recalculate the solution", 0, 0, 0xFFFFFFFF, false);
+        event.context.drawString("Type \"recalc\" in chat to recalculate the solution", 0, 0, 0xFFFFFFFF, false);
     }
 
     @Override

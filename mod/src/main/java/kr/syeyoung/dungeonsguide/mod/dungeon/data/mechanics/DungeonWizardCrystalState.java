@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
@@ -93,10 +94,11 @@ public class DungeonWizardCrystalState implements DungeonMechanicState {
 
     @Override
     public String getCurrentState() {
-        for (ItemStack stack : Minecraft.getInstance().player.inventory.mainInventory) {
-            if (stack == null) continue;
-            if (stack.getItem() != Items.skull) continue;
-            if (stack.getDisplayName().equals("§9Wizard's Crystal")) return "obtained-self";
+        for (ItemStack stack : Minecraft.getInstance().player.getInventory().getNonEquipmentItems()) {
+            if (stack.isEmpty()) continue;
+            // 1.8.9's skull item, the crystal is a player head
+            if (!stack.is(Items.PLAYER_HEAD)) continue;
+            if (TextUtils.getFormattedName(stack).equals("§9Wizard's Crystal")) return "obtained-self";
         }
         if (LegacyBlock.SKULL.is(data.secretPoint.getBlock(room))) {
             return "unobtained";

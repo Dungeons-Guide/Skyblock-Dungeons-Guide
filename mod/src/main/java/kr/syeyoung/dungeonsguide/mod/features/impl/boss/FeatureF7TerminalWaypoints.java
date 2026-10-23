@@ -178,7 +178,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
             for (List<WaypointData> value : waypoints.values()) {
                 for (WaypointData waypointData : value) {
-                    if (entityplayer.getDistanceSq(waypointData.x, waypointData.y, waypointData.z) < 25) {
+                    if (entityplayer.distanceToSqr(waypointData.x, waypointData.y, waypointData.z) < 25) {
                         nearPlayer.put(waypointData.id, entityplayer.getName());
                     }
                 }
@@ -202,7 +202,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
                 for (WaypointData waypointData : value) {
                     if (waypointData.type == WaypointData.WaypointType.LAMP || waypointData.type == WaypointData.WaypointType.ARROW
                     || waypointData.type == WaypointData.WaypointType.PATH || waypointData.type == WaypointData.WaypointType.SIMON) {
-                        int dist = (int) player1.getDistanceSq(waypointData.x, waypointData.y, waypointData.z);
+                        int dist = (int) player1.distanceToSqr(waypointData.x, waypointData.y, waypointData.z);
                         if (dist < minDist) {
                             minDistId = waypointData.id;
                             minDist = dist;
@@ -223,7 +223,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
             for (List<WaypointData> value : waypoints.values()) {
                 for (WaypointData waypointData : value) {
                     if (waypointData.type == WaypointData.WaypointType.LEVER) {
-                        int dist = (int) player1.getDistanceSq(waypointData.x, waypointData.y, waypointData.z);
+                        int dist = (int) player1.distanceToSqr(waypointData.x, waypointData.y, waypointData.z);
                         if (dist < minDist) {
                             minDistId = waypointData.id;
                             minDist = dist;
@@ -244,7 +244,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
             for (List<WaypointData> value : waypoints.values()) {
                 for (WaypointData waypointData : value) {
                     if (waypointData.type == WaypointData.WaypointType.TERMINAL) {
-                        int dist = (int) player1.getDistanceSq(waypointData.x, waypointData.y, waypointData.z);
+                        int dist = (int) player1.distanceToSqr(waypointData.x, waypointData.y, waypointData.z);
                         if (dist < minDist) {
                             minDistId = waypointData.id;
                             minDist = dist;

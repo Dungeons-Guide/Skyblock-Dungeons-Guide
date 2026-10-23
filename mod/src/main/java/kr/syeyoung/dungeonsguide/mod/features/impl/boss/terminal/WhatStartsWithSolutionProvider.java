@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.Slot;
 
@@ -27,15 +28,16 @@ import java.util.List;
 
 public class WhatStartsWithSolutionProvider implements TerminalSolutionProvider{
     @Override
-    public TerminalSolution provideSolution(ChestMenu chest, List<Slot> clicked) {
-        String that = chest.getLowerChestInventory().getName().replace("What starts with: '", "").replace("'?", "").trim().toLowerCase();
+    public TerminalSolution provideSolution(ContainerScreen screen, List<Slot> clicked) {
+        ChestMenu chest = screen.getMenu();
+        String that = screen.getTitle().getString().replace("What starts with: '", "").replace("'?", "").trim().toLowerCase();
 
         TerminalSolution ts = new TerminalSolution();
         ts.setCurrSlots(new ArrayList<Slot>());
-        for (Slot inventorySlot : chest.inventorySlots) {
-            if (inventorySlot.inventory != chest.getLowerChestInventory()) continue;
-            if (inventorySlot.getHasStack() && inventorySlot.getStack() != null && !inventorySlot.getStack().isItemEnchanted() ) {
-                String name = TextUtils.stripColor(inventorySlot.getStack().getDisplayName()).toLowerCase();
+        for (Slot inventorySlot : chest.slots) {
+            if (inventorySlot.container != chest.getContainer()) continue;
+            if (inventorySlot.hasItem() && !inventorySlot.getItem().isEmpty() && !inventorySlot.getItem().hasFoil() ) {
+                String name = TextUtils.stripColor(inventorySlot.getItem().getDisplayName()).toLowerCase();
                 if (name.startsWith(that))
                     ts.getCurrSlots().add(inventorySlot);
             }
@@ -44,7 +46,8 @@ public class WhatStartsWithSolutionProvider implements TerminalSolutionProvider{
     }
 
     @Override
-    public boolean isApplicable(ChestMenu chest) {
-        return chest.getLowerChestInventory().getName().startsWith("What starts with: '");
+    public boolean isApplicable(ContainerScreen screen) {
+        ChestMenu chest = screen.getMenu();
+        return screen.getTitle().getString().startsWith("What starts with: '");
     }
 }

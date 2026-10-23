@@ -59,7 +59,7 @@ public class FeatureBoxBats extends SimpleFeature  {
             @Override
             public boolean apply(@Nullable Bat input) {
                 if (input != null && input.isInvisible()) return false;
-                return input != null && input.getDistanceSq(player) < sq;
+                return input != null && input.distanceToSqr(player) < sq;
             }
         });
         AColor c = this.<AColor>getParameter("color").getValue();

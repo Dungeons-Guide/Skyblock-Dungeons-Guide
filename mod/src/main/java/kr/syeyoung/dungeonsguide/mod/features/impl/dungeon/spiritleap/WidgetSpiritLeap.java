@@ -17,7 +17,7 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.inventory.Slot;
@@ -81,30 +81,30 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
 
     public void onChestUpdate(WindowUpdateEvent windowUpdateEvent) {
         if (windowUpdateEvent == null) {
-            GuiChest guiChest = GuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest();
+            ContainerScreen guiChest = GuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest();
             if (guiChest == null) {
                 slotMap.clear();
             } else {
                 for (int x = 1; x<=7; x++) {
                     int y = 1;
                     int i = y * 9 + x;
-                    Slot s = guiChest.inventorySlots.getSlot(i);
+                    Slot s = guiChest.getMenu().getSlot(i);
                     WarpTarget prev = slotMap.remove(i);
-                    if (s == null || !s.getHasStack() || s.getStack().getItem() != Items.skull) { continue; }
+                    if (s == null || !s.hasItem() || !s.getItem().is(Items.PLAYER_HEAD)) { continue; }
 
-                    slotMap.put(i, new WarpTarget(s.getStack(), i));
+                    slotMap.put(i, new WarpTarget(s.getItem(), i));
                 }
 
             }
         } else {
             if (windowUpdateEvent.getPacketSetSlot() != null) {
-                int i = windowUpdateEvent.getPacketSetSlot().func_149173_d();
+                int i = windowUpdateEvent.getPacketSetSlot().getSlot();
 
-                ItemStack stack = windowUpdateEvent.getPacketSetSlot().func_149174_e();
+                ItemStack stack = windowUpdateEvent.getPacketSetSlot().getItem();
 
                 if (i / 9 < 3) {
                     WarpTarget prev = slotMap.remove(i);
-                    if (stack != null && stack.getItem() == Items.skull) {
+                    if (!stack.isEmpty() && stack.is(Items.PLAYER_HEAD)) {
 //                    if (prev == null) prev = new WidgetPartyElement(this, i);
 //                    prev.update(PartyFinderParty.fromItemStack(stack));
 //                        System.out.println(stack.getTagCompound());
@@ -116,9 +116,9 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
                     int y = 1;
                     int i = y * 9 + x;
 
-                    ItemStack item = windowUpdateEvent.getWindowItems().getItemStacks()[i];
+                    ItemStack item = windowUpdateEvent.getWindowItems().items().get(i);
                     WarpTarget prev = slotMap.remove(i);
-                    if (item == null || item.getItem() != Items.skull) { continue; }
+                    if (item.isEmpty() || !item.is(Items.PLAYER_HEAD)) { continue; }
 
                     slotMap.put(i, new WarpTarget(item, i));
                 }

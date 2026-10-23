@@ -20,6 +20,14 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile;
 
 
+import net.minecraft.util.datafix.fixes.References;
+import net.minecraft.util.datafix.DataFixers;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.SharedConstants;
+import com.mojang.serialization.Dynamic;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -117,14 +125,17 @@ public class PlayerProfileParser {
     }
 
     public static CompoundTag parseBase64NBT(String nbt) throws IOException {
-        return NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(nbt)));
+        return NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(nbt)), NbtAccounter.unlimitedHeap());
     }
 
+    // the api still serves 1.8.9 item nbt: vanilla's DataFixer brings it from before 1.9 (99) to current, then the item codec reads it (D125)
+    private static final int LEGACY_ITEM_DATA_VERSION = 99;
     public static ItemStack deserializeNBT(CompoundTag nbtTagCompound) {
-        if (nbtTagCompound.hasNoTags()) return null;
-        ItemStack itemStack = new ItemStack(Blocks.stone);
-        itemStack.deserializeNBT(nbtTagCompound);
-        return itemStack;
+        if (nbtTagCompound.isEmpty()) return null;
+        Dynamic<Tag> fixed = DataFixers.getDataFixer().update(References.ITEM_STACK, new Dynamic<>(NbtOps.INSTANCE, nbtTagCompound),
+                LEGACY_ITEM_DATA_VERSION, SharedConstants.getCurrentVersion().dataVersion().version());
+        return ItemStack.CODEC.parse(Minecraft.getInstance().getConnection().registryAccess().createSerializationContext(NbtOps.INSTANCE), fixed.getValue())
+                .result().orElse(null);
     }
 
     public static ItemStack[] parseInventory(JsonObject object, String path, ItemStack[] itemStacks) throws IOException {
@@ -132,12 +143,12 @@ public class PlayerProfileParser {
         if (nbt == null) return null;
 
         CompoundTag armor = parseBase64NBT(nbt);
-        ListTag array = armor.getTagList("i", 10);
-        if (itemStacks == null || array.tagCount() > itemStacks.length)
-            itemStacks = new ItemStack[array.tagCount()];
+        ListTag array = armor.getListOrEmpty("i");
+        if (itemStacks == null || array.size() > itemStacks.length)
+            itemStacks = new ItemStack[array.size()];
 
-        for (int i = 0; i < array.tagCount(); i++) {
-            CompoundTag item = array.getCompoundTagAt(i);
+        for (int i = 0; i < array.size(); i++) {
+            CompoundTag item = array.getCompoundOrEmpty(i);
             itemStacks[i] = deserializeNBT(item);
         }
         return itemStacks;
@@ -169,10 +180,10 @@ public class PlayerProfileParser {
 
             if (inventory.has("wardrobe_contents")) {
                 CompoundTag armor = parseBase64NBT(getOrDefault(inventory, "wardrobe_contents.data", null));
-                ListTag array = armor.getTagList("i", 10);
-                for (int i = 0; i < array.tagCount(); i++) {
+                ListTag array = armor.getListOrEmpty("i");
+                for (int i = 0; i < array.size(); i++) {
                     if (i % 4 == 0) playerProfile.getWardrobe().add(new PlayerProfile.Armor());
-                    CompoundTag item = array.getCompoundTagAt(i);
+                    CompoundTag item = array.getCompoundOrEmpty(i);
                     playerProfile.getWardrobe().get(i / 4).getArmorSlots()[i % 4] = deserializeNBT(item);
                 }
             }

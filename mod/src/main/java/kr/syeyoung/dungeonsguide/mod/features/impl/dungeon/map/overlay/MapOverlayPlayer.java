@@ -38,8 +38,8 @@ public class MapOverlayPlayer implements MapOverlay{
 
         if (entityplayer != null && (!entityplayer.isInvisible() || entityplayer == Minecraft.getInstance().player)) {
             // getting location from player entity
-            Vec3 playerPos = entityplayer.getPositionEyes(partialTicks);
-            yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYawHead - entityplayer.prevRotationYawHead) * partialTicks;
+            Vec3 playerPos = entityplayer.getEyePosition(partialTicks);
+            yaw2 = entityplayer.yHeadRotO + (entityplayer.getYHeadRot() - entityplayer.yHeadRotO) * partialTicks;
             if(DungeonsGuide.getDungeonsGuide().verbose) System.out.println("Got player location from entity");
             return new Vector3d(playerPos.xCoord, playerPos.zCoord, yaw2);
         } else {

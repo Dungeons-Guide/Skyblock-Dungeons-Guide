@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
+import java.util.List;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.events.impl.ScreenOpenEvent;
 
 
@@ -32,7 +34,7 @@ import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -77,13 +79,14 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
     private GuiScreenAdapterChestOverride guiScreenAdapter;
 
     private String conditionCheck(GuiScreen guiScreen) {
-        if (!(guiScreen instanceof GuiChest)) return null;
-        GuiChest chest = (GuiChest) guiScreen;
-        if (!(chest.inventorySlots instanceof ChestMenu)) return null;
-        ChestMenu containerChest = (ChestMenu) chest.inventorySlots;
-        Container lower = containerChest.getLowerChestInventory();
+        if (!(guiScreen instanceof ContainerScreen)) return null;
+        ContainerScreen chest = (ContainerScreen) guiScreen;
+        if (!(chest.getMenu() instanceof ChestMenu)) return null;
+        ChestMenu containerChest = (ChestMenu) chest.getMenu();
+        Container lower = containerChest.getContainer();
         if (lower == null) return null;
-        return lower.getName();
+        // 1.8.9's chest inventory name is the screen title on 26.1 (D125)
+        return chest.getTitle().getString();
     }
 
     @DGEventHandler
@@ -111,7 +114,7 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
             scaler.child.setValue(widgetPartyFinder);
             guiScreenAdapter = new GuiScreenAdapterChestOverride(scaler);
         }
-        guiScreenAdapter.setGuiChest((GuiChest) event.gui);
+        guiScreenAdapter.setGuiChest((ContainerScreen) event.gui);
 
         event.gui = guiScreenAdapter;
     }
@@ -122,40 +125,35 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
             widgetPartyFinder.onChestUpdate(windowUpdateEvent);
         }
 
-        if (Minecraft.getInstance().screen instanceof GuiChest) {
-            GuiChest chest = (GuiChest) Minecraft.getInstance().screen;
+        if (Minecraft.getInstance().screen instanceof ContainerScreen) {
+            ContainerScreen chest = (ContainerScreen) Minecraft.getInstance().screen;
 
-            if (!(chest.inventorySlots instanceof ChestMenu)) return;
-            ChestMenu containerChest = (ChestMenu) chest.inventorySlots;
-            Container lower = containerChest.getLowerChestInventory();
-            if (lower == null || !lower.getName().equals("Catacombs Gate")) return;
+            if (!(chest.getMenu() instanceof ChestMenu)) return;
+            ChestMenu containerChest = (ChestMenu) chest.getMenu();
+            Container lower = containerChest.getContainer();
+            if (lower == null || !chest.getTitle().getString().equals("Catacombs Gate")) return;
 
             ItemStack item = null;
             if (windowUpdateEvent.getWindowItems() != null) {
-                if (windowUpdateEvent.getWindowItems().getItemStacks().length <= 47) return;
-                item = windowUpdateEvent.getWindowItems().getItemStacks()[47];
+                if (windowUpdateEvent.getWindowItems().items().size() <= 47) return;
+                item = windowUpdateEvent.getWindowItems().items().get(47);
 
             } else if (windowUpdateEvent.getPacketSetSlot() != null) {
-                if (windowUpdateEvent.getPacketSetSlot().func_149173_d() != 47) return;
-                item = windowUpdateEvent.getPacketSetSlot().func_149174_e();
+                if (windowUpdateEvent.getPacketSetSlot().getSlot() != 47) return;
+                item = windowUpdateEvent.getPacketSetSlot().getItem();
             }
-            if (item == null) return;
+            if (item.isEmpty()) return;
 
-            CompoundTag stackTagCompound = item.getTagCompound();
-            if (stackTagCompound.hasKey("display", 10)) {
-                CompoundTag nbtTagCompound = stackTagCompound.getCompoundTag("display");
+            // 1.8.9's display.Lore, the lore component on 26.1 (D125)
+            List<String> nbtTagList1 = TextUtils.getFormattedLore(item);
 
-                if (nbtTagCompound.getTagId("Lore") == 9) {
-                    ListTag nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
-
-                    for (int i = 0; i < nbtTagList1.tagCount(); i++) {
-                        String str = nbtTagList1.getStringTagAt(i);
-                        if (str.startsWith("§aCurrently Selected")) {
-                            lastClass = str.substring(24);
-                        }
-                    }
+            for (int i = 0; i < nbtTagList1.size(); i++) {
+                String str = nbtTagList1.get(i);
+                if (str.startsWith("§aCurrently Selected")) {
+                    lastClass = str.substring(24);
                 }
             }
+
         }
     }
 }

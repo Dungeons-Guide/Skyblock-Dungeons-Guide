@@ -17,6 +17,8 @@
  */
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.impl;
 
+import java.util.List;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.IDataRenderer;
 import lombok.AllArgsConstructor;
@@ -52,12 +54,10 @@ public abstract class DataRendererTalismanBase implements IDataRenderer {
     }
 
     private static DataRendererTalismans.Rarity getRarity(ItemStack itemStack) {
-        CompoundTag display = itemStack.getTagCompound().getCompoundTag("display");
-        if (display == null) return null;
-        ListTag lore = display.getTagList("Lore", 8);
-        if (lore == null) return null;
-        for (int i = 0; i < lore.tagCount(); i++) {
-            String line = lore.getStringTagAt(i);
+        // 1.8.9's display.Lore, the lore component on 26.1 (D125)
+        List<String> lore = TextUtils.getFormattedLore(itemStack);
+        for (int i = 0; i < lore.size(); i++) {
+            String line = lore.get(i);
             for (DataRendererTalismans.Rarity value : DataRendererTalismans.Rarity.values()) {
                 if (line.startsWith(value.getColor()) && line.contains("CCESSORY")) return value;
             }

@@ -18,6 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
+import java.util.stream.Collectors;
+import net.minecraft.world.item.TooltipFlag;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessResult;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatSubscriber;
@@ -42,7 +45,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.gui.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.inventory.Slot;
@@ -221,79 +224,79 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     private final Map<Integer, WidgetPartyElement> partyElementMap = new HashMap<>();
     public void onChestUpdate(WindowUpdateEvent windowUpdateEvent) {
         if (windowUpdateEvent == null) {
-            GuiChest guiChest = GuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest();
+            ContainerScreen guiChest = GuiScreenAdapterChestOverride.getAdapter(getDomElement()).getGuiChest();
             if (guiChest == null) {
                 partyElementMap.clear();
             } else {
                 for (int x = 1; x<=7; x++) {
                     for (int y = 1; y <= 3; y++) {
                         int i = y * 9 + x;
-                        Slot s = guiChest.inventorySlots.getSlot(i);
+                        Slot s = guiChest.getMenu().getSlot(i);
                         WidgetPartyElement prev = partyElementMap.remove(i);
-                        if (s == null || !s.getHasStack()) { continue; }
-                        if (!filter(s.getStack())) continue;
+                        if (s == null || !s.hasItem()) { continue; }
+                        if (!filter(s.getItem())) continue;
 
                         if (prev == null) prev = new WidgetPartyElement(this, i);
-                        prev.update(PartyFinderParty.fromItemStack(s.getStack()));
+                        prev.update(PartyFinderParty.fromItemStack(s.getItem()));
                         partyElementMap.put(i, prev);
                     }
                 }
 
                 {
-                    Slot next = guiChest.inventorySlots.getSlot(9 * 2 + 8);
-                    if (next.getStack() != null && next.getStack().getItem() == Items.arrow) {
+                    Slot next = guiChest.getMenu().getSlot(9 * 2 + 8);
+                    if (!next.getItem().isEmpty() && next.getItem().is(Items.ARROW)) {
                         nextVisible.setValue("true");
-                        extractPage(next.getStack());
+                        extractPage(next.getItem());
                     } else {
                         nextVisible.setValue("false");
                     }
 
-                    Slot prev = guiChest.inventorySlots.getSlot(9 * 2 + 0);
-                    if (prev.getStack() != null && prev.getStack().getItem() == Items.arrow) {
+                    Slot prev = guiChest.getMenu().getSlot(9 * 2 + 0);
+                    if (!prev.getItem().isEmpty() && prev.getItem().is(Items.ARROW)) {
                         prevVisible.setValue("true");
-                        extractPage(prev.getStack());
+                        extractPage(prev.getItem());
                     } else {
                         prevVisible.setValue("false");
                     }
 
-                    Slot delist = guiChest.inventorySlots.getSlot(9 * 5 + 7);
-                    setDelistable(delist.getStack() != null && delist.getStack().getItem() == Item.getItemFromBlock(Blocks.bookshelf));
+                    Slot delist = guiChest.getMenu().getSlot(9 * 5 + 7);
+                    setDelistable(!delist.getItem().isEmpty() && delist.getItem().is(Items.BOOKSHELF));
 
-                    Slot search = guiChest.inventorySlots.getSlot(9*5+5);
-                    if (search != null && search.getStack() != null)
-                        extractSearch(search.getStack());
+                    Slot search = guiChest.getMenu().getSlot(9*5+5);
+                    if (search != null && !search.getItem().isEmpty())
+                        extractSearch(search.getItem());
 
-                    Slot myParty = guiChest.inventorySlots.getSlot(9*5+8);
-                    if (myParty != null && myParty.getStack() != null) extractMyParty(myParty.getStack());
+                    Slot myParty = guiChest.getMenu().getSlot(9*5+8);
+                    if (myParty != null && !myParty.getItem().isEmpty()) extractMyParty(myParty.getItem());
                 }
             }
         } else {
             if (windowUpdateEvent.getPacketSetSlot() != null) {
-                int i = windowUpdateEvent.getPacketSetSlot().func_149173_d();
+                int i = windowUpdateEvent.getPacketSetSlot().getSlot();
 
-                ItemStack stack = windowUpdateEvent.getPacketSetSlot().func_149174_e();
+                ItemStack stack = windowUpdateEvent.getPacketSetSlot().getItem();
                 if (i == 9*2+8) {
-                    if (stack != null && stack.getItem() == Items.arrow) {
+                    if (!stack.isEmpty() && stack.is(Items.ARROW)) {
                         nextVisible.setValue("true");
                         extractPage(stack);
                     } else {
                         nextVisible.setValue("false");
                     }
                 } else if (i == 9*2) {
-                    if (stack != null && stack.getItem() == Items.arrow) {
+                    if (!stack.isEmpty() && stack.is(Items.ARROW)) {
                         prevVisible.setValue("true");
                         extractPage(stack);
                     } else {
                         prevVisible.setValue("false");
                     }
                 } else if (i == 9*5+7) {
-                    setDelistable(stack != null && stack.getItem() == Item.getItemFromBlock(Blocks.bookshelf));
+                    setDelistable(!stack.isEmpty() && stack.is(Items.BOOKSHELF));
                 } else if (i == 9*5 + 5) {
-                    if (stack != null) {
+                    if (!stack.isEmpty()) {
                         extractSearch(stack);
                     }
                 } else if (i == 9*5+8) {
-                    if (stack != null) extractMyParty(stack);
+                    if (!stack.isEmpty()) extractMyParty(stack);
                 }
 
                 if (i%9 == 0 || i%9 == 8 || i/9 == 0 || i/9 >= 4) {
@@ -310,7 +313,7 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
                 for (int x = 1; x<=7; x++) {
                     for (int y = 1; y <= 3; y++) {
                         int i = y * 9 + x;
-                        ItemStack item = windowUpdateEvent.getWindowItems().getItemStacks()[i];
+                        ItemStack item = windowUpdateEvent.getWindowItems().items().get(i);
                         WidgetPartyElement prev = partyElementMap.remove(i);
                         if (!filter(item)) continue;
 
@@ -321,30 +324,30 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
                 }
 
                 {
-                    ItemStack next = windowUpdateEvent.getWindowItems().getItemStacks()[9 * 2 + 8];
-                    if (next != null && next.getItem() == Items.arrow) {
+                    ItemStack next = windowUpdateEvent.getWindowItems().items().get(9 * 2 + 8);
+                    if (!next.isEmpty() && next.is(Items.ARROW)) {
                         nextVisible.setValue("true");
                         extractPage(next);
                     } else {
                         nextVisible.setValue("false");
                     }
 
-                    ItemStack prev = windowUpdateEvent.getWindowItems().getItemStacks()[9 * 2];
-                    if (prev != null && prev.getItem() == Items.arrow) {
+                    ItemStack prev = windowUpdateEvent.getWindowItems().items().get(9 * 2);
+                    if (!prev.isEmpty() && prev.is(Items.ARROW)) {
                         prevVisible.setValue("true");
                         extractPage(prev);
                     } else {
                         prevVisible.setValue("false");
                     }
 
-                    ItemStack delist = windowUpdateEvent.getWindowItems().getItemStacks()[9*5+7];
-                    setDelistable(delist != null && delist.getItem() == Item.getItemFromBlock(Blocks.bookshelf));
+                    ItemStack delist = windowUpdateEvent.getWindowItems().items().get(9*5+7);
+                    setDelistable(!delist.isEmpty() && delist.is(Items.BOOKSHELF));
 
-                    ItemStack search = windowUpdateEvent.getWindowItems().getItemStacks()[9*5+5];
-                    if (search != null) extractSearch(search);
+                    ItemStack search = windowUpdateEvent.getWindowItems().items().get(9*5+5);
+                    if (!search.isEmpty()) extractSearch(search);
 
-                    ItemStack myParty = windowUpdateEvent.getWindowItems().getItemStacks()[9*5+8];
-                    if (myParty != null) extractMyParty(myParty);
+                    ItemStack myParty = windowUpdateEvent.getWindowItems().items().get(9*5+8);
+                    if (!myParty.isEmpty()) extractMyParty(myParty);
                 }
             }
         }
@@ -352,37 +355,35 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
         addItems();
     }
     public void extractPage(ItemStack itemStack) {
-        CompoundTag stackTagCompound = itemStack.getTagCompound();
         int page = -1;
-        if (stackTagCompound.hasKey("display", 10)) {
-            CompoundTag nbtTagCompound = stackTagCompound.getCompoundTag("display");
+        // 1.8.9's display.Lore, the lore component on 26.1 (D125)
+        List<String> nbtTagList1 = TextUtils.getFormattedLore(itemStack);
 
-            if (nbtTagCompound.getTagId("Lore") == 9) {
-                ListTag nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
-
-                for (int i = 0; i < nbtTagList1.tagCount(); i++) {
-                    String str = nbtTagList1.getStringTagAt(i);
-                    if (str.startsWith("§ePage ")) {
-                        int pg = Integer.parseInt(str.substring(7));
-                        if (itemStack.getDisplayName().equals("§aPrevious Page")) page = pg+1;
-                        else page = pg-1;
-                    }
-                }
+        for (int i = 0; i < nbtTagList1.size(); i++) {
+            String str = nbtTagList1.get(i);
+            if (str.startsWith("§ePage ")) {
+                int pg = Integer.parseInt(str.substring(7));
+                if (TextUtils.getFormattedName(itemStack).equals("§aPrevious Page")) page = pg+1;
+                else page = pg-1;
             }
         }
+
         pageNumber.setValue("Page "+page);
     }
 
     public void extractMyParty(ItemStack itemStack) {
-        if (itemStack == null || itemStack.getItem() != Items.skull) {
+        if (itemStack.isEmpty() || !itemStack.is(Items.PLAYER_HEAD)) {
             party.setValue("");
             return;
         }
 
-        List<String> list = itemStack.getTooltip(Minecraft.getInstance().player, Minecraft.getInstance().options.advancedItemTooltips);
+        List<String> list = itemStack.getTooltipLines(Item.TooltipContext.of(Minecraft.getInstance().level), Minecraft.getInstance().player,
+                Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL)
+                // TODO: D5 stopgap (D125), 1.8.9 tooltips were legacy strings
+                .stream().map(TextUtils::getFormattedText).collect(Collectors.toList());
         for (int i = 0; i < list.size(); ++i) {
             if (i == 0) {
-                list.set(i, itemStack.getRarity().rarityColor + list.get(i));
+                list.set(i, itemStack.getRarity().color() + list.get(i));
             } else {
                 list.set(i, ChatFormatting.GRAY + list.get(i));
             }
@@ -393,31 +394,26 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     public void extractSearch(ItemStack itemStack) {
         String dungeon="", floor="", text="", classLv="", dungeonLv="", sort="";
         {
-            CompoundTag stackTagCompound = itemStack.getTagCompound();
-            if (stackTagCompound.hasKey("display", 10)) {
-                CompoundTag nbtTagCompound = stackTagCompound.getCompoundTag("display");
+            // 1.8.9's display.Lore, the lore component on 26.1 (D125)
+            List<String> nbtTagList1 = TextUtils.getFormattedLore(itemStack);
 
-                if (nbtTagCompound.getTagId("Lore") == 9) {
-                    ListTag nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
-
-                    for (int i = 0; i < nbtTagList1.tagCount(); i++) {
-                        String str = nbtTagList1.getStringTagAt(i);
-                        if (str.startsWith("§aDungeon: ")) {
-                            dungeon = str.substring(11);
-                        } else if (str.startsWith("§aFloor: ")) {
-                            floor = str.substring(9);
-                        } else if (str.startsWith("§aSearch text: ")) {
-                            text = str.substring(15);
-                        } else if (str.startsWith("§aClass Level: ")) {
-                            classLv = str.substring(15);
-                        } else if (str.startsWith("§aDungeon Level: ")) {
-                            dungeonLv = str.substring(17);
-                        } else if (str.startsWith("§aSort: ")) {
-                            sort =  str.substring(8);
-                        }
-                    }
+            for (int i = 0; i < nbtTagList1.size(); i++) {
+                String str = nbtTagList1.get(i);
+                if (str.startsWith("§aDungeon: ")) {
+                    dungeon = str.substring(11);
+                } else if (str.startsWith("§aFloor: ")) {
+                    floor = str.substring(9);
+                } else if (str.startsWith("§aSearch text: ")) {
+                    text = str.substring(15);
+                } else if (str.startsWith("§aClass Level: ")) {
+                    classLv = str.substring(15);
+                } else if (str.startsWith("§aDungeon Level: ")) {
+                    dungeonLv = str.substring(17);
+                } else if (str.startsWith("§aSort: ")) {
+                    sort =  str.substring(8);
                 }
             }
+
         }
 
 
@@ -428,9 +424,9 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     }
 
     public boolean filter(ItemStack itemStack) {
-        if (itemStack == null) return false;
+        if (itemStack.isEmpty()) return false;
         if (itemStack.getItem() == null) return false;
-        if (itemStack.getItem() != Items.skull) return false;
+        if (!itemStack.is(Items.PLAYER_HEAD)) return false;
 
         PartyFinderParty party = PartyFinderParty.fromItemStack(itemStack);
 

@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 
+import net.minecraft.tags.ItemTags;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
@@ -108,9 +109,10 @@ public class FeatureArrowPathSolver extends SimpleFeature {
             if (pos.getX() != -2) return false;
             if (pos.getZ() < 75 || pos.getZ() > 79) return false;
             if (pos.getY() < 121 || pos.getY() > 125) return false;
-            ItemStack itemStack = filter.getDisplayedItem();
-            if (itemStack == null) return false;
-            if (itemStack.getItem() == Item.getItemFromBlock(Blocks.wool) || itemStack.getItem() == Items.arrow) return true;
+            ItemStack itemStack = filter.getItem();
+            if (itemStack.isEmpty()) return false;
+            // 1.8.9's wool item was every color
+            if (itemStack.is(ItemTags.WOOL) || itemStack.is(Items.ARROW)) return true;
             return false;
         });
 
@@ -122,10 +124,11 @@ public class FeatureArrowPathSolver extends SimpleFeature {
             int x = frame.getPosition().getZ() - 75;
             int y = frame.getPosition().getY() - 121;
 
-            if (frame.getDisplayedItem().getItem() == Items.arrow) {
+            if (frame.getItem().is(Items.ARROW)) {
                 mapping[y][x] = frame.getRotation()+1;
                 bfsAble[y][x] = 9999;
-            } else if (frame.getDisplayedItem().getMetadata() == DyeColor.LIME.getMetadata()) {
+            // 1.8.9's lime wool metadata
+            } else if (frame.getItem().is(Items.LIME_WOOL)) {
                 mapping[y][x] = 10; // starting
                 bfsAble[y][x] = 99999;
             } else {

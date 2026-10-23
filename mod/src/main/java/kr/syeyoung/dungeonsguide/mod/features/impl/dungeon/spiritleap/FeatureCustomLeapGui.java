@@ -31,7 +31,7 @@ import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.Container;
 
@@ -47,13 +47,14 @@ public class FeatureCustomLeapGui extends SimpleFeature {
     private GuiScreenAdapterChestOverride guiScreenAdapter;
 
     private String conditionCheck(GuiScreen guiScreen) {
-        if (!(guiScreen instanceof GuiChest)) return null;
-        GuiChest chest = (GuiChest) guiScreen;
-        if (!(chest.inventorySlots instanceof ChestMenu)) return null;
-        ChestMenu containerChest = (ChestMenu) chest.inventorySlots;
-        Container lower = containerChest.getLowerChestInventory();
+        if (!(guiScreen instanceof ContainerScreen)) return null;
+        ContainerScreen chest = (ContainerScreen) guiScreen;
+        if (!(chest.getMenu() instanceof ChestMenu)) return null;
+        ChestMenu containerChest = (ChestMenu) chest.getMenu();
+        Container lower = containerChest.getContainer();
         if (lower == null) return null;
-        return lower.getName();
+        // 1.8.9's chest inventory name is the screen title on 26.1 (D125)
+        return chest.getTitle().getString();
     }
 
     @DGEventHandler
@@ -83,7 +84,7 @@ public class FeatureCustomLeapGui extends SimpleFeature {
             int y = (int) (Math.max(0, Minecraft.getInstance().getWindow().getHeight() / 2 - 200 * scaler.scale.getValue()) + 100);
             guiScreenAdapter = new GuiScreenAdapterChestOverride(scaler, x, y);
         }
-        guiScreenAdapter.setGuiChest((GuiChest) event.gui);
+        guiScreenAdapter.setGuiChest((ContainerScreen) event.gui);
 
         event.gui = guiScreenAdapter;
     }

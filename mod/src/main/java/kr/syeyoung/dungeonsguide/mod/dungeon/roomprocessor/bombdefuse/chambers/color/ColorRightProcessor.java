@@ -29,8 +29,11 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
+import com.mojang.authlib.properties.Property;
+import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
 
 import java.util.HashMap;
@@ -106,9 +109,10 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
         if (armorStand == null) {
             return 0;
         }
-        ItemStack item = armorStand.getInventory()[4];
-        ListTag list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
-        String str = ((CompoundTag)list.get(0)).getString("Value");
+        ItemStack item = armorStand.getItemBySlot(EquipmentSlot.HEAD);
+        // 1.8.9's SkullOwner.Properties.textures, the profile component on 26.1 (D125)
+        ResolvableProfile profile = item.get(DataComponents.PROFILE);
+        String str = profile.partialProfile().properties().get("textures").stream().findFirst().map(Property::value).orElse("");
         return (byte) (!integers.containsKey(str) ? 0 : integers.get(str));
     }
 

@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.DyeColor;
@@ -29,14 +30,14 @@ import java.util.List;
 
 public class CorrectThePaneSolutionProvider implements TerminalSolutionProvider {
     @Override
-    public TerminalSolution provideSolution(ChestMenu chest, List<Slot> clicked) {
+    public TerminalSolution provideSolution(ContainerScreen screen, List<Slot> clicked) {
+        ChestMenu chest = screen.getMenu();
         TerminalSolution ts = new TerminalSolution();
         ts.setCurrSlots(new ArrayList<Slot>());
-        for (Slot inventorySlot : chest.inventorySlots) {
-            if (inventorySlot.inventory != chest.getLowerChestInventory()) continue;
-            if (inventorySlot.getHasStack() && inventorySlot.getStack() != null) {
-                if (inventorySlot.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        inventorySlot.getStack().getItemDamage() == DyeColor.RED.getMetadata()) {
+        for (Slot inventorySlot : chest.slots) {
+            if (inventorySlot.container != chest.getContainer()) continue;
+            if (inventorySlot.hasItem() && !inventorySlot.getItem().isEmpty()) {
+                if (inventorySlot.getItem().is(Items.RED_STAINED_GLASS_PANE)) {
                     ts.getCurrSlots().add(inventorySlot);
                 }
             }
@@ -47,7 +48,8 @@ public class CorrectThePaneSolutionProvider implements TerminalSolutionProvider 
     }
 
     @Override
-    public boolean isApplicable(ChestMenu chest) {
-        return chest.getLowerChestInventory().getName().equals("Correct all the panes!");
+    public boolean isApplicable(ContainerScreen screen) {
+        ChestMenu chest = screen.getMenu();
+        return screen.getTitle().getString().equals("Correct all the panes!");
     }
 }

@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
+import net.minecraft.world.item.SpawnEggItem;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.pathfinding.pathfinder.ShadowCast;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
@@ -43,8 +44,9 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
     private List<BlockPos> toHighlight;
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onInteract(PlayerInteractEvent event) {
-        if (event.entityPlayer.getHeldItem() == null ||
-                event.entityPlayer.getHeldItem().getItem() != Items.spawn_egg) {
+        // 1.8.9's spawn egg item was every spawn egg
+        if (event.entityPlayer.getMainHandItem().isEmpty() ||
+                !(event.entityPlayer.getMainHandItem().getItem() instanceof SpawnEggItem)) {
             return;
         }
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && event.action != PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {

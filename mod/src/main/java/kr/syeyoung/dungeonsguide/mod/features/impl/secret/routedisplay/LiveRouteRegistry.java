@@ -56,7 +56,7 @@ public class LiveRouteRegistry extends SimpleFeature {
 
         Optional<DungeonRoom> dungeonRoomOpt = Optional.ofNullable(context)
                 .map(DungeonContext::getScaffoldParser)
-                .map(a->a.getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.getPositionVector()))
+                .map(a->a.getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getInstance().player.position()))
                 .map(a -> DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getRoomMap().get(a))
                 .filter(a -> a.getRoomProcessor() != null);
         if (!dungeonRoomOpt.isPresent()) {
@@ -80,7 +80,7 @@ public class LiveRouteRegistry extends SimpleFeature {
                 context.getBossfightProcessor().tick();
             }
             if (context.getScaffoldParser() != null) {
-                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.position());
 
                 return context.getScaffoldParser().getRoomMap().get(roomPt);
             }

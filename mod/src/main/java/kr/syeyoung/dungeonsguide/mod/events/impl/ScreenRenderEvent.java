@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
 import kr.syeyoung.dungeonsguide.mod.events.DGEvent;
+import kr.syeyoung.dungeonsguide.mod.gui.renderer.RenderingContext;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -28,18 +29,21 @@ public abstract class ScreenRenderEvent extends DGEvent {
     public final int mouseX;
     public final int mouseY;
     public final float renderPartialTicks;
+    // handlers draw here, in gui units; rendered into an image after dispatch (D126)
+    public final RenderingContext context;
 
-    protected ScreenRenderEvent(Screen gui, GuiGraphicsExtractor graphics, int mouseX, int mouseY, float renderPartialTicks) {
+    protected ScreenRenderEvent(Screen gui, GuiGraphicsExtractor graphics, int mouseX, int mouseY, float renderPartialTicks, RenderingContext context) {
         this.gui = gui;
         this.graphics = graphics;
         this.mouseX = mouseX;
         this.mouseY = mouseY;
         this.renderPartialTicks = renderPartialTicks;
+        this.context = context;
     }
 
     public static class Post extends ScreenRenderEvent {
-        public Post(Screen gui, GuiGraphicsExtractor graphics, int mouseX, int mouseY, float renderPartialTicks) {
-            super(gui, graphics, mouseX, mouseY, renderPartialTicks);
+        public Post(Screen gui, GuiGraphicsExtractor graphics, int mouseX, int mouseY, float renderPartialTicks, RenderingContext context) {
+            super(gui, graphics, mouseX, mouseY, renderPartialTicks, context);
         }
     }
 }

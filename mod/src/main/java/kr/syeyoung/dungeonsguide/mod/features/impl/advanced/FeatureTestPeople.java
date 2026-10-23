@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
+import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.core.component.DataComponents;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
@@ -189,13 +191,14 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 
     public ItemStack getSkullByUserName(String username) {
         if (SkullCashe.containsKey(username)) return SkullCashe.get(username);
-        ItemStack stack = new ItemStack(Items.skull, 1, 3);
+        // 1.8.9's skull item with meta 3, a player head
+        ItemStack stack = new ItemStack(Items.PLAYER_HEAD);
 
         executor.submit(() -> {
             Player playerEntityByName = Minecraft.getInstance().level.getPlayerEntityByName(username);
             if(playerEntityByName == null || playerEntityByName.getGameProfile() == null) {
-                stack.setTagCompound(new CompoundTag());
-                stack.getTagCompound().setTag("SkullOwner", new StringTag(username));
+                // 1.8.9's SkullOwner, the profile component on 26.1 (D125)
+                stack.set(DataComponents.PROFILE, ResolvableProfile.createUnresolved(username));
                 return;
             }
 
@@ -210,8 +213,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 
 
 
-            stack.setTagCompound(new CompoundTag());
-            stack.getTagCompound().setTag("SkullOwner", new StringTag(username));
+            stack.set(DataComponents.PROFILE, ResolvableProfile.createUnresolved(username));
 
         });
 

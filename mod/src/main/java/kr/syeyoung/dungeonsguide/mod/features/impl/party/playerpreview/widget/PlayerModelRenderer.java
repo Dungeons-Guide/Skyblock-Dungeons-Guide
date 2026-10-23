@@ -18,6 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget;
 
+import java.util.stream.Collectors;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.Item;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.ActiveCosmetic;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticData;
@@ -156,11 +160,13 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
             }
         }
         if (toHover != null) {
-            List<String> list = toHover.getTooltip(Minecraft.getInstance().player,
-                    Minecraft.getInstance().options.advancedItemTooltips);
+            List<String> list = toHover.getTooltipLines(Item.TooltipContext.of(Minecraft.getInstance().level), Minecraft.getInstance().player,
+                Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL)
+                // TODO: D5 stopgap (D125), 1.8.9 tooltips were legacy strings
+                .stream().map(TextUtils::getFormattedText).collect(Collectors.toList());
             for (int i = 0; i < list.size(); ++i) {
                 if (i == 0) {
-                    list.set(i, toHover.getRarity().rarityColor + list.get(i));
+                    list.set(i, toHover.getRarity().color() + list.get(i));
                 } else {
                     list.set(i, ChatFormatting.GRAY + list.get(i));
                 }

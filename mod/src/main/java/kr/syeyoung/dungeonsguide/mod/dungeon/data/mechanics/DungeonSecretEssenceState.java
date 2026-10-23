@@ -18,6 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.data.mechanics;
 
+import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.EquipmentSlot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.data.LegacyBlock;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
@@ -77,28 +80,28 @@ public class DungeonSecretEssenceState implements DungeonMechanicState, ISecret 
 
             if (pos.distToLowCornerSqr(Minecraft.getInstance().player.getX(), Minecraft.getInstance().player.getY(), Minecraft.getInstance().player.getZ()) < 25) {
                 if (tileEntity instanceof SkullBlockEntity) {
-                    String texture = Optional.ofNullable(((SkullBlockEntity) tileEntity).getPlayerProfile())
-                            .map(a -> a.getProperties())
+                    String texture = Optional.ofNullable(((SkullBlockEntity) tileEntity).getOwnerProfile())
+                            .map(a -> a.partialProfile().properties())
                             .map(a -> a.get("textures"))
                             .flatMap(a -> a.stream().findFirst())
-                            .map(a -> a.getValue()).orElse(null);
+                            .map(a -> a.value()).orElse(null);
 
                     if (texture == null) return;
                     for (ArmorStand entity : entities) {
-                        ItemStack itemStackIn = entity.getEquipmentInSlot(4);
+                        ItemStack itemStackIn = entity.getItemBySlot(EquipmentSlot.HEAD);
                         System.out.println(itemStackIn);
-                        if (itemStackIn == null) continue;
-                        if (itemStackIn.getItem() != Items.skull) continue;
+                        if (itemStackIn.isEmpty()) continue;
+                        // 1.8.9's skull item, a player head for the SkullOwner
+                        if (!itemStackIn.is(Items.PLAYER_HEAD)) continue;
 
-                        if (itemStackIn.hasTagCompound()) {
-                            CompoundTag nbttagcompound = itemStackIn.getTagCompound();
-                            if (nbttagcompound.hasKey("SkullOwner", 10)) {
-                                GameProfile gameprofile = NbtUtils.readGameProfileFromNBT(nbttagcompound.getCompoundTag("SkullOwner"));
+                        // 1.8.9's SkullOwner nbt, the profile component on 26.1 (D125)
+                        ResolvableProfile profile = itemStackIn.get(DataComponents.PROFILE);
+                        if (profile != null) {
+                            GameProfile gameprofile = profile.partialProfile();
 
-                                if (texture.equals(gameprofile.getProperties().get("textures").stream().findFirst().map(a -> a.getValue()).orElse(null))) {
-                                    found = true;
-                                    return;
-                                }
+                            if (texture.equals(gameprofile.properties().get("textures").stream().findFirst().map(a -> a.value()).orElse(null))) {
+                                found = true;
+                                return;
                             }
                         }
                     }

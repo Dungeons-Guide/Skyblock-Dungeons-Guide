@@ -66,7 +66,7 @@ public class MapPlayerProcessor {
         }
         ItemStack stack = mc.player.getInventory().getItem(8);
 
-        if (stack == null || !(stack.getItem() instanceof MapItem)) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof MapItem)) {
             return;
         }
 

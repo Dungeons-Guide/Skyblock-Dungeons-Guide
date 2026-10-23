@@ -24,6 +24,11 @@ import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.chat.Style;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemLore;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,6 +57,22 @@ public class TextUtils {
             copy.append(copyComponent(sibling));
         }
         return copy;
+    }
+
+    // TODO: D5 stopgap (D125): 1.8.9's display.Lore strings, one legacy string per lore line, empty if none
+    public static List<String> getFormattedLore(ItemStack itemStack) {
+        ItemLore lore = itemStack.get(DataComponents.LORE);
+        if (lore == null) return Collections.emptyList();
+        List<String> lines = new ArrayList<>();
+        for (Component line : lore.lines()) {
+            lines.add(getFormattedText(line));
+        }
+        return lines;
+    }
+
+    // TODO: D5 stopgap (D125): 1.8.9's ItemStack.getDisplayName() as a legacy string
+    public static String getFormattedName(ItemStack itemStack) {
+        return getFormattedText(itemStack.getHoverName());
     }
 
     // TODO: D5 stopgap until chat reading moves to styled component matching.

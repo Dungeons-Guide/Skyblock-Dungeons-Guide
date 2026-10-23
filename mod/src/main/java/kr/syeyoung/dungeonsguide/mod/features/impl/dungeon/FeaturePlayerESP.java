@@ -72,7 +72,7 @@ public class FeaturePlayerESP extends SimpleFeature {
         ItemStack[] hand = inv.mainInventory;
         inv.mainInventory = new ItemStack[36];
 
-        float f = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * renderPlayerEvent.partialRenderTick;
+        float f = entity.yRotO + (entity.getYRot() - entity.yRotO) * renderPlayerEvent.partialRenderTick;
         try {
             renderPlayerEvent.renderer.doRender((AbstractClientPlayer) renderPlayerEvent.entityPlayer, renderPlayerEvent.x, renderPlayerEvent.y, renderPlayerEvent.z, f, renderPlayerEvent.partialRenderTick);
         } catch (Exception t) {}

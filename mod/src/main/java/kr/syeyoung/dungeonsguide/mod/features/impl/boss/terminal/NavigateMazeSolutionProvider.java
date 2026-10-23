@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.DyeColor;
@@ -29,54 +30,50 @@ import java.util.List;
 
 public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
     @Override
-    public TerminalSolution provideSolution(ChestMenu chest, List<Slot> clicked) {
+    public TerminalSolution provideSolution(ContainerScreen screen, List<Slot> clicked) {
+        ChestMenu chest = screen.getMenu();
         TerminalSolution ts = new TerminalSolution();
         ts.setCurrSlots(new ArrayList<Slot>());
         Slot solution = null;
-        for (Slot inventorySlot : chest.inventorySlots) {
-            if (inventorySlot.inventory != chest.getLowerChestInventory()) continue;
-            if (inventorySlot.getHasStack() && inventorySlot.getStack() != null) {
-                if (inventorySlot.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        inventorySlot.getStack().getItemDamage() == DyeColor.WHITE.getMetadata()) {
-                    int x = inventorySlot.slotNumber % 9;
-                    int y = inventorySlot.slotNumber / 9;
+        for (Slot inventorySlot : chest.slots) {
+            if (inventorySlot.container != chest.getContainer()) continue;
+            if (inventorySlot.hasItem() && !inventorySlot.getItem().isEmpty()) {
+                if (inventorySlot.getItem().is(Items.WHITE_STAINED_GLASS_PANE)) {
+                    int x = inventorySlot.index % 9;
+                    int y = inventorySlot.index / 9;
 
                     if (x > 0) {
-                        Slot toChk =  chest.inventorySlots.get(y * 9 + x - 1);
+                        Slot toChk =  chest.slots.get(y * 9 + x - 1);
 
-                        if (toChk.getHasStack() && toChk.getStack() != null &&
-                                toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                                toChk.getStack().getItemDamage() == DyeColor.LIME.getMetadata()) {
+                        if (toChk.hasItem() && !toChk.getItem().isEmpty() &&
+                                toChk.getItem().is(Items.LIME_STAINED_GLASS_PANE)) {
                             solution = inventorySlot;
                             break;
                         }
                     }
                     if (x < 8) {
-                        Slot toChk =  chest.inventorySlots.get(y * 9 + x + 1);
+                        Slot toChk =  chest.slots.get(y * 9 + x + 1);
 
-                        if (toChk.getHasStack() && toChk.getStack() != null &&
-                                toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                                toChk.getStack().getItemDamage() == DyeColor.LIME.getMetadata()) {
+                        if (toChk.hasItem() && !toChk.getItem().isEmpty() &&
+                                toChk.getItem().is(Items.LIME_STAINED_GLASS_PANE)) {
                             solution = inventorySlot;
                             break;
                         }
                     }
                     if (y > 0) {
-                        Slot toChk =  chest.inventorySlots.get((y-1) * 9 + x);
+                        Slot toChk =  chest.slots.get((y-1) * 9 + x);
 
-                        if (toChk.getHasStack() && toChk.getStack() != null &&
-                                toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                                toChk.getStack().getItemDamage() == DyeColor.LIME.getMetadata()) {
+                        if (toChk.hasItem() && !toChk.getItem().isEmpty() &&
+                                toChk.getItem().is(Items.LIME_STAINED_GLASS_PANE)) {
                             solution = inventorySlot;
                             break;
                         }
                     }
-                    if (y < chest.getLowerChestInventory().getSizeInventory() / 9 - 1) {
-                        Slot toChk =  chest.inventorySlots.get((y+1) * 9 + x);
+                    if (y < chest.getContainer().getContainerSize() / 9 - 1) {
+                        Slot toChk =  chest.slots.get((y+1) * 9 + x);
 
-                        if (toChk.getHasStack() && toChk.getStack() != null &&
-                                toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                                toChk.getStack().getItemDamage() == DyeColor.LIME.getMetadata()) {
+                        if (toChk.hasItem() && !toChk.getItem().isEmpty() &&
+                                toChk.getItem().is(Items.LIME_STAINED_GLASS_PANE)) {
                             solution = inventorySlot;
                             break;
                         }
@@ -89,45 +86,41 @@ public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
         ts.getCurrSlots().add(solution);
         ts.setNextSlots(new ArrayList<Slot>());
         {
-            int x = solution.slotNumber % 9;
-            int y = solution.slotNumber / 9;
+            int x = solution.index % 9;
+            int y = solution.index / 9;
 
             if (x > 0) {
-                Slot toChk =  chest.inventorySlots.get(y * 9 + x - 1);
+                Slot toChk =  chest.slots.get(y * 9 + x - 1);
 
-                if (toChk.getHasStack() && toChk.getStack() != null &&
-                        toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        toChk.getStack().getItemDamage() == DyeColor.WHITE.getMetadata()) {
+                if (toChk.hasItem() && !toChk.getItem().isEmpty() &&
+                        toChk.getItem().is(Items.WHITE_STAINED_GLASS_PANE)) {
                     ts.getNextSlots().add(toChk);
                     return ts;
                 }
             }
             if (x < 8) {
-                Slot toChk =  chest.inventorySlots.get(y * 9 + x + 1);
+                Slot toChk =  chest.slots.get(y * 9 + x + 1);
 
-                if (toChk.getHasStack() && toChk.getStack() != null &&
-                        toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        toChk.getStack().getItemDamage() == DyeColor.WHITE.getMetadata()) {
+                if (toChk.hasItem() && !toChk.getItem().isEmpty() &&
+                        toChk.getItem().is(Items.WHITE_STAINED_GLASS_PANE)) {
                     ts.getNextSlots().add(toChk);
                     return ts;
                 }
             }
             if (y > 0) {
-                Slot toChk =  chest.inventorySlots.get((y-1) * 9 + x);
+                Slot toChk =  chest.slots.get((y-1) * 9 + x);
 
-                if (toChk.getHasStack() && toChk.getStack() != null &&
-                        toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        toChk.getStack().getItemDamage() == DyeColor.WHITE.getMetadata()) {
+                if (toChk.hasItem() && !toChk.getItem().isEmpty() &&
+                        toChk.getItem().is(Items.WHITE_STAINED_GLASS_PANE)) {
                     ts.getNextSlots().add(toChk);
                     return ts;
                 }
             }
-            if (y < chest.getLowerChestInventory().getSizeInventory() / 9 - 1) {
-                Slot toChk =  chest.inventorySlots.get((y+1) * 9 + x);
+            if (y < chest.getContainer().getContainerSize() / 9 - 1) {
+                Slot toChk =  chest.slots.get((y+1) * 9 + x);
 
-                if (toChk.getHasStack() && toChk.getStack() != null &&
-                        toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&
-                        toChk.getStack().getItemDamage() == DyeColor.WHITE.getMetadata()) {
+                if (toChk.hasItem() && !toChk.getItem().isEmpty() &&
+                        toChk.getItem().is(Items.WHITE_STAINED_GLASS_PANE)) {
                     ts.getNextSlots().add(toChk);
                     return ts;
                 }
@@ -138,7 +131,8 @@ public class NavigateMazeSolutionProvider implements TerminalSolutionProvider {
     }
 
     @Override
-    public boolean isApplicable(ChestMenu chest) {
-        return chest.getLowerChestInventory().getName().equals("Navigate the maze!");
+    public boolean isApplicable(ContainerScreen screen) {
+        ChestMenu chest = screen.getMenu();
+        return screen.getTitle().getString().equals("Navigate the maze!");
     }
 }

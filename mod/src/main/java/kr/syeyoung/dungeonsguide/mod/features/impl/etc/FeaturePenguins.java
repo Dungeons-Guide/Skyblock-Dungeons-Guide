@@ -135,11 +135,11 @@ public class FeaturePenguins extends SimpleFeature {
         GlStateManager.pushMatrix();
         GlStateManager.color(1,1,1,1);
         GlStateManager.translate(renderPlayerEvent.x, renderPlayerEvent.y, renderPlayerEvent.z);
-        if (renderPlayerEvent.entityPlayer.isSneaking())
+        if (renderPlayerEvent.entityPlayer.isShiftKeyDown())
         {
             GlStateManager.translate(0.0F, -0.203125F, 0.0F);
         }
-        float f1 = renderPlayerEvent.entityPlayer.prevRotationYawHead + (renderPlayerEvent.entityPlayer.rotationYawHead - renderPlayerEvent.entityPlayer.prevRotationYawHead) * renderPlayerEvent.partialRenderTick;
+        float f1 = renderPlayerEvent.entityPlayer.yHeadRotO + (renderPlayerEvent.entityPlayer.getYHeadRot() - renderPlayerEvent.entityPlayer.yHeadRotO) * renderPlayerEvent.partialRenderTick;
         GlStateManager.rotate(f1+180,0,-1,0);
         Minecraft.getInstance().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 
@@ -158,7 +158,7 @@ public class FeaturePenguins extends SimpleFeature {
             {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(renderPlayerEvent.x, renderPlayerEvent.y, renderPlayerEvent.z);
-                if (renderPlayerEvent.entityPlayer.isSneaking())
+                if (renderPlayerEvent.entityPlayer.isShiftKeyDown())
                 {
                     GlStateManager.translate(0.0F, -0.203125F, 0.0F);
                 }
