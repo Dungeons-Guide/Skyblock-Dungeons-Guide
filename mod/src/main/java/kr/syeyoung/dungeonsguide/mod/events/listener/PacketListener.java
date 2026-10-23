@@ -131,7 +131,14 @@ public class PacketListener {
             if (pkt.getTeamAction() == ClientboundSetPlayerTeamPacket.Action.ADD) {
                 // CREATE
                 Team team = new Team(pkt.getName());
-                pkt.getParameters().ifPresent(parameters -> applyParameters(team, parameters));
+                if (pkt.getParameters().isPresent()) {
+                    ClientboundSetPlayerTeamPacket.Parameters parameters = pkt.getParameters().get();
+                    team.setDisplayName(copy(parameters.getDisplayName()));
+                    team.setPrefix(copy(parameters.getPlayerPrefix()));
+                    team.setSuffix(copy(parameters.getPlayerSuffix()));
+                    team.setNameTagVisibility(NameTagVisibility.of(parameters.getNametagVisibility().getSerializedName()));
+                    team.setColor(parameters.getColor());
+                }
 
                 for (String player : pkt.getPlayers()) {
                     team.addTeamMember(player);
@@ -145,7 +152,12 @@ public class PacketListener {
                 // UPDATE
                 Team team = TeamManager.INSTANCE.getTeamByName(pkt.getName());
                 if (team != null) {
-                    applyParameters(team, pkt.getParameters().get());
+                    ClientboundSetPlayerTeamPacket.Parameters parameters = pkt.getParameters().get();
+                    team.setDisplayName(copy(parameters.getDisplayName()));
+                    team.setPrefix(copy(parameters.getPlayerPrefix()));
+                    team.setSuffix(copy(parameters.getPlayerSuffix()));
+                    team.setNameTagVisibility(NameTagVisibility.of(parameters.getNametagVisibility().getSerializedName()));
+                    team.setColor(parameters.getColor());
                 }
             } else if (pkt.getPlayerAction() == ClientboundSetPlayerTeamPacket.Action.ADD) {
                 // PLAYER UPDATE
@@ -203,13 +215,5 @@ public class PacketListener {
         } else if (packet instanceof ClientboundTakeItemEntityPacket) {
             DungeonsGuide.getDungeonsGuide().getEventBus().fireEvent(new ItemPickupEvent(((ClientboundTakeItemEntityPacket) packet).getItemId(), ((ClientboundTakeItemEntityPacket) packet).getPlayerId()));
         }
-    }
-
-    private static void applyParameters(Team team, ClientboundSetPlayerTeamPacket.Parameters parameters) {
-        team.setDisplayName(copy(parameters.getDisplayName()));
-        team.setPrefix(copy(parameters.getPlayerPrefix()));
-        team.setSuffix(copy(parameters.getPlayerSuffix()));
-        team.setNameTagVisibility(NameTagVisibility.of(parameters.getNametagVisibility().getSerializedName()));
-        team.setColor(parameters.getColor());
     }
 }
