@@ -198,6 +198,11 @@ public class DungeonListener {
                     if (! "?".equals(e.getMessage()) && !"No door finder found".equals(e.getMessage())) {
                         e.printStackTrace();
                         FeatureCollectDiagnostics.queueSendLogAsync(e);
+                    } else if (System.currentTimeMillis() - lastContextFailLog > 10000) {
+                        // these are expected while the dungeon is still loading, but if they never stop nothing works, so say so (rate limited)
+                        lastContextFailLog = System.currentTimeMillis();
+                        System.out.println("[DungeonsGuide] cannot create dungeon context for \"" + SkyblockStatus.getLocationName() + "\": "
+                                + ("?".equals(e.getMessage()) ? "Mort / entrance door not found yet" : e.getMessage()));
                     }
                 }
             }
@@ -230,6 +235,7 @@ public class DungeonListener {
 
     }
 
+    private long lastContextFailLog = 0;
     private WeakReference<DungeonRoom> lastRoom = null;
 
     @SubscribeEvent

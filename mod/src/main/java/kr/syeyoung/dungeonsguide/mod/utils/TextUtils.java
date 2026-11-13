@@ -36,7 +36,8 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 public class TextUtils {
-    private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)§[0-9A-FK-OR]");
+    // any § + char: Hypixel pads scoreboard entries with codes that are not formatting codes (like §q), minecraft ignores them when drawing so they must not leave a letter behind
+    private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)§.");
 
     private static final Pattern SCOREBOARD_CHARACTERS = Pattern.compile("[^a-z A-Z:0-9/'.]");
 

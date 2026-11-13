@@ -98,9 +98,14 @@ public class DungeonRoomInfoRegistry {
     }
 
     public static void saveAll(File dir) {
+        saveAll(dir, false);
+    }
+
+    // force: write every room, not just user made ones (used by dgdebug convertroomdata, which exports the bundled rooms)
+    public static void saveAll(File dir, boolean force) {
         dir.mkdirs();
         //User is dev if they are in a dev environment or they are on the allowlist DEV_USERS
-        boolean isDev = FabricLoader.getInstance().isDevelopmentEnvironment() || DEV_USERS.contains(Minecraft.getInstance().player.getUUID().toString().replace("-",""));
+        boolean isDev = force || FabricLoader.getInstance().isDevelopmentEnvironment() || DEV_USERS.contains(Minecraft.getInstance().player.getUUID().toString().replace("-",""));
         StringBuilder nameIDString = new StringBuilder("name,uuid,processsor,secrets");
         StringBuilder ids = new StringBuilder();
         CBORMapper objectMapper = new CBORMapper();

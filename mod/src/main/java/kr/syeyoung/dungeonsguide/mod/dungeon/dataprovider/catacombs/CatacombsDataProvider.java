@@ -62,8 +62,8 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
         int radius = mc.options.getEffectiveRenderDistance() * 16;
         AABB loaded = new AABB(center.getMinBlockX() - radius, mc.level.getMinY(), center.getMinBlockZ() - radius,
                 center.getMaxBlockX() + 1 + radius, mc.level.getMaxY() + 1, center.getMaxBlockZ() + 1 + radius);
-        // TODO: D5 entity name stopgap (D116)
-        return mc.level.getEntitiesOfClass(ArmorStand.class, loaded, input -> TextUtils.getFormattedText(input.getName()).equals("§bMort"));
+        // compare the plain name: getFormattedText appends a §r, so the old equals("§bMort") could never match
+        return mc.level.getEntitiesOfClass(ArmorStand.class, loaded, input -> TextUtils.stripColor(input.getName().getString()).trim().equals("Mort"));
     }
 
     /**

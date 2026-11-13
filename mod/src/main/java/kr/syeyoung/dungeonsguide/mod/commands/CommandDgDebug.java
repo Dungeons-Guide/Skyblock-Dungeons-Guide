@@ -1438,7 +1438,7 @@ public class CommandDgDebug {
             for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
                 RoomDataConverter.convert(dungeonRoomInfo, table);
             }
-            DungeonRoomInfoRegistry.saveAll(new File(out, "roomdata"));
+            DungeonRoomInfoRegistry.saveAll(new File(out, "roomdata"), true);
             ChatTransmitter.addToQueue(Component.literal("§eDungeons Guide §7:: §fConverted room data to " + out.getAbsolutePath()));
         } catch (Exception e) {
             e.printStackTrace();
