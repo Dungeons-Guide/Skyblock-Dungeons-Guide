@@ -9,6 +9,7 @@ import org.apache.commons.io.input.CountingInputStream;
 
 import java.io.*;
 import java.lang.ref.SoftReference;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
@@ -163,12 +164,17 @@ public class PathfindPrecalculation {
         public static void destroyDirectByteBuffer(ByteBuffer toBeDestroyed)
                 throws IllegalArgumentException, IllegalAccessException,
                 InvocationTargetException, SecurityException, NoSuchMethodException {
-            Method cleanerMethod = toBeDestroyed.getClass().getMethod("cleaner");
-            cleanerMethod.setAccessible(true);
-            Object cleaner = cleanerMethod.invoke(toBeDestroyed);
-            Method cleanMethod = cleaner.getClass().getMethod("clean");
-            cleanMethod.setAccessible(true);
-            cleanMethod.invoke(cleaner);
+            // the old reflective DirectByteBuffer.cleaner() access is blocked on modern java (java.base does not open
+            // java.nio), Unsafe.invokeCleaner is the supported way to free a direct buffer. if even that is unavailable
+            // the buffer is just left to the GC, which is harmless
+            try {
+                Field f = Class.forName("sun.misc.Unsafe").getDeclaredField("theUnsafe");
+                f.setAccessible(true);
+                Object unsafe = f.get(null);
+                unsafe.getClass().getMethod("invokeCleaner", ByteBuffer.class).invoke(unsafe, toBeDestroyed);
+            } catch (ReflectiveOperationException | RuntimeException e) {
+                // leave it to the GC
+            }
         }
 
     }

@@ -57,14 +57,19 @@ public class FeatureDungeonSBTime extends TextHUDFeature {
             }
         }
         time = time.replace(" ", "");
-        int hour = time.indexOf('h') == -1 ? 0 : Integer.parseInt(time.substring(0, time.indexOf('h')));
-        if (time.contains("h")) time = time.substring(time.indexOf('h') + 1);
-        int minute = time.indexOf('m') == -1 ? 0 : Integer.parseInt(time.substring(0, time.indexOf('m')));
-        if (time.contains("m")) time = time.substring(time.indexOf('m') + 1);
-        int second = time.indexOf('s') == -1 ? 0 : Integer.parseInt(time.substring(0, time.indexOf('s')));
+        try {
+            int hour = time.indexOf('h') == -1 ? 0 : Integer.parseInt(time.substring(0, time.indexOf('h')));
+            if (time.contains("h")) time = time.substring(time.indexOf('h') + 1);
+            int minute = time.indexOf('m') == -1 ? 0 : Integer.parseInt(time.substring(0, time.indexOf('m')));
+            if (time.contains("m")) time = time.substring(time.indexOf('m') + 1);
+            int second = time.indexOf('s') == -1 ? 0 : Integer.parseInt(time.substring(0, time.indexOf('s')));
 
-        int time2 = hour * 60 * 60 + minute * 60 + second;
-        return time2 * 1000;
+            int time2 = hour * 60 * 60 + minute * 60 + second;
+            return time2 * 1000;
+        } catch (NumberFormatException e) {
+            // an unparseable scoreboard line must not take the whole client down from a tick handler
+            return 0;
+        }
     }
 
 

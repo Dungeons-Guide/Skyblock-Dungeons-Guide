@@ -169,17 +169,22 @@ public class SkyblockStatus {
                             strippedLine.substring(9).split(" ")[0]));
                 }
             }
-            if (sc.getJustTeam().startsWith(" §7⏣")) {
+            if (isLocationLine(sc.getJustTeam())) {
                 setLocationName(strippedLine.trim());
             }
         }
 
         isDungeonRunning = foundDungeon;
 
-        if (getLocationName() != null)
-            isOnDungeon = getLocationName().startsWith("The Catacombs") | foundDungeon;
-        else
-            isOnDungeon=false;
+        // the Cleared: line only exists inside a run, so it counts even when the location line wasn't recognized
+        isOnDungeon = foundDungeon || (getLocationName() != null && getLocationName().startsWith("The Catacombs"));
+    }
+
+    // the location line is " §7" + an icon + " " + the name. the icon used to be '⏣', Hypixel now sends a private use font glyph (U+E067 on 26.1)
+    private static boolean isLocationLine(String line) {
+        if (line == null || line.length() < 4 || !line.startsWith(" §7")) return false;
+        char icon = line.charAt(3);
+        return icon == '\u23E3' || (icon >= '\uE000' && icon <= '\uF8FF');
     }
 
 }
